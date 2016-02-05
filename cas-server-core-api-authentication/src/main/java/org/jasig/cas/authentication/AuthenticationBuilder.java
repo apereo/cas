@@ -1,10 +1,10 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Principal;
-import org.joda.time.DateTime;
 
 import java.io.Serializable;
 import java.util.List;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
@@ -113,7 +113,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param d Authentication date.
      * @return This builder instance.
      */
-    AuthenticationBuilder setAuthenticationDate(DateTime d);
+    AuthenticationBuilder setAuthenticationDate(ZonedDateTime d);
 
     /**
      * Creates an immutable authentication instance from builder data.

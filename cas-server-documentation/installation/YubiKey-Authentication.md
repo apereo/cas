@@ -12,13 +12,13 @@ To configure YubiKey accounts and obtain API keys, [refer to the documentation](
 [YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the 
 following dependencies in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-support-yubikey</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 
@@ -26,14 +26,14 @@ following dependencies in the Maven WAR overlay:
 # cas.mfa.yubikey.client.id=
 # cas.mfa.yubikey.secret.key=
 # cas.mfa.yubikey.rank = 0
-{% endhighlight %}
+```
 
 By default, all YubiKey accounts for users are allowed to authenticate. If you wish to plug in a custom registry implementation that would determine 
 which users are allowed to use their YubiKey accounts for authentication, you may plug in a custom implementation of the `YubiKeyAccountRegistry`
 that allows you to provide a mapping between usernames and YubiKey public keys.
 
-{% highlight xml %}
+```xml
 <alias name="customYubiKeyAccountRegistry" alias="yubiKeyAccountRegistry" />
-{% endhighlight %}
+```
 
 

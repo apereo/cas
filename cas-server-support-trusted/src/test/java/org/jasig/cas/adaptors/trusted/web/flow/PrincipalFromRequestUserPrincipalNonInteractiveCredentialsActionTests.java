@@ -9,6 +9,7 @@ import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -17,7 +18,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.security.Principal;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -51,12 +51,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
     @Test
     public void verifyRemoteUserExists() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setUserPrincipal(new Principal() {
-            @Override
-            public String getName() {
-                return "test";
-            }
-        });
+        request.setUserPrincipal(() -> "test");
 
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(

@@ -16,7 +16,7 @@ import org.jasig.cas.services.web.beans.RegisteredServiceOAuthTypeEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServicePublicKeyEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceTypeEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
@@ -52,7 +52,7 @@ public final class DefaultRegisteredServiceMapper implements RegisteredServiceMa
         }
         bean.setRequiredHandlers(svc.getRequiredHandlers());
 
-        if (svc instanceof OAuthRegisteredCallbackAuthorizeService) {
+        if (svc instanceof OAuthCallbackAuthorizeService) {
             bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString());
         }
 
@@ -113,7 +113,7 @@ public final class DefaultRegisteredServiceMapper implements RegisteredServiceMa
             // create base RegisteredService object
             final String type = data.getType();
             if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
-                regSvc = new OAuthRegisteredCallbackAuthorizeService();
+                regSvc = new OAuthCallbackAuthorizeService();
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())) {
                 regSvc = new OAuthRegisteredService();
 

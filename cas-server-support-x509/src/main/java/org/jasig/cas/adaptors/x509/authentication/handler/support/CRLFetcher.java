@@ -1,7 +1,15 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.springframework.core.io.Resource;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Set;
 
@@ -16,16 +24,54 @@ public interface CRLFetcher {
      * and returns a map of CRLs each tracked by its url.
      * @param crls resources to retrieve
      * @return map of crl entries and their urls
-     * @throws Exception the exception thrown if resources cant be fetched
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    Set<X509CRL> fetch(@NotNull @Size(min=1)  Set<? extends Object> crls) throws Exception;
+    Set<X509CRL> fetch(@NotNull @Size(min=1) Set<Resource> crls) throws IOException, CRLException, CertificateException;
 
     /**
      * Fetches a single of crl from the specified resource
      * and returns it.
      * @param crl resources to retrieve
      * @return the CRL entry
-     * @throws Exception the exception thrown if resources cant be fetched
+     * @throws MalformedURLException the exception thrown if resources cant be fetched
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    X509CRL fetch(@NotNull Object crl) throws Exception;
+    X509CRL fetch(@NotNull String crl) throws MalformedURLException, IOException, CRLException, CertificateException;
+
+    /**
+     * Fetches a single of crl from the specified resource
+     * and returns it.
+     * @param crl resources to retrieve
+     * @return the CRL entry
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
+     */
+    X509CRL fetch(@NotNull URI crl) throws IOException, CRLException, CertificateException;
+
+    /**
+     * Fetches a single of crl from the specified resource
+     * and returns it.
+     * @param crl resources to retrieve
+     * @return the CRL entry
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
+     */
+    X509CRL fetch(@NotNull URL crl) throws IOException, CRLException, CertificateException;
+
+    /**
+     * Fetches a single of crl from the specified resource
+     * and returns it.
+     * @param crl resources to retrieve
+     * @return the CRL entry
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
+     */
+    X509CRL fetch(@NotNull Resource crl) throws IOException, CRLException, CertificateException;
 }

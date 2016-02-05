@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link InfinispanTicketRegistry}. Infinispan is a distributed in-memory key/value data store with optional schema.
@@ -84,12 +84,7 @@ public final class InfinispanTicketRegistry extends AbstractTicketRegistry {
      */
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Ticket> allTickets = new HashSet<>();
-        for (final Ticket ticket : this.cache.values()) {
-            final Ticket proxiedTicket = getProxiedTicketInstance(ticket);
-            allTickets.add(proxiedTicket);
-        }
-        return decodeTickets(allTickets);
+        return decodeTickets(this.cache.values().stream().map(this::getProxiedTicketInstance).collect(Collectors.toList()));
     }
 
     public void setCache(final Cache<String, Ticket> cache) {

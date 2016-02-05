@@ -17,30 +17,30 @@ additional work.
 ## X.509 Components
 X.509 support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-x509-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 CAS provides an X.509 authentication handler, a handful of X.509-specific principal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
 
-###`X509CredentialsAuthenticationHandler`
+### `X509CredentialsAuthenticationHandler`
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
 by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-{% highlight xml %}
+```xml
 <alias name="x509CredentialsAuthenticationHandler" alias="primaryAuthenticationHandler" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.x509.authn.crl.checkAll=false
 # cas.x509.authn.crl.throw.failure=true
 # cas.x509.authn.crl.refresh.interval=
@@ -54,50 +54,50 @@ The following settings are applicable:
 # cas.x509.authn.principal.descriptor=
 # cas.x509.authn.principal.serial.no.prefix=
 # cas.x509.authn.principal.value.delim=
-{% endhighlight %}
+```
 
 ## Principal Resolver Components
 
-###`X509SubjectPrincipalResolver`
+### `X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 The following configuration snippet produces principals of the form `cn@example.com`. For example, given a
 certificate with the subject `DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto` it would produce the ID
 `jacky@vt.edu`.
 
-{% highlight xml %}
+```xml
 <alias name="x509SubjectPrincipalResolver" alias="primaryPrincipalResolver" />
-{% endhighlight %}
+```
 
-###`X509SubjectDNPrincipalResolver`
+### `X509SubjectDNPrincipalResolver`
 Creates a principal ID from the certificate subject distinguished name.
 
-{% highlight xml %}
+```xml
 <alias name="x509SubjectDNPrincipalResolver" alias="primaryPrincipalResolver" />
-{% endhighlight %}
+```
 
-###`X509SerialNumberPrincipalResolver`
+### `X509SerialNumberPrincipalResolver`
 Creates a principal ID from the certificate serial number.
 
-{% highlight xml %}
+```xml
 <alias name="x509SerialNumberPrincipalResolver" alias="primaryPrincipalResolver" />
-{% endhighlight %}
+```
 
-###`X509SerialNumberAndIssuerDNPrincipalResolver`
+### `X509SerialNumberAndIssuerDNPrincipalResolver`
 Creates a principal ID by concatenating the certificate serial number, a delimiter, and the issuer DN.
 The serial number may be prefixed with an optional string.
 
-{% highlight xml %}
+```xml
 <alias name="x509SerialNumberAndIssuerDNPrincipalResolver" alias="primaryPrincipalResolver" />
-{% endhighlight %}
+```
 
-###`X509SubjectAlternativeNameUPNPrincipalResolver`
+### `X509SubjectAlternativeNameUPNPrincipalResolver`
 Adds support the embedding of a `UserPrincipalName` object as a `SubjectAlternateName` extension within an X509 certificate,
 allowing properly-empowered certificates to be used for network logon (via SmartCards, or alternately by 'soft certs' in certain environments).
 This resolver extracts the Subject Alternative Name UPN extension from the provided certificate if available as a resolved principal id.
 
-{% highlight xml %}
+```xml
 <alias name="x509SubjectAlternativeNameUPNPrincipalResolver" alias="primaryPrincipalResolver" />
-{% endhighlight %}
+```
 
 ## Certificate Revocation Checking Components
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
@@ -118,56 +118,56 @@ The following policies are available by default:
 | `denyRevocationPolicy`
 | `thresholdExpiredCRLRevocationPolicy`
 
-###`ResourceCRLRevocationChecker`
+### `ResourceCRLRevocationChecker`
 Performs a certificate revocation check against a CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
 
-{% highlight xml %}
+```xml
 <alias name="resourceCrlRevocationChecker" alias="x509RevocationChecker" />
 <util:set id="x509CrlResources" />
 ...
 <alias name="allowRevocationPolicy" alias="x509ResourceUnavailableRevocationPolicy" />
 <alias name="thresholdExpiredCRLRevocationPolicy" alias="x509ResourceExpiredRevocationPolicy" />
-{% endhighlight %}
+```
 
-###`CRLDistributionPointRevocationChecker`
+### `CRLDistributionPointRevocationChecker`
 Performs certificate revocation checking against the CRL URI(s) mentioned in the certificate _cRLDistributionPoints_
 extension field. The component leverages a cache to prevent excessive IO against CRL endpoints; CRL data is fetched
 if does not exist in the cache or if it is expired.
 
-{% highlight xml %}
+```xml
 <alias name="crlDistributionPointRevocationChecker" alias="x509RevocationChecker" />
 ...
 <alias name="allowRevocationPolicy" alias="x509CrlUnavailableRevocationPolicy" />
 <alias name="thresholdExpiredCRLRevocationPolicy" alias="x509CrlExpiredRevocationPolicy" />
-{% endhighlight %}
+```
 
 ## CRL Fetching Configuration
 By default, all revocation checks use the `ResourceCRLFetcher` component to fetch the CRL resource from the specified location.
 
-{% highlight xml %}
+```xml
 <alias name="resourceCrlFetcher" alias="x509CrlFetcher" />
-{% endhighlight %}
+```
 
 The following alternatives are available:
 
-###`LdaptiveResourceCRLFetcher`
+### `LdaptiveResourceCRLFetcher`
 Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance.
 
-{% highlight xml %}
+```xml
 <alias name="ldaptiveResourceCRLFetcher" alias="x509CrlFetcher" />
 <alias name="customLdapSearchExecutor" alias="ldaptiveResourceCRLSearchExecutor" />
 <alias name="customLdapConnectionConfig" alias="ldaptiveResourceCRLConnectionConfig" />
-{% endhighlight %}
+```
 
-###`PoolingLdaptiveResourceCRLFetcher`
+### `PoolingLdaptiveResourceCRLFetcher`
 Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance. This component is able to use connection pooling.
 
-{% highlight xml %}
+```xml
 <alias name="poolingLdaptiveResourceCRLFetcher" alias="x509CrlFetcher" />
 <alias name="customLdapConnectionPool" alias="poolingLdaptiveConnectionPool" />
 <alias name="customLdapSearchExecutor" alias="poolingLdaptiveResourceCRLSearchExecutor" />
 <alias name="customLdapConnectionConfig" alias="poolingLdaptiveResourceCRLConnectionConfig" />
-{% endhighlight %}
+```
 
 ## X.509 Configuration
 X.509 configuration requires substantial configuration outside the CAS Web application. The configuration of Web

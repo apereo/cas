@@ -56,15 +56,4 @@
   <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
 
-  <!-- just to make the management webapp work as it's not really used -->
-  <bean id="accessTokenJwtGenerator" class="org.pac4j.jwt.profile.JwtGenerator">
-    <constructor-arg name="signingSecret" value="12345678901234567890123456789012" />
-    <constructor-arg name="encryptionSecret" value="12345678901234567890123456789012" />
-  </bean>
-
-  <bean id="accessTokenJwtAuthenticator" class="org.pac4j.jwt.credentials.authenticator.JwtAuthenticator">
-    <constructor-arg name="signingSecret" value="12345678901234567890123456789012" />
-    <constructor-arg name="encryptionSecret" value="12345678901234567890123456789012" />
-  </bean>
-
 </beans>

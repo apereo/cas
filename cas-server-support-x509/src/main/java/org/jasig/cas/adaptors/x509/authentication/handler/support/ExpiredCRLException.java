@@ -1,9 +1,10 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import org.joda.time.DateTime;
-
 import java.security.GeneralSecurityException;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 
 /**
  * Exception describing an expired CRL condition.
@@ -20,7 +21,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     private final String id;
 
     /** CRL expiration date. */
-    private final DateTime expirationDate;
+    private final ZonedDateTime expirationDate;
 
     /** Leniency of expiration. */
     private final int leniency;
@@ -31,7 +32,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
      * @param identifier Identifier or name that describes CRL.
      * @param expirationDate CRL expiration date.
      */
-    public ExpiredCRLException(final String identifier, final Date expirationDate) {
+    public ExpiredCRLException(final String identifier, final ZonedDateTime expirationDate) {
         this(identifier, expirationDate, 0);
     }
 
@@ -44,9 +45,45 @@ public class ExpiredCRLException extends GeneralSecurityException {
      * @param leniency Number of seconds beyond the expiration date at which
      * the CRL is considered expired.  MUST be non-negative integer.
      */
-    public ExpiredCRLException(final String identifier, final Date expirationDate, final int leniency) {
+    public ExpiredCRLException(final String identifier, final ChronoZonedDateTime expirationDate, final int leniency) {
         this.id = identifier;
-        this.expirationDate = new DateTime(expirationDate);
+        this.expirationDate = (ZonedDateTime) expirationDate;
+        if (leniency < 0) {
+            throw new IllegalArgumentException("Leniency cannot be negative.");
+        }
+        this.leniency = leniency;
+    }
+
+    /**
+     * Creates a new instance describing a CRL that expired on a date that is
+     * more than leniency seconds beyond its expiration date.
+     *
+     * @param identifier Identifier or name that describes CRL.
+     * @param expirationDate CRL expiration date.
+     * @param leniency Number of seconds beyond the expiration date at which
+     * the CRL is considered expired.  MUST be non-negative integer.
+     */
+    public ExpiredCRLException(final String identifier, final ZonedDateTime expirationDate, final int leniency) {
+        this.id = identifier;
+        this.expirationDate = ZonedDateTime.from(expirationDate);
+        if (leniency < 0) {
+            throw new IllegalArgumentException("Leniency cannot be negative.");
+        }
+        this.leniency = leniency;
+    }
+
+    /**
+     * Creates a new instance describing a CRL that expired on a date that is
+     * more than leniency seconds beyond its expiration date.
+     *
+     * @param identifier Identifier or name that describes CRL.
+     * @param expirationDate CRL expiration date.
+     * @param leniency Number of seconds beyond the expiration date at which
+     * the CRL is considered expired.  MUST be non-negative integer.
+     */
+    public ExpiredCRLException(final String identifier, final Instant expirationDate, final int leniency) {
+        this.id = identifier;
+        this.expirationDate = ZonedDateTime.ofInstant(expirationDate, ZoneOffset.UTC);
         if (leniency < 0) {
             throw new IllegalArgumentException("Leniency cannot be negative.");
         }
@@ -63,8 +100,8 @@ public class ExpiredCRLException extends GeneralSecurityException {
     /**
      * @return Returns the expirationDate.
      */
-    public DateTime getExpirationDate() {
-        return this.expirationDate == null ? null : new DateTime(this.expirationDate);
+    public ZonedDateTime getExpirationDate() {
+        return this.expirationDate == null ? null : ZonedDateTime.from(this.expirationDate);
     }
 
     /**

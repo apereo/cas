@@ -6,13 +6,13 @@ title: CAS - Ignite Ticket Registry
 # Ignite Ticket Registry
 Ignite integration is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-integration-ignite</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 
@@ -27,39 +27,39 @@ maintains service tickets and ticket-granting tickets in two separate caches, so
 
 Enable the registry via:
 
-{% highlight xml %}
+```xml
 <alias name="igniteTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+```
 
 
-###TLS Replication
+### TLS Replication
 Ignite supports replication over TLS for distributed caches composed of two or more nodes. To learn more about TLS replication with Ignite,
 [see this resource](https://apacheignite.readme.io/docs/ssltls).
 
 Enable TLS via:
 
-{% highlight properties %}
+```properties
 ignite.keyStoreFilePath=keystore/server.jks
 ignite.keyStorePassword=123456
 ignite.trustStoreFilePath=keystore/trust.jks
 ignite.trustStorePassword=123456
-{% endhighlight %}
+```
 
 For test environments, TLS certificate verification may be disabled by setting `ignite.trustStoreFilePath` *and*
 `ignite.trustStorePassword` to `NULL`
 
 Additional TLS context configuration if performed by setting the following properties. In almost all cases, the Ignite defaults should work.
 
-{% highlight properties %}
+```properties
 # ignite.protocol=
 # ignite.keyAlgorithm=
 # ignite.trustStoreType=
 # ignite.keyStoreType=
-{% endhighlight %}
+```
 
 
-####Configuration
-{% highlight properties %}
+#### Configuration
+```properties
 # ignite.servicesCache.name=serviceTicketsCache
 # ignite.servicesCache.cacheMode=REPLICATED
 # ignite.servicesCache.atomicityMode=TRANSACTIONAL
@@ -71,14 +71,14 @@ Additional TLS context configuration if performed by setting the following prope
 
 # Comma delimited list of addresses for distributed caches.
 # ignite.adresses=localhost:47500
-{% endhighlight %}
+```
 
-###Eviction Policy
+### Eviction Policy
 Ignite manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
 The default CAS ticket registry cleaner is then not needed, but could be used to enable
 [CAS single logout functionality](Logout-Single-Logout.html), if required.
 
-###Troubleshooting Guidelines
+### Troubleshooting Guidelines
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component is blocking traffic.
 * If nodes external to CAS instances are utilized, ensure that each cache manager specified a name that matches the Ignite configuration

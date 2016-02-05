@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Utility class used by all tests that provision and deprovision LDAP test data.
@@ -85,9 +86,8 @@ public final class LdapTestUtils {
         try {
             for (final LdapEntry entry : entries) {
                 final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
-                for (final LdapAttribute a : entry.getAttributes()) {
-                    attrs.add(new Attribute(a.getName(), a.getStringValues()));
-                }
+                attrs.addAll(entry.getAttributes().stream()
+                        .map(a -> new Attribute(a.getName(), a.getStringValues())).collect(Collectors.toList()));
                 connection.add(new AddRequest(entry.getDn(), attrs));
             }
         } catch (final Exception e) {

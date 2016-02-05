@@ -1,13 +1,13 @@
 package org.jasig.cas.authentication.support;
 
 import org.jasig.cas.DefaultMessageDescriptor;
-import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
 import org.jasig.cas.authentication.InvalidLoginTimeException;
-import org.joda.time.Days;
-import org.joda.time.Instant;
+import org.jasig.cas.authentication.MessageDescriptor;
+import org.jasig.cas.util.DateTimeUtils;
+
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -22,8 +22,10 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -131,17 +133,17 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             return;
         }
 
-        final Calendar expDate = warning.getExpiration();
-        final Days ttl = Days.daysBetween(Instant.now(), new Instant(expDate));
+        final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
+        final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
         logger.debug(
                 "Password expires in {} days. Expiration warning threshold is {} days.",
-                ttl.getDays(),
+                ttl,
                 configuration.getPasswordWarningNumberOfDays());
         if (configuration.isAlwaysDisplayPasswordExpirationWarning()
-                || ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
+                || ttl < configuration.getPasswordWarningNumberOfDays()) {
             messages.add(new PasswordExpiringWarningMessageDescriptor(
                     "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
-                    ttl.getDays(),
+                    ttl,
                     configuration.getPasswordPolicyUrl()));
         }
         if (warning.getLoginsRemaining() > 0) {

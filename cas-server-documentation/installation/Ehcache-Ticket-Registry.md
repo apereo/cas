@@ -6,13 +6,13 @@ title: CAS - Ehcache Ticket Registry
 # Ehcache Ticket Registry
 Ehcache integration is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-integration-ehcache</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 `EhCacheTicketRegistry` stores tickets in an [Ehcache](http://ehcache.org/) instance.
 
@@ -26,19 +26,19 @@ subsystem. The registry maintains service tickets and ticket-granting tickets in
 to validate them may very likely arrive at different CAS cluster nodes
 
 
-###RMI Replication
+### RMI Replication
 Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/index.html)
 replication for distributed caches composed of two or more nodes. To learn more about RMI
 replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 
 Enable the registry via:
 
-{% highlight xml %}
+```xml
 <alias name="ehcacheTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+```
 
-####Configuration
-{% highlight properties %}
+#### Configuration
+```properties
 # ehcache.config.file=classpath:ehcache-replicated.xml
 # ehcache.cachemanager.shared=false
 # ehcache.cachemanager.name=ticketRegistryCacheManager
@@ -64,10 +64,10 @@ Enable the registry via:
 # ehcache.repl.sync.updates=true
 # ehcache.repl.sync.updatesCopy=true
 # ehcache.repl.sync.removals=true
-{% endhighlight %}
+```
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
-{% highlight xml %}
+```xml
 <ehcache name="ehCacheTicketRegistryCache"
     updateCheck="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -99,11 +99,11 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
       class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
       properties="port=41001,remoteObjectPort=41002" />
 </ehcache>
-{% endhighlight %}
+```
 
 
 
-###Eviction Policy
+### Eviction Policy
 Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
 The default CAS ticket registry cleaner is then not needed, but could be used to enable
 [CAS single logout functionality](Logout-Single-Logout.html), if required.
@@ -118,7 +118,7 @@ policies are must be carefully configured to avoid memory creep. Disk offload an
 aggressive eviction could provide a suitable workaround.
 
 
-###Troubleshooting Guidelines
+### Troubleshooting Guidelines
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component
  is blocking traffic.

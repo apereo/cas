@@ -93,29 +93,27 @@ class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
     private void handleEvent(final WatchKey key) {
         this.readLock.lock();
         try {
-            for (final WatchEvent<?> event : key.pollEvents()) {
-                if (event.count() <= 1) {
-                    final WatchEvent.Kind kind = event.kind();
+            //The filename is the context of the event.
+            key.pollEvents().stream().filter(event -> event.count() <= 1).forEach(event -> {
+                final WatchEvent.Kind kind = event.kind();
 
-                    //The filename is the context of the event.
-                    final WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                    final Path filename = ev.context();
+                //The filename is the context of the event.
+                final WatchEvent<Path> ev = (WatchEvent<Path>) event;
+                final Path filename = ev.context();
 
-                    final Path parent = (Path) key.watchable();
-                    final Path fullPath = parent.resolve(filename);
-                    final File file = fullPath.toFile();
+                final Path parent = (Path) key.watchable();
+                final Path fullPath = parent.resolve(filename);
+                final File file = fullPath.toFile();
 
-                    LOGGER.trace("Detected event [{}] on file [{}]. Loading change...", kind, file);
-                    if (kind.name().equals(ENTRY_CREATE.name()) && file.exists()) {
-                        handleCreateEvent(file);
-                    } else if (kind.name().equals(ENTRY_DELETE.name())) {
-                        handleDeleteEvent();
-                    } else if (kind.name().equals(ENTRY_MODIFY.name()) && file.exists()) {
-                        handleModifyEvent(file);
-                    }
+                LOGGER.trace("Detected event [{}] on file [{}]. Loading change...", kind, file);
+                if (kind.name().equals(ENTRY_CREATE.name()) && file.exists()) {
+                    handleCreateEvent(file);
+                } else if (kind.name().equals(ENTRY_DELETE.name())) {
+                    handleDeleteEvent();
+                } else if (kind.name().equals(ENTRY_MODIFY.name()) && file.exists()) {
+                    handleModifyEvent(file);
                 }
-
-            }
+            });
         } finally {
             this.readLock.unlock();
         }

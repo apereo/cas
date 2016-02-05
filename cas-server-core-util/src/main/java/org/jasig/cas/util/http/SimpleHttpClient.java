@@ -24,6 +24,7 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -61,6 +62,7 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
      */
     SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
             final FutureRequestExecutionService requestExecutorService) {
+        Collections.sort(acceptableCodes);
         this.acceptableCodes = ImmutableList.copyOf(acceptableCodes);
         this.httpClient = httpClient;
         this.requestExecutorService = requestExecutorService;
@@ -147,20 +149,17 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
         try (final CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
-            for (final int acceptableCode : this.acceptableCodes) {
-                if (responseCode == acceptableCode) {
-                    LOGGER.debug("Response code from server matched {}.", responseCode);
-                    return true;
-                }
+            final int idx = Collections.binarySearch(acceptableCodes, responseCode);
+            if (idx >= 0) {
+                LOGGER.debug("Response code from server matched {}.", responseCode);
+                return true;
             }
 
-            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was {}",
-                    responseCode);
+            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was {}", responseCode);
 
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
-                LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
-                        value);
+                LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(), value);
             }
 
             entity = response.getEntity();

@@ -24,7 +24,7 @@ public class ServiceTicketDelegator<T extends ServiceTicket> extends AbstractTic
      * @param serviceTicket the service ticket
      * @param callback the callback
      */
-    ServiceTicketDelegator(final AbstractTicketRegistry ticketRegistry,
+    protected ServiceTicketDelegator(final AbstractTicketRegistry ticketRegistry,
                            final T serviceTicket, final boolean callback) {
         super(ticketRegistry, serviceTicket, callback);
     }

@@ -1,18 +1,19 @@
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.authentication.principal.Service;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -193,11 +194,8 @@ public abstract class AbstractTicketRegistryTests {
             assertEquals("The size of the registry is not the same as the collection.", ticketRegistryTickets.size(),
                     tickets.size());
 
-            for (final Ticket ticket : tickets) {
-                if (!ticketRegistryTickets.contains(ticket)) {
-                    fail("Ticket was added to registry but was not found in retrieval of collection of all tickets.");
-                }
-            }
+            tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
+                    .forEach(ticket -> fail("Ticket was added to registry but was not found in retrieval of collection of all tickets."));
         } catch (final Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
