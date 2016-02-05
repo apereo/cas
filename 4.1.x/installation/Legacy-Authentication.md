@@ -18,15 +18,15 @@ Legacy authentication components are enabled by including the following dependen
 CAS provides the following components to accommodate different legacy authentication needs for backwards compatibility:
 
 
-###`LegacyAuthenticationHandlerAdapter`
+### `LegacyAuthenticationHandlerAdapter`
 Adapts a CAS 3.x `AuthenticationHandler` onto a CAS 4.x `AuthenticationHandler`. If the supplied legacy authentication handler supports `NamedAuthenticationHandler`, then its defined name will be used to identify the handler. Otherwise, the name of the class itself will be used.
 
 
-###`CredentialsAdapter`
+### `CredentialsAdapter`
 Interface to be implemented by adapters to determine how credentials need be converted over to CAS 4.
 
 
-####`UsernamePasswordCredentialsAdapter`
+#### `UsernamePasswordCredentialsAdapter`
 Adapts and converts a CAS 4 username/password credential into a CAS 3.x username/password credential.
 
 

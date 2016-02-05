@@ -14,7 +14,7 @@ CAS supports a pluggable and extensible policy framework to control the expirati
 TGT expiration policy governs the time span during which an authenticated user may grant STs with a valid (non-expired) TGT without having to reauthenticate. An attempt to grant a ST with an expired TGT would require the user to reauthenticate to obtain a new (valid) TGT.
 
 
-####`TimeoutExpirationPolicy`
+#### `TimeoutExpirationPolicy`
 The default expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout. For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise it would be marked as expired.
 
 
@@ -31,7 +31,7 @@ The default expiration policy applied to TGTs provides for most-recently-used ex
 {% endhighlight %}
 
 
-####`HardTimeoutExpirationPolicy`
+#### `HardTimeoutExpirationPolicy`
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired and the user will be forced to reauthenticate.
 
 
@@ -48,7 +48,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 
 
 
-####`ThrottledUseAndTimeoutExpirationPolicy`
+#### `ThrottledUseAndTimeoutExpirationPolicy`
 The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
 
@@ -71,24 +71,24 @@ TGT expires under one of two conditions:
 {% endhighlight %}
 
 
-####`NeverExpiresExpirationPolicy`
+#### `NeverExpiresExpirationPolicy`
 The never expires policy allows tickets to exist indefinitely.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Use of this policy has significant consequences to overall security policy and should be enabled only after thorough review by a qualified security team. There are also implications to server resource usage for the ticket registries backed by filesystem storage. Since disk storage for tickets can never be reclaimed for those registries with this policy in effect, use of this policy with those ticket registry implementations is strongly discouraged.</p></div>
 
 
-#####Usage Example
+##### Usage Example
 {% highlight xml %}
 <!-- TGT never expires -->
 <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
 {% endhighlight %}
 
 
-####`RememberMeDelegatingExpirationPolicy`
+#### `RememberMeDelegatingExpirationPolicy`
 This policy implements applies to [long term authentication](Configuring-Authentication-Components.html) features of CAS known as "Remember Me". 
 
 
-#####Usage Example
+##### Usage Example
 {% highlight xml %}
 <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy">
    <property name="sessionExpirationPolicy">
@@ -106,17 +106,17 @@ This policy implements applies to [long term authentication](Configuring-Authent
 ### Service Ticket Policies
 
 
-####`MultiTimeUseOrTimeoutExpirationPolicy`
+#### `MultiTimeUseOrTimeoutExpirationPolicy`
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum period of inactivity elapses.
 
 
-#####Parameters
+##### Parameters
 * `numberOfUses` - Maximum number of times the ticket can be used.
 * `timeToKill` - Maximum amount of inactivity from the last time the ticket was used beyond which it is considered expired.
 * `timeUnit` - The unit of time based on which `timeToKill` will be calculated.
 
 
-#####Usage Example
+##### Usage Example
 {% highlight xml %}
 <!-- ST may be used exactly once and must be validated within 10 seconds. -->
 <util:constant id="SECONDS" static-field="java.util.concurrent.TimeUnit.SECONDS"/>
