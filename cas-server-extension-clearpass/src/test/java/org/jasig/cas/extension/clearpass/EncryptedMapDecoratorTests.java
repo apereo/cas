@@ -1,15 +1,15 @@
 package org.jasig.cas.extension.clearpass;
 
-import static org.junit.Assert.*;
-
-import java.util.Map;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -55,16 +55,14 @@ public class EncryptedMapDecoratorTests {
     public void addManyItems() {
         final int totalItems = 100;
 
-        for (int i = 0; i < totalItems; i++) {
-            this.decorator.put("key" + i, "value" + i);
-        }
+        IntStream.range(0, totalItems).forEach(i -> this.decorator.put("key" + i, "value" + i));
 
         assertEquals(this.decorator.size(), totalItems);
 
-        for (int i = 0; i < totalItems; i++) {
+        IntStream.range(0, totalItems).forEach(i -> {
             assertNull(this.map.get("key" + i));
             assertEquals("value" + i, this.decorator.get("key" + i));
-        }
+        });
     }
 
     @Test

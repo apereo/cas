@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -69,13 +70,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        for (final RegisteredService r : this.registeredServices) {
-            if (r.getId() == id) {
-                return r;
-            }
-        }
-
-        return null;
+        return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
     }
 
     @Override
@@ -107,15 +102,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
      * @return the highest service id in the list of registered services
      */
     private long findHighestId() {
-        long id = 0;
-
-        for (final RegisteredService r : this.registeredServices) {
-            if (r.getId() > id) {
-                id = r.getId();
-            }
-        }
-
-        return id;
+        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse((long) 0);
     }
 
     private void logWarning() {

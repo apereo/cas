@@ -1,14 +1,14 @@
 package org.jasig.cas.authentication.principal.cache;
 
+import org.jasig.cas.authentication.principal.Principal;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import org.jasig.cas.authentication.principal.Principal;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -72,12 +72,9 @@ public final class CachingPrincipalAttributesRepository extends AbstractPrincipa
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         try {
-            return this.cache.get(p.getId(), new Callable<Map<String, Object>>() {
-                @Override
-                public Map<String, Object> call() throws Exception {
-                    logger.debug("No cached attributes could be found for {}", p.getId());
-                    return new HashMap<>();
-                }
+            return this.cache.get(p.getId(), () -> {
+                logger.debug("No cached attributes could be found for {}", p.getId());
+                return new HashMap<>();
             });
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);

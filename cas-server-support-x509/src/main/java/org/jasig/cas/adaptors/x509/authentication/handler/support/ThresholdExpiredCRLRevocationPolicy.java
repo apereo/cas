@@ -1,6 +1,7 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Min;
-import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
-import java.util.Calendar;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 
 /**
@@ -42,17 +43,16 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
      *
      * @param crl CRL instance to evaluate.
      *
-     * @throws GeneralSecurityException On expired CRL data. Check the exception type for exact details
+     * @throws ExpiredCRLException On expired CRL data. Check the exception type for exact details
      *
      * @see org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy#apply(java.lang.Object)
      */
     @Override
-    public void apply(final X509CRL crl) throws GeneralSecurityException {
-        final Calendar cutoff = Calendar.getInstance();
-        if (CertUtils.isExpired(crl, cutoff.getTime())) {
-            cutoff.add(Calendar.SECOND, -this.threshold);
-            if (CertUtils.isExpired(crl, cutoff.getTime())) {
-                throw new ExpiredCRLException(crl.toString(), cutoff.getTime(), this.threshold);
+    public void apply(final X509CRL crl) throws ExpiredCRLException {
+        final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC);
+        if (CertUtils.isExpired(crl, cutoff)) {
+            if (CertUtils.isExpired(crl, cutoff.minusSeconds(this.threshold))) {
+                throw new ExpiredCRLException(crl.toString(), cutoff, this.threshold);
             }
             logger.info(String.format("CRL expired on %s but is within threshold period, %s seconds.",
                         crl.getNextUpdate(), this.threshold));

@@ -1,11 +1,12 @@
 package org.jasig.cas.services;
 
+import org.jasig.cas.util.RegexUtils;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,14 +207,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
-        for (final String key : copy) {
+        final boolean authorized = copy.stream().filter(key -> {
             final Set<String> requiredValues = this.requiredAttributes.get(key);
             final Set<String> availableValues;
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
-                final Collection valCol = (Collection) objVal;
-                availableValues = Sets.newHashSet(valCol.iterator());
+                availableValues = Sets.newHashSet(((Collection) objVal).iterator());
             } else {
                 availableValues = Sets.newHashSet(objVal.toString());
             }
@@ -230,9 +230,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 logger.info("Principal is authorized to access the service");
                 return true;
             }
+            return false;
+        }).findFirst().isPresent();
+
+        if (!authorized) {
+            logger.info("Principal is denied access as the required attributes for the registered service are missing");
         }
-        logger.info("Principal is denied access as the required attributes for the registered service are missing");
-        return false;
+
+        return authorized;
     }
 
     @Override

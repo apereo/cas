@@ -11,7 +11,7 @@ import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeFactory;
-import org.joda.time.DateTime;
+
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         // bypass approval -> redirect to the application with code
         if (bypassApprovalService || bypassApprovalParameter != null) {
             final Principal principal = principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
-            final Authentication authentication = new OAuthAuthentication(new DateTime(), principal);
+            final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
             final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
             final OAuthCode code = oAuthCodeFactory.create(service, authentication);
             logger.debug("Generated OAuth code: {}", code);
