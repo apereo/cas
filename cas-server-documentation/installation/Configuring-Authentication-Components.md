@@ -6,23 +6,23 @@ title: CAS - Configuring Authentication Components
 # Authentication
 The CAS authentication process is performed by several related components:
 
-######`PrincipalNameTransformer`
+###### `PrincipalNameTransformer`
 Transforms the user id string that is typed into the login form into a tentative Principal Name to be
 validated by a specific type of Authentication Handler.
 
-######`AuthenticationManager`
+###### `AuthenticationManager`
 Entry point into authentication subsystem. It accepts one or more credentials and delegates authentication to
 configured `AuthenticationHandler` components. It collects the results of each attempt and determines effective
 security policy.
 
-######`AuthenticationHandler`
+###### `AuthenticationHandler`
 Authenticates a single credential and reports one of three possible results: success, failure, not attempted.
 
-######`PrincipalResolver`
+###### `PrincipalResolver`
 Converts information in the authentication credential into a security principal that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
 
-######`AuthenticationMetaDataPopulator`
+###### `AuthenticationMetaDataPopulator`
 Strategy component for setting arbitrary metadata about a successful authentication event; these are commonly used
 to set protocol-specific data.
 
@@ -51,18 +51,18 @@ but the behavior can be further controlled by setting `#setAuthenticationPolicy(
 with one of the following policies.
 
 
-######`AnyAuthenticationPolicy`
+###### `AnyAuthenticationPolicy`
 Satisfied if any handler succeeds. Supports a `tryAll` flag to avoid short circuiting at step 4.1 above and try every
 handler even if one prior succeeded. This policy is the default and provides backward-compatible behavior with the
 `AuthenticationManagerImpl` component of CAS 3.x.
 
 
-######`AllAuthenticationPolicy`
+###### `AllAuthenticationPolicy`
 Satisfied if and only if all given credentials are successfully authenticated. Support for multiple credentials is
 new in CAS and this handler would only be acceptable in a multi-factor authentication situation.
 
 
-######`RequiredHandlerAuthenticationPolicy`
+###### `RequiredHandlerAuthenticationPolicy`
 Satisfied if an only if a specified handler successfully authenticates its credential. Supports a `tryAll` flag to
 avoid short circuiting at step 4.1 above and try every handler even if one prior succeeded. This policy could be
 used to support a multi-factor authentication situation, for example, where username/password authentication is
@@ -123,7 +123,7 @@ Please [see this guide](Configuring-Principal-Resolution.html) more full details
 Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence. The following components are available:
 
-######`NoOpPrincipalNameTransformer`
+###### `NoOpPrincipalNameTransformer`
 Default transformer, that actually does no transformation on the user id.
 
 {% highlight xml %}
@@ -131,7 +131,7 @@ Default transformer, that actually does no transformation on the user id.
 {% endhighlight %}
 
 
-######`PrefixSuffixPrincipalNameTransformer`
+###### `PrefixSuffixPrincipalNameTransformer`
 Transforms the user id by adding a postfix or suffix.
 
 {% highlight xml %}
@@ -145,7 +145,7 @@ The following settings are applicable:
 # cas.principal.transform.suffix=
 {% endhighlight %}
 
-######`ConvertCasePrincipalNameTransformer`
+###### `ConvertCasePrincipalNameTransformer`
 A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
 The transformer is also able to accept and work on the result of
 a previous transformer that might have modified the uid, such that the two can be chained.

@@ -13,10 +13,10 @@ validated when an authentication request from the application arrives.
 
 ## Components
 
-###`RegisteredServiceAccessStrategy`
+### `RegisteredServiceAccessStrategy`
 This is the parent interface that outlines the required operations from the CAS perspective that need to be carried out in order to determine whether the service can proceed to the next step in the authentication flow.
 
-###`DefaultRegisteredServiceAccessStrategy`
+### `DefaultRegisteredServiceAccessStrategy`
 The default access manager allows one to configure a service with the following properties:
 
 | Field                             | Description
@@ -34,7 +34,7 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-###`TimeBasedRegisteredServiceAccessStrategy`
+### `TimeBasedRegisteredServiceAccessStrategy`
 This access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
@@ -43,7 +43,7 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
-###`GrouperRegisteredServiceAccessStrategy`
+### `GrouperRegisteredServiceAccessStrategy`
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
