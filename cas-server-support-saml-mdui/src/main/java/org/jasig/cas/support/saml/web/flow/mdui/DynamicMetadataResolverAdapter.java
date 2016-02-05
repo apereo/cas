@@ -1,5 +1,6 @@
 package org.jasig.cas.support.saml.web.flow.mdui;
 
+import org.jasig.cas.util.EncodingUtils;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Map;
 
 /**
@@ -38,7 +38,7 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
 
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
-        final String encodedId = URLEncoder.encode(entityId, "UTF-8");
+        final String encodedId = EncodingUtils.urlEncode(entityId);
         final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
 
         final HttpURLConnection httpcon = (HttpURLConnection) (url.openConnection());
