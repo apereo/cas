@@ -72,7 +72,7 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
 
     /**
-     * The action state 'generateLoginTicket'.
+     * The action state 'initializeLoginForm'.
      */
-    String STATE_ID_GENERATE_LOGIN_TICKET = "generateLoginTicket";
+    String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
 }

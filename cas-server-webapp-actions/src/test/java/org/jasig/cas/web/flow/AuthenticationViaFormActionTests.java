@@ -50,8 +50,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
         request.addParameter("username", "test");
         request.addParameter("password", "test");
 
@@ -71,8 +69,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockRequestContext context = new MockRequestContext();
 
-        WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
 
         request.addParameter("username", "test");
         request.addParameter("password", "test");
@@ -95,8 +91,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockRequestContext context = new MockRequestContext();
 
-        WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
         request.addParameter("username", "test");
         request.addParameter("password", "test");
         request.addParameter("warn", "true");
@@ -146,8 +140,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockRequestContext context = new MockRequestContext();
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
-        WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
 
         request.addParameter("renew", "true");
         request.addParameter("service", TestUtils.getService(TestUtils.CONST_TEST_URL).getId());
@@ -172,9 +164,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
-
-        WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter("renew", "true");

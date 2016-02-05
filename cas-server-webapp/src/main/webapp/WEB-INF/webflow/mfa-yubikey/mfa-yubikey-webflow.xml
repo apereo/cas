@@ -9,8 +9,7 @@
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
 
-    <action-state id="generateLoginTicket">
-        <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
+    <action-state id="initializeLoginForm">
         <transition on="generated" to="viewLoginFormYubiKey" />
     </action-state>
 
@@ -30,7 +29,7 @@
     <action-state id="realSubmitYubiKey">
         <evaluate expression="yubikeyAuthenticationWebflowAction" />
         <transition on="success" to="success" />
-        <transition on="error" to="generateLoginTicket" />
+        <transition on="error" to="initializeLoginForm" />
     </action-state>
 
     <end-state id="success" />
