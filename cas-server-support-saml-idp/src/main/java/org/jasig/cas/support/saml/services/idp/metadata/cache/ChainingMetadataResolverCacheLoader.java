@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
+import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.util.ResourceUtils;
 import org.jasig.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
@@ -41,7 +42,6 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -138,7 +138,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             public String apply(@Nullable final String input) {
                 try {
                     if (StringUtils.isNotBlank(input)) {
-                        final String metadataLocation = service.getMetadataLocation().replace("{0}", URLEncoder.encode(input, "UTF-8"));
+                        final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
                         logger.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
                         return metadataLocation;
                     }

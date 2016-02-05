@@ -5,24 +5,19 @@ import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.extractor.BasicAuthExtractor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -33,14 +28,6 @@ import java.util.Optional;
  */
 @Component("accessTokenController")
 public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
-
-    @Autowired
-    @Qualifier("defaultAccessTokenFactory")
-    private AccessTokenFactory accessTokenFactory;
-
-    @NotNull
-    @Value("${tgt.timeToKillInSeconds:7200}")
-    private long timeout;
 
     private BasicAuthExtractor basicAuthExtractor = new BasicAuthExtractor(null);
 
@@ -62,8 +49,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
         final Service service = code.getService();
         final Authentication authentication = code.getAuthentication();
-        final AccessToken accessToken = accessTokenFactory.create(service, authentication);
-        ticketRegistry.addTicket(accessToken);
+        final AccessToken accessToken = generateAccessToken(service, authentication);
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken.getId(), OAuthConstants.EXPIRES, timeout);
         logger.debug("OAuth access token response: {}", text);
@@ -79,7 +65,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      */
     private boolean verifyAccessTokenRequest(final HttpServletRequest request) {
 
-        final boolean checkParameterExist = checkCredentialsExist(request)
+        final boolean checkParameterExist = checkClientCredentialsExist(request)
                 && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
                 && checkParameterExist(request, OAuthConstants.CODE);
 
@@ -95,7 +81,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      * @param request the HTTP request
      * @return whether the credentials exist
      */
-    private boolean checkCredentialsExist(final HttpServletRequest request) {
+    private boolean checkClientCredentialsExist(final HttpServletRequest request) {
         final Optional<UsernamePasswordCredentials> opCredentials = getCredentials(request);
         if (!opCredentials.isPresent()) {
             logger.error("Missing credentials");
@@ -169,21 +155,5 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             }
         }
         return Optional.ofNullable(credentials);
-    }
-
-    public AccessTokenFactory getAccessTokenFactory() {
-        return accessTokenFactory;
-    }
-
-    public void setAccessTokenFactory(final AccessTokenFactory accessTokenFactory) {
-        this.accessTokenFactory = accessTokenFactory;
-    }
-
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
     }
 }
