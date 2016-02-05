@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 /**
  * This controller returns an access token according to the given OAuth code.
@@ -95,11 +96,18 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      * @return whether the credentials exist
      */
     private boolean checkCredentialsExist(final HttpServletRequest request) {
-        final UsernamePasswordCredentials credential = getCredentials(request);
-        if (StringUtils.isBlank(credential.getUsername())) {
+        final Optional<UsernamePasswordCredentials> opCredentials = getCredentials(request);
+        if (!opCredentials.isPresent()) {
+            logger.error("Missing credentials");
+            return false;
+        }
+        final UsernamePasswordCredentials credentials = opCredentials.get();
+        final String clientId = credentials.getUsername();
+        final String clientSecret = credentials.getPassword();
+        if (StringUtils.isBlank(credentials.getUsername())) {
             logger.error("Missing clientId");
             return false;
-        } else if (StringUtils.isBlank(credential.getPassword())) {
+        } else if (StringUtils.isBlank(credentials.getPassword())) {
             logger.error("Missing secret");
             return false;
         }
@@ -113,9 +121,14 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      * @return whether the secret is valid
      */
     private boolean checkClientSecret(final HttpServletRequest request) {
-        final UsernamePasswordCredentials credential = getCredentials(request);
-        final String clientId = credential.getUsername();
-        final String clientSecret = credential.getPassword();
+        final Optional<UsernamePasswordCredentials> opCredentials = getCredentials(request);
+        if (!opCredentials.isPresent()) {
+            logger.error("Missing credentials");
+            return false;
+        }
+        final UsernamePasswordCredentials credentials = opCredentials.get();
+        final String clientId = credentials.getUsername();
+        final String clientSecret = credentials.getPassword();
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         logger.debug("Found: {} for: {} in secret check", service, clientId);
 
@@ -127,8 +140,13 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
     }
 
     @Override
-    protected String getClientId(final HttpServletRequest request) {
-        return getCredentials(request).getUsername();
+    protected Optional<String> getClientId(final HttpServletRequest request) {
+        final Optional<UsernamePasswordCredentials> credentials = getCredentials(request);
+        if (credentials.isPresent()) {
+            return Optional.ofNullable(credentials.get().getUsername());
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -137,7 +155,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      * @param request the HTTP request
      * @return the client credentials
      */
-    private UsernamePasswordCredentials getCredentials(final HttpServletRequest request) {
+    private Optional<UsernamePasswordCredentials> getCredentials(final HttpServletRequest request) {
         final String id = request.getParameter(OAuthConstants.CLIENT_ID);
         final String secret = request.getParameter(OAuthConstants.CLIENT_SECRET);
         UsernamePasswordCredentials credentials = null;
@@ -150,11 +168,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
                 logger.error("Cannot get clientId / secret from header", e);
             }
         }
-        if (credentials != null) {
-            return credentials;
-        } else {
-            return new UsernamePasswordCredentials(null, null, null);
-        }
+        return Optional.ofNullable(credentials);
     }
 
     public AccessTokenFactory getAccessTokenFactory() {
