@@ -3,10 +3,12 @@ package org.jasig.cas.authentication.principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Encapsulates a Response to send back for a particular service.
@@ -65,28 +67,22 @@ public final class DefaultResponse implements Response {
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
         final StringBuilder builder = new StringBuilder(parameters.size()
                 * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
-        boolean isFirst = true;
         final String[] fragmentSplit = sanitizeUrl(url).split("#");
 
         builder.append(fragmentSplit[0]);
-
-        for (final Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (entry.getValue() != null) {
-                if (isFirst) {
-                    builder.append(url.contains("?") ? "&" : "?");
-                    isFirst = false;
-                } else {
-                    builder.append('&');
-                }
-                builder.append(entry.getKey());
-                builder.append('=');
-
-                try {
-                    builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                } catch (final Exception e) {
-                    builder.append(entry.getValue());
-                }
+        final String params = parameters.entrySet().stream().filter(entry -> entry.getValue() != null).map(entry -> {
+            String param;
+            try {
+                param = String.join("=", entry.getKey(), URLEncoder.encode(entry.getValue(), "UTF-8"));
+            } catch (final UnsupportedEncodingException e) {
+                param = String.join("=", entry.getKey(), entry.getValue());
             }
+            return param;
+        }).collect(Collectors.joining("&"));
+
+        if (!(params == null || params.isEmpty())) {
+            builder.append(url.contains("?") ? "&" : "?");
+            builder.append(params);
         }
 
         if (fragmentSplit.length > 1) {

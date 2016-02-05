@@ -4,11 +4,11 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * EhCache-backed implementation of a Map for caching a set of Strings.
@@ -75,9 +75,7 @@ public final class EhcacheBackedMap implements Map<String, String> {
 
     @Override
     public void putAll(final Map<? extends String, ? extends String> m) {
-        for (final Map.Entry<? extends String, ? extends String> entry : m.entrySet()) {
-            put(entry.getKey(), entry.getValue());
-        }
+        m.forEach(this::put);
     }
 
     @Override
@@ -92,31 +90,20 @@ public final class EhcacheBackedMap implements Map<String, String> {
 
     @Override
     public Collection<String> values() {
-        final Set<String> keys = keySet();
-        final Collection<String> values = new ArrayList<>();
-
-        for (final String key : keys) {
-            final String value = get(key);
-            if (value != null) {
-                values.add(value);
-            }
-        }
-
-        return values;
+        return keySet().stream().map(this::get).filter(value -> value != null).collect(Collectors.toList());
     }
 
     @Override
     public Set<Entry<String, String>> entrySet() {
-        final Set<String> keys = keySet();
         final Set<Entry<String, String>> entries = new HashSet<>();
 
-        for (final String key : keys) {
+        keySet().stream().forEach(key -> {
             final Element element = this.cache.get(key);
 
             if (element != null) {
                 entries.add(new ElementMapEntry(element));
             }
-        }
+        });
 
         return entries;
 

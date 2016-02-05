@@ -2,6 +2,7 @@ package org.jasig.cas.adaptors.ldap.services;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistryDao;
+
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -10,7 +11,6 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the ServiceRegistryDao interface which stores the services in a LDAP Directory.
@@ -125,11 +126,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
                     final List<AttributeModification> mods = new ArrayList<>();
 
                     final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
-                    for (final LdapAttribute attr : entry.getAttributes()) {
-                        if (!attr.getName().equals(this.ldapServiceMapper.getIdAttribute())) {
-                            mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
-                        }
-                    }
+                    mods.addAll(entry.getAttributes().stream()
+                            .filter(attr -> !attr.getName().equals(this.ldapServiceMapper.getIdAttribute()))
+                            .map(attr -> new AttributeModification(AttributeModificationType.REPLACE, attr)).collect(Collectors.toList()));
                     final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
                     operation.execute(request);
                 } catch (final LdapException e) {

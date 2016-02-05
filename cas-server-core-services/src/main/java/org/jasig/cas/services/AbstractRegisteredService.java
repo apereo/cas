@@ -439,11 +439,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         if (handlers == null) {
             return;
         }
-        for (final String handler : handlers) {
-            getRequiredHandlers().add(handler);
-        }
+        getRequiredHandlers().addAll(handlers);
     }
-    
+
     /**
      * Sets the attribute filtering policy.
      *

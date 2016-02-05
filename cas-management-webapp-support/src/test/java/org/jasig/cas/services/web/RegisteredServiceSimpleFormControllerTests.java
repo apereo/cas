@@ -1,7 +1,5 @@
 package org.jasig.cas.services.web;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -15,6 +13,9 @@ import org.jasig.cas.services.web.factory.DefaultRegisteredServiceFactory;
 import org.jasig.cas.services.web.factory.DefaultRegisteredServiceMapper;
 import org.jasig.cas.services.web.factory.RegisteredServiceMapper;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -200,12 +201,9 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for (final  RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof MockRegisteredService);
-        }
+        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof  MockRegisteredService));
     }
 
-    
     @Test
     public void verifyEditMockRegisteredService() throws Exception {
         registeredServiceFactory.setRegisteredServiceMapper(new MockRegisteredServiceMapper());

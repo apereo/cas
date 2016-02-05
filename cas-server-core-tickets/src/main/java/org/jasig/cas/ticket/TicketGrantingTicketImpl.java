@@ -1,11 +1,12 @@
 package org.jasig.cas.ticket;
 
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -175,16 +176,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
             final String path = normalizePath(service);
             final Collection<Service> existingServices = services.values();
             // loop on existing services
-            for (final Service existingService : existingServices) {
-                final String existingPath = normalizePath(existingService);
-                // if an existing service has the same normalized path, remove it
-                // and its service ticket to keep the latest one
-                if (StringUtils.equals(path, existingPath)) {
-                    existingServices.remove(existingService);
-                    LOGGER.trace("Removed previous tickets for service: {}", existingService);
-                    break;
-                }
-            }
+            existingServices.stream()
+                    .filter(existingService -> path.equals(normalizePath(existingService)))
+                    .findFirst().ifPresent(existingService -> {
+                        existingServices.remove(existingService);
+                        LOGGER.trace("Removed previous tickets for service: {}", existingService);
+                    });
         }
         this.services.put(id, service);
     }

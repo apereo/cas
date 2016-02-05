@@ -1,6 +1,5 @@
 package org.jasig.cas.web.report;
 
-import com.google.common.base.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
@@ -8,7 +7,9 @@ import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.DateTimeUtils;
 import org.jasig.cas.util.ISOStandardDateFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -139,7 +139,7 @@ public final class SingleSignOnSessionsReportController {
             sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.toString(),
-                    dateFormat.format(authentication.getAuthenticationDate()));
+                    dateFormat.format(DateTimeUtils.dateOf(authentication.getAuthenticationDate())));
             sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.toString(), tgt.getCountOfUses());
             sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString(), tgt.getId());
             sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.toString(), principal.getAttributes());
@@ -167,14 +167,11 @@ public final class SingleSignOnSessionsReportController {
      * @return the non expired ticket granting tickets
      */
     private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
-        return this.centralAuthenticationService.getTickets(new Predicate<Ticket>() {
-            @Override
-            public boolean apply(@Nullable final Ticket ticket) {
-                if (ticket instanceof TicketGrantingTicket) {
-                    return !ticket.isExpired();
-                }
-                return false;
+        return this.centralAuthenticationService.getTickets(ticket -> {
+            if (ticket instanceof TicketGrantingTicket) {
+                return !ticket.isExpired();
             }
+            return false;
         });
     }
 

@@ -1,12 +1,12 @@
 package org.jasig.cas.mock;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -15,9 +15,10 @@ import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +39,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private final Authentication authentication;
 
-    private final Date created;
+    private final ZonedDateTime created;
 
     private int usageCount;
 
@@ -60,7 +61,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
                             new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
                             .build();
 
-        created = new Date();
+        created = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     @Override
@@ -124,8 +125,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
-    public long getCreationTime() {
-        return created.getTime();
+    public ZonedDateTime getCreationTime() {
+        return created;
     }
 
     @Override

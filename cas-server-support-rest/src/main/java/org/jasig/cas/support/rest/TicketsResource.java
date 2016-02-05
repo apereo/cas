@@ -1,13 +1,11 @@
 package org.jasig.cas.support.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
@@ -19,6 +17,9 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.jasig.cas.ticket.registry.TicketRegistrySupport;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -118,10 +120,9 @@ public class TicketsResource {
 
         }
         catch (final AuthenticationException e) {
-            final List<String> authnExceptions = new LinkedList<>();
-            for (final Map.Entry<String, Class<? extends Exception>> handlerErrorEntry : e.getHandlerErrors().entrySet()) {
-                authnExceptions.add(handlerErrorEntry.getValue().getSimpleName());
-            }
+            final List<String> authnExceptions = e.getHandlerErrors().entrySet().stream()
+                    .map(handlerErrorEntry -> handlerErrorEntry.getValue().getSimpleName())
+                    .collect(Collectors.toCollection(LinkedList::new));
             final Map<String, List<String>> errorsMap = new HashMap<>();
             errorsMap.put("authentication_exceptions", authnExceptions);
             LOGGER.error(e.getMessage(), e);
