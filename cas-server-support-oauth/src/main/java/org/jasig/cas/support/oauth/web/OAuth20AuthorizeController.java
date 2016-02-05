@@ -1,17 +1,20 @@
 package org.jasig.cas.support.oauth.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeFactory;
 
+import org.jasig.cas.util.EncodingUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -67,19 +70,33 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         final UserProfile profile = manager.get(true);
         CommonHelper.assertNotNull("profile", profile);
 
-        // bypass approval -> redirect to the application with code
+        // bypass approval -> redirect to the application with code or access token
         if (bypassApprovalService || bypassApprovalParameter != null) {
             final Principal principal = principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
             final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
             final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
-            final OAuthCode code = oAuthCodeFactory.create(service, authentication);
-            logger.debug("Generated OAuth code: {}", code);
-            ticketRegistry.addTicket(code);
 
+            final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
             String callbackUrl = redirectUri;
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
-            if (state != null) {
-                callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.STATE, state);
+            // authorization code grant type
+            if (StringUtils.equalsIgnoreCase(responseType, OAuthResponseType.CODE.name())) {
+                final OAuthCode code = oAuthCodeFactory.create(service, authentication);
+                logger.debug("Generated OAuth code: {}", code);
+                ticketRegistry.addTicket(code);
+
+                callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
+                if (state != null) {
+                    callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.STATE, state);
+                }
+            } else if (StringUtils.equalsIgnoreCase(responseType, OAuthResponseType.TOKEN.name())) {
+                // implicit grant type
+                final AccessToken accessToken = generateAccessToken(service, authentication);
+                logger.debug("Generated access token: {}", accessToken);
+
+                callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + timeout;
+                if (state != null) {
+                    callbackUrl += "&state=" + EncodingUtils.urlEncode(state);
+                }
             }
             logger.debug("callbackUrl: {}", callbackUrl);
             return OAuthUtils.redirectTo(callbackUrl);
@@ -103,10 +120,35 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
      */
     private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
 
-        return checkParameterExist(request, OAuthConstants.CLIENT_ID)
-            && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+        final boolean checkParameterExist = checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                && checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
+
+        final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
+
+        return checkParameterExist
+            && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
             && checkServiceValid(request)
             && checkCallbackValid(request);
+    }
+
+    /**
+     * Check the response type.
+     *
+     * @param type the current response type
+     * @param expectedTypes the expected response types
+     * @return whether the response type is supported
+     */
+    private boolean checkResponseTypes(final String type, final OAuthResponseType... expectedTypes) {
+        logger.debug("Response type: {}", type);
+
+        for (final OAuthResponseType expectedType : expectedTypes) {
+            if (StringUtils.equals(type, expectedType.name().toLowerCase())) {
+                return true;
+            }
+        }
+        logger.error("Unsupported response type: {}", type);
+        return false;
     }
 
     /**

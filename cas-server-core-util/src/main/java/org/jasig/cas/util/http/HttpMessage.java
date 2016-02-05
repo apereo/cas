@@ -3,12 +3,10 @@ package org.jasig.cas.util.http;
 import java.net.URL;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.util.EncodingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * Abstraction for a message that is sent to an http endpoint.
@@ -86,8 +84,8 @@ public class HttpMessage {
      */
     protected String formatOutputMessageInternal(final String message) {
         try {
-            return URLEncoder.encode(message, "UTF-8"); 
-        } catch (final UnsupportedEncodingException e) {
+            return EncodingUtils.urlEncode(message);
+        } catch (final RuntimeException e) {
             LOGGER.warn(e.getMessage(), e);
         }
         return message;
