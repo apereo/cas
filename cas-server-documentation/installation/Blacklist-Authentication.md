@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-###`RejectUsersAuthenticationHandler`
+### `RejectUsersAuthenticationHandler`
 ```xml
 <alias name="rejectUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 ```
