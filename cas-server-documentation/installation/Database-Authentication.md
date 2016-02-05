@@ -88,7 +88,7 @@ database.pool.acquireRetryDelay=2000
 ## Database Components
 CAS provides the following components to accommodate different database authentication needs.
 
-######`QueryDatabaseAuthenticationHandler`
+###### `QueryDatabaseAuthenticationHandler`
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
 configurable database query.
 
@@ -103,7 +103,7 @@ The following settings are applicable:
 # cas.jdbc.authn.query.sql=select password from users where username=?
 {% endhighlight %}
 
-######`SearchModeSearchDatabaseAuthenticationHandler`
+###### `SearchModeSearchDatabaseAuthenticationHandler`
 Searches for a user record by querying against a username and password; the user is authenticated if at
 least one result is found.
 
@@ -121,7 +121,7 @@ The following settings are applicable:
 {% endhighlight %}
 
 
-######`BindModeSearchDatabaseAuthenticationHandler`
+###### `BindModeSearchDatabaseAuthenticationHandler`
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
 The following example does not perform any password encoding since most JDBC drivers natively encode plaintext
@@ -134,7 +134,7 @@ ability to establish a connection with username/password credentials. This handl
 <alias name="dataSource" alias="bindSearchDatabaseDataSource" />
 {% endhighlight %}
 
-######`QueryAndEncodeDatabaseAuthenticationHandler`
+###### `QueryAndEncodeDatabaseAuthenticationHandler`
 A JDBC querying handler that will pull back the password and
 the private salt value for a user and validate the encoded
 password using the public salt value. Assumes everything
