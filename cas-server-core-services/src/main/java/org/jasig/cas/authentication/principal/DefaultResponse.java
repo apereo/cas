@@ -1,10 +1,9 @@
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.util.EncodingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,8 +72,8 @@ public final class DefaultResponse implements Response {
         final String params = parameters.entrySet().stream().filter(entry -> entry.getValue() != null).map(entry -> {
             String param;
             try {
-                param = String.join("=", entry.getKey(), URLEncoder.encode(entry.getValue(), "UTF-8"));
-            } catch (final UnsupportedEncodingException e) {
+                param = String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
+            } catch (final RuntimeException e) {
                 param = String.join("=", entry.getKey(), entry.getValue());
             }
             return param;

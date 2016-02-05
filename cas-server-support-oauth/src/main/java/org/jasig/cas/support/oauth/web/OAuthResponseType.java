@@ -7,5 +7,12 @@ package org.jasig.cas.support.oauth.web;
  * @since 4.3.0
  */
 public enum OAuthResponseType {
-    CODE, TOKEN
+    /**
+     * The authorization grant type.
+     */
+    CODE,
+    /**
+     * The implicit grant type.
+     */
+    TOKEN
 }
