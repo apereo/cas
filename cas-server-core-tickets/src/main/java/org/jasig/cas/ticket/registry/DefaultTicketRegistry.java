@@ -98,10 +98,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
         this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
-    /**
 
-     * @throws IllegalArgumentException if the Ticket is null.
-     */
     @Override
     public void addTicket(final Ticket ticket) {
         Assert.notNull(ticket, "ticket cannot be null");
