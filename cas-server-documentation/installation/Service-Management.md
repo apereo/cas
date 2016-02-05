@@ -60,21 +60,21 @@ Registered services present the following metadata:
 | `logoutUrl`                  		| URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
 | `properties`                  		| Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis.
 
-###Configure Service Access Strategy
+### Configure Service Access Strategy
 
 [See this guide](Configuring-Service-Access-Strategy.html) for more info please.
 
-###Configure Proxy Authentication Policy
+### Configure Proxy Authentication Policy
 
 [See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
 
-###Configure Service Custom Properties
+### Configure Service Custom Properties
 
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
 ## Persisting Registered Service Data
 
-######`InMemoryServiceRegistryDaoImpl`
+###### `InMemoryServiceRegistryDaoImpl`
 This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
 
 {% highlight xml %}
@@ -96,19 +96,19 @@ This component is _NOT_ suitable for use with the service management webapp sinc
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
-######`JsonServiceRegistryDao`
+###### `JsonServiceRegistryDao`
 
 [See this guide](JSON-Service-Management.html) for more info please.
 
-######`MongoServiceRegistryDao`
+###### `MongoServiceRegistryDao`
 
 [See this guide](Mongo-Service-Management.html) for more info please.
 
-######`LdapServiceRegistryDao`
+###### `LdapServiceRegistryDao`
 
 [See this guide](LDAP-Service-Management.html) for more info please.
 
-######`JpaServiceRegistryDaoImpl`
+###### `JpaServiceRegistryDaoImpl`
 
 [See this guide](JPA-Service-Management.html) for more info please.
 
