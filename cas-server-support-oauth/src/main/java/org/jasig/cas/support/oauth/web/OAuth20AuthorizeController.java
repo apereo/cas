@@ -14,6 +14,7 @@ import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeFactory;
 
+import org.jasig.cas.util.EncodingUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -94,7 +95,7 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
 
                 callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + timeout;
                 if (state != null) {
-                    callbackUrl += "&state=" + OAuthUtils.urlEncode(state);
+                    callbackUrl += "&state=" + EncodingUtils.urlEncode(state);
                 }
             }
             logger.debug("callbackUrl: {}", callbackUrl);
