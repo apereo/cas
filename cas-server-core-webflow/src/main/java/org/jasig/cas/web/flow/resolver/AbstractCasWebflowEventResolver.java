@@ -21,6 +21,7 @@ import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.flow.CasWebflowConstants;
+import org.jasig.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -65,7 +66,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * The Application context.
      */
     @Autowired
-    protected WebApplicationContext applicationContext;
+    protected ConfigurableApplicationContext applicationContext;
 
     /**
      * The Authentication system support.
@@ -100,9 +101,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected CookieGenerator warnCookieGenerator;
 
     /** The mfa selector. */
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("multifactorAuthenticationProviderSelector")
-    protected MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+    protected MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
+            new FirstMultifactorAuthenticationProviderSelector();
 
     /**
      * Adds a warning message to the message context.

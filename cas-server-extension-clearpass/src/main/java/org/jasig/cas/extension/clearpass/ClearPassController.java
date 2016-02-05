@@ -23,16 +23,16 @@ import java.util.Map;
 public final class ClearPassController extends AbstractController {
 
     /** view if clearpass request fails. */
-    protected static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
+    public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
 
     /** view if clearpass request succeeds. */
-    protected static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
+    public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
 
     /** key under which clearpass will be placed into the model. */
-    protected static final String MODEL_CLEARPASS = "credentials";
+    public static final String MODEL_CLEARPASS = "credentials";
 
     /** key under which failure descriptions are placed into the model. */
-    protected static final String MODEL_FAILURE_DESCRIPTION = "description";
+    public static final String MODEL_FAILURE_DESCRIPTION = "description";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClearPassController.class);
 
