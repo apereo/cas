@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -49,7 +50,7 @@ public final class EncodedTicket implements Ticket {
     }
 
     @Override
-    public long getCreationTime() {
+    public ZonedDateTime getCreationTime() {
         throw new UnsupportedOperationException("getCreationTime() operation not supported");
     }
 

@@ -2,6 +2,8 @@ package org.jasig.cas.support.saml.authentication;
 
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
+
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -31,6 +33,6 @@ public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
                 byteOutputStream);
         deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
         deflaterOutputStream.close();
-        return CompressionUtils.encodeBase64(byteOutputStream.toByteArray());
+        return EncodingUtils.encodeBase64(byteOutputStream.toByteArray());
     }
 }

@@ -9,17 +9,17 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.util.CompressionUtils;
-import org.jasig.cas.util.ISOStandardDateFormat;
-import org.joda.time.DateTime;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -71,11 +71,11 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
         final Pattern pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\"");
         final Matcher matcher = pattern.matcher(response);
-        final DateTime now = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
 
         while (matcher.find()) {
             final String onOrAfter = matcher.group(1);
-            final DateTime dt = DateTime.parse(onOrAfter);
+            final ZonedDateTime dt = ZonedDateTime.parse(onOrAfter);
             assertTrue(dt.isAfter(now));
         }
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));

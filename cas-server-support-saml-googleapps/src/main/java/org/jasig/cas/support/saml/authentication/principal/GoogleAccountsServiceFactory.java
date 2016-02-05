@@ -63,6 +63,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
     /**
      * Init public and private keys.
+     * @throws RuntimeException if key creation encountered an error.
      */
     @PostConstruct
     public void init() {

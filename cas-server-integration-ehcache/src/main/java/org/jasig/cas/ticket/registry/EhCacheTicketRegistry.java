@@ -154,15 +154,9 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
 
         final Collection<Ticket> allTickets = new HashSet<>(serviceTickets.size() + tgtTicketsTickets.size());
 
-        for (final Element ticket : serviceTickets) {
-            final Ticket proxiedTicket = getProxiedTicketInstance((Ticket) ticket.getObjectValue());
-            allTickets.add(proxiedTicket);
-        }
+        serviceTickets.stream().forEach(ticket -> allTickets.add(getProxiedTicketInstance((Ticket) ticket.getObjectValue())));
 
-        for (final Element ticket : tgtTicketsTickets) {
-            final Ticket proxiedTicket = getProxiedTicketInstance((Ticket) ticket.getObjectValue());
-            allTickets.add(proxiedTicket);
-        }
+        tgtTicketsTickets.stream().forEach(ticket -> allTickets.add(getProxiedTicketInstance((Ticket) ticket.getObjectValue())));
 
         return decodeTickets(allTickets);
     }
@@ -239,18 +233,13 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
         }
     }
 
-    /**
-     * @see Cache#getKeysWithExpiryCheck()
-     */
+
     @Override
     public int sessionCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache
                 .getKeysWithExpiryCheck().size(), super.sessionCount());
     }
 
-    /**
-     * @see Cache#getKeysWithExpiryCheck()
-     */
     @Override
     public int serviceTicketCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck()

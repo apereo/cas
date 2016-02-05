@@ -3,7 +3,7 @@ layout: default
 title: CAS - OpenID Protocol
 ---
 
-#OpenID Protocol
+# OpenID Protocol
 OpenID is an open, decentralized, free framework for user-centric digital identity. Users represent themselves using URIs. For more information see the [http://www.openid.net](http://www.openid.net).
 
 CAS supports both the "dumb" and "smart" modes of the OpenID protocol. Dumb mode acts in a similar fashion to the existing CAS protocol. The smart mode differs in that it establishes an association between the client and the openId provider (OP) at the begining. Thanks to that association and the key exchange done during association, information exchanged between the client and the provider are signed and verified using this key. There is no need for the final request (which is equivalent in CAS protocol to the ticket validation).
@@ -20,7 +20,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-##OpenID v2.0 support
+## OpenID v2.0 support
 
 By default, the CAS server is defined as an OpenID provider v1.0. This definition is held in the `user.jsp` file (in the `WEB-INF/view/jsp/protocol/openid` directory):
 

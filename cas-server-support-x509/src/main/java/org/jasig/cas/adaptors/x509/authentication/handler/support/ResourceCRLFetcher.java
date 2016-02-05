@@ -3,15 +3,17 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,29 +27,59 @@ import java.util.Set;
  */
 @Component("resourceCrlFetcher")
 public class ResourceCRLFetcher implements CRLFetcher {
-    /** Logger instance. */
+    /**
+     * Logger instance.
+     */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Creates a new instance using the specified resources for CRL data.
      */
-    public ResourceCRLFetcher() {}
+    public ResourceCRLFetcher() {
+    }
 
     @Override
-    public final Set<X509CRL> fetch(final Set<? extends Object> crls) throws Exception {
+    public final Set<X509CRL> fetch(final Set<Resource> crls) throws IOException, CRLException, CertificateException {
         final Set<X509CRL> results = new HashSet<>();
-        for (final Object r : crls) {
+        for (final Resource r : crls) {
             logger.debug("Fetching CRL data from {}", r);
-            final X509CRL crl = fetchInternal(r);
-            if (crl != null) {
-                results.add(crl);
+            try (final InputStream ins = r.getInputStream()) {
+                final X509CRL crl = (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
+                if (crl != null) {
+                    results.add(crl);
+                }
             }
         }
         return results;
     }
 
+    /**
+     * Fetch the resource. Designed so that extensions
+     * can decide how the resource should be retrieved.
+     *
+     * @param crl the resource
+     * @return the x 509 cRL
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
+     */
     @Override
-    public X509CRL fetch(final Object crl) throws Exception {
+    public X509CRL fetch(@NotNull final String crl) throws IOException, CRLException, CertificateException {
+        return fetch(new URL(crl));
+    }
+
+    /**
+     * Fetch the resource. Designed so that extensions
+     * can decide how the resource should be retrieved.
+     *
+     * @param crl the resource
+     * @return the x 509 cRL
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
+     */
+    @Override
+    public X509CRL fetch(@NotNull final Resource crl) throws IOException, CRLException, CertificateException {
         final Set<X509CRL> results = fetch(Collections.singleton(crl));
         if (!results.isEmpty()) {
             return results.iterator().next();
@@ -56,33 +88,33 @@ public class ResourceCRLFetcher implements CRLFetcher {
         return null;
     }
 
+
     /**
      * Fetch the resource. Designed so that extensions
      * can decide how the resource should be retrieved.
      *
-     * @param r the resource which can be {@link URL}, {@link URI}, {@link String}
-     *          or {@link AbstractResource}
+     * @param crl the resource
      * @return the x 509 cRL
-     * @throws Exception the exception
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    protected X509CRL fetchInternal(@NotNull final Object r) throws Exception {
-        Resource rs = null;
-        if (r instanceof URI) {
-            rs = new UrlResource(((URI) r).toURL());
-        } else if (r instanceof URL) {
-            rs = new UrlResource(((URL) r));
-        } else if (r instanceof AbstractResource) {
-            rs = (AbstractResource) r;
-        } else if (r instanceof String) {
-            rs = new UrlResource(new URL(r.toString()));
-        }
+    @Override
+    public X509CRL fetch(@NotNull final URI crl) throws IOException, CRLException, CertificateException {
+        return fetch(crl.toURL());
+    }
 
-        if (rs == null) {
-            throw new IllegalArgumentException("Resource " + r + " could not be identified");
-        }
-
-        try (final InputStream ins = rs.getInputStream()) {
-            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
-        }
+    /**
+     * Fetch the resource. Designed so that extensions
+     * can decide how the resource should be retrieved.
+     *
+     * @param crl the resource
+     * @return the x 509 cRL
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException the exception thrown if resources cant be fetched
+     */
+    public X509CRL fetch(@NotNull final URL crl) throws IOException, CRLException, CertificateException {
+        return fetch(new UrlResource((URL) crl));
     }
 }

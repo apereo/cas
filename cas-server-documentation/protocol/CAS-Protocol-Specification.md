@@ -1170,11 +1170,10 @@ Section [2.5.4](<#head2.5.4>) for a full description of this process.
 **3.5. login ticket**
 ---------------------
 
-A login ticket is a string that is provided by `/login` as a credential requester
+A login ticket is an *optional* string that MAY be provided by `/login` as a credential requester
 and passed to `/login` as a credential acceptor for username/password
 authentication. Its purpose is to prevent the replaying of credentials due to
 bugs in web browsers.
-
 
 
 <a name="head3.5.1"/>

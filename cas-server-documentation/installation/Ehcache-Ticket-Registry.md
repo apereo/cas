@@ -26,7 +26,7 @@ subsystem. The registry maintains service tickets and ticket-granting tickets in
 to validate them may very likely arrive at different CAS cluster nodes
 
 
-###RMI Replication
+### RMI Replication
 Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/index.html)
 replication for distributed caches composed of two or more nodes. To learn more about RMI
 replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
@@ -37,7 +37,7 @@ Enable the registry via:
 <alias name="ehcacheTicketRegistry" alias="ticketRegistry" />
 ```
 
-####Configuration
+#### Configuration
 ```properties
 # ehcache.config.file=classpath:ehcache-replicated.xml
 # ehcache.cachemanager.shared=false
@@ -103,7 +103,7 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
 
 
 
-###Eviction Policy
+### Eviction Policy
 Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
 The default CAS ticket registry cleaner is then not needed, but could be used to enable
 [CAS single logout functionality](Logout-Single-Logout.html), if required.
@@ -118,7 +118,7 @@ policies are must be carefully configured to avoid memory creep. Disk offload an
 aggressive eviction could provide a suitable workaround.
 
 
-###Troubleshooting Guidelines
+### Troubleshooting Guidelines
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component
  is blocking traffic.

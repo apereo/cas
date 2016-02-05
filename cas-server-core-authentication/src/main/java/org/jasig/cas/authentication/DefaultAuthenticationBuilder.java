@@ -1,9 +1,12 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Principal;
-import org.joda.time.DateTime;
+
 import org.springframework.util.Assert;
 
+import javax.validation.constraints.NotNull;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,13 +36,13 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private final Map<String, Class<? extends Exception>> failures = new LinkedHashMap<>();
 
     /** Authentication date. */
-    private DateTime authenticationDate;
+    private ZonedDateTime authenticationDate;
 
     /**
      * Creates a new instance using the current date for the authentication date.
      */
     public DefaultAuthenticationBuilder() {
-        authenticationDate = new DateTime();
+        authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     /**
@@ -58,8 +61,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      *
      * @return Authentication date.
      */
-    public DateTime getAuthenticationDate() {
-        return this.authenticationDate == null ? null : new DateTime(this.authenticationDate);
+    public ZonedDateTime getAuthenticationDate() {
+        return this.authenticationDate;
     }
 
     /**
@@ -70,7 +73,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setAuthenticationDate(final DateTime d) {
+    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
         this.authenticationDate = d;
         return this;
     }
@@ -157,12 +160,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setAttributes(final Map<String, Object> attributes) {
-        Assert.notNull(attributes, "Attributes cannot be null");
+    public AuthenticationBuilder setAttributes(@NotNull final Map<String, Object> attributes) {
         this.attributes.clear();
-        for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
-            this.attributes.put(entry.getKey(), entry.getValue());
-        }
+        this.attributes.putAll(attributes);
         return this;
     }
 
@@ -206,9 +206,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addSuccesses(final Map<String, HandlerResult> successes) {
-        for (final Map.Entry<String, HandlerResult> entry : successes.entrySet()) {
-            addSuccess(entry.getKey(), entry.getValue());
-        }
+        successes.entrySet().stream().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
         return this;
     }
 
@@ -252,9 +250,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addFailures(final Map<String, Class<? extends Exception>> failures) {
-        for (final Map.Entry<String, Class<? extends Exception>> entry : failures.entrySet()) {
-            addFailure(entry.getKey(), entry.getValue());
-        }
+        failures.entrySet().stream().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
         return this;
     }
 
