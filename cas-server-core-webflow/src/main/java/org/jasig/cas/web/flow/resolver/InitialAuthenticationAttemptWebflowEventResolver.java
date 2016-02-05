@@ -82,7 +82,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
             final AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
             if (builder == null) {
-                throw new IllegalArgumentException("No authentication result builider can be located in the context");
+                throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
             return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
