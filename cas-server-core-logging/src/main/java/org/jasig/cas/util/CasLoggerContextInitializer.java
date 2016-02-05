@@ -62,7 +62,8 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
                 final URI location = logConfigurationFile.getURI();
                 if (!location.equals(oldLocation)) {
                     context.setConfigLocation(location);
-                    LOGGER.debug("Updated logging config file from [{}] to [{}]", oldLocation, location);
+                    LOGGER.debug("Updated logging config file from [{}] to [{}]", oldLocation != null ? oldLocation :
+                            "", location);
                 }
                 INITIALIZED.set(true);
             }
