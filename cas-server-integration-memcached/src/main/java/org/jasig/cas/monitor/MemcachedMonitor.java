@@ -92,7 +92,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
                 final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
                 final long evictions = Long.parseLong(statsMap.get("evictions"));
 
-                String name;
+                final String name;
                 if (key instanceof InetSocketAddress) {
                     name = ((InetSocketAddress) key).getHostName();
                 } else {
