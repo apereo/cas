@@ -32,7 +32,7 @@ Enable the registry via:
 ```
 
 
-###TLS Replication
+### TLS Replication
 Ignite supports replication over TLS for distributed caches composed of two or more nodes. To learn more about TLS replication with Ignite,
 [see this resource](https://apacheignite.readme.io/docs/ssltls).
 
@@ -58,7 +58,7 @@ Additional TLS context configuration if performed by setting the following prope
 ```
 
 
-####Configuration
+#### Configuration
 ```properties
 # ignite.servicesCache.name=serviceTicketsCache
 # ignite.servicesCache.cacheMode=REPLICATED
@@ -73,12 +73,12 @@ Additional TLS context configuration if performed by setting the following prope
 # ignite.adresses=localhost:47500
 ```
 
-###Eviction Policy
+### Eviction Policy
 Ignite manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
 The default CAS ticket registry cleaner is then not needed, but could be used to enable
 [CAS single logout functionality](Logout-Single-Logout.html), if required.
 
-###Troubleshooting Guidelines
+### Troubleshooting Guidelines
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component is blocking traffic.
 * If nodes external to CAS instances are utilized, ensure that each cache manager specified a name that matches the Ignite configuration
