@@ -43,7 +43,7 @@ The CAS project provides the following additional implementations:
 ### Sample Usage
 
 
-####LDAP
+#### LDAP
 The following snippet assumes that connection information beans are already defined.
 
 ```xml
@@ -67,7 +67,7 @@ The following snippet assumes that connection information beans are already defi
 ```
 
 
-####JDBC
+#### JDBC
 The following snippet assumes that connection information beans are already defined.
 
 ```xml
@@ -92,7 +92,7 @@ The following snippet assumes that connection information beans are already defi
 ```
 
 
-####Caching, Merging and Cascading
+#### Caching, Merging and Cascading
 Note that this snippet below strictly uses the Person Directory components for resolving attributes.
 
 ```xml
