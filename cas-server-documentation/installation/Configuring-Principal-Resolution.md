@@ -25,7 +25,7 @@ be be combined with an LDAP-based principal resolver to accommodate this case.
 
 ## Principal Resolution Components
 
-###`PersonDirectoryPrincipalResolver`
+### `PersonDirectoryPrincipalResolver`
 Uses the Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
 The [Person Directory documentation](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual) provides
