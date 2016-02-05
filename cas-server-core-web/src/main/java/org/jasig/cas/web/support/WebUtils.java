@@ -360,7 +360,7 @@ public final class WebUtils {
 
         if (credential == null) {
             final FlowSession session = context.getFlowExecutionContext().getActiveSession();
-            credential = session.getScope().getRequired("credentials", Credential.class);
+            credential = session.getScope().get("credential", Credential.class);
         }
         if (credential != null && StringUtils.isBlank(credential.getId())) {
             return null;
