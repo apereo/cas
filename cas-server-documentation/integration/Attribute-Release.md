@@ -22,7 +22,7 @@ The service registry component of CAS has the ability to allow for configuration
 * Ensure the attribute is available and resolved for the principal
 * Set the `usernameAttributeProvider` property of the given service to once of the attribute providers below
 
-###`DefaultRegisteredServiceUsernameProvider`
+### `DefaultRegisteredServiceUsernameProvider`
 The default configuration which need not explicitly be defined, simply returns the resolved
 principal id as the username for this service.
 
@@ -36,7 +36,7 @@ principal id as the username for this service.
 }
 {% endhighlight %}
 
-###`PrincipalAttributeRegisteredServiceUsernameProvider`
+### `PrincipalAttributeRegisteredServiceUsernameProvider`
 Returns an attribute that is already resolved for the principal as the username for this service. If the attribute
 is not available, the default principal id will be used.
 
@@ -55,7 +55,7 @@ is not available, the default principal id will be used.
 {% endhighlight %}
 
 
-###`AnonymousRegisteredServiceUsernameAttributeProvider`
+### `AnonymousRegisteredServiceUsernameAttributeProvider`
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
 of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
 
@@ -91,7 +91,7 @@ to [release the proxy-granting ticket id as an attribute](../installation/Config
 
 ### Components
 
-####`ReturnAllAttributeReleasePolicy`
+#### `ReturnAllAttributeReleasePolicy`
 Return all resolved attributes to the service.
 
 {% highlight json %}
@@ -107,7 +107,7 @@ Return all resolved attributes to the service.
 }
 {% endhighlight %}
 
-####`ReturnAllowedAttributeReleasePolicy`
+#### `ReturnAllowedAttributeReleasePolicy`
 Only return the attributes that are explicitly allowed by the configuration.
 
 {% highlight json %}
@@ -125,7 +125,7 @@ Only return the attributes that are explicitly allowed by the configuration.
 {% endhighlight %}
 
 
-####`ReturnMappedAttributeReleasePolicy`
+#### `ReturnMappedAttributeReleasePolicy`
 Similar to above, this policy will return a collection of allowed attributes for the
 service, but also allows those attributes to be mapped and "renamed" at the more granular service level.
 
@@ -156,7 +156,7 @@ release `uid`, `affiliation` and `group` to the web application configured.
 While each policy defines what attributes may be allowed for a given service,
 there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.
 
-#####`RegisteredServiceRegexAttributeFilter`
+##### `RegisteredServiceRegexAttributeFilter`
 The regex filter that is responsible to make sure only attributes whose value
 matches a certain regex pattern are released.
 
@@ -196,18 +196,18 @@ length of the SSO session. If there are any attribute value changes since the
 commencement of SSO session, the changes are not reflected and returned back
 to the service upon release time.
 
-###Components
+### Components
 
-###`PrincipalAttributesRepository`
+### `PrincipalAttributesRepository`
 Parent component that describes the relationship between a CAS `Principal`
 and the underlying attribute repository source.
 
-###`DefaultPrincipalAttributesRepository`
+### `DefaultPrincipalAttributesRepository`
 The default relationship between a CAS `Principal` and the underlying attribute
 repository source, such that principal attributes are kept as they are without
 any additional processes to evaluate and update them. This need not be configured explicitly.
 
-###`CachingPrincipalAttributesRepository`
+### `CachingPrincipalAttributesRepository`
 The relationship between a CAS `Principal` and the underlying attribute
 repository source, that describes how and at what length the CAS `Principal` attributes should
 be cached. Upon attribute release time, this component is consulted to ensure that appropriate
@@ -251,7 +251,7 @@ Sample configuration follows:
 {% endhighlight %}
 
 
-####Merging Strategies
+#### Merging Strategies
 By default, no merging strategy takes place, which means the principal attributes are always ignored and
 attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
 
@@ -347,7 +347,7 @@ For example:
 }
 {% endhighlight %}
 
-###Encrypting Attributes
+### Encrypting Attributes
 CAS by default supports the ability to encrypt certain attributes, such as the proxy-granting ticket and the credential conditionally.
 If you wish to take this a step further and encrypt other attributes that you deem sensitive, you can use the following components
 as a baseline to carry out the task at hand:
