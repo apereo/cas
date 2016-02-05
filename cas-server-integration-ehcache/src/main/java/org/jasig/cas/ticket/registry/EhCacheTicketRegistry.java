@@ -253,18 +253,13 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
         }
     }
 
-    /**
-     * @see Cache#getKeysWithExpiryCheck()
-     */
+
     @Override
     public int sessionCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache
                 .getKeysWithExpiryCheck().size(), super.sessionCount());
     }
 
-    /**
-     * @see Cache#getKeysWithExpiryCheck()
-     */
     @Override
     public int serviceTicketCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck()
