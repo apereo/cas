@@ -13,10 +13,10 @@ validated when an authentication request from the application arrives.
 
 ## Components
 
-###`RegisteredServiceAccessStrategy`
+### `RegisteredServiceAccessStrategy`
 This is the parent interface that outlines the required operations from the CAS perspective that need to be carried out in order to determine whether the service can proceed to the next step in the authentication flow.
 
-###`DefaultRegisteredServiceAccessStrategy`
+### `DefaultRegisteredServiceAccessStrategy`
 The default access manager allows one to configure a service with the following properties:
 
 | Field                             | Description

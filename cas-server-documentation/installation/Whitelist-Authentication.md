@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-###`AcceptUsersAuthenticationHandler`
+### `AcceptUsersAuthenticationHandler`
 {% highlight xml %}
 <bean class="org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler">
     <property name="users">
@@ -36,7 +36,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 
 
-###`FileAuthenticationHandler`
+### `FileAuthenticationHandler`
 {% highlight xml %}
 <bean class="org.jasig.cas.adaptors.generic.FileAuthenticationHandler"
    p:fileName="file:/opt/cas/file_of_passwords.txt" />

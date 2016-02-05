@@ -97,7 +97,7 @@ The following properties may be used as a starting point for connection pool con
 ## Database Components
 CAS provides the followng components to accommodate different database authentication needs.
 
-######`QueryDatabaseAuthenticationHandler`
+###### `QueryDatabaseAuthenticationHandler`
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
 configurable database query. `QueryDatabaseAuthenticationHandler` is by far the most flexible and easiest to
 configure for anyone proficient with SQL, but `SearchModeSearchDatabaseAuthenticationHandler` provides an alternative
@@ -128,7 +128,7 @@ The following example uses an MD5 hash algorithm and searches exclusively for _a
 {% endhighlight %}
 
 
-######`SearchModeSearchDatabaseAuthenticationHandler`
+###### `SearchModeSearchDatabaseAuthenticationHandler`
 Searches for a user record by querying against a username and (hashed) password; the user is authenticated if at
 least one result is found.
 
@@ -149,7 +149,7 @@ The following example uses a SHA1 hash algorithm to authenticate users.
 {% endhighlight %}
 
 
-######`BindModeSearchDatabaseAuthenticationHandler`
+###### `BindModeSearchDatabaseAuthenticationHandler`
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
 The following example does not perform any password encoding since most JDBC drivers natively encode plaintext
@@ -163,7 +163,7 @@ ability to establish a connection with username/password credentials. This handl
 {% endhighlight %}
 
 
-######`QueryAndEncodeDatabaseAuthenticationHandler`
+###### `QueryAndEncodeDatabaseAuthenticationHandler`
 A JDBC querying handler that will pull back the password and
 the private salt value for a user and validate the encoded
 password using the public salt value. Assumes everything

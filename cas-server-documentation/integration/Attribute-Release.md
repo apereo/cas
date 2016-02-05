@@ -22,7 +22,7 @@ The service registry component of CAS has the ability to allow for configuration
 * Ensure the attribute is available and resolved for the principal
 * Set the `usernameAttributeProvider` property of the given service to once of the attribute providers below
 
-###`DefaultRegisteredServiceUsernameProvider`
+### `DefaultRegisteredServiceUsernameProvider`
 The default configuration which need not explicitly be defined, simply returns the resolved principal id as the username for this service.
 
 {% highlight json %}
@@ -35,7 +35,7 @@ The default configuration which need not explicitly be defined, simply returns t
 }
 {% endhighlight %}
 
-###`PrincipalAttributeRegisteredServiceUsernameProvider`
+### `PrincipalAttributeRegisteredServiceUsernameProvider`
 Returns an attribute that is already resolved for the principal as the username for this service. If the attribute
 is not available, the default principal id will be used.
 
@@ -53,7 +53,7 @@ is not available, the default principal id will be used.
 }
 {% endhighlight %}
 
-###`AnonymousRegisteredServiceUsernameAttributeProvider`
+### `AnonymousRegisteredServiceUsernameAttributeProvider`
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
 of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
 
@@ -89,7 +89,7 @@ The following settings are shared by all attribute release policies:
 
 ### Components
 
-####`ReturnAllAttributeReleasePolicy`
+#### `ReturnAllAttributeReleasePolicy`
 Return all resolved attributes to the service.
 
 {% highlight json %}
@@ -105,7 +105,7 @@ Return all resolved attributes to the service.
 }
 {% endhighlight %}
 
-####`ReturnAllowedAttributeReleasePolicy`
+#### `ReturnAllowedAttributeReleasePolicy`
 Only return the attributes that are explicitly allowed by the configuration.
 
 {% highlight json %}
@@ -123,7 +123,7 @@ Only return the attributes that are explicitly allowed by the configuration.
 {% endhighlight %}
 
 
-####`ReturnMappedAttributeReleasePolicy`
+#### `ReturnMappedAttributeReleasePolicy`
 Similar to above, this policy will return a collection of allowed attributes for the service, but also allows those attributes to be mapped and "renamed" at the more granular service level.
 
 For example, the following configuration will recognize the resolved attributes `eduPersonAffiliation` and `groupMembership` and will then release affiliation` and `group` to the web application configured.
@@ -150,7 +150,7 @@ For example, the following configuration will recognize the resolved attributes 
 #### Attribute Filters
 While each policy defines what attributes may be allowed for a given service, there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.
 
-######`RegisteredServiceRegexAttributeFilter`
+###### `RegisteredServiceRegexAttributeFilter`
 The regex filter that is responsible to make sure only attributes whose value matches a certain regex pattern are released.
 
 Suppose that the following attributes are resolved:
@@ -186,13 +186,13 @@ By default, [resolved attributes](Attribute-Resolution.html) are cached to the l
 
 #### Components
 
-####`PrincipalAttributesRepository`
+#### `PrincipalAttributesRepository`
 Parent component that describes the relationship between a CAS `Principal` and the underlying attribute repository source.
 
-####`DefaultPrincipalAttributesRepository`
+#### `DefaultPrincipalAttributesRepository`
 The default relationship between a CAS `Principal` and the underlying attribute repository source, such that principal attributes are kept as they are without any additional processes to evaluate and update them. This need not be configured explicitly.
 
-####`CachingPrincipalAttributesRepository`
+#### `CachingPrincipalAttributesRepository`
 The  relationship between a CAS `Principal` and the underlying attribute repository source, that describes how and
 at what length the CAS `Principal` attributes should be cached. Upon attribute release time, this component
 is consulted to ensure that appropriate attribute values are released to the scoped service, per the cache
