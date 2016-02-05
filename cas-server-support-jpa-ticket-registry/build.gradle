@@ -4,6 +4,8 @@ dependencies {
     compile project(':cas-server-core-tickets')
     compile project(':cas-server-core-monitor')
     compile project(':cas-server-core-util')
+    compile project(':cas-server-support-jpa-util')
+    compile project(':cas-server-support-oauth-core')
     compile libraries.spring
     compile libraries.quartz
     compile libraries.hibernate    

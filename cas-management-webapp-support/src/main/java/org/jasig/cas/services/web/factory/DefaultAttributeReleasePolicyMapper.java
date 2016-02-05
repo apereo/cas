@@ -165,7 +165,7 @@ public final class DefaultAttributeReleasePolicyMapper implements AttributeRelea
         final RegisteredServiceAttributeReleasePolicyStrategyEditBean policyBean = attrRelease.getAttrPolicy();
         final String policyType = policyBean.getType();
 
-        AbstractRegisteredServiceAttributeReleasePolicy policy;
+        final AbstractRegisteredServiceAttributeReleasePolicy policy;
         if (StringUtils.equalsIgnoreCase(policyType, AbstractRegisteredServiceAttributeReleasePolicyStrategyBean
                 .Types.ALL.toString())) {
             policy = new ReturnAllAttributeReleasePolicy();

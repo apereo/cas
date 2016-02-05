@@ -1,12 +1,13 @@
 package org.jasig.cas.support.wsfederation.authentication.principal;
 
 import org.jasig.cas.support.wsfederation.AbstractWsFederationTests;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
@@ -27,13 +28,13 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     @Before
     public void setUp() {
         standardCred = new WsFederationCredential();
-        standardCred.setNotBefore(new DateTime().withZone(DateTimeZone.UTC));
-        standardCred.setNotOnOrAfter(new DateTime().withZone(DateTimeZone.UTC).plusHours(1));
-        standardCred.setIssuedOn(new DateTime().withZone(DateTimeZone.UTC));
+        standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1));
+        standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setIssuer("http://adfs.example.com/adfs/services/trust");
         standardCred.setAudience("urn:federation:cas");
         standardCred.setId("_6257b2bf-7361-4081-ae1f-ec58d4310f61");
-        standardCred.setRetrievedOn(new DateTime().withZone(DateTimeZone.UTC).plusSeconds(1));
+        standardCred.setRetrievedOn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(1));
     }
 
     @Test
@@ -58,9 +59,9 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
 
     @Test
     public void verifyIsValidEarlyToken() throws Exception {
-        standardCred.setNotBefore(new DateTime().withZone(DateTimeZone.UTC).plusDays(1));
-        standardCred.setNotOnOrAfter(new DateTime().withZone(DateTimeZone.UTC).plusHours(1).plusDays(1));
-        standardCred.setIssuedOn(new DateTime().withZone(DateTimeZone.UTC).plusDays(1));
+        standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1));
+        standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).plusDays(1));
+        standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1));
         
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertFalse("testIsValidEarlyToken() - False", result);
@@ -68,9 +69,9 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
 
     @Test
     public void verifyIsValidOldToken() throws Exception {
-        standardCred.setNotBefore(new DateTime().withZone(DateTimeZone.UTC).minusDays(1));
-        standardCred.setNotOnOrAfter(new DateTime().withZone(DateTimeZone.UTC).plusHours(1).minusDays(1));
-        standardCred.setIssuedOn(new DateTime().withZone(DateTimeZone.UTC).minusDays(1));
+        standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
+        standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).minusDays(1));
+        standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
         
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertFalse("testIsValidOldToken() - False", result);
@@ -78,7 +79,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
 
     @Test
     public void verifyIsValidExpiredIssuedOn() throws Exception {
-        standardCred.setIssuedOn(new DateTime().withZone(DateTimeZone.UTC).minusSeconds(3));
+        standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(3));
         
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertFalse("testIsValidOldToken() - False", result);

@@ -13,6 +13,7 @@ import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSer
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,12 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
         logger.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
+
+        // there are no explicitly defined NameIDFormats, include the default format
+        // see: http://saml2int.org/profile/current/#section92
+        if (supportedNameFormats.isEmpty()) {
+            supportedNameFormats.add(NameIDType.TRANSIENT);
+        }
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {

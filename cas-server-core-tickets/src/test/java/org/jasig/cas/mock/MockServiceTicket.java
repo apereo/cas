@@ -3,11 +3,12 @@ package org.jasig.cas.mock;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * Mock service ticket.
@@ -21,7 +22,7 @@ public class MockServiceTicket implements ServiceTicket {
 
     private final String id;
 
-    private final Date created;
+    private final ZonedDateTime created;
 
     private final Service service;
 
@@ -31,7 +32,7 @@ public class MockServiceTicket implements ServiceTicket {
         this.service = service;
         this.id = id;
         this.parent = parent;
-        created = new Date();
+        created = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     @Override
@@ -73,8 +74,8 @@ public class MockServiceTicket implements ServiceTicket {
     }
 
     @Override
-    public long getCreationTime() {
-        return created.getTime();
+    public ZonedDateTime getCreationTime() {
+        return created;
     }
 
     @Override

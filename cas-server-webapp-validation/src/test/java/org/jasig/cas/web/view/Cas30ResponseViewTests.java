@@ -6,7 +6,7 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.CasViewConstants;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Test;
@@ -105,7 +105,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
             logger.debug("Decoding value [{}]", cred);
-            final byte[] cred64 = CompressionUtils.decodeBase64ToByteArray(cred);
+            final byte[] cred64 = EncodingUtils.decodeBase64(cred);
 
             logger.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
             cipher.init(Cipher.DECRYPT_MODE, privateKey);

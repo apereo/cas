@@ -42,22 +42,22 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
     @Override
     public HealthStatus observe() {
         final Map<String, Status> results = new LinkedHashMap<>(this.monitors.size());
-        StatusCode code = StatusCode.UNKNOWN;
-        Status result;
-        for (final Monitor monitor : this.monitors) {
+        final StatusCode[] code = {StatusCode.UNKNOWN};
+        final Status[] result = new Status[1];
+        this.monitors.stream().forEach(monitor -> {
             try {
-                result = monitor.observe();
-                final StatusCode resCode = result.getCode();
-                if (resCode.value() > code.value()) {
-                    code = resCode;
+                result[0] = monitor.observe();
+                final StatusCode resCode = result[0].getCode();
+                if (resCode.value() > code[0].value()) {
+                    code[0] = resCode;
                 }
             } catch (final Exception e) {
-                code = StatusCode.ERROR;
-                result = new Status(code, e.getClass().getSimpleName() + ": " + e.getMessage());
+                code[0] = StatusCode.ERROR;
+                result[0] = new Status(code[0], e.getClass().getSimpleName() + ": " + e.getMessage());
             }
-            results.put(monitor.getName(), result);
-        }
+            results.put(monitor.getName(), result[0]);
+        });
 
-        return new HealthStatus(code, results);
+        return new HealthStatus(code[0], results);
     }
 }

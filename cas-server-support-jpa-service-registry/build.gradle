@@ -2,6 +2,7 @@ description = 'Apereo CAS JPA Service Registry Support'
 dependencies {
 
     compile project(':cas-server-core-services')
+    compile project(':cas-server-support-jpa-util')
     compile libraries.spring
     compile libraries.quartz
     compile libraries.hibernate    

@@ -3,7 +3,7 @@ layout: default
 title: CAS - Shibboleth Integration
 ---
 
-#Overview
+# Overview
 CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple different strategies. 
 It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP. With such a setup, when user is routed to the IdP, the following may take place:
 
@@ -11,23 +11,23 @@ It is possible to designate CAS to serve as the authentication provider for the 
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must authenticate before the IDP proceeds with the requested action.
 
 
-##SSO for Shibboleth IdP (RemoteUser)
+## SSO for Shibboleth IdP (RemoteUser)
 
-###Configuration
+### Configuration
 
-####Include CAS Client Libraries in IdP Deployable
+#### Include CAS Client Libraries in IdP Deployable
 
 Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are 
 included in the `./lib` installer folder, then redeploy the Idp with these files:
 
-{% highlight bash %}
+```bash
 cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
-{% endhighlight %}
+```
 
-####Modify `$SHIB_HOME/conf/handler.xml`
+#### Modify `$SHIB_HOME/conf/handler.xml`
 
 Define the `RemoteUser` authentication method to be used with CAS authentication.
-{% highlight xml %}
+```xml
 <!-- Remote User handler for CAS support -->
 <LoginHandler xsi:type="RemoteUser">
   <AuthenticationMethod>
@@ -37,12 +37,12 @@ Define the `RemoteUser` authentication method to be used with CAS authentication
     urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
   </AuthenticationMethod>
 </LoginHandler>
-{% endhighlight %}
+```
 
 
-####Modify IdP Deployable `web.xml`
+#### Modify IdP Deployable `web.xml`
 Add the following XML blocks to the `web.xml` file for the IdP war deployable.
-{% highlight xml %}
+```xml
 <!-- For CAS client support -->
 <context-param>
   <param-name>serverName</param-name>
@@ -97,13 +97,13 @@ CAS Filters
   <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
   <url-pattern>/Authn/RemoteUser</url-pattern>
 </filter-mapping>
-{% endhighlight %}
+```
 
 
-####Enable `RemoteUserHandler` in Idp Deployable `web.xml`
+#### Enable `RemoteUserHandler` in Idp Deployable `web.xml`
 Ensure the following is defined:
 
-{% highlight xml %}
+```xml
 <!-- Servlet protected by container user for RemoteUser authentication -->
 <servlet>
   <servlet-name>RemoteUserAuthHandler</servlet-name>
@@ -114,17 +114,17 @@ Ensure the following is defined:
   <servlet-name>RemoteUserAuthHandler</servlet-name>
   <url-pattern>/Authn/RemoteUser</url-pattern>
 </servlet-mapping>
-{% endhighlight %}
+```
 
 
-##SSO for Shibboleth IdP (External)
+## SSO for Shibboleth IdP (External)
 This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using 
 this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`.
 
 The plugin is available for both Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2) 
 and [v3](https://github.com/Unicon/shib-cas-authn3).
 
-###Relying Party EntityId
+### Relying Party EntityId
 The authentication plugin is able to pass the relying party's entity ID over to the CAS server upon authentication requests. 
 The entity ID is passed in form of a url parameter to the CAS server as such:
 
@@ -132,38 +132,38 @@ The entity ID is passed in form of a url parameter to the CAS server as such:
 https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<relying-party-entity-id>
 ```
 
-###Displaying SAML MDUI
+### Displaying SAML MDUI
 The CAS server is able to recognize the `entityId` parameter and display SAML MDUI on the login page,
 that is provided by the metadata associated with the relying party. This means that CAS will also need to know
 about metadata sources that the identity provider uses.
 
-###Configuration
+### Configuration
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-saml-mdui</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 Then, adjust `cas-servlet.xml` with the following:
 
-{% highlight xml %}
+```xml
 <bean id="samlDynamicMetadataUIParserAction"
   class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
   c:entityIdParameterName="entityId"
   c:metadataAdapter-ref="metadataAdapter"/>
-{% endhighlight %}
+```
 
 Metadata sources in the CAS server can be configured via the following ways:
 
 #### Static
 In this case, metadata sources are statically provided via classpath, file or url resources.
 
-{% highlight xml %}
+```xml
 <bean id="metadataAdapter"
       class="org.jasig.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
@@ -179,7 +179,7 @@ In this case, metadata sources are statically provided via classpath, file or ur
         </bean>
     </entry>
 </util:map>
-{% endhighlight %}
+```
 
 #### Dynamic
 In this case, metadata sources are provided via the
@@ -187,7 +187,7 @@ In this case, metadata sources are provided via the
 is a REST-like API for requesting and receiving arbitrary metadata. CAS will contact
 the metadata server to query for the metadata based on the `entityId` provided.
 
-{% highlight xml %}
+```xml
 <bean id="metadataAdapter"
       class="org.jasig.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
@@ -203,15 +203,15 @@ the metadata server to query for the metadata based on the `entityId` provided.
     </bean>
   </entry>
 </util:map>
-{% endhighlight %}
+```
 
-####Configure Metadata Filters
+#### Configure Metadata Filters
 Metadata filters can be configured to validate and verify the received
 metadata in both scenarios. Filters typically check for validity of signaures,
 whether `validUntil` exists, etc. The following example attempts to validate
 the signature on the metadata via a pre-configured public key:
 
-{% highlight xml %}
+```xml
 <bean id="metadataFilters"
     class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
     <property name="filters">
@@ -251,16 +251,16 @@ the signature on the metadata via a pre-configured public key:
       class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
       p:publicKeyInfo="classpath:inc-md-pub.pem" >
 </bean>
-{% endhighlight %}
+```
 
 You will need to modify your metadata retrieval process, whether static or dynamic,
 to adjust for the appropriate metadata filter if need be.
 
-###Display MDUI
+### Display MDUI
 Modify the `login-webflow.xml` to execute the `SamlMetadataUIParserAction` action
 when the login form is rendered:
 
-{% highlight xml %}
+```xml
 <view-state id="viewLoginForm" ...>
     ...
     <on-entry>
@@ -270,13 +270,13 @@ when the login form is rendered:
     </on-entry>
     ...
 </view-state>
-{% endhighlight %}
+```
 
 A sample screenshot of the above configuration in action:
 
 ![capture](https://cloud.githubusercontent.com/assets/1205228/8120071/095c7628-1050-11e5-810e-7bce128391df.PNG)
 
-##Shibboleth Service Provider Proxy
+## Shibboleth Service Provider Proxy
 The [CASShib project](https://code.google.com/p/casshib/) "Shibbolizes" the CAS server and enables end applications to get authentication 
 information from CAS rather than the Shibboleth Service Provider. CASShib is designed as an alternative to deploying the 
 Shibboleth service provider for each application in order to:

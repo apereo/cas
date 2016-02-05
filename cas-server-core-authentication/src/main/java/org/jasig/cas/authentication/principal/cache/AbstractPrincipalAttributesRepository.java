@@ -1,8 +1,5 @@
 package org.jasig.cas.authentication.principal.cache;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.util.ApplicationContextProvider;
@@ -12,6 +9,10 @@ import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Parent class for retrieval principals attributes, provides operations
@@ -131,12 +133,9 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     protected final Map<String, Object> convertPersonAttributesToPrincipalAttributes(
             final Map<String, List<Object>> attributes) {
-        final Map<String, Object> convertedAttributes = new HashMap<>();
-        for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
-            final List<Object> values = entry.getValue();
-            convertedAttributes.put(entry.getKey(), values.size() == 1 ? values.get(0) : values);
-        }
-        return convertedAttributes;
+        return attributes.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
     }
 
     /***
@@ -148,7 +147,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         final Map<String, List<Object>> convertedAttributes = new HashMap<>(p.getAttributes().size());
         final Map<String, Object> principalAttributes = p.getAttributes();
 
-        for (final Map.Entry<String, Object> entry : principalAttributes.entrySet()) {
+        principalAttributes.entrySet().stream().forEach(entry -> {
             final Object values = entry.getValue();
             final String key = entry.getKey();
             if (values instanceof List) {
@@ -156,7 +155,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             } else {
                 convertedAttributes.put(key, Collections.singletonList(values));
             }
-        }
+        });
         return convertedAttributes;
     }
 

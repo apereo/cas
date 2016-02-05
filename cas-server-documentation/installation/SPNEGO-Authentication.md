@@ -29,13 +29,13 @@ ticket expires.
 ## SPNEGO Components
 SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-spnego-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## SPNEGO Configuration
 
@@ -93,10 +93,10 @@ zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
 URL, e.g. `https://cas.example.com`.
 
-###Webflow Configuration
+### Webflow Configuration
 Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
 
-###Authentication Configuration
+### Authentication Configuration
 
 Provide a JAAS `login.conf` file:
 
@@ -109,7 +109,7 @@ Provide a JAAS `login.conf` file:
 
 You may use the following configuration in `cas.properties`:
 
-{% highlight properties %}
+```properties
 # cas.spnego.ldap.attribute=spnegoattribute
 # cas.spnego.ldap.filter=host={0}
 # cas.spnego.ldap.basedn=
@@ -138,7 +138,7 @@ You may use the following configuration in `cas.properties`:
 # cas.spnego.principal.resolver.transform=NONE
 # cas.spnego.service.principal=HTTP/cas.example.com@EXAMPLE.COM
 # cas.spnego.hostname.client.action.strategy=hostnameSpnegoClientAction
-{% endhighlight %}
+```
 
 ## Client Selection Strategy
 CAS provides a set of components that attempt to activate the SPNEGO flow conditionally,
@@ -150,36 +150,36 @@ or resume normally, depending on the client action strategy chosen below.
 ### By Remote IP
 Checks to see if the request's remote ip address matches a predefine pattern.
 
-{% highlight properties %}
+```properties
 ...
 # cas.spnego.hostname.client.action.strategy=baseSpnegoClientAction
 ...
-{% endhighlight %}
+```
 
 
 ### By Hostname
 Checks to see if the request's remote hostname matches a predefine pattern.
 
-{% highlight properties %}
+```properties
 ...
 # cas.spnego.hostname.client.action.strategy=hostnameSpnegoClientAction
 ...
-{% endhighlight %}
+```
 
 
 ### By LDAP Attribute
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-{% highlight properties %}
+```properties
 ...
 # cas.spnego.hostname.client.action.strategy=ldapSpnegoClientAction
 ...
-{% endhighlight %}
+```
 
 ...and the LDAP configuration:
 
-{% highlight xml %}
+```xml
 <bean id="spnegoCLientActionConnectionFactory" class="..." />
 
 <bean id="spnegoClientActionSearchRequest" class="org.ldaptive.SearchRequest"
@@ -192,4 +192,4 @@ would allow the webflow to resume to SPNEGO.
 <bean id="baseDn" class="java.lang.String">
     <constructor-arg type="java.lang.String" value="${cas.spnego.ldap.basedn:}" />
 </bean>
-{% endhighlight %}
+```

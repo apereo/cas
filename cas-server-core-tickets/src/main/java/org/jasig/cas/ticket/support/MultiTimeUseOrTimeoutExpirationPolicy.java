@@ -1,12 +1,16 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -84,11 +88,11 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
             return true;
         }
 
-        final long systemTime = System.currentTimeMillis();
-        final long lastTimeUsed = ticketState.getLastTimeUsed();
-        final long difference = systemTime - lastTimeUsed;
+        final ZonedDateTime systemTime = ZonedDateTime.now(ZoneOffset.UTC);
+        final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
+        final ZonedDateTime expirationTime = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
 
-        if (difference >= this.timeToKillInMilliSeconds) {
+        if (systemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket has expired because the difference between current time [{}] "
                 + "and ticket time [{}] is greater than or equal to [{}]", systemTime, lastTimeUsed,
                 this.timeToKillInMilliSeconds);

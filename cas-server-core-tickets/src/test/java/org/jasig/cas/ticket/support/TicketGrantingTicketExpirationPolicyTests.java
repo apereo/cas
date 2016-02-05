@@ -1,13 +1,17 @@
 package org.jasig.cas.ticket.support;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.*;
 
 /**
  * @author William G. Thompson, Jr.
@@ -37,9 +41,9 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifyTgtIsExpiredByHardTimeOut() throws InterruptedException {
-         // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
-         while (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()
-                 < (HARD_TIMEOUT - SLIDING_TIMEOUT / 2)) {
+        // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
+        final ZonedDateTime creationTime = ticketGrantingTicket.getCreationTime();
+         while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.MILLIS).isAfter(ZonedDateTime.now(ZoneOffset.UTC))) {
              ticketGrantingTicket.grantServiceTicket("test",
                      org.jasig.cas.services.TestUtils.getService(), expirationPolicy, false,
                      true);

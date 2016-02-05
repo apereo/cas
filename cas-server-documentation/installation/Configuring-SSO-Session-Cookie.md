@@ -18,7 +18,7 @@ to generate your own JSON Web Tokens.
 
 ## Configuration
 The generation of the ticket-granting cookie is controlled via:
-{% highlight properties %}
+```properties
 # The encryption secret key. By default, must be a octet string of size 256.
 tgc.encryption.key=
 
@@ -42,7 +42,7 @@ tgc.signing.key=
 
 # The expiration value of the SSO Warning cookie
 # warn.cookie.maxAge=-1
-{% endhighlight %}
+```
 
 The cookie has the following properties:
 
@@ -66,20 +66,20 @@ to an SSO-participating application. This might better match user expectations.
 
 The controlling of this behavior is done via the `cas.properties` file:
 
-{% highlight properties %}
+```properties
 ##
 # Single Sign-On Session
 #
 # Indicates whether an SSO session should be created for renewed authentication requests.
 # create.sso.renewed.authn=true
-{% endhighlight %}
+```
 
 # SSO Warning Session Cookie
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page. The cookie is used later to warn and prompt
 the user before a service ticket is generated and access to the service application is granted.
 The cookie is controlled via:
 
-{% highlight properties %}
+```properties
 # Decides whether SSO Warning cookie should be created only under secure connections.
 # warn.cookie.secure=true
 
@@ -91,4 +91,4 @@ The cookie is controlled via:
 
 # The path to which the SSO Warning cookie will be scoped
 # warn.cookie.path=/cas
-{% endhighlight %}
+```

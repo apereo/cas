@@ -1,7 +1,8 @@
 package org.jasig.cas.services;
 
-import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.principal.Service;
+
+import com.google.common.base.Predicate;
 
 import java.util.Collection;
 

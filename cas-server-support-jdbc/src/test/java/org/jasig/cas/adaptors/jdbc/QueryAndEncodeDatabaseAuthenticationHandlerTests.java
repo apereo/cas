@@ -1,15 +1,14 @@
 package org.jasig.cas.adaptors.jdbc;
 
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
-import org.apache.shiro.crypto.hash.DefaultHashService;
-import org.apache.shiro.crypto.hash.HashRequest;
-import org.apache.shiro.util.ByteSource;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
+
+import org.apache.shiro.crypto.hash.DefaultHashService;
+import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.util.ByteSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
-    private static final String ALG_NAME = MessageDigestAlgorithms.SHA_512;
+    private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
@@ -130,12 +129,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
                         ALG_NAME);
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
-        q.setPasswordEncoder(new PasswordEncoder() {
-            @Override
-            public String encode(final String password) {
-                return password.concat("1");
-            }
-        });
+        q.setPasswordEncoder(password -> password.concat("1"));
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
         final HandlerResult r = q.authenticateUsernamePasswordInternal(

@@ -7,10 +7,12 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.DigestUtils;
+import org.jasig.cas.util.SerializationUtils;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Scott Battaglia
@@ -37,6 +42,23 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
+
+    private List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators = new ArrayList<>();
+
+    /**
+     * Default constructor which registers the appropriate ticket delegators.
+     */
+    @SuppressWarnings("unchecked")
+    public AbstractTicketRegistry() {
+        ticketDelegators.add(new Pair(ProxyGrantingTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(ProxyGrantingTicketDelegator.class)));
+        ticketDelegators.add(new Pair(TicketGrantingTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(TicketGrantingTicketDelegator.class)));
+        ticketDelegators.add(new Pair(ProxyTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(ProxyTicketDelegator.class)));
+        ticketDelegators.add(new Pair(ServiceTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(ServiceTicketDelegator.class)));
+    }
 
     /**
      * {@inheritDoc}
@@ -90,16 +112,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (ticket instanceof TicketGrantingTicket) {
+            if (ticket instanceof ProxyGrantingTicket) {
+                logger.debug("Removing proxy-granting ticket [{}]", ticketId);
+            }
+
             logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
             deleteChildren(tgt);
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
-                logger.debug("Removing proxy-granting ticket [{}]", proxyGrantingTicket.getId());
-                deleteTicket(proxyGrantingTicket.getId());
-            }
-
+            proxyGrantingTickets.stream().map(Ticket::getId).forEach(this::deleteTicket);
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
         return deleteSingleTicket(ticketId);
@@ -115,17 +137,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                final String ticketId = entry.getKey();
+            services.keySet().stream().forEach(ticketId -> {
                 if (deleteSingleTicket(ticketId)) {
-                    logger.debug("Removed ticket [{}]", entry.getKey());
+                    logger.debug("Removed ticket [{}]", ticketId);
                 } else {
-                    logger.debug("Unable to remove ticket [{}]", entry.getKey());
+                    logger.debug("Unable to remove ticket [{}]", ticketId);
                 }
-            }
+            });
         }
     }
-
 
     /**
      * Delete a single ticket instance from the store.
@@ -170,23 +190,19 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return null;
         }
 
-        if (ticket instanceof ProxyGrantingTicket) {
-            return new ProxyGrantingTicketDelegator(this, (ProxyGrantingTicket) ticket, needsCallback());
+        for (final Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>> ticketDelegator: ticketDelegators) {
+            final Class<? extends Ticket> clazz = ticketDelegator.getFirst();
+            if (clazz.isAssignableFrom(ticket.getClass())) {
+                final Constructor<? extends AbstractTicketDelegator> constructor = ticketDelegator.getSecond();
+                try {
+                    return constructor.newInstance(this, ticket, needsCallback());
+                } catch (final Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
-        if (ticket instanceof TicketGrantingTicket) {
-            return new TicketGrantingTicketDelegator<>(this, (TicketGrantingTicket) ticket, needsCallback());
-        }
-
-        if (ticket instanceof ProxyTicket) {
-            return new ProxyTicketDelegator(this, (ProxyTicket) ticket, needsCallback());
-        }
-
-        if (ticket instanceof ServiceTicket) {
-            return new ServiceTicketDelegator<>(this, (ServiceTicket) ticket, needsCallback());
-        }
-
-        throw new IllegalStateException("Cannot wrap ticket of type: " + ticket.getClass() + " with a proxy delegator");
+        throw new IllegalStateException("Cannot wrap ticket of type: " + ticket.getClass() + " with a ticket delegator");
     }
 
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
@@ -208,7 +224,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return ticketId;
         }
 
-        return CompressionUtils.sha512Hex(ticketId);
+        return DigestUtils.sha512(ticketId);
     }
 
     /**
@@ -228,7 +244,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         logger.info("Encoding [{}]", ticket);
-        final byte[] encodedTicketObject = CompressionUtils.serializeAndEncodeObject(
+        final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(
@@ -256,7 +272,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         logger.info("Attempting to decode {}", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
-        final Ticket ticket = CompressionUtils.decodeAndSerializeObject(
+        final Ticket ticket = SerializationUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
         logger.info("Decoded {}",  ticket);
         return ticket;
@@ -274,15 +290,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return items;
         }
 
-        if (items == null || items.isEmpty()) {
-            return items;
-        }
+        return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
+    }
 
-        final Collection<Ticket> tickets = new HashSet<>(items.size());
-        for (final Ticket item : items) {
-            final Ticket ticket = decodeTicket(item);
-            tickets.add(ticket);
-        }
-        return tickets;
+    @Nullable
+    public List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> getTicketDelegators() {
+        return ticketDelegators;
+    }
+
+    public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>>
+                                            ticketDelegators) {
+        this.ticketDelegators = ticketDelegators;
     }
 }
