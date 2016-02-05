@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
@@ -63,7 +64,12 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @return whether the service is valid
      */
     protected boolean checkServiceValid(final HttpServletRequest request) {
-        final String clientId = getClientId(request);
+        final Optional<String> opClientId = getClientId(request);
+        if (!opClientId.isPresent()) {
+            logger.error("Missing clientId");
+            return false;
+        }
+        final String clientId = opClientId.get();
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         logger.debug("Found: {} for: {}", service, clientId);
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
@@ -80,7 +86,12 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @return whether the callback url is valid
      */
     protected boolean checkCallbackValid(final HttpServletRequest request) {
-        final String clientId = getClientId(request);
+        final Optional<String> opClientId = getClientId(request);
+        if (!opClientId.isPresent()) {
+            logger.error("Missing clientId");
+            return false;
+        }
+        final String clientId = opClientId.get();
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
         final String serviceId = service.getServiceId();
@@ -98,8 +109,8 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @param request the HTTP request
      * @return the client identifier
      */
-    protected String getClientId(final HttpServletRequest request) {
-        return request.getParameter(OAuthConstants.CLIENT_ID);
+    protected Optional<String> getClientId(final HttpServletRequest request) {
+        return Optional.ofNullable(request.getParameter(OAuthConstants.CLIENT_ID));
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {
