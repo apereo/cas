@@ -28,7 +28,7 @@ The CAS login throttling components are listed below along with a sample configu
 preventing more than 1 failed login every 3 seconds.
 
 
-#####`InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
+##### `InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
 Uses a memory map to prevent successive failed login attempts from the same IP address.
 {% highlight xml %}
 <bean id="loginThrottle"
@@ -39,7 +39,7 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
 {% endhighlight %}
 
 
-#####`InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+##### `InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
 Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
 {% highlight xml %}
 <bean id="loginThrottle"
@@ -50,7 +50,7 @@ Uses a memory map to prevent successive failed login attempts for a particular u
 {% endhighlight %}
 
 
-#####`InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+##### `InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
 [inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with

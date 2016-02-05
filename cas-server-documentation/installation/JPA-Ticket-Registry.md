@@ -177,7 +177,7 @@ In the `pom.xml` file of the Maven overlay, adjust for the following dependencie
 ...
 {% endhighlight %}
 
-##Cleaner Locking Strategy 
+## Cleaner Locking Strategy 
 The above shows a JPA 2.0 implementation of an exclusive, non-reentrant lock, `JpaLockingStrategy`, to be used with the JPA-backed ticket registry.
 
 This will configure the cleaner with the following defaults:
@@ -221,7 +221,7 @@ CREATE INDEX ST_TGT_FK_I ON TICKETGRANTINGTICKET (ticketGrantingTicket_ID);
 {% endhighlight %}
 
 
-###ORACLE
+### ORACLE
 {% highlight sql %}
 CREATE INDEX "ST_TGT_FK_I"
   ON SERVICETICKET ("TICKETGRANTINGTICKET_ID")
@@ -331,7 +331,7 @@ InnoDB tables are easily specified via the use of the following Hibernate dialec
 {% endhighlight %}
 
 
-###BLOB vs LONGBLOB
+### BLOB vs LONGBLOB
 Hibernate on recent versions of MySQL (e.g. 5.1) properly maps the `@Lob` JPA annotation onto type `LONGBLOB`, which is very important since these fields commonly store serialized graphs of Java objects that grow proportionally with CAS SSO session lifetime. Under some circumstances, Hibernate may treat these columns as type `BLOB`, which have storage limits that are easily exceeded. It is recommended that the generated schema be reviewed and any BLOB type columns be converted to `LONGBLOB`.
 
 The following MySQL statement would change this `SERVICES_GRANTED_ACCESS_TO` column's type to `LONGBLOB`:
@@ -341,7 +341,7 @@ ALTER TABLE TICKETGRANTINGTICKET MODIFY SERVICES_GRANTED_ACCESS_TO LONGBLOB;
 {% endhighlight %}
 
 
-###Case Sensitive Schema
+### Case Sensitive Schema
 It may necessary to force lowercase schema names in the MySQL configuration:
 
 Adjust the `my.cnf` file to include the following:
