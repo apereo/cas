@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-###`AcceptUsersAuthenticationHandler`
+### `AcceptUsersAuthenticationHandler`
 ```xml
 <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 ```
@@ -34,7 +34,7 @@ The following settings are applicable:
 accept.authn.users=casuser::Mellon
 ```
 
-###`FileAuthenticationHandler`
+### `FileAuthenticationHandler`
 
 ```xml
 <alias name="fileAuthenticationHandler" alias="primaryAuthenticationHandler" />
