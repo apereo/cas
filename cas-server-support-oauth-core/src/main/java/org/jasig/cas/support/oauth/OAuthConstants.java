@@ -17,6 +17,9 @@ public interface OAuthConstants {
     /** The redirect uri. */
     String REDIRECT_URI = "redirect_uri";
 
+    /** The response type. */
+    String RESPONSE_TYPE = "response_type";
+
     /** The client id. */
     String CLIENT_ID = "client_id";
 
