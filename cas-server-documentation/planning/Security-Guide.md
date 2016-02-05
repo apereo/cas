@@ -185,7 +185,7 @@ systems including CAS. See the
 section for further information.
 
 
-###Credential Encryption
+### Credential Encryption
 An open source product called [Java Simplified Encryption](http://www.jasypt.org/cli.html)  allows you to replace clear text passwords in files with encrypted strings that are decrypted at run time. Jasypt can be integrated into the Spring configuration framework so that property values are decrypted as the configuration file is loaded.  Jasypt's approach replaces the the property management technique with one that recognizes encrypted strings and decrypts them. This method uses password-based encryption, which means that the system still needs a secret password in order to decrypt our credentials. We don't want to simply move the secret from one file to another, and Jasypt avoids that by passing the key as an environment variable or even directly to the application through a web interface each time it is deployed.
 
 This ability is beneficial since it removes the need to embed plain-text credentials in configuration files, and allows the adopter to securely keep track of all encrypted settings in source control systems, safely sharing the build configuration with others. Sensitive pieces of data are only restricted to the deployment environment.

@@ -1,13 +1,14 @@
 package org.jasig.cas.web.report;
 
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.common.base.Predicates;
-import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -50,7 +53,7 @@ public final class StatisticsController implements ServletContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final Date upTimeStartDate = new Date();
+    private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Value("${host.name:cas01.example.org}")
     private String casTicketSuffix;
@@ -79,7 +82,7 @@ public final class StatisticsController implements ServletContextAware {
                 throws Exception {
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("startTime", this.upTimeStartDate);
-        final double difference = System.currentTimeMillis() - this.upTimeStartDate.getTime();
+        final double difference = this.upTimeStartDate.until(ZonedDateTime.now(ZoneOffset.UTC), ChronoUnit.MILLIS);
 
         modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<Integer>(
                         Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,

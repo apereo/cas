@@ -3,7 +3,7 @@ package org.jasig.cas.support.spnego.web.flow;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +61,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             logger.debug("SPNEGO Authorization header found with {} bytes",
                     authorizationHeader.length() - this.messageBeginPrefix.length());
 
-            final byte[] token = CompressionUtils.decodeBase64ToByteArray(authorizationHeader.substring(this.messageBeginPrefix.length()));
+            final byte[] token = EncodingUtils.decodeBase64(authorizationHeader.substring(this.messageBeginPrefix.length()));
             if (token == null) {
                 logger.warn("Could not compress authorization header in base64");
                 return null;
@@ -115,7 +115,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             logger.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                    + ' ' + CompressionUtils.encodeBase64(nextToken));
+                    + ' ' + EncodingUtils.encodeBase64(nextToken));
         } else {
             logger.debug("Unable to obtain the output token required.");
         }

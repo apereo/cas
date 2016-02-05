@@ -19,7 +19,6 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -147,7 +146,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
             @Override
             public void run() {
                 try {
-                    final Set<Resource> resources = ResourceCRLRevocationChecker.this.getResources();
+                    final Set<Resource> resources = getResources();
                     final Set<X509CRL> results = getFetcher().fetch(resources);
                     ResourceCRLRevocationChecker.this.addCrls(results);
                 } catch (final Exception e) {
@@ -190,9 +189,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
      * @param results the results
      */
     private void addCrls(final Set<X509CRL> results) {
-        final Iterator<X509CRL> it = results.iterator();
-        while (it.hasNext()) {
-            final X509CRL entry = it.next();
+        for (final X509CRL entry : results) {
             addCRL(entry.getIssuerX500Principal(), entry);
         }
     }

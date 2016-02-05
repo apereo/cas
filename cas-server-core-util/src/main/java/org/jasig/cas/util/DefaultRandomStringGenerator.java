@@ -1,6 +1,7 @@
 package org.jasig.cas.util;
 
 import java.security.SecureRandom;
+import java.util.stream.IntStream;
 
 /**
  * Implementation of the RandomStringGenerator that allows you to define the
@@ -76,10 +77,10 @@ public final class DefaultRandomStringGenerator implements RandomStringGenerator
      */
     private static String convertBytesToString(final byte[] random) {
         final char[] output = new char[random.length];
-        for (int i = 0; i < random.length; i++) {
+        IntStream.range(0, random.length).forEach(i -> {
             final int index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
             output[i] = PRINTABLE_CHARACTERS[index];
-        }
+        });
 
         return new String(output);
     }

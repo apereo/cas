@@ -67,9 +67,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         if (values == null) {
             return;
         }
-        for (final String handler : values) {
-            getValues().add(handler);
-        }
+        getValues().addAll(values);
     }
 
     @Override

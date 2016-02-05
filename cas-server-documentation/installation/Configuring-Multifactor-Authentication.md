@@ -24,23 +24,23 @@ CAS ships with support for applying policy in the following areas:
 
 ## Components
 
-###`PolicyBasedAuthenticationManager`
+### `PolicyBasedAuthenticationManager`
 CAS ships with an authentication manager component that is fundamentally MFA-aware. It supports a number of
 policies, discussed above, that could facilitate a simple MFA design; for example, where multiple credentials are
 invariably required to start a CAS SSO session.
 
-###`ContextualAuthenticationPolicy`
+### `ContextualAuthenticationPolicy`
 Strategy pattern component for applying security policy in an arbitrary context. These components are assumed to be
 stateful once created.
 
-###`ContextualAuthenticationPolicyFactory`
+### `ContextualAuthenticationPolicyFactory`
 Factory class for creating stateful instances of `ContextualAuthenticationPolicy` that apply to a particular context.
 
-###`AcceptAnyAuthenticationPolicyFactory`
+### `AcceptAnyAuthenticationPolicyFactory`
 Simple factory class that produces contextual security policies that always pass. This component is configured by
 default in some cases to provide backward compatibility with CAS 3.x.
 
-###`RequiredHandlerAuthenticationPolicyFactory`
+### `RequiredHandlerAuthenticationPolicyFactory`
 Factory that produces policy objects based on the security context of the service requesting a ticket. In particular the security context is based on the required authentication handlers that must have successfully validated credentials in order to access the service.
 
 With the above configuration in mind, the [service management facility](Service-Management.html)

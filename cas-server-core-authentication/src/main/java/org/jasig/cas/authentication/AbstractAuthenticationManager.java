@@ -1,12 +1,13 @@
 package org.jasig.cas.authentication;
 
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.inspektr.audit.annotation.Audit;
+
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -103,11 +104,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      */
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, final Collection<Credential> credentials) {
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
-            for (final Credential credential : credentials) {
-                if (populator.supports(credential)) {
-                    populator.populateAttributes(builder, credential);
-                }
-            }
+            credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
         }
     }
 

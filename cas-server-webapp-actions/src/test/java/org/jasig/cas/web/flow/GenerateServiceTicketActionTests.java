@@ -33,6 +33,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action = new GenerateServiceTicketAction();
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
+        this.action.setTicketRegistrySupport(getTicketRegistrySupport());
         this.action.afterPropertiesSet();
 
         final AuthenticationResult authnResult =
@@ -41,6 +42,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
                                 TestUtils.getCredentialsWithSameUsernameAndPassword());
 
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
+        getTicketRegistry().addTicket(this.ticketGrantingTicket);
     }
 
     @Test

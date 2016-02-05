@@ -2,15 +2,17 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationResult;
-import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,9 +41,13 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     private CentralAuthenticationService centralAuthenticationService;
 
     @NotNull
-    @Autowired(required=false)
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSupport")
+    private TicketRegistrySupport ticketRegistrySupport;
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -49,9 +55,23 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
-            final Credential credential = WebUtils.getCredential(context);
-            final AuthenticationResult authenticationResult =
-                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            /**
+             * In the initial primary authentication flow, credentials are cached and available.
+             * Since they are authenticated as part of submission first, there is no need to doubly
+             * authenticate and verify credentials.
+             *
+             * In subsequent authentication flows where a TGT is available and only an ST needs to be
+             * created, there are no cached copies of the credential, since we do have a TGT available.
+             * So we will simply grab the available authentication and produce the final result based on that.
+             */
+            final Authentication authentication = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            if (authentication == null) {
+                throw new InvalidTicketException(
+                        new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
+            }
+            final AuthenticationResultBuilder authenticationResultBuilder = authenticationSystemSupport
+                    .establishAuthenticationContextFromInitial(authentication);
+            final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
@@ -78,6 +98,10 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
         this.authenticationSystemSupport = authenticationSystemSupport;
+    }
+
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
     /**

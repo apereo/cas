@@ -151,10 +151,10 @@ public class DefaultServicesManagerImplTests  {
     @Test
     public void verifyEmptyServicesRegistry() {
         final SimpleService s = new SimpleService("http://www.google.com");
-        
-        for (final RegisteredService svc : defaultServicesManagerImpl.getAllServices()) {
-            defaultServicesManagerImpl.delete(svc.getId());
-        }
+
+        defaultServicesManagerImpl.getAllServices().stream()
+                .forEach(svc -> defaultServicesManagerImpl.delete(svc.getId()));
+
         assertTrue(this.defaultServicesManagerImpl.getAllServices().size() == 0);
         assertNull(this.defaultServicesManagerImpl.findServiceBy(s));
         assertNull(this.defaultServicesManagerImpl.findServiceBy(1000));
