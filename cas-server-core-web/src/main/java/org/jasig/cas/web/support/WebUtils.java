@@ -287,45 +287,12 @@ public final class WebUtils {
     }
 
     /**
-     * Put login ticket into flow scope.
-     *
-     * @param context the context
-     * @param ticket the ticket
-     */
-    public static void putLoginTicket(final RequestContext context, final String ticket) {
-        context.getFlowScope().put("loginTicket", ticket);
-    }
-
-    /**
      * Adds the unauthorized redirect url to the flow scope.
      * @param context the request context
      * @param url the uri to redirect the flow
      */
     public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
         context.getFlowScope().put("unauthorizedRedirectUrl", url);
-    }
-
-    /**
-     * Gets the login ticket from flow scope.
-     *
-     * @param context the context
-     * @return the login ticket from flow scope
-     */
-    public static String getLoginTicketFromFlowScope(final RequestContext context) {
-        // Getting the saved LT destroys it in support of one-time-use
-        // See section 3.5.1 of http://www.jasig.org/cas/protocol
-        final String lt = (String) context.getFlowScope().remove("loginTicket");
-        return lt != null ? lt : "";
-    }
-
-    /**
-     * Gets the login ticket from request.
-     *
-     * @param context the context
-     * @return the login ticket from request
-     */
-    public static String getLoginTicketFromRequest(final RequestContext context) {
-       return context.getRequestParameters().get("lt");
     }
 
     /**
