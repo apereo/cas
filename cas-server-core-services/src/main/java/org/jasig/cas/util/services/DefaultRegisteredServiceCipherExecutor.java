@@ -23,13 +23,6 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * Encrypt using the given cipher associated with the service,
-     * and encode the data in base 64.
-     *
-     * @param data the data
-     * @return the encoded piece of data in base64
-     */
     @Override
     public final String encode(final String data, final RegisteredService service) {
         try {
