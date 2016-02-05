@@ -73,7 +73,7 @@ Registered services present the following metadata:
 
 ## Persisting Registered Service Data
 
-######`InMemoryServiceRegistryDaoImpl`
+###### `InMemoryServiceRegistryDaoImpl`
 This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
 
 ```xml
@@ -95,19 +95,19 @@ This component is _NOT_ suitable for use with the service management webapp sinc
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
-######`JsonServiceRegistryDao`
+###### `JsonServiceRegistryDao`
 
 [See this guide](JSON-Service-Management.html) for more info please.
 
-######`MongoServiceRegistryDao`
+###### `MongoServiceRegistryDao`
 
 [See this guide](Mongo-Service-Management.html) for more info please.
 
-######`LdapServiceRegistryDao`
+###### `LdapServiceRegistryDao`
 
 [See this guide](LDAP-Service-Management.html) for more info please.
 
-######`JpaServiceRegistryDaoImpl`
+###### `JpaServiceRegistryDaoImpl`
 
 [See this guide](JPA-Service-Management.html) for more info please.
 

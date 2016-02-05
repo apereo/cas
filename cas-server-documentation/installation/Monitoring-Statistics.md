@@ -249,16 +249,16 @@ The CAS web application exposes a `/statistics` endpoint that can be used to vie
 
 Once access is granted, the following sub-endpoints can be used to query the CAS server's status and metrics:
 
-####`/statistics/ping`
+#### `/statistics/ping`
 Reports back `pong` to indicate that the CAS server is running.
 
-####`/statistics/metrics?pretty=true`
+#### `/statistics/metrics?pretty=true`
 Reports back metrics and performance data. The optional `pretty` flag attempts to format the JSON output.
 
-####`/statistics/threads`
+#### `/statistics/threads`
 Reports back JVM thread info.
 
-####`/statistics/healthcheck`
+#### `/statistics/healthcheck`
 Unused at this point, but may be used later to output health examinations of the CAS server's internals, such as ticket registry, etc.
 
 ## Routing logs to SysLog
