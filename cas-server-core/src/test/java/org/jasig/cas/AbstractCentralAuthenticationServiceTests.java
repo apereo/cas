@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired(required = true)
     private CentralAuthenticationService centralAuthenticationService;
@@ -79,5 +83,9 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return authenticationSystemSupport;
+    }
+
+    public TicketRegistrySupport getTicketRegistrySupport() {
+        return ticketRegistrySupport;
     }
 }
