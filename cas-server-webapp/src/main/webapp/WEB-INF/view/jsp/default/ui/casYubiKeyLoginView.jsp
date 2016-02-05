@@ -29,7 +29,6 @@
                     tabindex="4" type="submit" />
         </div>
         <div class="row btn-row">
-            <input type="hidden" name="lt" value="${loginTicket}"/>
             <input type="hidden" name="execution" value="${flowExecutionKey}"/>
         </div>
     </form:form>

@@ -182,4 +182,4 @@ user-friendly server-side error messages.
 
 ## X.509 Webflow Configuration
 
-Replace all instances of the `generateLoginTicket` transition in other states with `startX509Authenticate`.
+Replace all instances of the `initializeLoginForm` transition in other states with `startX509Authenticate`.
