@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.4.xsd">
 
-    <var name="credentials" class="org.jasig.cas.adaptors.duo.DuoCredential" />
+    <var name="credential" class="org.jasig.cas.adaptors.duo.DuoCredential" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
@@ -13,7 +13,7 @@
         <transition on="generated" to="viewLoginFormDuo" />
     </action-state>
 
-    <view-state id="viewLoginFormDuo" view="casDuoLoginView" model="credentials">
+    <view-state id="viewLoginFormDuo" view="casDuoLoginView" model="credential">
         <binder>
             <binding property="signedDuoResponse"/>
         </binder>
