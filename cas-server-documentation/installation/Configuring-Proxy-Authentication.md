@@ -51,7 +51,7 @@ below and the aspects related to proxy authentication may either be commented ou
 Components responsible to determine what needs to be done to handle proxies.
 
 
-###`CAS10ProxyHandler`
+### `CAS10ProxyHandler`
 Proxy handler compliant with CAS v1 protocol that is designed to not handle proxy requests and simply return nothing as proxy support in the protocol is absent.
 
 {% highlight xml %}
@@ -59,7 +59,7 @@ Proxy handler compliant with CAS v1 protocol that is designed to not handle prox
 {% endhighlight %}
 
 
-###`CAS20ProxyHandler`
+### `CAS20ProxyHandler`
 Protocol handler compliant with CAS v2 protocol that is responsible to callback the URL provided and give it a pgtIou and a pgtId.
 
 {% highlight xml %}

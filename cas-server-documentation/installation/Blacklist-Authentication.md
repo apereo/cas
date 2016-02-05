@@ -22,7 +22,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-###`RejectUsersAuthenticationHandler`
+### `RejectUsersAuthenticationHandler`
 {% highlight xml %}
 <bean class="org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler">
     <property name="users">

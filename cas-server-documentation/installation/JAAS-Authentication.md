@@ -14,7 +14,7 @@ and allows for PAM-style multi-module "stacked" authentication.
 JAAS components are provided in the CAS core module and require no additional dependencies to use.
 
 
-######`JaasAuthenticationHandler`
+###### `JaasAuthenticationHandler`
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file. The handler only exposes a single configuration property:
 
