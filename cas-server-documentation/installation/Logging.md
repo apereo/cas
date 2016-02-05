@@ -127,23 +127,23 @@ CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditin
 
 ## Components
 
-###`AuditTrailManagementAspect`
+### `AuditTrailManagementAspect`
 Aspect modularizing management of an audit trail data concern.
 
 
-###`Slf4jLoggingAuditTrailManager`
+### `Slf4jLoggingAuditTrailManager`
 `AuditTrailManager` that dumps auditable information to a configured logger based on SLF4J, at the `INFO` level.
 
 
-###`JdbcAuditTrailManager`
+### `JdbcAuditTrailManager`
 `AuditTrailManager` to persist the audit trail to the `AUDIT_TRAIL` table in a rational database.
 
 
-###`TicketAsFirstParameterResourceResolver`
+### `TicketAsFirstParameterResourceResolver`
 `ResourceResolver` that can determine the ticket id from the first parameter of the method call.
 
 
-###`TicketOrCredentialPrincipalResolver`
+### `TicketOrCredentialPrincipalResolver`
 `PrincipalResolver` that can retrieve the username from either the `Ticket` or from the `Credential`.
 
 ## Configuration

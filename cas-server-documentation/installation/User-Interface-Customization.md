@@ -342,7 +342,7 @@ Note that support for themes comes with the following components:
 | `RegisteredServiceThemeBasedViewResolver` | If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs an overhaul with additional icons, images, text, etc then this component` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
 
 
-###`ServiceThemeResolver`
+### `ServiceThemeResolver`
 Configuration of service-specific themes is backed by the Spring framework and provided by the following component:
 {% highlight xml %}
 <bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
@@ -358,7 +358,7 @@ Furthermore, deployers may be able to use the functionality provided by the `The
 - Add the location of related styling files, such as CSS and Javascript in the file above.
 - Specify the name of your theme for the service definition under the `theme` property.
 
-###`RegisteredServiceThemeBasedViewResolver`
+### `RegisteredServiceThemeBasedViewResolver`
 `RegisteredServiceThemeBasedViewResolver` is an alternate Spring View Resolver that utilizes a service's
 associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.jsp`, etc). This is specially useful in cases where the set of pages for a theme that are targeted
 for a different type of audience are entirely different structurally that simply
