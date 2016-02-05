@@ -47,7 +47,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      */
     protected byte[] sign(final byte[] value) {
         try {
-            final String base64 = CompressionUtils.encodeBase64(value);
+            final String base64 = EncodingUtils.encodeBase64(value);
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(base64);
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
@@ -76,7 +76,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             if (verified) {
                 final String payload = jws.getPayload();
                 logger.debug("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
-                return CompressionUtils.decodeBase64(payload);
+                return EncodingUtils.decodeBase64(payload);
             }
             return null;
         } catch (final Exception e) {

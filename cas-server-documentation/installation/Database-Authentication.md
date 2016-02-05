@@ -6,13 +6,13 @@ title: CAS - Database Authentication
 # Database Authentication
 Database authentication components are enabled by including the following dependencies in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-jdbc</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Connection Pooling
 All database authentication components require a `DataSource` for acquiring connections to the underlying database.
@@ -22,7 +22,7 @@ is a good choice that we discuss here.
 ### Pooled Data Source Example
 A bean named `dataSource` must be defined for CAS components that use a database.
 
-{% highlight xml %}
+```xml
 <bean id="dataSource"
   class="com.mchange.v2.c3p0.ComboPooledDataSource"
   p:driverClass="${database.driverClass}"
@@ -39,11 +39,11 @@ A bean named `dataSource` must be defined for CAS components that use a database
   p:acquireRetryDelay="${database.pool.acquireRetryDelay}"
   p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod}"
   p:preferredTestQuery="${database.pool.connectionHealthQuery}" />
-{% endhighlight %}
+```
 
 The following properties may be used as a starting point for connection pool configuration/tuning.
 
-{% highlight properties %}
+```properties
 # == Basic database connection pool configuration ==
 database.driverClass=org.postgresql.Driver
 database.url=jdbc:postgresql://database.example.com/cas?ssl=true
@@ -82,46 +82,46 @@ database.pool.acquireRetryAttempts=5
 
 # Amount of time in ms to wait between successive aquire retry attempts.
 database.pool.acquireRetryDelay=2000
-{% endhighlight %}
+```
 
 
 ## Database Components
 CAS provides the following components to accommodate different database authentication needs.
 
-######`QueryDatabaseAuthenticationHandler`
+###### `QueryDatabaseAuthenticationHandler`
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
 configurable database query.
 
-{% highlight xml %}
+```xml
 <alias name="queryDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="queryDatabaseDataSource" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.jdbc.authn.query.sql=select password from users where username=?
-{% endhighlight %}
+```
 
-######`SearchModeSearchDatabaseAuthenticationHandler`
+###### `SearchModeSearchDatabaseAuthenticationHandler`
 Searches for a user record by querying against a username and password; the user is authenticated if at
 least one result is found.
 
-{% highlight xml %}
+```xml
 <alias name="searchModeSearchDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="searchModeDatabaseDataSource" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.jdbc.authn.search.password=
 # cas.jdbc.authn.search.user=
 # cas.jdbc.authn.search.table=
-{% endhighlight %}
+```
 
 
-######`BindModeSearchDatabaseAuthenticationHandler`
+###### `BindModeSearchDatabaseAuthenticationHandler`
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
 The following example does not perform any password encoding since most JDBC drivers natively encode plaintext
@@ -129,12 +129,12 @@ passwords to the appropriate format required by the underlying database. Note au
 ability to establish a connection with username/password credentials. This handler is the easiest to configure
 (usually none required), but least flexible, of the database authentication components.
 
-{% highlight xml %}
+```xml
 <alias name="bindModeSearchDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="bindSearchDatabaseDataSource" />
-{% endhighlight %}
+```
 
-######`QueryAndEncodeDatabaseAuthenticationHandler`
+###### `QueryAndEncodeDatabaseAuthenticationHandler`
 A JDBC querying handler that will pull back the password and
 the private salt value for a user and validate the encoded
 password using the public salt value. Assumes everything
@@ -147,14 +147,14 @@ If multiple iterations are used, the bytecode Hash of the first iteration is
 rehashed without the salt values.
 The final hash is converted to Hex before comparing it to the database value.
 
-{% highlight xml %}
+```xml
 <alias name="queryAndEncodeDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="queryEncodeDatabaseDataSource" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.jdbc.authn.query.encode.sql=
 # cas.jdbc.authn.query.encode.alg=
 # cas.jdbc.authn.query.encode.salt.static=
@@ -162,4 +162,4 @@ The following settings are applicable:
 # cas.jdbc.authn.query.encode.salt=
 # cas.jdbc.authn.query.encode.iterations.field=
 # cas.jdbc.authn.query.encode.iterations=
-{% endhighlight %}
+```

@@ -1,11 +1,12 @@
 package org.jasig.cas.support.saml.services.idp.metadata;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
+
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLException;
@@ -29,9 +30,11 @@ import org.opensaml.xmlsec.signature.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlRegisteredServiceServiceProviderMetadataFacade} that acts a façade between the SAML metadata resolved
@@ -146,8 +149,8 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return this.ssoDescriptor;
     }
 
-    public DateTime getValidUntil() {
-        return this.ssoDescriptor.getValidUntil();
+    public ZonedDateTime getValidUntil() {
+        return DateTimeUtils.zonedDateTimeOf(this.ssoDescriptor.getValidUntil());
     }
 
     public EntityDescriptor getEntityDescriptor() {
@@ -218,11 +221,8 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         final List<String> nameIdFormats = new ArrayList<>();
         final List<XMLObject> children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
-            for (final XMLObject child : children) {
-                if (child instanceof NameIDFormat) {
-                    nameIdFormats.add(((NameIDFormat) child).getFormat());
-                }
-            }
+            nameIdFormats.addAll(children.stream().filter(child -> child instanceof NameIDFormat)
+                    .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
         }
         return nameIdFormats;
     }

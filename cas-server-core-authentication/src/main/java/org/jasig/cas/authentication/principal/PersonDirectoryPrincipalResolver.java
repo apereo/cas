@@ -1,11 +1,12 @@
 package org.jasig.cas.authentication.principal;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.util.Pair;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,9 +136,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected Pair<String, Map<String, Object>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
                                                                                    final Map<String, List<Object>> attributes) {
+        final String[] principalId = {extractedPrincipalId};
         final Map<String, Object> convertedAttributes = new HashMap<>();
-        String principalId = extractedPrincipalId;
-        for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
+        attributes.entrySet().stream().forEach(entry -> {
             final String key = entry.getKey();
 
             logger.debug("Found attribute [{}]", key);
@@ -147,7 +148,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, extractedPrincipalId);
                 } else {
-                    principalId = values.get(0).toString();
+                    principalId[0] = values.get(0).toString();
                     logger.debug(
                             "Found principal attribute value {}; removing {} from attribute map.",
                             extractedPrincipalId,
@@ -156,9 +157,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             } else {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
-        }
-
-        return new Pair<>(principalId, convertedAttributes);
+        });
+        return new Pair<>(principalId[0], convertedAttributes);
     }
 
     /**

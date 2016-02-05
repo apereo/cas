@@ -185,7 +185,7 @@ systems including CAS. See the
 section for further information.
 
 
-###Credential Encryption
+### Credential Encryption
 An open source product called [Java Simplified Encryption](http://www.jasypt.org/cli.html)  allows you to replace clear text passwords in files with encrypted strings that are decrypted at run time. Jasypt can be integrated into the Spring configuration framework so that property values are decrypted as the configuration file is loaded.  Jasypt's approach replaces the the property management technique with one that recognizes encrypted strings and decrypts them. This method uses password-based encryption, which means that the system still needs a secret password in order to decrypt our credentials. We don't want to simply move the secret from one file to another, and Jasypt avoids that by passing the key as an environment variable or even directly to the application through a web interface each time it is deployed.
 
 This ability is beneficial since it removes the need to embed plain-text credentials in configuration files, and allows the adopter to securely keep track of all encrypted settings in source control systems, safely sharing the build configuration with others. Sensitive pieces of data are only restricted to the deployment environment.
@@ -201,13 +201,13 @@ As part of the CAS Security Filter, the CAS project automatically provides the n
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently off by default, and may be enabled via the following settings:
 
-{% highlight xml %}
+```xml
 # httpresponse.header.cache=false
 # httpresponse.header.hsts=false
 # httpresponse.header.xframe=false
 # httpresponse.header.xcontent=false
 # httpresponse.header.xss=false
-{% endhighlight %}
+```
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 

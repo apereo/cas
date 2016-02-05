@@ -10,8 +10,6 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
 
-import java.util.Iterator;
-
 /**
  * The {@link WsFederationWebflowConfigurer} is responsible for
  * adjusting the CAS webflow context for wsfed integration.
@@ -39,9 +37,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         setStartState(flow, actionState);
 
         final TransitionableState loginTicketState = flow.getTransitionableState(CasWebflowConstants.STATE_ID_GENERATE_LOGIN_TICKET);
-        final Iterator<Transition> it = loginTicketState.getTransitionSet().iterator();
-        while (it.hasNext()) {
-            final Transition transition = it.next();
+        for (final Transition transition : loginTicketState.getTransitionSet()) {
             if (transition.getId().equals(CasWebflowConstants.TRANSITION_ID_GENERATED)) {
                 final TargetStateResolver targetStateResolver = (TargetStateResolver) fromStringTo(TargetStateResolver.class)
                         .execute("wsFederationRedirect");

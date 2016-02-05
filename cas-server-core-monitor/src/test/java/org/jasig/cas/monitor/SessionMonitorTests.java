@@ -8,8 +8,11 @@ import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -61,24 +64,18 @@ public class SessionMonitorTests {
         assertTrue(status.getDescription().contains("Service ticket count"));
     }
     private void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
-        TicketGrantingTicketImpl ticket = null;
-        for (int i = 0; i < tgtCount; i++) {
-            ticket = new TicketGrantingTicketImpl(
+        final TicketGrantingTicketImpl[] ticket = {null};
+        IntStream.range(0, tgtCount).forEach(i -> {
+            ticket[0] = new TicketGrantingTicketImpl(
                     GENERATOR.getNewTicketId("TGT"),
                     org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     TEST_EXP_POLICY);
-            registry.addTicket(ticket);
-        }
+            registry.addTicket(ticket[0]);
+        });
 
-        if (ticket != null) {
-          for (int i = 0; i < stCount; i++) {
-              registry.addTicket(ticket.grantServiceTicket(
-                      GENERATOR.getNewTicketId("ST"),
-                      new MockService("junit"),
-                      TEST_EXP_POLICY,
-                      false,
-                      true));
-          }
+        if (ticket[0] != null) {
+            IntStream.range(0, stCount).forEach(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
+                                    new MockService("junit"), TEST_EXP_POLICY, false, true)));
         }
     }
 }

@@ -1,6 +1,5 @@
 package org.jasig.cas.ticket.registry.support;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +13,9 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * JPA 2.0 implementation of an exclusive, non-reentrant lock.
@@ -105,12 +102,12 @@ public class JpaLockingStrategy implements LockingStrategy {
 
         boolean result = false;
         if (lock != null) {
-            final DateTime expDate = new DateTime(lock.getExpirationDate());
+            final ZonedDateTime expDate = ZonedDateTime.from(lock.getExpirationDate());
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
                 logger.debug("{} trying to acquire {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
-            } else if (new DateTime().isAfter(expDate)) {
+            } else if (ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
                 // Acquire expired lock regardless of who formerly owned it
                 logger.debug("{} trying to acquire expired {} lock.", uniqueId, applicationId);
                 result = acquire(entityManager, lock);
@@ -171,9 +168,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     private boolean acquire(final EntityManager em, final Lock lock) {
         lock.setUniqueId(uniqueId);
         if (lockTimeout > 0) {
-            final Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.SECOND, lockTimeout);
-            lock.setExpirationDate(cal.getTime());
+            lock.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(lockTimeout));
         } else {
             lock.setExpirationDate(null);
         }
@@ -217,9 +212,8 @@ public class JpaLockingStrategy implements LockingStrategy {
         private String uniqueId;
 
         /** Database column name that holds expiration date. */
-        @Temporal(TemporalType.TIMESTAMP)
         @Column(name="expiration_date")
-        private Date expirationDate;
+        private ZonedDateTime expirationDate;
 
         /**
          * @return the applicationId
@@ -252,14 +246,14 @@ public class JpaLockingStrategy implements LockingStrategy {
         /**
          * @return the expirationDate
          */
-        public DateTime getExpirationDate() {
-            return this.expirationDate == null ? null : new DateTime(this.expirationDate);
+        public ZonedDateTime getExpirationDate() {
+            return this.expirationDate == null ? null : ZonedDateTime.from(this.expirationDate);
         }
 
         /**
          * @param expirationDate the expirationDate to set
          */
-        public void setExpirationDate(final Date expirationDate) {
+        public void setExpirationDate(final ZonedDateTime expirationDate) {
             this.expirationDate = expirationDate;
         }
     }

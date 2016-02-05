@@ -1,25 +1,32 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-       http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.4.xsd">
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-       <bean id="accessTokenJwtGenerator" class="org.pac4j.jwt.profile.JwtGenerator">
-              <constructor-arg name="signingSecret" value="${cas.oauth.jwt.signingSecret}" />
-              <constructor-arg name="encryptionSecret" value="${cas.oauth.jwt.encryptionSecret}" />
-       </bean>
+       <alias name="ticketGrantingTicketExpirationPolicy" alias="oAuthAcccessTokenExpirationPolicy" />
+       <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="oAuthCodeExpirationPolicy" />
 
-       <bean id="accessTokenJwtAuthenticator" class="org.pac4j.jwt.credentials.authenticator.JwtAuthenticator">
-              <constructor-arg name="signingSecret" value="${cas.oauth.jwt.signingSecret}" />
-              <constructor-arg name="encryptionSecret" value="${cas.oauth.jwt.encryptionSecret}" />
-       </bean>
+       <context:component-scan base-package="org.pac4j.springframework.web" />
+
+       <bean id="oauthSecConfig" class="org.pac4j.core.config.Config"
+             c:callbackUrl="${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize"
+             c:client-ref="oauthCasClient" />
+
+       <bean id="oauthCasClient" class="org.pac4j.cas.client.CasClient" p:casLoginUrl="${server.prefix:http://localhost:8080/cas}/login"
+             p:name="CasOAuthClient" />
+
+       <mvc:interceptors>
+              <mvc:interceptor>
+                     <mvc:mapping path="/oauth2.0/authorize*" />
+                     <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor"
+                           c:config-ref="oauthSecConfig"
+                           c:clientName="CasOAuthClient" />
+              </mvc:interceptor>
+       </mvc:interceptors>
 
 </beans>

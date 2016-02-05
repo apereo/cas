@@ -25,12 +25,8 @@ public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAut
 
             @Override
             public boolean isSatisfiedBy(final Authentication authentication) {
-                for (final String required : context.getRegisteredService().getRequiredHandlers()) {
-                    if (!authentication.getSuccesses().containsKey(required)) {
-                        return false;
-                    }
-                }
-                return true;
+                return context.getRegisteredService().getRequiredHandlers().stream()
+                        .allMatch(required -> authentication.getSuccesses().containsKey(required));
             }
         };
     }

@@ -29,15 +29,15 @@ Adjust your expiration policy so that remember-me authentication requests are
 handled via a long-term timeout expiration policy, and other requests
 are handled via the CAS default SSO session expiration policy.
 
-{% highlight xml %}
+```xml
 <alias name="rememberMeDelegatingExpirationPolicy" alias="grantingTicketExpirationPolicy" />
 <alias name="timeoutExpirationPolicy" alias="rememberMeExpirationPolicy" />
 <alias name="ticketGrantingTicketExpirationPolicy" alias="sessionExpirationPolicy" />
-{% endhighlight %}
+```
 
 The length of the long term authentication session is determined by:
 
-{% highlight properties %}
+```properties
 # Inactivity Timeout Policy
 # tgt.timeout.maxTimeToLiveInSeconds=1209600
 
@@ -46,7 +46,7 @@ The length of the long term authentication session is determined by:
 # tgt.timeToKillInSeconds=7200
 
 # tgc.remember.me.maxAge=1209600
-{% endhighlight %}
+```
 
 This allows CAS to preserve a ticket expiration policy for 2 weeks for
 long-term authentication requests, while using a maximum 8-hour expiration policy

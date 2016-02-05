@@ -1,9 +1,10 @@
 package org.jasig.cas;
 
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
 
 import java.io.File;
 import java.net.URL;
+import java.time.ZonedDateTime;
 
 /**
  * Class that exposes the CAS version. Fetches the "Implementation-Version"
@@ -34,16 +35,16 @@ public final class CasVersion {
      * Gets last modified date/time for the module.
      * @return the date/time
      */
-    public static DateTime getDateTime() {
+    public static ZonedDateTime getDateTime() {
         try {
             final Class clazz = CasVersion.class;
             final URL resource = clazz.getResource(clazz.getSimpleName() + ".class");
             if ("file".equals(resource.getProtocol())) {
-                return new DateTime(new File(resource.toURI()).lastModified());
+                return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());
             } else if ("jar".equals(resource.getProtocol())) {
                 final String path = resource.getPath();
                 final File file = new File(path.substring(5, path.indexOf('!')));
-                return new DateTime(file.lastModified());
+                return DateTimeUtils.zonedDateTimeOf(file.lastModified());
             }
             throw new IllegalArgumentException("Unhandled url protocol: "
                         + resource.getProtocol() + " for class: "

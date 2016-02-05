@@ -12,25 +12,13 @@ To get a better understanding of the OAuth/OpenID protocol support in CAS, [see 
 ## Configuration
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-oauth</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
-
-and defining the appropriate keys for JWT signing and encryption:
-
-{% highlight properties %}
-cas.oauth.jwt.signingSecret=
-cas.oauth.jwt.encryptionSecret=
-{% endhighlight %}
-
-These keys must be 32 characters long (the default signature algorithm is HS256 and the default encryption algorithm is A256GCM).
-
-You can even customize the way JWT tokens are generated and verified by overriding the `META-INF\spring\cas-servlet-oauth.xml` file.
-
+```
 
 After enabling OAuth support, three new urls will be available:
 
@@ -44,11 +32,11 @@ It's the url to call to exchange the code for an access token. Input GET paramet
 It's the url to call to get the profile of the authorized user. Input GET parameter required: *access_token*. The response is in JSON format with all attributes of the user.
 
 
-##Add OAuth Clients
+## Add OAuth Clients
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "clientid",
@@ -58,7 +46,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "name" : "HTTPS and IMAPS",
   "id" : 10000001
 }
-{% endhighlight %}
+```
 
 # OpenID Authentication
 

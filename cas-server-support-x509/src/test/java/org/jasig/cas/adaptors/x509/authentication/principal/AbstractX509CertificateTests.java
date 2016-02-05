@@ -63,13 +63,7 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public Principal getIssuerDN() {
-            return new Principal(){
-
-                @Override
-                public String getName() {
-                    return "CN=Jasig,DC=jasig,DC=org";
-                }
-            };
+            return () -> "CN=Jasig,DC=jasig,DC=org";
         }
 
         @Override
@@ -119,14 +113,7 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public Principal getSubjectDN() {
-            return new Principal(){
-
-                @Override
-                public String getName() {
-                    return "CN=CAS,DC=jasig,DC=org";
-                }
-
-            };
+            return () -> "CN=CAS,DC=jasig,DC=org";
         }
 
         @Override

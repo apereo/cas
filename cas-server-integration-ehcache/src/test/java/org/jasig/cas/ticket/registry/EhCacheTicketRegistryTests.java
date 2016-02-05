@@ -7,6 +7,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +20,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
@@ -207,11 +207,8 @@ public final class EhCacheTicketRegistryTests {
             assertEquals("The size of the registry is not the same as the collection.", ticketRegistryTickets.size(),
                     tickets.size());
 
-            for (final Ticket ticket : tickets) {
-                if (!ticketRegistryTickets.contains(ticket)) {
-                    fail("Ticket was added to registry but was not found in retrieval of collection of all tickets.");
-                }
-            }
+            tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
+                    .forEach(ticket -> fail("Ticket was added to registry but was not found in retrieval of collection of all tickets."));
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
@@ -259,10 +256,9 @@ public final class EhCacheTicketRegistryTests {
      * test to run an isolated mode independent of the previous state of either cache.
      */
     private void initTicketRegistry() {
-        final Iterator<Ticket> it = this.ticketRegistry.getTickets().iterator();
 
-        while (it.hasNext()) {
-            this.ticketRegistry.deleteTicket(it.next().getId());
+        for (final Ticket ticket : this.ticketRegistry.getTickets()) {
+            this.ticketRegistry.deleteTicket(ticket.getId());
         }
     }
 }

@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  *   <li>Monitoring : follow separately the number of TGT and ST.</li>
  * </ul>
  *
- * @author tduehr
+ * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 4.3.0`
  */
 @Component("igniteTicketRegistry")
@@ -162,12 +162,7 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
         final Collection<Cache.Entry<String, Ticket>> serviceTickets;
         final Collection<Cache.Entry<String, Ticket>> tgtTicketsTickets;
 
-        final IgniteBiPredicate<String, Ticket> filter = new IgniteBiPredicate<String, Ticket>() {
-          @Override
-          public boolean apply(final String key, final Ticket t) {
-            return !t.isExpired();
-          }
-        };
+        final IgniteBiPredicate<String, Ticket> filter = (IgniteBiPredicate<String, Ticket>) (key, t) -> !t.isExpired();
 
         QueryCursor<Cache.Entry<String, Ticket>> cursor = ticketGrantingTicketsCache.query(new ScanQuery<>(filter));
         tgtTicketsTickets = cursor.getAll();
@@ -177,15 +172,9 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
 
         final Collection<Ticket> allTickets = new HashSet<>(serviceTickets.size() + tgtTicketsTickets.size());
 
-        for (final Cache.Entry<String, Ticket> entry : serviceTickets) {
-            final Ticket proxiedTicket = getProxiedTicketInstance(entry.getValue());
-            allTickets.add(proxiedTicket);
-        }
+        serviceTickets.stream().forEach(entry -> allTickets.add(getProxiedTicketInstance(entry.getValue())));
 
-        for (final Cache.Entry<String, Ticket> entry : tgtTicketsTickets) {
-            final Ticket proxiedTicket = getProxiedTicketInstance(entry.getValue());
-            allTickets.add(proxiedTicket);
-        }
+        tgtTicketsTickets.stream().forEach(entry -> allTickets.add(getProxiedTicketInstance(entry.getValue())));
 
         return decodeTickets(allTickets);
     }
@@ -302,13 +291,13 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
     @Override
     public int sessionCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache
-            .size(CachePeekMode.ALL), super.sessionCount());
+            .size(CachePeekMode.ALL), (int) super.sessionCount());
     }
 
     @Override
     public int serviceTicketCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache
-            .size(CachePeekMode.ALL), super.serviceTicketCount());
+            .size(CachePeekMode.ALL), (int) super.serviceTicketCount());
     }
 
     /**
