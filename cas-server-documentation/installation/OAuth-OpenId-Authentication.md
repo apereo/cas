@@ -23,13 +23,32 @@ Support is enabled by including the following dependency in the Maven WAR overla
 After enabling OAuth support, three new urls will be available:
 
 * **/oauth2.0/authorize**  
-It's the url to call to authorize the user: the CAS login page will be displayed and the user will authenticate. After successful authentication, the user will be redirected to the OAuth *callback url* with a code. Input GET parameters required: *client_id* and *redirect_uri*.
+It's the url to call to authorize the user: the CAS login page will be displayed and the user will authenticate. Required input GET parameters: *client_id* and *redirect_uri*.
 
 * **/oauth2.0/accessToken**  
-It's the url to call to exchange the code for an access token. Input GET parameters required: *client_id*, *redirect_uri*, *client_secret* and *code*.
+It's the url to call to exchange the code for an access token. Required input GET parameters: *client_id*, *redirect_uri*, *client_secret* and *code*.
 
 * **/oauth2.0/profile**  
-It's the url to call to get the profile of the authorized user. Input GET parameter required: *access_token*. The response is in JSON format with all attributes of the user.
+It's the url to call to get the profile of the authorized user. Required input GET parameter: *access_token*. The response is in JSON format with all attributes of the user.
+
+
+## Grant types
+
+Two grant types are supported:
+
+### The authorization code grant type has three steps:
+
+1) /cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK returns the code as a parameter of the CALLBACK url
+
+2) /cas/oauth2.0/accessToken?client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK returns the access token
+
+3) /cas/oauth2.0/profile?access_token=TOKEN returns the user profile.
+
+### The implicit grant type has two steps:
+
+1) /cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK returns the access token as an anchor parameter of the CALLBACK url
+
+2) /cas/oauth2.0/profile?access_token=TOKEN returns the user profile.
 
 
 ## Add OAuth Clients

@@ -1,15 +1,20 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
+import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +44,27 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
+
+    @NotNull
+    @Value("${tgt.timeToKillInSeconds:7200}")
+    protected long timeout;
+
+    @Autowired
+    @Qualifier("defaultAccessTokenFactory")
+    private AccessTokenFactory accessTokenFactory;
+
+    /**
+     * Generate an access token.
+     *
+     * @param service the service
+     * @param authentication the authentication
+     * @return an access token
+     */
+    protected AccessToken generateAccessToken(final Service service, final Authentication authentication) {
+        final AccessToken accessToken = accessTokenFactory.create(service, authentication);
+        ticketRegistry.addTicket(accessToken);
+        return accessToken;
+    }
 
     /**
      * Check if a parameter exists.
@@ -127,5 +153,21 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     public TicketRegistry getTicketRegistry() {
         return ticketRegistry;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(final long timeout) {
+        this.timeout = timeout;
+    }
+
+    public AccessTokenFactory getAccessTokenFactory() {
+        return accessTokenFactory;
+    }
+
+    public void setAccessTokenFactory(final AccessTokenFactory accessTokenFactory) {
+        this.accessTokenFactory = accessTokenFactory;
     }
 }

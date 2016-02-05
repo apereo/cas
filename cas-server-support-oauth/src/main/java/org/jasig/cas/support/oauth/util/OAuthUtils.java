@@ -1,4 +1,4 @@
-package org.jasig.cas.support.oauth;
+package org.jasig.cas.support.oauth.util;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -12,7 +12,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -67,7 +68,6 @@ public final class OAuthUtils {
         return new ModelAndView(new RedirectView(url));
     }
 
-
     /**
      * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
      * @param servicesManager the service registry DAO instance.
@@ -84,5 +84,19 @@ public final class OAuthUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Url encode a value.
+     *
+     * @param value the value to encode
+     * @return the encoded value
+     */
+    public static String urlEncode(final String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
