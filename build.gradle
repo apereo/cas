@@ -783,7 +783,7 @@ ext.libraries = [
         ],
         validationapi    : "javax.validation:validation-api:$javaxValidationVersion",
         xmlapis          : "xml-apis:xml-apis:$xmlapisVersion",
-        yubicoapi        : [
+        yubicoapi        : 
             dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
                 exclude(group: 'org.slf4j', module: 'slf4j-api')
                 exclude(group: 'commons-codec', module: 'commons-codec')
