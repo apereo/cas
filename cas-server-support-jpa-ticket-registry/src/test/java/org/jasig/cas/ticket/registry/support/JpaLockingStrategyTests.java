@@ -8,8 +8,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
@@ -18,12 +16,15 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -131,7 +132,7 @@ public class JpaLockingStrategyTests {
     public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, getConcurrentLocks("concurrent-new"));
+            testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndRelease produced an error", e);
             fail("testConcurrentAcquireAndRelease failed.");
@@ -150,7 +151,7 @@ public class JpaLockingStrategyTests {
         locks[0].release();
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, locks);
+            testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
             fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
@@ -189,30 +190,29 @@ public class JpaLockingStrategyTests {
         return (String) results.get(0).get("unique_id");
     }
 
-    private void testConcurrency(final ExecutorService executor, final LockingStrategy[] locks) throws Exception {
-        final List<Locker> lockers = new ArrayList<>(locks.length);
-        for (int i = 0; i < locks.length; i++) {
-            lockers.add(new Locker(locks[i]));
-        }
+    private void testConcurrency(final ExecutorService executor, final Collection<LockingStrategy> locks) throws Exception {
+        final List<Locker> lockers = new ArrayList<>(locks.size());
+        lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
 
-        int lockCount = 0;
-        for (final Future<Boolean> result : executor.invokeAll(lockers)) {
-            if (result.get()) {
-                lockCount++;
+        final long lockCount = executor.invokeAll(lockers).stream().filter(result -> {
+            try {
+                return result.get();
+            } catch (final InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
             }
-        }
+        }).count();
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
 
-        final List<Releaser> releasers = new ArrayList<>(locks.length);
-        for (int i = 0; i < locks.length; i++) {
-            releasers.add(new Releaser(locks[i]));
-        }
-        int releaseCount = 0;
-        for (final Future<Boolean> result : executor.invokeAll(lockers)) {
-            if (result.get()) {
-                releaseCount++;
+        final List<Releaser> releasers = new ArrayList<>(locks.size());
+
+        releasers.addAll(locks.stream().map(Releaser::new).collect(Collectors.toList()));
+        final long releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
+            try {
+                return result.get();
+            } catch (final InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
             }
-        }
+        }).count();
         assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
     }
 
@@ -233,18 +233,15 @@ public class JpaLockingStrategyTests {
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
-                @Override
-                public Object doInTransaction(final TransactionStatus status) {
-                    try {
-                        final Object result = method.invoke(jpaLock, args);
-                        jpaLock.entityManager.flush();
-                        logger.debug("Performed {} on {}", method.getName(), jpaLock);
-                        return result;
-                        // Force result of transaction to database
-                    } catch (final Exception e) {
-                        throw new RuntimeException("Transactional method invocation failed.", e);
-                    }
+            return new TransactionTemplate(txManager).execute(status -> {
+                try {
+                    final Object result = method.invoke(jpaLock, args);
+                    jpaLock.entityManager.flush();
+                    logger.debug("Performed {} on {}", method.getName(), jpaLock);
+                    return result;
+                    // Force result of transaction to database
+                } catch (final Exception e) {
+                    throw new RuntimeException("Transactional method invocation failed.", e);
                 }
             });
         }

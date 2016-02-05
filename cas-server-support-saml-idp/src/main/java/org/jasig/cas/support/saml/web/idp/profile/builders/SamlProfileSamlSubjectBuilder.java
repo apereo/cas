@@ -5,7 +5,7 @@ import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
@@ -46,7 +46,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         final NameID nameID = ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor);
         final Subject subject = newSubject(nameID.getFormat(), nameID.getValue(),
                 authnRequest.getAssertionConsumerServiceURL(),
-                new DateTime(assertion.getValidFromDate()),
+                DateTimeUtils.zonedDateTimeOf(assertion.getValidFromDate()),
                 authnRequest.getID());
         subject.setNameID(nameID);
         return subject;

@@ -1,12 +1,14 @@
 package org.jasig.cas.support.wsfederation.authentication.principal;
 
+import org.jasig.cas.authentication.Credential;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.jasig.cas.authentication.Credential;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -23,10 +25,10 @@ public final class WsFederationCredential implements Credential {
     private String authenticationMethod;
     private String id;
     private String issuer;
-    private DateTime issuedOn;
-    private DateTime notBefore;
-    private DateTime notOnOrAfter;
-    private DateTime retrievedOn;
+    private ZonedDateTime issuedOn;
+    private ZonedDateTime notBefore;
+    private ZonedDateTime notOnOrAfter;
+    private ZonedDateTime retrievedOn;
     private Map<String, List<Object>> attributes;
 
     public String getAuthenticationMethod() {
@@ -62,11 +64,11 @@ public final class WsFederationCredential implements Credential {
         this.id = id;
     }
 
-    public DateTime getIssuedOn() {
+    public ZonedDateTime getIssuedOn() {
         return this.issuedOn;
     }
 
-    public void setIssuedOn(final DateTime issuedOn) {
+    public void setIssuedOn(final ZonedDateTime issuedOn) {
         this.issuedOn = issuedOn;
     }
 
@@ -78,27 +80,27 @@ public final class WsFederationCredential implements Credential {
         this.issuer = issuer;
     }
 
-    public DateTime getNotBefore() {
+    public ZonedDateTime getNotBefore() {
         return this.notBefore;
     }
 
-    public void setNotBefore(final DateTime notBefore) {
+    public void setNotBefore(final ZonedDateTime notBefore) {
         this.notBefore = notBefore;
     }
 
-    public DateTime getNotOnOrAfter() {
+    public ZonedDateTime getNotOnOrAfter() {
         return this.notOnOrAfter;
     }
 
-    public void setNotOnOrAfter(final DateTime notOnOrAfter) {
+    public void setNotOnOrAfter(final ZonedDateTime notOnOrAfter) {
         this.notOnOrAfter = notOnOrAfter;
     }
 
-    public DateTime getRetrievedOn() {
+    public ZonedDateTime getRetrievedOn() {
         return this.retrievedOn;
     }
 
-    public void setRetrievedOn(final DateTime retrievedOn) {
+    public void setRetrievedOn(final ZonedDateTime retrievedOn) {
         this.retrievedOn = retrievedOn;
     }
 
@@ -137,28 +139,28 @@ public final class WsFederationCredential implements Credential {
             return false;
         }
 
-        if (!this.getIssuer().equalsIgnoreCase(expectedIssuer)) {
-            logger.warn("Issuer is invalid: {}", this.getIssuer());
+        if (!this.issuer.equalsIgnoreCase(expectedIssuer)) {
+            logger.warn("Issuer is invalid: {}", this.issuer);
             return false;
         }
 
-        final DateTime retrievedOnTimeDrift = this.getRetrievedOn().minusMillis(timeDrift);
-        if (this.getIssuedOn().isBefore(retrievedOnTimeDrift)) {
+        final ZonedDateTime retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
+        if (this.issuedOn.isBefore(retrievedOnTimeDrift)) {
             logger.warn("Ticket is issued before the allowed drift. Issued on {} while allowed drift is {}",
-                    this.getIssuedOn(), retrievedOnTimeDrift);
+                    this.issuedOn, retrievedOnTimeDrift);
             return false;
         }
 
-        final DateTime retrievedOnTimeAfterDrift = this.getRetrievedOn().plusMillis(timeDrift);
-        if (this.getIssuedOn().isAfter(retrievedOnTimeAfterDrift)) {
+        final ZonedDateTime retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
+        if (this.issuedOn.isAfter(retrievedOnTimeAfterDrift)) {
             logger.warn("Ticket is issued after the allowed drift. Issued on {} while allowed drift is {}",
-                    this.getIssuedOn(), retrievedOnTimeAfterDrift);
+                    this.issuedOn, retrievedOnTimeAfterDrift);
             return false;
         }
 
-        if (this.getRetrievedOn().isAfter(this.getNotOnOrAfter())) {
+        if (this.retrievedOn.isAfter(this.notOnOrAfter)) {
             logger.warn("Ticket is too late because it's retrieved on {} which is after {}.",
-                    this.getRetrievedOn(), this.getNotOnOrAfter());
+                    this.retrievedOn, this.notOnOrAfter);
             return false;
         }
 

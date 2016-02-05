@@ -1,6 +1,5 @@
 package org.jasig.cas.audit.spi;
 
-import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationTransaction;
@@ -12,6 +11,8 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.AopUtils;
 import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
+
+import org.aspectj.lang.JoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -92,16 +94,12 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     }
 
     private String resolveArguments(final StringBuilder builder, final Collection args1AsArray) {
-        for (final Object arg: args1AsArray) {
-            builder.append(resolveArgument(arg));
-        }
+        args1AsArray.stream().forEach(arg -> builder.append(resolveArgument(arg)));
         return builder.toString();
     }
 
     private String resolveArguments(final StringBuilder builder, final Object[] args1AsArray) {
-        for (final Object arg: args1AsArray) {
-            builder.append(resolveArgument(arg));
-        }
+        Arrays.stream(args1AsArray).forEach(arg -> builder.append(resolveArgument(arg)));
         return builder.toString();
     }
 

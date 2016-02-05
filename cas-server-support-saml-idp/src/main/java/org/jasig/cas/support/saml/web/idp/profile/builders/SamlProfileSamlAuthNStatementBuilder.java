@@ -5,7 +5,8 @@ import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
+
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link SamlProfileSamlAuthNStatementBuilder}.
@@ -60,10 +62,11 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
             throws SamlException {
 
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        final AuthnStatement statement = newAuthnStatement(authenticationMethod, new DateTime(assertion.getAuthenticationDate()));
+        final AuthnStatement statement = newAuthnStatement(authenticationMethod,
+            DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()));
         if (assertion.getValidUntilDate() != null) {
-            final DateTime dt = new DateTime(assertion.getValidUntilDate());
-            statement.setSessionNotOnOrAfter(dt.plusSeconds(this.skewAllowance));
+            final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
+            statement.setSessionNotOnOrAfter(DateTimeUtils.dateTimeOf(dt.plusSeconds(this.skewAllowance)));
         }
         statement.setSubjectLocality(buildSubjectLocality(assertion, authnRequest, adaptor));
         return statement;

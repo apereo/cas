@@ -1,16 +1,20 @@
 package org.jasig.cas.adaptors.x509.util;
 
+import org.jasig.cas.util.DateTimeUtils;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.cryptacular.util.CertUtil;
+import org.springframework.core.io.InputStreamSource;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.Date;
-
-import org.cryptacular.util.CertUtil;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.core.io.Resource;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 
 /**
@@ -38,7 +42,7 @@ public final class CertUtils {
      * @return True if current system time is after CRL next update, false otherwise.
      */
     public static boolean isExpired(final X509CRL crl) {
-        return isExpired(crl, new Date(System.currentTimeMillis()));
+        return isExpired(crl, ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     /**
@@ -50,8 +54,8 @@ public final class CertUtils {
      *
      * @return True if reference date is after CRL next update, false otherwise.
      */
-    public static boolean isExpired(final X509CRL crl, final Date reference) {
-        return reference.after(crl.getNextUpdate());
+    public static boolean isExpired(final X509CRL crl, final ZonedDateTime reference) {
+        return reference.isAfter(DateTimeUtils.zonedDateTimeOf(crl.getNextUpdate()));
     }
 
     /**
@@ -60,10 +64,10 @@ public final class CertUtils {
      * @param resource the resource to read the cert from
      * @return the x 509 certificate
      */
-    public static X509Certificate readCertificate(final Resource resource) {
+    public static X509Certificate readCertificate(final InputStreamSource resource) {
         try (final InputStream in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
-        } catch (final Exception e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Error reading certificate " + resource, e);
         }
     }
@@ -91,7 +95,7 @@ public final class CertUtils {
         try {
             return CertificateFactory.getInstance(X509_CERTIFICATE_TYPE);
         } catch (final CertificateException e) {
-            throw new IllegalStateException("X509 certificate type not supported by default provider.");
+            throw new IllegalStateException("X509 certificate type not supported by default provider.", e);
         }
     }
 }

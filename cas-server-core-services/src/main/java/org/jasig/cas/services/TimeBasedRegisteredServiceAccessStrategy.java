@@ -3,7 +3,9 @@ package org.jasig.cas.services;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.joda.time.DateTime;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategy} is responsible for
@@ -94,10 +96,10 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     @Override
     public boolean isServiceAccessAllowed() {
-        final DateTime now = DateTime.now();
+        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
 
         if (this.startingDateTime != null) {
-            final DateTime st = DateTime.parse(this.startingDateTime);
+            final ZonedDateTime st = ZonedDateTime.parse(this.startingDateTime);
 
             if (now.isBefore(st)) {
                 logger.warn("Service access not allowed because it starts at {}. Now is {}",
@@ -107,7 +109,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
         }
 
         if (this.endingDateTime != null) {
-            final DateTime et = DateTime.parse(this.endingDateTime);
+            final ZonedDateTime et = ZonedDateTime.parse(this.endingDateTime);
             if  (now.isAfter(et)) {
                 logger.warn("Service access not allowed because it ended at {}. Now is {}",
                         this.endingDateTime, now);

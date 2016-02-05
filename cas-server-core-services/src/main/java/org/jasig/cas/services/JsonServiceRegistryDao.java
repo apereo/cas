@@ -1,11 +1,12 @@
 package org.jasig.cas.services;
 
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.LockedOutputStream;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,32 +189,31 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public final synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
-        int errorCount = 0;
+        final int[] errorCount = {0};
         final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[] {FILE_EXTENSION}, true);
-        for (final File file : c) {
-            if (file.length() > 0) {
-                final RegisteredService service = loadRegisteredServiceFromFile(file);
-                if (service == null) {
-                    LOGGER.warn("Could not load service definition from file {}", file);
-                    errorCount++;
-                } else {
-                    if (temp.containsKey(service.getId())) {
-                        LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                        + "This will overwrite previous service definitions and is likely a "
-                                        + "configuration problem. Make sure all services have a unique id and try again.",
-                                service.getServiceId(), service.getId());
-                    }
-                    temp.put(service.getId(), service);
+        c.stream().filter(file -> file.length() > 0).forEach(file -> {
+            final RegisteredService service = loadRegisteredServiceFromFile(file);
+            if (service == null) {
+                LOGGER.warn("Could not load service definition from file {}", file);
+                errorCount[0]++;
+            } else {
+                if (temp.containsKey(service.getId())) {
+                    LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                                    + "This will overwrite previous service definitions and is likely a "
+                                    + "configuration problem. Make sure all services have a unique id and try again.",
+                            service.getServiceId(), service.getId());
                 }
+                temp.put(service.getId(), service);
             }
-        }
-        if (errorCount == 0) {
+        });
+
+        if (errorCount[0] == 0) {
             this.serviceMap = temp;
         } else {
             LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are "
-                   +  "corrected", errorCount);
+                   +  "corrected", errorCount[0]);
         }
-        return new ArrayList<>(this.serviceMap.values());
+        return new ArrayList(this.serviceMap.values());
     }
 
     @Override

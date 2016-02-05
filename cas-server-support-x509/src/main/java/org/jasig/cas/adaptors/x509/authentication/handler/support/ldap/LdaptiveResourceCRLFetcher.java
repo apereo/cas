@@ -1,10 +1,8 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 
-import java.security.cert.CertificateException;
-import java.security.cert.X509CRL;
-import javax.validation.constraints.NotNull;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.ResourceCRLFetcher;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
+
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
@@ -18,7 +16,16 @@ import org.ldaptive.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509CRL;
 
 /**
  * Fetches a CRL from an LDAP instance.
@@ -50,22 +57,59 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         this.searchExecutor = searchExecutor;
     }
 
-    @Override
-    protected X509CRL fetchInternal(final Object r) throws Exception {
-        if (r.toString().toLowerCase().startsWith("ldap")) {
-            return fetchCRLFromLdap(r);
-        }
-        return super.fetchInternal(r);
+    private boolean isLdap(final String r) {
+        return r.toLowerCase().startsWith("ldap");
     }
 
+    private boolean isLdap(final URI r) {
+        return r.getScheme().equalsIgnoreCase("ldap");
+    }
+
+    private boolean isLdap(final URL r) {
+        return r.getProtocol().equalsIgnoreCase("ldap");
+    }
+
+    @Override
+    public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
+        if (isLdap(crl.toString())) {
+                return fetchCRLFromLdap(crl);
+        }
+        return super.fetch(crl);
+    }
+
+    @Override
+    public X509CRL fetch(@NotNull final URI crl) throws IOException, CRLException, CertificateException {
+        if (isLdap(crl)) {
+            return fetchCRLFromLdap(crl);
+        }
+        return super.fetch(crl);
+    }
+
+    @Override
+    public X509CRL fetch(@NotNull final URL crl) throws IOException, CRLException, CertificateException {
+        if (isLdap(crl)) {
+            return fetchCRLFromLdap(crl);
+        }
+        return super.fetch(crl);
+    }
+
+    @Override
+    public X509CRL fetch(@NotNull final String crl) throws IOException, CRLException, CertificateException {
+        if (isLdap(crl)) {
+            return fetchCRLFromLdap(crl);
+        }
+        return super.fetch(crl);
+    }
     /**
      * Downloads a CRL from given LDAP url.
      *
      * @param r the resource that is the ldap url.
      * @return the x 509 cRL
-     * @throws Exception if connection to ldap fails, or attribute to get the revocation list is unavailable
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
-    protected X509CRL fetchCRLFromLdap(final Object r) throws Exception {
+    protected X509CRL fetchCRLFromLdap(final Object r) throws CertificateException, IOException, CRLException {
         try {
             final String ldapURL = r.toString();
             logger.debug("Fetching CRL from ldap {}", ldapURL);
@@ -78,15 +122,14 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
                 logger.debug("Located entry [{}]. Retrieving first attribute [{}]",
                         entry, attribute);
                 return fetchX509CRLFromAttribute(attribute);
-            } else {
-                logger.debug("Failed to execute the search [{}]", result);
             }
 
+            logger.debug("Failed to execute the search [{}]", result);
             throw new CertificateException("Failed to establish a connection ldap and search.");
 
         } catch (final LdapException e) {
             logger.error(e.getMessage(), e);
-            throw new CertificateException(e);
+            throw new CertificateException(e.getMessage());
         }
     }
 
@@ -97,15 +140,17 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      *
      * @param aval the attribute, which may be null if it's not found
      * @return the x 509 cRL from attribute
-     * @throws Exception if attribute not found or could could not be decoded.
+     * @throws IOException the exception thrown if resources cant be fetched
+     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws CertificateException if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
-    protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute aval) throws Exception {
+    protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute aval) throws CertificateException, IOException, CRLException {
         if (aval != null) {
             final byte[] val = aval.getBinaryValue();
             if (val == null || val.length == 0) {
                 throw new CertificateException("Empty attribute. Can not download CRL from ldap");
             }
-            final byte[] decoded64 = CompressionUtils.decodeBase64ToByteArray(val);
+            final byte[] decoded64 = EncodingUtils.decodeBase64(val);
             if (decoded64 == null) {
                 throw new CertificateException("Could not decode the attribute value to base64");
             }

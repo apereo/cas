@@ -3,7 +3,7 @@ layout: default
 title: CAS - OAuth Protocol
 ---
 
-#OAuth Protocol
+# OAuth Protocol
 You can configure the CAS server with:
 
 * [OAuth client support](../integration/Delegate-Authentication.html), which means authentication can be delegated through a link on the login page to a CAS, OpenID or OAuth provider. 

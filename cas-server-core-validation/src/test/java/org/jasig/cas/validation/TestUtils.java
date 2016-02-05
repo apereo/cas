@@ -26,8 +26,8 @@ public final class TestUtils {
         final List<Authentication> list = new ArrayList<>();
         list.add(org.jasig.cas.authentication.TestUtils.getAuthentication());
 
-        for (int i = 0; i < extraPrincipals.length; i++) {
-            list.add(org.jasig.cas.authentication.TestUtils.getAuthentication(extraPrincipals[i]));
+        for (final String extraPrincipal : extraPrincipals) {
+            list.add(org.jasig.cas.authentication.TestUtils.getAuthentication(extraPrincipal));
         }
         return new ImmutableAssertion(org.jasig.cas.authentication.TestUtils.getAuthentication(),
                 list, org.jasig.cas.services.TestUtils.getService(), fromNewLogin);
