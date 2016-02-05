@@ -39,20 +39,20 @@ Strive for simplicity and you will be well served.
 
 ## Deployment Scenarios
 
-###Single-node CAS, HA VM Infrastructure
+### Single-node CAS, HA VM Infrastructure
 High availability can be achieved by implementing a single-node CAS running in a sophisticated virtualized environment. This approach to high availability is attractive in the sense that it simplifies the CAS server configuration but requires hardware virtualization technology that may not be present and available.
 
-####Physical Architecture
+#### Physical Architecture
 In a single-node VM architecture, the CAS server, along with the necessary prerequisites and software dependencies is deployed in a single host VM.
 Under this deployment scenario the default in-memory Ticket Registry is sufficient and no Servlet Session replication is required. This simplifies the deployment configuration and is the recommended approach if the VM infrastructure is sufficient to meet HA and scalability needs.
 
-####Robustness
+#### Robustness
 Hardware component failure/recovery is a feature of the virtualized environment such that the loss of a CPU, memory or power does not cause a failure of the CAS server.
 
-####Zero downtime maintenance approach
+#### Zero downtime maintenance approach
 True zero downtime maintenance (i.e. no observable impact to end users) is not achievable with this configuration. However, staging of maintenance and upgrades can be done without downtime by leveraging the cloning ability of most VM infrastructures. Once the new CAS Server node is ready, a brief cutover can be implemented which will effectively end all current SSO sessions. This could be done by scheduling restart of Tomcat during low traffic times, after the new cas.war has been deployed.
 
-####Scalability
+#### Scalability
 CAS itself has modest computing requirements such that any modern enterprise class server hardware is going to be sufficient to handle 10,000s of users in typical deployment scenarios. In a recent client engagement load testing a single node deployment yielded good results with CAS handling 200 concurrent users at 61 requests per second which roughly translates into 108,000 authentication transactions per hour. These number are of course representative and any benchmark will be highly dependent on local infrastructure.
 VM environments should be able to scale the available CPU and memory to meet a wide range of needs.
 
@@ -71,17 +71,17 @@ Multi-node CAS generally involves the following:
 * Having appropriate contingency plans such that the desired margin of headroom against failure is restored when it is exercised. (For example, having three CAS server instances, clustered, serving a load that can be serviced with just two instances.)
 
 
-####Physical Architecture
+#### Physical Architecture
 The physical architecture may be realized through VMs or physical hardware. It is important to note that in a shared ticket state model (Active/Active mode), CAS server nodes need to be able to communicate tickets state across all nodes and as such, firewall restrictions between such nodes needs to be relaxed enough to allow for ticket state replication.
 
 The service endpoint is a virtual IP address configured at the load balancer. Thus all requests are handled by the load balancer and then routed to available CAS nodes.
 
 
-####Robustness
+#### Robustness
 In the event of a CAS node failure, the work load and authentication requests can properly be rerouted to another CAS node. It is possible that through the failover scenario, some state may be lost depending on where the user is in the login flow and as such, once the rerouting of the request has landed from the failed node to the clone, users may need be presented with the CAS login screen again. This failure mode can be eliminated with Servlet session state replication.
 
 
-####Zero downtime maintenance approach
+#### Zero downtime maintenance approach
 Maintenance work, such that it would include upgrades and application of patches to the software may be carried out via two general approaches:
 
 1. In active-passive models, work may be carried out offline on the passive CAS node. The load balancer is then tweaked to switch over the prepared node once ready thereby switching the active-passive nodes around. This results in all CAS SSO sessions being reset and possibly some Ticket validation failures if done during times with high utilization. See below for more details on this approach.
@@ -89,7 +89,7 @@ Maintenance work, such that it would include upgrades and application of patches
 2. In active-active models, one node can be taken offline while at least one other CAS server node remains alive to respond to requests. Once the upgrade procedure is done, the server can return to the pool while obtaining the ticket state from other active nodes. Certain distributed ticket registry models have the ability to bootstrap themselves by receiving ticket data from other nodes without any manual configuration or adjustment. See below for more details on this approach.
 
 
-####Scalability
+#### Scalability
 Scalability is simply achieved by adding new CAS nodes to the cluster.
 
 
@@ -164,14 +164,14 @@ We _strongly_ recommend that all IO connections to a back-end data stores, such 
 leverage connection pooling where possible. It makes the best use of computational (especially for SSL/TLS connections) and IO resources while providing the best performance characteristics.
 
 
-###Monitoring
+### Monitoring
 CAS adopters typically implement monitoring of the availability of the CAS service using the tools already in use in operational practice for monitoring other enterprise web applications. CAS introduces a new modest monitoring page with authentication by default by the remote_address of the requestor.
 
 
-###Channel Confidentiality
+### Channel Confidentiality
 Channel Confidentiality (via SSL/TLS) is assumed and critical to the security posture of the CAS system. This includes both front-channel (between user browser-agent and CAS server) and back-channel (between web application and CAS server) https traffic, any intermediate proxy traffic between load balancers or content filters and CAS nodes, as well as primary authentication (e.g. LDAPS) and attribute resolution (JDBC over SSL). Any break in the privacy controls at any stage comprises the overall security of the system.
 
 
-###Upgrade/patches/security releases
+### Upgrade/patches/security releases
 CAS server upgrades should be carried out through the recommended Maven overlay approach. Established as a best practice, the CAS maven overlay approach allows one to seamlessly obtain the intended CAS server version from well known and public repositories while laying custom changes specific on top of the downloaded binary artifact.
 In the specifics of the Maven overlay approach, it may also be desirable to externalize the configuration outside of the `cas.war` so that the properties and logging configuration can vary across tiers for the same `cas.war` file. That is, externalizing the environment-specific configuration allows the same `cas.war` to be promoted from server to server and tier to tier, which increases the confidence that the web application that was tested and verified out of production will behave as tested in production.

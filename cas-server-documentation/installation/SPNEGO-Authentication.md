@@ -38,7 +38,7 @@ SPNEGO support is enabled by including the following dependency in the Maven WAR
 {% endhighlight %}
 
 
-######`JCIFSSpnegoAuthenticationHandler`
+###### `JCIFSSpnegoAuthenticationHandler`
 The authentication handler that provides SPNEGO support in both Kerberos and NTLM flavors. NTLM is disabled by default.
 Configuration properties:
 
@@ -46,7 +46,7 @@ Configuration properties:
 * `NTLMallowed` - True to enable NTLM support, false otherwise. (Disabled by default.)
 
 
-######`JCIFSConfig`
+###### `JCIFSConfig`
 Configuration helper for JCIFS and the Spring framework. Configuration properties:
 
 * `jcifsServicePrincipal` - service principal name.
@@ -58,13 +58,13 @@ Configuration helper for JCIFS and the Spring framework. Configuration propertie
 
 
 
-######`SpnegoNegociateCredentialsAction`
+###### `SpnegoNegociateCredentialsAction`
 CAS login Webflow action that begins the SPNEGO authenticaiton process. The action checks the `Authorization` request
 header for a suitable value (`Negotiate` for Kerberos or `NTLM`). If the check is successful, flow continues to the
 `SpnegoCredentialsAction` state; otherwise a 401 (not authorized) response is returned.
 
 
-######`SpnegoCredentialsAction`
+###### `SpnegoCredentialsAction`
 Constructs CAS credentials from the encoded GSSAPI data in the `Authorization` request header. The standard CAS
 authentication process proceeds as usual after this step: authentication is attempted with a suitable handler,
 `JCIFSSpnegoAuthenticationHandler` in this case. The action also sets response headers accordingly based on whether
