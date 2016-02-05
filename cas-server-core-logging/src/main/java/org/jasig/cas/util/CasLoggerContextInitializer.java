@@ -46,9 +46,7 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
         this.logConfigurationFile = logConfigurationFile;
     }
 
-    /**
-     * Reinitialize the logger by updating the location for the logging config file.
-     */
+
     @Override
     public void initializeApplicationContext(final ConfigurableApplicationContext configurableApplicationContext) {
         if (this.logConfigurationFile == null || !this.logConfigurationFile.exists()) {
