@@ -1,6 +1,5 @@
 package org.jasig.cas.web.flow;
 
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
+import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
 
                     // redirect to application with SAML logout message
                     final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(logoutUrl);
-                    builder.queryParam(this.logoutRequestParameter, URLEncoder.encode(logoutMessage, "UTF-8"));
+                    builder.queryParam(this.logoutRequestParameter, EncodingUtils.urlEncode(logoutMessage));
 
                     return result(REDIRECT_APP_EVENT, DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL, builder.build().toUriString());
                 }
