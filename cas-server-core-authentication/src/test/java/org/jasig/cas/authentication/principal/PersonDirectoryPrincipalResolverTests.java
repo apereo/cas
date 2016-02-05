@@ -16,12 +16,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNullPrincipal() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        final Principal p = resolver.resolve(new Credential() {
-            @Override
-            public String getId() {
-                return null;
-            }
-        });
+        final Principal p = resolver.resolve(() -> null);
         assertNull(p);
 
     }

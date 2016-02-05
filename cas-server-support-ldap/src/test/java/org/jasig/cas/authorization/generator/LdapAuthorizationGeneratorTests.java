@@ -19,10 +19,10 @@
 package org.jasig.cas.authorization.generator;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ldaptive.LdapEntry;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,17 +56,15 @@ public class LdapAuthorizationGeneratorTests extends AbstractLdapTests {
 
     @Test
     public void verifyLoadUserByUsername() throws Exception {
-        for (final LdapEntry entry : getEntries()) {
-
-            if (entry.getAttribute("objectclass").getStringValues().contains(CAS_SERVICE_DETAILS_OBJ_CLASS)) {
-                final String username = getUsername(entry);
-                final CommonProfile profile = new CommonProfile();
-                profile.setId(username);
-                ldapAuthorizationGenerator.generate(profile);
-                assertTrue(hasAuthority(profile, "ROLE_ADMINISTRATORS"));
-                assertTrue(hasAuthority(profile, "ROLE_USERS"));
-            }
-        }
+        getEntries().stream().filter(entry -> entry.getAttribute("objectclass").getStringValues()
+                .contains(CAS_SERVICE_DETAILS_OBJ_CLASS)).forEach(entry -> {
+            final String username = getUsername(entry);
+            final CommonProfile profile = new CommonProfile();
+            profile.setId(username);
+            ldapAuthorizationGenerator.generate(profile);
+            assertTrue(hasAuthority(profile, "ROLE_ADMINISTRATORS"));
+            assertTrue(hasAuthority(profile, "ROLE_USERS"));
+        });
     }
 
     private boolean hasAuthority(final CommonProfile profile, final String name) {

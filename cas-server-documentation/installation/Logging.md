@@ -4,7 +4,7 @@ title: CAS - Logging Configuration
 ---
 
 
-#Logging
+# Logging
 CAS provides a logging facility that logs important informational events like authentication success and
 failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J
 Logging framework as a facade for the [Log4J engine](http://logging.apache.org‎) by default.
@@ -29,7 +29,7 @@ these levels to  `DEBUG`.
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though,
 you probably want to run them both as `WARN`.</p></div>
 
-##Configuration
+## Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath. 
 These may be overridden by the `cas.properties` file
@@ -52,13 +52,13 @@ via the following property passed to the JVM runtime instance:
 -DloggerFactory="org.apache.logging.slf4j.Log4jLoggerFactory"
 ```
 
-###Alternative Loggers
+### Alternative Loggers
 If you wish to use an alternative logging framework other than Log4j, you will need to exclude
 all `log4j` JAR artifacts and the `cas-server-core-logging` module from your configuration. Ensure
 an alternative framework such as Logback is provided instead to the application runtime and the necessary
 configuration is available per the framework. 
 
-###Refresh Interval
+### Refresh Interval
 The `log4j2.xml` itself controls the refresh interval of the logging configuration. Log4j has the ability
 to automatically detect changes to the configuration file and reconfigure itself. If the `monitorInterval`
 attribute is specified on the configuration element and is set to a non-zero value then the file will be
@@ -73,7 +73,7 @@ server environment.
         ...
 ```
 
-###Appenders
+### Appenders
 ```xml
 <Console name="console" target="SYSTEM_OUT">
     <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
@@ -90,7 +90,7 @@ server environment.
 ```
 
 
-###AsyncLoggers
+### AsyncLoggers
 Additional AsyncLoggers are available to specify the logging level for component categories.
 
 ```xml
@@ -124,7 +124,7 @@ element to the configuration. Here is an example:
 </AsyncLogger>
 ```
 
-##Log Data Sanitation
+## Log Data Sanitation
 For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data.
 This will of course include messages that are routed to a log destination by the logging framework as
  well as all audit messages. A sample follows below:
@@ -144,7 +144,7 @@ SERVER IP ADDRESS: ...
 Certain number of characters are left at the trailing end of the ticket id to assist with
 troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration.
 
-##AsyncLoggers Shutdown with Tomcat
+## AsyncLoggers Shutdown with Tomcat
 
 Log4j automatically inserts itself into the runtime application context in a Servlet 3 environment (i.e. Tomcat 8.x) and will clean up 
 the logging context once the container is instructed to shut down. However, Tomcat ignores all JAR files named `log4j*.jar`, which prevents 

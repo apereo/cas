@@ -2,6 +2,8 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 
+import java.time.ZonedDateTime;
+
 /**
  * @author Scott Battaglia
 
@@ -21,7 +23,7 @@ public interface TicketState {
      *
      * @return the last time the ticket was used.
      */
-    long getLastTimeUsed();
+    ZonedDateTime getLastTimeUsed();
 
     /**
      * Get the second to last time used.
@@ -29,14 +31,14 @@ public interface TicketState {
      * @return the previous time used.
      */
 
-    long getPreviousTimeUsed();
+    ZonedDateTime getPreviousTimeUsed();
 
     /**
      * Get the time the ticket was created.
      *
      * @return the creation time of the ticket.
      */
-    long getCreationTime();
+    ZonedDateTime getCreationTime();
 
     /**
      * Authentication information from the ticket. This may be null.

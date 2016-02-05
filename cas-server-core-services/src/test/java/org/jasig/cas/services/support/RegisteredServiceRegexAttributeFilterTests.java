@@ -1,10 +1,11 @@
 package org.jasig.cas.services.support;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.jasig.cas.util.SerializationUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -103,7 +104,8 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertTrue(attr.containsKey("attr3"));
 
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
+        final ReturnAllowedAttributeReleasePolicy p2 =
+            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
         assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
@@ -112,7 +114,8 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void verifySerialization() {
         final byte[] data = SerializationUtils.serialize(this.filter);
-        final RegisteredServiceAttributeFilter secondFilter = SerializationUtils.deserialize(data);
+        final RegisteredServiceAttributeFilter secondFilter =
+            SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 }

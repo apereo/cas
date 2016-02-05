@@ -4,11 +4,9 @@ import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.DateTimeUtils;
 import org.jasig.cas.web.support.WebUtils;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -26,15 +24,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
@@ -98,10 +98,6 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
         this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
-    /**
-
-     * @throws IllegalArgumentException if the Ticket is null.
-     */
     @Override
     public void addTicket(final Ticket ticket) {
         Assert.notNull(ticket, "ticket cannot be null");
@@ -134,24 +130,12 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
     @Override
     public int sessionCount() {
-        int count = 0;
-        for (final Ticket t : this.cache.values()) {
-            if (t instanceof TicketGrantingTicket) {
-                count++;
-            }
-        }
-        return count;
+        return (int) this.cache.values().stream().filter(t -> t instanceof TicketGrantingTicket).count();
     }
 
     @Override
     public int serviceTicketCount() {
-        int count = 0;
-        for (final Ticket t : this.cache.values()) {
-            if (t instanceof ServiceTicket) {
-                count++;
-            }
-        }
-        return count;
+        return (int) this.cache.values().stream().filter(t -> t instanceof ServiceTicket).count();
     }
 
     /**
@@ -169,7 +153,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
+                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.startDelay)))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                         .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();
@@ -192,10 +176,10 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
         try {
             logger.debug("Beginning ticket cleanup...");
-            final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
-                @Override
-                public boolean apply(@Nullable final Ticket ticket) {
-                    if (ticket.isExpired()) {
+            this.getTickets().stream()
+                    .filter(ticket -> ticket.isExpired())
+                    .collect(Collectors.toSet())
+                    .forEach(ticket -> {
                         if (ticket instanceof TicketGrantingTicket) {
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                             logoutManager.performLogout((TicketGrantingTicket) ticket);
@@ -206,12 +190,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                         } else {
                             logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
                         }
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            logger.info("{} expired tickets found and removed.", ticketsToRemove.size());
+                    });
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }

@@ -1,7 +1,8 @@
 package org.jasig.cas.authentication;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -55,10 +56,10 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (StringUtils.isNotBlank(this.acceptedUsers) && this.users == null) {
             final Set<String> usersPasswords = org.springframework.util.StringUtils.commaDelimitedListToSet(this.acceptedUsers);
             final Map<String, String> parsedUsers = new HashMap<>();
-            for (final String usersPassword : usersPasswords) {
+            usersPasswords.stream().forEach(usersPassword -> {
                 final String[] splitArray = USERS_PASSWORDS_SPLITTER_PATTERN.split(usersPassword);
                 parsedUsers.put(splitArray[0], splitArray[1]);
-            }
+            });
             setUsers(parsedUsers);
         }
     }

@@ -1,6 +1,7 @@
 package org.jasig.cas.ticket;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 /**
  * Interface for the generic concept of a ticket.
@@ -39,7 +40,7 @@ public interface Ticket extends Serializable {
      *
      * @return the time the ticket was created.
      */
-    long getCreationTime();
+    ZonedDateTime getCreationTime();
 
     /**
      * @return the number of times this ticket was used.

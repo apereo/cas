@@ -1,10 +1,15 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -50,22 +55,24 @@ public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExp
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final long currentTimeInMillis = System.currentTimeMillis();
-        final long lastTimeTicketWasUsed = ticketState.getLastTimeUsed();
+        final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+        final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
+        final ZonedDateTime killTime  = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
 
         if (ticketState.getCountOfUses() == 0
-            && (currentTimeInMillis - lastTimeTicketWasUsed < this.timeToKillInMilliSeconds)) {
+            && (currentTime.isBefore(killTime))) {
             LOGGER.debug("Ticket is not expired due to a count of zero and the time being less "
                     + "than the timeToKillInMilliseconds");
             return false;
         }
 
-        if ((currentTimeInMillis - lastTimeTicketWasUsed >= this.timeToKillInMilliSeconds)) {
+        if (currentTime.isAfter(killTime)) {
             LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInMilliseconds");
             return true;
         }
 
-        if ((currentTimeInMillis - lastTimeTicketWasUsed <= this.timeInBetweenUsesInMilliSeconds)) {
+        final ZonedDateTime dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInMilliSeconds, ChronoUnit.MILLIS);
+        if (currentTime.isBefore(dontUseUntil)) {
             LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
             return true;
         }

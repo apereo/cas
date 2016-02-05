@@ -4,8 +4,8 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Principal;
-import org.joda.time.DateTime;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,18 +18,17 @@ import java.util.Map;
 public class OAuthAuthentication implements Authentication {
 
     /** Authentication date stamp. */
-    private final DateTime authenticationDate;
+    private final ZonedDateTime authenticationDate;
 
     /** Authenticated principal. */
     private final Principal principal;
 
     /**
      * Default constructor.
-     *
-     * @param authenticationDate the authentication date
+     *  @param authenticationDate the authentication date
      * @param principal the principal
      */
-    public OAuthAuthentication(final DateTime authenticationDate, final Principal principal) {
+    public OAuthAuthentication(final ZonedDateTime authenticationDate, final Principal principal) {
         this.authenticationDate = authenticationDate;
         this.principal = principal;
     }
@@ -40,7 +39,7 @@ public class OAuthAuthentication implements Authentication {
     }
 
     @Override
-    public DateTime getAuthenticationDate() {
+    public ZonedDateTime getAuthenticationDate() {
         return authenticationDate;
     }
 
