@@ -45,6 +45,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
+    /** The access token timeout. */
     @NotNull
     @Value("${tgt.timeToKillInSeconds:7200}")
     protected long timeout;
