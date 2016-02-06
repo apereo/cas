@@ -6,7 +6,7 @@ title: CAS - Release Process
 # Release Process
 This page documents the steps that a release engineer should take for cutting a CAS server release.
 
-##Environment Review
+## Environment Review
 
 - Set up your environment:
 	- Load your SSH key and ensure this SSH key is also referenced in Github.
@@ -24,7 +24,7 @@ org.gradle.daemon=false
 
 - Checkout the CAS project: `git clone git@github.com:Jasig/cas.git cas-server`
 
-##Preparing the Release
+## Preparing the Release
 
 - Create a branch for the release version, if necessary (i.e `4.2.x`).
 - Switch to the release branch. 
@@ -45,7 +45,7 @@ org.gradle.daemon=false
 - Create a tag for the released version and push the tag to the upstream Jasig repository. (i.e. `v4.2.0-RC1`).
 - Switch to the `master` branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `4.3.0-SNAPSHOT`). Push your changes to the upstream Jasig repository. 
 
-##Performing the Release
+## Performing the Release
 
 Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig.org/display/JCH/Deploying+Maven+Artifacts) via Sonatype OSS repository.  
 
@@ -86,13 +86,13 @@ John Smith
 
 ```
 
-##Update Maven Overlay
+## Update Maven Overlay
 Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.
 
 - [CAS WebApp Overlay](https://github.com/Jasig/cas-overlay-template)
 - [CAS Services Management WebApp Overlay](https://github.com/Jasig/cas-services-management-overlay)
 
 
-##Docker Image
+## Docker Image
 Release a new CAS [Docker image](https://github.com/Jasig/cas/tree/dockerized-caswebapp).
 This task is only relevant when dealing with GA releases.
