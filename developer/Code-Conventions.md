@@ -8,7 +8,7 @@ Following the lead of well established projects such as Apache and Eclipse, all 
 
 The following document describes the set of coding conventions that are specific to the CAS project:
 
-##Brackets
+## Brackets
 All brackets should appear in compact form and are mandatory even for single line statements.
 
 ```java
@@ -22,7 +22,7 @@ public class FooClass {
 ```
 
 
-##Needless else clauses
+## Needless else clauses
 ```java
 public class FooClass {
     public String barMethod() {
@@ -36,17 +36,17 @@ public class FooClass {
 ```
 
 
-##Indentations
+## Indentations
 Code indentation should be set to use 4 spaces. Tabs should **never** be used for indentation.
 
-##Arrays vs. Lists
+## Arrays vs. Lists
 Where it's possible, instances of `ImmutableCollection` should be used instead of their `Collection` counterpart
 or equivalent array definition. Returning or passing an argument as a native java `Collection` or array exposes
 internal implementations to the caller/client and would allow in theory for malicious
 modifications to the program state. 
 
 
-##Static Members
+## Static Members
 Static member variables will always be in uppercase wherein each word is separated by an underscore:
 
 ```java
@@ -54,7 +54,7 @@ private static final String SOME_OBJECT = "TheObject";
 ```
 
 
-##Logging
+## Logging
 We use [SLF4J](http://www.slf4j.org/index.html) for logging. In abstract classes, the provided logger should be mark as `protected` so that it can be reused in subclasses. In the case where we create our own Log instance, we will use the [recommended practice](http://www.slf4j.org/faq.html#declaration_pattern) of declaring logger objects by SLF4j:
 
 ```java
@@ -83,25 +83,25 @@ log.debug("The entry is {}.", entry);
 This is the preferred method over checking for a particular logging level and concatenating parameters through String objects.
 
 
-##Qualifying instance variables with this
+## Qualifying instance variables with this
 We qualify all instance variables with `this` with the exception of the Logging instances. We don't qualify that variable with "this" because it is well-known to be threadsafe. `logger.warn("Message")` becomes more of an idiom than invocation of instance variable.
 
 ##Use of the final keyword
 We use the keyword `final` keyword on local variables and parameters. Classes and methods are preferred to also be marked as `final` unless there are specific design decisions.
 
 
-##Naming testcases
+## Naming testcases
 If we were writing a JUnit testcase for code defined in `Foo.java`, we would name it `FooTests.java`. We do not allow any code which is not a testcase to have a name ending in "Tests". All testcase must use annotations `(@Test)` instead of extending `junit.framework.TestCase`. Furthermore, the usage of `junit.framework` classes is generally discouraged. 
 
 
-##Injection
+## Injection
 For required dependencies, the constructor injection must be used whereas setters can be used for optional dependencies.
 
-##equals() and hashCode() methods
+## equals() and hashCode() methods
 The recommend way to build the `hashCode()` and `equals()` methods is to use the `EqualsBuilder` and `HashCodeBuilder `classes form the `commons-lang(3)` library.
 
 
-##Template for commit messages
+## Template for commit messages
 Short (50 chars or less) summary of changes.
 
 More detailed explanatory text, if necessary.  Wrap it to about 72 characters or so.  In some contexts, the first line is treated as the subject of an email and the rest of the text as the body.  The blank line separating the summary from the body is critical (unless you omit the body entirely); tools like rebase can get confused if you run the two together. 
@@ -113,14 +113,14 @@ More detailed explanatory text, if necessary.  Wrap it to about 72 characters or
 
 Placing _both_ the issue number and brief description would improve commit history in SCM. 
 
-##Creating Pull Requests
+## Creating Pull Requests
 When creating a pull request, make sure that the pull references the Github issue number:
 
 ![](https://camo.githubusercontent.com/0d91dc7e679d86bd4814faae37f0316279074571/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3539372f3439383937372f64383262643761382d626332362d313165322d383663652d3835613435336334643638332e706e67)
 
 This allows the pull request to be linked to the issue. When the pull is merged, the issue will automatically be closed as well.
 
-##Checkstyle
+## Checkstyle
 The current codebase takes advantage of the [Checkstyle engine](http://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Jasig/cas/blob/master/checkstyle-rules.xml) as much as possible.
  
 
