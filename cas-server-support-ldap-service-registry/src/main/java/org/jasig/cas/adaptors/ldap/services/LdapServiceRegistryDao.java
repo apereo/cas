@@ -1,5 +1,6 @@
 package org.jasig.cas.adaptors.ldap.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistryDao;
 import org.ldaptive.AddOperation;
@@ -107,38 +108,40 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @return the registered service
      */
     private RegisteredService update(final RegisteredService rs) {
-
+        String currentDn = null;
         if (ldapServiceMapper == null || searchRequest == null) {
             return null;
         }
 
         try (final Connection searchConnection = getConnection()) {
-
             final Response<SearchResult> response = searchForServiceById(searchConnection, rs.getId());
             if (hasResults(response)) {
-                final String currentDn = response.getResult().getEntry().getDn();
-
-
-                try (final Connection modifyConnection = getConnection()) {
-                    final ModifyOperation operation = new ModifyOperation(modifyConnection);
-
-                    final List<AttributeModification> mods = new ArrayList<>();
-
-                    final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
-                    for (final LdapAttribute attr : entry.getAttributes()) {
-                        if (!attr.getName().equals(this.ldapServiceMapper.getIdAttribute())) {
-                            mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
-                        }
-                    }
-                    final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
-                    operation.execute(request);
-                } catch (final LdapException e) {
-                    logger.error(e.getMessage(), e);
-                }
+                currentDn = response.getResult().getEntry().getDn();
             }
-        } catch (final LdapException e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
+
+        if (StringUtils.isNotBlank(currentDn)) {
+            logger.debug("Updating registered service at {}", currentDn);
+
+            try (final Connection modifyConnection = getConnection()) {
+                final ModifyOperation operation = new ModifyOperation(modifyConnection);
+                final List<AttributeModification> mods = new ArrayList<>();
+
+                final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
+                for (final LdapAttribute attr : entry.getAttributes()) {
+                    if (!attr.getName().equals(this.ldapServiceMapper.getIdAttribute())) {
+                        mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                    }
+                }
+                final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
+                operation.execute(request);
+            } catch (final LdapException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
         return rs;
     }
 
