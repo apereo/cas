@@ -62,9 +62,9 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
             throw new IllegalArgumentException("YubiKey WS API url cannot be reached");
         } catch (final Exception e) {
             final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
-            if (policy != null && policy.isFailOpen()) {
-                logger.warn("Duo could not be reached. Since the authentication provider is configured to fail-open, authentication will "
-                        + "proceed without Duo for service {}. {}", service.getServiceId(), e);
+            if (policy != null && policy.getFailureMode() == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
+                logger.warn("Yubico could not be reached. Since the authentication provider is configured to fail-open, authentication "
+                       +  "will proceed without Duo for service {}. {}", service.getServiceId(), e);
                 return false;
             }
         }

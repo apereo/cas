@@ -39,7 +39,7 @@ public class RadiusMultifactorAuthenticationProvider implements MultifactorAuthe
         }
 
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
-        if (policy != null && policy.isFailOpen()) {
+        if (policy != null && policy.getFailureMode() == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
             logger.warn("RADIUS servers could not be reached. Since the authentication provider is configured to fail-open, "
                     + "authentication will proceed without RADIUS for service {}", service.getServiceId());
             return false;

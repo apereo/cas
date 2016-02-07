@@ -15,22 +15,22 @@ Duo offers several options for authenticating users:
 
 [See here](https://www.duo.com/) for additional information.
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-support-duo</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 
-{% highlight properties %}
+```properties
 # cas.mfa.duo.api.host=
 # cas.mfa.duo.integration.key=
 # cas.mfa.duo.secret.key=
 # cas.mfa.duo.application.key=
 # cas.mfa.duo.rank=0
-{% endhighlight %}
+```
 
 
