@@ -52,20 +52,17 @@ Multifactor authentication can be activated based on the following triggers:
 ### Applications
 MFA can be triggered for a specific application registered inside the CAS service registry.
 
-{% highlight json %}
-
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "multifactorPolicy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ],
-    "failOpen" : false
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ]
   }
 }
-
-{% endhighlight %}
+```
 
 ### Principal Attribute
 MFA can be triggered for all users/subjects carrying a specific attribute that matches configured attribute value. The attribute
@@ -79,19 +76,16 @@ that indicates the required MFA authentication flow. The parameter name
 is configurable, but its value must match the authentication provider id
 of an available MFA provider described above. 
 
-{% highlight bash %}
-
+```bash
 https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
-
-{% endhighlight %}
+```
 
 ### Principal Attribute Per Application
 As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided
 the authenticated principal carries an attribute that matches configured attribute value. The attribute
 value can be an arbitrary regex pattern. See below to learn about how to configure MFA settings.
 
-{% highlight json %}
-
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
@@ -103,14 +97,34 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
     "principalAttributeValueToMatch" : "faculty|allMfaMembers"
   }
 }
-
-{% endhighlight %}
+```
 
 ## Fail-Open vs Fail-Closed
 The authentication policy by default supports fail-close mode, which means that if you attempt to exercise a particular
 provider available to CAS and the provider is not available and cannot be reached, authentication will be stopped and an error
 will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
 functionality, if that provider cannot respond. 
+
+```json
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ],
+    "failureMode" : "CLOSED"
+  }
+}
+```
+
+The following failure modes are supported:
+
+| Field                | Description
+|----------------------+---------------------------------+
+| `CLOSED`                  | Authentication is blocked if the provider cannot be reached. 
+| `OPEN`                    | Authentication proceeds, yet MFA is not communicated to the client.
+| `PHANTOM`                 | Authentication proceeds and MFA is communicated to the client.
 
 ## Ranking Providers
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
@@ -135,8 +149,8 @@ that rank near the top with a lower index value are considered the best.
 ## Settings
 The following general MFA settings are available for configuration in `cas.properties`:
 
-{% highlight properties %}
+```properties
 # cas.mfa.principal.attribute=
 # cas.mfa.principal.attribute.value=
 # cas.mfa.request.parameter=
-{% endhighlight %}
+```
