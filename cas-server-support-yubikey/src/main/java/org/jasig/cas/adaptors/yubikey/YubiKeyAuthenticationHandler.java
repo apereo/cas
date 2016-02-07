@@ -33,7 +33,7 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Component("yubiKeyAuthenticationHandler")
+@Component("yubikeyAuthenticationHandler")
 public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler
         implements InitializingBean {
 

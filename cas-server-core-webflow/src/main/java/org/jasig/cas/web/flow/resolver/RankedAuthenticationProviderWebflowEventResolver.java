@@ -38,6 +38,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
+
     @Autowired
     @Qualifier("defaultAuthenticationSupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -110,7 +111,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
                             provider, requestedProvider);
                     return resumeFlow();
                 }
-                if (provider.getOrder() > requestedProvider.getOrder()) {
+                if (provider.getOrder() >= requestedProvider.getOrder()) {
                     logger.debug("Provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
                             provider, requestedProvider);
                     return resumeFlow();
