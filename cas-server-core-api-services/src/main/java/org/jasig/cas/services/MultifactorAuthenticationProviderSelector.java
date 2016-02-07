@@ -3,7 +3,6 @@ package org.jasig.cas.services;
 import org.jasig.cas.authentication.principal.Principal;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * This is {@link MultifactorAuthenticationProviderSelector}

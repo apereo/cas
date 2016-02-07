@@ -1,27 +1,21 @@
 package org.jasig.cas.support.oauth.web;
 
-import org.springframework.test.annotation.DirtiesContext;
-
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.support.oauth.OAuthConstants;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
 import org.jasig.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.TicketState;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
