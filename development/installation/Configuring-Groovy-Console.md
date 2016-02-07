@@ -4,7 +4,7 @@ title: CAS - Groovy Console
 ---
 
 # CAS Groovy Console
-This is a Groovy shell embedded inside the CAS server that be used by deployers to interact with the CAS API at runtime,
+This is a Groovy shell embedded inside the CAS server that could be used by deployers to interact with the CAS API at runtime,
 to query the runtime state of the software and execute custom Groovy scripts. The console is fully aware of the CAS application 
 context and is also able to load custom groovy scripts which 
 may want to peek inside the CAS configuration, invoke its API and perhaps report back various bits of configuration about CAS.
@@ -75,7 +75,6 @@ groovy:000> defaultTicketRegistry.getTickets()
 ```
 
 All CAS public APIs may be used by the shell to interact with the application context.
-
 
 ### Custom Groovy Scripts
 
