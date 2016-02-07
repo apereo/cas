@@ -150,7 +150,6 @@ that rank near the top with a lower index value are considered the best.
 The following general MFA settings are available for configuration in `cas.properties`:
 
 ```properties
-# cas.mfa.principal.attribute=
-# cas.mfa.principal.attribute.value=
-# cas.mfa.request.parameter=
+# cas.mfa.principal.attributes=memberOf,groupName,authnClass
+# cas.mfa.request.parameter=authn_method
 ```
