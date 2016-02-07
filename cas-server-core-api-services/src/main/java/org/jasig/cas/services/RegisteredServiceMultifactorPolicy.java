@@ -13,18 +13,37 @@ import java.util.Set;
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
 
     /**
+     * The enum Failure modes.
+     */
+    enum FailureModes {
+        /**
+         * Disallow MFA, proceed with authentication but don't communicate MFA to the RP.
+         */
+        OPEN,
+        /**
+         * Disallow MFA, block with authentication.
+         */
+        CLOSED,
+        /**
+         * Disallow MFA, proceed with authentication and communicate MFA to the RP.
+         */
+        PHANTOM
+    }
+
+    /**
      * Gets MFA authentication provider id.
      *
      * @return the authentication provider id
      */
     Set<String> getMultifactorAuthenticationProviders();
 
+
     /**
-     * Is fail open boolean.
+     * Gets failure mode.
      *
-     * @return the boolean
+     * @return the failure mode
      */
-    boolean isFailOpen();
+    FailureModes getFailureMode();
 
     /**
      * Gets principal attribute name trigger.
