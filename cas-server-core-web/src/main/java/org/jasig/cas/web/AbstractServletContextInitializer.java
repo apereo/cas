@@ -1,5 +1,6 @@
 package org.jasig.cas.web;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
@@ -341,4 +342,12 @@ public abstract class AbstractServletContextInitializer
      * @param event the event
      */
     protected void destroyServletContext(final ServletContextEvent event) {}
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append(this.getClass().getSimpleName())
+                .toString();
+    }
 }

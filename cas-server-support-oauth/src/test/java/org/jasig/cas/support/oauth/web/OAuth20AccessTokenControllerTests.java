@@ -198,12 +198,7 @@ public final class OAuth20AccessTokenControllerTests {
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
-        expiringOAuthCodeFactory.setExpirationPolicy(new ExpirationPolicy() {
-            @Override
-            public boolean isExpired(final TicketState ticketState) {
-                return true;
-            }
-        });
+        expiringOAuthCodeFactory.setExpirationPolicy((ExpirationPolicy) ticketState -> true);
         final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
         final OAuthCodeImpl code = (OAuthCodeImpl) expiringOAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);

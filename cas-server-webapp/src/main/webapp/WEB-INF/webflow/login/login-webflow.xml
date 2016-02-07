@@ -61,7 +61,8 @@
     </decision-state>
 
     <action-state id="initializeLoginForm">
-        <transition to="viewLoginForm"/>
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="viewLoginForm"/>
     </action-state>
 
     <view-state id="viewLoginForm" view="casLoginView" model="credential">

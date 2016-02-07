@@ -1,5 +1,6 @@
 package org.jasig.cas.web.flow.resolver;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.LinkedHashSet;
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,11 +29,8 @@ import java.util.Set;
 @Component("principalAttributeAuthenticationPolicyWebflowEventResolver")
 public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Value("${cas.mfa.principal.attribute:}")
+    @Value("${cas.mfa.principal.attributes:}")
     private String attributeName;
-
-    @Value("${cas.mfa.principal.attribute.value:}")
-    private String attributeValue;
 
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
@@ -44,8 +43,8 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
-            logger.debug("Attribute name/value to determine event is not configured for {}", principal.getId());
+        if (StringUtils.isBlank(this.attributeName)) {
+            logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
             return null;
         }
 
@@ -56,18 +55,15 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
             return null;
         }
 
-        final Set<MultifactorAuthenticationProvider> providers = new LinkedHashSet<>(providerMap.size());
-        for (final MultifactorAuthenticationProvider provider : providerMap.values()) {
-            try {
-                if (provider.getId().matches(this.attributeValue)) {
-                    logger.debug("Matched provider {} against attribute value {}", provider, this.attributeValue);
-                    providers.add(provider);
-                }
-            } catch (final Exception e) {
-                logger.warn("Could not verify multifactor authentication provider {}", provider, e);
-            }
-        }
-        return resolveEventViaPrincipalAttribute(principal, this.attributeName, service, context,
-                providers, Predicates.alwaysTrue());
+        final Collection<MultifactorAuthenticationProvider> providers = providerMap.values();
+        return resolveEventViaPrincipalAttribute(principal,
+                org.springframework.util.StringUtils.commaDelimitedListToSet(this.attributeName),
+                service, context, providers,
+                input -> {
+                    return providers.stream()
+                            .filter(provider -> provider.getId().equals(input))
+                            .count() > 0;
+                });
     }
+
 }
