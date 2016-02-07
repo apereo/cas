@@ -1,5 +1,7 @@
 package org.jasig.cas.adaptors.radius.authentication;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.jasig.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -56,5 +58,31 @@ public class RadiusMultifactorAuthenticationProvider implements MultifactorAuthe
     @Override
     public int getOrder() {
         return this.rank;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final RadiusMultifactorAuthenticationProvider rhs = (RadiusMultifactorAuthenticationProvider) obj;
+        return new EqualsBuilder()
+                .append(this.rank, rhs.rank)
+                .append(this.getId(), rhs.getId())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(rank)
+                .append(getId())
+                .toHashCode();
     }
 }

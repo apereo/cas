@@ -15,7 +15,6 @@ import java.util.Set;
  * @author Alaa Nassef
  * @since 4.0.0
  */
-
 @Component("successfulHandlerMetaDataPopulator")
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
@@ -26,7 +25,7 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
             successes = new HashSet(successes);
         }
         
-        builder.addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, successes);
+        builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, successes);
     }
 
     @Override
