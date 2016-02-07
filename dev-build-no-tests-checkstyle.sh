@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-./gradlew clean build -DskipAspectJ=true -x javadoc -x test -x checkstyleMain -x checkstyleTest
+gradle clean build  -x test -x javadoc -x checkstyleMain -x checkstyleTest  -x signArchives  -x findbugsMain

@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.jasig.cas.web.flow.AuthUtils;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -97,6 +98,21 @@ public class TicketsResource {
     @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                    final HttpServletRequest request) throws JsonProcessingException {
+      /**
+         * TODO: It is not possible to pass around the servlet context through a hierarcy
+         * of changes without making much change in the class interfaces. Therefore, using
+         * threadlocal to maintain the tenant information. May be it is possible to use
+         * spring flow to do that but this should be a place holder till we figure out the best
+         * way to achieve that.
+         */
+        String tenantId = AuthUtils.SELF;
+
+        if(request!=null) {
+          //The URL is //https://localhost:8443/auth/login.
+          tenantId = AuthUtils.extractTenantID(request);
+        }
+
+        AuthUtils.setTenantId(tenantId);
         try (Formatter fmt = new Formatter()) {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
