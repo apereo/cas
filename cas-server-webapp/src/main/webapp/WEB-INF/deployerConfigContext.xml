@@ -48,13 +48,13 @@
 
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
-        <entry key="eduPersonAffiliation" value="yubikeyAuthenticationHandler" />
+        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
         <entry key="groupMembership" value="groupMembership" />
         <entry>
             <key><value>memberOf</value></key>
             <list>
                 <value>faculty</value>
-                <value>staff</value>
+                <value>mfa-duo</value>
                 <value>org</value>
             </list>
         </entry>
