@@ -1,6 +1,8 @@
 package org.jasig.cas.adaptors.yubikey;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
@@ -79,5 +81,31 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
     @Override
     public int getOrder() {
         return this.rank;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final YubiKeyMultifactorAuthenticationProvider rhs = (YubiKeyMultifactorAuthenticationProvider) obj;
+        return new EqualsBuilder()
+                .append(this.rank, rhs.rank)
+                .append(this.getId(), rhs.getId())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(rank)
+                .append(getId())
+                .toHashCode();
     }
 }

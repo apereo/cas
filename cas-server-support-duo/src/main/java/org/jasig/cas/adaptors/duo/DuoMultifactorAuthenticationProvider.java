@@ -1,5 +1,7 @@
 package org.jasig.cas.adaptors.duo;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
@@ -55,5 +57,32 @@ public class DuoMultifactorAuthenticationProvider implements MultifactorAuthenti
     @Override
     public int getOrder() {
         return this.rank;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final DuoMultifactorAuthenticationProvider rhs = (DuoMultifactorAuthenticationProvider) obj;
+        return new EqualsBuilder()
+                .append(this.rank, rhs.rank)
+                .append(this.getId(), rhs.getId())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(rank)
+                .append(getId())
+                .toHashCode();
     }
 }
