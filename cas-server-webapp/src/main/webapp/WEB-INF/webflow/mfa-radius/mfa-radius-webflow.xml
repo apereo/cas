@@ -10,7 +10,8 @@
     </on-start>
 
     <action-state id="initializeLoginForm">
-        <transition on="generated" to="viewLoginFormRadius" />
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="viewLoginFormRadius"/>
     </action-state>
 
     <view-state id="viewLoginFormRadius" view="casRadiusLoginView" model="credential">
@@ -19,7 +20,7 @@
             <binding property="password" />
         </binder>
         <on-entry>
-            <set name="viewScope.commandName" value="'credentials'" />
+            <set name="viewScope.commandName" value="'credential'" />
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
         <transition on="submit" bind="true" validate="false" to="realSubmitRadius"/>

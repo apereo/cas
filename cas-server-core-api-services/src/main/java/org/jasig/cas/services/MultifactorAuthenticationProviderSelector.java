@@ -2,6 +2,7 @@ package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Principal;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -22,7 +23,7 @@ public interface MultifactorAuthenticationProviderSelector {
      * @param principal the principal
      * @return the multifactor authentication provider
      */
-    MultifactorAuthenticationProvider resolve(Set<MultifactorAuthenticationProvider> providers,
+    MultifactorAuthenticationProvider resolve(Collection<MultifactorAuthenticationProvider> providers,
                                               RegisteredService service,
                                               Principal principal);
 }
