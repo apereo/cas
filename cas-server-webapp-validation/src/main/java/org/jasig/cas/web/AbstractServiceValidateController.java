@@ -1,10 +1,11 @@
 package org.jasig.cas.web;
 
 import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
@@ -14,7 +15,6 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -24,7 +24,6 @@ import org.jasig.cas.validation.AbstractCasProtocolValidationSpecification;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.validation.ValidationResponseType;
-import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
