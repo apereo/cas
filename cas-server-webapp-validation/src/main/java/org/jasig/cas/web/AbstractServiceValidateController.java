@@ -20,6 +20,7 @@ import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.validation.AbstractCasProtocolValidationSpecification;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.validation.ValidationResponseType;
@@ -27,6 +28,7 @@ import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -105,6 +107,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
+
+    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    private String authenticationContextAttribute;
+
+    @Value("${cas.mfa.request.parameter:authn_method}")
+    private String authenticationContextParameter;
+
 
     /**
      * Instantiates a new Service validate controller.
@@ -201,7 +210,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
             if (!validateAssertion(request, serviceTicketId, assertion)) {
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
-                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null, request, service);
+                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                        new Object[] {serviceTicketId}, request, service);
             }
 
             String proxyIou = null;
@@ -240,13 +250,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the boolean
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
-        final ValidationSpecification validationSpecification = this.getCommandClass();
+        final AbstractCasProtocolValidationSpecification validationSpecification = this.getCommandClass();
         final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
         initBinder(request, binder);
         binder.bind(request);
 
-        if (!validationSpecification.isSatisfiedBy(assertion)) {
-            logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+        validationSpecification.setAuthenticationContextAttribute(this.authenticationContextAttribute);
+        validationSpecification.setAuthenticationContextParameter(this.authenticationContextParameter);
+
+        if (!validationSpecification.isSatisfiedBy(assertion, request)) {
+            logger.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
             return false;
         }
         return true;
@@ -341,9 +354,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      *
      * @return the command class
      */
-    private ValidationSpecification getCommandClass() {
+    private AbstractCasProtocolValidationSpecification getCommandClass() {
         try {
-            return (ValidationSpecification) this.validationSpecificationClass.newInstance();
+            return (AbstractCasProtocolValidationSpecification) this.validationSpecificationClass.newInstance();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }

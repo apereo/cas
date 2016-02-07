@@ -3,6 +3,8 @@ package org.jasig.cas.mock;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Class to test the Runtime exception thrown when there is no default
  * constructor on a ValidationSpecification.
@@ -19,7 +21,7 @@ public class MockValidationSpecification implements ValidationSpecification {
     }
 
     @Override
-    public boolean isSatisfiedBy(final Assertion assertion) {
+    public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         return this.test;
     }
 }
