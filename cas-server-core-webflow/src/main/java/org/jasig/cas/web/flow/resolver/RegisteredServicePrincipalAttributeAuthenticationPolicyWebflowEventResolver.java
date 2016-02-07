@@ -44,7 +44,8 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
 
         final Principal principal = authentication.getPrincipal();
         final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
-        return resolveEventViaPrincipalAttribute(principal, policy.getPrincipalAttributeNameTrigger(), service, context,
-                providers, Predicates.containsPattern(policy.getPrincipalAttributeValueToMatch()));
+        return resolveEventViaPrincipalAttribute(principal,
+                org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
+                service, context, providers, Predicates.containsPattern(policy.getPrincipalAttributeValueToMatch()));
     }
 }

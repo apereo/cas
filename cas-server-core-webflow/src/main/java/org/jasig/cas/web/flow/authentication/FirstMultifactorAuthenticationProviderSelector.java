@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class FirstMultifactorAuthenticationProviderSelector implements Multifact
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public MultifactorAuthenticationProvider resolve(final Set<MultifactorAuthenticationProvider> providers,
+    public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                                      final RegisteredService service, final Principal principal) {
         final Iterator<MultifactorAuthenticationProvider> it = providers.iterator();
         final MultifactorAuthenticationProvider provider = it.next();
