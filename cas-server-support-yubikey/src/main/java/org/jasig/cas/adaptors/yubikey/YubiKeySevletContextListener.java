@@ -18,11 +18,16 @@ import javax.servlet.annotation.WebListener;
 @Component
 public class YubiKeySevletContextListener extends AbstractServletContextInitializer {
     @Autowired
-    @Qualifier("yubiKeyAuthenticationHandler")
+    @Qualifier("yubikeyAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
+
+    @Autowired
+    @Qualifier("yubikeyAuthenticationMetaDataPopulator")
+    private YubiKeyAuthenticationMetaDataPopulator populator;
 
     @Override
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
+        addAuthenticationMetadataPopulator(populator);
     }
 }
