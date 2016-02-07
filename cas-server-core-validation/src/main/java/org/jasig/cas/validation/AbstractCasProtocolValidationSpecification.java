@@ -5,7 +5,6 @@ import org.jasig.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationExce
 import org.jasig.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;
