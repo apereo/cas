@@ -22,7 +22,7 @@ following dependencies in the Maven WAR overlay:
 
 ## Configuration
 
-{% highlight properties %}
+```properties
 # cas.mfa.yubikey.client.id=
 # cas.mfa.yubikey.secret.key=
 # cas.mfa.yubikey.rank = 0

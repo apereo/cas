@@ -68,7 +68,7 @@ public class JsonServiceRegistryDaoTests {
 
         final DefaultRegisteredServiceMultifactorPolicy policy =
                 new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setFailOpen(true);
+        policy.setFailureMode(RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM);
 
         final Set<String> set = new HashSet<>();
         set.add("duoAuthenticationProvider");

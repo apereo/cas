@@ -18,7 +18,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     private static final long serialVersionUID = -3068390754996358337L;
 
     private Set<String> multifactorAuthenticationProviders = new LinkedHashSet<>();
-    private boolean failOpen;
+    private FailureModes failureMode = FailureModes.CLOSED;
     private String principalAttributeNameTrigger;
     private String principalAttributeValueToMatch;
 
@@ -38,12 +38,12 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     }
 
     @Override
-    public boolean isFailOpen() {
-        return failOpen;
+    public FailureModes getFailureMode() {
+        return failureMode;
     }
 
-    public void setFailOpen(final boolean failOpen) {
-        this.failOpen = failOpen;
+    public void setFailureMode(final FailureModes failureMode) {
+        this.failureMode = failureMode;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
         final DefaultRegisteredServiceMultifactorPolicy rhs = (DefaultRegisteredServiceMultifactorPolicy) obj;
         return new EqualsBuilder()
                 .append(this.multifactorAuthenticationProviders, rhs.multifactorAuthenticationProviders)
-                .append(this.failOpen, rhs.failOpen)
+                .append(this.failureMode, rhs.failureMode)
                 .append(this.principalAttributeNameTrigger, rhs.principalAttributeNameTrigger)
                 .append(this.principalAttributeValueToMatch, rhs.principalAttributeValueToMatch)
                 .isEquals();
@@ -89,7 +89,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(multifactorAuthenticationProviders)
-                .append(failOpen)
+                .append(failureMode)
                 .append(principalAttributeNameTrigger)
                 .append(principalAttributeValueToMatch)
                 .toHashCode();
@@ -100,7 +100,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     public String toString() {
         return new ToStringBuilder(this)
                 .append("multifactorAuthenticationProviders", multifactorAuthenticationProviders)
-                .append("failOpen", failOpen)
+                .append("failureMode", failureMode)
                 .append("principalAttributeNameTrigger", principalAttributeNameTrigger)
                 .append("principalAttributeValueToMatch", principalAttributeValueToMatch)
                 .toString();
