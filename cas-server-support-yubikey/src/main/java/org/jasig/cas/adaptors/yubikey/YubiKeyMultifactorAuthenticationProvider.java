@@ -34,7 +34,7 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    @Qualifier("yubiKeyAuthenticationHandler")
+    @Qualifier("yubikeyAuthenticationHandler")
     private YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
 
     @Value("${cas.mfa.yubikey.rank:0}")
