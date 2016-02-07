@@ -152,4 +152,5 @@ The following general MFA settings are available for configuration in `cas.prope
 ```properties
 # cas.mfa.principal.attributes=memberOf,groupName,authnClass
 # cas.mfa.request.parameter=authn_method
+# cas.mfa.authn.ctx.attribute=authnContextClass
 ```

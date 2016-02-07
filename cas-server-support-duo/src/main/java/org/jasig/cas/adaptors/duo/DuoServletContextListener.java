@@ -1,6 +1,7 @@
 package org.jasig.cas.adaptors.duo;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,8 +22,13 @@ public class DuoServletContextListener extends AbstractServletContextInitializer
     @Qualifier("duoAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
+    @Autowired
+    @Qualifier("duoAuthenticationMetaDataPopulator")
+    private AuthenticationMetaDataPopulator populator;
+
     @Override
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
+        addAuthenticationMetadataPopulator(populator);
     }
 }

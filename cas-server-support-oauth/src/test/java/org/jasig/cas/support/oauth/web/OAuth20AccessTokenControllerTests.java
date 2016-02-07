@@ -15,8 +15,6 @@ import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.TicketState;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.core.context.HttpConstants;
