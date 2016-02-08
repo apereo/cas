@@ -109,7 +109,7 @@ public class TicketsResource {
 
         if(request!=null) {
           //The URL is //https://localhost:8443/auth/login.
-          tenantId = AuthUtils.extractTenantID(request);
+          tenantId = AuthUtils.extractTenantID(request.getRequestURL().toString());
         }
 
         AuthUtils.setTenantId(tenantId);
