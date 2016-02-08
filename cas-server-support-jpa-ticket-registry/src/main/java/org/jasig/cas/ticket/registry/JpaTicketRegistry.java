@@ -1,6 +1,5 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.support.oauth.ticket.OAuthToken;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
@@ -65,10 +64,6 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
     @Autowired(required = false)
     @Qualifier("scheduler")
     private Scheduler scheduler;
-
-    @Autowired
-    @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
 
     @Autowired
     @Qualifier("jpaLockingStrategy")
@@ -296,7 +291,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
                 return;
             }
             logger.debug("Acquired lock. Proceeding with cleanup.");
-            cleanupTickets(this.getTickets().stream(), this.logoutManager);
+            cleanupTickets();
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         } finally {

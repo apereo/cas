@@ -1,6 +1,5 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -57,10 +56,6 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     @Autowired(required = false)
     @Qualifier("scheduler")
     private Scheduler scheduler;
-
-    @Autowired
-    @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
 
     /**
      * A HashMap to contain the tickets.
@@ -174,7 +169,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
         try {
-            cleanupTickets(this.getTickets().stream(), this.logoutManager);
+            cleanupTickets();
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
