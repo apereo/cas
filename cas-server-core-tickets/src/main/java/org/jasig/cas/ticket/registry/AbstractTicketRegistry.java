@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Scott Battaglia
@@ -40,10 +39,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
     /** The Slf4j logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
+
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
 
     private List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators = new ArrayList<>();
 
@@ -311,14 +315,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @param ticketStream a stream containing a collection of all tickets in any particular registry holding them.
      * @param logoutManager the logout manager of any particular ticket registry
      */
-    protected void cleanupTickets(final Stream<Ticket> ticketStream, final LogoutManager logoutManager) {
+    protected void cleanupTickets() {
         logger.debug("Beginning ticket cleanup...");
-        ticketStream
+        this.getTickets().stream()
                 .filter(ticket -> ticket.isExpired())
                 .forEach(ticket -> {
                     if (ticket instanceof TicketGrantingTicket) {
                         logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                        logoutManager.performLogout((TicketGrantingTicket) ticket);
+                        this.logoutManager.performLogout((TicketGrantingTicket) ticket);
                         deleteTicket(ticket.getId());
                     } else if (ticket instanceof ServiceTicket) {
                         logger.debug("Cleaning up expired service ticket or its derivative [{}]", ticket.getId());
