@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -291,34 +290,13 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
         try {
-
-            logger.info("Beginning ticket cleanup.");
             logger.debug("Attempting to acquire ticket cleanup lock.");
             if (!this.jpaLockingStrategy.acquire()) {
-                logger.info("Could not obtain lock.  Aborting cleanup.");
+                logger.info("Could not obtain lock. Aborting cleanup.");
                 return;
             }
-            logger.debug("Acquired lock.  Proceeding with cleanup.");
-
-            logger.info("Beginning ticket cleanup...");
-            this.getTickets().stream()
-                    .filter(ticket -> ticket.isExpired())
-                    .collect(Collectors.toSet())
-                    .forEach(ticket -> {
-                        if (ticket instanceof TicketGrantingTicket) {
-                            logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                            logoutManager.performLogout((TicketGrantingTicket) ticket);
-                            deleteTicket(ticket.getId());
-                        } else if (ticket instanceof OAuthToken) {
-                            logger.debug("Cleaning up expired OAuth token [{}]", ticket.getId());
-                            deleteTicket(ticket.getId());
-                        } else if (ticket instanceof ServiceTicket) {
-                            logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                            deleteTicket(ticket.getId());
-                        } else {
-                            logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
-                        }
-                });
+            logger.debug("Acquired lock. Proceeding with cleanup.");
+            cleanupTickets(this.getTickets().stream(), this.logoutManager);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         } finally {

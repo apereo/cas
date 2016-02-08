@@ -2,6 +2,7 @@ package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Scott Battaglia
@@ -301,5 +303,29 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>>
                                             ticketDelegators) {
         this.ticketDelegators = ticketDelegators;
+    }
+
+    /**
+     * Common code to go over expired tickets and clean them up.
+     *
+     * @param ticketStream a stream containing a collection of all tickets in any particular registry holding them.
+     * @param logoutManager the logout manager of any particular ticket registry
+     */
+    protected void cleanupTickets(Stream<Ticket> ticketStream, LogoutManager logoutManager) {
+        logger.debug("Beginning ticket cleanup...");
+        ticketStream
+                .filter(ticket -> ticket.isExpired())
+                .forEach(ticket -> {
+                    if (ticket instanceof TicketGrantingTicket) {
+                        logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                        logoutManager.performLogout((TicketGrantingTicket) ticket);
+                        deleteTicket(ticket.getId());
+                    } else if (ticket instanceof ServiceTicket) {
+                        logger.debug("Cleaning up expired service ticket or its derivative [{}]", ticket.getId());
+                        deleteTicket(ticket.getId());
+                    } else {
+                        logger.warn("Unknown ticket type [{}]. Nothing to clean up.", ticket.getClass().getSimpleName());
+                    }
+                });
     }
 }
