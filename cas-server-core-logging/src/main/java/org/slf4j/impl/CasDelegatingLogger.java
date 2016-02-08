@@ -77,7 +77,7 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
                 return args;
             }
 
-            return Arrays.stream(args).filter(arg -> arg != null).map(Object::toString)
+            return Arrays.stream(args).map(arg -> arg != null ? arg.toString() : null)
                     .map(message -> ticketIdPresentInLogMessage(message) ? removeTicketId(message) : message).toArray();
         } catch (final Exception e) {
             throw new RuntimeException(e);
