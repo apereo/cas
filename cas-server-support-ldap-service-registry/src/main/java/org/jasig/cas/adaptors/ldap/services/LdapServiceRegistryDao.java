@@ -1,5 +1,6 @@
 package org.jasig.cas.adaptors.ldap.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistryDao;
 
@@ -108,36 +109,38 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @return the registered service
      */
     private RegisteredService update(final RegisteredService rs) {
-
+        String currentDn = null;
         if (ldapServiceMapper == null || searchRequest == null) {
             return null;
         }
 
         try (final Connection searchConnection = getConnection()) {
-
             final Response<SearchResult> response = searchForServiceById(searchConnection, rs.getId());
             if (hasResults(response)) {
-                final String currentDn = response.getResult().getEntry().getDn();
+                currentDn = response.getResult().getEntry().getDn();
+            }
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
 
+        if (StringUtils.isNotBlank(currentDn)) {
+            logger.debug("Updating registered service at {}", currentDn);
 
-                try (final Connection modifyConnection = getConnection()) {
-                    final ModifyOperation operation = new ModifyOperation(modifyConnection);
+            try (final Connection modifyConnection = getConnection()) {
+                final ModifyOperation operation = new ModifyOperation(modifyConnection);
+                final List<AttributeModification> mods = new ArrayList<>();
 
-                    final List<AttributeModification> mods = new ArrayList<>();
-
-                    final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
+                final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.searchRequest.getBaseDn(), rs);
                     mods.addAll(entry.getAttributes().stream()
                             .filter(attr -> !attr.getName().equals(this.ldapServiceMapper.getIdAttribute()))
                             .map(attr -> new AttributeModification(AttributeModificationType.REPLACE, attr)).collect(Collectors.toList()));
-                    final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
-                    operation.execute(request);
-                } catch (final LdapException e) {
-                    logger.error(e.getMessage(), e);
-                }
+                final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
+                operation.execute(request);
+            } catch (final LdapException e) {
+                logger.error(e.getMessage(), e);
             }
-        } catch (final LdapException e) {
-            logger.error(e.getMessage(), e);
         }
+
         return rs;
     }
 
