@@ -311,7 +311,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @param ticketStream a stream containing a collection of all tickets in any particular registry holding them.
      * @param logoutManager the logout manager of any particular ticket registry
      */
-    protected void cleanupTickets(Stream<Ticket> ticketStream, LogoutManager logoutManager) {
+    protected void cleanupTickets(final Stream<Ticket> ticketStream, final LogoutManager logoutManager) {
         logger.debug("Beginning ticket cleanup...");
         ticketStream
                 .filter(ticket -> ticket.isExpired())
