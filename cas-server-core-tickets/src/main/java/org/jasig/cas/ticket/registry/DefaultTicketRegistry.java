@@ -178,7 +178,6 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
             logger.debug("Beginning ticket cleanup...");
             this.getTickets().stream()
                     .filter(ticket -> ticket.isExpired())
-                    .collect(Collectors.toSet())
                     .forEach(ticket -> {
                         if (ticket instanceof TicketGrantingTicket) {
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
