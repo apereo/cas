@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
@@ -175,21 +174,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
         try {
-            logger.debug("Beginning ticket cleanup...");
-            this.getTickets().stream()
-                    .filter(ticket -> ticket.isExpired())
-                    .forEach(ticket -> {
-                        if (ticket instanceof TicketGrantingTicket) {
-                            logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                            logoutManager.performLogout((TicketGrantingTicket) ticket);
-                            deleteTicket(ticket.getId());
-                        } else if (ticket instanceof ServiceTicket) {
-                            logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                            deleteTicket(ticket.getId());
-                        } else {
-                            logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
-                        }
-                    });
+            cleanupTickets(this.getTickets().stream(), this.logoutManager);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
