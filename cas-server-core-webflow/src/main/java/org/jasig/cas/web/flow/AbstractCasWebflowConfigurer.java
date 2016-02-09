@@ -601,15 +601,15 @@ public abstract class AbstractCasWebflowConfigurer {
                                                                     final FlowDefinitionRegistry registry) {
 
         final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
+        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        final String targetStateId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
         final List<DefaultMapping> mappings = new ArrayList<>();
         final Mapper inputMapper = createMapperToSubflowState(mappings);
         final SubflowAttributeMapper subflowMapper = createSubflowAttributeMapper(inputMapper, null);
         subflowState.setAttributeMapper(subflowMapper);
-        subflowState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+        subflowState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId));
 
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         logger.debug("Retrieved action state {}", actionState.getId());
         createTransitionForState(actionState, subflowId, subflowId);
 
