@@ -67,7 +67,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyAfterPropertesSetTestEverything() throws Exception {
-        this.serviceValidateController.setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
+        this.serviceValidateController.setValidationSpecification(new Cas20ProtocolValidationSpecification());
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test(expected=RuntimeException.class)
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
-        this.serviceValidateController.setValidationSpecificationClass(MockValidationSpecification.class);
+        this.serviceValidateController.setValidationSpecification(new MockValidationSpecification(false));
 
         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
