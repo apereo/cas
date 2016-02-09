@@ -60,20 +60,27 @@ public final class InitialFlowSetupAction extends AbstractAction {
     @Size(min=1)
     private List<ArgumentExtractor> argumentExtractors;
 
-    /** Boolean to note whether we've set the values on the generators or not. */
-    private boolean pathPopulated = false;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        if (!this.pathPopulated) {
-            final String contextPath = context.getExternalContext().getContextPath();
-            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + "/" : "/";
-            logger.info("Setting path for cookies to: "
-                + cookiePath);
+
+        final String contextPath = context.getExternalContext().getContextPath();
+        final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + '/' : "/";
+
+        if (!StringUtils.hasText(warnCookieGenerator.getCookiePath())) {
+            logger.info("Setting path for cookies for warn cookie generator to: " + cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
+        } else {
+            logger.debug("Warning cookie domain is set to " + warnCookieGenerator.getCookieDomain()
+                    + " and path " +  warnCookieGenerator.getCookiePath());
+        }
+        if (!StringUtils.hasText(ticketGrantingTicketCookieGenerator.getCookiePath())) {
+            logger.info("Setting path for cookies for TGC cookie generator to: " + cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
-            this.pathPopulated = true;
+        } else {
+            logger.debug("TGC cookie domain is set to " + ticketGrantingTicketCookieGenerator.getCookieDomain()
+                    + " and path " +  ticketGrantingTicketCookieGenerator.getCookiePath());
         }
 
         context.getFlowScope().put(
