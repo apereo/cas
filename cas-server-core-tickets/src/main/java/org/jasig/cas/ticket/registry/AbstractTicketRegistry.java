@@ -311,10 +311,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
     /**
      * Common code to go over expired tickets and clean them up.
-     *
-     * @param ticketStream a stream containing a collection of all tickets in any particular registry holding them.
-     * @param logoutManager the logout manager of any particular ticket registry
-     */
+     **/
     protected void cleanupTickets() {
         logger.debug("Beginning ticket cleanup...");
         this.getTickets().stream()
