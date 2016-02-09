@@ -403,7 +403,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
         }
         final Event event = events.iterator().next();
-        logger.info("Resolved single event [{}] via [{}] for this context", event.getId(),
+        logger.debug("Resolved single event [{}] via [{}] for this context", event.getId(),
                 event.getSource().getClass().getName());
         return event;
     }

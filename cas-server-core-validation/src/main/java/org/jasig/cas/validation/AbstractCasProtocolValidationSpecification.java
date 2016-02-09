@@ -1,14 +1,12 @@
 package org.jasig.cas.validation;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
-import org.jasig.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 /**
  * Base validation specification for the CAS protocol. This specification checks
@@ -22,9 +20,10 @@ import java.util.Collection;
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private String authenticationContextAttribute;
 
-    private String authenticationContextParameter;
+    @Autowired
+    @Qualifier("authenticationContextValidationSpecification")
+    private ValidationSpecification authenticationContextValidationSpecification;
 
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
@@ -44,21 +43,6 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
         this.renew = renew;
     }
 
-    public String getAuthenticationContextAttribute() {
-        return authenticationContextAttribute;
-    }
-
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
-    }
-
-    public String getAuthenticationContextParameter() {
-        return authenticationContextParameter;
-    }
-
-    public void setAuthenticationContextParameter(final String authenticationContextParameter) {
-        this.authenticationContextParameter = authenticationContextParameter;
-    }
 
     /**
      * Method to set the renew requirement.
@@ -67,6 +51,10 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
      */
     public final void setRenew(final boolean renew) {
         this.renew = renew;
+    }
+
+    public void setAuthenticationContextValidationSpecification(final ValidationSpecification specification) {
+        this.authenticationContextValidationSpecification = specification;
     }
 
     /**
@@ -80,24 +68,8 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
 
     @Override
     public final boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
-        final boolean valid = isSatisfiedByInternal(assertion) && (!this.renew || assertion.isFromNewLogin());
-
-        if (valid) {
-            final String value = request.getParameter(this.authenticationContextParameter);
-            if (StringUtils.isBlank(value)) {
-                return true;
-            }
-
-            final Object ctxAttr = assertion.getPrimaryAuthentication().getAttributes().get(this.authenticationContextAttribute);
-            final Collection<Object> contexts = CollectionUtils.convertValueToCollection(ctxAttr);
-            logger.debug("Attempting to match requested authentication context {} against {}", value, contexts);
-
-            if  (contexts.stream().filter(ctx -> ctx.toString().equals(value)).count() > 0) {
-                return true;
-            }
-            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
-        }
-        return false;
+        return isSatisfiedByInternal(assertion) && (!this.renew || assertion.isFromNewLogin())
+            && authenticationContextValidationSpecification.isSatisfiedBy(assertion, request);
     }
 
     /**

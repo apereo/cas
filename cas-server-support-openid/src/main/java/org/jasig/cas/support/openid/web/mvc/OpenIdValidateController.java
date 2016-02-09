@@ -1,10 +1,12 @@
 package org.jasig.cas.support.openid.web.mvc;
 
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.AbstractServiceValidateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,10 +29,13 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     @Override
     @Autowired
-    public void setValidationSpecificationClass(@Value("org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification")
-                                                final Class<?> validationSpecificationClass) {
-        super.setValidationSpecificationClass(validationSpecificationClass);
+    @Scope("prototype")
+    public void setValidationSpecification(
+            @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
+            final ValidationSpecification validationSpecification) {
+        super.setValidationSpecification(validationSpecification);
     }
+
 
     @Override
     @Autowired

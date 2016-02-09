@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -37,15 +39,19 @@ public final class DuoAuthenticationService {
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
 
+    @NotNull
     @Value("${cas.mfa.duo.integration.key:}")
     private String duoIntegrationKey;
 
+    @NotNull
     @Value("${cas.mfa.duo.secret.key:}")
     private String duoSecretKey;
 
+    @NotNull
     @Value("${cas.mfa.duo.application.key:}")
     private String duoApplicationKey;
 
+    @NotNull
     @Value("${cas.mfa.duo.api.host:}")
     private String duoApiHost;
 
@@ -54,6 +60,13 @@ public final class DuoAuthenticationService {
      */
     public DuoAuthenticationService() {}
 
+    @PostConstruct
+    private void initialize() {
+        Assert.hasLength(this.duoApiHost, "Duo API host cannot be blank");
+        Assert.hasLength(this.duoIntegrationKey, "Duo integration key cannot be blank");
+        Assert.hasLength(this.duoSecretKey, "Duo secret key cannot be blank");
+        Assert.hasLength(this.duoApplicationKey, "Duo application key cannot be blank");
+    }
 
     public String getDuoApiHost() {
         return this.duoApiHost;
