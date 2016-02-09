@@ -14,7 +14,10 @@
 
     <context:property-placeholder location="cas.properties" ignore-resource-not-found="true" />
 
-    <bean id="igniteTicketRegistry" class="org.jasig.cas.ticket.registry.IgniteTicketRegistry"
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config/>
+
+    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.IgniteTicketRegistry"
       p:igniteConfiguration-ref="igniteConfiguration" />
 
     <bean id="igniteConfiguration" class="org.apache.ignite.configuration.IgniteConfiguration">
@@ -48,4 +51,20 @@
     <bean id="igniteAddresses" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray">
         <constructor-arg type="java.lang.String" value="localhost:47500"/>
     </bean>
+
+    <!-- CAS Context Core -->
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+
 </beans>
