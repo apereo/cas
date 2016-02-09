@@ -3,28 +3,26 @@ package org.jasig.cas.web.flow.resolver;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationContextValidator;
 import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.registry.TicketRegistrySupport;
-import org.jasig.cas.util.CollectionUtils;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -51,6 +49,10 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+
+    @Autowired
+    @Qualifier("authenticationContextValidator")
+    private AuthenticationContextValidator authenticationContextValidator;
 
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
@@ -88,71 +90,20 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return ImmutableSet.of(event);
         }
 
-        final Collection<MultifactorAuthenticationProvider> satisfiedProviders = getSatisfiedAuthenticationProviders(authentication);
-        if (satisfiedProviders == null) {
-            logger.debug("No satisfied multifactor authentication providers are recorded; proceed with flow normally.");
-            return resumeFlow();
-        }
-        final Map<String, MultifactorAuthenticationProvider> providerMap = getAllMultifactorAuthenticationProvidersFromApplicationContext();
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
+                this.authenticationContextValidator.validate(authentication, event.getId());
 
-        final MultifactorAuthenticationProvider requestedProvider = locateRequestedProvider(providerMap.values(), event);
-        if (requestedProvider == null) {
-            logger.debug("Requested authentication provider is not available; proceed with flow normally.");
+        if (result.getFirst()) {
             return resumeFlow();
         }
 
-        if (!satisfiedProviders.isEmpty()) {
-            final MultifactorAuthenticationProvider[] providersArray =
-                    satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
-            OrderComparator.sortIfNecessary(providersArray);
-            for (final MultifactorAuthenticationProvider provider : providersArray) {
-                if (provider.equals(requestedProvider)) {
-                    logger.debug("Current provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
-                            provider, requestedProvider);
-                    return resumeFlow();
-                }
-                if (provider.getOrder() >= requestedProvider.getOrder()) {
-                    logger.debug("Provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
-                            provider, requestedProvider);
-                    return resumeFlow();
-                }
-            }
+        if (result.getSecond().isPresent()) {
+            return ImmutableSet.of(validateEventIdForMatchingTransitionInContext(event.getId(), context,
+                    buildEventAttributeMap(authentication.getPrincipal(), service, result.getSecond().get())));
         }
-        return ImmutableSet.of(validateEventIdForMatchingTransitionInContext(requestedProvider.getId(), context,
-                buildEventAttributeMap(authentication.getPrincipal(), service, requestedProvider)));
-    }
+        logger.warn("The authentication context cannot be satisfied and the requested context {} is unrecognized", event.getId());
+        return ImmutableSet.of(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
 
-    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication) {
-        final Collection<Object> contexts = CollectionUtils.convertValueToCollection(
-                authentication.getAttributes().get(this.authenticationContextAttribute));
-
-        if (contexts == null || contexts.isEmpty()) {
-            return null;
-        }
-
-        final Collection<MultifactorAuthenticationProvider> providers =
-                getAllMultifactorAuthenticationProvidersFromApplicationContext().values();
-
-        final Iterator<MultifactorAuthenticationProvider> iterator = providers.iterator();
-        for (final Object context : contexts) {
-            while (iterator.hasNext()) {
-                final MultifactorAuthenticationProvider provider = iterator.next();
-                if (!provider.getId().equals(context)) {
-                    iterator.remove();
-                }
-            }
-        }
-        return providers;
-    }
-
-    private static MultifactorAuthenticationProvider locateRequestedProvider(
-            final Collection<MultifactorAuthenticationProvider> providersArray, final Event event) {
-        for (final MultifactorAuthenticationProvider provider : providersArray) {
-            if (provider.getId().equals(event.getId())) {
-                return provider;
-            }
-        }
-        return null;
     }
 
     private Set<Event> resumeFlow() {

@@ -20,14 +20,12 @@ import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
-import org.jasig.cas.validation.AbstractCasProtocolValidationSpecification;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.validation.ValidationResponseType;
+import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -69,6 +67,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private ApplicationContext context;
 
     @NotNull
+    private ValidationSpecification validationSpecification;
+
+    @NotNull
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -84,10 +85,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    /** The validation protocol we want to use. */
-    @NotNull
-    private Class<?> validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
 
     /** The proxy handler we want to use with the controller. */
     @NotNull
@@ -106,12 +103,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
-    private String authenticationContextAttribute;
-
-    @Value("${cas.mfa.request.parameter:authn_method}")
-    private String authenticationContextParameter;
 
 
     /**
@@ -249,13 +240,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the boolean
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
-        final AbstractCasProtocolValidationSpecification validationSpecification = this.getCommandClass();
+
         final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
         initBinder(request, binder);
         binder.bind(request);
-
-        validationSpecification.setAuthenticationContextAttribute(this.authenticationContextAttribute);
-        validationSpecification.setAuthenticationContextParameter(this.authenticationContextParameter);
 
         if (!validationSpecification.isSatisfiedBy(assertion, request)) {
             logger.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
@@ -347,19 +335,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return Collections.emptyMap();  
     }
-    
-    /**
-     * Gets the command class based on {@link #setValidationSpecificationClass(Class)}.
-     *
-     * @return the command class
-     */
-    private AbstractCasProtocolValidationSpecification getCommandClass() {
-        try {
-            return (AbstractCasProtocolValidationSpecification) this.validationSpecificationClass.newInstance();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
@@ -383,8 +359,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param validationSpecificationClass The authenticationSpecificationClass
      * to set.
      */
-    public void setValidationSpecificationClass(final Class<?> validationSpecificationClass) {
-        this.validationSpecificationClass = validationSpecificationClass;
+    public void setValidationSpecification(final ValidationSpecification validationSpecificationClass) {
+        this.validationSpecification = validationSpecificationClass;
     }
 
     /**
