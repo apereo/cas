@@ -193,7 +193,7 @@
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MissingSwitchDefault">
-            <property name="severity" value="error"/>
+            <property name="severity" value="info"/>
         </module>
         <module name="SimplifyBooleanExpression">
             <property name="severity" value="error"/>

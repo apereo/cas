@@ -434,7 +434,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 logger.debug("Selected multifactor authentication provider for this transaction is {}", provider);
 
                 if (!provider.verify(service)) {
-                    logger.warn("Multifactor authentication provider {} could not be verified.", provider);
+                    logger.warn("Multifactor authentication provider {} could not be verified/reached.", provider);
                     return null;
                 }
                 final String identifier = provider.getId();

@@ -3,6 +3,7 @@ package org.jasig.cas.web;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContextValidator;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
@@ -11,7 +12,9 @@ import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -19,13 +22,16 @@ import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationResponseType;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -38,6 +44,7 @@ import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -104,11 +111,28 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
 
+    @Value("${cas.mfa.request.parameter:authn_method}")
+    private String authenticationContextParameter;
+
+    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    private String authenticationContextAttribute;
+
+    @Autowired
+    @Qualifier("authenticationContextValidator")
+    private AuthenticationContextValidator authenticationContextValidator;
 
     /**
      * Instantiates a new Service validate controller.
      */
     public AbstractServiceValidateController() {}
+
+    public String getAuthenticationContextParameter() {
+        return authenticationContextParameter;
+    }
+
+    public void setAuthenticationContextParameter(final String authenticationContextParameter) {
+        this.authenticationContextParameter = authenticationContextParameter;
+    }
 
     /**
      * Overrideable method to determine which credentials to use to grant a
@@ -127,11 +151,36 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                logger.error("Error constructing pgtUrl", e);
+                logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
         }
 
         return null;
+    }
+
+
+    /**
+     * Validate authentication context pair.
+     *
+     * @param assertion the assertion
+     * @param request   the request
+     * @return the pair
+     */
+    protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(
+            final Assertion assertion, final HttpServletRequest request) {
+        final String requestedContext = request.getParameter(this.authenticationContextParameter);
+        if (!StringUtils.hasLength(requestedContext)) {
+            logger.debug("No particular authentication context is required for this request");
+            return new Pair(true, Optional.empty());
+        }
+
+        logger.debug("Locating the primary authentication associated with this service request {}", assertion.getService());
+        final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
+        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(assertion.getService(), service);
+
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
+                this.authenticationContextValidator.validate(assertion.getPrimaryAuthentication(), requestedContext, service);
+        return result;
     }
 
     /**
@@ -141,7 +190,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param binder the binder
      */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
-        binder.setRequiredFields("renew");
+        binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
     }
 
     /**
@@ -204,6 +253,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                         new Object[] {serviceTicketId}, request, service);
             }
 
+            final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
+            if (!ctxResult.getFirst()) {
+                throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
+            }
+
             String proxyIou = null;
             if (serviceCredential != null && this.proxyHandler.canHandle(serviceCredential)) {
                 proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
@@ -216,7 +270,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
             onSuccessfulValidation(serviceTicketId, assertion);
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
-            return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
+            return generateSuccessView(assertion, proxyIou, service, ctxResult.getSecond(), proxyGrantingTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
@@ -298,14 +352,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * Generate the success view. The result will contain the assertion and the proxy iou.
      *
-     * @param assertion the assertion
-     * @param proxyIou the proxy iou
-     * @param service the validated service
+     * @param assertion           the assertion
+     * @param proxyIou            the proxy iou
+     * @param service             the validated service
+     * @param contextProvider     the context provider
      * @param proxyGrantingTicket the proxy granting ticket
      * @return the model and view, pointed to the view name set by
      */
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou,
                                              final WebApplicationService service,
+                                             final Optional<MultifactorAuthenticationProvider> contextProvider,
                                              final TicketGrantingTicket proxyGrantingTicket) {
 
         final ModelAndView modelAndView = getModelAndView(true, service);
@@ -315,6 +371,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
         if (proxyGrantingTicket != null) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
+        }
+        if (contextProvider.isPresent()) {
+            modelAndView.addObject(this.authenticationContextAttribute, contextProvider.get());
         }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {

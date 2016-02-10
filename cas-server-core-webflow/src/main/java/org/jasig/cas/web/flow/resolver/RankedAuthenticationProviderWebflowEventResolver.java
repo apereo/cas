@@ -15,7 +15,6 @@ import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -34,8 +33,6 @@ import java.util.Set;
 @Component("rankedAuthenticationProviderWebflowEventResolver")
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
-    private String authenticationContextAttribute;
 
     @Autowired
     @Qualifier("defaultAuthenticationSupport")
@@ -91,7 +88,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
-                this.authenticationContextValidator.validate(authentication, event.getId());
+                this.authenticationContextValidator.validate(authentication, event.getId(), service);
 
         if (result.getFirst()) {
             return resumeFlow();
@@ -101,7 +98,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return ImmutableSet.of(validateEventIdForMatchingTransitionInContext(event.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, result.getSecond().get())));
         }
-        logger.warn("The authentication context cannot be satisfied and the requested context {} is unrecognized", event.getId());
+        logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", event.getId());
         return ImmutableSet.of(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
 
     }
