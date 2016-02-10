@@ -79,7 +79,8 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         final Optional<MultifactorAuthenticationProvider> contextProvider = getSatisfiedMultifactorAuthenticationProvider(model);
         if (contextProvider.isPresent()) {
-            filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider.get()));
+            filteredAuthenticationAttributes.put(this.authenticationContextAttribute,
+                    Collections.singleton(contextProvider.get().getId()));
         }
 
         return filteredAuthenticationAttributes;

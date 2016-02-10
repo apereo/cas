@@ -83,7 +83,7 @@ public final class AuthenticationContextValidator {
 
         if  (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
             logger.debug("Requested authentication context {} is satisfied", requestedContext);
-            return new Pair(true, Optional.of(requestedProvider));
+            return new Pair(true, requestedProvider);
         }
 
         final Collection<MultifactorAuthenticationProvider> satisfiedProviders =
@@ -91,7 +91,7 @@ public final class AuthenticationContextValidator {
 
         if (satisfiedProviders == null) {
             logger.debug("No satisfied multifactor authentication providers are recorded in the current authentication context.");
-            return new Pair(false, Optional.of(requestedProvider));
+            return new Pair(false, requestedProvider);
         }
 
 
@@ -105,7 +105,7 @@ public final class AuthenticationContextValidator {
             if (result.isPresent()) {
                 logger.debug("Current provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
                         result.get(), requestedProvider);
-                return new Pair(true, Optional.of(requestedProvider));
+                return new Pair(true, requestedProvider);
             }
         }
 
@@ -119,7 +119,7 @@ public final class AuthenticationContextValidator {
                                  + "since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
                                  + "of the present authentication context",
                             mode, service.getServiceId(), requestedProvider);
-                    return new Pair(true, Optional.of(requestedProvider));
+                    return new Pair(true, requestedProvider);
                 }
                 break;
             case OPEN:
@@ -133,7 +133,7 @@ public final class AuthenticationContextValidator {
                 break;
         }
 
-        return new Pair(false, Optional.of(requestedProvider));
+        return new Pair(false, requestedProvider);
     }
 
     /**
