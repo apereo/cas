@@ -142,9 +142,8 @@ route the authentication flow to the required authentication level and upon succ
 authentication level now satisfied. 
 
 Ranking of authentication methods is done per provider via specific properties for each in `cas.properties`. Note that
-the lower the rank value is, the higher on the security scale it remains. A provider that ranks lower trumps and override
-others with a higher value. The best way to remember this is to think of the ranking scale as a sports league where providers/teams
-that rank near the top with a lower index value are considered the best.
+the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps 
+and override others with a lower value. 
 
 ## Settings
 The following general MFA settings are available for configuration in `cas.properties`:
@@ -153,4 +152,5 @@ The following general MFA settings are available for configuration in `cas.prope
 # cas.mfa.principal.attributes=memberOf,groupName,authnClass
 # cas.mfa.request.parameter=authn_method
 # cas.mfa.authn.ctx.attribute=authnContextClass
+# cas.mfa.failure.mode=CLOSED
 ```
