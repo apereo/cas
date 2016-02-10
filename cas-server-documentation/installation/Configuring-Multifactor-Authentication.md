@@ -123,8 +123,8 @@ The following failure modes are supported:
 | Field                | Description
 |----------------------+---------------------------------+
 | `CLOSED`                  | Authentication is blocked if the provider cannot be reached. 
-| `OPEN`                    | Authentication proceeds, yet MFA is not communicated to the client.
-| `PHANTOM`                 | Authentication proceeds and MFA is communicated to the client.
+| `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
+| `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 
 ## Ranking Providers
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
