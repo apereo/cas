@@ -1,14 +1,10 @@
 package org.jasig.cas.support.oauth.web;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
-import org.jasig.cas.support.oauth.util.OAuthUtils;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.cas.support.oauth.validator.OAuthValidator;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.mvc.AbstractController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
@@ -33,12 +27,6 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The services manager. */
-    @NotNull
-    @Autowired
-    @Qualifier("servicesManager")
-    protected ServicesManager servicesManager;
-
     /** The ticket registry. */
     @NotNull
     @Autowired
@@ -50,6 +38,13 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     @Value("${tgt.timeToKillInSeconds:7200}")
     protected long timeout;
 
+    /** The OAuth validator. */
+    @NotNull
+    @Autowired
+    @Qualifier("oAuthValidator")
+    protected OAuthValidator validator;
+
+    @NotNull
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory accessTokenFactory;
@@ -67,89 +62,8 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         return accessToken;
     }
 
-    /**
-     * Check if a parameter exists.
-     *
-     * @param request the HTTP request
-     * @param name the parameter name
-     * @return whether the parameter exists
-     */
-    protected boolean checkParameterExist(final HttpServletRequest request, final String name) {
-        final String parameter = request.getParameter(name);
-        logger.debug("{}: {}", name, parameter);
-        if (StringUtils.isBlank(parameter)) {
-            logger.error("Missing: {}", name);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Check if the service is valid.
-     *
-     * @param request the HTTP request
-     * @return whether the service is valid
-     */
-    protected boolean checkServiceValid(final HttpServletRequest request) {
-        final Optional<String> opClientId = getClientId(request);
-        if (!opClientId.isPresent()) {
-            logger.error("Missing clientId");
-            return false;
-        }
-        final String clientId = opClientId.get();
-        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        logger.debug("Found: {} for: {}", service, clientId);
-        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
-            logger.error("Service {} is not found in the registry or it is disabled.", clientId);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Check if the callback url is valid.
-     *
-     * @param request the HTTP request
-     * @return whether the callback url is valid
-     */
-    protected boolean checkCallbackValid(final HttpServletRequest request) {
-        final Optional<String> opClientId = getClientId(request);
-        if (!opClientId.isPresent()) {
-            logger.error("Missing clientId");
-            return false;
-        }
-        final String clientId = opClientId.get();
-        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        final String serviceId = service.getServiceId();
-        logger.debug("Found: {} for: {} vs redirectUri: {}", service, clientId, redirectUri);
-        if (!redirectUri.matches(serviceId)) {
-            logger.error("Unsupported {}: {} for serviceId: {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Get the client identifier.
-     *
-     * @param request the HTTP request
-     * @return the client identifier
-     */
-    protected Optional<String> getClientId(final HttpServletRequest request) {
-        return Optional.ofNullable(request.getParameter(OAuthConstants.CLIENT_ID));
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
-    }
-
-    public ServicesManager getServicesManager() {
-        return servicesManager;
     }
 
     public TicketRegistry getTicketRegistry() {
@@ -170,5 +84,13 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     public void setAccessTokenFactory(final AccessTokenFactory accessTokenFactory) {
         this.accessTokenFactory = accessTokenFactory;
+    }
+
+    public OAuthValidator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(final OAuthValidator validator) {
+        this.validator = validator;
     }
 }

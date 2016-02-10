@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
@@ -26,13 +27,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
- * This url is protected by a CAS authentication.
+ * This url is protected by a CAS authentication. It returns an OAuth code or directly an access token.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -40,10 +42,18 @@ import java.util.Map;
 @Component("authorizeController")
 public final class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
+    /** The services manager. */
+    @NotNull
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
+
+    @NotNull
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory oAuthCodeFactory;
 
+    @NotNull
     @Autowired
     @Qualifier("defaultPrincipalFactory")
     private PrincipalFactory principalFactory;
@@ -68,7 +78,9 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
         final UserProfile profile = manager.get(true);
-        CommonHelper.assertNotNull("profile", profile);
+        if (profile == null) {
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
+        }
 
         // bypass approval -> redirect to the application with code or access token
         if (bypassApprovalService || bypassApprovalParameter != null) {
@@ -120,16 +132,18 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
      */
     private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
 
-        final boolean checkParameterExist = checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                && checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
+        final boolean checkParameterExist = validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                && validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                && validator.checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
 
         final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
+        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
 
         return checkParameterExist
             && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
-            && checkServiceValid(request)
-            && checkCallbackValid(request);
+            && validator.checkServiceValid(clientId)
+            && validator.checkCallbackValid(clientId, redirectUri);
     }
 
     /**
@@ -151,10 +165,18 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         return false;
     }
 
+    public ServicesManager getServicesManager() {
+        return servicesManager;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
     /**
      * Get the OAuth code factory.
      *
-     * @return the OAuth code factory.
+     * @return the OAuth code factory
      */
     public OAuthCodeFactory getoAuthCodeFactory() {
         return oAuthCodeFactory;
@@ -163,7 +185,7 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
     /**
      * Set the OAuth code factory.
      *
-     * @param oAuthCodeFactory the OAuth code factory.
+     * @param oAuthCodeFactory the OAuth code factory
      */
     public void setoAuthCodeFactory(final OAuthCodeFactory oAuthCodeFactory) {
         this.oAuthCodeFactory = oAuthCodeFactory;
