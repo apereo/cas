@@ -2,8 +2,6 @@ package org.jasig.cas.validation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
-    @Autowired
-    @Qualifier("authenticationContextValidationSpecification")
-    private ValidationSpecification authenticationContextValidationSpecification;
 
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
@@ -53,9 +47,6 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
         this.renew = renew;
     }
 
-    public void setAuthenticationContextValidationSpecification(final ValidationSpecification specification) {
-        this.authenticationContextValidationSpecification = specification;
-    }
 
     /**
      * Method to determine if we require renew to be true.
@@ -68,8 +59,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
 
     @Override
     public final boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
-        return isSatisfiedByInternal(assertion) && (!this.renew || assertion.isFromNewLogin())
-            && authenticationContextValidationSpecification.isSatisfiedBy(assertion, request);
+        return isSatisfiedByInternal(assertion) && (!this.renew || assertion.isFromNewLogin());
     }
 
     /**
