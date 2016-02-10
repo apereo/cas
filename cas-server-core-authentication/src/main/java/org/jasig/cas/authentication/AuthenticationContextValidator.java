@@ -2,16 +2,21 @@ package org.jasig.cas.authentication;
 
 
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.CollectionUtils;
 import org.jasig.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,6 +38,14 @@ public final class AuthenticationContextValidator {
     private String authenticationContextAttribute;
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+
+    @Value("${cas.mfa.failure.mode:CLOSED}")
+    private String globalFailureMode;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     public String getAuthenticationContextAttribute() {
@@ -49,55 +62,78 @@ public final class AuthenticationContextValidator {
      *
      * @param authentication   the authentication
      * @param requestedContext the requested context
+     * @param service          the service
      * @return the resulting pair indicates whether context is satisfied, and if so, by which provider.
      */
-    public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication, final String
-            requestedContext) {
+    public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication,
+                                                                               final String requestedContext,
+                                                                               final RegisteredService service) {
         final Object ctxAttr = authentication.getAttributes().get(this.authenticationContextAttribute);
         final Collection<Object> contexts = CollectionUtils.convertValueToCollection(ctxAttr);
         logger.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
 
-        if  (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
-            logger.debug("Requested authentication context {} is satisfied", requestedContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap = getAllMultifactorAuthenticationProvidersFromApplicationContext();
+        final Optional<MultifactorAuthenticationProvider> requestedProvider =
+                locateRequestedProvider(providerMap.values(), requestedContext);
+
+        if (!requestedProvider.isPresent()) {
+            logger.debug("Requested authentication provider cannot be recognized.");
             return new Pair(false, Optional.empty());
         }
 
-
-        final Map<String, MultifactorAuthenticationProvider> providerMap = getAllMultifactorAuthenticationProvidersFromApplicationContext();
+        if  (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
+            logger.debug("Requested authentication context {} is satisfied", requestedContext);
+            return new Pair(true, Optional.of(requestedProvider));
+        }
 
         final Collection<MultifactorAuthenticationProvider> satisfiedProviders =
                 getSatisfiedAuthenticationProviders(authentication, providerMap.values());
 
         if (satisfiedProviders == null) {
-            logger.debug("No satisfied multifactor authentication providers are recorded.");
-            return new Pair(false, Optional.empty());
+            logger.debug("No satisfied multifactor authentication providers are recorded in the current authentication context.");
+            return new Pair(false, Optional.of(requestedProvider));
         }
 
-        final MultifactorAuthenticationProvider requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
-        if (requestedProvider == null) {
-            logger.debug("Requested authentication provider is not available.");
-            return new Pair(false, Optional.empty());
-        }
 
         if (!satisfiedProviders.isEmpty()) {
-            final MultifactorAuthenticationProvider[] providersArray =
-                    satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
-            OrderComparator.sortIfNecessary(providersArray);
-            for (final MultifactorAuthenticationProvider provider : providersArray) {
-                if (provider.equals(requestedProvider)) {
-                    logger.debug("Current provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
-                            provider, requestedProvider);
-                    return new Pair(true, Optional.of(requestedProvider));
-                }
+            final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
+            OrderComparator.sortIfNecessary(providers);
+            final Optional<MultifactorAuthenticationProvider> result = Arrays.stream(providers)
+                    .filter(provider -> provider.equals(requestedProvider) || provider.getOrder() >= requestedProvider.get().getOrder())
+                    .findFirst();
 
-                if (provider.getOrder() >= requestedProvider.getOrder()) {
-                    logger.debug("Provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
-                            provider, requestedProvider);
-                    return new Pair(true, Optional.of(requestedProvider));
-                }
+            if (result.isPresent()) {
+                logger.debug("Current provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
+                        result.get(), requestedProvider);
+                return new Pair(true, Optional.of(requestedProvider));
             }
         }
-        return new Pair(false, Optional.empty());
+
+        logger.debug("No multifactor providers could be located to satisfy the requested context for {}", requestedProvider);
+
+        final RegisteredServiceMultifactorPolicy.FailureModes mode = getMultifactorFailureModeForService(service);
+        switch (mode) {
+            case PHANTOM:
+                if (!requestedProvider.get().verify(service)) {
+                    logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
+                                 + "since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
+                                 + "of the present authentication context",
+                            mode, service.getServiceId(), requestedProvider);
+                    return new Pair(true, Optional.of(requestedProvider));
+                }
+                break;
+            case OPEN:
+                if (!requestedProvider.get().verify(service)) {
+                    logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
+                                 + "since provider {} is unavailable at the moment, CAS will consider the authentication satisfied "
+                                 + "without the presence of {}",
+                            mode, service.getServiceId(), requestedProvider);
+                    return new Pair(true, satisfiedProviders.stream().findFirst());
+                }
+                break;
+        }
+
+        return new Pair(false, Optional.of(requestedProvider));
     }
 
     /**
@@ -136,14 +172,20 @@ public final class AuthenticationContextValidator {
     }
 
 
-    private static MultifactorAuthenticationProvider locateRequestedProvider(
+    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
             final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
-        for (final MultifactorAuthenticationProvider provider : providersArray) {
-            if (provider.getId().equals(requestedProvider)) {
-                return provider;
-            }
+
+        return providersArray.stream()
+                .filter(provider -> provider.getId().equals(requestedProvider))
+                .findFirst();
+    }
+
+    private RegisteredServiceMultifactorPolicy.FailureModes getMultifactorFailureModeForService(final RegisteredService service) {
+        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
+        if (policy == null || policy.getFailureMode() == null) {
+            return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
         }
-        return null;
+        return policy.getFailureMode();
     }
 
 }
