@@ -5,23 +5,23 @@ import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.profile.OAuthClientProfile;
+import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.exception.TechnicalException;
-import org.pac4j.http.credentials.UsernamePasswordCredentials;
-import org.pac4j.http.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
- * This controller returns an access token according to the given OAuth code.
+ * This controller returns an access token according to the given OAuth code and client credentials (authorization code grant type)
+ * or according to the user identity (resource owner password grant type).
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -29,12 +29,10 @@ import java.util.Optional;
 @Component("accessTokenController")
 public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
-    private BasicAuthExtractor basicAuthExtractor = new BasicAuthExtractor(null);
-
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-        if (!verifyAccessTokenRequest(request)) {
+        if (!verifyAccessTokenRequest(request, response)) {
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
         }
 
@@ -61,99 +59,59 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      * Verify the access token request.
      *
      * @param request the HTTP request
+     * @param response the HTTP response
      * @return true, if successful
      */
-    private boolean verifyAccessTokenRequest(final HttpServletRequest request) {
+    private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
 
-        final boolean checkParameterExist = checkClientCredentialsExist(request)
-                && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                && checkParameterExist(request, OAuthConstants.CODE);
-
-        return checkParameterExist
-                && checkServiceValid(request)
-                && checkCallbackValid(request)
-                && checkClientSecret(request);
-    }
-
-    /**
-     * Check if the credentials exist.
-     *
-     * @param request the HTTP request
-     * @return whether the credentials exist
-     */
-    private boolean checkClientCredentialsExist(final HttpServletRequest request) {
-        final Optional<UsernamePasswordCredentials> opCredentials = getCredentials(request);
-        if (!opCredentials.isPresent()) {
-            logger.error("Missing credentials");
+        // must have the right grant type
+        final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
+        if (!checkGrantTypes(grantType, OAuthGrantType.AUTHORIZATION_CODE, OAuthGrantType.PASSWORD)) {
             return false;
         }
-        final UsernamePasswordCredentials credentials = opCredentials.get();
-        final String clientId = credentials.getUsername();
-        final String clientSecret = credentials.getPassword();
-        if (StringUtils.isBlank(credentials.getUsername())) {
-            logger.error("Missing clientId");
-            return false;
-        } else if (StringUtils.isBlank(credentials.getPassword())) {
-            logger.error("Missing secret");
+
+        // must be authenticated (client or user)
+        final J2EContext context = new J2EContext(request, response);
+        final ProfileManager manager = new ProfileManager(context);
+        final UserProfile profile = manager.get(true);
+        if (profile == null) {
             return false;
         }
-        return true;
-    }
 
-    /**
-     * Check the client secret.
-     *
-     * @param request the HTTP request
-     * @return whether the secret is valid
-     */
-    private boolean checkClientSecret(final HttpServletRequest request) {
-        final Optional<UsernamePasswordCredentials> opCredentials = getCredentials(request);
-        if (!opCredentials.isPresent()) {
-            logger.error("Missing credentials");
-            return false;
-        }
-        final UsernamePasswordCredentials credentials = opCredentials.get();
-        final String clientId = credentials.getUsername();
-        final String clientSecret = credentials.getPassword();
-        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        logger.debug("Found: {} for: {} in secret check", service, clientId);
+        // authorization code grant type
+        if (OAuthGrantType.AUTHORIZATION_CODE.name().equalsIgnoreCase(grantType)) {
 
-        if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
-            logger.error("Wrong client secret for service: {}", service);
-            return false;
-        }
-        return true;
-    }
+            final String clientId = profile.getId();
+            final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
 
-    @Override
-    protected Optional<String> getClientId(final HttpServletRequest request) {
-        final Optional<UsernamePasswordCredentials> credentials = getCredentials(request);
-        if (credentials.isPresent()) {
-            return Optional.ofNullable(credentials.get().getUsername());
+            return profile instanceof OAuthClientProfile
+                    && validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                    && validator.checkParameterExist(request, OAuthConstants.CODE)
+                    && validator.checkCallbackValid(clientId, redirectUri);
+
         } else {
-            return Optional.empty();
+
+            // resource owner password grant type
+            return profile instanceof OAuthUserProfile;
         }
     }
 
     /**
-     * Get the client credentials.
+     * Check the grant type.
      *
-     * @param request the HTTP request
-     * @return the client credentials
+     * @param type the current grant type
+     * @param expectedTypes the expected grant types
+     * @return whether the grant type is supported
      */
-    private Optional<UsernamePasswordCredentials> getCredentials(final HttpServletRequest request) {
-        final String id = request.getParameter(OAuthConstants.CLIENT_ID);
-        final String secret = request.getParameter(OAuthConstants.CLIENT_SECRET);
-        UsernamePasswordCredentials credentials = null;
-        if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(secret)) {
-            credentials = new UsernamePasswordCredentials(id, secret, null);
-        } else {
-            try {
-                credentials = basicAuthExtractor.extract(new J2EContext(request, null));
-            } catch (final TechnicalException e) {
-                logger.error("Cannot get clientId / secret from header", e);
+    private boolean checkGrantTypes(final String type, final OAuthGrantType... expectedTypes) {
+        logger.debug("Grant type: {}", type);
+
+        for (final OAuthGrantType expectedType : expectedTypes) {
+            if (StringUtils.equals(type, expectedType.name().toLowerCase())) {
+                return true;
             }
         }
-        return Optional.ofNullable(credentials);
+        logger.error("Unsupported grant type: {}", type);
+        return false;
     }
 }

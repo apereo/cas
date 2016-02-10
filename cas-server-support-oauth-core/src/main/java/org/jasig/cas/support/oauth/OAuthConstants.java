@@ -20,6 +20,9 @@ public interface OAuthConstants {
     /** The response type. */
     String RESPONSE_TYPE = "response_type";
 
+    /** The grant type. */
+    String GRANT_TYPE = "grant_type";
+
     /** The client id. */
     String CLIENT_ID = "client_id";
 

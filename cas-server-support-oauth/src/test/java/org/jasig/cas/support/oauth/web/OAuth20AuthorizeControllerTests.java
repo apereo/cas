@@ -143,6 +143,31 @@ public final class OAuth20AuthorizeControllerTests {
     }
 
     @Test
+    public void verifyCodeNoProfile() throws Exception {
+        clearAllServices();
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+                + OAuthConstants.AUTHORIZE_URL);
+        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
+        mockRequest.setParameter(OAuthConstants.RESPONSE_TYPE, OAuthResponseType.CODE.name().toLowerCase());
+        mockRequest.setServerName(CAS_SERVER);
+        mockRequest.setServerPort(CAS_PORT);
+        mockRequest.setScheme(CAS_SCHEME);
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+
+        final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        service.setBypassApprovalPrompt(true);
+        oAuth20AuthorizeController.getServicesManager().save(service);
+
+        final MockHttpSession session = new MockHttpSession();
+        mockRequest.setSession(session);
+
+        final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
+        assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
+    }
+
+    @Test
     public void verifyCodeRedirectToClient() throws Exception {
         clearAllServices();
 
