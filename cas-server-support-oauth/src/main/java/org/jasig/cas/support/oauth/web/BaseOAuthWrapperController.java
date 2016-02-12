@@ -1,11 +1,18 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
+import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
 import org.jasig.cas.support.oauth.validator.OAuthValidator;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
@@ -26,6 +34,12 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /** The services manager. */
+    @NotNull
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     /** The ticket registry. */
     @NotNull
@@ -49,8 +63,13 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory accessTokenFactory;
 
+    @NotNull
+    @Autowired
+    @Qualifier("defaultPrincipalFactory")
+    private PrincipalFactory principalFactory;
+
     /**
-     * Generate an access token.
+     * Generate an access token from a service and authentication.
      *
      * @param service the service
      * @param authentication the authentication
@@ -60,6 +79,35 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         final AccessToken accessToken = accessTokenFactory.create(service, authentication);
         ticketRegistry.addTicket(accessToken);
         return accessToken;
+    }
+
+    /**
+     * Create an OAuth service from a registered service.
+     *
+     * @param registeredService the registered service
+     * @return the OAuth service
+     */
+    protected OAuthWebApplicationService createService(final RegisteredService registeredService) {
+        return new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
+    }
+
+    /**
+     * Create an authentication from a user profile.
+     *
+     * @param profile the given user profile
+     * @return the built authentication
+     */
+    protected Authentication createAuthentication(final UserProfile profile) {
+        final Principal principal = principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
+        return new OAuthAuthentication(ZonedDateTime.now(), principal);
+    }
+
+    public ServicesManager getServicesManager() {
+        return servicesManager;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
@@ -92,5 +140,13 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     public void setValidator(final OAuthValidator validator) {
         this.validator = validator;
+    }
+
+    public PrincipalFactory getPrincipalFactory() {
+        return principalFactory;
+    }
+
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
     }
 }
