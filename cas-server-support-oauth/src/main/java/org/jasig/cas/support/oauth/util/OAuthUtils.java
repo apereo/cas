@@ -1,5 +1,6 @@
 package org.jasig.cas.support.oauth.util;
 
+import org.apache.http.HttpStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -31,11 +32,10 @@ public final class OAuthUtils {
      *
      * @param response http response
      * @param error error message
-     * @param status status code
      * @return a null view
      */
-    public static ModelAndView writeTextError(final HttpServletResponse response, final String error, final int status) {
-        return OAuthUtils.writeText(response, "error=" + error, status);
+    public static ModelAndView writeTextError(final HttpServletResponse response, final String error) {
+        return OAuthUtils.writeText(response, "error=" + error, HttpStatus.SC_BAD_REQUEST);
     }
 
     /**

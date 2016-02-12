@@ -1,6 +1,5 @@
 package org.jasig.cas.support.oauth.web;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -33,20 +32,34 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         if (!verifyAccessTokenRequest(request, response)) {
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
         }
 
-        final String codeParameter = request.getParameter(OAuthConstants.CODE);
-        final OAuthCode code = ticketRegistry.getTicket(codeParameter, OAuthCode.class);
-        // code should not be expired
-        if (code == null || code.isExpired()) {
-            logger.error("Code expired: {}", code);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
-        }
-        ticketRegistry.deleteTicket(code.getId());
+        final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
+        final Service service;
+        final Authentication authentication;
+        // authorization code grant type
+        if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
+            final String codeParameter = request.getParameter(OAuthConstants.CODE);
+            final OAuthCode code = ticketRegistry.getTicket(codeParameter, OAuthCode.class);
+            // code should not be expired
+            if (code == null || code.isExpired()) {
+                logger.error("Code expired: {}", code);
+                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
+            }
+            ticketRegistry.deleteTicket(code.getId());
 
-        final Service service = code.getService();
-        final Authentication authentication = code.getAuthentication();
+            service = code.getService();
+            authentication = code.getAuthentication();
+        } else {
+            // resource owner password grant type
+            final J2EContext context = new J2EContext(request, response);
+            final ProfileManager manager = new ProfileManager(context);
+            final OAuthUserProfile profile = (OAuthUserProfile) manager.get(true);
+            final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+            service = createService(OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId));
+            authentication = createAuthentication(profile);
+        }
         final AccessToken accessToken = generateAccessToken(service, authentication);
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken.getId(), OAuthConstants.EXPIRES, timeout);
@@ -79,7 +92,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         }
 
         // authorization code grant type
-        if (OAuthGrantType.AUTHORIZATION_CODE.name().equalsIgnoreCase(grantType)) {
+        if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
 
             final String clientId = profile.getId();
             final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
@@ -91,13 +104,17 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
         } else {
 
+            final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+
             // resource owner password grant type
-            return profile instanceof OAuthUserProfile;
+            return profile instanceof OAuthUserProfile
+                    && validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                    && validator.checkServiceValid(clientId);
         }
     }
 
     /**
-     * Check the grant type.
+     * Check the grant type against expected grant types.
      *
      * @param type the current grant type
      * @param expectedTypes the expected grant types
@@ -107,11 +124,22 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         logger.debug("Grant type: {}", type);
 
         for (final OAuthGrantType expectedType : expectedTypes) {
-            if (StringUtils.equals(type, expectedType.name().toLowerCase())) {
+            if (isGrantType(type, expectedType)) {
                 return true;
             }
         }
         logger.error("Unsupported grant type: {}", type);
         return false;
+    }
+
+    /**
+     * Check the grant type against an expected grant type.
+     *
+     * @param type the given grant type
+     * @param expectedType the expected grant type
+     * @return whether the grant type is the expected one
+     */
+    private boolean isGrantType(final String type, final OAuthGrantType expectedType) {
+        return expectedType != null && expectedType.name().toLowerCase().equals(type);
     }
 }
