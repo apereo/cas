@@ -47,7 +47,7 @@ public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
             }
             credentials.setUserProfile(profile);
         } catch (final AuthenticationException e) {
-            throw new CredentialsException("Cannot login using internal CAS authentication manager", e);
+            throw new CredentialsException("Cannot login user using internal CAS authentication manager", e);
         }
     }
 
