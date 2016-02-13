@@ -3,6 +3,7 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
     <description>
         Configuration for the EhCache TicketRegistry which stores the tickets in a distributed EhCache and cleans
         them out as specified intervals.
