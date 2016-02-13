@@ -863,7 +863,6 @@ subprojects {
         maxParallelForks = 1
         useJUnit()
         scanForTestClasses false
-        ig
         include '**/*Tests.*'
         exclude '**/*Abstract*.*'
         classpath = it.classpath + files("${projectDir}/src/main/resources") +
