@@ -16,7 +16,7 @@ RADIUS support is enabled by including the following dependency in the Maven WAR
 
 ## RADIUS Components
 
-######`RadiusAuthenticationHandler`
+###### `RadiusAuthenticationHandler`
 The RADIUS handler accepts username/password credentials and delegates authentication to one or more RADIUS
 servers. It supports two types of failovers: failover on an authentication failure, and failover on a server exception.
 
@@ -28,7 +28,7 @@ should proceed in the face of one or more RADIUS server failures.
 * `servers` - Array of RADIUS servers to delegate to for authentication.
 
 
-######`JRadiusServerImpl`
+###### `JRadiusServerImpl`
 Component representing a RADIUS server has the following configuration properties.
 
 * `protocol` - radius protocol to use.
