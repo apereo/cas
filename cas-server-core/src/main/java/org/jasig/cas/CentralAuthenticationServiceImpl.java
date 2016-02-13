@@ -153,7 +153,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
-        getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
+        getAuthenticationSatisfiedByPolicy(ticketGrantingTicket.getRoot(), new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
@@ -228,7 +228,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
-        getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject, new ServiceContext(service, registeredService));
+        getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot(), new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = proxyGrantingTicketObject.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
