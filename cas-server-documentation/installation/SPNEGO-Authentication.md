@@ -93,10 +93,10 @@ zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
 URL, e.g. `https://cas.example.com`.
 
-###Webflow Configuration
+### Webflow Configuration
 Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
 
-###Authentication Configuration
+### Authentication Configuration
 
 Provide a JAAS `login.conf` file:
 

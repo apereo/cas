@@ -36,6 +36,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action = new GenerateServiceTicketAction();
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
+        this.action.setTicketRegistrySupport(getTicketRegistrySupport());
         this.action.afterPropertiesSet();
 
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
@@ -45,6 +46,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
                 .handle(transaction,  builder);
         final AuthenticationContext ctx = builder.build(TestUtils.getService());
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        getTicketRegistry().addTicket(this.ticketGrantingTicket);
     }
 
     @Test

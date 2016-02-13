@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-###`AcceptUsersAuthenticationHandler`
+### `AcceptUsersAuthenticationHandler`
 {% highlight xml %}
 <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
@@ -34,7 +34,7 @@ The following settings are applicable:
 accept.authn.users=casuser::Mellon
 {% endhighlight %}
 
-###`FileAuthenticationHandler`
+### `FileAuthenticationHandler`
 
 {% highlight xml %}
 <alias name="fileAuthenticationHandler" alias="primaryAuthenticationHandler" />
@@ -47,7 +47,7 @@ The following settings are applicable:
 # file.authn.separator=::
 {% endhighlight %}
 
-####Example Password File
+#### Example Password File
 {% highlight bash %}
 scott::password
 bob::password2
