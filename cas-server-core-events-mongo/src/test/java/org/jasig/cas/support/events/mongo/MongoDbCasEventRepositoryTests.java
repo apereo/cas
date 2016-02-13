@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/mongo-cloudtest-eventscontext.xml")
-public class MongoDbCasEventsRepositoryTests {
+public class MongoDbCasEventRepositoryTests {
 
     @Autowired
     private CasEventRepository repository;
