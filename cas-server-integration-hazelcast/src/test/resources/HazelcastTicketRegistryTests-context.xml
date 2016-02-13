@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util.xsd">
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
 
+
+    <context:property-placeholder properties-ref="casProperties"/>
+    <util:properties id="casProperties"/>
+
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config/>
 
     <bean id="tcpIpHazelcastJoinConfig" class="com.hazelcast.config.JoinConfig">
         <property name="multicastConfig">
@@ -120,5 +128,21 @@
         <constructor-arg name="ticketGrantingTicketTimeoutInSeconds" value="10"/>
         <constructor-arg name="serviceTicketTimeoutInSeconds" value="10"/>
     </bean>
+
+    <!-- CAS Context Core -->
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
 
 </beans>
