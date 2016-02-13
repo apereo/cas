@@ -6,7 +6,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
 import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
-
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
@@ -95,39 +95,77 @@ public class AuthenticationExceptionHandler {
     }
 
     /**
-     * Maps an authentication exception onto a state name equal to the simple class name of the.
+     * Maps an authentication exception onto a state name. Also sets an ERROR severity message in the message context.
      *
      * @param e Authentication error to handle.
      * @param messageContext the spring message context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
-     * {@link org.jasig.cas.authentication.AuthenticationException#getHandlerErrors()} with highest precedence.
-     * Also sets an ERROR severity message in the message context of the form
-     * {@code [messageBundlePrefix][exceptionClassSimpleName]} for each handler error that is
-     * configured. If not match is found, {@value #UNKNOWN} is returned.
      */
-    public String handle(final AuthenticationException e, final MessageContext messageContext) {
-        if (e != null) {
-            final MessageBuilder builder = new MessageBuilder();
-            return this.errors.stream()
-                    .map(kind -> e.getHandlerErrors().values().stream().filter(error -> error != null && error.equals(kind)).findFirst())
-                    .filter(Optional::isPresent).map(Optional::get).map(err -> {
-                        final String handlerErrorName = err.getSimpleName();
-                        final String messageCode = this.messageBundlePrefix + handlerErrorName;
-                        messageContext.addMessage(builder.error().code(messageCode).build());
-                        return handlerErrorName;
-                    })
-                    .findFirst().orElseGet(() -> {
-                        final String messageCode = this.messageBundlePrefix + UNKNOWN;
-                        logger.error("Unable to translate handler errors of the authentication exception {}."
-                                + "Returning {} by default...", e, messageCode);
-                        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
-                        return UNKNOWN;
-                    });
+    public String handle(final Exception e, final MessageContext messageContext) {
+        // handle AuthenticationExceptions
+        if (e instanceof AuthenticationException) {
+            return handleAuthenticationException((AuthenticationException) e, messageContext);
+        }
+        // handle AbstractTicketExceptions exceptions
+        else if (e instanceof AbstractTicketException) {
+            return handleAbstractTicketException((AbstractTicketException) e, messageContext);
+        } else {
+            // we don't recognize this exception
+            logger.trace("Unable to translate handler errors of the authentication exception {}. " +
+                    "Returning {} by default...", e, UNKNOWN);
+            final String messageCode = this.messageBundlePrefix + UNKNOWN;
+            messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+            return UNKNOWN;
+        }
+    }
+
+    /**
+     * Maps an authentication exception onto a state name equal to the simple class name of the {@link
+     * AuthenticationException#getHandlerErrors()} with highest precedence. Also sets an ERROR severity message in the
+     * message context of the form {@code [messageBundlePrefix][exceptionClassSimpleName]} for for the first handler
+     * error that is configured. If no match is found, {@value #UNKNOWN} is returned.
+     *
+     * @param e              Authentication error to handle.
+     * @param messageContext the spring message context
+     * @return Name of next flow state to transition to or {@value #UNKNOWN}
+     */
+    private String handleAuthenticationException(final AuthenticationException e, final MessageContext messageContext) {
+        // find the first error in the error list that matches the handlerErrors
+        final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
+                .map(Class::getSimpleName).findFirst().orElseGet(() -> {
+                    logger.error("Unable to translate handler errors of the authentication exception {}. " +
+                            "Returning {} by default...", e, UNKNOWN);
+                    return UNKNOWN;
+                });
+
+        // output message and return handlerErrorName
+        final String messageCode = this.messageBundlePrefix + handlerErrorName;
+        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+        return handlerErrorName;
+    }
+
+    /**
+     * Maps an {@link AbstractTicketException} onto a state name equal to the simple class name of the exception with
+     * highest precedence. Also sets an ERROR severity message in the message context with the error code found in
+     * {@link AbstractTicketException#getCode()}. If no match is found, {@value #UNKNOWN} is returned.
+     *
+     * @param e              Ticket exception to handle.
+     * @param messageContext the spring message context
+     * @return Name of next flow state to transition to or {@value #UNKNOWN}
+     */
+    private String handleAbstractTicketException(final AbstractTicketException e, final MessageContext messageContext) {
+        // find the first error in the error list that matches the AbstractTicketException
+        final Optional<String> match = this.errors.stream().filter((c) -> c.isInstance(e)).map(Class::getSimpleName)
+                .findFirst();
+
+        // for AbstractTicketExceptions we only output messages for errors in the errors list
+        if (match.isPresent()) {
+            // use the RootCasException.getCode() for the message code
+            messageContext.addMessage(new MessageBuilder().error().code(((AbstractTicketException) e).getCode())
+                    .build());
         }
 
-        final String messageCode = this.messageBundlePrefix + UNKNOWN;
-        logger.trace("Unable to translate handler errors of the authentication exception {}. Returning {} by default...", e, messageCode);
-        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
-        return UNKNOWN;
+        // return the matched simple class name
+        return match.orElse(UNKNOWN);
     }
 }
