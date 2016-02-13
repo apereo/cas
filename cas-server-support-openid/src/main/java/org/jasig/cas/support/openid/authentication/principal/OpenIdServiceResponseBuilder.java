@@ -52,6 +52,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * This will force the consumer to ask a verification, which will validate the service ticket.
      *
      * @param ticketId the service ticket to provide to the service.
+     * @param webApplicationService web application service
      * @return the generated authentication answer
      */
     @Override
