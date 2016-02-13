@@ -2,6 +2,7 @@ package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -38,10 +39,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
     /** The Slf4j logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
+
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
 
     private List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators = new ArrayList<>();
 
@@ -301,5 +307,26 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>>
                                             ticketDelegators) {
         this.ticketDelegators = ticketDelegators;
+    }
+
+    /**
+     * Common code to go over expired tickets and clean them up.
+     **/
+    protected void cleanupTickets() {
+        logger.debug("Beginning ticket cleanup...");
+        this.getTickets().stream()
+                .filter(ticket -> ticket.isExpired())
+                .forEach(ticket -> {
+                    if (ticket instanceof TicketGrantingTicket) {
+                        logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                        this.logoutManager.performLogout((TicketGrantingTicket) ticket);
+                        deleteTicket(ticket.getId());
+                    } else if (ticket instanceof ServiceTicket) {
+                        logger.debug("Cleaning up expired service ticket or its derivative [{}]", ticket.getId());
+                        deleteTicket(ticket.getId());
+                    } else {
+                        logger.warn("Unknown ticket type [{}]. Nothing to clean up.", ticket.getClass().getSimpleName());
+                    }
+                });
     }
 }
