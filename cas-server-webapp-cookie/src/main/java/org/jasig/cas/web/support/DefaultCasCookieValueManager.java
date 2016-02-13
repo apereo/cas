@@ -53,7 +53,11 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
     public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder(givenCookieValue);
 
-        final String remoteAddr = request.getRemoteAddr();
+        String remoteAddr = request.getHeader("X-FORWARDED-FOR");
+        if (remoteAddr == null) {
+            remoteAddr = request.getRemoteAddr();
+        }
+
         if (StringUtils.isBlank(remoteAddr)) {
             throw new IllegalStateException("Request does not specify a remote address");
         }
