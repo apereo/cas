@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <bean id="mongoEventsTemplate" class="org.springframework.data.mongodb.core.MongoTemplate"
+          c:mongoDbFactory-ref="mongoAuthNEventsDbFactory"/>
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+          p:afterInitialization="true"/>
+
+    <mongo:mongo-client host="${mongodb.events.host:localhost}" port="${mongodb.events.port:27017}"
+                        id="mongoAuthNEvents">
+        <mongo:client-options write-concern="${mongodb.events.writeconcern:NORMAL}"
+                              heartbeat-connect-timeout="${mongodb.events.timeout:5000}"
+                              heartbeat-socket-timeout="${mongodb.events.timeout:5000}"
+                              max-connection-life-time="${mongodb.events.conns.lifetime:60000}"
+                              socket-keep-alive="${mongodb.events.socket.keepalive:false}"
+                              max-connection-idle-time="${mongodb.events.idle.timeout:30000}"
+                              connections-per-host="${mongodb.events.conns.per.host:10}"
+                              socket-timeout="${mongodb.events.timeout:5000}"
+                              connect-timeout="${mongodb.events.timeout:5000}"  />
+    </mongo:mongo-client>
+
+    <mongo:db-factory id="mongoAuthNEventsDbFactory"
+                      mongo-ref="mongoAuthNEvents"
+                      dbname="${cas.authn.events.mongo.db:mongoAuthnEvents}"
+                      username="${mongodb.events.userId:}"
+                      password="${mongodb.events.userPassword:}"/>
+
+</beans>
