@@ -286,7 +286,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
-        getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, new ServiceContext(service, registeredService));
+        getAuthenticationSatisfiedByPolicy(ticketGrantingTicket.getRoot(), new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
