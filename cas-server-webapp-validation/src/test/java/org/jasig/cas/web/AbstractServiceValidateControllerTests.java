@@ -12,6 +12,7 @@ import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationResponseType;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController.setApplicationContext(context);
         this.serviceValidateController.setArgumentExtractor(getArgumentExtractor());
         this.serviceValidateController.setServicesManager(getServicesManager());
+        this.serviceValidateController.setValidationSpecification(new Cas20WithoutProxyingValidationSpecification());
+
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
@@ -103,14 +106,12 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
                         new MockHttpServletResponse()).getViewName());
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
         this.serviceValidateController.setValidationSpecification(new MockValidationSpecification(false));
-
         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
                         new MockHttpServletResponse()).getViewName());
-        fail("Expected exception");
     }
 
     @Test
