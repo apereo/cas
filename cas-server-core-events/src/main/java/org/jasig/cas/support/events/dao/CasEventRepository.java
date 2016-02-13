@@ -1,7 +1,5 @@
 package org.jasig.cas.support.events.dao;
 
-import org.jasig.cas.support.events.AbstractCasEvent;
-
 import java.util.Collection;
 
 /**
@@ -10,19 +8,26 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public interface CasEventsRepository {
+public interface CasEventRepository {
     /**
      * Save.
      *
      * @param event the event
      */
-    void save(AbstractCasEvent event);
+    void save(CasEventDTO event);
 
     /**
      * Load collection.
      *
      * @return the collection
      */
-    Collection<AbstractCasEvent> load();
+    Collection<CasEventDTO> load();
 
+    /**
+     * Gets events of type.
+     *
+     * @param type the type
+     * @return the events of type
+     */
+    Collection<CasEventDTO> getEventsOfType(String type);
 }

@@ -1,11 +1,10 @@
 package org.jasig.cas.support.events.mongo;
 
-import org.jasig.cas.support.events.AbstractCasEvent;
-import org.jasig.cas.support.events.dao.CasEventsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jasig.cas.support.events.dao.AbstractCasEventRepository;
+import org.jasig.cas.support.events.dao.CasEventDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
@@ -15,20 +14,20 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 /**
- * This is {@link MongoDbCasEventsRepository} that stores event data into a mongodb database.
+ * This is {@link MongoDbCasEventRepository} that stores event data into a mongodb database.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Repository("casEventsRepository")
-public class MongoDbCasEventsRepository implements CasEventsRepository {
+@Repository("casEventRepository")
+public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbCasEventsRepository.class);
+    private static final String MONGODB_COLLECTION_NAME = "MongoDbCasEventRepository";
 
-    private static final String MONGODB_COLLECTION_NAME = MongoDbCasEventsRepository.class.getSimpleName();
+    @Value("${mongodb.events.collection:" + MONGODB_COLLECTION_NAME + '}')
+    private String collectionName;
 
-    private String collectionName = MONGODB_COLLECTION_NAME;
-
+    @Value("${mongodb.events.dropcollection:false}")
     private boolean dropCollection;
 
     @Autowired
@@ -47,16 +46,14 @@ public class MongoDbCasEventsRepository implements CasEventsRepository {
         Assert.notNull(this.mongoTemplate);
 
         if (this.dropCollection) {
-            LOGGER.debug("Dropping database collection: {}", this.collectionName);
+            logger.debug("Dropping database collection: {}", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
 
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: {}", this.collectionName);
+            logger.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
-
-
     }
 
     @Override
@@ -65,7 +62,7 @@ public class MongoDbCasEventsRepository implements CasEventsRepository {
     }
 
     /**
-     * Optionally, specify the name of the mongodb collection where services are to be kept.
+     * Optionally, specify the name of the mongodb collection where events are to be kept.
      * By default, the name of the collection is specified by the constant {@link #MONGODB_COLLECTION_NAME}
      * @param name the name
      */
@@ -86,12 +83,12 @@ public class MongoDbCasEventsRepository implements CasEventsRepository {
     }
 
     @Override
-    public void save(final AbstractCasEvent event) {
-
+    public void save(final CasEventDTO event) {
+        this.mongoTemplate.save(event, this.collectionName);
     }
 
     @Override
-    public Collection<AbstractCasEvent> load() {
-        return null;
+    public Collection<CasEventDTO> load() {
+        return this.mongoTemplate.findAll(CasEventDTO.class, this.collectionName);
     }
 }
