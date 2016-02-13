@@ -46,6 +46,6 @@ Even if the primary goal of the CAS server is to implement the CAS protocol, oth
 
 
 
-#Delegated Authentication
+# Delegated Authentication
 Using the CAS protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to another CAS server.
 

@@ -25,7 +25,7 @@ be be combined with an LDAP-based principal resolver to accommodate this case.
 
 ## Principal Resolution Components
 
-###`PersonDirectoryPrincipalResolver`
+### `PersonDirectoryPrincipalResolver`
 Uses the Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
 The [Person Directory documentation](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual) provides
@@ -55,12 +55,12 @@ We present a stub configuration here that can be modified accordingly by consult
 {% endhighlight %}
 
 
-###`OpenIdPrincipalResolver`
+### `OpenIdPrincipalResolver`
 Extension of `PersonDirectoryPrincipalResolver` that is specifically for use with OpenID credentials. The configuration
 of this component is identical to that of `PersonDirectoryPrincipalResolver`.
 
 
-###`SpnegoPrincipalResolver`
+### `SpnegoPrincipalResolver`
 Extension of `PersonDirectoryPrincipalResolver` that is specifically for use with SPNEGO credentials. The configuration
 is the same as that of `PersonDirectoryPrincipalResolver` but with an additional property, `transformPrincipalId`,
 that provides a simple case transform on the principal ID. The following values are supported:
@@ -78,14 +78,14 @@ that provides a simple case transform on the principal ID. The following values 
       p:transformPrincipalId="UPPERCASE" />
 {% endhighlight %}
 
-###`X509SubjectPrincipalResolver`
+### `X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 See the [X.509 principal resolver](#x_509) section for more information.
 
-###`X509SubjectDNPrincipalResolver`
+### `X509SubjectDNPrincipalResolver`
 Creates a principal ID from the certificate subject distinguished name.
 
-###`ChainingPrincipalResolver`
+### `ChainingPrincipalResolver`
 Delegates to one or more principal resolves in series to resolve a principal. The input to first configured
 resolver is the authenticated
 credential; for every subsequent resolver, the input is a Credential whose ID is the resolved principal

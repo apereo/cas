@@ -20,10 +20,10 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-#Configuration
+# Configuration
 
 
-##Add the OAuth20WrapperController
+## Add the OAuth20WrapperController
 
 To add the `OAuth20WrapperController`, you need to add the mapping between the /oauth2.0/* url and the CAS servlet in the *web.xml* file:
 
@@ -65,9 +65,9 @@ The *loginUrl* is the login url of the CAS server. The timeout is the lifetime o
 {% endhighlight %}
 
 
-##Add the needed CAS services
+## Add the needed CAS services
 
-###Callback Authorization
+### Callback Authorization
 
 One service is needed to make the OAuth wrapper works in CAS. It defines the callback url after CAS authentication to return to the OAuth wrapper as a CAS service.  
 **Note**: the callback url must end with "callbackAuthorize".
@@ -87,7 +87,7 @@ One service is needed to make the OAuth wrapper works in CAS. It defines the cal
 {% endhighlight %}
 
 
-###OAuth Clients
+### OAuth Clients
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
 
