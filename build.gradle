@@ -870,7 +870,7 @@ subprojects {
         maxParallelForks = 1
         useJUnit()
         scanForTestClasses false
-        ig
+
         include '**/*Tests.*'
         exclude '**/*Abstract*.*'
         ignoreFailures Boolean.getBoolean("ignoreTestFailures")
