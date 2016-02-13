@@ -863,6 +863,7 @@ subprojects {
         maxParallelForks = 1
         useJUnit()
         scanForTestClasses false
+        ig
         include '**/*Tests.*'
         exclude '**/*Abstract*.*'
         classpath = it.classpath + files("${projectDir}/src/main/resources") +
@@ -941,7 +942,7 @@ subprojects {
     findbugs {
         toolVersion = "${findbugsVersion}"
         sourceSets = [sourceSets.main]
-        ignoreFailures = true
+        ignoreFailures = false
         reportsDir = file("$project.buildDir/findbugsReports")
         effort = "max"
         reportLevel = "high"
