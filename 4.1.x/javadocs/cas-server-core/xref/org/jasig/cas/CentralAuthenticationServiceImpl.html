@@ -294,7 +294,7 @@
 <a class="jxr_linenumber" name="L286" href="#L286">286</a> 
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>         <em class="jxr_comment">// Perform security policy check by getting the authentication that satisfies the configured policy</em>
 <a class="jxr_linenumber" name="L288" href="#L288">288</a>         <em class="jxr_comment">// This throws if no suitable policy is found</em>
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/ServiceContext.html">ServiceContext</a>(service, registeredService));
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket.getRoot(), <strong class="jxr_keyword">new</strong> ServiceContext(service, registeredService));
 <a class="jxr_linenumber" name="L290" href="#L290">290</a> 
 <a class="jxr_linenumber" name="L291" href="#L291">291</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; authentications = ticketGrantingTicket.getChainedAuthentications();
 <a class="jxr_linenumber" name="L292" href="#L292">292</a>         <strong class="jxr_keyword">final</strong> Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
