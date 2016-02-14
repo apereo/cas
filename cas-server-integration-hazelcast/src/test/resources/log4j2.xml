@@ -18,6 +18,9 @@
         <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.springframework" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
