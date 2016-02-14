@@ -34,8 +34,8 @@ import javax.validation.constraints.NotNull;
  */
 @Component("generateServiceTicketAction")
 public final class GenerateServiceTicketAction extends AbstractAction {
-    /** Ticket failure result. */
-    private static final String TICKET_FAILURE = "ticketFailure";
+    /** Authentication failure result. */
+    private static final String AUTHENTICATION_FAILURE = "authenticationFailure";
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
@@ -90,7 +90,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
-            return newEvent(TICKET_FAILURE, e);
+            return newEvent(AUTHENTICATION_FAILURE, e);
         }
 
         return error();
