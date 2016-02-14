@@ -45,9 +45,6 @@ public class AuthenticationViaFormAction {
     /** Authentication succeeded with warnings from authn subsystem that should be displayed to user. */
     public static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
 
-    /** Authentication failure result. */
-    public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
-
     /** Flow scope attribute that determines if authn is happening at a public workstation. */
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
@@ -163,13 +160,13 @@ public class AuthenticationViaFormAction {
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_WARN);
 
         } catch (final AuthenticationException e) {
-            return newEvent(AUTHENTICATION_FAILURE, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         } catch (final AbstractTicketException e) {
             if (e instanceof TicketCreationException) {
                 logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
             }
-            return newEvent(AUTHENTICATION_FAILURE, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         }
     }
     /**
@@ -200,7 +197,7 @@ public class AuthenticationViaFormAction {
 
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);
-            return newEvent(AUTHENTICATION_FAILURE, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
             logger.debug(e.getMessage(), e);
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);

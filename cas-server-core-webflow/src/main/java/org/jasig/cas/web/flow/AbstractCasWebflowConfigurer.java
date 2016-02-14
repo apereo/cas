@@ -119,6 +119,9 @@ public abstract class AbstractCasWebflowConfigurer {
      */
     protected static final String STATE_ID_GENERATE_LOGIN_TICKET = "generateLoginTicket";
 
+    /** Authentication failure result. */
+    public static final String EVENT_AUTHENTICATION_FAILURE = "authenticationFailure";
+
     private static final String FLOW_ID_LOGIN = "login";
 
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
