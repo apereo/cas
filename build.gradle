@@ -863,6 +863,7 @@ subprojects {
         maxParallelForks = 1
         useJUnit()
         scanForTestClasses false
+        ignoreFailures Boolean.getBoolean("ignoreTestFailures")
         include '**/*Tests.*'
         exclude '**/*Abstract*.*'
         classpath = it.classpath + files("${projectDir}/src/main/resources") +
