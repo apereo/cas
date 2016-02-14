@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.InvalidLoginLocationException;
 import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
@@ -62,6 +63,7 @@ public class AuthenticationExceptionHandler {
         DEFAULT_ERROR_LIST.add(AccountPasswordMustChangeException.class);
         DEFAULT_ERROR_LIST.add(InvalidLoginTimeException.class);
         DEFAULT_ERROR_LIST.add(UnauthorizedServiceForPrincipalException.class);
+        DEFAULT_ERROR_LIST.add(UnsatisfiedAuthenticationPolicyException.class);
     }
 
     /** Ordered list of error classes that this class knows how to handle. */
