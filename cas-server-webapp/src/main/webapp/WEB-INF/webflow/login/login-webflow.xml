@@ -88,7 +88,6 @@
         <transition on="success" to="sendTicketGrantingTicket"/>
         <transition on="successWithWarnings" to="showMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
-        <transition on="ticketFailure" to="handleTicketFailure"/>
         <transition on="error" to="generateLoginTicket"/>
     </action-state>
 
@@ -111,11 +110,6 @@
         <transition on="FailedLoginException" to="generateLoginTicket"/>
         <transition on="AccountNotFoundException" to="generateLoginTicket"/>
         <transition on="UnauthorizedServiceForPrincipalException" to="generateLoginTicket" />
-        <transition on="UNKNOWN" to="generateLoginTicket"/>
-    </action-state>
-
-    <action-state id="handleTicketFailure">
-        <evaluate expression="ticketExceptionHandler.handle(currentEvent.attributes.error, messageContext)"/>
         <transition on="UnsatisfiedAuthenticationPolicyException" to="generateLoginTicket"/>
         <transition to="generateLoginTicket"/>
     </action-state>
@@ -133,7 +127,6 @@
         <evaluate expression="generateServiceTicketAction"/>
         <transition on="success" to="warn"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
-        <transition on="ticketFailure" to="handleTicketFailure"/>
         <transition on="error" to="generateLoginTicket"/>
         <transition on="gateway" to="gatewayServicesManagementCheck"/>
     </action-state>
