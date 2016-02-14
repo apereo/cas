@@ -200,7 +200,7 @@ public class AuthenticationViaFormAction {
             return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
             logger.debug(e.getMessage(), e);
-            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         }
     }
 
