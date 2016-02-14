@@ -16,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.ViewResolver;
@@ -35,6 +36,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@DirtiesContext
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
