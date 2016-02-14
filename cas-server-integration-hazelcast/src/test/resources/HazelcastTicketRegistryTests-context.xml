@@ -13,7 +13,9 @@
     <context:property-placeholder properties-ref="casProperties"/>
     <util:properties id="casProperties"/>
 
-    <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.jasig.cas">
+        <context:exclude-filter type="regex" expression="org\.jasig\.cas\.ticket\.registry\.config.*"/>
+    </context:component-scan>
     <context:annotation-config/>
 
     <bean id="tcpIpHazelcastJoinConfig" class="com.hazelcast.config.JoinConfig">

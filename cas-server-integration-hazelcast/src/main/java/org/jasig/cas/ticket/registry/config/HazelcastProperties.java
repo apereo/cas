@@ -47,7 +47,7 @@ public class HazelcastProperties {
     /**
      * Instance name.
      */
-    @Value("${hz.cluster.instance.name:caslocalhost}")
+    @Value("${hz.cluster.instance.name:localhost}")
     private String instanceName;
 
     /**
