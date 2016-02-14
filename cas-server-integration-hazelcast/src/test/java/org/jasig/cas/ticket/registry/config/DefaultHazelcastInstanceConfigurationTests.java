@@ -7,7 +7,10 @@ import com.hazelcast.core.HazelcastInstance;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,7 +26,9 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml")
 @ActiveProfiles("default_hz_config")
+@DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHazelcastInstanceConfigurationTests.class);
 
     @Autowired
     private HazelcastInstance hzInstance;
@@ -50,6 +55,10 @@ public class DefaultHazelcastInstanceConfigurationTests {
 
     @After
     public void shutdownHz() {
+        LOGGER.info("Shutting down hazelcast instance {}", this.hzInstance.getConfig().getInstanceName());
         this.hzInstance.shutdown();
+        while (this.hzInstance.getLifecycleService().isRunning()) {
+            LOGGER.info("Waiting for instances to shut down");
+        }
     }
 }
