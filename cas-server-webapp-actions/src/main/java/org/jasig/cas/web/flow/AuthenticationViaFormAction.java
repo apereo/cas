@@ -48,9 +48,6 @@ public class AuthenticationViaFormAction {
     /** Authentication failure result. */
     public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
 
-    /** Ticket failure result. */
-    private static final String TICKET_FAILURE = "ticketFailure";
-
     /** Flow scope attribute that determines if authn is happening at a public workstation. */
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
@@ -172,7 +169,7 @@ public class AuthenticationViaFormAction {
                 logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
             }
-            return newEvent(TICKET_FAILURE, e);
+            return newEvent(AUTHENTICATION_FAILURE, e);
         }
     }
     /**
