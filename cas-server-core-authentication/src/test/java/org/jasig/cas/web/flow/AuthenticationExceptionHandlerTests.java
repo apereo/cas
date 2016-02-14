@@ -65,26 +65,28 @@ public class AuthenticationExceptionHandlerTests {
         final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
         final MessageContext ctx = mock(MessageContext.class);
 
-        final ContextualAuthenticationPolicy<?> policy = new ContextualAuthenticationPolicy<Object>() {
-            @Override
-            public Optional<String> getCode() {
-                return Optional.of("CUSTOM_CODE");
-            }
-
-            @Override
-            public Object getContext() {
-                return null;
-            }
-
-            @Override
-            public boolean isSatisfiedBy(final Authentication authentication) {
-                return false;
-            }
-        };
+        final ContextualAuthenticationPolicy<?> policy = new TestContextualAuthenticationPolicy();
         final String id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), ctx);
         assertEquals(id, "UnsatisfiedAuthenticationPolicyException");
-        ArgumentCaptor<DefaultMessageResolver> message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
+        final ArgumentCaptor<DefaultMessageResolver> message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
         verify(ctx, times(1)).addMessage(message.capture());
-        assertArrayEquals(new String[]{"CUSTOM_CODE"}, message.getValue().getCodes());
+        assertArrayEquals(new String[]{policy.getCode().get()}, message.getValue().getCodes());
+    }
+
+    private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {
+        @Override
+        public Optional<String> getCode() {
+            return Optional.of("CUSTOM_CODE");
+        }
+
+        @Override
+        public Object getContext() {
+            return null;
+        }
+
+        @Override
+        public boolean isSatisfiedBy(final Authentication authentication) {
+            return false;
+        }
     }
 }
