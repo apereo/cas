@@ -41,7 +41,7 @@
             id="dataSourceService"
             class="com.mchange.v2.c3p0.ComboPooledDataSource"
             p:driverClass="${events.jpa.database.driverClass:org.hsqldb.jdbcDriver}"
-            p:jdbcUrl="${events.jpa.database.url:jdbc:hsqldb:mem:cas-service-registry}"
+            p:jdbcUrl="${events.jpa.database.url:jdbc:hsqldb:mem:cas-events-registry}"
             p:user="${events.jpa.database.user:sa}"
             p:password="${events.jpa.database.password:}"
             p:initialPoolSize="${events.jpa.database.pool.minSize:6}"
