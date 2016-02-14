@@ -104,17 +104,14 @@ public class AuthenticationExceptionHandler {
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     public String handle(final Exception e, final MessageContext messageContext) {
-        // handle AuthenticationExceptions
         if (e instanceof AuthenticationException) {
             return handleAuthenticationException((AuthenticationException) e, messageContext);
-        }
-        // handle AbstractTicketExceptions exceptions
-        else if (e instanceof AbstractTicketException) {
+        } else if (e instanceof AbstractTicketException) {
             return handleAbstractTicketException((AbstractTicketException) e, messageContext);
         } else {
             // we don't recognize this exception
-            logger.trace("Unable to translate handler errors of the authentication exception {}. " +
-                    "Returning {} by default...", e, UNKNOWN);
+            logger.trace("Unable to translate handler errors of the authentication exception {}. "
+                    + "Returning {} by default...", e, UNKNOWN);
             final String messageCode = this.messageBundlePrefix + UNKNOWN;
             messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
             return UNKNOWN;
@@ -135,8 +132,8 @@ public class AuthenticationExceptionHandler {
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {
-                    logger.error("Unable to translate handler errors of the authentication exception {}. " +
-                            "Returning {} by default...", e, UNKNOWN);
+                    logger.error("Unable to translate handler errors of the authentication exception {}. "
+                            + "Returning {} by default...", e, UNKNOWN);
                     return UNKNOWN;
                 });
 
