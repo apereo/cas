@@ -871,6 +871,7 @@ subprojects {
         useJUnit()
         scanForTestClasses false
 
+        ignoreFailures Boolean.getBoolean("ignoreTestFailures")
         include '**/*Tests.*'
         exclude '**/*Abstract*.*'
         ignoreFailures Boolean.getBoolean("ignoreTestFailures")
