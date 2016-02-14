@@ -108,14 +108,14 @@ public class AuthenticationExceptionHandler {
             return handleAuthenticationException((AuthenticationException) e, messageContext);
         } else if (e instanceof AbstractTicketException) {
             return handleAbstractTicketException((AbstractTicketException) e, messageContext);
-        } else {
-            // we don't recognize this exception
-            logger.trace("Unable to translate handler errors of the authentication exception {}. "
-                    + "Returning {} by default...", e, UNKNOWN);
-            final String messageCode = this.messageBundlePrefix + UNKNOWN;
-            messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
-            return UNKNOWN;
         }
+
+        // we don't recognize this exception
+        logger.trace("Unable to translate handler errors of the authentication exception {}. "
+                + "Returning {} by default...", e, UNKNOWN);
+        final String messageCode = this.messageBundlePrefix + UNKNOWN;
+        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+        return UNKNOWN;
     }
 
     /**
@@ -128,7 +128,7 @@ public class AuthenticationExceptionHandler {
      * @param messageContext the spring message context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
-    private String handleAuthenticationException(final AuthenticationException e, final MessageContext messageContext) {
+    protected String handleAuthenticationException(final AuthenticationException e, final MessageContext messageContext) {
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
                 .map(Class::getSimpleName).findFirst().orElseGet(() -> {
@@ -152,7 +152,7 @@ public class AuthenticationExceptionHandler {
      * @param messageContext the spring message context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
-    private String handleAbstractTicketException(final AbstractTicketException e, final MessageContext messageContext) {
+    protected String handleAbstractTicketException(final AbstractTicketException e, final MessageContext messageContext) {
         // find the first error in the error list that matches the AbstractTicketException
         final Optional<String> match = this.errors.stream().filter((c) -> c.isInstance(e)).map(Class::getSimpleName)
                 .findFirst();
