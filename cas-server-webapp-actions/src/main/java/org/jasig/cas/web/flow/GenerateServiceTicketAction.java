@@ -34,9 +34,6 @@ import javax.validation.constraints.NotNull;
  */
 @Component("generateServiceTicketAction")
 public final class GenerateServiceTicketAction extends AbstractAction {
-    /** Authentication failure result. */
-    private static final String AUTHENTICATION_FAILURE = "authenticationFailure";
-
     /** Instance of CentralAuthenticationService. */
     @NotNull
     @Autowired
@@ -90,7 +87,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
-            return newEvent(AUTHENTICATION_FAILURE, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         }
 
         return error();
