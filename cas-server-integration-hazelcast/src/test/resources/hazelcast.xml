@@ -3,6 +3,7 @@
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+    <instance-name>cas</instance-name>
     <network>
         <port auto-increment="false" port-count="100">5801</port>
         <join>
