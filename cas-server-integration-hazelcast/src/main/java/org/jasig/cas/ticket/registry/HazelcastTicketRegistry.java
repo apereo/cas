@@ -148,6 +148,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
      */
     @PreDestroy
     public void shutdown() {
+        logger.info("Shutting down Hazelcast instance {}", hz.getConfig().getInstanceName());
         this.hz.shutdown();
     }
 
