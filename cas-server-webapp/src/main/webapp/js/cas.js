@@ -11,6 +11,38 @@ function loadjQueryCookies() {
     head.load("https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js", resourceLoadedSuccessfully);
 }
 
+function requestGeoPosition() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showGeoPosition, logGeoLocationError,
+            {maximumAge:600000, timeout:5000, enableHighAccuracy: true});
+    } else {
+        console.log("Browser does not support Geo Location");
+    }
+}
+
+function logGeoLocationError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            console.log("User denied the request for Geolocation.");
+            break;
+        case error.POSITION_UNAVAILABLE:
+            console.log("Location information is unavailable.");
+            break;
+        case error.TIMEOUT:
+            console.log("The request to get user location timed out.");
+            break;
+        default:
+            console.log("An unknown error occurred.");
+            break;
+    }
+}
+
+function showGeoPosition(position) {
+    $('[name="geolocation"]').val(position.coords.latitude + ","
+        + position.coords.longitude + "," + position.coords.accuracy + "," + position.timestamp);
+    console.log($('[name="geolocation"]').val());
+}
+
 function areCookiesEnabled() {
     $.cookie('cookiesEnabled', 'true');
     var value = $.cookie('cookiesEnabled');
@@ -23,6 +55,8 @@ function areCookiesEnabled() {
 
 function resourceLoadedSuccessfully() {
     $(document).ready(function() {
+
+        requestGeoPosition();
 
         if ($(":focus").length === 0){
             $("input:visible:enabled:first").focus();
