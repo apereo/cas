@@ -3,17 +3,16 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -44,10 +43,6 @@ public class AuthenticationViaFormAction {
 
     /** Authentication succeeded with warnings from authn subsystem that should be displayed to user. */
     public static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
-
-    /** Authentication failure result. */
-    public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
-
 
     /** Flow scope attribute that determines if authn is happening at a public workstation. */
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
@@ -164,15 +159,10 @@ public class AuthenticationViaFormAction {
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_WARN);
 
         } catch (final AuthenticationException e) {
-            return newEvent(AUTHENTICATION_FAILURE, e);
-        } catch (final TicketCreationException e) {
-            logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         } catch (final AbstractTicketException e) {
-            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         }
-        return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR);
-
     }
     /**
      * Create ticket granting ticket for the given credentials.
@@ -202,10 +192,10 @@ public class AuthenticationViaFormAction {
 
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);
-            return newEvent(AUTHENTICATION_FAILURE, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
             logger.debug(e.getMessage(), e);
-            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
+            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
         }
     }
 
