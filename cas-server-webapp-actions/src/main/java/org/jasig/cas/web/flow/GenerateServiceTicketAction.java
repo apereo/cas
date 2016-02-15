@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,7 +34,6 @@ import javax.validation.constraints.NotNull;
  */
 @Component("generateServiceTicketAction")
 public final class GenerateServiceTicketAction extends AbstractAction {
-
     /** Instance of CentralAuthenticationService. */
     @NotNull
     @Autowired
@@ -78,8 +78,6 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
 
-        } catch (final AuthenticationException e) {
-            logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -87,9 +85,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
-
-        return error();
     }
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
@@ -113,5 +110,16 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
             .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
+    }
+
+    /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id the id
+     * @param error the error
+     * @return the event
+     */
+    private Event newEvent(final String id, final Exception error) {
+        return new Event(this, id, new LocalAttributeMap<Object>("error", error));
     }
 }

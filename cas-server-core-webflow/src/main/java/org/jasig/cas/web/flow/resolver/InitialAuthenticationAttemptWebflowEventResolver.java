@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,11 +141,11 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
 
-        final AuthenticationException ex;
-        if (e instanceof AuthenticationException) {
-            ex = (AuthenticationException) e;
-        } else if (e.getCause() instanceof AuthenticationException) {
-            ex = (AuthenticationException) e.getCause();
+        final Exception ex;
+        if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
+            ex = e;
+        } else if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
+            ex = (Exception) e.getCause();
         } else {
             return null;
         }
