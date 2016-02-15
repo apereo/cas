@@ -16,8 +16,8 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public Collection<CasEventDTO> getEventsOfType(final String type) {
-        final Collection<CasEventDTO> events = load();
+    public Collection<CasEvent> getEventsOfType(final String type) {
+        final Collection<CasEvent> events = load();
         return events.stream().filter(event -> event.getType().equals(type)).collect(Collectors.toSet());
     }
 

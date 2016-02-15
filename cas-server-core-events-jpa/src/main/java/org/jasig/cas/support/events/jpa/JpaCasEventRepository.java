@@ -1,11 +1,12 @@
 package org.jasig.cas.support.events.jpa;
 
 import org.jasig.cas.support.events.dao.AbstractCasEventRepository;
-import org.jasig.cas.support.events.dao.CasEventDTO;
+import org.jasig.cas.support.events.dao.CasEvent;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -30,12 +31,18 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void save(final CasEventDTO event) {
+    public void save(final CasEvent event) {
         this.entityManager.merge(event);
     }
 
     @Override
-    public Collection<CasEventDTO> load() {
-        return this.entityManager.createQuery("SELECT r FROM CasEventDTO r", CasEventDTO.class).getResultList();
+    public Collection<CasEvent> load() {
+        return this.entityManager.createQuery("SELECT r FROM CasEvent r", CasEvent.class).getResultList();
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsForPrincipal(final String id) {
+        return this.entityManager.createQuery("select r from CasEvent r where r.principalId = :principalId",
+                CasEvent.class).setParameter("principalId", id).getResultList();
     }
 }

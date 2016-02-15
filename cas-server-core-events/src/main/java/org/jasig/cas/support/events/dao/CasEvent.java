@@ -17,14 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link CasEventDTO}, which represents a single event stored in the events repository.
+ * This is {@link CasEvent}, which represents a single event stored in the events repository.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
 @Entity
-@Table(name = "CasEvents")
-public class CasEventDTO {
+@Table(name = "CasEvent")
+public class CasEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,6 +32,9 @@ public class CasEventDTO {
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String type;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    private String principalId;
 
     @ElementCollection
     @MapKeyColumn(name="name")
@@ -152,11 +155,19 @@ public class CasEventDTO {
         return this.properties.get(key);
     }
 
+    public String getPrincipalId() {
+        return principalId;
+    }
+
+    public void setPrincipalId(final String principalId) {
+        this.principalId = principalId;
+    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("type", type)
+                .append("principalId", this.principalId)
                 .toString();
     }
 }
