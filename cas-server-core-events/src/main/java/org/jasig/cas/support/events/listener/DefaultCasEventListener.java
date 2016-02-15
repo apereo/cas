@@ -1,7 +1,7 @@
 package org.jasig.cas.support.events.listener;
 
 import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
-import org.jasig.cas.support.events.dao.CasEventDTO;
+import org.jasig.cas.support.events.dao.CasEvent;
 import org.jasig.cas.support.events.dao.CasEventRepository;
 import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.common.web.ClientInfo;
@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link DefaultCasEventListener} that attempts to consume CAS events
@@ -40,11 +38,12 @@ public class DefaultCasEventListener {
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (casEventRepository != null) {
 
-            final CasEventDTO dto = new CasEventDTO();
+            final CasEvent dto = new CasEvent();
             dto.setType(event.getClass().getCanonicalName());
             dto.putTimestamp(event.getTimestamp());
             dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
             dto.putId(event.getTicketGrantingTicket().getId());
+            dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
 
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
             dto.putClientIpAddress(clientInfo.getClientIpAddress());

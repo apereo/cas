@@ -1,11 +1,13 @@
 package org.jasig.cas.support.events.mongo;
 
 import org.jasig.cas.support.events.dao.AbstractCasEventRepository;
-import org.jasig.cas.support.events.dao.CasEventDTO;
+import org.jasig.cas.support.events.dao.CasEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
@@ -83,12 +85,19 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void save(final CasEventDTO event) {
+    public void save(final CasEvent event) {
         this.mongoTemplate.save(event, this.collectionName);
     }
 
     @Override
-    public Collection<CasEventDTO> load() {
-        return this.mongoTemplate.findAll(CasEventDTO.class, this.collectionName);
+    public Collection<CasEvent> load() {
+        return this.mongoTemplate.findAll(CasEvent.class, this.collectionName);
+    }
+
+    @Override
+    public Collection<CasEvent> getEventsForPrincipal(final String id) {
+        final Query query= new Query();
+        query.addCriteria(Criteria.where("principalId").is(id));
+        return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 }
