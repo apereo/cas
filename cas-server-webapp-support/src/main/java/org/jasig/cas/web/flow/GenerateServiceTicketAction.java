@@ -26,6 +26,7 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -61,9 +62,9 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
-        }
 
-        return error();
+            return newEvent("error", e);
+        }
     }
 
     public void setCentralAuthenticationService(
@@ -80,5 +81,16 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
             .getRequestParameterMap().get("gateway"));
+    }
+
+    /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id the id
+     * @param error the error
+     * @return the event
+     */
+    private Event newEvent(final String id, final Exception error) {
+        return new Event(this, id, new LocalAttributeMap<Object>("error", error));
     }
 }
