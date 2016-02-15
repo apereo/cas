@@ -9,7 +9,6 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.stereotype.Component;
@@ -73,15 +72,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             return newEvent(CasWebflowConstants.TRANSITION_ID_WARN);
 
-        } catch (final AuthenticationException e) {
+        } catch (final AuthenticationException | AbstractTicketException e) {
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
-        } catch (final TicketCreationException e) {
-            logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-        } catch (final AbstractTicketException e) {
-            return newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
         }
-        return newEvent(CasWebflowConstants.TRANSITION_ID_ERROR);
-
     }
 }

@@ -27,7 +27,7 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
      * @param policy Non-null unfulfilled security policy that caused exception.
      */
     public UnsatisfiedAuthenticationPolicyException(final ContextualAuthenticationPolicy<?> policy) {
-        super(CODE);
+        super(policy.getCode().orElse(CODE));
         Assert.notNull(policy, "ContextualAuthenticationPolicy cannot be null");
         this.policy = policy;
     }

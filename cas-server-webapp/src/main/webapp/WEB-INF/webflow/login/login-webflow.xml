@@ -116,7 +116,8 @@
         <transition on="FailedLoginException" to="initializeLoginForm"/>
         <transition on="AccountNotFoundException" to="initializeLoginForm"/>
         <transition on="UnauthorizedServiceForPrincipalException" to="initializeLoginForm" />
-        <transition on="UNKNOWN" to="initializeLoginForm"/>
+        <transition on="UnsatisfiedAuthenticationPolicyException" to="initializeLoginForm"/>
+        <transition to="initializeLoginForm"/>
     </action-state>
 
     <action-state id="sendTicketGrantingTicket">
