@@ -1,6 +1,8 @@
 package org.jasig.cas.support.events.dao;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.util.http.HttpRequestGeoLocation;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -142,7 +144,11 @@ public class CasEvent {
      * @param value the value
      */
     public void put(final String key, final String value) {
-        this.properties.put(key, value);
+        if (StringUtils.isBlank(value)) {
+            this.properties.remove(key);
+        } else {
+            this.properties.put(key, value);
+        }
     }
 
     /**
@@ -169,5 +175,53 @@ public class CasEvent {
                 .append("type", type)
                 .append("principalId", this.principalId)
                 .toString();
+    }
+
+    /**
+     * Put geo latitude.
+     *
+     * @param s the s
+     */
+    private void putGeoLatitude(final String s) {
+        put("geoLatitude", s);
+    }
+
+    /**
+     * Put geo longitude.
+     *
+     * @param s the longitude
+     */
+    private void putGeoLongitude(final String s) {
+        put("geoLongitude", s);
+    }
+
+    /**
+     * Put geo accuracy.
+     *
+     * @param s the accuracy
+     */
+    private void putGeoAccuracy(final String s) {
+        put("geoAccuracy", s);
+    }
+
+    /**
+     * Put geo timestamp.
+     *
+     * @param s the timestamp
+     */
+    private void putGeoTimestamp(final String s) {
+        put("geoTimestamp", s);
+    }
+
+    /**
+     * Put geo location.
+     *
+     * @param location the location
+     */
+    public void putGeoLocation(final HttpRequestGeoLocation location) {
+        putGeoAccuracy(location.getAccuracy());
+        putGeoLatitude(location.getLatitude());
+        putGeoLongitude(location.getLongitude());
+        putGeoTimestamp(location.getTimestamp());
     }
 }

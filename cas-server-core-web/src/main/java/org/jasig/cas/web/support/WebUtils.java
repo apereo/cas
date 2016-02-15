@@ -8,6 +8,7 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.http.HttpRequestGeoLocation;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -453,5 +454,18 @@ public final class WebUtils {
      */
     public static String getHttpServletRequestUserAgent() {
         return getHttpServletRequestUserAgent(getHttpServletRequest());
+    }
+
+    public static HttpRequestGeoLocation getHttpServletRequestGeoLocation() {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest();
+        final HttpRequestGeoLocation loc = new HttpRequestGeoLocation();
+        if (request != null) {
+            final String[] geoLocation = request.getParameter("geolocation").split(",");
+            loc.setLatitude(geoLocation[0]);
+            loc.setLongitude(geoLocation[1]);
+            loc.setAccuracy(geoLocation[2]);
+            loc.setTimestamp(geoLocation[3]);
+        }
+        return loc;
     }
 }
