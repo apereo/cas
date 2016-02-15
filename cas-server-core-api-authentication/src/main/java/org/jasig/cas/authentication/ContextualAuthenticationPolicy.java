@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import java.util.Optional;
+
 /**
  * A stateful authentication policy that is applied using arbitrary contextual information.
  *
@@ -13,4 +15,13 @@ public interface ContextualAuthenticationPolicy<T> extends AuthenticationPolicy 
      * @return Context information.
      */
     T getContext();
+
+    /**
+     * Return an optional message code to use when this {@link ContextualAuthenticationPolicy} is unsatisfied.
+     *
+     * @return Optional message code
+     */
+    default Optional<String> getCode() {
+        return Optional.empty();
+    }
 }
