@@ -123,7 +123,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private RegisteredService verifyRegisteredService(final JsonGenerator jsonGenerator, final Pair<String, Service> pair)
             throws IOException {
-        final RegisteredService service = this.servicesManager.findServiceBy(pair.getSecond());
+        final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(pair.getSecond().getId()));
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
             logger.warn("Service {}] is not found in the registry or it is disabled.", service);
             jsonGenerator.writeStartObject();
