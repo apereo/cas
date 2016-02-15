@@ -53,7 +53,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
             return getDefaultThemeName();
         }
         // retrieve the user agent string from the request
-        final String userAgent = request.getHeader("User-Agent");
+        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
 
         if (StringUtils.isBlank(userAgent)) {
             return getDefaultThemeName();

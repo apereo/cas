@@ -3,14 +3,15 @@ package org.jasig.cas.support.events.listener;
 import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.jasig.cas.support.events.dao.CasEventDTO;
 import org.jasig.cas.support.events.dao.CasEventRepository;
+import org.jasig.cas.web.support.WebUtils;
+import org.jasig.inspektr.common.web.ClientInfo;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,24 +32,6 @@ public class DefaultCasEventListener {
     private CasEventRepository casEventRepository;
 
     /**
-     * Gets the http request based on the
-     * {@link org.springframework.web.context.request.RequestContextHolder}.
-     *
-     * @return the request or null
-     */
-    protected final HttpServletRequest getRequest() {
-        try {
-            final ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            if (attrs != null) {
-                return attrs.getRequest();
-            }
-        } catch (final Exception e) {
-            logger.trace("Unable to obtain the http request", e);
-        }
-        return null;
-    }
-
-    /**
      * Handle TGT creation event.
      *
      * @param event the event
@@ -63,15 +46,10 @@ public class DefaultCasEventListener {
             dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
             dto.putId(event.getTicketGrantingTicket().getId());
 
-            final HttpServletRequest request = getRequest();
-            if (request != null) {
-                String ipAddress = request.getHeader("X-FORWARDED-FOR");
-                if (ipAddress == null) {
-                    ipAddress = request.getRemoteAddr();
-                }
-                dto.putLocation(ipAddress);
-                dto.putAgent(request.getHeader("user-agent"));
-            }
+            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+            dto.putClientIpAddress(clientInfo.getClientIpAddress());
+            dto.putServerIpAddress(clientInfo.getServerIpAddress());
+            dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
             casEventRepository.save(dto);
         }
     }
