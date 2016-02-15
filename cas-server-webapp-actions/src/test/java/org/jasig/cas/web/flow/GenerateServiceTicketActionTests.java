@@ -91,7 +91,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         when(tgt.getId()).thenReturn("bleh");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
-        assertEquals("error", this.action.execute(context).getId());
+        assertEquals(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
 
     @Test
@@ -105,7 +105,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
 
         this.ticketGrantingTicket.markTicketExpired();
-        assertEquals("error", this.action.execute(context).getId());
+        assertEquals(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
     
     @Test
