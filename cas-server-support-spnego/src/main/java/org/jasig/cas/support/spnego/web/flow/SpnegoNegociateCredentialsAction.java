@@ -130,8 +130,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     /**
      * Sets supported browsers by their user agent. The user agent
-     * header defined by {@link SpnegoConstants#HEADER_USER_AGENT}
-     * will be compared against this list. The user agents configured
+     * header defined will be compared against this list. The user agents configured
      * here need not be an exact match. So longer is the user agent identifier
      * configured in this list is "found" in the user agent header retrieved,
      * the check will pass.
