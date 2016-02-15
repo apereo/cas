@@ -5,7 +5,6 @@ import org.jasig.cas.support.events.dao.CasEventDTO;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
@@ -24,12 +23,6 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     @NotNull
     @PersistenceContext(unitName = "eventsEntityManagerFactory")
     private EntityManager entityManager;
-
-    /**
-     * Initialized post construction.
-     */
-    @PostConstruct
-    public void init() {}
 
     @Override
     public String toString() {

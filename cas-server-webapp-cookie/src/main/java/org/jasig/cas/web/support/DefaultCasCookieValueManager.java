@@ -3,6 +3,8 @@ package org.jasig.cas.web.support;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.util.NoOpCipherExecutor;
+import org.jasig.inspektr.common.web.ClientInfo;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,18 +55,11 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
     public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder(givenCookieValue);
 
-        String remoteAddr = request.getHeader("X-FORWARDED-FOR");
-        if (remoteAddr == null) {
-            remoteAddr = request.getRemoteAddr();
-        }
-
-        if (StringUtils.isBlank(remoteAddr)) {
-            throw new IllegalStateException("Request does not specify a remote address");
-        }
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         builder.append(COOKIE_FIELD_SEPARATOR);
-        builder.append(remoteAddr);
+        builder.append(clientInfo.getClientIpAddress());
 
-        final String userAgent = request.getHeader("user-agent");
+        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
         if (StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Request does not specify a user-agent");
         }
@@ -103,9 +98,9 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
                     + request.getRemoteAddr());
         }
 
-        if (!userAgent.equals(request.getHeader("user-agent"))) {
-            throw new IllegalStateException("Invalid cookie. Required user-agent does not match "
-                    + request.getHeader("user-agent"));
+        final String agent = WebUtils.getHttpServletRequestUserAgent(request);
+        if (!userAgent.equals(agent)) {
+            throw new IllegalStateException("Invalid cookie. Required user-agent does not match " + agent);
         }
         return value;
     }
