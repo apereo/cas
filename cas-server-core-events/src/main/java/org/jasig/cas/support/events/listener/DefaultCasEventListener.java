@@ -3,6 +3,7 @@ package org.jasig.cas.support.events.listener;
 import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.jasig.cas.support.events.dao.CasEvent;
 import org.jasig.cas.support.events.dao.CasEventRepository;
+import org.jasig.cas.util.http.HttpRequestGeoLocation;
 import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.common.web.ClientInfo;
 import org.jasig.inspektr.common.web.ClientInfoHolder;
@@ -49,6 +50,10 @@ public class DefaultCasEventListener {
             dto.putClientIpAddress(clientInfo.getClientIpAddress());
             dto.putServerIpAddress(clientInfo.getServerIpAddress());
             dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
+
+            final HttpRequestGeoLocation location = WebUtils.getHttpServletRequestGeoLocation();
+            dto.putGeoLocation(location);
+
             casEventRepository.save(dto);
         }
     }
