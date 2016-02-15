@@ -133,7 +133,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(
         final String id, final Authentication authentication,
-        final ExpirationPolicy expirationPolicy) {
+        final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         synchronized (this.lock) {
             if(this.grantedTicketAlready) {
                 throw new InvalidProxyGrantingTicketForServiceTicket(service);
