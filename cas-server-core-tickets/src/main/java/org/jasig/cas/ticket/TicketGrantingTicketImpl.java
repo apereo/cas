@@ -105,7 +105,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         final TicketGrantingTicket parentTicketGrantingTicket,
         @NotNull final Authentication authentication, final ExpirationPolicy policy) {
 
-        super(id, parentTicketGrantingTicket, policy);
+        super(id, policy);
 
         if (parentTicketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
@@ -155,7 +155,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
                 service, this.getCountOfUses() == 0 || credentialsProvided,
                 expirationPolicy);
 
-        updateServiceAndTrackSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        updateStateAndTrackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
 
@@ -166,8 +166,8 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @param service                    the service
      * @param onlyTrackMostRecentSession the only track most recent session
      */
-    protected void updateServiceAndTrackSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
-        updateState();
+    protected void updateStateAndTrackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
+        update();
 
         final List<Authentication> authentications = getChainedAuthentications();
         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
