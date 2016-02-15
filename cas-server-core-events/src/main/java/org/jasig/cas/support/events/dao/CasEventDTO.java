@@ -83,12 +83,21 @@ public class CasEventDTO {
     }
 
     /**
-     * Put location.
+     * Put client ip.
      *
      * @param loc the loc
      */
-    public void putLocation(final String loc) {
-        put("location", loc);
+    public void putClientIpAddress(final String loc) {
+        put("clientip", loc);
+    }
+
+    /**
+     * Put server ip.
+     *
+     * @param loc the loc
+     */
+    public void putServerIpAddress(final String loc) {
+        put("serverip", loc);
     }
 
     /**
@@ -104,7 +113,7 @@ public class CasEventDTO {
         return ZonedDateTime.parse(get("creationTime"));
     }
 
-    public Long getTimstamp() {
+    public Long getTimestamp() {
         return Long.valueOf(get("timestamp"));
     }
 
@@ -112,14 +121,17 @@ public class CasEventDTO {
         return get("agent");
     }
 
-    public String getLocation() {
-        return get("location");
-    }
-
     public String getId() {
         return get("id");
     }
 
+    public String getClientIpAddress() {
+        return get("clientip");
+    }
+
+    public String getServerIpAddress() {
+        return get("serverip");
+    }
     /**
      * Put property.
      *

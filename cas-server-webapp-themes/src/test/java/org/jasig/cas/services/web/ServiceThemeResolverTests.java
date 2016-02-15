@@ -3,6 +3,7 @@ package org.jasig.cas.services.web;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,10 +20,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
 public class ServiceThemeResolverTests {
 
@@ -59,7 +58,7 @@ public class ServiceThemeResolverTests {
         scope.put("service", org.jasig.cas.services.TestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
-        request.addHeader("User-Agent", "Mozilla");
+        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
 
@@ -67,7 +66,7 @@ public class ServiceThemeResolverTests {
     public void verifyGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
-        request.addHeader("User-Agent", "Mozilla");
+        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
 
@@ -76,10 +75,7 @@ public class ServiceThemeResolverTests {
         this.serviceThemeResolver.setServicesManager(null);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
-        request.addHeader("User-Agent", "Mozilla");
+        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
-
-
-
 }

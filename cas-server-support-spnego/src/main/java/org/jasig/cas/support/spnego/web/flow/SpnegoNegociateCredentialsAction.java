@@ -81,7 +81,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        final String userAgent = request.getHeader(SpnegoConstants.HEADER_USER_AGENT);
+        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
 
         LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
 

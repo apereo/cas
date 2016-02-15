@@ -1,5 +1,6 @@
 package org.jasig.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -7,8 +8,6 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-
-import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -44,6 +43,9 @@ public final class WebUtils {
 
     /** Request attribute that contains message key describing details of authorization failure.*/
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
+
+    /** Constant representing the request header for user agent. */
+    public static final String USER_AGENT_HEADER = "user-agent";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
@@ -429,5 +431,27 @@ public final class WebUtils {
         } else {
             LOGGER.debug("No warning cookie generator is defined");
         }
+    }
+
+    /**
+     * Gets http servlet request user agent.
+     *
+     * @param request the request
+     * @return the http servlet request user agent
+     */
+    public static String getHttpServletRequestUserAgent(final HttpServletRequest request) {
+        if (request != null) {
+            return request.getHeader(USER_AGENT_HEADER);
+        }
+        return null;
+    }
+
+    /**
+     * Gets http servlet request user agent.
+     *
+     * @return the http servlet request user agent
+     */
+    public static String getHttpServletRequestUserAgent() {
+        return getHttpServletRequestUserAgent(getHttpServletRequest());
     }
 }
