@@ -2,7 +2,7 @@ package org.jasig.cas.support.events.jpa;
 
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
-import org.jasig.cas.support.events.dao.CasEventDTO;
+import org.jasig.cas.support.events.dao.CasEvent;
 import org.jasig.cas.support.events.dao.CasEventRepository;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class JpaCasEventRepositoryTests {
         final TicketGrantingTicket ticket = new MockTicketGrantingTicket("casuser");
         final CasTicketGrantingTicketCreatedEvent event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
 
-        final CasEventDTO dto = new CasEventDTO();
+        final CasEvent dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
@@ -41,7 +41,7 @@ public class JpaCasEventRepositoryTests {
 
         this.repository.save(dto);
 
-        final Collection<CasEventDTO> col = this.repository.load();
+        final Collection<CasEvent> col = this.repository.load();
         assertEquals(col.size(), 1);
         assertFalse(col.stream().findFirst().get().getProperties().isEmpty());
     }
