@@ -14,14 +14,14 @@ public interface CasEventRepository {
      *
      * @param event the event
      */
-    void save(CasEventDTO event);
+    void save(CasEvent event);
 
     /**
      * Load collection.
      *
      * @return the collection
      */
-    Collection<CasEventDTO> load();
+    Collection<CasEvent> load();
 
     /**
      * Gets events of type.
@@ -29,5 +29,13 @@ public interface CasEventRepository {
      * @param type the type
      * @return the events of type
      */
-    Collection<CasEventDTO> getEventsOfType(String type);
+    Collection<CasEvent> getEventsOfType(String type);
+
+    /**
+     * Gets events for principal.
+     *
+     * @param id the id
+     * @return the events for principal
+     */
+    Collection<CasEvent> getEventsForPrincipal(String id);
 }
