@@ -37,7 +37,6 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     @NotNull
     private MongoOperations mongoTemplate;
 
-
     /**
      * Initialized registry post construction.
      * Will decide if the configured collection should
