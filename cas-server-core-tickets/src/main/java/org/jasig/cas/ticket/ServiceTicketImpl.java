@@ -75,7 +75,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     public ServiceTicketImpl(final String id,
         @NotNull final TicketGrantingTicketImpl ticket, @NotNull final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
-        super(id, ticket, policy);
+        super(id, policy);
 
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(ticket, "ticket cannot be null");
@@ -104,7 +104,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      */
     @Override
     public boolean isValidFor(final Service serviceToValidate) {
-        updateState();
+        update();
         return serviceToValidate.matches(this.service);
     }
 
@@ -136,8 +136,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         final ExpirationPolicy expirationPolicy) {
         synchronized (this.lock) {
             if(this.grantedTicketAlready) {
-                throw new IllegalStateException(
-                    "PGT already generated for this ST. Cannot grant more than one TGT for ST");
+                throw new InvalidProxyGrantingTicketForServiceTicket(service);
             }
             this.grantedTicketAlready = Boolean.TRUE;
         }
