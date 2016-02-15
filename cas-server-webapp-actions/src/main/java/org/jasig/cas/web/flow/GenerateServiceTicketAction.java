@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -88,6 +89,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
+
+            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
         }
 
         return error();
@@ -113,5 +116,16 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
             .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
+    }
+
+    /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id the id
+     * @param error the error
+     * @return the event
+     */
+    private Event newEvent(final String id, final Exception error) {
+        return new Event(this, id, new LocalAttributeMap<Object>("error", error));
     }
 }
