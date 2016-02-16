@@ -1,19 +1,11 @@
 package org.jasig.cas.support.events.jpa;
 
-import org.jasig.cas.mock.MockTicketGrantingTicket;
-import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
-import org.jasig.cas.support.events.dao.CasEvent;
+import org.jasig.cas.support.events.AbstractCasEventRepositoryTests;
 import org.jasig.cas.support.events.dao.CasEventRepository;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.Collection;
-
-import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link JpaCasEventRepository}.
@@ -23,26 +15,13 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/jpa-eventscontext-test.xml")
-public class JpaCasEventRepositoryTests {
+public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired
     private CasEventRepository repository;
 
-    @Test
-    public void verifySave() {
-        final TicketGrantingTicket ticket = new MockTicketGrantingTicket("casuser");
-        final CasTicketGrantingTicketCreatedEvent event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
-
-        final CasEvent dto = new CasEvent();
-        dto.setType(event.getClass().getCanonicalName());
-        dto.putTimestamp(event.getTimestamp());
-        dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
-        dto.putId(event.getTicketGrantingTicket().getId());
-
-        this.repository.save(dto);
-
-        final Collection<CasEvent> col = this.repository.load();
-        assertEquals(col.size(), 1);
-        assertFalse(col.stream().findFirst().get().getProperties().isEmpty());
+    @Override
+    public CasEventRepository getRepositoryInstance() {
+        return this.repository;
     }
 }
