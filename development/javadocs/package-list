@@ -41,6 +41,10 @@ org.jasig.cas.services.web.beans
 org.jasig.cas.services.web.factory
 org.jasig.cas.services.web.view
 org.jasig.cas.support.events
+org.jasig.cas.support.events.dao
+org.jasig.cas.support.events.jpa
+org.jasig.cas.support.events.listener
+org.jasig.cas.support.events.mongo
 org.jasig.cas.support.oauth
 org.jasig.cas.support.oauth.authentication
 org.jasig.cas.support.oauth.services
