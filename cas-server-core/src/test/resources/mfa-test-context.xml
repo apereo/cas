@@ -44,7 +44,6 @@
     <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
 
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
-    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy"/>
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     <alias name="requiredHandlerAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>

@@ -29,10 +29,11 @@ import java.util.Optional;
 @Component("accessTokenController")
 public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
-    private BasicAuthExtractor basicAuthExtractor = new BasicAuthExtractor(null);
+    private final BasicAuthExtractor basicAuthExtractor = new BasicAuthExtractor(null);
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        response.setContentType("text/plain");
 
         if (!verifyAccessTokenRequest(request)) {
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
@@ -43,6 +44,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         // code should not be expired
         if (code == null || code.isExpired()) {
             logger.error("Code expired: {}", code);
+            if (code != null) {
+                ticketRegistry.deleteTicket(code.getId());
+            }
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
         ticketRegistry.deleteTicket(code.getId());
@@ -53,7 +57,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken.getId(), OAuthConstants.EXPIRES, timeout);
         logger.debug("OAuth access token response: {}", text);
-        response.setContentType("text/plain");
+
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
     }
 
@@ -88,8 +92,6 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             return false;
         }
         final UsernamePasswordCredentials credentials = opCredentials.get();
-        final String clientId = credentials.getUsername();
-        final String clientSecret = credentials.getPassword();
         if (StringUtils.isBlank(credentials.getUsername())) {
             logger.error("Missing clientId");
             return false;
@@ -116,8 +118,12 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         final String clientId = credentials.getUsername();
         final String clientSecret = credentials.getPassword();
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        logger.debug("Found: {} for: {} in secret check", service, clientId);
+        if (service == null) {
+            logger.warn("OAuth registered service could not be found");
+            return false;
+        }
 
+        logger.debug("Found: {} for: {} in secret check", service, clientId);
         if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
             logger.error("Wrong client secret for service: {}", service);
             return false;
@@ -130,9 +136,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         final Optional<UsernamePasswordCredentials> credentials = getCredentials(request);
         if (credentials.isPresent()) {
             return Optional.ofNullable(credentials.get().getUsername());
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
+
     }
 
     /**
