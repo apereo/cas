@@ -54,7 +54,6 @@ public final class OAuth20ProfileControllerTests {
     @Autowired
     private Controller oauth20WrapperController;
 
-
     @Autowired
     @Qualifier("defaultAccessTokenGenerator")
     private AccessTokenGenerator accessTokenGenerator;
@@ -110,7 +109,7 @@ public final class OAuth20ProfileControllerTests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
-        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessTokenGenerator.generate(TestUtils.getService(), impl));
+        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessTokenGenerator.generate(TestUtils.getService("0"), impl));
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
@@ -138,7 +137,7 @@ public final class OAuth20ProfileControllerTests {
         final TicketGrantingTicket impl = new TicketGrantingTicketImpl(TGT_ID,
                 org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
-                + accessTokenGenerator.generate(TestUtils.getService(), impl));
+                + accessTokenGenerator.generate(TestUtils.getService("0"), impl));
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());

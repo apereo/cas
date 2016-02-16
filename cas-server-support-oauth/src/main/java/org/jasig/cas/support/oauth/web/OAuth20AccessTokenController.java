@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -65,7 +66,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
 
-        final String accessTokenEncoded = this.accessTokenGenerator.generate(serviceTicket.getService(), ticketGrantingTicket);
+        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthWebApplicationService service = new OAuthWebApplicationService(registeredService.getId());
+        final String accessTokenEncoded = this.accessTokenGenerator.generate(service, ticketGrantingTicket);
         final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
                 .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenEncoded, OAuthConstants.EXPIRES, expires);
@@ -127,6 +130,4 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         }
         return true;
     }
-
-
 }
