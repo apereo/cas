@@ -13,14 +13,15 @@ import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
-import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCodeFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -72,9 +73,11 @@ public final class OAuth20AccessTokenControllerTests {
     private static final String VALUE = "attributeValue";
 
     @Autowired
-    private DefaultOAuthCodeFactory oAuthCodeFactory;
+    @Qualifier("defaultOAuthCodeFactory")
+    private OAuthCodeFactory oAuthCodeFactory;
 
     @Autowired
+    @Qualifier("accessTokenController")
     private OAuth20AccessTokenController oAuth20AccessTokenController;
 
     @Test
@@ -204,8 +207,8 @@ public final class OAuth20AccessTokenControllerTests {
                 return true;
             }
         });
-        final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
-        final OAuthCodeImpl code = (OAuthCodeImpl) expiringOAuthCodeFactory.create(service, authentication);
+        final Service service = new OAuthWebApplicationService(String.valueOf(registeredService.getId()), registeredService.getServiceId());
+        final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -242,15 +245,15 @@ public final class OAuth20AccessTokenControllerTests {
 
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
-        final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
-        final OAuthCodeImpl code = (OAuthCodeImpl) oAuthCodeFactory.create(service, authentication);
+        final Service service = new OAuthWebApplicationService(String.valueOf(registeredService.getId()), registeredService.getServiceId());
+        final OAuthCode code = oAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         if (basicAuth) {
-            final String auth = CLIENT_ID + ":" + CLIENT_SECRET;
+            final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
             final String value = Base64.encodeBase64String(auth.getBytes("UTF-8"));
             mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
         } else {
@@ -260,7 +263,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
-        assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket((code.getId())));
+        assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket(code.getId()));
         assertEquals("text/plain", mockResponse.getContentType());
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
