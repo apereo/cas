@@ -81,7 +81,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        final String userAgent = request.getHeader(SpnegoConstants.HEADER_USER_AGENT);
+        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
 
         LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
 
@@ -130,8 +130,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     /**
      * Sets supported browsers by their user agent. The user agent
-     * header defined by {@link SpnegoConstants#HEADER_USER_AGENT}
-     * will be compared against this list. The user agents configured
+     * header defined will be compared against this list. The user agents configured
      * here need not be an exact match. So longer is the user agent identifier
      * configured in this list is "found" in the user agent header retrieved,
      * the check will pass.
