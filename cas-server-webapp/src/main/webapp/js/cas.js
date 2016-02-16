@@ -12,6 +12,7 @@ function loadjQueryCookies() {
 }
 
 function requestGeoPosition() {
+    console.log("Requesting GeoLocation data from the browser...");
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showGeoPosition, logGeoLocationError,
             {maximumAge:600000, timeout:5000, enableHighAccuracy: true});
@@ -56,7 +57,9 @@ function areCookiesEnabled() {
 function resourceLoadedSuccessfully() {
     $(document).ready(function() {
 
-        requestGeoPosition();
+        if (trackGeoLocation) {
+            requestGeoPosition();
+        }
 
         if ($(":focus").length === 0){
             $("input:visible:enabled:first").focus();
