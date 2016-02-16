@@ -12,6 +12,33 @@ designed to be consumed by the developer and subsequent CAS modules, while audit
 
 By default, no events are recorded by this functionality.
 
+## Recorded Data
+The following metadata is captured and recorded by the event machinery when enabled:
+
+| Field                             | Description
+|-----------------------------------+----------------------------------------------------------------+
+| `principalId`                              | The principal id of the authenticated subject
+| `timestamp`                                | Timestamp of this event
+| `creationTime`                             | Timestamp of this authentication event
+| `clientIpAddress`                          | Client IP address
+| `serverIpAddress`                          | Server IP address
+| `agent`                                    | User-Agent of the browser
+| `geoLatitude`                              | Geo Latitude of authentication request's origin 
+| `geoLongitude`                             | Geo Longitude of authentication request's origin
+| `geoAccuracy`                              | Accuracy measure of the location
+| `geoTimestamp`                             | Timestamp of the geo location request
+
+## GeoLocation
+CAS attempts to record the geolocation properties of the authentication requests, by allowing the browser to ask for user's consent. 
+Should consent not be granted or geolocation not supported by the browser, CAS will ignore the geolocation data when it attempts to 
+record the event. 
+
+If you wish to completely disallow geolocation tracking, configure the following settings:
+
+```properties
+# events.track.geolocation=false
+```
+
 ## Configuration
 The following storage backends are available for consumption of events:
 
