@@ -456,15 +456,28 @@ public final class WebUtils {
         return getHttpServletRequestUserAgent(getHttpServletRequest());
     }
 
+    /**
+     * Gets http servlet request geo location.
+     *
+     * @return the http servlet request geo location
+     */
     public static HttpRequestGeoLocation getHttpServletRequestGeoLocation() {
+        final int latIndex = 0;
+        final int oongIndex = 1;
+        final int accuIndex = 2;
+        final int timeIndex = 3;
+
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final HttpRequestGeoLocation loc = new HttpRequestGeoLocation();
         if (request != null) {
-            final String[] geoLocation = request.getParameter("geolocation").split(",");
-            loc.setLatitude(geoLocation[0]);
-            loc.setLongitude(geoLocation[1]);
-            loc.setAccuracy(geoLocation[2]);
-            loc.setTimestamp(geoLocation[3]);
+            final String geoLocationParam = request.getParameter("geolocation");
+            if (StringUtils.isNotBlank(geoLocationParam)) {
+                final String[] geoLocation = geoLocationParam.split(",");
+                loc.setLatitude(geoLocation[latIndex]);
+                loc.setLongitude(geoLocation[oongIndex]);
+                loc.setAccuracy(geoLocation[accuIndex]);
+                loc.setTimestamp(geoLocation[timeIndex]);
+            }
         }
         return loc;
     }
