@@ -60,7 +60,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      */
     public OAuthCodeImpl(final String id, @NotNull final Service service, @NotNull final Authentication authentication,
                          final ExpirationPolicy expirationPolicy) {
-        super(id, null, expirationPolicy);
+        super(id, expirationPolicy);
 
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(authentication, "authentication cannot be null");
@@ -80,7 +80,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     @Override
     public boolean isValidFor(final Service serviceToValidate) {
-        updateState();
+        update();
         return serviceToValidate.matches(this.service);
     }
 

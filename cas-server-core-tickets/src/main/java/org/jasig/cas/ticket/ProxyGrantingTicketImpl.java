@@ -65,7 +65,8 @@ public final class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl impl
                 service, this.getCountOfUses() == 0,
                 expirationPolicy);
 
-        updateServiceAndTrackSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        updateStateAndTrackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+
         return serviceTicket;
     }
 
