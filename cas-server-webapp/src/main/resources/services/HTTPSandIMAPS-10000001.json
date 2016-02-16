@@ -18,7 +18,7 @@
       "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
     },
     "authorizedToReleaseCredentialPassword" : false,
-    "authorizedToReleaseProxyGrantingTicket" : true
+    "authorizedToReleaseProxyGrantingTicket" : false
   },
   "accessStrategy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
