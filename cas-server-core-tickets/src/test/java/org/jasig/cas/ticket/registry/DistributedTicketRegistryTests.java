@@ -1,5 +1,6 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -74,7 +75,7 @@ public final class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void verifyUpdateOfRegistry() {
+    public void verifyUpdateOfRegistry() throws AbstractTicketException {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
                 org.jasig.cas.authentication.TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
