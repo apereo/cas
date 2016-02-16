@@ -1,5 +1,7 @@
 package org.jasig.cas.ticket.registry;
 
+import com.google.common.io.ByteSource;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
@@ -8,24 +10,38 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
+import org.jasig.cas.util.DateTimeUtils;
 import org.jasig.cas.util.DigestUtils;
-import org.jasig.cas.util.SerializationUtils;
-
-import com.google.common.io.ByteSource;
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.util.Pair;
+import org.jasig.cas.util.SerializationUtils;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Constructor;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -35,10 +51,23 @@ import java.util.stream.Collectors;
  * This is a published and supported CAS Server 3 API.
  * </p>
  */
-public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState {
+public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState, Job {
 
     /** The Slf4j logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Value("${ticket.registry.cleaner.enabled:false}")
+    private boolean cleanerEnabled;
+
+    @Value("${ticket.registry.cleaner.repeatinterval:120}")
+    private int refreshInterval;
+
+    @Value("${ticket.registry.cleaner.startdelay:20}")
+    private int startDelay;
+
+    @Autowired(required = false)
+    @Qualifier("scheduler")
+    private Scheduler scheduler;
 
     @Nullable
     @Autowired(required = false)
@@ -312,21 +341,90 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     /**
      * Common code to go over expired tickets and clean them up.
      **/
-    protected void cleanupTickets() {
-        logger.debug("Beginning ticket cleanup...");
-        this.getTickets().stream()
-                .filter(ticket -> ticket.isExpired())
-                .forEach(ticket -> {
-                    if (ticket instanceof TicketGrantingTicket) {
-                        logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                        this.logoutManager.performLogout((TicketGrantingTicket) ticket);
-                        deleteTicket(ticket.getId());
-                    } else if (ticket instanceof ServiceTicket) {
-                        logger.debug("Cleaning up expired service ticket or its derivative [{}]", ticket.getId());
-                        deleteTicket(ticket.getId());
-                    } else {
-                        logger.warn("Unknown ticket type [{}]. Nothing to clean up.", ticket.getClass().getSimpleName());
-                    }
-                });
+    protected final void cleanupTickets() {
+        try {
+            if (preCleanupTickets()) {
+                logger.debug("Beginning ticket cleanup...");
+                this.getTickets().stream()
+                        .filter(ticket -> ticket.isExpired())
+                        .forEach(ticket -> {
+                            if (ticket instanceof TicketGrantingTicket) {
+                                logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                                this.logoutManager.performLogout((TicketGrantingTicket) ticket);
+                                deleteTicket(ticket.getId());
+                            } else if (ticket instanceof ServiceTicket) {
+                                logger.debug("Cleaning up expired service ticket or its derivative [{}]", ticket.getId());
+                                deleteTicket(ticket.getId());
+                            } else {
+                                logger.warn("Unknown ticket type [{}]. Nothing to clean up.", ticket.getClass().getSimpleName());
+                            }
+                        });
+            }
+        } finally {
+            postCleanupTickets();
+        }
+
+    }
+
+    /**
+     * Post cleanup tickets. This injection point is always executed
+     * in a finally block regardless of whether cleanup actually happened.
+     */
+    protected void postCleanupTickets() {
+
+    }
+
+    /**
+     * Pre cleanup tickets.
+     *
+     * @return true, if cleanup should proceed. false otherwise.
+     */
+    protected boolean preCleanupTickets() {
+        return true;
+    }
+
+    /**
+     * Schedule reloader job.
+     */
+    @PostConstruct
+    protected void scheduleCleanerJob() {
+        try {
+
+            if (!cleanerEnabled) {
+                logger.info("Ticket registry cleaner is disabled. No cleaner processes will be scheduled");
+                return;
+            }
+
+            logger.info("Preparing to schedule job to clean up after tickets...");
+            final JobDetail job = JobBuilder.newJob(this.getClass())
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .build();
+
+            final Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.startDelay)))
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                            .withIntervalInSeconds(this.refreshInterval)
+                            .repeatForever()).build();
+
+            logger.debug("Scheduling {} job", this.getClass().getSimpleName());
+            scheduler.scheduleJob(job, trigger);
+            logger.info("{} will clean tickets every {} minutes",
+                    this.getClass().getSimpleName(),
+                    TimeUnit.SECONDS.toMinutes(this.refreshInterval));
+        } catch (final Exception e){
+            logger.warn(e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public final void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        try {
+            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+            cleanupTickets();
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 }
