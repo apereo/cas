@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.profile.OAuthClientProfile;
 import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
@@ -99,20 +100,22 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
             final String clientId = profile.getId();
             final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
+            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             return profile instanceof OAuthClientProfile
                     && validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
                     && validator.checkParameterExist(request, OAuthConstants.CODE)
-                    && validator.checkCallbackValid(clientId, redirectUri);
+                    && validator.checkCallbackValid(registeredService, redirectUri);
 
         } else {
 
             final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             // resource owner password grant type
             return profile instanceof OAuthUserProfile
                     && validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                    && validator.checkServiceValid(clientId);
+                    && validator.checkServiceValid(registeredService);
         }
     }
 

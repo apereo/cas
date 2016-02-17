@@ -88,7 +88,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @return the OAuth service
      */
     protected OAuthWebApplicationService createService(final RegisteredService registeredService) {
-        return new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
+        return new OAuthWebApplicationService(registeredService);
     }
 
     /**
