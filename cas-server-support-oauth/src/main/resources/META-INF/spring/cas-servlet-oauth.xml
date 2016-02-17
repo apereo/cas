@@ -9,7 +9,6 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
        <alias name="ticketGrantingTicketExpirationPolicy" alias="oAuthAcccessTokenExpirationPolicy" />
-       <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="oAuthCodeExpirationPolicy" />
 
        <context:component-scan base-package="org.pac4j.springframework.web" />
 

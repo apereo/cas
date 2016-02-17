@@ -2,6 +2,7 @@ package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
@@ -49,7 +50,8 @@ public class ServiceTicketDelegator<T extends ServiceTicket> extends AbstractTic
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
                                                         final Authentication authentication,
-                                                        final ExpirationPolicy expirationPolicy) {
+                                                        final ExpirationPolicy expirationPolicy)
+                                                        throws AbstractTicketException {
         final ProxyGrantingTicket t = this.getTicket().grantProxyGrantingTicket(id,
                 authentication, expirationPolicy);
         updateTicket();

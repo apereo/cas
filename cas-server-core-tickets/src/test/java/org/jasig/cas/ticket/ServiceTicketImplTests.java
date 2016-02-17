@@ -86,7 +86,7 @@ public class ServiceTicketImplTests {
     }
 
     @Test
-    public void verifyTicketGrantingTicket() {
+    public void verifyTicketGrantingTicket() throws AbstractTicketException {
         final Authentication a = org.jasig.cas.authentication.TestUtils.getAuthentication();
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
                 org.jasig.cas.authentication.TestUtils.getAuthentication(),
@@ -102,7 +102,7 @@ public class ServiceTicketImplTests {
     }
 
     @Test
-    public void verifyTicketGrantingTicketGrantedTwice() {
+    public void verifyTicketGrantingTicketGrantedTwice() throws AbstractTicketException  {
         final Authentication a = org.jasig.cas.authentication.TestUtils.getAuthentication();
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
                 org.jasig.cas.authentication.TestUtils.getAuthentication(),

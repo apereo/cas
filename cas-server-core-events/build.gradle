@@ -1,10 +1,12 @@
-
 description = 'Apereo CAS Core Events'
 dependencies {
     compile project(':cas-server-core-api-ticket')
     compile project(':cas-server-core-api-services')
     compile project(':cas-server-core-api-validation')
-	compile libraries.spring
+    compile project(':cas-server-core-web')
+    compile libraries.spring
+    compile libraries.hibernate
+    testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
 }
 
 

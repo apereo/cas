@@ -1,10 +1,9 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,14 +33,6 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
      * @return the request or null
      */
     protected final HttpServletRequest getRequest() {
-        try {
-            final ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            if (attrs != null) {
-                return attrs.getRequest();
-            }
-        }  catch (final Exception e) {
-            LOGGER.trace("Unable to obtain the http request", e);
-        }
-        return null;
+        return WebUtils.getHttpServletRequest();
     }
 }

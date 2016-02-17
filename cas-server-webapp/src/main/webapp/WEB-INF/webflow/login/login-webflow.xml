@@ -110,7 +110,8 @@
         <transition on="FailedLoginException" to="generateLoginTicket"/>
         <transition on="AccountNotFoundException" to="generateLoginTicket"/>
         <transition on="UnauthorizedServiceForPrincipalException" to="generateLoginTicket" />
-        <transition on="UNKNOWN" to="generateLoginTicket"/>
+        <transition on="UnsatisfiedAuthenticationPolicyException" to="generateLoginTicket"/>
+        <transition to="generateLoginTicket"/>
     </action-state>
 
     <action-state id="sendTicketGrantingTicket">

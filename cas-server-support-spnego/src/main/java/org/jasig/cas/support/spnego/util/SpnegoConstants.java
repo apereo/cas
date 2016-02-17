@@ -15,9 +15,6 @@ public interface SpnegoConstants {
     /** The header authorization. */
     String HEADER_AUTHORIZATION = "Authorization";
 
-    /** The header user agent. */
-    String HEADER_USER_AGENT = "User-Agent";
-
     /** The negotiate. */
     String NEGOTIATE = "Negotiate";
 

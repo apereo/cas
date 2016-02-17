@@ -15,10 +15,13 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info">
+        <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Root level="info">
+        <Logger name="org.springframework" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
