@@ -8,6 +8,7 @@ import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.util.DateTimeUtils;
 
+import org.ldaptive.auth.ext.FreeIPAAccountState;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -61,6 +62,12 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
         this.errorMap.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(FreeIPAAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
+        this.errorMap.put(FreeIPAAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
+        this.errorMap.put(FreeIPAAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
+        this.errorMap.put(FreeIPAAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
+        this.errorMap.put(FreeIPAAccountState.Error.MAXIMUM_LOGINS_EXCEEDED, new AccountLockedException());
+        this.errorMap.put(FreeIPAAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
         this.errorMap.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
