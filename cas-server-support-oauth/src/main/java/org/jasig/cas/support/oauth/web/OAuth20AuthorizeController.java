@@ -120,11 +120,12 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
+        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
 
         return checkParameterExist
             && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
-            && validator.checkServiceValid(clientId)
-            && validator.checkCallbackValid(clientId, redirectUri);
+            && validator.checkServiceValid(registeredService)
+            && validator.checkCallbackValid(registeredService, redirectUri);
     }
 
     /**
