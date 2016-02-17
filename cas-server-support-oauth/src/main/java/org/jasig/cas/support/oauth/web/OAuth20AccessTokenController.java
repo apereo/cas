@@ -30,6 +30,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        response.setContentType("text/plain");
 
         if (!verifyAccessTokenRequest(request, response)) {
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
@@ -45,6 +46,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             // code should not be expired
             if (code == null || code.isExpired()) {
                 logger.error("Code expired: {}", code);
+                if (code != null) {
+                    ticketRegistry.deleteTicket(code.getId());
+                }
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
             }
             ticketRegistry.deleteTicket(code.getId());
@@ -64,7 +68,6 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken.getId(), OAuthConstants.EXPIRES, timeout);
         logger.debug("OAuth access token response: {}", text);
-        response.setContentType("text/plain");
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
     }
 

@@ -10,9 +10,30 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-    <bean id="infinispanTicketRegistry" class="org.jasig.cas.ticket.registry.InfinispanTicketRegistry" />
+    <context:property-placeholder properties-ref="casProperties"/>
+    <util:properties id="casProperties"/>
+
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config/>
+
+    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.InfinispanTicketRegistry" />
     <bean id="infinispanTicketsCache" factory-bean="cacheManager" factory-method="getCache" />
     <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"
           c:configurationFile="infinispan.xml"/>
+
+    <!-- CAS Context Core -->
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
 
 </beans>

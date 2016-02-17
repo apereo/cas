@@ -27,7 +27,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
 
     /** Default instance for the ticket id generator. */
     @NotNull
-    protected final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    protected final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
     @NotNull
@@ -35,32 +35,31 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Whether we should track the most recent session by keeping the latest service ticket. */
-    @Value("${tgt.onlyTrackMostRecentSession:true}")
+    @Value("${tgt.track.recent.session:true}")
     protected boolean onlyTrackMostRecentSession = true;
 
     /** ExpirationPolicy for Service Tickets. */
     @NotNull
-    @Resource(name="serviceTicketExpirationPolicy")
-    protected ExpirationPolicy serviceTicketExpirationPolicy;
+    @Resource(name="proxyTicketExpirationPolicy")
+    protected ExpirationPolicy proxyTicketExpirationPolicy;
 
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket,
                                        final Service service) {
         final String uniqueTicketIdGenKey = service.getClass().getName();
-        logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
-        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator =
-                this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
-        if (serviceTicketUniqueTicketIdGenerator == null) {
-            serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
-            logger.debug("Service ticket id generator not found for [{}]. Using the default generator...",
+        logger.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
+        UniqueTicketIdGenerator generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+        if (generator == null) {
+            generator = this.defaultTicketIdGenerator;
+            logger.debug("Ticket id generator not found for [{}]. Using the default generator...",
                     uniqueTicketIdGenKey);
         }
 
-        final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
+        final String ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
         final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(
                 ticketId,
                 service,
-                this.serviceTicketExpirationPolicy,
+                this.proxyTicketExpirationPolicy,
                 this.onlyTrackMostRecentSession);
         return (T) serviceTicket;
     }
@@ -82,7 +81,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
 
-    public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
+    public void setProxyTicketExpirationPolicy(final ExpirationPolicy proxyTicketExpirationPolicy) {
+        this.proxyTicketExpirationPolicy = proxyTicketExpirationPolicy;
     }
 }

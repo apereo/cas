@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.mock.MockService;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -180,10 +181,14 @@ public class JpaTicketRegistryTests {
     }
 
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
-        return parent.grantProxyGrantingTicket(
-                ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                TestUtils.getAuthentication(),
-                EXP_POLICY_PGT);
+        try {
+            return parent.grantProxyGrantingTicket(
+                    ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
+                    TestUtils.getAuthentication(),
+                    EXP_POLICY_PGT);
+        } catch (final AbstractTicketException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static ProxyTicket newPT(final ProxyGrantingTicket parent) {
@@ -220,7 +225,7 @@ public class JpaTicketRegistryTests {
         });
     }
 
-    ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent) {
+    ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent)  {
         return new TransactionTemplate(txManager).execute(status -> {
             final ProxyGrantingTicket pgt = newPGT(parent);
             jpaTicketRegistry.addTicket(pgt);

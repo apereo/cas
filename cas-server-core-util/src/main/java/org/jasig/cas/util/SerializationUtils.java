@@ -49,13 +49,13 @@ public final class SerializationUtils {
             out = new ObjectOutputStream(outputStream);
             out.writeObject(object);
         } catch (final IOException e) {
-            throw new SerializationException(e);
+            throw new RuntimeException(e);
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (final IOException e) {
-                    throw new SerializationException(e);
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -87,13 +87,13 @@ public final class SerializationUtils {
             final T obj = (T) in.readObject();
             return obj;
         } catch (final ClassNotFoundException | IOException e) {
-            throw new DeserializationException(e);
+            throw new RuntimeException(e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (final IOException e) {
-                    throw new DeserializationException(e);
+                    throw new RuntimeException(e);
                 }
             }
         }
