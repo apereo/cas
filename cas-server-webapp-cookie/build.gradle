@@ -1,8 +1,8 @@
-
 description = 'Apereo CAS Web Application Cookie Management'
 dependencies {
-  compile libraries.spring
-  compile libraries.hibernate
-  compile project(':cas-server-core-util')
+    compile libraries.spring
+    compile libraries.hibernate
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-core-web')
 }
 

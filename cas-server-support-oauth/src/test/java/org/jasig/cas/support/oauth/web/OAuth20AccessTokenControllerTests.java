@@ -14,7 +14,7 @@ import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
-import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.validator.OAuthValidator;
 
 import org.junit.Before;
@@ -82,12 +82,15 @@ public final class OAuth20AccessTokenControllerTests {
     private static final String GOOD_PASSWORD = "test";
 
     @Autowired
+    @Qualifier("defaultOAuthCodeFactory")
     private DefaultOAuthCodeFactory oAuthCodeFactory;
 
     @Autowired
+    @Qualifier("accessTokenController")
     private OAuth20AccessTokenController oAuth20AccessTokenController;
 
     @Autowired
+    @Qualifier("oAuthValidator")
     private OAuthValidator validator;
 
     @Autowired
@@ -111,7 +114,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -130,7 +133,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -149,7 +152,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -169,7 +172,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, "badValue");
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -188,7 +191,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -208,7 +211,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -228,7 +231,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
-        final OAuthCodeImpl code = addCode(principal, registeredService);
+        final OAuthCode code = addCode(principal, registeredService);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -249,7 +252,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -270,7 +273,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -295,8 +298,8 @@ public final class OAuth20AccessTokenControllerTests {
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
         expiringOAuthCodeFactory.setExpirationPolicy(state -> true);
-        final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
-        final OAuthCodeImpl code = (OAuthCodeImpl) expiringOAuthCodeFactory.create(service, authentication);
+        final Service service = new OAuthWebApplicationService(String.valueOf(registeredService.getId()), registeredService.getServiceId());
+        final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -329,14 +332,14 @@ public final class OAuth20AccessTokenControllerTests {
 
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        final OAuthCodeImpl code = addCode(principal, service);
+        final OAuthCode code = addCode(principal, service);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         if (basicAuth) {
-            final String auth = CLIENT_ID + ":" + CLIENT_SECRET;
+            final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
             final String value = Base64.encodeBase64String(auth.getBytes("UTF-8"));
             mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
         } else {
@@ -480,10 +483,10 @@ public final class OAuth20AccessTokenControllerTests {
         return registeredService;
     }
 
-    private OAuthCodeImpl addCode(final Principal principal, final RegisteredService registeredService) {
+    private OAuthCode addCode(final Principal principal, final RegisteredService registeredService) {
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
-        final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
-        final OAuthCodeImpl code = (OAuthCodeImpl) oAuthCodeFactory.create(service, authentication);
+        final Service service = new OAuthWebApplicationService(String.valueOf(registeredService.getId()), registeredService.getServiceId());
+        final OAuthCode code = oAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
         return code;
     }

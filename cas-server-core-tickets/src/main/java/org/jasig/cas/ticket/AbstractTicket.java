@@ -32,7 +32,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     private static final long serialVersionUID = -8506442397878267555L;
 
     /**
-     * The {@link ExpirationPolicy} this is associated with.
+     * The {@link ExpirationPolicy} this ticket is associated with.
      **/
     @Lob
     @Column(name="EXPIRATION_POLICY", length = Integer.MAX_VALUE, nullable=false)
@@ -71,11 +71,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * be null) and a specified Expiration Policy.
      *
      * @param id the unique identifier for the ticket
-     * @param ticket the parent TicketGrantingTicket
      * @param expirationPolicy the expiration policy for the ticket.
      * @throws IllegalArgumentException if the id or expiration policy is null.
      */
-    public AbstractTicket(final String id, final TicketGrantingTicket ticket,
+    public AbstractTicket(final String id,
         final ExpirationPolicy expirationPolicy) {
         Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
         Assert.notNull(id, "id cannot be null");
@@ -91,20 +90,16 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         return this.id;
     }
 
-    /**
-     * Records the <i>previous</i> last time this ticket was used as well as
-     * the last usage time. The ticket usage count is also incremented.
-     *
-     * <p>Tickets themselves are solely responsible to maintain their state. The
-     * determination of  ticket usage is left up to the implementation and
-     * the specific ticket type.
-     *
-     * @see ExpirationPolicy
-     */
-    protected final void updateState() {
+    @Override
+    public final void update() {
         this.previousLastTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
+
+        if (getGrantingTicket() != null && !getGrantingTicket().isExpired()) {
+            final TicketState state = TicketState.class.cast(getGrantingTicket());
+            state.update();
+        }
     }
 
     @Override

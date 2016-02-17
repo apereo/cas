@@ -33,7 +33,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Whether we should track the most recent session by keeping the latest service ticket. */
-    @Value("${tgt.onlyTrackMostRecentSession:true}")
+    @Value("${tgt.track.recent.session:true}")
     protected boolean onlyTrackMostRecentSession = true;
 
     /** ExpirationPolicy for Service Tickets. */

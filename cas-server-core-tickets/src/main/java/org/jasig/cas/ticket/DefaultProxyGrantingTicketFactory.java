@@ -37,7 +37,8 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
-                                                    final Authentication authentication) {
+                                                    final Authentication authentication)
+                                                    throws AbstractTicketException {
         final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
                 ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         final ProxyGrantingTicket proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(pgtId,
