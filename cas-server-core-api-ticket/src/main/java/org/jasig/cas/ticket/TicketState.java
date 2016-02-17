@@ -6,7 +6,6 @@ import java.time.ZonedDateTime;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 public interface TicketState {
@@ -46,4 +45,16 @@ public interface TicketState {
      * @return the authentication information.
      */
     Authentication getAuthentication();
+
+    /**
+     * Records the <i>previous</i> last time this ticket was used as well as
+     * the last usage time. The ticket usage count is also incremented.
+     * <p>Tickets themselves are solely responsible to maintain their state. The
+     * determination of  ticket usage is left up to the implementation and
+     * the specific ticket type.
+     *
+     * @see ExpirationPolicy
+     * @since 4.3.0
+     */
+    void update();
 }

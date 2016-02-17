@@ -14,9 +14,10 @@ import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
  */
 public interface ServiceTicket extends Ticket {
 
-    /** Prefix generally applied to unique ids generated
+    /**
+     * Prefix generally applied to unique ids generated
      * by org.jasig.cas.ticket.UniqueTicketIdGenerator.
-     **/
+     */
     String PREFIX = "ST";
 
     /**
@@ -36,6 +37,7 @@ public interface ServiceTicket extends Ticket {
 
     /**
      * Attempts to ensure that the service specified matches the service associated with the ticket.
+     *
      * @param service The incoming service to match this service ticket against.
      * @return true, if the match is successful.
      */
@@ -45,13 +47,15 @@ public interface ServiceTicket extends Ticket {
      * Method to grant a TicketGrantingTicket from this service to the
      * authentication. Analogous to the ProxyGrantingTicket.
      *
-     * @param id The unique identifier for this ticket.
-     * @param authentication The Authentication we wish to grant a ticket for.
+     * @param id               The unique identifier for this ticket.
+     * @param authentication   The Authentication we wish to grant a ticket for.
      * @param expirationPolicy expiration policy associated with this ticket
      * @return The ticket granting ticket.
+     * @throws AbstractTicketException ticket exception thrown when generating the ticket
      * @since 4.2
      */
     ProxyGrantingTicket grantProxyGrantingTicket(String id,
                                                  Authentication authentication,
-                                                 ExpirationPolicy expirationPolicy);
+                                                 ExpirationPolicy expirationPolicy)
+                                                 throws AbstractTicketException;
 }

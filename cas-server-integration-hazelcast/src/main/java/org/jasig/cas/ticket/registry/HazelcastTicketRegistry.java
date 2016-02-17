@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -145,7 +146,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
+    @PreDestroy
     public void shutdown() {
+        logger.info("Shutting down Hazelcast instance {}", hz.getConfig().getInstanceName());
         this.hz.shutdown();
     }
 

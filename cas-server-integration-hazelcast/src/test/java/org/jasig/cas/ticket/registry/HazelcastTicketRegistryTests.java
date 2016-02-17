@@ -10,12 +10,10 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DateTimeUtils;
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -31,22 +29,24 @@ import static org.junit.Assert.*;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:HazelcastTicketRegistryTests-context.xml")
 public class HazelcastTicketRegistryTests {
 
-    @Autowired
     private HazelcastTicketRegistry hzTicketRegistry1;
 
-    @Autowired
     private HazelcastTicketRegistry hzTicketRegistry2;
 
-    public void setHzTicketRegistry1(final HazelcastTicketRegistry hzTicketRegistry1) {
-        this.hzTicketRegistry1 = hzTicketRegistry1;
+    @Before
+    public void init() {
+        final FileSystemXmlApplicationContext context =
+                new FileSystemXmlApplicationContext("classpath:HazelcastTicketRegistryTests-context.xml");
+        this.hzTicketRegistry1 = context.getBean("hzTicketRegistry1", HazelcastTicketRegistry.class);
+        this.hzTicketRegistry2 = context.getBean("hzTicketRegistry2", HazelcastTicketRegistry.class);
     }
 
-    public void setHzTicketRegistry2(final HazelcastTicketRegistry hzTicketRegistry2) {
-        this.hzTicketRegistry2 = hzTicketRegistry2;
+    @After
+    public void shutdown() {
+        this.hzTicketRegistry1.shutdown();
+        this.hzTicketRegistry2.shutdown();
     }
 
     @Test
