@@ -49,7 +49,6 @@ public interface TicketState {
     /**
      * Records the <i>previous</i> last time this ticket was used as well as
      * the last usage time. The ticket usage count is also incremented.
-     * <p>
      * <p>Tickets themselves are solely responsible to maintain their state. The
      * determination of  ticket usage is left up to the implementation and
      * the specific ticket type.
