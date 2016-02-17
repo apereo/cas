@@ -8,6 +8,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -96,6 +97,10 @@ public final class OAuth20AccessTokenControllerTests {
     @Autowired
     @Qualifier("oauthSecConfig")
     private Config oauthSecConfig;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     private RequiresAuthenticationInterceptor requiresAuthenticationInterceptor;
 
@@ -287,7 +292,7 @@ public final class OAuth20AccessTokenControllerTests {
     public void verifyClientExpiredCode() throws Exception {
 
         final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
-        validator.getServicesManager().save(registeredService);
+        servicesManager.save(registeredService);
 
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
@@ -298,7 +303,7 @@ public final class OAuth20AccessTokenControllerTests {
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
         expiringOAuthCodeFactory.setExpirationPolicy(state -> true);
-        final Service service = new OAuthWebApplicationService(String.valueOf(registeredService.getId()), registeredService.getServiceId());
+        final Service service = new OAuthWebApplicationService(registeredService);
         final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
 
@@ -309,7 +314,7 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
-        validator.getServicesManager().save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
+        servicesManager.save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -479,13 +484,13 @@ public final class OAuth20AccessTokenControllerTests {
 
     private RegisteredService addRegisteredService() {
         final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
-        validator.getServicesManager().save(registeredService);
+        servicesManager.save(registeredService);
         return registeredService;
     }
 
     private OAuthCode addCode(final Principal principal, final RegisteredService registeredService) {
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
-        final Service service = new OAuthWebApplicationService(String.valueOf(registeredService.getId()), registeredService.getServiceId());
+        final Service service = new OAuthWebApplicationService(registeredService);
         final OAuthCode code = oAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
         return code;
@@ -502,12 +507,12 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     private void clearAllServices() {
-        final Collection<RegisteredService> col  = validator.getServicesManager().getAllServices();
+        final Collection<RegisteredService> col  = servicesManager.getAllServices();
 
         for (final RegisteredService r : col) {
-            validator.getServicesManager().delete(r.getId());
+            servicesManager.delete(r.getId());
         }
 
-        ((ReloadableServicesManager) validator.getServicesManager()).reload();
+        ((ReloadableServicesManager) servicesManager).reload();
     }
 }
