@@ -79,7 +79,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     * @return the registered service jwt secret
     */
     private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
+        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
     }
 
     /**
