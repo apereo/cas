@@ -17,7 +17,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 ```
 
 ## SAML2
-CAS provides support for [SAML2 Authentication](../integration/Configuring-SAML2-Authentication.html). 
+CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html). 
 
 ## Google Apps
 CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html). 
