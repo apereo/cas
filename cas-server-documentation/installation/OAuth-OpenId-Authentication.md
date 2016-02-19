@@ -77,6 +77,16 @@ The expiration policy for OAuth codes are controlled by the following properties
 # oauth.code.timeToKillInSeconds=1
 ```
 
+
+## OAuth Access Token Expiration Policy
+
+The expiration policy for OAuth access tokens are controlled by the following properties:
+
+```properties
+# oauth.access.token.maxTimeToLiveInSeconds=28800
+# oauth.access.token.timeToKillInSeconds=7200
+```
+
 # OpenID Authentication
 
 To configure CAS to act as an OpenID provider, please [see this page](../protocol/OpenID-Protocol.html).
