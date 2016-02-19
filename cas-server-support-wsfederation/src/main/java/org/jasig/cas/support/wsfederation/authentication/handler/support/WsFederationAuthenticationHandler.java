@@ -41,7 +41,7 @@ public final class WsFederationAuthenticationHandler extends AbstractPreAndPostP
             final Map attributes = wsFederationCredentials.getAttributes();
             final Principal principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
 
-            return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<MessageDescriptor>());
+            return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>());
         }
         throw new FailedLoginException();
     }

@@ -75,7 +75,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                         attributes.put(attribute.getAttributeName(), attribute.getValue().toString());
                     }
                     return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes),
-                            new ArrayList<MessageDescriptor>());
+                            new ArrayList<>());
                 }
                                 
                 if (!this.failoverOnAuthenticationFailure) {
