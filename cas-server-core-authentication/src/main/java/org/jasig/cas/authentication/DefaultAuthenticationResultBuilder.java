@@ -28,7 +28,7 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
     private static final long serialVersionUID = 6180465589526463843L;
 
-    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<Authentication>());
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
     private PrincipalElectionStrategy principalElectionStrategy;
 
