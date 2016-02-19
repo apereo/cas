@@ -161,7 +161,7 @@ public class KryoTranscoderTests {
     public void verifyEncodeDecodeTGTWithLinkedHashMap() throws Exception {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<String, Object>(this.principalAttributes));
+                new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
     }

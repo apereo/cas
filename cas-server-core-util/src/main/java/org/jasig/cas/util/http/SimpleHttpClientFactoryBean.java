@@ -245,7 +245,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private FutureRequestExecutionService buildRequestExecutorService(final CloseableHttpClient httpClient) {
         if (this.executorService == null) {
             this.executorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber,
-                    0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(this.queueSize));
+                    0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(this.queueSize));
         }
 
         return new FutureRequestExecutionService(httpClient, this.executorService);
