@@ -1,7 +1,6 @@
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
 import net.jradius.packet.attribute.RadiusAttribute;
-import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.HandlerResult;
