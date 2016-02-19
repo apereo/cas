@@ -7,9 +7,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
-       <alias name="ticketGrantingTicketExpirationPolicy" alias="oAuthAcccessTokenExpirationPolicy" />
-
+       
        <context:component-scan base-package="org.pac4j.springframework.web" />
 
        <bean id="oauthSecConfig" class="org.pac4j.core.config.Config"
