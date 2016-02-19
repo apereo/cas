@@ -1,9 +1,9 @@
 package org.jasig.cas.support.oauth.authenticator;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
@@ -24,19 +24,22 @@ import java.util.Map;
  * @since 4.3.0
  */
 @Component("oAuthUserAuthenticator")
-public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
+public final class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationManager")
-    private AuthenticationManager authenticationManager;
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials) {
         final UsernamePasswordCredential casCredential = new UsernamePasswordCredential(credentials.getUsername(),
                 credentials.getPassword());
         try {
-            final Authentication authentication = authenticationManager.authenticate(AuthenticationTransaction.wrap(casCredential));
+
+            final AuthenticationResult authenticationResult = authenticationSystemSupport
+                    .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
+            final Authentication authentication = authenticationResult.getAuthentication();
             final Principal principal = authentication.getPrincipal();
 
             final OAuthUserProfile profile = new OAuthUserProfile();
@@ -47,15 +50,15 @@ public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
             }
             credentials.setUserProfile(profile);
         } catch (final AuthenticationException e) {
-            throw new CredentialsException("Cannot login user using internal CAS authentication manager", e);
+            throw new CredentialsException("Cannot login user using CAS internal authentication", e);
         }
     }
 
-    public AuthenticationManager getAuthenticationManager() {
-        return authenticationManager;
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
     }
 
-    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }

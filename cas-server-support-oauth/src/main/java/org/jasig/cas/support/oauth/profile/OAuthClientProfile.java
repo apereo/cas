@@ -8,7 +8,7 @@ import org.pac4j.http.profile.HttpProfile;
  * @author Jerome Leleu
  * @since 4.3.0
  */
-public class OAuthClientProfile extends HttpProfile {
+public final class OAuthClientProfile extends HttpProfile {
 
     private static final long serialVersionUID = -5939145501924730962L;
 }
