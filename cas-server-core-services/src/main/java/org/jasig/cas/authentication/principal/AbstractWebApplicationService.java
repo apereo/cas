@@ -21,7 +21,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private static final long serialVersionUID = 610105280927740076L;
 
-    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
+    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<>());
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

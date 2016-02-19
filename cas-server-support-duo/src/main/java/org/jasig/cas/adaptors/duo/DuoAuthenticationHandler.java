@@ -68,7 +68,7 @@ public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessing
                 logger.info("Successful Duo authentication for [{}]", primaryCredentialsUsername);
 
                 final Principal principal = this.principalFactory.createPrincipal(duoVerifyResponse);
-                return createHandlerResult(credential, principal, new ArrayList<MessageDescriptor>());
+                return createHandlerResult(credential, principal, new ArrayList<>());
             }
             throw new FailedLoginException("Duo authentication username "
                     + primaryCredentialsUsername + " does not match Duo response: " + duoVerifyResponse);
