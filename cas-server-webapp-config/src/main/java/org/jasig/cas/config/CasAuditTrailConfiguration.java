@@ -24,29 +24,55 @@ import java.util.Map;
  */
 @Configuration("casAuditTrailConfiguration")
 public class CasAuditTrailConfiguration {
+    /**
+     * The App code.
+     */
     @Value("${cas.audit.appcode:CAS}")
     private String appCode;
 
+    /**
+     * The Principal resolver.
+     */
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
 
+    /**
+     * The Audit trail manager.
+     */
     @Autowired
     @Qualifier("auditTrailManager")
     private AuditTrailManager auditTrailManager;
 
+    /**
+     * The Audit resource resolver map.
+     */
     @Resource(name = "auditResourceResolverMap")
     private Map auditResourceResolverMap;
 
+    /**
+     * The Audit action resolver map.
+     */
     @Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
 
+    /**
+     * The Entry separator.
+     */
     @Value("${cas.audit.singleline.separator:|}")
     private String entrySeparator;
 
+    /**
+     * The Use single line.
+     */
     @Value("${cas.audit.singleline:false}")
     private boolean useSingleLine;
 
+    /**
+     * Audit trail management aspect audit trail management aspect.
+     *
+     * @return the audit trail management aspect
+     */
     @Bean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect(this.appCode,
@@ -55,6 +81,11 @@ public class CasAuditTrailConfiguration {
 
     }
 
+    /**
+     * Audit trail manager audit trail manager.
+     *
+     * @return the audit trail manager
+     */
     @Bean(name = "auditTrailManager")
     public AuditTrailManager auditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
@@ -63,21 +94,41 @@ public class CasAuditTrailConfiguration {
         return mgmr;
     }
 
+    /**
+     * Authentication action resolver default audit action resolver.
+     *
+     * @return the default audit action resolver
+     */
     @Bean(name = "authenticationActionResolver")
     public DefaultAuditActionResolver authenticationActionResolver() {
         return new DefaultAuditActionResolver("_SUCCESS", "_FAILED");
     }
 
+    /**
+     * Ticket creation action resolver default audit action resolver.
+     *
+     * @return the default audit action resolver
+     */
     @Bean(name = "ticketCreationActionResolver")
     public DefaultAuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
     }
 
+    /**
+     * Ticket validation action resolver default audit action resolver.
+     *
+     * @return the default audit action resolver
+     */
     @Bean(name = "ticketValidationActionResolver")
     public DefaultAuditActionResolver ticketValidationActionResolver() {
         return new DefaultAuditActionResolver("D", "_FAILED");
     }
 
+    /**
+     * Return value resource resolver return value as string resource resolver.
+     *
+     * @return the return value as string resource resolver
+     */
     @Bean(name = "returnValueResourceResolver")
     public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();

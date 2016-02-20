@@ -18,9 +18,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casSecurityContextConfiguration")
 public class CasSecurityContextConfiguration {
 
+    /**
+     * The Regex pattern.
+     */
     @Value("${cas.securityContext.adminpages.ip:127\\.0\\.\\.1}")
     private String regexPattern;
 
+    /**
+     * Requires authentication interceptor requires authentication interceptor.
+     *
+     * @return the requires authentication interceptor
+     */
     @Bean(name = "requiresAuthenticationInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationInterceptor() {
         return new RequiresAuthenticationInterceptor(new Config(new IpClient(new IpRegexpAuthenticator(this.regexPattern))), "IpClient");
