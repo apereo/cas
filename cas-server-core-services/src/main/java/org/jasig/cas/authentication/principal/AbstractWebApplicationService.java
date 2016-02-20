@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication.principal;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.validation.ValidationResponseType;
@@ -7,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,7 +20,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private static final long serialVersionUID = 610105280927740076L;
 
-    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<>());
+    private static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
