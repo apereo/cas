@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authorization.generator;
 
+import com.stormpath.sdk.lang.Assert;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -158,6 +159,10 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
 
     @Override
     public void generate(final CommonProfile profile) {
+        Assert.notNull(this.connectionFactory, "connectionFactory must not be null");
+        Assert.notNull(this.roleSearchExecutor, "roleSearchExecutor must not be null");
+        Assert.notNull(this.userSearchExecutor, "userSearchExecutor must not be null");
+
         final String username = profile.getId();
         final SearchResult userResult;
         try {
@@ -195,6 +200,16 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
         } catch (final LdapException e) {
             throw new RuntimeException("LDAP error fetching roles for user.", e);
         }
+        addProfileRolesFromAttributes(profile, roleResult);
+    }
+
+    /**
+     * Add profile roles from attributes.
+     *
+     * @param profile    the profile
+     * @param roleResult the role result
+     */
+    protected void addProfileRolesFromAttributes(final CommonProfile profile, final SearchResult roleResult) {
         LdapAttribute roleAttribute;
         for (final LdapEntry entry : roleResult.getEntries()) {
             roleAttribute = entry.getAttribute(this.roleAttributeName);
@@ -206,7 +221,6 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
             for (final String role : roleAttribute.getStringValues()) {
                 profile.addRole(this.rolePrefix + role.toUpperCase());
             }
-
         }
     }
 
