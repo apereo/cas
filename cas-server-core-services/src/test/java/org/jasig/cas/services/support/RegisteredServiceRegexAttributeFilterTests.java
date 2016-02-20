@@ -44,7 +44,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("employeeId", "E1234");
         this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
         this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
-        this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
+        this.givenAttributesMap.put("setAttribute", new HashSet<>(Arrays.asList("math", "science", "chemistry")));
 
         final Map<String, String> mapAttributes = new HashMap<>();
         mapAttributes.put("uid", "loggedInTestUid");

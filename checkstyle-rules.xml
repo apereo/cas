@@ -51,6 +51,9 @@
         <module name="ConstantName">
             <property name="severity" value="error"/>
         </module>
+        <module name="GenericWhitespaceCheck">
+            <property name="severity" value="error"/>
+        </module>
         <module name="ModifiedControlVariable">
             <property name="severity" value="error"/>
         </module>
