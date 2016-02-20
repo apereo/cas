@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 
@@ -34,7 +33,7 @@ import java.util.Properties;
 public class CasApplicationContextConfiguration {
 
     private static final int URL_HANDLER_MAPPING_ORDER = 1000;
-    
+
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
@@ -47,7 +46,7 @@ public class CasApplicationContextConfiguration {
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
-            
+
     @Autowired
     @Qualifier("casSpringBeanJobFactory")
     private SpringBeanJobFactory casSpringBeanJobFactory;

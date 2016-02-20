@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
     <description>
         This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
         modify this unless you know what you're doing!
@@ -19,7 +17,7 @@
     | The base-package indicates where components stored. Spring will scan this
     | folder and find out the annotated beans and register it in Spring container.
     -->
-    <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.jasig.cas"/>
     <context:annotation-config/>
 
     <!--
@@ -28,5 +26,16 @@
       of any aspects defined in this file.
     -->
     <aop:aspectj-autoproxy/>
+
+    <!--
+    Security configuration for sensitive areas of CAS : status and statistics.
+    -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/status/**"/>
+            <mvc:mapping path="/statistics/**"/>
+            <ref bean="requiresAuthenticationInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>
