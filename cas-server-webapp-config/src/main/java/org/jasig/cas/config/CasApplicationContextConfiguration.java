@@ -47,12 +47,7 @@ public class CasApplicationContextConfiguration {
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
-
-    @NotNull
-    @Autowired
-    @Qualifier("passThroughController")
-    private Controller passThroughController;
-        
+            
     @Autowired
     @Qualifier("casSpringBeanJobFactory")
     private SpringBeanJobFactory casSpringBeanJobFactory;
@@ -90,7 +85,7 @@ public class CasApplicationContextConfiguration {
     }
 
     @Bean(name = "passThroughController")
-    public UrlFilenameViewController passThroughController() {
+    protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
     }
 
@@ -114,7 +109,7 @@ public class CasApplicationContextConfiguration {
         bean.setAlwaysUseFullPath(true);
 
         final Properties properties = new Properties();
-        properties.put("/authorizationFailure.html", this.passThroughController);
+        properties.put("/authorizationFailure.html", passThroughController());
         bean.setMappings(properties);
         return bean;
     }
