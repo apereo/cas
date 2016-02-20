@@ -57,7 +57,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalNoAttrRequirements() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<String, Object>()));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<String, Object>()));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
     }
 
     @Test

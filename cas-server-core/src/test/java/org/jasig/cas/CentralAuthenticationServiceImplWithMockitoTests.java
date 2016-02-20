@@ -109,7 +109,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final TicketGrantingTicket tgtRootMock = createRootTicketGrantingTicket();
         
         final TicketGrantingTicket tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false,
-                tgtRootMock, new ArrayList<Authentication>());
+                tgtRootMock, new ArrayList<>());
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         final List<Authentication> authnListMock = mock(List.class);
