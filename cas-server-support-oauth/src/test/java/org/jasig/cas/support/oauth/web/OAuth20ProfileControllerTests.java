@@ -88,7 +88,7 @@ public final class OAuth20ProfileControllerTests {
 
     @Test
     public void verifyExpiredAccessToken() throws Exception {
-        final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, new HashMap<String, Object>());
+        final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, new HashMap<>());
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory();
         expiringAccessTokenFactory.setExpirationPolicy(new ExpirationPolicy() {
