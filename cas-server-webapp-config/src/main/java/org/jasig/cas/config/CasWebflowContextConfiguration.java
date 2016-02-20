@@ -25,7 +25,7 @@ public class CasWebflowContextConfiguration {
 
     private static final int VIEW_RESOLVER_ORDER = 10000;
 
-    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/}")
+    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/")
     private String resolverPathPrefix;
 
     @Bean(name = "expressionParser")
