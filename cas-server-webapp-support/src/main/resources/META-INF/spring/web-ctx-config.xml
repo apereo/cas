@@ -11,20 +11,4 @@
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- Scan CAS artifacts to mvc annotations, such as controllers.
-        The scan is controlled by the application context config file -->
-    <mvc:annotation-driven />
-    <mvc:interceptors>
-        <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor"
-              p:cacheSeconds="0"
-              p:alwaysUseFullPath="true" />
-    </mvc:interceptors>
-
-    <util:map id="serviceThemeResolverSupportedBrowsers">
-        <entry key=".*iPhone.*" value="iphone"/>
-        <entry key=".*Android.*" value="android"/>
-        <entry key=".*Safari.*Pre.*" value="safari"/>
-        <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
-    </util:map>
-
 </beans>
