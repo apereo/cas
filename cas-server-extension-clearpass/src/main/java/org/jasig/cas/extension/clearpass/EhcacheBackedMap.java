@@ -85,7 +85,7 @@ public final class EhcacheBackedMap implements Map<String, String> {
 
     @Override
     public Set<String> keySet() {
-        return new HashSet<String>(this.cache.getKeys());
+        return new HashSet<>(this.cache.getKeys());
     }
 
     @Override
