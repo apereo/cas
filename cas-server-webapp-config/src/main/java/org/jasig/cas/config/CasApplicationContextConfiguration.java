@@ -1,6 +1,7 @@
 package org.jasig.cas.config;
 
 import org.jasig.cas.authentication.principal.ServiceFactory;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -32,36 +33,67 @@ import java.util.Properties;
 @Configuration("casApplicationContextConfiguration")
 public class CasApplicationContextConfiguration {
 
+    /**
+     * The constant URL_HANDLER_MAPPING_ORDER.
+     */
     private static final int URL_HANDLER_MAPPING_ORDER = 1000;
 
+    /**
+     * The Service ticket unique id generator.
+     */
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
+    /**
+     * The Web application service factory.
+     */
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    /**
+     * The Default argument extractor.
+     */
     @NotNull
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
 
+    /**
+     * The Cas spring bean job factory.
+     */
     @Autowired
     @Qualifier("casSpringBeanJobFactory")
     private SpringBeanJobFactory casSpringBeanJobFactory;
 
+    /**
+     * The Wait for jobs to complete on shutdown.
+     */
     @Value("${scheduler.shutdown.wait:true}")
     private boolean waitForJobsToCompleteOnShutdown;
 
+    /**
+     * The Interrupt jobs.
+     */
     @Value("${scheduler.shutdown.interruptJobs:true}")
     private boolean interruptJobs;
 
+    /**
+     * Advisor auto proxy creator default advisor auto proxy creator.
+     *
+     * @return the default advisor auto proxy creator
+     */
     @Bean(name = "advisorAutoProxyCreator")
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
+    /**
+     * Service factory list list.
+     *
+     * @return the list
+     */
     @Bean(name = "serviceFactoryList")
     public List serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
@@ -69,6 +101,11 @@ public class CasApplicationContextConfiguration {
         return list;
     }
 
+    /**
+     * Argument extractors list.
+     *
+     * @return the list
+     */
     @Bean(name = "argumentExtractors")
     public List argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
@@ -76,18 +113,33 @@ public class CasApplicationContextConfiguration {
         return list;
     }
 
+    /**
+     * Unique id generators map map.
+     *
+     * @return the map
+     */
     @Bean(name = "uniqueIdGeneratorsMap")
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
-        map.put("org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl", this.serviceTicketUniqueIdGenerator);
+        map.put(SimpleWebApplicationServiceImpl.class.getName(), this.serviceTicketUniqueIdGenerator);
         return map;
     }
 
+    /**
+     * Pass through controller url filename view controller.
+     *
+     * @return the url filename view controller
+     */
     @Bean(name = "passThroughController")
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
     }
 
+    /**
+     * Scheduler scheduler factory bean.
+     *
+     * @return the scheduler factory bean
+     */
     @Bean(name = "scheduler")
     public SchedulerFactoryBean scheduler() {
         final SchedulerFactoryBean factory = new SchedulerFactoryBean();
@@ -101,6 +153,11 @@ public class CasApplicationContextConfiguration {
         return factory;
     }
 
+    /**
+     * Handler mapping c simple url handler mapping.
+     *
+     * @return the simple url handler mapping
+     */
     @Bean(name = "handlerMappingC")
     public SimpleUrlHandlerMapping handlerMappingC() {
         final SimpleUrlHandlerMapping bean = new SimpleUrlHandlerMapping();

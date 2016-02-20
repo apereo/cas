@@ -16,6 +16,11 @@ import java.util.Map;
 @Configuration("casWebApplicationSupportConfiguration")
 public class CasWebApplicationSupportConfiguration {
 
+    /**
+     * Web content interceptor web content interceptor.
+     *
+     * @return the web content interceptor
+     */
     @Bean(name = "webContentInterceptor")
     public WebContentInterceptor webContentInterceptor() {
         final WebContentInterceptor interceptor = new WebContentInterceptor();
@@ -24,6 +29,11 @@ public class CasWebApplicationSupportConfiguration {
         return interceptor;
     }
 
+    /**
+     * Service theme resolver supported browsers map.
+     *
+     * @return the map
+     */
     @Bean(name = "serviceThemeResolverSupportedBrowsers")
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();

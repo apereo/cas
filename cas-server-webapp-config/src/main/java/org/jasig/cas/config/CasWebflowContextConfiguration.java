@@ -23,11 +23,22 @@ import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 @Configuration("casWebflowContextConfiguration")
 public class CasWebflowContextConfiguration {
 
+    /**
+     * The constant VIEW_RESOLVER_ORDER.
+     */
     private static final int VIEW_RESOLVER_ORDER = 10000;
 
+    /**
+     * The Resolver path prefix.
+     */
     @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/")
     private String resolverPathPrefix;
 
+    /**
+     * Expression parser web flow spring el expression parser.
+     *
+     * @return the web flow spring el expression parser
+     */
     @Bean(name = "expressionParser")
     public WebFlowSpringELExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
@@ -36,11 +47,21 @@ public class CasWebflowContextConfiguration {
         return parser;
     }
 
+    /**
+     * Logout conversion service conversion service.
+     *
+     * @return the conversion service
+     */
     @Bean(name = "logoutConversionService")
     public ConversionService logoutConversionService() {
         return new LogoutConversionService();
     }
 
+    /**
+     * Internal view resolver internal resource view resolver.
+     *
+     * @return the internal resource view resolver
+     */
     @Bean(name = "internalViewResolver")
     public InternalResourceViewResolver internalViewResolver() {
         final InternalResourceViewResolver resolver = new InternalResourceViewResolver();
@@ -51,6 +72,11 @@ public class CasWebflowContextConfiguration {
         return resolver;
     }
 
+    /**
+     * View resolver resource bundle view resolver.
+     *
+     * @return the resource bundle view resolver
+     */
     @Bean(name = "viewResolver")
     public ResourceBundleViewResolver viewResolver() {
         final ResourceBundleViewResolver resolver = new ResourceBundleViewResolver();
@@ -59,6 +85,11 @@ public class CasWebflowContextConfiguration {
         return resolver;
     }
 
+    /**
+     * View factory creator mvc view factory creator.
+     *
+     * @return the mvc view factory creator
+     */
     @Bean(name = "viewFactoryCreator")
     public MvcViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
