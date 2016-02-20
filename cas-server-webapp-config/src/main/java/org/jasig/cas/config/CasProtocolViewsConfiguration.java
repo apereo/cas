@@ -36,37 +36,37 @@ public class CasProtocolViewsConfiguration {
     @Value("${view.cas.post.response:/WEB-INF/view/jsp/protocol/casPostResponseView.jsp}")
     private String postResponseView;
 
-    @Bean
+    @Bean(name = "cas2JstlSuccessView")
     public JstlView cas2JstlSuccessView() {
         return new JstlView(this.cas2SuccessView);
     }
 
-    @Bean
+    @Bean(name = "cas2ServiceFailureView")
     public JstlView cas2ServiceFailureView() {
         return new JstlView(this.cas2FailureView);
     }
 
-    @Bean
+    @Bean(name = "cas2ProxyFailureView")
     public JstlView cas2ProxyFailureView() {
         return new JstlView(this.cas2ProxyFailureView);
     }
 
-    @Bean
+    @Bean(name = "cas2ProxySuccessView")
     public JstlView cas2ProxySuccessView() {
         return new JstlView(this.cas2ProxySuccessView);
     }
 
-    @Bean
+    @Bean(name = "cas3JstlSuccessView")
     public JstlView cas3JstlSuccessView() {
         return new JstlView(this.cas3SuccessView);
     }
 
-    @Bean
+    @Bean(name = "cas3ServiceFailureView")
     public JstlView cas3ServiceFailureView() {
         return new JstlView(this.cas3FailureView);
     }
 
-    @Bean
+    @Bean(name = "postResponseView")
     public JstlView postResponseView() {
         return new JstlView(this.postResponseView);
     }
