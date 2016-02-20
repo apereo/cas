@@ -33,6 +33,12 @@
     -->
     <aop:aspectj-autoproxy/>
 
+    <!-- 
+    Scan CAS artifacts to mvc annotations, such as controllers.
+    The scan is controlled by the application context config file 
+    -->
+    <mvc:annotation-driven />
+    
     <!--
     Security configuration for sensitive areas of CAS : status and statistics.
     -->
@@ -41,6 +47,10 @@
             <mvc:mapping path="/status/**"/>
             <mvc:mapping path="/statistics/**"/>
             <ref bean="requiresAuthenticationInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <ref bean="webContentInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>
     
