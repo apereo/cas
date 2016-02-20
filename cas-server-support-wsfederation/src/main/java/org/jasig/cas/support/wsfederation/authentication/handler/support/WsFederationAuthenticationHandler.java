@@ -2,7 +2,6 @@ package org.jasig.cas.support.wsfederation.authentication.handler.support;
 
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
@@ -41,7 +40,7 @@ public final class WsFederationAuthenticationHandler extends AbstractPreAndPostP
             final Map attributes = wsFederationCredentials.getAttributes();
             final Principal principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
 
-            return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<MessageDescriptor>());
+            return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>());
         }
         throw new FailedLoginException();
     }

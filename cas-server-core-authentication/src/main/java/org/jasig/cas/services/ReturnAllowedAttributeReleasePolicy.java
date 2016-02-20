@@ -26,7 +26,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractRegistere
      * Instantiates a new Return allowed attribute release policy.
      */
     public ReturnAllowedAttributeReleasePolicy() {
-        this(new ArrayList<String>());
+        this(new ArrayList<>());
     }
 
     /**
