@@ -5,6 +5,7 @@ import org.jasig.inspektr.audit.AuditTrailManagementAspect;
 import org.jasig.inspektr.audit.AuditTrailManager;
 import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
+import org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,12 +41,26 @@ public class CasAuditTrailConfiguration {
     @Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
 
+    @Value("${cas.audit.singleline.separator:|}")
+    private String entrySeparator;
+
+    @Value("${cas.audit.singleline:false}")
+    private boolean useSingleLine;
+
     @Bean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect(this.appCode,
                 this.principalResolver, ImmutableList.of(this.auditTrailManager), auditActionResolverMap,
                 auditResourceResolverMap);
 
+    }
+
+    @Bean(name = "auditTrailManager")
+    public AuditTrailManager auditTrailManager() {
+        final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
+        mgmr.setUseSingleLine(this.useSingleLine);
+        mgmr.setEntrySeparator(this.entrySeparator);
+        return mgmr;
     }
 
     @Bean(name = "authenticationActionResolver")
