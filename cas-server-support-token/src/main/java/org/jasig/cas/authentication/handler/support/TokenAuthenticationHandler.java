@@ -39,7 +39,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
         final RegisteredService service = this.servicesManager.findServiceBy(tokenCredential.getService());
         final String signingSecret = getRegisteredServiceJwtSigningSecret(service);
-        final String encryptionSecret = getRegisteredServiceJwtSigningSecret(service);
+        final String encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
         if (StringUtils.isNotBlank(signingSecret)) {
             if (StringUtils.isBlank(encryptionSecret)) {
@@ -79,7 +79,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     * @return the registered service jwt secret
     */
     private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
+        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
     }
 
     /**
