@@ -1,4 +1,4 @@
-package org.jasig.cas.ticket.registry.config;
+package org.jasig.cas.config;
 
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.MaxSizeConfig;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Component
+@Component("hazelcastProperties")
 public class HazelcastProperties {
 
     /**
