@@ -91,19 +91,28 @@ ext.libraries = [
         hazelcast        : "com.hazelcast:hazelcast:$hazelcastVersion",
         hibernate        : [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
+                    exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
                     exclude(group: 'org.javassist', module: 'javassist')
                     exclude(group: 'xml-apis', module: 'xml-apis')
+                    exclude(group: 'dom4j', module: 'dom4j')
+
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
                     exclude(group: 'org.javassist', module: 'javassist')
+                    exclude(group: 'dom4j', module: 'dom4j')
                     exclude(group: 'xml-apis', module: 'xml-apis')
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'com.fasterxml', module:'classmate')
+                    force = true
+                },
+                dependencies.create("dom4j:dom4j:$dom4jVersion") {
+                    exclude(group: 'xml-apis', module: 'xml-apis')
                     force = true
                 },
                 "com.mchange:c3p0:$c3p0Version"
