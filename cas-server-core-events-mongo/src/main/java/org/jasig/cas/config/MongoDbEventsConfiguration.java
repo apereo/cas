@@ -1,6 +1,7 @@
 package org.jasig.cas.config;
 
 import com.mongodb.MongoClientURI;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ public class MongoDbEventsConfiguration {
     /**
      * The Client uri.
      */
-    @Value("${mongodb.events.clienturi}")
+    @Value("${mongodb.events.clienturi:}")
     private String clientUri;
 
     /**
@@ -31,6 +32,9 @@ public class MongoDbEventsConfiguration {
      */
     @Bean(name = "clientUri")
     public MongoClientURI clientUri() {
+        if (StringUtils.isBlank(this.clientUri)) {
+            throw new RuntimeException("MongoDb Client URI must be defined for CAS events");
+        }
         return new MongoClientURI(this.clientUri);
     }
 
