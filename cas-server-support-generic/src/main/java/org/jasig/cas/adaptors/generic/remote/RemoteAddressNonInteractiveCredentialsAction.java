@@ -3,6 +3,7 @@ package org.jasig.cas.adaptors.generic.remote;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -14,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Component("remoteAddressCheck")
 public final class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
+    
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
