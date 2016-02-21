@@ -4,6 +4,7 @@ import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
+import org.jasig.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,12 @@ public class SamlIdPConfiguration {
         return new ClassPathResource("template-sp-metadata.xml");
     }
 
+    @Bean(name={"defaultSingleLogoutServiceLogoutUrlBuilder",
+                "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
+    public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
+    }
+    
     @Bean(name="shibboleth.VelocityEngine")
     public VelocityEngineFactoryBean velocityEngine() {
         final VelocityEngineFactoryBean bean = new VelocityEngineFactoryBean();
