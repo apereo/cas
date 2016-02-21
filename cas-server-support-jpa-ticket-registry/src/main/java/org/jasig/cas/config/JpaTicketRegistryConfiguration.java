@@ -13,13 +13,13 @@ import javax.persistence.EntityManagerFactory;
 import java.util.Properties;
 
 /**
- * This this {@link JpaServiceRegistryConfiguration}.
+ * This this {@link JpaTicketRegistryConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Configuration("jpaServiceRegistryConfiguration")
-public class JpaServiceRegistryConfiguration {
+@Configuration("jpaTicketRegistryConfiguration")
+public class JpaTicketRegistryConfiguration {
 
     /**
      * The Show sql.
@@ -141,8 +141,8 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the hibernate jpa vendor adapter
      */
-    @Bean(name = "jpaServiceVendorAdapter")
-    public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
+    @Bean(name = "ticketJpaVendorAdapter")
+    public HibernateJpaVendorAdapter ticketJpaVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
         jpaEventVendorAdapter.setGenerateDdl(this.generateDdl);
         jpaEventVendorAdapter.setShowSql(this.showSql);
@@ -154,12 +154,11 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the string [ ]
      */
-    @Bean(name = "jpaServicePackagesToScan")
-    public String[] jpaServicePackagesToScan() {
+    @Bean(name = "ticketPackagesToScan")
+    public String[] ticketPackagesToScan() {
         return new String[] {
-                "org.jasig.cas.services", 
-                "org..jasig.cas.support.oauth.services",
-                "org.jasig.cas.support.saml.services"
+                "org.jasig.cas.ticket", 
+                "org.jasig.cas.adaptors.jdbc"
         };
     }
     
@@ -168,14 +167,14 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-    @Bean(name = "serviceEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
+    @Bean(name = "ticketEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
-        bean.setJpaVendorAdapter(jpaServiceVendorAdapter());
+        bean.setJpaVendorAdapter(ticketJpaVendorAdapter());
         bean.setPersistenceUnitName("jpaServiceRegistryContext");
-        bean.setPackagesToScan(jpaServicePackagesToScan());
-        bean.setDataSource(dataSourceService());
+        bean.setPackagesToScan(ticketPackagesToScan());
+        bean.setDataSource(dataSourceTicket());
 
         final Properties properties = new Properties();
         properties.put("hibernate.dialect", this.hibernateDialect);
@@ -191,16 +190,16 @@ public class JpaServiceRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    @Bean(name = "transactionManagerServiceReg")
-    public JpaTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") 
+    @Bean(name = "ticketTransactionManager")
+    public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
 
-    @Bean(name = "dataSourceService")
-    public ComboPooledDataSource dataSourceService() {
+    @Bean(name = "dataSourceTicket")
+    public ComboPooledDataSource dataSourceTicket() {
         try {
             final ComboPooledDataSource bean = new ComboPooledDataSource();
             bean.setDriverClass(this.driverClass);
