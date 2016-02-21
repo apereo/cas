@@ -3,8 +3,6 @@ description = 'Apereo CAS JPA Ticket Registry Support'
 dependencies {
   
   compile project(':cas-server-core-util')
-  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
-    exclude(module: 'jboss-logging-annotations')
-    exclude(module: 'javassist')
-  }
+  compile libraries.hibernate
+  
 }
