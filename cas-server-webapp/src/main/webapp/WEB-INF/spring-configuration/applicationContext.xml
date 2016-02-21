@@ -46,7 +46,7 @@
         <mvc:interceptor>
             <mvc:mapping path="/status/**"/>
             <mvc:mapping path="/statistics/**"/>
-            <ref bean="requiresAuthenticationInterceptor"/>
+            <ref bean="requiresAuthenticationStatusStatsInterceptor"/>
         </mvc:interceptor>
         <mvc:interceptor>
             <mvc:mapping path="/*"/>

@@ -7,23 +7,15 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-       
-       <context:component-scan base-package="org.pac4j.springframework.web" />
 
-       <bean id="oauthSecConfig" class="org.pac4j.core.config.Config"
-             c:callbackUrl="${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize"
-             c:client-ref="oauthCasClient" />
+    <context:component-scan base-package="org.pac4j.springframework.web"/>
 
-       <bean id="oauthCasClient" class="org.pac4j.cas.client.CasClient" p:casLoginUrl="${server.prefix:http://localhost:8080/cas}/login"
-             p:name="CasOAuthClient" />
 
-       <mvc:interceptors>
-              <mvc:interceptor>
-                     <mvc:mapping path="/oauth2.0/authorize*" />
-                     <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor"
-                           c:config-ref="oauthSecConfig"
-                           c:clientName="CasOAuthClient" />
-              </mvc:interceptor>
-       </mvc:interceptors>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/oauth2.0/authorize*"/>
+            <ref bean="requiresAuthenticationAuthorizeInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>
