@@ -10,7 +10,6 @@
 
     <context:component-scan base-package="org.pac4j.springframework.web"/>
 
-
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/oauth2.0/authorize*"/>
