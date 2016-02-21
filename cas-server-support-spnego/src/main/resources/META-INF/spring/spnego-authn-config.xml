@@ -11,6 +11,5 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <bean id="spnegoAuthentication" class="jcifs.spnego.Authentication" />
-
+   
 </beans>
