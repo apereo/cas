@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 /**
  * Monitors a {@link Cache} instance.
  * The accuracy of statistics is governed by the value of {@link Cache#getStatistics()}.
- *
+ * <p>
  * <p>NOTE: computation of highly accurate statistics is expensive.</p>
  *
  * @author Marvin S. Addison
@@ -20,26 +20,27 @@ import javax.annotation.Nullable;
 public class EhCacheMonitor extends AbstractCacheMonitor {
 
     @Nullable
-    @Autowired(required=false)
-    @Qualifier("ehcacheMonitorCache")
-    private Cache cache;
+    @Autowired(required = false)
+    @Qualifier("ticketGrantingTicketsCache")
+    private Cache ticketGrantingTicketsCache;
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("serviceTicketsCache")
+    private Cache serviceTicketsCache;
 
     /**
      * Instantiates a new Ehcache monitor.
      */
-    public EhCacheMonitor() {}
-
-    /**
-     * Instantiates a new EhCache monitor.
-     *
-     * @param cache the cache
-     */
-    public EhCacheMonitor(final Cache cache) {
-        this.cache = cache;
+    public EhCacheMonitor() {
     }
+
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        return new EhCacheStatistics[] {new EhCacheStatistics(cache)};
+        return new EhCacheStatistics[]{
+                new EhCacheStatistics(ticketGrantingTicketsCache),
+                new EhCacheStatistics(serviceTicketsCache)
+        };
     }
 }

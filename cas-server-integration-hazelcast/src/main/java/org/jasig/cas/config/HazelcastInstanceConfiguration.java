@@ -1,4 +1,4 @@
-package org.jasig.cas.ticket.registry.config;
+package org.jasig.cas.config;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
@@ -11,6 +11,7 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,29 +26,29 @@ import java.util.Map;
 
 /**
  * Spring's Java configuration component for <code>HazelcastInstance</code> that is consumed and used by
- * <code>HazelcastTicketRegistry</code>.
- *
- * This configuration class has the smarts to choose the configuration source for the <code>HazelcastInstance</code> bean
+ * {@link org.jasig.cas.ticket.registry.HazelcastTicketRegistry}.
+ * <p>
+ * This configuration class has the smarts to choose the configuration source for the {@link HazelcastInstance}
  * that it produces by either loading the native hazelcast XML config file from a resource location indicated by
- * <i>hz.config.location</i> property or if that property is not set nor a valid location, creates HazelcastInstance programattically
+ * <code>hz.config.location</code> property or if that property is not set nor a valid location, creates HazelcastInstance programmatically
  * with a handful properties and their defaults (if not set) that it exposes to CAS deployers.
  *
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Configuration
+@Configuration("hazelcastInstanceConfiguration")
 public class HazelcastInstanceConfiguration {
 
     @Autowired
+    @Qualifier("hazelcastProperties")
     private HazelcastProperties hazelcastProperties;
 
     /**
      * Create HazelcastInstance bean.
      *
      * @param hazelcastConfigLocation String representation of hazelcast xml config.
-     * @param resourceLoader resource loader for loading hazelcast xml configuration resource.
+     * @param resourceLoader          resource loader for loading hazelcast xml configuration resource.
      * @return HazelcastInstance bean.
-     *
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
     @Bean
@@ -63,7 +64,6 @@ public class HazelcastInstanceConfiguration {
      *
      * @param configLocation config location for hazelcast xml
      * @return Hazelcast Config
-     *
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
     private Config getConfig(final Resource configLocation) throws IOException {
