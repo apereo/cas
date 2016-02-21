@@ -274,7 +274,7 @@ public class EhcacheTicketRegistryConfiguration {
         bean.setMaxElementsOnDisk(this.maxElementsOnDisk);
         bean.setMemoryStoreEvictionPolicy(this.memoryStoreEvictionPolicy);
         bean.setOverflowToDisk(this.overflowToDisk);
-
+        
         return bean;
     }
 
