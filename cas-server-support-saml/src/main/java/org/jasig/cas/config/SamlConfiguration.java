@@ -29,23 +29,43 @@ import java.util.Map;
  */
 @Configuration("samlConfiguration")
 public class SamlConfiguration {
-    
+
+    /**
+     * The constant POOL_SIZE.
+     */
     private static final int POOL_SIZE = 100;
-    
+
+    /**
+     * The Issuer.
+     */
     @Value("${cas.saml.response.issuer:localhost}")
     private String issuer;
-    
+
+    /**
+     * The Skew allowance.
+     */
     @Value("${cas.saml.response.skewAllowance:0}")
     private int skewAllowance;
-    
+
+    /**
+     * The Services manager.
+     */
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
+    /**
+     * The Cas attribute encoder.
+     */
     @Autowired
     @Qualifier("casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
-    
+
+    /**
+     * Cas saml service success view saml 10 success response view.
+     *
+     * @return the saml 10 success response view
+     */
     @Bean(name="casSamlServiceSuccessView")
     public Saml10SuccessResponseView casSamlServiceSuccessView() {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
@@ -56,6 +76,11 @@ public class SamlConfiguration {
         return view;
     }
 
+    /**
+     * Cas saml service failure view saml 10 failure response view.
+     *
+     * @return the saml 10 failure response view
+     */
     @Bean(name="casSamlServiceFailureView")
     public Saml10FailureResponseView casSamlServiceFailureView() {
         final Saml10FailureResponseView view = new Saml10FailureResponseView();
@@ -64,12 +89,22 @@ public class SamlConfiguration {
         return view;
     }
 
+    /**
+     * Open saml config bean open saml config bean.
+     *
+     * @return the open saml config bean
+     */
     @Bean(name="shibboleth.OpenSAMLConfig")
     @DependsOn("shibboleth.ParserPool")
     public OpenSamlConfigBean openSamlConfigBean() {
         return new OpenSamlConfigBean();
     }
 
+    /**
+     * Parser pool basic parser pool.
+     *
+     * @return the basic parser pool
+     */
     @Bean(name="shibboleth.ParserPool", initMethod = "initialize")
     public BasicParserPool parserPool() {
         final BasicParserPool pool = new BasicParserPool();
@@ -99,19 +134,34 @@ public class SamlConfiguration {
         pool.setBuilderFeatures(features);
         return pool;
     }
-    
+
+    /**
+     * Builder factory xml object builder factory.
+     *
+     * @return the xml object builder factory
+     */
     @Bean(name="shibboleth.BuilderFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public XMLObjectBuilderFactory builderFactory() {
         return XMLObjectProviderRegistrySupport.getBuilderFactory();
     }
 
+    /**
+     * Marshaller factory marshaller factory.
+     *
+     * @return the marshaller factory
+     */
     @Bean(name="shibboleth.MarshallerFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public MarshallerFactory marshallerFactory() {
         return XMLObjectProviderRegistrySupport.getMarshallerFactory();
     }
 
+    /**
+     * Unmarshaller factory unmarshaller factory.
+     *
+     * @return the unmarshaller factory
+     */
     @Bean(name="shibboleth.MarshallerFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public UnmarshallerFactory unmarshallerFactory() {
