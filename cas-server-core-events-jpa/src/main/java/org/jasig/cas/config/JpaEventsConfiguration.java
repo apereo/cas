@@ -21,64 +21,126 @@ import java.util.Properties;
 @Configuration("jpaEventsConfiguration")
 public class JpaEventsConfiguration {
 
+    /**
+     * The Show sql.
+     */
     @Value("${database.show.sql:true}")
     private boolean showSql;
 
+    /**
+     * The Generate ddl.
+     */
     @Value("${database.gen.ddl:true}")
     private boolean generateDdl;
 
+    /**
+     * The Hibernate dialect.
+     */
     @Value("${events.jpa.database.dialect:org.hibernate.dialect.HSQLDialect}")
     private String hibernateDialect;
 
+    /**
+     * The Hibernate hbm 2 ddl auto.
+     */
     @Value("${events.jpa.database.ddl.auto:create-drop}")
     private String hibernateHbm2DdlAuto;
 
+    /**
+     * The Hibernate batch size.
+     */
     @Value("${events.jpa.database.batchSize:1}")
     private String hibernateBatchSize;
 
+    /**
+     * The Driver class.
+     */
     @Value("${events.jpa.database.driverClass:org.hsqldb.jdbcDriver}")
     private String driverClass;
 
+    /**
+     * The Jdbc url.
+     */
     @Value("${events.jpa.database.url:jdbc:hsqldb:mem:cas-events-registry}")
     private String jdbcUrl;
 
+    /**
+     * The User.
+     */
     @Value("${events.jpa.database.user:sa}")
     private String user;
 
+    /**
+     * The Password.
+     */
     @Value("${events.jpa.database.password:}")
     private String password;
 
+    /**
+     * The Initial pool size.
+     */
     @Value("${events.jpa.database.pool.minSize:6}")
     private int initialPoolSize;
 
+    /**
+     * The Min pool size.
+     */
     @Value("${events.jpa.database.pool.minSize:6}")
     private int minPoolSize;
 
+    /**
+     * The Max pool size.
+     */
     @Value("${events.jpa.database.pool.maxSize:18}")
     private int maxPoolSize;
 
+    /**
+     * The Max idle time excess connections.
+     */
     @Value("${events.jpa.database.pool.maxIdleTime:1000}")
     private int maxIdleTimeExcessConnections;
 
+    /**
+     * The Checkout timeout.
+     */
     @Value("${events.jpa.database.pool.maxWait:2000}")
     private int checkoutTimeout;
 
+    /**
+     * The Acquire increment.
+     */
     @Value("${events.jpa.database.pool.acquireIncrement:16}")
     private int acquireIncrement;
 
+    /**
+     * The Acquire retry attempts.
+     */
     @Value("${events.jpa.database.pool.acquireRetryAttempts:5}")
     private int acquireRetryAttempts;
 
+    /**
+     * The Acquire retry delay.
+     */
     @Value("${events.jpa.database.pool.acquireRetryDelay:2000}")
     private int acquireRetryDelay;
 
+    /**
+     * The Idle connection test period.
+     */
     @Value("${events.jpa.database.pool.idleConnectionTestPeriod:30}")
     private int idleConnectionTestPeriod;
 
+    /**
+     * The Preferred test query.
+     */
     @Value("${events.jpa.database.pool.connectionHealthQuery:select 1}")
     private String preferredTestQuery;
 
 
+    /**
+     * Jpa event vendor adapter hibernate jpa vendor adapter.
+     *
+     * @return the hibernate jpa vendor adapter
+     */
     @Bean(name = "jpaEventVendorAdapter")
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
@@ -88,6 +150,11 @@ public class JpaEventsConfiguration {
     }
 
 
+    /**
+     * Data source event combo pooled data source.
+     *
+     * @return the combo pooled data source
+     */
     @Bean(name = "dataSourceEvent")
     public ComboPooledDataSource dataSourceEvent() {
         try {
@@ -112,11 +179,21 @@ public class JpaEventsConfiguration {
         }
     }
 
+    /**
+     * Jpa event packages to scan string [ ].
+     *
+     * @return the string [ ]
+     */
     @Bean(name = "jpaEventPackagesToScan")
     public String[] jpaEventPackagesToScan() {
         return new String[]{"org.jasig.cas.support.events.dao"};
     }
 
+    /**
+     * Events entity manager factory local container entity manager factory bean.
+     *
+     * @return the local container entity manager factory bean
+     */
     @Bean(name = "eventsEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
@@ -136,6 +213,12 @@ public class JpaEventsConfiguration {
     }
 
 
+    /**
+     * Transaction manager events jpa transaction manager.
+     *
+     * @param emf the emf
+     * @return the jpa transaction manager
+     */
     @Bean(name = "transactionManagerEvents")
     public JpaTransactionManager transactionManagerEvents(final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
