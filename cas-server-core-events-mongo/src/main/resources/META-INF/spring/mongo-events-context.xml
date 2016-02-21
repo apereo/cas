@@ -15,18 +15,7 @@
         http://www.springframework.org/schema/data/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
-    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+    
 
-    <bean id="mongoEventsTemplate" class="org.springframework.data.mongodb.core.MongoTemplate"
-          c:mongoDbFactory-ref="mongoAuthNEventsDbFactory"/>
-
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
-          p:afterInitialization="true"/>
-
-    <bean id="mongoAuthNEventsDbFactory" class="org.springframework.data.mongodb.core.SimpleMongoDbFactory"
-          c:uri-ref="clientUri" />
-
-    <bean id="clientUri" class="com.mongodb.MongoClientURI"
-          c:uri="${mongodb.events.clienturi}" />
 
 </beans>
