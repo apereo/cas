@@ -22,21 +22,39 @@ import java.util.Properties;
  */
 @Configuration("samlIdPConfiguration")
 public class SamlIdPConfiguration {
-    
+
+    /**
+     * The Resource loader path.
+     */
     @Value("#{'%{idp.views:%{idp.home}/views}'.trim()}")
     private String resourceLoaderPath;
-    
+
+    /**
+     * Template sp metadata resource.
+     *
+     * @return the resource
+     */
     @Bean(name="templateSpMetadata")
     public Resource templateSpMetadata() {
         return new ClassPathResource("template-sp-metadata.xml");
     }
 
+    /**
+     * Saml id p single logout service logout url builder saml id p single logout service logout url builder.
+     *
+     * @return the saml idp single logout service logout url builder
+     */
     @Bean(name={"defaultSingleLogoutServiceLogoutUrlBuilder",
                 "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
     }
-    
+
+    /**
+     * Velocity engine velocity engine factory bean.
+     *
+     * @return the velocity engine factory bean
+     */
     @Bean(name="shibboleth.VelocityEngine")
     public VelocityEngineFactoryBean velocityEngine() {
         final VelocityEngineFactoryBean bean = new VelocityEngineFactoryBean();

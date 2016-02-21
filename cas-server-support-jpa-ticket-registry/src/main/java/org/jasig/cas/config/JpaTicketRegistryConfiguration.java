@@ -135,7 +135,7 @@ public class JpaTicketRegistryConfiguration {
      */
     @Value("${svcreg.database.pool.connectionHealthQuery:select 1}")
     private String preferredTestQuery;
-    
+
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.
      *
@@ -161,7 +161,7 @@ public class JpaTicketRegistryConfiguration {
                 "org.jasig.cas.adaptors.jdbc"
         };
     }
-    
+
     /**
      * Entity manager factory local container.
      *
@@ -198,6 +198,11 @@ public class JpaTicketRegistryConfiguration {
         return mgmr;
     }
 
+    /**
+     * Data source ticket combo pooled data source.
+     *
+     * @return the combo pooled data source
+     */
     @Bean(name = "dataSourceTicket")
     public ComboPooledDataSource dataSourceTicket() {
         try {

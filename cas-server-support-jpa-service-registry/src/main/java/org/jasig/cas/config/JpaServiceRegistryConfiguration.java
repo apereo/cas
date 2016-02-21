@@ -135,7 +135,7 @@ public class JpaServiceRegistryConfiguration {
      */
     @Value("${svcreg.database.pool.connectionHealthQuery:select 1}")
     private String preferredTestQuery;
-    
+
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.
      *
@@ -162,7 +162,7 @@ public class JpaServiceRegistryConfiguration {
                 "org.jasig.cas.support.saml.services"
         };
     }
-    
+
     /**
      * Entity manager factory local container.
      *
@@ -199,6 +199,11 @@ public class JpaServiceRegistryConfiguration {
         return mgmr;
     }
 
+    /**
+     * Data source service combo pooled data source.
+     *
+     * @return the combo pooled data source
+     */
     @Bean(name = "dataSourceService")
     public ComboPooledDataSource dataSourceService() {
         try {
