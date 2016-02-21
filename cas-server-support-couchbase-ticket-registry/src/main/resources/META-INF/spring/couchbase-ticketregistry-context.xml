@@ -12,13 +12,5 @@
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="nodesSet" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
-        <constructor-arg type="java.lang.String" value="${ticketreg.couchbase.nodes:localhost:8091}"/>
-    </bean>
 
-    <bean id="ticketRegistryCouchbaseClientFactory" class="org.jasig.cas.couchbase.core.CouchbaseClientFactory"
-          p:nodes-ref="nodesSet"
-          p:timeout="${ticketreg.couchbase.timeout:10}"
-          p:password="${ticketreg.couchbase.password:}"
-          p:bucket="${ticketreg.couchbase.bucket:default}" />
 </beans>
