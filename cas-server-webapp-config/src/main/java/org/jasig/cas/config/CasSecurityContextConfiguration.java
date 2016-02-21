@@ -29,7 +29,7 @@ public class CasSecurityContextConfiguration {
      *
      * @return the requires authentication interceptor
      */
-    @Bean(name = "requiresAuthenticationInterceptor")
+    @Bean(name = "requiresAuthenticationStatusStatsInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationInterceptor() {
         return new RequiresAuthenticationInterceptor(new Config(new IpClient(new IpRegexpAuthenticator(this.regexPattern))), "IpClient");
     }
