@@ -13,14 +13,13 @@ import javax.persistence.EntityManagerFactory;
 import java.util.Properties;
 
 /**
- * This is {@link JpaEventsConfiguration}, defines certain beans via configuration
- * while delegating some to Spring namespaces inside the context config file.
+ * This this {@link JpaServiceRegistryConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Configuration("jpaEventsConfiguration")
-public class JpaEventsConfiguration {
+@Configuration("jpaServiceRegistryConfiguration")
+public class JpaServiceRegistryConfiguration {
 
     /**
      * The Show sql.
@@ -37,127 +36,171 @@ public class JpaEventsConfiguration {
     /**
      * The Hibernate dialect.
      */
-    @Value("${events.jpa.database.dialect:org.hibernate.dialect.HSQLDialect}")
+    @Value("${svcreg.database.dialect:org.hibernate.dialect.HSQLDialect}")
     private String hibernateDialect;
 
     /**
      * The Hibernate hbm 2 ddl auto.
      */
-    @Value("${events.jpa.database.ddl.auto:create-drop}")
+    @Value("${svcreg.database.ddl.auto:create-drop}")
     private String hibernateHbm2DdlAuto;
 
     /**
      * The Hibernate batch size.
      */
-    @Value("${events.jpa.database.batchSize:1}")
+    @Value("${svcreg.database.batchSize:1}")
     private String hibernateBatchSize;
+
 
     /**
      * The Driver class.
      */
-    @Value("${events.jpa.database.driverClass:org.hsqldb.jdbcDriver}")
+    @Value("${svcreg.database.driverClass:org.hsqldb.jdbcDriver}")
     private String driverClass;
 
     /**
      * The Jdbc url.
      */
-    @Value("${events.jpa.database.url:jdbc:hsqldb:mem:cas-events-registry}")
+    @Value("${svcreg.database.url:jdbc:hsqldb:mem:cas-service-registry}")
     private String jdbcUrl;
 
     /**
      * The User.
      */
-    @Value("${events.jpa.database.user:sa}")
+    @Value("${svcreg.database.user:sa}")
     private String user;
 
     /**
      * The Password.
      */
-    @Value("${events.jpa.database.password:}")
+    @Value("${svcreg.database.password:}")
     private String password;
 
     /**
      * The Initial pool size.
      */
-    @Value("${events.jpa.database.pool.minSize:6}")
+    @Value("${svcreg.database.pool.minSize:6}")
     private int initialPoolSize;
 
     /**
      * The Min pool size.
      */
-    @Value("${events.jpa.database.pool.minSize:6}")
+    @Value("${svcreg.database.pool.minSize:6}")
     private int minPoolSize;
 
     /**
      * The Max pool size.
      */
-    @Value("${events.jpa.database.pool.maxSize:18}")
+    @Value("${svcreg.database.pool.maxSize:18}")
     private int maxPoolSize;
 
     /**
      * The Max idle time excess connections.
      */
-    @Value("${events.jpa.database.pool.maxIdleTime:1000}")
+    @Value("${svcreg.database.pool.maxIdleTime:1000}")
     private int maxIdleTimeExcessConnections;
 
     /**
      * The Checkout timeout.
      */
-    @Value("${events.jpa.database.pool.maxWait:2000}")
+    @Value("${svcreg.database.pool.maxWait:2000}")
     private int checkoutTimeout;
 
     /**
      * The Acquire increment.
      */
-    @Value("${events.jpa.database.pool.acquireIncrement:16}")
+    @Value("${svcreg.database.pool.acquireIncrement:16}")
     private int acquireIncrement;
 
     /**
      * The Acquire retry attempts.
      */
-    @Value("${events.jpa.database.pool.acquireRetryAttempts:5}")
+    @Value("${svcreg.database.pool.acquireRetryAttempts:5}")
     private int acquireRetryAttempts;
 
     /**
      * The Acquire retry delay.
      */
-    @Value("${events.jpa.database.pool.acquireRetryDelay:2000}")
+    @Value("${svcreg.database.pool.acquireRetryDelay:2000}")
     private int acquireRetryDelay;
 
     /**
      * The Idle connection test period.
      */
-    @Value("${events.jpa.database.pool.idleConnectionTestPeriod:30}")
+    @Value("${svcreg.database.pool.idleConnectionTestPeriod:30}")
     private int idleConnectionTestPeriod;
 
     /**
      * The Preferred test query.
      */
-    @Value("${events.jpa.database.pool.connectionHealthQuery:select 1}")
+    @Value("${svcreg.database.pool.connectionHealthQuery:select 1}")
     private String preferredTestQuery;
-
-
+    
     /**
-     * Jpa event vendor adapter hibernate jpa vendor adapter.
+     * Jpa vendor adapter hibernate jpa vendor adapter.
      *
      * @return the hibernate jpa vendor adapter
      */
-    @Bean(name = "jpaEventVendorAdapter")
-    public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
+    @Bean(name = "jpaServiceVendorAdapter")
+    public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
         jpaEventVendorAdapter.setGenerateDdl(this.generateDdl);
         jpaEventVendorAdapter.setShowSql(this.showSql);
         return jpaEventVendorAdapter;
     }
 
+    /**
+     * Jpa event packages to scan string [].
+     *
+     * @return the string [ ]
+     */
+    @Bean(name = "jpaServicePackagesToScan")
+    public String[] jpaServicePackagesToScan() {
+        return new String[] {
+                "org.jasig.cas.services", 
+                "org..jasig.cas.support.oauth.services",
+                "org.jasig.cas.support.saml.services"
+        };
+    }
+    
+    /**
+     * Entity manager factory local container.
+     *
+     * @return the local container entity manager factory bean
+     */
+    @Bean(name = "serviceEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
+
+        bean.setJpaVendorAdapter(jpaServiceVendorAdapter());
+        bean.setPersistenceUnitName("jpaServiceRegistryContext");
+        bean.setPackagesToScan(jpaServicePackagesToScan());
+        bean.setDataSource(dataSourceService());
+
+        final Properties properties = new Properties();
+        properties.put("hibernate.dialect", this.hibernateDialect);
+        properties.put("hibernate.hbm2ddl.auto", this.hibernateHbm2DdlAuto);
+        properties.put("hibernate.jdbc.batch_size", this.hibernateBatchSize);
+        bean.setJpaProperties(properties);
+        return bean;
+    }
 
     /**
-     * Data source event combo pooled data source.
+     * Transaction manager events jpa transaction manager.
      *
-     * @return the combo pooled data source
+     * @param emf the emf
+     * @return the jpa transaction manager
      */
-    @Bean(name = "dataSourceEvent")
-    public ComboPooledDataSource dataSourceEvent() {
+    @Bean(name = "transactionManagerServiceReg")
+    public JpaTransactionManager transactionManagerEvents(@Qualifier("serviceEntityManagerFactory") 
+                                                          final EntityManagerFactory emf) {
+        final JpaTransactionManager mgmr = new JpaTransactionManager();
+        mgmr.setEntityManagerFactory(emf);
+        return mgmr;
+    }
+
+    @Bean(name = "dataSourceService")
+    public ComboPooledDataSource dataSourceService() {
         try {
             final ComboPooledDataSource bean = new ComboPooledDataSource();
             bean.setDriverClass(this.driverClass);
@@ -179,54 +222,4 @@ public class JpaEventsConfiguration {
             throw new RuntimeException(e);
         }
     }
-
-    /**
-     * Jpa event packages to scan string [ ].
-     *
-     * @return the string [ ]
-     */
-    @Bean(name = "jpaEventPackagesToScan")
-    public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.jasig.cas.support.events.dao"};
-    }
-
-    /**
-     * Events entity manager factory local container entity manager factory bean.
-     *
-     * @return the local container entity manager factory bean
-     */
-    @Bean(name = "eventsEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-
-        bean.setJpaVendorAdapter(jpaEventVendorAdapter());
-        bean.setPersistenceUnitName("jpaEventRegistryContext");
-        bean.setPackagesToScan(jpaEventPackagesToScan());
-        bean.setDataSource(dataSourceEvent());
-
-        final Properties properties = new Properties();
-        properties.put("hibernate.dialect", this.hibernateDialect);
-        properties.put("hibernate.hbm2ddl.auto", this.hibernateHbm2DdlAuto);
-        properties.put("hibernate.jdbc.batch_size", this.hibernateBatchSize);
-        properties.put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
-        bean.setJpaProperties(properties);
-        return bean;
-    }
-
-
-    /**
-     * Transaction manager events jpa transaction manager.
-     *
-     * @param emf the emf
-     * @return the jpa transaction manager
-     */
-    @Bean(name = "transactionManagerEvents")
-    public JpaTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory")
-                                                          final EntityManagerFactory emf) {
-        final JpaTransactionManager mgmr = new JpaTransactionManager();
-        mgmr.setEntityManagerFactory(emf);
-        return mgmr;
-    }
-
-
 }
