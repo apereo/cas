@@ -20,6 +20,11 @@
             classpath*:/META-INF/spring/*.xml
         </param-value>
     </context-param>
+    
+    <context-param>
+      <param-name>wavityConfigLocation</param-name>
+      <param-value>/WEB-INF/wavity-configuration</param-value>
+    </context-param>
 
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
@@ -68,6 +73,15 @@
     <listener>
         <listener-class>
             org.jasig.cas.CasEnvironmentContextListener
+        </listener-class>
+    </listener>
+    
+    <!-- 
+    	Creates the Wavity environment
+    -->
+    <listener>
+        <listener-class>
+            org.jasig.cas.WavityEnvironmentContextListener
         </listener-class>
     </listener>
 

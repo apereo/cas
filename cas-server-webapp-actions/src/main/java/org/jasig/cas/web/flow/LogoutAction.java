@@ -1,5 +1,13 @@
 package org.jasig.cas.web.flow;
 
+import java.util.Calendar;
+import java.util.EnumMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
@@ -15,10 +23,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import com.wavity.broker.api.provider.BrokerProvider;
+import com.wavity.broker.util.EventAttribute;
+import com.wavity.broker.util.EventType;
+import com.wavity.broker.util.TopicType;
 
 /**
  * Action to delete the TGT and the appropriate cookies.
@@ -62,7 +70,10 @@ public final class LogoutAction extends AbstractLogoutAction {
                 }
             }
         }
-
+        
+        // Produce a message using broker API
+        produceLogoutMessage(context);
+        
         final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         if (this.followServiceRedirects && service != null) {
             final Service webAppService = new WebApplicationServiceFactory().createService(service);
@@ -72,7 +83,7 @@ public final class LogoutAction extends AbstractLogoutAction {
                 context.getFlowScope().put("logoutRedirectUrl", service);
             }
         }
-
+        
         // there are some front services to logout, perform front SLO
         if (needFrontSlo) {
             return new Event(this, FRONT_EVENT);
@@ -88,5 +99,40 @@ public final class LogoutAction extends AbstractLogoutAction {
 
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
+    }
+    
+    /**
+     * Produces a message for logout event
+     * 
+     * @param context the object of RequestContext
+     */
+    private void produceLogoutMessage(final RequestContext context) {
+    	if (context == null) {
+    		logger.error("*** Request context can't be null to produce a logout message ***");
+    		return;
+    	}
+    	final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+    	String tenantId = null;
+    	if (request != null) {
+			tenantId = AuthUtils.extractTenantID(request);
+		}
+		if (tenantId == null || "".equals(tenantId)) {
+			logger.error("*** Tenant ID can't be empty or null ***");
+			return;
+		}
+		final BrokerProvider brokerProvider = BrokerProvider.getInstance();
+		try {
+			brokerProvider.onCreate();
+			final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
+			attr.put(EventAttribute.MESSAGE, String.format("The user %s logged out", AuthUtils.getCredential()));
+			attr.put(EventAttribute.ACTOR_ID, tenantId);
+			attr.put(EventAttribute.TIMESTAMP, Long.toString(Calendar.getInstance().getTimeInMillis()));
+			attr.put(EventAttribute.IS_NOTIFY_TARGET, true);
+			attr.put(EventAttribute.EVENT_RESULT, "success");
+			attr.put(EventAttribute.EC_ID, "Test EC ID");
+			brokerProvider.publish(TopicType.ADMIN, EventType.EVENT_TYPE_SSO_AUTHENTICATION, attr);
+		} catch (Exception e) {
+			logger.error("broker failed to publish event", e);
+		}
     }
 }

@@ -46,7 +46,7 @@ dependencies {
   compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
   compile group: 'joda-time', name: 'joda-time', version:jodaTimeVersion
   compile group: 'com.google.guava', name: 'guava', version:guavaVersion
-  
+    
   compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
     exclude(module: 'slf4j-api')
   }
@@ -88,5 +88,25 @@ dependencies {
   testCompile project(':cas-server-core-monitor')
   testCompile project(path: ":cas-server-core-services", configuration: "tests")
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+  
+  compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {
+    exclude(module: 'slf4j-api')
+  }
+  compile (group: 'wavity-dependency', name: 'wavity-dependency', version: '1.0.0-SNAPSHOT') {
+        transitive = true
+        exclude(module: 'slf4j-api')
+        exclude(module: 'jackson-databind')
+        exclude group: 'org.javassist', module: 'javassist'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'net.sf.ehcache', module: 'ehcache'
+        exclude group: 'javax.json', module: 'javax.json-api'
+        exclude group: 'javax', module: 'javaee-api'
+        exclude group: 'javax', module: 'javaee-web-api'
+        exclude group: 'javax', module: 'javaee-endorsed-api'
+        exclude group: 'junit', module: 'junit'
+  }
 }
 
