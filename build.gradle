@@ -244,7 +244,6 @@ ext.libraries = [
                     exclude(group: 'com.google.guava', module: 'guava')
                     exclude(group: 'ch.qos.logback', module: 'logback-core')
                     exclude(group: 'ch.qos.logback', module: 'logback-classic')
-                    exclude(group: 'net.shibboleth.liberty', module: 'idwsfconsumer')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-saml-impl:$idpVersion") {
@@ -264,7 +263,6 @@ ext.libraries = [
                     exclude(group: 'org.ldaptive', module: 'ldaptive')
                     exclude(group: 'ch.qos.logback', module: 'logback-core')
                     exclude(group: 'ch.qos.logback', module: 'logback-classic')
-                    exclude(group: 'net.shibboleth.liberty', module: 'idwsfconsumer')
                     force = true
                 },
                 dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport") {
