@@ -94,6 +94,4 @@ public class OAuthConfiguration {
     public RequiresAuthenticationInterceptor requiresAuthenticationAccessTokenInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
-
-
 }
