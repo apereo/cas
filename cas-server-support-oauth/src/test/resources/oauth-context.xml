@@ -28,9 +28,6 @@
     <context:annotation-config/>
 
     <!-- OAuth View -->
-    <bean id="oauthConfirmView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/oauth/confirm.jsp"/>
-
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
