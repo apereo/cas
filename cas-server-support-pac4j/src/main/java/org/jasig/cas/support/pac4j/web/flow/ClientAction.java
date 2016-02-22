@@ -136,7 +136,7 @@ public final class ClientAction extends AbstractAction {
                 credentials = client.getCredentials(webContext);
                 logger.debug("credentials: {}", credentials);
             } catch (final RequiresHttpAction e) {
-                logger.debug("requires http action: {}", e);
+                logger.debug("requires http action", e);
                 response.flushBuffer();
                 final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
