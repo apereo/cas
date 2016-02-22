@@ -31,62 +31,9 @@ file contains a straightforward description of states and transitions in the flo
 the most common configuration concern beyond component configuration in the Spring XML configuration files. 
 
 ## Spring Configuration
-CAS server depends heavily on the Spring framework. Two modes of configuration are available. Note that both modes
-can be used at the same time. 
+CAS server depends heavily on the Spring framework. There are exact and specific XML configuration files under `spring-configuration` directory that control various properties of CAS as well as `deployerConfigContext.xml` which is mostly expected by CAS adopters to be included in the overlay for environment-specific CAS settings.
 
-### XML
-There are exact and specific XML configuration files under `spring-configuration` 
-directory that control various properties of CAS as well as `deployerConfigContext.xml` which is mostly expected by CAS adopters to be 
-included in the overlay for environment-specific CAS settings.
-
-XML configuration files can be overwritten to change behavior if need be via the Maven overlay process. The XML file can be obtained 
-from source for the CAS version and placed at the same exact path by the same exact name in the Maven overlay build. If configured 
-correctly, the build will use the locally-provided XML file rather than the default.
-
-### Groovy
-The CAS application context is able to load any `.groovy` file under the `spring-configuration` directory. 
-For advanced use cases, CAS beans can be dynamically defined via the Groovy programming language. 
-As an example, here is an `exampleBean` defined inside a `applicationContext.groovy` file:
-
-```groovy
-beans {
-    xmlns([context:'http://www.springframework.org/schema/context'])
-    xmlns([lang:'http://www.springframework.org/schema/lang'])
-    xmlns([util:'http://www.springframework.org/schema/util'])
-
-    exampleBean(org.jasig.cas.example.ExampleBean) {
-        beanProperty = propertyValue
-    }
-}
-```
-
-Additionally, dynamic reloadable Groovy beans can be defined in `deployerConfigContext.xml`. These definitions
-are directly read from a `.groovy` script which is monitored for changes and reloaded automatically.
-Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
-and is monitored for changes every 5 seconds. 
-
-```
-<lang:groovy id="messenger"
-    refresh-check-delay="5000" 
-    script-source="classpath:Messenger.groovy">
-    <lang:property name="message" value="Hello, CAS!" />
-</lang:groovy>
-```
-
-The contents of the `Messenger.groovy` must resolve to a valid Java class:
-
-```groovy
-class ExampleMessenger implements Messenger {
-    String message = "Welcome"
-    
-    String getMessage() {
-        this.message
-    }
-    void setMessage(String message) {
-        this.message = message
-    }
-}
-```
+XML configuration files can be overwritten to change behavior if need be via the Maven overlay process. The XML file can be obtained from source for the CAS version and placed at the same exact path by the same exact name in the Maven overlay build. If configured correctly, the build will use the locally-provided XML file rather than the default.
 
 ## Custom and Third-Party Source
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
@@ -138,8 +85,7 @@ under a `src/java/main` directory in the overlay project source tree.
     │   │   │                           └── UrlBuilder.java
 
 
-Also, note that for any custom Java component to compile and be included in the final `cas.war` file, the `pom.xml` 
-in the Maven overlay must include a reference to the Maven Java compiler so classes can compiled. Here is a *sample* build configuration:
+Also, note that for any custom Java component to compile and be included in the final `cas.war` file, the `pom.xml` in the Maven overlay must include a reference to the Maven Java compiler so classes can compiled. Here is a *sample* build configuration:
 
 
 ```xml
