@@ -80,6 +80,13 @@ ext.libraries = [
             exclude(group: 'log4j', module: 'log4j')
             force = true
         },
+        maxmind : [
+                dependencies.create("com.maxmind.geoip2:geoip2:$maxmindVersion") {
+                    exclude(group: 'commons-logging', module: 'commons-logging')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
+                    force = true
+                }
+        ],
         guava            : [
                 "com.google.guava:guava:$guavaVersion",
                 dependencies.create("org.reflections:reflections:$reflectionsVersion") {
@@ -111,7 +118,7 @@ ext.libraries = [
         ],
         httpclient       : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
-                    exclude(module: 'commons-codec')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
                     force = true
                 },
                 "commons-codec:commons-codec:$commonsCodecVersion"
