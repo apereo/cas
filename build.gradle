@@ -108,7 +108,7 @@ ext.libraries = [
                 dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
-                    exclude(group: 'com.fasterxml', module:'classmate')
+                    exclude(group: 'com.fasterxml', module: 'classmate')
                     force = true
                 },
                 dependencies.create("dom4j:dom4j:$dom4jVersion") {
@@ -236,6 +236,7 @@ ext.libraries = [
                     exclude(group: 'com.google.guava', module: 'guava')
                     exclude(group: 'ch.qos.logback', module: 'logback-core')
                     exclude(group: 'ch.qos.logback', module: 'logback-classic')
+                    exclude(group: 'net.shibboleth.liberty', module: 'idwsfconsumer')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-saml-impl:$idpVersion") {
@@ -255,6 +256,7 @@ ext.libraries = [
                     exclude(group: 'org.ldaptive', module: 'ldaptive')
                     exclude(group: 'ch.qos.logback', module: 'logback-core')
                     exclude(group: 'ch.qos.logback', module: 'logback-classic')
+                    exclude(group: 'net.shibboleth.liberty', module: 'idwsfconsumer')
                     force = true
                 },
                 dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport") {
@@ -282,8 +284,8 @@ ext.libraries = [
         ignite           : [
                 "org.apache.ignite:ignite-core:$igniteVersion",
                 dependencies.create("org.apache.ignite:ignite-log4j:$igniteVersion") {
-                   exclude(group: 'log4j', module: 'log4j')
-                   force = true
+                    exclude(group: 'log4j', module: 'log4j')
+                    force = true
                 },
                 dependencies.create("org.apache.ignite:ignite-spring:$igniteVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
@@ -323,7 +325,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        inspektraspects         : [
+        inspektraspects  : [
                 dependencies.create("org.jasig.inspektr:inspektr-aspects:$inspektrVersion") {
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.aspectj', module: 'aspectjrt')
@@ -364,11 +366,11 @@ ext.libraries = [
                 "javax.transaction:jta:$jtaVersion"
         ],
         jackson          : [
-            "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
-             dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
+                "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
                     force = true
-            }
+                }
         ],
         couchbase        : "com.couchbase.client:java-client:$couchbaseVersion",
 
@@ -725,61 +727,65 @@ ext.libraries = [
             force = true
         },
         springcloud      : [
-                dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClient") {   
-                	exclude(group: 'org.springframework', module: 'spring-web')
-                	exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
-                	exclude(group: 'org.springframework', module: 'spring-webmvc')
-                	exclude(group: 'org.springframework', module: 'spring-core')
-                	exclude(group: 'org.springframework', module: 'spring-context')
-                	exclude(group: 'org.slf4j', module: 'slf4j-api')
-                	exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
-                	exclude(group: 'org.hibernate', module: 'hibernate-validator')	
-                	exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClient") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigServer") {   
-                	exclude(group: 'org.springframework', module: 'spring-web')
-                	exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
-                	exclude(group: 'org.springframework', module: 'spring-webmvc')
-                	exclude(group: 'org.springframework', module: 'spring-core')
-                	exclude(group: 'org.springframework', module: 'spring-context')
-                	exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
-                	exclude(group: 'org.slf4j', module: 'slf4j-api')
-                	exclude(group: 'org.hibernate', module: 'hibernate-validator')	
-                	exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigServer") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudStarter") {   
-                	exclude(group: 'org.springframework', module: 'spring-web')
-                	exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
-                	exclude(group: 'org.springframework', module: 'spring-webmvc')
-                	exclude(group: 'org.springframework', module: 'spring-core')
-                	exclude(group: 'org.springframework', module: 'spring-context')
-                	exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
-                	exclude(group: 'org.hibernate', module: 'hibernate-validator')	
-                	exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
-                	exclude(group: 'org.slf4j', module: 'slf4j-api')
+                dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudStarter") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContext") {  
-                	exclude(group: 'org.springframework', module: 'spring-web')
-                	exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
-                	exclude(group: 'org.springframework', module: 'spring-webmvc')
-                	exclude(group: 'org.springframework', module: 'spring-core')
-                	exclude(group: 'org.springframework', module: 'spring-context')
-                	exclude(group: 'org.slf4j', module: 'slf4j-api')
-                	exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
-                	exclude(group: 'org.hibernate', module: 'hibernate-validator')
-                	exclude(group: 'org.apache.httpcomponents', module: 'httpclient')	
+                dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContext") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
-                    force = true 
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    force = true
                 }
         ],
         spring           : [
@@ -849,12 +855,12 @@ ext.libraries = [
         validationapi    : "javax.validation:validation-api:$javaxValidationVersion",
         xmlapis          : "xml-apis:xml-apis:$xmlapisVersion",
         yubicoapi        : [
-            dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
-                exclude(group: 'org.slf4j', module: 'slf4j-api')
-                exclude(group: 'commons-codec', module: 'commons-codec')
-                force = true
-            },
-            "commons-codec:commons-codec:$commonsCodecVersion",
+                dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
+                    force = true
+                },
+                "commons-codec:commons-codec:$commonsCodecVersion",
         ]
 ]
 
@@ -894,7 +900,7 @@ allprojects {
         project.configurations {
             grettyRunnerJetty9 {
                 resolutionStrategy.eachDependency(grettyResolutionStrategy)
-            }    
+            }
         }
     }
 }
@@ -1034,7 +1040,6 @@ subprojects {
         compile libraries.commons
         compile libraries.jodatime
         compile libraries.inspektr
-        compile libraries.springcloud
 
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektraspects
@@ -1218,28 +1223,28 @@ subprojects {
                             releases {
                                 enabled true
                             }
-                       }
-                       repository {
+                        }
+                        repository {
                             id "jitpack"
                             url "https://jitpack.io"
                             releases {
                                 enabled true
                             }
-                       }  
-                       repository {
+                        }
+                        repository {
                             id "jasig-legacy"
                             url "http://developer.jasig.org/repo/content/groups/m2-legacy"
                             releases {
                                 enabled true
                             }
-                       }  
-                       repository {
+                        }
+                        repository {
                             id "couchbase"
                             url "http://files.couchbase.com/maven2/"
                             releases {
                                 enabled true
                             }
-                       } 
+                        }
                     }
 
                 }
