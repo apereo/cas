@@ -2,7 +2,12 @@ package org.jasig.cas.config;
 
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
+import org.pac4j.http.client.direct.DirectBasicAuthClient;
+import org.pac4j.http.client.direct.DirectFormClient;
+import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +21,13 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @Configuration("oauthConfiguration")
 public class OAuthConfiguration {
+
+    /**
+     * The Oauth client authenticator.
+     */
+    @Autowired
+    @Qualifier("oAuthUserAuthenticator")
+    private UsernamePasswordAuthenticator oAuthClientAuthenticator;
 
     /**
      * The Cas login url.
@@ -34,9 +46,9 @@ public class OAuthConfiguration {
      *
      * @return the jstl view
      */
-    @Bean(name="oauthConfirmView")
+    @Bean(name = "oauthConfirmView")
     public JstlView oauthConfirmView() {
-        return new JstlView("/WEB-INF/view/jsp/protocol/oauth/confirm.jsp");    
+        return new JstlView("/WEB-INF/view/jsp/protocol/oauth/confirm.jsp");
     }
 
     /**
@@ -44,22 +56,44 @@ public class OAuthConfiguration {
      *
      * @return the config
      */
-    @Bean(name="oauthSecConfig")
+    @Bean(name = "oauthSecConfig")
     public Config oauthSecConfig() {
-        final CasClient client = new CasClient(this.casLoginUrl);
-        client.setName("CasOAuthClient");
-        return new Config(this.callbackUrl, client);
-    }
+        final CasClient oauthCasClient = new CasClient(this.casLoginUrl);
+        oauthCasClient.setName("CasOAuthClient");
 
+        final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(this.oAuthClientAuthenticator);
+        basicAuthClient.setName("clientBasicAuth");
+
+        final DirectFormClient directFormClient = new DirectFormClient(this.oAuthClientAuthenticator);
+        basicAuthClient.setName("clientForm");
+        directFormClient.setUsernameParameter("client_id");
+        directFormClient.setPasswordParameter("client_secret");
+
+        final DirectFormClient userFormClient = new DirectFormClient(this.oAuthClientAuthenticator);
+        basicAuthClient.setName("userForm");
+
+        return new Config(this.callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
+    }
 
     /**
      * Requires authentication authorize interceptor requires authentication interceptor.
      *
      * @return the requires authentication interceptor
      */
-    @Bean(name="requiresAuthenticationAuthorizeInterceptor")
+    @Bean(name = "requiresAuthenticationAuthorizeInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        return new RequiresAuthenticationInterceptor(oauthSecConfig(), 
-                "CASOAuthClient");
+        return new RequiresAuthenticationInterceptor(oauthSecConfig(), "CasOAuthClient");
     }
+
+    /**
+     * Requires authentication access token interceptor requires authentication interceptor.
+     *
+     * @return the requires authentication interceptor
+     */
+    @Bean(name = "requiresAuthenticationAccessTokenInterceptor")
+    public RequiresAuthenticationInterceptor requiresAuthenticationAccessTokenInterceptor() {
+        return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
+    }
+
+
 }
