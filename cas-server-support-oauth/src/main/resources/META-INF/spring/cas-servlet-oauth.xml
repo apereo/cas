@@ -15,6 +15,10 @@
             <mvc:mapping path="/oauth2.0/authorize*"/>
             <ref bean="requiresAuthenticationAuthorizeInterceptor"/>
         </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/oauth2.0/accessToken*" />
+            <ref bean="requiresAuthenticationAccessTokenInterceptor"/>
+        </mvc:interceptor>
     </mvc:interceptors>
 
 </beans>
