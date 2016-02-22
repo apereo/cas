@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This this {@link SamlConfiguration}.
+ * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
