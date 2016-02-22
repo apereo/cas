@@ -21,10 +21,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
+import org.springframework.web.servlet.view.InternalResourceView;
+import org.springframework.web.servlet.view.ResourceBundleViewResolver;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
+import javax.validation.MessageInterpolator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,8 +45,19 @@ import java.util.Properties;
 @Configuration("casManagementWebAppConfiguration")
 public class CasManagementWebAppConfiguration {
 
+    /**
+     * The User properties file.
+     */
     @Value("${user.details.file.location:classpath:user-details.properties}")
     private Resource userPropertiesFile;
+
+    /**
+     * The Message interpolator.
+     */
+    @Autowired
+    @Qualifier("messageInterpolator")
+    private MessageInterpolator messageInterpolator;
+
     /**
      * The Authorization generator.
      */
@@ -82,6 +101,12 @@ public class CasManagementWebAppConfiguration {
      */
     @javax.annotation.Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
+
+    /**
+     * The Base name.
+     */
+    @Value("${cas-management.viewResolver.basename:default_views}")
+    private String baseName;
 
     /**
      * A character encoding filter.
@@ -244,4 +269,65 @@ public class CasManagementWebAppConfiguration {
         }
     }
 
+    /**
+     * Locale resolver cookie locale resolver.
+     *
+     * @return the cookie locale resolver
+     */
+    @Bean(name = "localeResolver")
+    public CookieLocaleResolver localeResolver() {
+        final CookieLocaleResolver resolver = new CookieLocaleResolver();
+        resolver.setDefaultLocale(Locale.ENGLISH);
+        return resolver;
+    }
+
+    /**
+     * Locale change interceptor locale change interceptor.
+     *
+     * @return the locale change interceptor
+     */
+    @Bean(name = "localeChangeInterceptor")
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        return new LocaleChangeInterceptor();
+    }
+
+    /**
+     * Credentials validator local validator factory bean.
+     *
+     * @return the local validator factory bean
+     */
+    @Bean(name = "credentialsValidator")
+    public LocalValidatorFactoryBean credentialsValidator() {
+        final LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
+        bean.setMessageInterpolator(this.messageInterpolator);
+        return bean;
+    }
+
+    /**
+     * Url based view resolver url based view resolver.
+     *
+     * @return the url based view resolver
+     */
+    @Bean(name = "urlBasedViewResolver")
+    public UrlBasedViewResolver urlBasedViewResolver() {
+        final UrlBasedViewResolver bean = new UrlBasedViewResolver();
+        bean.setViewClass(InternalResourceView.class);
+        bean.setPrefix("/WEB-INF/view/jsp/");
+        bean.setSuffix(".jsp");
+        bean.setOrder(2);
+        return bean;
+    }
+
+    /**
+     * View resolver resource bundle view resolver.
+     *
+     * @return the resource bundle view resolver
+     */
+    @Bean(name = "viewResolver")
+    public ResourceBundleViewResolver viewResolver() {
+        final ResourceBundleViewResolver bean = new ResourceBundleViewResolver();
+        bean.setOrder(0);
+        bean.setBasename(this.baseName);
+        return bean;
+    }
 }

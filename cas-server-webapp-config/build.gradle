@@ -6,5 +6,7 @@ dependencies {
     compile libraries.cassecurityfilter
     compile project(':cas-server-core-web')
     compile project(':cas-server-webapp-actions')
+    provided project(':cas-server-webapp-themes')
+    provided libraries.bouncycastle
 }
 
