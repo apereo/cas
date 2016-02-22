@@ -65,12 +65,12 @@ public class OAuthConfiguration {
         basicAuthClient.setName("clientBasicAuth");
 
         final DirectFormClient directFormClient = new DirectFormClient(this.oAuthClientAuthenticator);
-        basicAuthClient.setName("clientForm");
+        directFormClient.setName("clientForm");
         directFormClient.setUsernameParameter("client_id");
         directFormClient.setPasswordParameter("client_secret");
 
         final DirectFormClient userFormClient = new DirectFormClient(this.oAuthClientAuthenticator);
-        basicAuthClient.setName("userForm");
+        userFormClient.setName("userForm");
 
         return new Config(this.callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
     }
