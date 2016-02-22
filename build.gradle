@@ -35,6 +35,7 @@ ext.libraries = [
                 "commons-io:commons-io:$commonsIoVersion",
                 dependencies.create("commons-jexl:commons-jexl:$commonsJexlVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
+                    exclude(group: 'commons-lang', module: 'commons-lang')
                     exclude(group: 'junit', module: 'junit')
                     force = true
                 },
