@@ -158,7 +158,7 @@ public class JpaServiceRegistryConfiguration {
     public String[] jpaServicePackagesToScan() {
         return new String[] {
                 "org.jasig.cas.services", 
-                "org..jasig.cas.support.oauth.services",
+                "org.jasig.cas.support.oauth.services",
                 "org.jasig.cas.support.saml.services"
         };
     }
