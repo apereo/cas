@@ -37,8 +37,11 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -94,10 +97,15 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @NotNull
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
+    /** Mutex cache for ticket operations. **/
+    protected final Map ticketMutexCache;
+
     /**
      * Instantiates a new Central authentication service impl.
      */
-    protected AbstractCentralAuthenticationService() {}
+    protected AbstractCentralAuthenticationService() {
+        this.ticketMutexCache = Collections.synchronizedMap(new WeakHashMap());
+    }
 
     /**
      * Build the central authentication service implementation.
@@ -117,6 +125,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
+        this.ticketMutexCache = Collections.synchronizedMap(new WeakHashMap());
     }
 
     public final void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
@@ -150,6 +159,15 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
 
     /**
+     * Gets a synchronization handle.
+     * @param id String mutex id
+     * @return SimpleMutex
+     */
+    protected final SimpleMutex getMutex(final String id) {
+        return (SimpleMutex) ticketMutexCache.computeIfAbsent(id, k -> new SimpleMutex(k.toString()));
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Note:
@@ -164,23 +182,24 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz)
             throws InvalidTicketException {
         Assert.notNull(ticketId, "ticketId cannot be null");
-        final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
+        final SimpleMutex mutex = getMutex(ticketId);
+        synchronized(mutex) {
+            final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
 
-        if (ticket == null) {
-            logger.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", ticketId, clazz.getSimpleName());
-            throw new InvalidTicketException(ticketId);
-        }
+            if (ticket == null) {
+                logger.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", ticketId, clazz.getSimpleName());
+                throw new InvalidTicketException(ticketId);
+            }
 
-        if (ticket instanceof TicketGrantingTicket) {
-            synchronized (ticket) {
+            if (ticket instanceof TicketGrantingTicket) {
                 if (ticket.isExpired()) {
                     this.ticketRegistry.deleteTicket(ticketId);
                     logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticketId);
                     throw new InvalidTicketException(ticketId);
                 }
             }
+            return (T) ticket;
         }
-        return (T) ticket;
     }
 
     @Timed(name = "GET_TICKETS_TIMER")
