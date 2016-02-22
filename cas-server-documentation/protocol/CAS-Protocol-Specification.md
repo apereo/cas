@@ -1670,7 +1670,7 @@ specific language governing permissions and limitations under the License.
 **Appendix F: YALE License**
 ===========================
 
-Copyright (c) 2000-2005 Yale University. All rights reserved.
+Copyright (c) 2000-2005 Yale University. 
 
 THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
