@@ -19,12 +19,15 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPConstants;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.jasig.cas.util.EncodingUtils;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -37,8 +40,9 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.security.SecureRandom;
 
 /**
@@ -207,32 +211,19 @@ public abstract class AbstractSamlProfileHandlerController {
     }
 
     /**
-     * Store authn request.
-     *
-     * @param request      the request
-     * @param authnRequest the authn request
-     */
-    protected void storeAuthnRequest(final HttpServletRequest request, final AuthnRequest authnRequest) {
-        final HttpSession session = request.getSession();
-        if (authnRequest != null) {
-            logger.debug("Storing authentication request issued by [{}] into session as [{}]",
-                    authnRequest.getIssuer().getValue(), AuthnRequest.class.getName());
-        } else {
-            logger.debug("Removing authentication request from session");
-        }
-        session.setAttribute(AuthnRequest.class.getName(), authnRequest);
-    }
-
-    /**
      * Retrieve authn request authn request.
      *
      * @param request the request
      * @return the authn request
+     * @throws Exception the exception
      */
-    protected AuthnRequest retrieveAuthnRequest(final HttpServletRequest request) {
-        logger.debug("Retrieving authentication request from session");
-        final HttpSession session = request.getSession();
-        return (AuthnRequest) session.getAttribute(AuthnRequest.class.getName());
+    protected AuthnRequest retrieveAuthnRequest(final HttpServletRequest request) throws Exception {
+        logger.debug("Retrieving authentication request from scope");
+        final String requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes("UTF-8"));
+        final AuthnRequest authnRequest = (AuthnRequest) 
+                XMLObjectSupport.unmarshallFromInputStream(configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
+        return authnRequest;
     }
 
     /**
@@ -319,12 +310,16 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the string
      * @throws SamlException the saml exception
      */
-    protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
+    protected String constructServiceUrl(final HttpServletRequest request, 
+                                         final HttpServletResponse response,
                                          final AuthnRequest authnRequest)
             throws SamlException {
-        try {
+        try (final StringWriter writer = SamlIdPUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
             builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, authnRequest.getIssuer().getValue()));
+
+            final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes("UTF-8"));
+            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest));
             final String url = builder.buildURL();
 
             logger.debug("Built service callback url [{}]", url);
@@ -337,3 +332,4 @@ public abstract class AbstractSamlProfileHandlerController {
         }
     }
 }
+
