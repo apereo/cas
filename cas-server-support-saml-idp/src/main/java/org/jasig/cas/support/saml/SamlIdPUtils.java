@@ -63,6 +63,33 @@ public final class SamlIdPUtils {
     }
 
     /**
+     * Transform saml object to String.
+     *
+     * @param configBean the config bean
+     * @param samlObject the saml object
+     * @return the string
+     * @throws SamlException the saml exception
+     */
+    public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final SAMLObject samlObject) throws SamlException {
+        final StringWriter writer = new StringWriter();
+        try {
+            final Marshaller marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
+            if (marshaller != null) {
+                final Element element = marshaller.marshall(samlObject);
+                final DOMSource domSource = new DOMSource(element);
+                
+                final StreamResult result = new StreamResult(writer);
+                final TransformerFactory tf = TransformerFactory.newInstance();
+                final Transformer transformer = tf.newTransformer();
+                transformer.transform(domSource, result);
+            }
+        } catch (final Exception e) {
+            throw new SamlException(e.getMessage(), e);
+        }
+        return writer;
+    }
+    
+    /**
      * Log saml object.
      *
      * @param configBean the config bean
@@ -70,21 +97,7 @@ public final class SamlIdPUtils {
      * @throws SamlException the saml exception
      */
     public static void logSamlObject(final OpenSamlConfigBean configBean, final SAMLObject samlObject) throws SamlException {
-        try {
-            final Marshaller marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
-            if (marshaller != null) {
-                final Element element = marshaller.marshall(samlObject);
-                final DOMSource domSource = new DOMSource(element);
-                final StringWriter writer = new StringWriter();
-                final StreamResult result = new StreamResult(writer);
-                final TransformerFactory tf = TransformerFactory.newInstance();
-                final Transformer transformer = tf.newTransformer();
-                transformer.transform(domSource, result);
-                LOGGER.debug("Logging [{}]\n{}", samlObject.getClass().getName(), writer);
-            }
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
-        }
+        LOGGER.debug("Logging [{}]\n{}", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject));
     }
 
     /**
@@ -163,7 +176,6 @@ public final class SamlIdPUtils {
         acs.setResponseLocation(authnRequest.getAssertionConsumerServiceURL());
         return acs;
     }
-
 }
 
 
