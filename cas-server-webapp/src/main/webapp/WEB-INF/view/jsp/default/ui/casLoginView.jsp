@@ -77,28 +77,31 @@
             <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
             <form:password cssClass="required" cssErrorClass="error" id="password" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
             <span id="capslock-on" style="display:none;"><p><img src="images/warning.png" valign="top"> <spring:message code="screen.capslock.on" /></p></span>
+            <p/>
         </section>
 
         <!--
         <section class="row check">
-            <p>
-                <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
-                <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
-                <br/>
-                <input id="publicWorkstation" name="publicWorkstation" value="false" tabindex="4" type="checkbox" />
-                <label for="publicWorkstation"><spring:message code="screen.welcome.label.publicstation" /></label>
-                <br/>
-                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"  />
-                <label for="rememberMe"><spring:message code="screen.rememberme.checkbox.title" /></label>
-            </p>
+        <p>
+        <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
+        <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
+        <br/>
+        <input id="publicWorkstation" name="publicWorkstation" value="false" tabindex="4" type="checkbox" />
+        <label for="publicWorkstation"><spring:message code="screen.welcome.label.publicstation" /></label>
+        <br/>
+        <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"  />
+        <label for="rememberMe"><spring:message code="screen.rememberme.checkbox.title" /></label>
+        </p>
         </section>
         -->
 
         <section class="row btn-row">
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
+            <input type="hidden" name="geolocation" />
 
-            <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="6" type="submit" />
+            <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />"
+                   tabindex="6" type="submit" />
             <input class="btn-reset" name="reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="7" type="reset" />
         </section>
     </form:form>

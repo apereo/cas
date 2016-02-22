@@ -14,12 +14,16 @@
     </listener>
 
     <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.GroovyWebApplicationContext</param-value>
+    </context-param>
+    
+    <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/spring-configuration/*.xml
+            /WEB-INF/spring-configuration/*.groovy
             /WEB-INF/deployerConfigContext.xml
-            <!-- this enables extensions and addons to contribute to overall CAS' application context
-                 by loading spring context files from classpath i.e. found in classpath jars, etc. -->
             classpath*:/META-INF/spring/*.xml
         </param-value>
     </context-param>

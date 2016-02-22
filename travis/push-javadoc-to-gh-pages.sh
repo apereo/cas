@@ -89,7 +89,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git add -f . > /dev/null
 
   echo -e "Committing changes...\n"
-  git commit -m "Published documentation to [gh-pages]. Build $TRAVIS_BUILD_NUMBER" > /dev/null
+  git commit -m "Published documentation from $TRAVIS_BRANCH to [gh-pages]. Build $TRAVIS_BUILD_NUMBER " > /dev/null
 
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null

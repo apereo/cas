@@ -2,7 +2,6 @@ package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
 import net.jradius.exception.TimeoutException;
 import net.jradius.packet.attribute.RadiusAttribute;
-import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.HandlerResult;
@@ -76,7 +75,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                         attributes.put(attribute.getAttributeName(), attribute.getValue().toString());
                     }
                     return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes),
-                            new ArrayList<MessageDescriptor>());
+                            new ArrayList<>());
                 }
                                 
                 if (!this.failoverOnAuthenticationFailure) {

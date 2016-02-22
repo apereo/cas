@@ -38,7 +38,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * Repository of principal attributes to be retrieved.
      */
     @NotNull
-    protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
+    protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
 
     /**
      * Factory to create the principal type.
@@ -99,15 +99,13 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
         final String principalId = extractPrincipalId(credential);
 
-        if (principalId == null) {
-            logger.debug("Got null for extracted principal ID; returning null.");
+        if (StringUtils.isBlank(principalId)) {
+            logger.debug("Principal id [{}] could not be found", principalId);
             return null;
         }
 
         logger.debug("Creating SimplePrincipal for [{}]", principalId);
-
         final Map<String, List<Object>> attributes = retrievePersonAttributes(principalId, credential);
-        logger.debug("Principal id [{}] could not be found", principalId);
 
         if (attributes == null || attributes.isEmpty()) {
             logger.debug("Principal id [{}] did not specify any attributes", principalId);
