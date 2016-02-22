@@ -59,6 +59,13 @@ public final class WebUtils {
     /** Flow scope attribute that determines if authn is happening at a public workstation. */
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
+    /** Scope parameter noting the authentication object. **/
+    private static final String PARAMETER_AUTHENTICATION = "authentication";
+    /** Scope parameter noting the authentication result builder. **/
+    private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
+    /** Scope parameter noting the result of the authentication. **/
+    private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
+
     /**
      * Instantiates a new web utils instance.
      */
@@ -284,8 +291,7 @@ public final class WebUtils {
      * @param context the context
      * @return the service ticket from request scope
      */
-    public static String getServiceTicketFromRequestScope(
-        final RequestContext context) {
+    public static String getServiceTicketFromRequestScope(final RequestContext context) {
         return context.getRequestScope().getString("serviceTicketId");
     }
 
@@ -446,7 +452,7 @@ public final class WebUtils {
      * @param ctx            the ctx
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext ctx) {
-        ctx.getConversationScope().put("authentication", authentication);
+        ctx.getConversationScope().put(PARAMETER_AUTHENTICATION, authentication);
     }
 
     /**
@@ -456,7 +462,7 @@ public final class WebUtils {
      * @return the authentication
      */
     public static Authentication getAuthentication(final RequestContext ctx) {
-        return ctx.getConversationScope().get("authentication", Authentication.class);
+        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION, Authentication.class);
     }
 
     /**
@@ -466,7 +472,7 @@ public final class WebUtils {
      * @param ctx     the ctx
      */
     public static void putAuthenticationResultBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
-        ctx.getConversationScope().put("authenticationResultBuilder", builder);
+        ctx.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT_BUILDER, builder);
     }
 
     /**
@@ -476,7 +482,7 @@ public final class WebUtils {
      * @return the authentication result builder
      */
     public static AuthenticationResultBuilder getAuthenticationResultBuilder(final RequestContext ctx) {
-        return ctx.getConversationScope().get("authenticationResultBuilder", AuthenticationResultBuilder.class);
+        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT_BUILDER, AuthenticationResultBuilder.class);
     }
 
     /**
@@ -486,7 +492,7 @@ public final class WebUtils {
      * @param context               the context
      */
     public static void putAuthenticationResult(final AuthenticationResult authenticationResult, final RequestContext context) {
-        context.getConversationScope().put("authenticationResult", authenticationResult);
+        context.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT, authenticationResult);
     }
 
     /**
@@ -496,7 +502,7 @@ public final class WebUtils {
      * @return the authentication context builder
      */
     public static AuthenticationResult getAuthenticationResult(final RequestContext ctx) {
-        return ctx.getConversationScope().get("authenticationResult", AuthenticationResult.class);
+        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT, AuthenticationResult.class);
     }
     
     /**
