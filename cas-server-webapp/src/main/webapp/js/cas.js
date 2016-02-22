@@ -41,7 +41,6 @@ function logGeoLocationError(error) {
 function showGeoPosition(position) {
     $('[name="geolocation"]').val(position.coords.latitude + ","
         + position.coords.longitude + "," + position.coords.accuracy + "," + position.timestamp);
-    console.log($('[name="geolocation"]').val());
 }
 
 function areCookiesEnabled() {

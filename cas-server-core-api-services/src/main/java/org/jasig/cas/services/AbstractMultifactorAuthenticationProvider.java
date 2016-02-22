@@ -43,7 +43,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         }
 
         if (failureMode == RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
-            logger.warn("{} could not be reached. Authentication shall fail for {}", getClass().getSimpleName());
+            logger.warn("{} could not be reached. Authentication shall fail for {}", getClass().getSimpleName(), service.getServiceId());
             throw new AuthenticationException();
         }
 

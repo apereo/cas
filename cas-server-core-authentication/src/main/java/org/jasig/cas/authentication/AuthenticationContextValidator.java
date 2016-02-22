@@ -32,7 +32,7 @@ import java.util.Optional;
 @Component("authenticationContextValidator")
 public final class AuthenticationContextValidator {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
@@ -72,8 +72,13 @@ public final class AuthenticationContextValidator {
         final Collection<Object> contexts = CollectionUtils.convertValueToCollection(ctxAttr);
         logger.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap = getAllMultifactorAuthenticationProvidersFromApplicationContext();
-        final Optional<MultifactorAuthenticationProvider> requestedProvider =
+        final Map<String, MultifactorAuthenticationProvider> providerMap = 
+                getAllMultifactorAuthenticationProvidersFromApplicationContext();
+        if (providerMap == null) {
+            logger.debug("No providers have been configured");
+            return new Pair(false, Optional.empty());
+        }
+        final Optional<MultifactorAuthenticationProvider> requestedProvider = 
                 locateRequestedProvider(providerMap.values(), requestedContext);
 
         if (!requestedProvider.isPresent()) {
@@ -117,8 +122,8 @@ public final class AuthenticationContextValidator {
                 if (!requestedProvider.get().verify(service)) {
                     logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
                                  + "since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
-                                 + "of the present authentication context",
-                            mode, service.getServiceId(), requestedProvider);
+                                 + "of the present authentication context", service.getServiceId(),
+                            mode, requestedProvider, requestedContext);
                     return new Pair(true, requestedProvider);
                 }
                 break;
@@ -126,8 +131,8 @@ public final class AuthenticationContextValidator {
                 if (!requestedProvider.get().verify(service)) {
                     logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
                                  + "since provider {} is unavailable at the moment, CAS will consider the authentication satisfied "
-                                 + "without the presence of {}",
-                            mode, service.getServiceId(), requestedProvider);
+                                 + "without the presence of {}", service.getServiceId(),
+                            mode, requestedProvider, requestedContext);
                     return new Pair(true, satisfiedProviders.stream().findFirst());
                 }
                 break;
@@ -156,18 +161,16 @@ public final class AuthenticationContextValidator {
                 authentication.getAttributes().get(this.authenticationContextAttribute));
 
         if (contexts == null || contexts.isEmpty()) {
+            logger.debug("No authentication context could be determined based on authentication attribute {}", 
+                    this.authenticationContextAttribute);
             return null;
         }
 
-        final Iterator<MultifactorAuthenticationProvider> iterator = providers.iterator();
-        for (final Object context : contexts) {
-            while (iterator.hasNext()) {
-                final MultifactorAuthenticationProvider provider = iterator.next();
-                if (!provider.getId().equals(context)) {
-                    iterator.remove();
-                }
-            }
-        }
+        contexts.stream().forEach(context -> 
+            providers.removeIf(provider -> !provider.getId().equals(context))
+        );
+        
+        logger.debug("Found {} providers that may satisfy the context", providers.size());
         return providers;
     }
 
