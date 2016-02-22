@@ -36,14 +36,7 @@ public class CasAuditTrailConfiguration {
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
-
-    /**
-     * The Audit trail manager.
-     */
-    @Autowired
-    @Qualifier("auditTrailManager")
-    private AuditTrailManager auditTrailManager;
-
+    
     /**
      * The Audit resource resolver map.
      */
@@ -76,7 +69,7 @@ public class CasAuditTrailConfiguration {
     @Bean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect(this.appCode,
-                this.principalResolver, ImmutableList.of(this.auditTrailManager), auditActionResolverMap,
+                this.principalResolver, ImmutableList.of(auditTrailManager()), auditActionResolverMap,
                 auditResourceResolverMap);
 
     }
