@@ -7,7 +7,6 @@ import java.time.ZonedDateTime;
  * Interface for the generic concept of a ticket.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 public interface Ticket extends Serializable {

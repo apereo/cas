@@ -38,17 +38,18 @@ Two grant types are supported:
 
 ### The authorization code grant type has three steps:
 
-1) /cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK returns the code as a parameter of the CALLBACK url
+1) `/cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the CALLBACK url
 
-2) /cas/oauth2.0/accessToken?client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK returns the access token
+2) `/cas/oauth2.0/accessToken?client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
 
-3) /cas/oauth2.0/profile?access_token=TOKEN returns the user profile.
+3) `/cas/oauth2.0/profile?access_token=TOKEN` returns the user profile.
 
 ### The implicit grant type has two steps:
 
-1) /cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK returns the access token as an anchor parameter of the CALLBACK url
+1) `/cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the
+ CALLBACK url
 
-2) /cas/oauth2.0/profile?access_token=TOKEN returns the user profile.
+2) `/cas/oauth2.0/profile?access_token=TOKEN` returns the user profile.
 
 
 ## Add OAuth Clients
@@ -65,6 +66,25 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "name" : "HTTPS and IMAPS",
   "id" : 10000001
 }
+```
+
+## OAuth Code Expiration Policy
+
+The expiration policy for OAuth codes are controlled by the following properties:
+
+```properties
+# oauth.code.numberOfUses=1
+# oauth.code.timeToKillInSeconds=1
+```
+
+
+## OAuth Access Token Expiration Policy
+
+The expiration policy for OAuth access tokens are controlled by the following properties:
+
+```properties
+# oauth.access.token.maxTimeToLiveInSeconds=28800
+# oauth.access.token.timeToKillInSeconds=7200
 ```
 
 # OpenID Authentication

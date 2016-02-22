@@ -120,6 +120,6 @@ public final class GenerateServiceTicketAction extends AbstractAction {
      * @return the event
      */
     private Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap<Object>("error", error));
+        return new Event(this, id, new LocalAttributeMap<>("error", error));
     }
 }
