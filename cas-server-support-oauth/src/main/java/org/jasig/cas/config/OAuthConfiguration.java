@@ -27,7 +27,12 @@ public class OAuthConfiguration {
      */
     @Autowired
     @Qualifier("oAuthUserAuthenticator")
+    private UsernamePasswordAuthenticator oAuthUserAuthenticator;
+
+    @Autowired
+    @Qualifier("oAuthClientAuthenticator")
     private UsernamePasswordAuthenticator oAuthClientAuthenticator;
+
 
     /**
      * The Cas login url.
@@ -69,7 +74,7 @@ public class OAuthConfiguration {
         directFormClient.setUsernameParameter("client_id");
         directFormClient.setPasswordParameter("client_secret");
 
-        final DirectFormClient userFormClient = new DirectFormClient(this.oAuthClientAuthenticator);
+        final DirectFormClient userFormClient = new DirectFormClient(this.oAuthUserAuthenticator);
         userFormClient.setName("userForm");
 
         return new Config(this.callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
