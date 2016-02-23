@@ -27,13 +27,13 @@ public final class OAuthClientAuthenticator implements UsernamePasswordAuthentic
     @NotNull
     @Autowired
     @Qualifier("oAuthValidator")
-    protected OAuthValidator validator;
+    private OAuthValidator validator;
 
     /** The services manager. */
     @NotNull
     @Autowired
     @Qualifier("servicesManager")
-    protected ServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials) {
