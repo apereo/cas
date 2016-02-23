@@ -4,10 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Joe McCall
+ * @since 4.3
  */
 public class DelegatingPasswordEncoderTests {
 
@@ -19,11 +20,11 @@ public class DelegatingPasswordEncoderTests {
     }
 
     @Test
-    public void testEncode() throws Exception {
+    public void verifyEncode() throws Exception {
 
         final String rawPassword = "expectedRawPassword";
         final String expectedEncodedPassword = "expectedEncodedPassword";
-        MockPasswordEncoder mockPasswordEncoder = new MockPasswordEncoder();
+        final MockPasswordEncoder mockPasswordEncoder = new MockPasswordEncoder();
         mockPasswordEncoder.setExpectedEncodedPassword(expectedEncodedPassword);
         passwordEncoder.setSpringPasswordEncoder(mockPasswordEncoder);
 
@@ -37,15 +38,15 @@ public class DelegatingPasswordEncoderTests {
     }
 
     @Test
-    public void testMatches() throws Exception {
+    public void verifyMatches() throws Exception {
         final Boolean expectedMatches = true;
 
-        MockPasswordEncoder mockPasswordEncoder = new MockPasswordEncoder();
+        final MockPasswordEncoder mockPasswordEncoder = new MockPasswordEncoder();
         mockPasswordEncoder.setExpectedMatches(expectedMatches);
         passwordEncoder.setSpringPasswordEncoder(mockPasswordEncoder);
 
         assertEquals("password matches as expected",
-                (Object) expectedMatches,
+                expectedMatches,
                 passwordEncoder.matches("", ""));
 
         assertEquals("collaborator has been called",
@@ -56,27 +57,27 @@ public class DelegatingPasswordEncoderTests {
     /**
      * Simple mock class to test collaboration with the spring password encoder
      */
-    private class MockPasswordEncoder implements PasswordEncoder {
+    private static class MockPasswordEncoder implements PasswordEncoder {
 
         private String expectedEncodedPassword;
         private Boolean expectedMatches;
 
-        private int encodeCalledCount = 0;
-        private int matchesCalledCount = 0;
+        private int encodeCalledCount;
+        private int matchesCalledCount;
 
         @Override
-        public String encode(CharSequence rawPassword) {
+        public String encode(final CharSequence rawPassword) {
             ++encodeCalledCount;
             return expectedEncodedPassword;
         }
 
         @Override
-        public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
             ++matchesCalledCount;
             return expectedMatches;
         }
 
-        public void setExpectedEncodedPassword(String expectedEncodedPassword) {
+        public void setExpectedEncodedPassword(final String expectedEncodedPassword) {
             this.expectedEncodedPassword = expectedEncodedPassword;
         }
 
@@ -84,7 +85,7 @@ public class DelegatingPasswordEncoderTests {
             return encodeCalledCount;
         }
 
-        public void setExpectedMatches(Boolean expectedMatches) {
+        public void setExpectedMatches(final Boolean expectedMatches) {
             this.expectedMatches = expectedMatches;
         }
 
