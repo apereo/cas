@@ -12,8 +12,8 @@
        http://www.springframework.org/schema/webflow-config
        http://www.springframework.org/schema/webflow-config/spring-webflow-config.xsd">
 
-    <webflow:flow-registry id="yubikeyFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
-        <webflow:flow-location-pattern value="/mfa-yubikey/*-webflow.xml"/>
+    <webflow:flow-registry id="radiusFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+        <webflow:flow-location-pattern value="/mfa-radius/*-webflow.xml"/>
     </webflow:flow-registry>
 
 </beans>
