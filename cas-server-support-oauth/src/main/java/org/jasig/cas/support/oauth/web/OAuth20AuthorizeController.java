@@ -2,6 +2,7 @@ package org.jasig.cas.support.oauth.web;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
@@ -54,6 +55,8 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         logger.debug("bypassApprovalParameter: {}", bypassApprovalParameter);
 
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(clientId, registeredService);
+        
         final boolean bypassApprovalService = registeredService.isBypassApprovalPrompt();
         logger.debug("bypassApprovalService: {}", bypassApprovalService);
 
