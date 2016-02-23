@@ -2,6 +2,8 @@ package org.jasig.cas.config;
 
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
+import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
+import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -18,6 +21,7 @@ import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.XmlViewResolver;
 import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
+import org.springframework.webflow.executor.FlowExecutor;
 
 import javax.validation.MessageInterpolator;
 import java.util.Locale;
@@ -68,7 +72,7 @@ public class CasWebAppConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
+    
     /**
      * The Default locale.
      */
@@ -186,4 +190,11 @@ public class CasWebAppConfiguration {
         bean.setParamName(this.localeParamName);
         return bean;
     }
+
+
+    @Bean(name = "simpleControllerHandlerAdapter")
+    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
+        return new SimpleControllerHandlerAdapter();
+    }
+
 }
