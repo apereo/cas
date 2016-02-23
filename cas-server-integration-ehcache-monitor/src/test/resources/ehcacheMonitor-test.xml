@@ -34,8 +34,8 @@
     <property name="timeToLive" value="300" />
   </bean>
 
-  <bean id="monitor" class="org.jasig.cas.monitor.EhCacheMonitor">
-    <constructor-arg index="0" ref="testCache" />
-  </bean>
+  <bean id="monitor" class="org.jasig.cas.monitor.EhCacheMonitor"
+        c:ticketGrantingTicketsCache-ref="testCache" />
+  
 
 </beans>

@@ -102,11 +102,12 @@ public final class OAuth20AccessTokenControllerTests {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     private RequiresAuthenticationInterceptor requiresAuthenticationInterceptor;
 
     @Before
     public void setUp() {
-        requiresAuthenticationInterceptor = new RequiresAuthenticationInterceptor(oauthSecConfig, "clientBasicAuth,clientForm,userForm");
         clearAllServices();
     }
 
