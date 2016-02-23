@@ -26,9 +26,7 @@ It should be the same configuration you already use in your CAS server in the `W
 
 ## Authentication Method
 
-By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this 
-documentation. However, you could change the authentication method by 
-overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
+By default, the `cas-management-webapp` is configured to authenticate against a CAS server. 
 
 ## Configuration
 The following properties are applicable and must be adjusted by overriding the default `WEB-INF/cas-management.properties` file:
