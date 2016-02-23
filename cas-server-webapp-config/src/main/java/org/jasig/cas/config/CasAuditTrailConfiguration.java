@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @since 4.3.0
  */
 @Configuration("casAuditTrailConfiguration")
+@Lazy(true)
 public class CasAuditTrailConfiguration {
     /**
      * The App code.
