@@ -64,6 +64,12 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         }
     }
 
+    @Override
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        final String encodedRawPassword = encode(rawPassword.toString());
+        return encodedPassword.equals(encodedRawPassword);
+    }
+
     public void setCharacterEncoding(final String characterEncoding) {
         this.characterEncoding = characterEncoding;
     }
