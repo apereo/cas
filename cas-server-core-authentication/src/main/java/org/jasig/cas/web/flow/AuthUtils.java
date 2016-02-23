@@ -190,9 +190,9 @@ public final class AuthUtils {
 	  private static ThreadLocal<String> threadLocal = new ThreadLocal<String>();
 	  
 	  /**
-	   * Sets the credential
+	   * Sets the credential, user ID
 	   * 
-	   * @param credential
+	   * @param credential the string of user ID
 	   */
 	  public static void set(String credential) {
 		  threadLocal.set(credential);

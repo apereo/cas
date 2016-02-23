@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.wavity.broker.api.provider.BrokerProvider;
+
 /**
  * This class is for creating Wavity environment for using broker API
  * 
@@ -70,6 +72,8 @@ public class WavityEnvironmentContextListener implements ServletContextListener 
 	    WavityEnvInitializer wavityEnvInitializer = new WavityEnvInitializer();
 	    try {
 	    	wavityEnvInitializer.setUp();
+	    	final BrokerProvider brokerProvider = BrokerProvider.getInstance();
+	    	brokerProvider.onCreate();
 	    } catch (Exception e) {
 	    	log.error("failed to initialize wavity enviroment");
 	    }

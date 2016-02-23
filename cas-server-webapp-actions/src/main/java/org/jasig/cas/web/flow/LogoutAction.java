@@ -120,9 +120,8 @@ public final class LogoutAction extends AbstractLogoutAction {
 			logger.error("*** Tenant ID can't be empty or null ***");
 			return;
 		}
-		final BrokerProvider brokerProvider = BrokerProvider.getInstance();
 		try {
-			brokerProvider.onCreate();
+			final BrokerProvider brokerProvider = BrokerProvider.getInstance();
 			final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
 			attr.put(EventAttribute.MESSAGE, String.format("The user %s logged out", AuthUtils.getCredential()));
 			attr.put(EventAttribute.ACTOR_ID, tenantId);

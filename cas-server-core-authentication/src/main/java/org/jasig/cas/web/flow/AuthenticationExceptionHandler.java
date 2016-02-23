@@ -160,9 +160,8 @@ public class AuthenticationExceptionHandler {
     		logger.error("*** the message is required to pubish an error message ***");
     		return;
     	}
-    	final BrokerProvider brokerProvider = BrokerProvider.getInstance();
     	try {
-			brokerProvider.onCreate();
+    		final BrokerProvider brokerProvider = BrokerProvider.getInstance();
 			final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
 			attr.put(EventAttribute.MESSAGE, String.format("Credential: %s, message: %s", AuthUtils.getCredential(), message));
 			attr.put(EventAttribute.TIMESTAMP, Long.toString(Calendar.getInstance().getTimeInMillis()));

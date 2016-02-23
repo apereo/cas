@@ -59,16 +59,15 @@ public class ProducingMessageAction extends AbstractAction {
 			return error();
 		}
 
-		final BrokerProvider brokerProvider = BrokerProvider.getInstance();
-		brokerProvider.onCreate();
-		final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
-		attr.put(EventAttribute.MESSAGE, String.format("The user %s logged in successfully", credential.toString()));
-		attr.put(EventAttribute.ACTOR_NAME, tenantId);
-		attr.put(EventAttribute.TIMESTAMP, Long.toString(Calendar.getInstance().getTimeInMillis()));
-		attr.put(EventAttribute.IS_NOTIFY_TARGET, true);
-		attr.put(EventAttribute.EVENT_RESULT, "success");
-		attr.put(EventAttribute.EC_ID, "Test EC ID");
 		try {
+			final BrokerProvider brokerProvider = BrokerProvider.getInstance();
+			final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
+			attr.put(EventAttribute.MESSAGE, String.format("The user %s logged in successfully", credential.toString()));
+			attr.put(EventAttribute.ACTOR_NAME, tenantId);
+			attr.put(EventAttribute.TIMESTAMP, Long.toString(Calendar.getInstance().getTimeInMillis()));
+			attr.put(EventAttribute.IS_NOTIFY_TARGET, true);
+			attr.put(EventAttribute.EVENT_RESULT, "success");
+			attr.put(EventAttribute.EC_ID, "Test EC ID");
 			brokerProvider.publish(TopicType.ADMIN, EventType.EVENT_TYPE_SSO_AUTHENTICATION, attr);
 		} catch (final Exception e) {
 			logger.error("broker failed to publish event", e);
