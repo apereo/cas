@@ -51,7 +51,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
         builder.append(request.getRequestURI());
         builder.append('?');
         @SuppressWarnings("unchecked")
-        final Map<String, Object> flowParams = new LinkedHashMap<String, Object>(request.getParameterMap());
+        final Map<String, Object> flowParams = new LinkedHashMap<>(request.getParameterMap());
         flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
         appendQueryParameters(builder, flowParams, getEncodingScheme(request));
         return builder.toString();

@@ -74,7 +74,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Test
     public void verifyAddRegisteredServiceNoValues() throws Exception {
         final BindingResult result = mock(BindingResult.class);
-        when(result.getModel()).thenReturn(new HashMap<String, Object>());
+        when(result.getModel()).thenReturn(new HashMap<>());
         when(result.hasErrors()).thenReturn(true);
         
         final ModelMap model = new ModelMap();

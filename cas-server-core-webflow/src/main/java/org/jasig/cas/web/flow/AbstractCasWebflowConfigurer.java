@@ -66,6 +66,9 @@ import java.util.List;
  */
 @Component("casWebflowConfigurer")
 public abstract class AbstractCasWebflowConfigurer {
+    /** Authentication failure result. */
+    public static final String EVENT_AUTHENTICATION_FAILURE = "authenticationFailure";
+
     /**
      * The transition state 'success'.
      */

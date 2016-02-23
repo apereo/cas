@@ -4,6 +4,7 @@ import org.jasig.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0.0
  */
 @Component("multiTimeUseOrTimeoutExpirationPolicy")
-public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -5704993954986738308L;
@@ -32,15 +33,8 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
-    /** The time to kill in milliseconds. */
-    @Value("#{${st.timeToKillInSeconds:10}*1000}")
-    private final long timeToKillInMilliSeconds;
-
-    /** The maximum number of uses before expiration. */
-
-    @Value("${st.numberOfUses:1}")
-    private final int numberOfUses;
-
+    private long timeToKillInMilliSeconds;
+    private int numberOfUses;
 
     /** No-arg constructor for serialization support. */
     private MultiTimeUseOrTimeoutExpirationPolicy() {
@@ -99,5 +93,51 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
             return true;
         }
         return false;
+    }
+
+    /**
+     * The Proxy ticket expiration policy.
+     */
+    @Component("proxyTicketExpirationPolicy")
+    public static class ProxyTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+
+        private static final long serialVersionUID = -5814201080268311070L;
+
+        /**
+         * Instantiates a new proxy ticket expiration policy.
+         *
+         * @param numberOfUses             the number of uses
+         * @param timeToKillInMilliSeconds the time to kill in milli seconds
+         */
+        @Autowired
+        public ProxyTicketExpirationPolicy(@Value("${pt.numberOfUses:1}")
+                                             final int numberOfUses,
+                                             @Value("#{${pt.timeToKillInSeconds:10}*1000}")
+                                             final long timeToKillInMilliSeconds) {
+            super(numberOfUses, timeToKillInMilliSeconds);
+        }
+    }
+
+    /**
+     * The Service ticket expiration policy.
+     */
+    @Component("serviceTicketExpirationPolicy")
+    public static class ServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+
+        private static final long serialVersionUID = -5814201080268311070L;
+
+        /**
+         * Instantiates a new Service ticket expiration policy.
+         *
+         * @param numberOfUses             the number of uses
+         * @param timeToKillInMilliSeconds the time to kill in milli seconds
+         */
+        @Autowired
+        public ServiceTicketExpirationPolicy(@Value("${st.numberOfUses:1}")
+                                             final int numberOfUses,
+                                             @Value("#{${st.timeToKillInSeconds:10}*1000}")
+                                             final long timeToKillInMilliSeconds) {
+            super(numberOfUses, timeToKillInMilliSeconds);
+        }
     }
 }

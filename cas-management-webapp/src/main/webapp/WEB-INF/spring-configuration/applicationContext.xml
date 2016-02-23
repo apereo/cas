@@ -12,39 +12,60 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
-    <description>
-        This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
-        modify this unless you know what you're doing!
-    </description>
-
+    
     <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.pac4j.springframework.web" />
     <mvc:annotation-driven />
+    
+    <!-- 
+    Security Context Configuration 
+    -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/callback*" />
+            <mvc:exclude-mapping path="/logout*" />
+            <mvc:exclude-mapping path="/authorizationFailure.html" />
+            <ref bean="casManagementSecurityInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
 
-    <bean id="handlerMappingC"
-          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
-          p:alwaysUseFullPath="true">
-        <property name="mappings">
-            <util:properties>
-                <prop key="/*.html">passThroughController</prop>
-            </util:properties>
-        </property>
-    </bean>
+    <!-- 
+    Audit Context Configuration 
+    -->
+    <aop:aspectj-autoproxy/>
+    <util:map id="auditActionResolverMap">
+        <entry key="DELETE_SERVICE_ACTION_RESOLVER">
+            <ref bean="deleteServiceActionResolver" />
+        </entry>
+        <entry key="SAVE_SERVICE_ACTION_RESOLVER">
+            <ref bean="saveServiceActionResolver" />
+        </entry>
+    </util:map>
 
-    <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+    <util:map id="auditResourceResolverMap">
+        <entry key="DELETE_SERVICE_RESOURCE_RESOLVER">
+            <ref bean="deleteServiceResourceResolver" />
+        </entry>
+        <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
+            <ref bean="saveServiceResourceResolver" />
+        </entry>
+    </util:map>
+    
+    <!--
+    CAS Core Context Configuration
+    -->
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators" />
-    <util:list id="monitorsList" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />
-    <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
-    <util:list id="serviceFactoryList" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <util:list id="serviceFactoryList" />
 </beans>
