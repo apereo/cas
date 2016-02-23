@@ -2,13 +2,14 @@ package org.jasig.cas.support.oauth.web;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeFactory;
-
+import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.jasig.cas.util.EncodingUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -54,12 +55,20 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         logger.debug("bypassApprovalParameter: {}", bypassApprovalParameter);
 
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        try {
+            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(clientId, registeredService);
+        } catch (final UnauthorizedServiceException e) {
+            logger.error(e.getMessage(), e);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
+        }
+        
         final boolean bypassApprovalService = registeredService.isBypassApprovalPrompt();
         logger.debug("bypassApprovalService: {}", bypassApprovalService);
 
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
         final UserProfile profile = manager.get(true);
+        
         if (profile == null) {
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
@@ -70,39 +79,54 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
             final Service service = createService(registeredService);
 
             final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
-            String callbackUrl = redirectUri;
-            // authorization code grant type
+            final String callbackUrl;
             if (isResponseType(responseType, OAuthResponseType.CODE)) {
-                final OAuthCode code = oAuthCodeFactory.create(service, authentication);
-                logger.debug("Generated OAuth code: {}", code);
-                ticketRegistry.addTicket(code);
-
-                callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
-                if (state != null) {
-                    callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.STATE, state);
-                }
+                callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(state, authentication, service, redirectUri);
             } else {
-                // implicit grant type
-                final AccessToken accessToken = generateAccessToken(service, authentication);
-                logger.debug("Generated access token: {}", accessToken);
-
-                callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + timeout;
-                if (state != null) {
-                    callbackUrl += "&state=" + EncodingUtils.urlEncode(state);
-                }
+                callbackUrl = buildCallbackUrlForImplicitResponseType(state, authentication, service, redirectUri);
             }
             logger.debug("callbackUrl: {}", callbackUrl);
             return OAuthUtils.redirectTo(callbackUrl);
-        } else {
-            // redirect to approval screen
-            String callbackUrl = context.getFullRequestURL();
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.BYPASS_APPROVAL_PROMPT, "true");
-            final Map<String, Object> model = new HashMap<>();
-            model.put("callbackUrl", callbackUrl);
-            model.put("serviceName", registeredService.getName());
-            logger.debug("callbackUrl: {}", callbackUrl);
-            return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
         }
+
+        return redirectToApproveView(registeredService, context);
+    }
+
+    private String buildCallbackUrlForImplicitResponseType(final String state, final Authentication authentication, 
+                                                             final Service service, final String redirectUri) {
+        final AccessToken accessToken = generateAccessToken(service, authentication);
+        logger.debug("Generated Oauth access token: {}", accessToken);
+
+        String callbackUrl = redirectUri;
+        callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + timeout;
+        if (state != null) {
+            callbackUrl += "&state=" + EncodingUtils.urlEncode(state);
+        }
+        return callbackUrl;
+    }
+
+    private String buildCallbackUrlForAuthorizationCodeResponseType(final String state, final Authentication authentication,
+                                                                    final Service service, final String redirectUri) {
+        final OAuthCode code = oAuthCodeFactory.create(service, authentication);
+        logger.debug("Generated OAuth code: {}", code);
+        ticketRegistry.addTicket(code);
+
+        String callbackUrl = redirectUri;
+        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
+        if (state != null) {
+            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.STATE, state);
+        }
+        return callbackUrl;
+    }
+
+    private ModelAndView redirectToApproveView(final OAuthRegisteredService registeredService, final J2EContext context) {
+        String callbackUrl = context.getFullRequestURL();
+        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.BYPASS_APPROVAL_PROMPT, "true");
+        final Map<String, Object> model = new HashMap<>();
+        model.put("callbackUrl", callbackUrl);
+        model.put("serviceName", registeredService.getName());
+        logger.debug("callbackUrl: {}", callbackUrl);
+        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
     }
 
     /**

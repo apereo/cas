@@ -1,12 +1,17 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.BasicIdentifiableCredential;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
@@ -22,6 +27,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
@@ -99,7 +105,20 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      */
     protected Authentication createAuthentication(final UserProfile profile) {
         final Principal principal = principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
-        return new OAuthAuthentication(ZonedDateTime.now(), principal);
+        final String authenticator = profile.getClass().getCanonicalName();
+        final CredentialMetaData metadata = new BasicCredentialMetaData(
+                new BasicIdentifiableCredential(profile.getId()));
+        final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, principal, new ArrayList<>());
+
+        return DefaultAuthenticationBuilder.newInstance()
+                .addAttribute("permissions", profile.getPermissions())
+                .addAttribute("roles", profile.getRoles())
+                .addCredential(metadata)
+                .setPrincipal(principal)
+                .setAuthenticationDate(ZonedDateTime.now())
+                .addSuccess(profile.getClass().getCanonicalName(), handlerResult)
+                .build();
+        
     }
 
     public ServicesManager getServicesManager() {
