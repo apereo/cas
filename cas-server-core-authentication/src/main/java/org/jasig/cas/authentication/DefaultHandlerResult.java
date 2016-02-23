@@ -3,11 +3,11 @@ package org.jasig.cas.authentication;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
@@ -83,17 +83,28 @@ public class DefaultHandlerResult implements HandlerResult {
             final CredentialMetaData metaData,
             final Principal p,
             final List<MessageDescriptor> warnings) {
-        Assert.notNull(source, "Source cannot be null.");
+        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), 
+                metaData, p, warnings);
+    }
+    
+    /**
+     * Instantiates a new Default handler result.
+     *
+     * @param handlerName the handler name
+     * @param metaData    the meta data
+     * @param p           the p
+     * @param warnings    the warnings
+     */
+    public DefaultHandlerResult(
+            final String handlerName,
+            final CredentialMetaData metaData,
+            final Principal p, final List<MessageDescriptor> warnings) {
         Assert.notNull(metaData, "Credential metadata cannot be null.");
-        this.handlerName = source.getName();
-        if (!StringUtils.hasText(this.handlerName)) {
-            this.handlerName = source.getClass().getSimpleName();
-        }
+        this.handlerName = handlerName;
         this.credentialMetaData = metaData;
         this.principal = p;
         this.warnings = warnings;
     }
-
     @Override
     public String getHandlerName() {
         return this.handlerName;
