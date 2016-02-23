@@ -1,8 +1,6 @@
 description = 'Apereo CAS Web Application Configuration'
 dependencies {
     compile libraries.spring
-    compile libraries.springboot
-    compile libraries.springcloud
     compile libraries.hibernate
     compile libraries.commons
     compile libraries.cassecurityfilter
