@@ -43,7 +43,6 @@ public final class OAuthUserAuthenticator implements UsernamePasswordAuthenticat
             final Principal principal = authentication.getPrincipal();
 
             final OAuthUserProfile profile = new OAuthUserProfile();
-            credentials.setUserProfile(profile);
             profile.setId(principal.getId());
             final Map<String, Object> attributes = principal.getAttributes();
             if (attributes != null) {
