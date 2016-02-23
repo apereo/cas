@@ -858,6 +858,9 @@ ext.libraries = [
                 "commons-codec:commons-codec:$commonsCodecVersion",
                 "org.springframework:spring-webmvc:$springVersion"
         ],
+
+        springsecurity   : "org.springframework.security:spring-security-core:$springSecurityVersion",
+
         validationapi    : "javax.validation:validation-api:$javaxValidationVersion",
         xmlapis          : "xml-apis:xml-apis:$xmlapisVersion",
         yubicoapi        : [
