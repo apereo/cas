@@ -10,11 +10,7 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/webflow-config
-       http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.4.xsd">
-
-    <bean id="casDuoLoginView" class="org.springframework.web.servlet.view.JstlView"
-          p:url="/WEB-INF/view/jsp/default/ui/casDuoLoginView.jsp"/>
-
+       http://www.springframework.org/schema/webflow-config/spring-webflow-config.xsd">
 
     <webflow:flow-registry id="duoFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
         <webflow:flow-location-pattern value="/mfa-duo/*-webflow.xml"/>
