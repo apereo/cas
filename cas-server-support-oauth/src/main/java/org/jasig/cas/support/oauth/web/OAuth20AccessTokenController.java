@@ -60,7 +60,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             // resource owner password grant type
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
-            final OAuthUserProfile profile = (OAuthUserProfile) manager.get(true);
+            final UserProfile profile = manager.get(true);
             final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
             service = createService(OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId));
             authentication = createAuthentication(profile);
