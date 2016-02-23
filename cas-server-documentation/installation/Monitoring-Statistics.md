@@ -4,20 +4,7 @@ title: CAS - Monitoring & Statistics
 ---
 
 # Monitoring
-The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. 
-Access to the endpoint is secured by pac4j at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
-
-```xml
-<mvc:interceptor>
-    <mvc:mapping path="/status/**" />
-    <mvc:mapping path="/statistics/**" />
-    <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor">
-        <constructor-arg name="config" ref="config" />
-        <constructor-arg name="clientName" value="IpClient" />
-    </bean>
-</mvc:interceptor>
-```
-
+The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software.
 Access is granted the following settings in `cas.properties` file:
 
 ```bash
@@ -88,7 +75,6 @@ The following settings are available:
 <util:list id="monitorsList">
     <ref bean="ehcacheMonitor" />
 </util:list>
-<alias name="ticketGrantingTicketsCache" alias="ehcacheMonitorCache" />
 ```
 
 The following settings are available:

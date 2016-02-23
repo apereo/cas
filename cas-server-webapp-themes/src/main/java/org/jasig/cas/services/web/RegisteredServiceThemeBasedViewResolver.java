@@ -100,8 +100,7 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
         }
         view.setRequestContextAttribute(getRequestContextAttribute());
         view.setAttributesMap(getAttributesMap());
-
-        //From InternalResourceViewResolver.buildView
+        
         view.setAlwaysInclude(false);
         view.setExposeContextBeansAsAttributes(false);
         view.setPreventDispatchLoop(true);

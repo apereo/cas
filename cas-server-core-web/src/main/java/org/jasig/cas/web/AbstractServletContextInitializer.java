@@ -105,7 +105,7 @@ public abstract class AbstractServletContextInitializer
         this.applicationContext = applicationContext;
 
         try {
-            logger.info("Initializing {} root application context", contextInitializerName);
+            logger.debug("Initializing {} root application context", contextInitializerName);
             initializeRootApplicationContext();
             logger.info("Initialized {} root application context successfully", contextInitializerName);
 
