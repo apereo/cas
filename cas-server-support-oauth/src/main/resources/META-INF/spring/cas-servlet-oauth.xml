@@ -7,46 +7,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-       
-       <context:component-scan base-package="org.pac4j.springframework.web" />
 
-       <bean id="oauthSecConfig" class="org.pac4j.core.config.Config"
-             c:callbackUrl="${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize">
-              <constructor-arg name="clients">
-                     <array>
-                            <ref bean="oauthCasClient" />
-                            <ref bean="clientBasicAuth" />
-                            <ref bean="clientForm" />
-                            <ref bean="userForm" />
-                     </array>
-              </constructor-arg>
-       </bean>
+    <context:component-scan base-package="org.pac4j.springframework.web"/>
 
-       <bean id="oauthCasClient" class="org.pac4j.cas.client.CasClient" p:casLoginUrl="${server.prefix:http://localhost:8080/cas}/login"
-             p:name="CasOAuthClient" />
-
-       <bean id="clientBasicAuth" class="org.pac4j.http.client.direct.DirectBasicAuthClient" p:authenticator-ref="oAuthClientAuthenticator"
-             p:name="clientBasicAuth" />
-
-       <bean id="clientForm" class="org.pac4j.http.client.direct.DirectFormClient" p:authenticator-ref="oAuthClientAuthenticator"
-             p:name="clientForm" p:usernameParameter="client_id" p:passwordParameter="client_secret" />
-
-       <bean id="userForm" class="org.pac4j.http.client.direct.DirectFormClient" p:authenticator-ref="oAuthUserAuthenticator"
-             p:name="userForm" />
-
-       <mvc:interceptors>
-              <mvc:interceptor>
-                     <mvc:mapping path="/oauth2.0/authorize*" />
-                     <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor"
-                           c:config-ref="oauthSecConfig"
-                           c:clientName="CasOAuthClient" />
-              </mvc:interceptor>
-              <mvc:interceptor>
-                     <mvc:mapping path="/oauth2.0/accessToken*" />
-                     <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor"
-                           c:config-ref="oauthSecConfig"
-                           c:clientName="clientBasicAuth,clientForm,userForm" />
-              </mvc:interceptor>
-       </mvc:interceptors>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/oauth2.0/authorize*"/>
+            <ref bean="requiresAuthenticationAuthorizeInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/oauth2.0/accessToken*" />
+            <ref bean="requiresAuthenticationAccessTokenInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>
