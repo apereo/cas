@@ -209,11 +209,21 @@ public class CasWebflowContextConfiguration {
         }
     }
 
+    /**
+     * Login flow url handler cas default flow url handler.
+     *
+     * @return the cas default flow url handler
+     */
     @Bean(name = "loginFlowUrlHandler")
     public CasDefaultFlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
     }
 
+    /**
+     * Logout flow url handler cas default flow url handler.
+     *
+     * @return the cas default flow url handler
+     */
     @Bean(name = "logoutFlowUrlHandler")
     public CasDefaultFlowUrlHandler logoutFlowUrlHandler() {
         final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
@@ -221,6 +231,11 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
+    /**
+     * Logout handler adapter selective flow handler adapter.
+     *
+     * @return the selective flow handler adapter
+     */
     @Bean(name = "logoutHandlerAdapter")
     public SelectiveFlowHandlerAdapter logoutHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
@@ -230,6 +245,11 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
+    /**
+     * Login flow state transcoder encrypted transcoder.
+     *
+     * @return the encrypted transcoder
+     */
     @Bean(name = "loginFlowStateTranscoder")
     public EncryptedTranscoder loginFlowStateTranscoder() {
         try {
@@ -239,6 +259,11 @@ public class CasWebflowContextConfiguration {
         }
     }
 
+    /**
+     * Login handler adapter selective flow handler adapter.
+     *
+     * @return the selective flow handler adapter
+     */
     @Bean(name = "loginHandlerAdapter")
     public SelectiveFlowHandlerAdapter loginHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
@@ -258,6 +283,11 @@ public class CasWebflowContextConfiguration {
         return new LocaleChangeInterceptor();
     }
 
+    /**
+     * Logout flow handler mapping flow handler mapping.
+     *
+     * @return the flow handler mapping
+     */
     @Bean(name = "logoutFlowHandlerMapping")
     public FlowHandlerMapping logoutFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -268,6 +298,11 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
+    /**
+     * Login flow handler mapping flow handler mapping.
+     *
+     * @return the flow handler mapping
+     */
     @Bean(name = "loginFlowHandlerMapping")
     public FlowHandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
