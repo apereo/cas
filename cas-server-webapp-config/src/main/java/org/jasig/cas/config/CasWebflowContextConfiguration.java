@@ -6,18 +6,29 @@ import org.cryptacular.bean.KeyStoreFactoryBean;
 import org.cryptacular.generator.sp80038a.RBGNonce;
 import org.cryptacular.io.URLResource;
 import org.cryptacular.spec.BufferedBlockCipherSpec;
+import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.jasig.cas.web.flow.LogoutConversionService;
+import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;
+import org.jasig.spring.webflow.plugin.EncryptedTranscoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.ResourceBundleViewResolver;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
+import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 
 /**
  * This is {@link CasWebflowContextConfiguration} that attempts to create Spring-managed beans
@@ -29,9 +40,8 @@ import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 @Configuration("casWebflowContextConfiguration")
 public class CasWebflowContextConfiguration {
 
-    /**
-     * The constant VIEW_RESOLVER_ORDER.
-     */
+    private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
+    
     private static final int VIEW_RESOLVER_ORDER = 10000;
 
     /**
@@ -82,11 +92,36 @@ public class CasWebflowContextConfiguration {
     @Value("${cas.webflow.cipher.padding:PKCS7}")
     private String cipherPadding;
 
+    @Autowired
+    @Qualifier("logoutFlowExecutor")
+    @Lazy(true)
+    private FlowExecutor logoutFlowExecutor;
+
+    @Autowired
+    @Qualifier("loginFlowExecutor")
+    @Lazy(true)
+    private FlowExecutor loginFlowExecutor;
+
+    @Autowired
+    @Qualifier("logoutFlowRegistry")
+    @Lazy(true)
+    private FlowDefinitionRegistry logoutFlowRegistry;
+
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    @Lazy(true)
+    private FlowDefinitionRegistry loginFlowRegistry;
+    
     /**
      * The Key alias.
      */
     @Value("${cas.webflow.keyalias:aes128}")
     private String keyAlias;
+
+    @Autowired
+    @Qualifier("authenticationThrottle")
+    @Lazy(true)
+    private HandlerInterceptor authenticationThrottle;
 
     /**
      * Expression parser web flow spring el expression parser.
@@ -172,8 +207,76 @@ public class CasWebflowContextConfiguration {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
-
-
     }
+
+    @Bean(name = "loginFlowUrlHandler")
+    public CasDefaultFlowUrlHandler loginFlowUrlHandler() {
+        return new CasDefaultFlowUrlHandler();
+    }
+
+    @Bean(name = "logoutFlowUrlHandler")
+    public CasDefaultFlowUrlHandler logoutFlowUrlHandler() {
+        final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
+        handler.setFlowExecutionKeyParameter("RelayState");
+        return handler;
+    }
+
+    @Bean(name = "logoutHandlerAdapter")
+    public SelectiveFlowHandlerAdapter logoutHandlerAdapter() {
+        final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
+        handler.setSupportedFlowId("logout");
+        handler.setFlowExecutor(this.logoutFlowExecutor);
+        handler.setFlowUrlHandler(logoutFlowUrlHandler());
+        return handler;
+    }
+
+    @Bean(name = "loginFlowStateTranscoder")
+    public EncryptedTranscoder loginFlowStateTranscoder() {
+        try {
+            return new EncryptedTranscoder(loginFlowCipherBean());
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Bean(name = "loginHandlerAdapter")
+    public SelectiveFlowHandlerAdapter loginHandlerAdapter() {
+        final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
+        handler.setSupportedFlowId("login");
+        handler.setFlowExecutor(this.loginFlowExecutor);
+        handler.setFlowUrlHandler(loginFlowUrlHandler());
+        return handler;
+    }
+
+    /**
+     * Locale change interceptor locale change interceptor.
+     *
+     * @return the locale change interceptor
+     */
+    @Bean(name = "localeChangeInterceptor")
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        return new LocaleChangeInterceptor();
+    }
+
+    @Bean(name = "logoutFlowHandlerMapping")
+    public FlowHandlerMapping logoutFlowHandlerMapping() {
+        final FlowHandlerMapping handler = new FlowHandlerMapping();
+        handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
+        handler.setFlowRegistry(logoutFlowRegistry);
+        final Object[] interceptors = new Object[]{localeChangeInterceptor()};
+        handler.setInterceptors(interceptors);
+        return handler;
+    }
+
+    @Bean(name = "loginFlowHandlerMapping")
+    public FlowHandlerMapping loginFlowHandlerMapping() {
+        final FlowHandlerMapping handler = new FlowHandlerMapping();
+        handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
+        handler.setFlowRegistry(loginFlowRegistry);
+        final Object[] interceptors = new Object[]{localeChangeInterceptor(), this.authenticationThrottle};
+        handler.setInterceptors(interceptors);
+        return handler;
+    }
+    
 }
 

@@ -281,15 +281,6 @@ public class CasManagementWebAppConfiguration {
         return resolver;
     }
 
-    /**
-     * Locale change interceptor locale change interceptor.
-     *
-     * @return the locale change interceptor
-     */
-    @Bean(name = "localeChangeInterceptor")
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        return new LocaleChangeInterceptor();
-    }
 
     /**
      * Credentials validator local validator factory bean.
