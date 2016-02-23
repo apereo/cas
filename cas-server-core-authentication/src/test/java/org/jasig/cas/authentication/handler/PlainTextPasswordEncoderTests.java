@@ -23,4 +23,10 @@ public final class PlainTextPasswordEncoderTests {
     public void verifyValueToTranslate() {
         assertEquals(CONST_TO_ENCODE, this.passwordEncoder.encode(CONST_TO_ENCODE));
     }
+
+    @Test
+    public void verifyMatchesMethod() {
+        assertTrue("matches with expected inputs", passwordEncoder.matches(CONST_TO_ENCODE, CONST_TO_ENCODE));
+        assertFalse("does not match with bad inputs", passwordEncoder.matches("wrong " + CONST_TO_ENCODE, CONST_TO_ENCODE));
+    }
 }

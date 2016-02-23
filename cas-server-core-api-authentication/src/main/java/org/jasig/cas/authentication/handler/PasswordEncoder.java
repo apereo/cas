@@ -26,4 +26,15 @@ public interface PasswordEncoder {
      * @return the transformed version of the password
      */
     String encode(String password);
+
+    /**
+     * Method that checks if a plaintext password matches an encrypted/hashed
+     * version. Useful when the encoding method manages a salt, such as
+     * bcrypt/scrypt.
+     *
+     * @param rawPassword the password to check
+     * @param encodedPassword the encoded password
+     * @return whether or not the password matches the encoded password
+     */
+    boolean matches(CharSequence rawPassword, String encodedPassword);
 }
