@@ -38,6 +38,7 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
  * @since 4.3.0
  */
 @Configuration("casWebflowContextConfiguration")
+@Lazy(true)
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
