@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:metrics="http://www.ryantenney.com/schema/metrics"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
+        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.4.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
     <description>
         This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
         modify this unless you know what you're doing!
@@ -19,7 +23,7 @@
     | The base-package indicates where components stored. Spring will scan this
     | folder and find out the annotated beans and register it in Spring container.
     -->
-    <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.jasig.cas"/>
     <context:annotation-config/>
 
     <!--
@@ -29,60 +33,138 @@
     -->
     <aop:aspectj-autoproxy/>
 
-    <!-- ADVISORS -->
-    <bean id="advisorAutoProxyCreator"
-          class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+    <!-- 
+    Scan CAS artifacts to mvc annotations, such as controllers.
+    The scan is controlled by the application context config file 
+    -->
+    <mvc:annotation-driven />
+    
+    <!--
+    Security configuration for sensitive areas of CAS : status and statistics.
+    -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/status/**"/>
+            <mvc:mapping path="/statistics/**"/>
+            <ref bean="requiresAuthenticationStatusStatsInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <ref bean="webContentInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+    
+    <!-- 
+    Spring Webflow Configuration
+    -->
+    <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
+                                   expression-parser="expressionParser"/>
 
-    <!-- CAS Application Context Configuration -->
-    <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
-        <ref bean="webApplicationServiceFactory" />
-    </util:list>
+    <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+        <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
+    </webflow:flow-registry>
 
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
+    <webflow:flow-executor id="logoutFlowExecutor" flow-registry="logoutFlowRegistry">
+        <webflow:flow-execution-attributes>
+            <webflow:always-redirect-on-pause value="false"/>
+            <webflow:redirect-in-same-state value="false"/>
+        </webflow:flow-execution-attributes>
+    </webflow:flow-executor>
 
-    <util:map id="uniqueIdGeneratorsMap">
-        <entry
-            key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-            value-ref="serviceTicketUniqueIdGenerator" />
+    <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+        <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
+    </webflow:flow-registry>
+    
+    <!--
+    CAS Metrics Configuration
+    -->
+    <metrics:metric-registry id="metrics" />
+    <metrics:health-check-registry id="healthCheckMetrics" />
+
+    <metrics:annotation-driven metric-registry="metrics" />
+
+    <metrics:reporter type="slf4j" metric-registry="metrics"
+                      period="${metrics.refresh.internal:30s}"
+                      duration-unit="MILLISECONDS"
+                      rate-unit="MILLISECONDS"
+                      logger="perfStatsLogger"/>
+
+    <metrics:reporter type="jmx" metric-registry="metrics" />
+
+    <metrics:register metric-registry="metrics">
+        <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
+        <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
+        <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
+        <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
+    </metrics:register>
+    
+    <!--
+    Audit Trail Context
+    -->
+    <util:map id="auditActionResolverMap">
+        <entry key="AUTHENTICATION_RESOLVER">
+            <ref bean="authenticationActionResolver"/>
+        </entry>
+        <entry key="SAVE_SERVICE_ACTION_RESOLVER">
+            <ref bean="authenticationActionResolver"/>
+        </entry>
+
+        <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
+            <ref bean="ticketCreationActionResolver"/>
+        </entry>
+        <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
+            <bean class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"/>
+        </entry>
+
+        <entry key="CREATE_PROXY_GRANTING_TICKET_RESOLVER">
+            <ref bean="ticketCreationActionResolver"/>
+        </entry>
+        <entry key="DESTROY_PROXY_GRANTING_TICKET_RESOLVER">
+            <bean class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"/>
+        </entry>
+
+        <entry key="GRANT_SERVICE_TICKET_RESOLVER">
+            <ref bean="ticketCreationActionResolver"/>
+        </entry>
+        <entry key="GRANT_PROXY_TICKET_RESOLVER">
+            <ref bean="ticketCreationActionResolver"/>
+        </entry>
+
+        <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
+            <ref bean="ticketValidationActionResolver"/>
+        </entry>
     </util:map>
 
-    <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+    <util:map id="auditResourceResolverMap">
+        <entry key="AUTHENTICATION_RESOURCE_RESOLVER">
+            <bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver"/>
+        </entry>
+        <entry key="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
+            <ref bean="returnValueResourceResolver"/>
+        </entry>
+        <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
+            <ref bean="ticketResourceResolver"/>
+        </entry>
 
-    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
-          p:order="1000"
-          p:alwaysUseFullPath="true">
-        <property name="mappings">
-            <util:properties>
-                <prop key="/authorizationFailure.html">passThroughController</prop>
-            </util:properties>
-        </property>
-        <!--
-         uncomment this to enable sending PageRequest events.
-         <property
-           name="interceptors">
-           <list>
-             <ref bean="pageRequestHandlerInterceptorAdapter" />
-           </list>
-         </property>
-          -->
-    </bean>
+        <entry key="CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
+            <ref bean="returnValueResourceResolver"/>
+        </entry>
+        <entry key="DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
+            <ref bean="ticketResourceResolver"/>
+        </entry>
 
-    <!-- The Quartz scheduler used by any scheduled tasks -->
-    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
-        p:waitForJobsToCompleteOnShutdown="${scheduler.shutdown.wait:true}">
-        <property name="jobFactory">
-            <bean class="org.jasig.cas.util.CasSpringBeanJobFactory" />
-        </property>
-        <property name="quartzProperties">
-            <props>
-                <prop key="org.quartz.scheduler.interruptJobsOnShutdown">${scheduler.shutdown.interruptJobs:true}</prop>
-                <prop key="org.quartz.scheduler.interruptJobsOnShutdownWithWait">
-                    ${scheduler.shutdown.interruptJobs:true}
-                </prop>
-            </props>
-        </property>
-    </bean>
+        <entry key="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER">
+            <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver"/>
+        </entry>
+        <entry key="GRANT_PROXY_TICKET_RESOURCE_RESOLVER">
+            <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver"/>
+        </entry>
 
+        <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
+            <ref bean="ticketResourceResolver"/>
+        </entry>
+        <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
+            <ref bean="returnValueResourceResolver"/>
+        </entry>
+    </util:map>
 </beans>
