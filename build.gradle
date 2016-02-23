@@ -100,19 +100,28 @@ ext.libraries = [
         hazelcast        : "com.hazelcast:hazelcast:$hazelcastVersion",
         hibernate        : [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
+                    exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
                     exclude(group: 'org.javassist', module: 'javassist')
                     exclude(group: 'xml-apis', module: 'xml-apis')
+                    exclude(group: 'dom4j', module: 'dom4j')
+
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
                     exclude(group: 'org.javassist', module: 'javassist')
+                    exclude(group: 'dom4j', module: 'dom4j')
                     exclude(group: 'xml-apis', module: 'xml-apis')
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'com.fasterxml', module: 'classmate')
+                    force = true
+                },
+                dependencies.create("dom4j:dom4j:$dom4jVersion") {
+                    exclude(group: 'xml-apis', module: 'xml-apis')
                     force = true
                 },
                 "com.mchange:c3p0:$c3p0Version"
@@ -282,8 +291,8 @@ ext.libraries = [
         ignite           : [
                 "org.apache.ignite:ignite-core:$igniteVersion",
                 dependencies.create("org.apache.ignite:ignite-log4j:$igniteVersion") {
-                   exclude(group: 'log4j', module: 'log4j')
-                   force = true
+                    exclude(group: 'log4j', module: 'log4j')
+                    force = true
                 },
                 dependencies.create("org.apache.ignite:ignite-spring:$igniteVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
@@ -323,7 +332,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        inspektraspects         : [
+        inspektraspects  : [
                 dependencies.create("org.jasig.inspektr:inspektr-aspects:$inspektrVersion") {
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.aspectj', module: 'aspectjrt')
@@ -364,11 +373,11 @@ ext.libraries = [
                 "javax.transaction:jta:$jtaVersion"
         ],
         jackson          : [
-            "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
-             dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
+                "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
                     force = true
-            }
+                }
         ],
         couchbase        : "com.couchbase.client:java-client:$couchbaseVersion",
 
@@ -725,6 +734,68 @@ ext.libraries = [
             exclude(group: 'org.slf4j', module: 'slf4j-api')
             force = true
         },
+        springcloud      : [
+                dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClient") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    force = true
+                },
+                dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigServer") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    force = true
+                },
+                dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudStarter") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    force = true
+                },
+                dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContext") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    force = true
+                }
+        ],
         spring           : [
                 "org.springframework:spring-aop:$springVersion",
                 "org.springframework:spring-beans:$springVersion",
@@ -780,10 +851,10 @@ ext.libraries = [
                     exclude(group: 'commons-codec', module: 'commons-codec')
                     exclude(group: 'org.springframework', module: 'spring-core')
                     exclude(group: 'org.springframework', module: 'spring-beans')
-                    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.cryptacular', module: 'cryptacular')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
                     force = true
                 },
                 "commons-codec:commons-codec:$commonsCodecVersion",
@@ -792,11 +863,11 @@ ext.libraries = [
         validationapi    : "javax.validation:validation-api:$javaxValidationVersion",
         xmlapis          : "xml-apis:xml-apis:$xmlapisVersion",
         yubicoapi        : 
-            dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
-                exclude(group: 'org.slf4j', module: 'slf4j-api')
-                exclude(group: 'commons-codec', module: 'commons-codec')
-                force = true
-        },
+                dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
+                    force = true
+                },
         duojava : [
                 dependencies.create("net.unicon.iam:duo-java:$duoVersion") {
                     exclude(module: 'slf4j-api')
@@ -841,7 +912,7 @@ allprojects {
         project.configurations {
             grettyRunnerJetty9 {
                 resolutionStrategy.eachDependency(grettyResolutionStrategy)
-            }    
+            }
         }
     }
 }
@@ -1167,22 +1238,22 @@ subprojects {
                             releases {
                                 enabled true
                             }
-                       }
-                       repository {
+                        }
+                        repository {
                             id "jitpack"
                             url "https://jitpack.io"
                             releases {
                                 enabled true
                             }
-                       }  
-                       repository {
+                        }
+                        repository {
                             id "jasig-legacy"
                             url "http://developer.jasig.org/repo/content/groups/m2-legacy"
                             releases {
                                 enabled true
                             }
-                       }  
-                       repository {
+                        }
+                        repository {
                             id "couchbase"
                             url "http://files.couchbase.com/maven2/"
                             releases {
