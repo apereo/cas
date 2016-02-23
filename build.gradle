@@ -438,6 +438,10 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
                     exclude(group: 'org.hamcrest', module: 'hamcrest-core')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'com.fasterxml', module: 'classmate')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
                     force = true
                 },
                 "org.hsqldb:hsqldb:$hsqlVersion",
@@ -738,6 +742,10 @@ ext.libraries = [
         },
         springboot      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'com.fasterxml', module: 'classmate')
+                    exclude(group: 'org.hibernate', module: 'hibernate-validator')
                     force = true
                 }
         ],
@@ -755,6 +763,8 @@ ext.libraries = [
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
                     exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter')
+                    exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigServer") {
@@ -770,6 +780,12 @@ ext.libraries = [
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
                     exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter')
+                    exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-autoconfigure')
+                    exclude(group: 'org.yaml', module: 'snakeyaml')
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudStarter") {
@@ -785,6 +801,8 @@ ext.libraries = [
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
                     exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter')
+                    exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContext") {
@@ -800,6 +818,8 @@ ext.libraries = [
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
                     exclude(group: 'org.slf4j', module: 'logj-over-slf4j')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter')
+                    exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
                     force = true
                 }
         ],
