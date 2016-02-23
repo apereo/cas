@@ -11,7 +11,7 @@ dependencies {
     compile libraries.hibernate
     testCompile project(':cas-server-core-web')
 
-    provided("org.springframework.security:spring-security-core:$springSecurityVersion") {
+    provided(libraries.springsecurity) {
         transitive = false
     }
 }
