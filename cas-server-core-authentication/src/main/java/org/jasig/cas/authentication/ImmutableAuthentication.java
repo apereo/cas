@@ -57,6 +57,33 @@ public final class ImmutableAuthentication implements Authentication {
      * Creates a new instance with the given data.
      *
      * @param date Non-null authentication date.
+     * @param principal Non-null authenticated principal.
+     * @param attributes Nullable map of authentication metadata.
+     * @param successes Non-null map of authentication successes containing at least one entry.
+     */
+    public ImmutableAuthentication(
+            final ZonedDateTime date,
+            final Principal principal,
+            final Map<String, Object> attributes,
+            final Map<String, HandlerResult> successes) {
+
+        Assert.notNull(date, "Date cannot be null");
+        Assert.notNull(principal, "Principal cannot be null");
+        Assert.notNull(successes, "Successes cannot be null");
+        Assert.notEmpty(successes, "Successes cannot be empty");
+
+        this.authenticationDate = date;
+        this.principal = principal;
+        this.attributes = attributes.isEmpty() ? null : attributes;
+        this.successes = successes;
+        this.credentials = null;
+        this.failures = null;
+    }
+    
+    /**
+     * Creates a new instance with the given data.
+     *
+     * @param date Non-null authentication date.
      * @param credentials Non-null list of credential metadata containing at least one entry.
      * @param principal Non-null authenticated principal.
      * @param attributes Nullable map of authentication metadata.
