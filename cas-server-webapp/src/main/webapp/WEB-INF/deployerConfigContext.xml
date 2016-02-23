@@ -58,12 +58,7 @@
     
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-
-    <bean id="auditTrailManager"
-          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
-          p:entrySeparator="${cas.audit.singleline.separator:|}"
-          p:useSingleLine="${cas.audit.singleline:false}"/>
-
+    
     <alias name="neverThrottle" alias="authenticationThrottle" />
 
     <util:list id="monitorsList">

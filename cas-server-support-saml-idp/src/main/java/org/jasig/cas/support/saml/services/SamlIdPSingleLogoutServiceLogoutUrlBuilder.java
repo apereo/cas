@@ -12,7 +12,6 @@ import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.impl.SingleLogoutServiceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
@@ -22,7 +21,6 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Component("samlIdPSingleLogoutServiceLogoutUrlBuilder")
 public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutServiceLogoutUrlBuilder {
 
     /**

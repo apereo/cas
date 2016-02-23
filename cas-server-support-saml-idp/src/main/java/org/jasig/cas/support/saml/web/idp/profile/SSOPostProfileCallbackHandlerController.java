@@ -37,41 +37,39 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
     @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
-        try {
-            logger.info("Received SAML callback profile request [{}]", request.getRequestURI());
-            final AuthnRequest authnRequest = retrieveAuthnRequest(request);
-            if (authnRequest == null) {
-                logger.error("Can not validate the request because the original Authn request can not be found.");
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-
-            final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
-            if (StringUtils.isBlank(ticket)) {
-                logger.error("Can not validate the request because no [{}] is provided via the request",
-                        CasProtocolConstants.PARAMETER_TICKET);
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-
-            final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.casServerPrefix);
-            validator.setRenew(authnRequest.isForceAuthn());
-            final String serviceUrl = constructServiceUrl(request, response, authnRequest);
-            logger.debug("Created service url for validation: [{}]", serviceUrl);
-            final Assertion assertion = validator.validate(ticket, serviceUrl);
-            logCasValidationAssertion(assertion);
-            if (!assertion.isValid()) {
-                throw new SamlException("CAS assertion received is invalid");
-            }
-            final SamlRegisteredService registeredService = verifySamlRegisteredService(authnRequest.getAssertionConsumerServiceURL());
-            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
-
-            logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
-            responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
-            logger.info("Built the SAML response for [{}]", adaptor.getEntityId());
-
-        } finally {
-            storeAuthnRequest(request, null);
+    
+        logger.info("Received SAML callback profile request [{}]", request.getRequestURI());
+        final AuthnRequest authnRequest = retrieveAuthnRequest(request);
+        if (authnRequest == null) {
+            logger.error("Can not validate the request because the original Authn request can not be found.");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
+
+        final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        if (StringUtils.isBlank(ticket)) {
+            logger.error("Can not validate the request because no [{}] is provided via the request",
+                    CasProtocolConstants.PARAMETER_TICKET);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.casServerPrefix);
+        validator.setRenew(authnRequest.isForceAuthn());
+        final String serviceUrl = constructServiceUrl(request, response, authnRequest);
+        logger.debug("Created service url for validation: [{}]", serviceUrl);
+        final Assertion assertion = validator.validate(ticket, serviceUrl);
+        logCasValidationAssertion(assertion);
+        if (!assertion.isValid()) {
+            throw new SamlException("CAS assertion received is invalid");
+        }
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(authnRequest.getAssertionConsumerServiceURL());
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
+
+        logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
+        responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
+        logger.info("Built the SAML response for [{}]", adaptor.getEntityId());
+
+        
     }
 }
