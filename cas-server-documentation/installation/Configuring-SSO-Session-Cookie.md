@@ -37,6 +37,9 @@ tgc.signing.key=
 # The path to which the SSO cookie will be scoped
 # tgc.path=/cas
 
+# The domain of the SSO cookie
+# tgc.domain=
+
 # Decides whether SSO Warning cookie should be created only under secure connections.
 # warn.cookie.secure=true
 
