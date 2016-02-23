@@ -2,13 +2,12 @@ package org.jasig.cas.config;
 
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
-import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
-import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
@@ -21,7 +20,6 @@ import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.XmlViewResolver;
 import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
-import org.springframework.webflow.executor.FlowExecutor;
 
 import javax.validation.MessageInterpolator;
 import java.util.Locale;
@@ -33,6 +31,7 @@ import java.util.Locale;
  * @since 4.3.0
  */
 @Configuration("casWebAppConfiguration")
+@Lazy(true)
 public class CasWebAppConfiguration {
 
     /**
@@ -192,6 +191,11 @@ public class CasWebAppConfiguration {
     }
 
 
+    /**
+     * Simple controller handler adapter.
+     *
+     * @return the simple controller handler adapter
+     */
     @Bean(name = "simpleControllerHandlerAdapter")
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
