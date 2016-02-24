@@ -107,6 +107,7 @@ public class AuthenticationViaFormAction {
         }
 
         AuthUtils.setTenantId(tenantId);
+        AuthUtils.setCredential(credential.toString());
 
         if (isRequestAskingForServiceTicket(context)) {
             return grantServiceTicket(context, credential);

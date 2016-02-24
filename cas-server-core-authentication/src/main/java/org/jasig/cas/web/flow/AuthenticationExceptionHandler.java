@@ -7,9 +7,16 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.stereotype.Component;
 
+import com.wavity.broker.api.provider.BrokerProvider;
+import com.wavity.broker.util.EventAttribute;
+import com.wavity.broker.util.EventType;
+import com.wavity.broker.util.TopicType;
+
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 /**
@@ -102,6 +109,7 @@ public class AuthenticationExceptionHandler {
                         final String handlerErrorName = handlerError.getSimpleName();
                         final String messageCode = this.messageBundlePrefix + handlerErrorName;
                         messageContext.addMessage(builder.error().code(messageCode).build());
+                        produceBrokerMessage(handlerErrorName, messageCode);
                         return handlerErrorName;
                     }
                 }
@@ -110,7 +118,60 @@ public class AuthenticationExceptionHandler {
         }
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         logger.trace("Unable to translate handler errors of the authentication exception {}. Returning {} by default...", e, messageCode);
+        produceBrokerMessage(messageCode);
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
+    }
+    
+    /**
+     * Produces broker message when a handler error occurred
+     * 
+     * @param handlerErrorName the string of the handler error name
+     * @param messageCode the string of the message code
+     */
+    private final void produceBrokerMessage(final String handlerErrorName, final String messageCode) {
+    	if (("".equals(handlerErrorName) || handlerErrorName == null) || ("".equals(messageCode) || messageCode == null)) {
+    		logger.error("*** handlerErrorName and messageCode required to publish a message ***");
+    		return;
+    	}
+    	publishMessage(String.format("handler error: %s, message code: %s", handlerErrorName, messageCode));
+    }
+    
+    /**
+     * Produces broker message when a unknown error happened
+     * 
+     * @param messageCode the string of message code
+     */
+    private final void produceBrokerMessage(final String messageCode) {
+    	if ("".equals(messageCode) || messageCode == null) {
+    		logger.error("*** message code is required to publish a message ***");
+    		return;
+    	}
+    	publishMessage(messageCode);
+    }
+    
+    /**
+     * Publishes a message to KAFKA
+     * 
+     * @param message the string of message
+     */
+    private final void publishMessage(final String message) {
+    	if ("".equals(message) || message == null) {
+    		logger.error("*** the message is required to pubish an error message ***");
+    		return;
+    	}
+    	try {
+    		final BrokerProvider brokerProvider = BrokerProvider.getInstance();
+			final EnumMap<EventAttribute, Object> attr = new EnumMap<EventAttribute, Object>(EventAttribute.class);
+			attr.put(EventAttribute.MESSAGE, String.format("Credential: %s, message: %s", AuthUtils.getCredential(), message));
+			attr.put(EventAttribute.TIMESTAMP, Long.toString(Calendar.getInstance().getTimeInMillis()));
+			attr.put(EventAttribute.IS_NOTIFY_TARGET, true);
+			attr.put(EventAttribute.ACTOR_ID, AuthUtils.getTenantId());
+			attr.put(EventAttribute.EVENT_RESULT, "success");
+			attr.put(EventAttribute.EC_ID, "Test EC ID");
+			brokerProvider.publish(TopicType.ADMIN, EventType.EVENT_TYPE_SSO_AUTHENTICATION, attr);
+		} catch (final Exception e) {
+			logger.error("broker failed to publish event", e);
+		}
     }
 }
