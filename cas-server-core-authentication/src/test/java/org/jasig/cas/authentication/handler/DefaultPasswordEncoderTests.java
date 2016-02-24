@@ -62,6 +62,9 @@ public final class DefaultPasswordEncoderTests {
     @Test
     public void verifyMatchesMethod() {
         assertTrue("matches with expected inputs", this.passwordEncoder.matches(TEST_STRING, TEST_STRING_MD5));
+        assertTrue("matches with null inputs", passwordEncoder.matches(null, null));
+        assertFalse("does not match with partial null inputs", passwordEncoder.matches(null, TEST_STRING_MD5));
+        assertFalse("does not match with partial null inputs", passwordEncoder.matches(TEST_STRING, null));
         assertFalse("does not match with bad inputs", this.passwordEncoder.matches("wrong " + TEST_STRING, TEST_STRING_MD5));
     }
 }
