@@ -1,7 +1,5 @@
 package org.jasig.cas.authentication.handler;
 
-import org.springframework.stereotype.Component;
-
 import javax.validation.constraints.NotNull;
 
 /**
@@ -11,7 +9,6 @@ import javax.validation.constraints.NotNull;
  * @author Joe McCall
  * @since 4.3
  */
-@Component("springSecurityDelegatingPasswordEncoder")
 public class SpringSecurityDelegatingPasswordEncoder implements PasswordEncoder {
 
     @NotNull
@@ -30,6 +27,4 @@ public class SpringSecurityDelegatingPasswordEncoder implements PasswordEncoder 
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
         return delegate.matches(rawPassword, encodedPassword);
     }
-
-
 }
