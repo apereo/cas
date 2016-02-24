@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,6 @@ public final class PlainTextPasswordEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-        return rawPassword.equals(encodedPassword);
+        return StringUtils.equals(rawPassword, encodedPassword);
     }
 }
