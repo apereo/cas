@@ -10,13 +10,13 @@ import static org.junit.Assert.*;
  * @author Joe McCall
  * @since 4.3
  */
-public class DelegatingPasswordEncoderTests {
+public class SpringSecurityDelegatingPasswordEncoderTests {
 
-    private DelegatingPasswordEncoder passwordEncoder;
+    private SpringSecurityDelegatingPasswordEncoder passwordEncoder;
 
     @Before
     public void setup() {
-        passwordEncoder = new DelegatingPasswordEncoder();
+        passwordEncoder = new SpringSecurityDelegatingPasswordEncoder();
     }
 
     @Test
@@ -26,7 +26,7 @@ public class DelegatingPasswordEncoderTests {
         final String expectedEncodedPassword = "expectedEncodedPassword";
         final MockPasswordEncoder mockPasswordEncoder = new MockPasswordEncoder();
         mockPasswordEncoder.setExpectedEncodedPassword(expectedEncodedPassword);
-        passwordEncoder.setSpringPasswordEncoder(mockPasswordEncoder);
+        passwordEncoder.setDelegate(mockPasswordEncoder);
 
         assertEquals("password is encoded",
                 expectedEncodedPassword,
@@ -43,7 +43,7 @@ public class DelegatingPasswordEncoderTests {
 
         final MockPasswordEncoder mockPasswordEncoder = new MockPasswordEncoder();
         mockPasswordEncoder.setExpectedMatches(expectedMatches);
-        passwordEncoder.setSpringPasswordEncoder(mockPasswordEncoder);
+        passwordEncoder.setDelegate(mockPasswordEncoder);
 
         assertEquals("password matches as expected",
                 expectedMatches,
