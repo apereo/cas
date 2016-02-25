@@ -49,7 +49,6 @@ org.jasig.cas.support.events.mongo
 org.jasig.cas.support.geo
 org.jasig.cas.support.geo.maxmind
 org.jasig.cas.support.oauth
-org.jasig.cas.support.oauth.authentication
 org.jasig.cas.support.oauth.authenticator
 org.jasig.cas.support.oauth.profile
 org.jasig.cas.support.oauth.services
