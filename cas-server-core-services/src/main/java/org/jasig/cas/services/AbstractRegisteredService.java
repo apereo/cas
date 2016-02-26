@@ -374,6 +374,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                   .append(this.getEvaluationOrder(), other.getEvaluationOrder())
                   .append(this.getName().toLowerCase(), other.getName().toLowerCase())
                   .append(this.getServiceId(), other.getServiceId())
+                  .append(this.getId(), other.getId())
                   .toComparison();
     }
 
