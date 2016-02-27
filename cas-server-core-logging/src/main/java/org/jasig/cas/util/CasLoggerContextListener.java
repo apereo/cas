@@ -21,10 +21,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @WebListener
 @Component("log4jInitialization")
-public final class CasLoggerContextInitializer extends AbstractServletContextInitializer {
+public final class CasLoggerContextListener extends AbstractServletContextInitializer {
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasLoggerContextInitializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasLoggerContextListener.class);
 
     @Value("${log4j.config.location:classpath:log4j2.xml}")
     private final Resource logConfigurationFile;
@@ -32,7 +32,7 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
     /**
      * Instantiates a new Cas logger context initializer.
      */
-    public CasLoggerContextInitializer() {
+    public CasLoggerContextListener() {
         this.logConfigurationFile = null;
     }
 
@@ -41,7 +41,7 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
      *
      * @param logConfigurationFile the log configuration file
      */
-    public CasLoggerContextInitializer(@NotNull final Resource logConfigurationFile) {
+    public CasLoggerContextListener(@NotNull final Resource logConfigurationFile) {
         this.logConfigurationFile = logConfigurationFile;
     }
 

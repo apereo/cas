@@ -743,6 +743,7 @@ ext.libraries = [
         springboot      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
                     exclude(group: 'com.fasterxml', module: 'classmate')
                     exclude(group: 'org.hibernate', module: 'hibernate-validator')
