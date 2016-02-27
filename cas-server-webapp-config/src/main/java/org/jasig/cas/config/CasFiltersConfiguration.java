@@ -80,7 +80,7 @@ public class CasFiltersConfiguration {
      * The Params to check.
      */
     @Value("${cas.http.check.params:"
-            + " ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId}")
+            + "ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token}")
     private String paramsToCheck;
 
     /**

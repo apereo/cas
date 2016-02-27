@@ -12,27 +12,9 @@
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
-        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.4.xsd
+        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-    <description>
-        This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
-        modify this unless you know what you're doing!
-    </description>
-        
-    <!--
-    Security configuration for sensitive areas of CAS : status and statistics.
-    -->
-    <mvc:interceptors>
-        <mvc:interceptor>
-            <mvc:mapping path="/status/**"/>
-            <mvc:mapping path="/statistics/**"/>
-            <ref bean="requiresAuthenticationStatusStatsInterceptor"/>
-        </mvc:interceptor>
-        <mvc:interceptor>
-            <mvc:mapping path="/*"/>
-            <ref bean="webContentInterceptor" />
-        </mvc:interceptor>
-    </mvc:interceptors>
+    
     
     <!-- 
     Spring Webflow Configuration
@@ -78,73 +60,4 @@
         <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
     </metrics:register>
     
-    <!--
-    Audit Trail Context
-    -->
-    <util:map id="auditActionResolverMap">
-        <entry key="AUTHENTICATION_RESOLVER">
-            <ref bean="authenticationActionResolver"/>
-        </entry>
-        <entry key="SAVE_SERVICE_ACTION_RESOLVER">
-            <ref bean="authenticationActionResolver"/>
-        </entry>
-
-        <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
-            <ref bean="ticketCreationActionResolver"/>
-        </entry>
-        <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
-            <bean class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"/>
-        </entry>
-
-        <entry key="CREATE_PROXY_GRANTING_TICKET_RESOLVER">
-            <ref bean="ticketCreationActionResolver"/>
-        </entry>
-        <entry key="DESTROY_PROXY_GRANTING_TICKET_RESOLVER">
-            <bean class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"/>
-        </entry>
-
-        <entry key="GRANT_SERVICE_TICKET_RESOLVER">
-            <ref bean="ticketCreationActionResolver"/>
-        </entry>
-        <entry key="GRANT_PROXY_TICKET_RESOLVER">
-            <ref bean="ticketCreationActionResolver"/>
-        </entry>
-
-        <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
-            <ref bean="ticketValidationActionResolver"/>
-        </entry>
-    </util:map>
-
-    <util:map id="auditResourceResolverMap">
-        <entry key="AUTHENTICATION_RESOURCE_RESOLVER">
-            <bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver"/>
-        </entry>
-        <entry key="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
-            <ref bean="returnValueResourceResolver"/>
-        </entry>
-        <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
-            <ref bean="ticketResourceResolver"/>
-        </entry>
-
-        <entry key="CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
-            <ref bean="returnValueResourceResolver"/>
-        </entry>
-        <entry key="DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
-            <ref bean="ticketResourceResolver"/>
-        </entry>
-
-        <entry key="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER">
-            <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver"/>
-        </entry>
-        <entry key="GRANT_PROXY_TICKET_RESOURCE_RESOLVER">
-            <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver"/>
-        </entry>
-
-        <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
-            <ref bean="ticketResourceResolver"/>
-        </entry>
-        <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
-            <ref bean="returnValueResourceResolver"/>
-        </entry>
-    </util:map>
 </beans>

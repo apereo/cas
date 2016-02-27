@@ -4,8 +4,6 @@ import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.codahale.metrics.servlets.PingServlet;
 import com.codahale.metrics.servlets.ThreadDumpServlet;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.jasig.cas.CasEnvironmentContextListener;
 import org.jasig.cas.services.ServicesManager;
@@ -23,7 +21,7 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.mvc.WebContentInterceptor;
+import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -34,7 +32,6 @@ import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
 
 import javax.validation.MessageInterpolator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +96,7 @@ public class CasWebAppConfiguration {
      */
     @Value("${locale.param.name:locale}")
     private String localeParamName;
-
+    
     /**
      * Credentials validator local validator factory bean.
      *
@@ -204,20 +201,6 @@ public class CasWebAppConfiguration {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
         bean.setParamName(this.localeParamName);
         return bean;
-    }
-
-
-    /**
-     * Web content interceptor web content interceptor.
-     *
-     * @return the web content interceptor
-     */
-    @Bean(name = "webContentInterceptor")
-    public WebContentInterceptor webContentInterceptor() {
-        final WebContentInterceptor interceptor = new WebContentInterceptor();
-        interceptor.setCacheSeconds(0);
-        interceptor.setAlwaysUseFullPath(true);
-        return interceptor;
     }
 
     /**
@@ -345,4 +328,10 @@ public class CasWebAppConfiguration {
         bean.setListener(new CasEnvironmentContextListener());
         return bean;
     }
+    
+    @Bean(name="simpleControllerHandlerAdapter")
+    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
+        return new SimpleControllerHandlerAdapter();
+    }
+
 }

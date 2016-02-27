@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.JstlView;
 
 /**
@@ -20,7 +22,7 @@ import org.springframework.web.servlet.view.JstlView;
  * @since 4.3.0
  */
 @Configuration("oauthConfiguration")
-public class OAuthConfiguration {
+public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     /**
      * The Oauth client authenticator.
@@ -98,5 +100,14 @@ public class OAuthConfiguration {
     @Bean(name = "requiresAuthenticationAccessTokenInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationAccessTokenInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
+    }
+
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(requiresAuthenticationAuthorizeInterceptor())
+                .addPathPatterns("/oauth2.0/authorize*");
+
+        registry.addInterceptor(requiresAuthenticationAccessTokenInterceptor())
+                .addPathPatterns("/oauth2.0/accessToken*");
     }
 }

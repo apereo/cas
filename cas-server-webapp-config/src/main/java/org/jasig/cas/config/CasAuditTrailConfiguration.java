@@ -1,8 +1,12 @@
 package org.jasig.cas.config;
 
 import com.google.common.collect.ImmutableList;
+import org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
+import org.jasig.cas.audit.spi.ServiceResourceResolver;
 import org.jasig.inspektr.audit.AuditTrailManagementAspect;
 import org.jasig.inspektr.audit.AuditTrailManager;
+import org.jasig.inspektr.audit.spi.AuditActionResolver;
+import org.jasig.inspektr.audit.spi.AuditResourceResolver;
 import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
@@ -17,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,6 +44,11 @@ public class CasAuditTrailConfiguration {
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
+    
+    
+    @Autowired
+    @Qualifier("ticketResourceResolver")
+    private AuditResourceResolver ticketResourceResolver;
     
     /**
      * The Audit resource resolver map.
@@ -143,6 +153,35 @@ public class CasAuditTrailConfiguration {
     @Bean(name = "returnValueResourceResolver")
     public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
+    }
+    
+    
+    @Bean(name="auditActionResolverMap")
+    public Map auditActionResolverMap() {
+        final Map<String, AuditActionResolver> map = new HashMap<>();
+        map.put("AUTHENTICATION_RESOLVER", authenticationActionResolver());
+        map.put("SAVE_SERVICE_ACTION_RESOLVER", authenticationActionResolver());
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", new DefaultAuditActionResolver());
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", new DefaultAuditActionResolver());
+        map.put("GRANT_SERVICE_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("GRANT_PROXY_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketCreationActionResolver());
+        return map;
+    }
+
+    @Bean(name="auditResourceResolverMap")
+    public Map auditResourceResolverMap() {
+        final Map<String, AuditResourceResolver> map = new HashMap<>();
+        map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
+        map.put("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
+        map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
+        map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
+        map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
+        return map;
     }
 }
 
