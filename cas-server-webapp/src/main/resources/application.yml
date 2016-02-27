@@ -1,0 +1,3 @@
+isLog4jAutoInitializationDisabled: true
+contextClass: org.springframework.web.context.support.GroovyWebApplicationContext
+

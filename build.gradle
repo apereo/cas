@@ -442,6 +442,7 @@ ext.libraries = [
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
                     exclude(group: 'com.fasterxml', module: 'classmate')
                     exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.springframework', module: 'spring-test')
                     force = true
                 },
                 "org.hsqldb:hsqldb:$hsqlVersion",
@@ -747,6 +748,21 @@ ext.libraries = [
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
                     exclude(group: 'com.fasterxml', module: 'classmate')
                     exclude(group: 'org.hibernate', module: 'hibernate-validator')
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
+                    exclude(group: 'org.slf4j', module: 'jul-to-slf4j')
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion") {
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
+                    exclude(group: 'org.slf4j', module: 'jul-to-slf4j')
                     force = true
                 }
         ],

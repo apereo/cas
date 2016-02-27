@@ -8,6 +8,7 @@ dependencies {
     compile project(':cas-server-core-web')
     compile project(':cas-server-webapp-actions')
     provided project(':cas-server-webapp-themes')
+    provided project(':cas-server-core')
     provided libraries.bouncycastle
 }
 

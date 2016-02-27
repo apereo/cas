@@ -3,44 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
-    <display-name>Central Authentication System (CAS)</display-name>
-
-    <context-param>
-        <param-name>isLog4jAutoInitializationDisabled</param-name>
-        <param-value>true</param-value>
-    </context-param>
-    <listener>
-        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
-    </listener>
-
-    <context-param>
-        <param-name>contextClass</param-name>
-        <param-value>org.springframework.web.context.support.GroovyWebApplicationContext</param-value>
-    </context-param>
     
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            /WEB-INF/spring-configuration/*.xml
-            /WEB-INF/spring-configuration/*.groovy
-            /WEB-INF/deployerConfigContext.xml
-            classpath*:/META-INF/spring/*.xml
-        </param-value>
-    </context-param>
-
-    <!--
-      - Loads the CAS ApplicationContext.
-    -->
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
-    <listener>
-        <listener-class>
-            org.jasig.cas.CasEnvironmentContextListener
-        </listener-class>
-    </listener>
 
     <session-config>
         <!-- Default to 5 minute session timeouts -->

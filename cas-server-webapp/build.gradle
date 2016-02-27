@@ -25,7 +25,6 @@ war {
 }
 
 dependencies {
-    compile project(':cas-server-webapp-support')
     compile project(':cas-server-core')
     compile project(':cas-server-core-monitor')
     compile project(':cas-server-core-authentication')

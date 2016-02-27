@@ -18,13 +18,6 @@
         This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
         modify this unless you know what you're doing!
     </description>
-    
-    <!--
-      Including this aspectj-autoproxy element will cause spring to automatically
-      create proxies around any beans defined in this file that match the pointcuts
-      of any aspects defined in this file.
-    -->
-    <aop:aspectj-autoproxy/>
         
     <!--
     Security configuration for sensitive areas of CAS : status and statistics.

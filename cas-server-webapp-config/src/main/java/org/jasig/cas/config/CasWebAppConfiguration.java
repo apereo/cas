@@ -6,16 +6,20 @@ import com.codahale.metrics.servlets.PingServlet;
 import com.codahale.metrics.servlets.ThreadDumpServlet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.apache.logging.log4j.web.Log4jServletContextListener;
+import org.jasig.cas.CasEnvironmentContextListener;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -312,6 +316,33 @@ public class CasWebAppConfiguration {
                 "/WEB-INF/cas-servlet.xml,classpath*:/META-INF/cas-servlet-*.xml,/WEB-INF/cas-servlet-*.xml");
         initParams.put("publishContext", "false");
         bean.setInitParameters(initParams);
+        return bean;
+    }
+
+    @Bean(name="log4jServletContextListener")
+    public ServletListenerRegistrationBean log4jServletContextListener() {
+        final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("log4jServletContextListener");
+        bean.setListener(new Log4jServletContextListener());
+        return bean;
+    }
+
+    @Bean(name="contextLoaderListener")
+    public ServletListenerRegistrationBean contextLoaderListener() {
+        final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("contextLoaderListener");
+        bean.setListener(new ContextLoaderListener());
+        return bean;
+    }
+
+    @Bean(name="casEnvironmentContextListener")
+    public ServletListenerRegistrationBean casEnvironmentContextListener() {
+        final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("casEnvironmentContextListener");
+        bean.setListener(new CasEnvironmentContextListener());
         return bean;
     }
 }
