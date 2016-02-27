@@ -31,8 +31,8 @@ public class AuthenticationException extends RuntimeException {
     public AuthenticationException(final String msg) {
         this(
             msg,
-            Collections.<String, Class<? extends Exception>>emptyMap(),
-            Collections.<String, HandlerResult>emptyMap());
+            Collections.emptyMap(),
+            Collections.emptyMap());
     }
 
     /**
@@ -48,7 +48,7 @@ public class AuthenticationException extends RuntimeException {
      * @param handlerErrors Map of handler names to errors.
      */
     public AuthenticationException(final Map<String, Class<? extends Exception>> handlerErrors) {
-        this(handlerErrors, Collections.<String, HandlerResult>emptyMap());
+        this(handlerErrors, Collections.emptyMap());
     }
 
     /**
