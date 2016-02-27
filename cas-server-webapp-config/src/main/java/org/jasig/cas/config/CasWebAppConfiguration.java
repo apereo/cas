@@ -1,14 +1,22 @@
 package org.jasig.cas.config;
 
+import com.codahale.metrics.servlets.HealthCheckServlet;
+import com.codahale.metrics.servlets.MetricsServlet;
+import com.codahale.metrics.servlets.PingServlet;
+import com.codahale.metrics.servlets.ThreadDumpServlet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
@@ -21,7 +29,11 @@ import org.springframework.web.servlet.view.XmlViewResolver;
 import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
 
 import javax.validation.MessageInterpolator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -218,5 +230,88 @@ public class CasWebAppConfiguration {
         map.put(".*iPhone.*", "iphone");
         map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
         return map;
+    }
+    
+    
+    @Bean(name="metricsHealth")
+    public ServletRegistrationBean metricsHealth() {
+        final ServletRegistrationBean bean = new ServletRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("metricsHealth");
+        bean.setServlet(new HealthCheckServlet());
+        bean.setUrlMappings(Collections.singleton("/statistics/healthcheck"));
+        bean.setLoadOnStartup(1);
+        return bean;
+    }
+
+    @Bean(name="metrics")
+    public ServletRegistrationBean metrics() {
+        final ServletRegistrationBean bean = new ServletRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("metrics");
+        bean.setServlet(new MetricsServlet());
+        bean.setUrlMappings(Collections.singleton("/statistics/metrics"));
+        bean.setLoadOnStartup(1);
+        return bean;
+    }
+
+    @Bean(name="metricsThreads")
+    public ServletRegistrationBean metricsThreads() {
+        final ServletRegistrationBean bean = new ServletRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("metricsThreads");
+        bean.setServlet(new ThreadDumpServlet());
+        bean.setUrlMappings(Collections.singleton("/statistics/threads"));
+        bean.setLoadOnStartup(1);
+        return bean;
+    }
+    
+    @Bean(name="metricsPing")
+    public ServletRegistrationBean metricsPing() {
+        final ServletRegistrationBean bean = new ServletRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("metricsPing");
+        bean.setServlet(new PingServlet());
+        bean.setUrlMappings(Collections.singleton("/statistics/ping"));
+        bean.setLoadOnStartup(1);
+        return bean;
+    }
+
+    @Bean(name="cas")
+    public ServletRegistrationBean cas() {
+        final ServletRegistrationBean bean = new ServletRegistrationBean();
+        bean.setEnabled(true);
+        bean.setName("cas");
+        bean.setServlet(new DispatcherServlet());
+        
+        final List<String> list = new ArrayList<>();
+        list.add("/login");
+        list.add("/logout");
+        list.add("/validate");
+        list.add("/serviceValidate");
+        list.add("//p3/serviceValidate");
+        list.add("/proxy");
+        list.add("/proxyValidate");
+        list.add("/p3/proxyValidate");
+        list.add("/CentralAuthenticationService");
+
+        list.add("/status");
+        list.add("/statistics");
+        list.add("/statistics/ssosessions/*");
+        list.add("/statistics/ssosessions");
+        list.add("/status/config/*");
+        list.add("/status/config");
+        list.add("/authorizationFailure.html");
+        list.add("/v1/*");
+        
+        bean.setUrlMappings(list);
+        bean.setLoadOnStartup(1);
+        
+        final Map<String, String> initParams = new HashMap<>();
+        initParams.put("contextConfigConfiguration", 
+                "/WEB-INF/cas-servlet.xml,classpath*:/META-INF/cas-servlet-*.xml,/WEB-INF/cas-servlet-*.xml");
+        initParams.put("publishContext", "false");
+        bean.setInitParameters(initParams);
+        return bean;
     }
 }
