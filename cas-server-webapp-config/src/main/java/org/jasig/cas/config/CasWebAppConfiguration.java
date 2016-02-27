@@ -231,11 +231,11 @@ public class CasWebAppConfiguration {
         return bean;
     }
 
-    @Bean(name="metrics")
-    public ServletRegistrationBean metrics() {
+    @Bean(name="metricsServlet")
+    public ServletRegistrationBean metricsServlet() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
         bean.setEnabled(true);
-        bean.setName("metrics");
+        bean.setName("metricsServlet");
         bean.setServlet(new MetricsServlet());
         bean.setUrlMappings(Collections.singleton("/statistics/metrics"));
         bean.setLoadOnStartup(1);
@@ -310,16 +310,7 @@ public class CasWebAppConfiguration {
         bean.setListener(new Log4jServletContextListener());
         return bean;
     }
-
-    @Bean(name="contextLoaderListener")
-    public ServletListenerRegistrationBean contextLoaderListener() {
-        final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("contextLoaderListener");
-        bean.setListener(new ContextLoaderListener());
-        return bean;
-    }
-
+    
     @Bean(name="casEnvironmentContextListener")
     public ServletListenerRegistrationBean casEnvironmentContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();

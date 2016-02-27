@@ -51,18 +51,6 @@ public class CasAuditTrailConfiguration {
     private AuditResourceResolver ticketResourceResolver;
     
     /**
-     * The Audit resource resolver map.
-     */
-    @Resource(name = "auditResourceResolverMap")
-    private Map auditResourceResolverMap;
-
-    /**
-     * The Audit action resolver map.
-     */
-    @Resource(name = "auditActionResolverMap")
-    private Map auditActionResolverMap;
-
-    /**
      * The Entry separator.
      */
     @Value("${cas.audit.singleline.separator:|}")
@@ -82,8 +70,8 @@ public class CasAuditTrailConfiguration {
     @Bean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect(this.appCode,
-                this.principalResolver, ImmutableList.of(auditTrailManager()), auditActionResolverMap,
-                auditResourceResolverMap);
+                this.principalResolver, ImmutableList.of(auditTrailManager()), auditActionResolverMap(),
+                auditResourceResolverMap());
 
     }
 
