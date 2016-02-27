@@ -23,7 +23,8 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication(scanBasePackages = {"org.jasig.cas"},
         exclude={HibernateJpaAutoConfiguration.class, 
                 JerseyAutoConfiguration.class, 
-                GroovyTemplateAutoConfiguration.class, 
+                GroovyTemplateAutoConfiguration.class,
+                DataSourceAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
 @ImportResource(locations = {"/WEB-INF/spring-configuration/*.xml", 
                              "/WEB-INF/spring-configuration/*.groovy",
