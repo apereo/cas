@@ -41,7 +41,8 @@ public final class CasVersion {
             final URL resource = clazz.getResource(clazz.getSimpleName() + ".class");
             if ("file".equals(resource.getProtocol())) {
                 return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());
-            } else if ("jar".equals(resource.getProtocol())) {
+            } 
+            if ("jar".equals(resource.getProtocol())) {
                 final String path = resource.getPath();
                 final File file = new File(path.substring(5, path.indexOf('!')));
                 return DateTimeUtils.zonedDateTimeOf(file.lastModified());

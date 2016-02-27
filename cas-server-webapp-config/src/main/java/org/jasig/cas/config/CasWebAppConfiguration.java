@@ -5,7 +5,6 @@ import com.codahale.metrics.servlets.MetricsServlet;
 import com.codahale.metrics.servlets.PingServlet;
 import com.codahale.metrics.servlets.ThreadDumpServlet;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
-import org.jasig.cas.CasEnvironmentContextListener;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -310,16 +308,7 @@ public class CasWebAppConfiguration {
         bean.setListener(new Log4jServletContextListener());
         return bean;
     }
-    
-    @Bean(name="casEnvironmentContextListener")
-    public ServletListenerRegistrationBean casEnvironmentContextListener() {
-        final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("casEnvironmentContextListener");
-        bean.setListener(new CasEnvironmentContextListener());
-        return bean;
-    }
-    
+        
     @Bean(name="simpleControllerHandlerAdapter")
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();

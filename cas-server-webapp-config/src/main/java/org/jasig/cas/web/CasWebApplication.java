@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.ImportResource;
  * @since 4.3.0
  */
 @SpringBootApplication(scanBasePackages = {"org.jasig.cas"},
-        exclude={HibernateJpaAutoConfiguration.class})
+        exclude={HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class})
 @ImportResource(locations = {"/WEB-INF/spring-configuration/*.xml", 
                              "/WEB-INF/spring-configuration/*.groovy",
                              "/WEB-INF/deployerConfigContext.xml", 
@@ -31,8 +32,7 @@ public class CasWebApplication {
      * Instantiates a new Cas web application.
      */
     protected CasWebApplication() {}
-
-
+    
     /**
      * Main entry point of the CAS web application.
      *
