@@ -103,7 +103,7 @@ public final class AuthenticationContextValidator {
             final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providers);
             final Optional<MultifactorAuthenticationProvider> result = Arrays.stream(providers)
-                    .filter(provider -> provider.equals(requestedProvider) || provider.getOrder() >= requestedProvider.get().getOrder())
+                    .filter(provider -> provider.equals(requestedProvider.get()) || provider.getOrder() >= requestedProvider.get().getOrder())
                     .findFirst();
 
             if (result.isPresent()) {
