@@ -262,7 +262,7 @@ public class CasWebAppConfiguration {
         return bean;
     }
 
-    @Bean(name="cas")
+    @Bean(name="dispatcherServlet")
     public ServletRegistrationBean cas() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
         bean.setEnabled(true);

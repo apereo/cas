@@ -5,9 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
@@ -19,7 +21,10 @@ import org.springframework.context.annotation.ImportResource;
  * @since 4.3.0
  */
 @SpringBootApplication(scanBasePackages = {"org.jasig.cas"},
-        exclude={HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class})
+        exclude={HibernateJpaAutoConfiguration.class, 
+                JerseyAutoConfiguration.class, 
+                GroovyTemplateAutoConfiguration.class, 
+                VelocityAutoConfiguration.class})
 @ImportResource(locations = {"/WEB-INF/spring-configuration/*.xml", 
                              "/WEB-INF/spring-configuration/*.groovy",
                              "/WEB-INF/deployerConfigContext.xml", 

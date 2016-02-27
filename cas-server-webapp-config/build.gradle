@@ -10,6 +10,7 @@ dependencies {
     provided project(':cas-server-webapp-themes')
     provided project(':cas-server-core')
     provided project(':cas-server-core-audit')
+    provided project(':cas-server-core-logging')
     provided libraries.bouncycastle
 }
 

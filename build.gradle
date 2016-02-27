@@ -753,6 +753,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
+                    exclude(group: 'org.apache.tomcat.embed', module: 'tomcat-embed-el')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.slf4j', module: 'jul-to-slf4j')
                     force = true
