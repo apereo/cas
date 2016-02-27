@@ -37,27 +37,6 @@
         <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
     </webflow:flow-registry>
     
-    <!--
-    CAS Metrics Configuration
-    -->
-    <metrics:metric-registry id="metrics" />
-    <metrics:health-check-registry id="healthCheckMetrics" />
-
-    <metrics:annotation-driven metric-registry="metrics" />
-
-    <metrics:reporter type="slf4j" metric-registry="metrics"
-                      period="${metrics.refresh.internal:30s}"
-                      duration-unit="MILLISECONDS"
-                      rate-unit="MILLISECONDS"
-                      logger="perfStatsLogger"/>
-
-    <metrics:reporter type="jmx" metric-registry="metrics" />
-
-    <metrics:register metric-registry="metrics">
-        <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
-        <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
-        <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
-        <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
-    </metrics:register>
+    
     
 </beans>
