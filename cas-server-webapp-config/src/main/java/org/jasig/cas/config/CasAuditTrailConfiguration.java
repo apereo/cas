@@ -7,13 +7,16 @@ import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
+import org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -87,6 +90,21 @@ public class CasAuditTrailConfiguration {
         return mgmr;
     }
 
+
+    /**
+     * Cas client info logging filter client info thread local filter.
+     *
+     * @return the client info thread local filter
+     */
+    @Bean(name = "casClientInfoLoggingFilter")
+    public FilterRegistrationBean casClientInfoLoggingFilter() {
+        final FilterRegistrationBean bean = new FilterRegistrationBean();
+        bean.setFilter(new ClientInfoThreadLocalFilter());
+        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setName("CAS Client Info Logging Filter");
+        return bean;
+    }
+    
     /**
      * Authentication action resolver default audit action resolver.
      *

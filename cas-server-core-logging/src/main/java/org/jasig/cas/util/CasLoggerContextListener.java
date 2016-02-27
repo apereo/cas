@@ -2,7 +2,7 @@ package org.jasig.cas.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.jasig.cas.web.AbstractServletContextInitializer;
+import org.jasig.cas.web.AbstractServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @WebListener
 @Component("log4jInitialization")
-public final class CasLoggerContextListener extends AbstractServletContextInitializer {
+public final class CasLoggerContextListener extends AbstractServletContextListener {
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasLoggerContextListener.class);

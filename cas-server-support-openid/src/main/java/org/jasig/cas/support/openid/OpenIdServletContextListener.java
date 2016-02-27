@@ -5,7 +5,7 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
-import org.jasig.cas.web.AbstractServletContextInitializer;
+import org.jasig.cas.web.AbstractServletContextListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import javax.servlet.annotation.WebListener;
  */
 @WebListener
 @Component
-public class OpenIdServletContextListener extends AbstractServletContextInitializer {
+public class OpenIdServletContextListener extends AbstractServletContextListener {
 
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")

@@ -40,7 +40,7 @@ import java.util.Map;
  * @since 4.2
  */
 @Component
-public abstract class AbstractServletContextInitializer
+public abstract class AbstractServletContextListener
     implements ApplicationContextInitializer<ConfigurableApplicationContext>,
     WebApplicationInitializer,
     ServletContextListener, ApplicationContextAware {
@@ -55,7 +55,7 @@ public abstract class AbstractServletContextInitializer
     /**
      * Instantiates a new servlet context initializer.
      */
-    protected AbstractServletContextInitializer() {}
+    protected AbstractServletContextListener() {}
 
 
     @Override

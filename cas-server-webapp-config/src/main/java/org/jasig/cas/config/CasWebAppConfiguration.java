@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -20,7 +21,9 @@ import org.springframework.web.servlet.view.XmlViewResolver;
 import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
 
 import javax.validation.MessageInterpolator;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * This is {@link CasWebAppConfiguration}.
@@ -185,5 +188,35 @@ public class CasWebAppConfiguration {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
         bean.setParamName(this.localeParamName);
         return bean;
+    }
+
+
+    /**
+     * Web content interceptor web content interceptor.
+     *
+     * @return the web content interceptor
+     */
+    @Bean(name = "webContentInterceptor")
+    public WebContentInterceptor webContentInterceptor() {
+        final WebContentInterceptor interceptor = new WebContentInterceptor();
+        interceptor.setCacheSeconds(0);
+        interceptor.setAlwaysUseFullPath(true);
+        return interceptor;
+    }
+
+    /**
+     * Service theme resolver supported browsers map.
+     *
+     * @return the map
+     */
+    @Bean(name = "serviceThemeResolverSupportedBrowsers")
+    public Map serviceThemeResolverSupportedBrowsers() {
+        final Map<String, String> map = new HashMap<>();
+        map.put(".*iPhone.*", "iphone");
+        map.put(".*Android.*", "android");
+        map.put(".*Safari.*Pre.*", "safari");
+        map.put(".*iPhone.*", "iphone");
+        map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
+        return map;
     }
 }

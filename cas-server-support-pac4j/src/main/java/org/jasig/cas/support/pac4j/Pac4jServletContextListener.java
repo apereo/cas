@@ -2,7 +2,7 @@ package org.jasig.cas.support.pac4j;
 
 import org.jasig.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
-import org.jasig.cas.web.AbstractServletContextInitializer;
+import org.jasig.cas.web.AbstractServletContextListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import javax.servlet.annotation.WebListener;
  */
 @WebListener
 @Component("pac4jServletContextListener")
-public class Pac4jServletContextListener extends AbstractServletContextInitializer {
+public class Pac4jServletContextListener extends AbstractServletContextListener {
 
     @Autowired
     @Qualifier("clientAuthenticationHandler")

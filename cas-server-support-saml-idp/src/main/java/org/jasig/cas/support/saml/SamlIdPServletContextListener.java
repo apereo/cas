@@ -1,6 +1,6 @@
 package org.jasig.cas.support.saml;
 
-import org.jasig.cas.web.AbstractServletContextInitializer;
+import org.jasig.cas.web.AbstractServletContextListener;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import javax.servlet.annotation.WebListener;
  */
 @WebListener
 @Component("samlIdPServletContextListener")
-public class SamlIdPServletContextListener extends AbstractServletContextInitializer {
+public class SamlIdPServletContextListener extends AbstractServletContextListener {
 
     @Override
     public void initializeServletContext(final ServletContextEvent event) {

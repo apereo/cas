@@ -3,7 +3,7 @@ package org.jasig.cas.support.spnego;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.web.AbstractServletContextInitializer;
+import org.jasig.cas.web.AbstractServletContextListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import javax.servlet.annotation.WebListener;
  */
 @WebListener
 @Component
-public class SpnegoServletContextListener extends AbstractServletContextInitializer {
+public class SpnegoServletContextListener extends AbstractServletContextListener {
     @Autowired
     @Qualifier("spnegoHandler")
     private AuthenticationHandler spnegoHandler;
