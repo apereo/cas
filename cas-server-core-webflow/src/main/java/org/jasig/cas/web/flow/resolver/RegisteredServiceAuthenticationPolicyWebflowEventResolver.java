@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyWebflowEventResolver}
- * that attempts to resolve the next event basef on the authentication providers of this service.
+ * that attempts to resolve the next event based on the authentication providers of this service.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
