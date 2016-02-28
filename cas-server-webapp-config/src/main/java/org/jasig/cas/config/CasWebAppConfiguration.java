@@ -94,7 +94,7 @@ public class CasWebAppConfiguration {
      */
     @Value("${locale.param.name:locale}")
     private String localeParamName;
-    
+
     /**
      * Credentials validator local validator factory bean.
      *
@@ -216,8 +216,13 @@ public class CasWebAppConfiguration {
         map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
         return map;
     }
-    
-    
+
+
+    /**
+     * Metrics health servlet registration bean.
+     *
+     * @return the servlet registration bean
+     */
     @Bean(name="metricsHealth")
     public ServletRegistrationBean metricsHealth() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
@@ -229,6 +234,11 @@ public class CasWebAppConfiguration {
         return bean;
     }
 
+    /**
+     * Metrics servlet servlet registration bean.
+     *
+     * @return the servlet registration bean
+     */
     @Bean(name="metricsServlet")
     public ServletRegistrationBean metricsServlet() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
@@ -240,6 +250,11 @@ public class CasWebAppConfiguration {
         return bean;
     }
 
+    /**
+     * Metrics threads servlet registration bean.
+     *
+     * @return the servlet registration bean
+     */
     @Bean(name="metricsThreads")
     public ServletRegistrationBean metricsThreads() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
@@ -250,7 +265,12 @@ public class CasWebAppConfiguration {
         bean.setLoadOnStartup(1);
         return bean;
     }
-    
+
+    /**
+     * Metrics ping servlet registration bean.
+     *
+     * @return the servlet registration bean
+     */
     @Bean(name="metricsPing")
     public ServletRegistrationBean metricsPing() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
@@ -262,6 +282,11 @@ public class CasWebAppConfiguration {
         return bean;
     }
 
+    /**
+     * Cas servlet registration bean.
+     *
+     * @return the servlet registration bean
+     */
     @Bean(name="dispatcherServlet")
     public ServletRegistrationBean cas() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
@@ -300,6 +325,11 @@ public class CasWebAppConfiguration {
         return bean;
     }
 
+    /**
+     * Log4j servlet context listener servlet listener registration bean.
+     *
+     * @return the servlet listener registration bean
+     */
     @Bean(name="log4jServletContextListener")
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
@@ -308,7 +338,12 @@ public class CasWebAppConfiguration {
         bean.setListener(new Log4jServletContextListener());
         return bean;
     }
-        
+
+    /**
+     * Simple controller handler adapter simple controller handler adapter.
+     *
+     * @return the simple controller handler adapter
+     */
     @Bean(name="simpleControllerHandlerAdapter")
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();

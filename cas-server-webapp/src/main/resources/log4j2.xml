@@ -38,7 +38,7 @@
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="info" additivity="false">
+        <AsyncLogger name="org.springframework.boot" level="warn" additivity="false">
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
         </AsyncLogger>

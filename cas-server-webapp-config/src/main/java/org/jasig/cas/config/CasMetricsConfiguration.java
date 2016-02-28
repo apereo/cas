@@ -35,6 +35,11 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
     @Value("${metrics.logger.name:perfStatsLogger}")
     private String perfStatsLoggerName;
 
+    /**
+     * Metric registry metric registry.
+     *
+     * @return the metric registry
+     */
     @Bean(name = "metrics")
     public MetricRegistry metricRegistry() {
         final MetricRegistry metrics = new MetricRegistry();
@@ -45,6 +50,11 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
         return metrics;
     }
 
+    /**
+     * Health check metrics health check registry.
+     *
+     * @return the health check registry
+     */
     @Bean(name = "healthCheckMetrics")
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();
