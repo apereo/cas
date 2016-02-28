@@ -4,8 +4,7 @@ import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-
-import java.io.File;
+import org.springframework.core.io.FileSystemResource;
 
 import static org.junit.Assert.*;
 
@@ -20,7 +19,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     @Test
      public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
-        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
+        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource, "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
@@ -30,7 +29,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
-        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
+        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource, "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
@@ -40,19 +39,19 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test(expected = RuntimeException.class)
      public void verifyTrustStoreNotFound() throws Exception {
-        new FileTrustStoreSslSocketFactory(new File("test.jks"), "changeit");
+        new FileTrustStoreSslSocketFactory(new FileSystemResource("test.jks"), "changeit");
     }
 
     @Test(expected = RuntimeException.class)
     public void verifyTrustStoreBadPassword() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
-        new FileTrustStoreSslSocketFactory(resource.getFile(), "invalid");
+        new FileTrustStoreSslSocketFactory(resource, "invalid");
     }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
-        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
+        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource, "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
@@ -61,7 +60,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
-        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
+        final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource, "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
