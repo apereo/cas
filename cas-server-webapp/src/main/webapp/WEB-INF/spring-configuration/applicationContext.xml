@@ -19,8 +19,7 @@
     <!-- 
     Spring Webflow Configuration
     -->
-    <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
-                                   expression-parser="expressionParser"/>
+
 
     <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
         <webflow:flow-location-pattern value="/login/*-webflow.xml"/>

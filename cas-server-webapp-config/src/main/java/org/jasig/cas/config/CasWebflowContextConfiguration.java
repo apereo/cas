@@ -7,8 +7,10 @@ import org.cryptacular.generator.sp80038a.RBGNonce;
 import org.cryptacular.io.URLResource;
 import org.cryptacular.spec.BufferedBlockCipherSpec;
 import org.jasig.cas.web.flow.LogoutConversionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -16,6 +18,8 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.ResourceBundleViewResolver;
+import org.springframework.webflow.config.FlowBuilderServicesBuilder;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 
@@ -29,6 +33,9 @@ import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 @Configuration("casWebflowContextConfiguration")
 public class CasWebflowContextConfiguration {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     /**
      * The constant VIEW_RESOLVER_ORDER.
      */
@@ -172,8 +179,16 @@ public class CasWebflowContextConfiguration {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
-
-
     }
+    
+    @Bean(name="builder")
+    public FlowBuilderServices builder() {
+        final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
+        builder.setViewFactoryCreator(viewFactoryCreator());
+        builder.setExpressionParser(expressionParser());
+        builder.setDevelopmentMode(true);
+        return builder.build();
+    }
+
 }
 

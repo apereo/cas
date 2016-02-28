@@ -299,7 +299,7 @@ public class CasWebAppConfiguration {
         list.add("/logout");
         list.add("/validate");
         list.add("/serviceValidate");
-        list.add("//p3/serviceValidate");
+        list.add("/p3/serviceValidate");
         list.add("/proxy");
         list.add("/proxyValidate");
         list.add("/p3/proxyValidate");
@@ -318,8 +318,7 @@ public class CasWebAppConfiguration {
         bean.setLoadOnStartup(1);
         
         final Map<String, String> initParams = new HashMap<>();
-        initParams.put("contextConfigConfiguration", 
-                "/WEB-INF/cas-servlet.xml,classpath*:/META-INF/cas-servlet-*.xml,/WEB-INF/cas-servlet-*.xml");
+        initParams.put("contextConfigConfiguration", "/WEB-INF/cas-servlet.xml");
         initParams.put("publishContext", "false");
         bean.setInitParameters(initParams);
         return bean;

@@ -45,12 +45,15 @@ public class CasAuditTrailConfiguration {
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
-    
-    
+
+
+    /**
+     * The Ticket resource resolver.
+     */
     @Autowired
     @Qualifier("ticketResourceResolver")
     private AuditResourceResolver ticketResourceResolver;
-    
+
     /**
      * The Entry separator.
      */
@@ -103,7 +106,7 @@ public class CasAuditTrailConfiguration {
         bean.setName("CAS Client Info Logging Filter");
         return bean;
     }
-    
+
     /**
      * Authentication action resolver default audit action resolver.
      *
@@ -143,8 +146,13 @@ public class CasAuditTrailConfiguration {
     public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
     }
-    
-    
+
+
+    /**
+     * Audit action resolver map map.
+     *
+     * @return the map
+     */
     @Bean(name="auditActionResolverMap")
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
@@ -160,6 +168,11 @@ public class CasAuditTrailConfiguration {
         return map;
     }
 
+    /**
+     * Audit resource resolver map map.
+     *
+     * @return the map
+     */
     @Bean(name="auditResourceResolverMap")
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
