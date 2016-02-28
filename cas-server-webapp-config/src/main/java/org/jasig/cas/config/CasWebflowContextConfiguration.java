@@ -19,7 +19,11 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
+import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
+import org.springframework.webflow.config.FlowExecutorBuilder;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 
@@ -33,14 +37,18 @@ import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 @Configuration("casWebflowContextConfiguration")
 public class CasWebflowContextConfiguration {
 
-    @Autowired
-    private ApplicationContext applicationContext;
-    
     /**
      * The constant VIEW_RESOLVER_ORDER.
      */
     private static final int VIEW_RESOLVER_ORDER = 10000;
 
+    
+    /**
+     * The Application context.
+     */
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     /**
      * The Resolver path prefix.
      */
@@ -180,7 +188,12 @@ public class CasWebflowContextConfiguration {
             throw new RuntimeException(e);
         }
     }
-    
+
+    /**
+     * Builder flow builder services.
+     *
+     * @return the flow builder services
+     */
     @Bean(name="builder")
     public FlowBuilderServices builder() {
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
@@ -190,5 +203,43 @@ public class CasWebflowContextConfiguration {
         return builder.build();
     }
 
+    /**
+     * Logout flow executor flow executor.
+     *
+     * @return the flow executor
+     */
+    @Bean(name="logoutFlowExecutor")
+    public FlowExecutor logoutFlowExecutor() {
+        final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
+        builder.setAlwaysRedirectOnPause(false);
+        builder.setRedirectInSameState(false);
+        return builder.build();
+    }
+
+    /**
+     * Logout flow registry flow definition registry.
+     *
+     * @return the flow definition registry
+     */
+    @Bean(name="logoutFlowRegistry")
+    public FlowDefinitionRegistry logoutFlowRegistry() {
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
+        builder.setBasePath("/WEB-INF/webflow");
+        builder.addFlowLocationPattern("/logout/*-webflow.xml");
+        return builder.build();
+    }
+
+    /**
+     * Login flow registry flow definition registry.
+     *
+     * @return the flow definition registry
+     */
+    @Bean(name="loginFlowRegistry")
+    public FlowDefinitionRegistry loginFlowRegistry() {
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
+        builder.setBasePath("/WEB-INF/webflow");
+        builder.addFlowLocationPattern("/login/*-webflow.xml");
+        return builder.build();
+    }
 }
 
