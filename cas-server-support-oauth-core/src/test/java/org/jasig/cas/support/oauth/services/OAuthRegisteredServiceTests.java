@@ -22,7 +22,7 @@ public class OAuthRegisteredServiceTests {
     private final ServiceRegistryDao dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());
+        this.dao = new JsonServiceRegistryDao(RESOURCE);
     }
 
     @BeforeClass

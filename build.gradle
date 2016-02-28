@@ -753,7 +753,6 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
-                    exclude(group: 'org.apache.tomcat.embed', module: 'tomcat-embed-el')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.slf4j', module: 'jul-to-slf4j')
                     force = true
@@ -768,6 +767,11 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot:$springBootVersion") {
+                    force = true
+                }
+        ],
+        springboottomcat      : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-tomcat:$springBootVersion") {
                     force = true
                 }
         ],
@@ -925,6 +929,7 @@ ext.libraries = [
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
         jcenter()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
@@ -933,8 +938,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.akhikhl.gretty:gretty:1.2.4"
         classpath "nl.eveoh:gradle-aspectj:1.6"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
     }
 }
 
@@ -943,23 +948,6 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
-
-    afterEvaluate { project ->
-        def grettyResolutionStrategy = { DependencyResolveDetails details ->
-            if (details.requested.group == 'org.ow2.asm') {
-                details.useVersion('5.0.3')
-            }
-            if (details.requested.group == 'org.glassfish' && details.requested.name == 'javax.el') {
-                details.useVersion(javaxElVersion)
-            }
-        }
-
-        project.configurations {
-            grettyRunnerJetty9 {
-                resolutionStrategy.eachDependency(grettyResolutionStrategy)
-            }
-        }
-    }
 }
 
 subprojects {
@@ -971,6 +959,7 @@ subprojects {
     apply plugin: 'findbugs'
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
+    
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;

@@ -1,14 +1,7 @@
 apply plugin: 'war'
-apply plugin: "org.akhikhl.gretty"
+apply plugin: 'spring-boot'
 
 description = 'Apereo CAS Web Application'
-
-ext {
-    jettySslConfigEnabled = project.hasProperty('jettySslKeyStorePath') && 
-                            project.hasProperty('jettySslTrustStorePath') &&
-                            project.hasProperty('jettySslTrustStorePassword') &&
-                            project.hasProperty('jettySslKeyStorePassword')
-}
 
 javadoc {
     enabled false
@@ -22,6 +15,14 @@ war {
                 "Implementation-Date": java.time.ZonedDateTime.now(),
                 "Implementation-Version": project.version)
     }
+}
+
+springBoot  {
+    mainClass = 'org.jasig.cas.web.CasWebApplication'
+}
+
+bootRepackage {
+    mainClass = 'org.jasig.cas.web.CasWebApplication'
 }
 
 dependencies {
@@ -44,6 +45,7 @@ dependencies {
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
     
+    providedRuntime libraries.springboottomcat
     compile libraries.pac4j
     runtime libraries.spring
     runtime libraries.cassecurityfilter
@@ -51,19 +53,4 @@ dependencies {
     runtime libraries.metrics
     runtime libraries.hibernate
     runtime libraries.bouncycastle
-}
-
-gretty {
-    jvmArgs = ["-DloggerFactory=org.apache.logging.slf4j.Log4jLoggerFactory", "-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug",
-               "-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
-    scanInterval = 5
-    contextPath = '/cas'
-    httpsEnabled = project.ext.jettySslConfigEnabled
-    if (project.ext.jettySslConfigEnabled) {
-        httpsPort = 8443
-        sslKeyStorePath = project.ext.jettySslKeyStorePath
-        sslKeyStorePassword = project.ext.jettySslKeyStorePassword
-        sslTrustStorePath = project.ext.jettySslTrustStorePath
-        sslTrustStorePassword = project.ext.jettySslTrustStorePassword
-    }
 }

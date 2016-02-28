@@ -35,7 +35,7 @@ public class JsonServiceRegistryDaoTests {
     private final ServiceRegistryDao dao;
 
     public JsonServiceRegistryDaoTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());
+        this.dao = new JsonServiceRegistryDao(RESOURCE);
     }
 
     @BeforeClass

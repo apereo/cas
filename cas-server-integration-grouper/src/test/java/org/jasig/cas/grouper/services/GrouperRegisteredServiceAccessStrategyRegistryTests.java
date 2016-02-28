@@ -42,7 +42,7 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
         final GrouperRegisteredServiceAccessStrategy grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE.getFile());
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE);
         dao.save(service);
         dao.load();
     }

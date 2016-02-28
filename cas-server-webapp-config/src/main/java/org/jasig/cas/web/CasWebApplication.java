@@ -1,8 +1,6 @@
 package org.jasig.cas.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
+import org.jasig.cas.web.support.CasBanner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
@@ -10,7 +8,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
@@ -32,8 +30,6 @@ import org.springframework.context.annotation.ImportResource;
                              "classpath*:/META-INF/spring/*.xml"})
 @Import(AopAutoConfiguration.class)
 public class CasWebApplication {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     /**
      * Instantiates a new Cas web application.
      */
@@ -45,7 +41,7 @@ public class CasWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        SpringApplication.run(CasWebApplication.class, args);
+        new SpringApplicationBuilder(CasWebApplication.class).banner(new CasBanner()).run(args);
     }
     
 }

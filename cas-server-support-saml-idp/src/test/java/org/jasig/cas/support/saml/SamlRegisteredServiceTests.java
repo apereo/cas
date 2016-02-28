@@ -37,7 +37,7 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE.getFile());
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE);
         dao.save(service);
         dao.load();
     }
