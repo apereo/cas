@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
@@ -43,7 +44,7 @@ import java.util.Map;
  * @since 4.3.0
  */
 @Configuration("casWebAppConfiguration")
-public class CasWebAppConfiguration {
+public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     /**
      * The constant URL_VIEW_RESOLVER_ORDER.
@@ -296,6 +297,7 @@ public class CasWebAppConfiguration {
         
         final List<String> list = new ArrayList<>();
         list.add("/login");
+        list.add("/");
         list.add("/logout");
         list.add("/validate");
         list.add("/serviceValidate");
@@ -347,5 +349,4 @@ public class CasWebAppConfiguration {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-
 }

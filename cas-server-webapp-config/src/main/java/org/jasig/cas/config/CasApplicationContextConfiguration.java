@@ -13,9 +13,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,6 +141,18 @@ public class CasApplicationContextConfiguration {
         return new UrlFilenameViewController();
     }
 
+    @Bean(name="rootController")
+    protected Controller rootController() {
+        return new ParameterizableViewController() {
+            @Override
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) 
+                    throws Exception {
+                final String queryString = request.getQueryString();
+                final String url = request.getContextPath() + "/login" + (queryString != null ? '?' + queryString : "");
+                return new ModelAndView(new RedirectView(response.encodeURL(url)));
+            }
+        };
+    }
     /**
      * Scheduler scheduler factory bean.
      *
@@ -166,6 +184,7 @@ public class CasApplicationContextConfiguration {
 
         final Properties properties = new Properties();
         properties.put("/authorizationFailure.html", passThroughController());
+        properties.put("/", rootController());
         bean.setMappings(properties);
         return bean;
     }

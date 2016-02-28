@@ -40,8 +40,4 @@
         <error-code>503</error-code>
         <location>/WEB-INF/view/jsp/errors.jsp</location>
     </error-page>
-
-    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
 </web-app>
