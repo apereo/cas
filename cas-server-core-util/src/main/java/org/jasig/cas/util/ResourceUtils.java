@@ -3,6 +3,8 @@ package org.jasig.cas.util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -26,7 +28,8 @@ import java.util.zip.ZipEntry;
  * @since 4.3.0
  */
 public final class ResourceUtils {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
+    
     private ResourceUtils() {
     }
 
@@ -37,7 +40,7 @@ public final class ResourceUtils {
      * @return the resource from
      * @throws IOException the exception
      */
-    public static AbstractResource getResourceFrom(final String metadataLocation) throws IOException {
+    public static AbstractResource getRawResourceFrom(final String metadataLocation) throws IOException {
         final AbstractResource metadataLocationResource;
         if (metadataLocation.toLowerCase().startsWith("http")) {
             metadataLocationResource = new UrlResource(metadataLocation);
@@ -46,6 +49,18 @@ public final class ResourceUtils {
         } else {
             metadataLocationResource = new FileSystemResource(metadataLocation);
         }
+        return metadataLocationResource;
+    }
+    
+    /**
+     * Gets resource from a String location.
+     *
+     * @param metadataLocation the metadata location
+     * @return the resource from
+     * @throws IOException the exception
+     */
+    public static AbstractResource getResourceFrom(final String metadataLocation) throws IOException {
+        final AbstractResource metadataLocationResource = getRawResourceFrom(metadataLocation);
         if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
             throw new FileNotFoundException("Resource does not exist or is unreadable");
         }
@@ -67,6 +82,7 @@ public final class ResourceUtils {
                                                         final boolean isDirectory,
                                                         final String containsName) {
         try {
+
             if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
                 return resource.getFile();
             }
