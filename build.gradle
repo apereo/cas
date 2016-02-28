@@ -359,6 +359,9 @@ ext.libraries = [
                     force = true
                 }
         ],
+        javax            : [
+                "javax.servlet:javax.servlet-api:$javaxSevletVersion",
+        ],
         javaximpl        : [
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
@@ -759,6 +762,11 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot:$springBootVersion") {
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
                     force = true
                 }
         ],

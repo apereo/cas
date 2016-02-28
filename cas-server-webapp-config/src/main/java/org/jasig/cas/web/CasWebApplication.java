@@ -1,6 +1,7 @@
 package org.jasig.cas.web;
 
 import org.jasig.cas.web.support.CasBanner;
+import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.PropertySource;
                 JerseyAutoConfiguration.class, 
                 GroovyTemplateAutoConfiguration.class,
                 DataSourceAutoConfiguration.class,
+                MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
 @ImportResource(locations = {"/WEB-INF/spring-configuration/*.xml", 
                              "/WEB-INF/spring-configuration/*.groovy",
