@@ -359,15 +359,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        javax            : [
-                "javax.el:javax.el-api:$javaxElVersion",
-                "javax.servlet:javax.servlet-api:$javaxSevletVersion",
-        ],
         javaximpl        : [
-                dependencies.create("org.glassfish.web:javax.el:$javaxElImplVersion") {
-                    exclude(group: 'javax.el', module: 'javax.el-api')
-                    force = true
-                },
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
         ],
@@ -773,7 +765,11 @@ ext.libraries = [
         springboottomcat      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-tomcat:$springBootVersion") {
                     force = true
+                },
+                dependencies.create("org.apache.tomcat.embed:tomcat-embed-jasper:8.0.32") {
+                    force = true
                 }
+                
         ],
         springcloud      : [
                 dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClient") {
@@ -1099,7 +1095,6 @@ subprojects {
             findbugsPlugins libraries.findbugssec
         }
         testCompile libraries.tests
-        provided libraries.javax
         runtime libraries.javaximpl
     }
 

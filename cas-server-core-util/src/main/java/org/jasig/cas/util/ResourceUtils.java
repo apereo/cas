@@ -70,6 +70,9 @@ public final class ResourceUtils {
             if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
                 return resource.getFile();
             }
+            if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
+                return resource.getFile();
+            }
             
             final URL url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
             final File file = org.springframework.util.ResourceUtils.getFile(url);
