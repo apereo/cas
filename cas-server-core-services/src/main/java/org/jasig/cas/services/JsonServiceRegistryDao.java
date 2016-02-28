@@ -2,7 +2,6 @@ package org.jasig.cas.services;
 
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.LockedOutputStream;
@@ -12,31 +11,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PreDestroy;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 /**
  * Implementation of {@code ServiceRegistryDao} that reads services definition from JSON
@@ -144,38 +135,13 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     @Autowired
     public JsonServiceRegistryDao(@Value("${service.registry.config.location:classpath:services}")
                                   final Resource configDirectory) throws Exception {
-        
-        if (configDirectory instanceof ClassPathResource) {
-            final File servicesDirectory = prepareConfigDirectoryAsClasspathResource(configDirectory);
-            initializeRegistry(Paths.get(servicesDirectory.getCanonicalFile().getCanonicalPath()), new RegisteredServiceJsonSerializer());
-        } else {
-            initializeRegistry(Paths.get(configDirectory.getFile().getCanonicalPath()), new RegisteredServiceJsonSerializer());
-        }
+
+        final File servicesDirectory = org.jasig.cas.util.ResourceUtils
+                .prepareClasspathResourceIfNeeded(configDirectory, true, FILE_EXTENSION);
+        initializeRegistry(Paths.get(servicesDirectory.getCanonicalFile().getCanonicalPath()), new RegisteredServiceJsonSerializer());
     }
 
-    private File prepareConfigDirectoryAsClasspathResource(final Resource configDirectory) throws IOException {
-        final URL url = ResourceUtils.extractArchiveURL(configDirectory.getURL());
-        final File file = ResourceUtils.getFile(url);
-
-        final File servicesDirectory = new File(FileUtils.getTempDirectory(), configDirectory.getFilename());
-        FileUtils.forceMkdir(servicesDirectory);
-        FileUtils.cleanDirectory(servicesDirectory);
-
-        final JarFile jFile = new JarFile(file);
-        final Enumeration e = jFile.entries();
-        while (e.hasMoreElements()) {
-            final ZipEntry entry = (ZipEntry) e.nextElement();
-            if (entry.getName().contains(configDirectory.getFilename()) && entry.getName().endsWith(FILE_EXTENSION)) {
-                try (final InputStream stream = jFile.getInputStream(entry)) {
-                    final File entryFileName = new File(entry.getName());
-                    try (final FileWriter writer = new FileWriter(new File(servicesDirectory, entryFileName.getName()))) {
-                        IOUtils.copy(stream, writer);
-                    }
-                }
-            }
-        }
-        return servicesDirectory;
-    }
+    
 
     private void initializeRegistry(final Path configDirectory, final JsonSerializer<RegisteredService> registeredServiceJsonSerializer) {
         this.serviceRegistryDirectory = configDirectory;

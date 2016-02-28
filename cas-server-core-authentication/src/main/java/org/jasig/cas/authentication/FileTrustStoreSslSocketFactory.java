@@ -3,10 +3,12 @@ package org.jasig.cas.authentication;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.jasig.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.KeyManager;
@@ -50,12 +52,12 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
     @Autowired
     public FileTrustStoreSslSocketFactory(
             @Value("${http.client.truststore.file:classpath:truststore.jks}")
-            final File trustStoreFile,
+            final Resource trustStoreFile,
             @Value("${http.client.truststore.psw:changeit}")
             final String trustStorePassword) {
-        this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
+        this(prepareTrustStoreFile(trustStoreFile), trustStorePassword, KeyStore.getDefaultType());
     }
-
+    
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
@@ -267,6 +269,14 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
             final List<X509Certificate> certificates = new ArrayList<>();
             trustManagers.stream().forEach(trustManager -> certificates.addAll(Arrays.asList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[certificates.size()]);
+        }
+    }
+
+    private static File prepareTrustStoreFile(final Resource trustStoreFile) {
+        try {
+            return ResourceUtils.prepareClasspathResourceIfNeeded(trustStoreFile, false, trustStoreFile.getFilename());
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
