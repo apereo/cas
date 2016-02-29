@@ -260,7 +260,7 @@ Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't off
 ...
 {% endhighlight %}
 
-###"I am at a public workstation" authentication
+### "I am at a public workstation" authentication
 CAS has the ability to allow the user to opt-out of SSO, by indicating on the login page that the authentication
 is happening at a public workstation. By electing to do so, CAS will not honor the subsequent SSO session
 and will not generate the TGC that is designed to do so.
