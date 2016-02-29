@@ -67,8 +67,7 @@ configuration xml file, use the following beans instead of those provided by def
 {% highlight xml %}
 <bean id="cookieCipherExecutor" class="org.jasig.cas.util.NoOpCipherExecutor" />
 
-<bean id="cookieValueManager" class="org.jasig.cas.web.support.NoOpCookieValueManager"
-      c:cipherExecutor-ref="cookieCipherExecutor" />
+<bean id="cookieValueManager" class="org.jasig.cas.web.support.NoOpCookieValueManager"/>
 
 {% endhighlight %}
 
