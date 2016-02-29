@@ -3,6 +3,7 @@ package org.jasig.cas.web;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationContextValidator;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
@@ -10,6 +11,7 @@ import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
@@ -45,6 +47,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -111,8 +114,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
 
-    @Value("${cas.mfa.request.parameter:authn_method}")
-    private String authenticationContextParameter;
+    @NotNull
+    @Autowired
+    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
@@ -125,14 +130,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Instantiates a new Service validate controller.
      */
     public AbstractServiceValidateController() {}
-
-    public String getAuthenticationContextParameter() {
-        return authenticationContextParameter;
-    }
-
-    public void setAuthenticationContextParameter(final String authenticationContextParameter) {
-        this.authenticationContextParameter = authenticationContextParameter;
-    }
 
     /**
      * Overrideable method to determine which credentials to use to grant a
@@ -168,18 +165,26 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(
             final Assertion assertion, final HttpServletRequest request) {
-        final String requestedContext = request.getParameter(this.authenticationContextParameter);
-        if (!StringUtils.hasLength(requestedContext)) {
-            logger.debug("No particular authentication context is required for this request");
-            return new Pair(true, Optional.empty());
-        }
-
+        // find the RegisteredService for this Assertion
         logger.debug("Locating the primary authentication associated with this service request {}", assertion.getService());
         final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
         RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
+        // resolve MFA auth context for this request
+        final Set<String> providers = this.context.getBeansOfType(MultifactorAuthenticationProvider.class).keySet();
+        final Authentication authentication = assertion.getPrimaryAuthentication();
+        final Optional<String> requestedContext = multifactorTriggerSelectionStrategy.resolve(providers, request,
+                service, authentication.getPrincipal());
+
+        // no MFA auth context found
+        if (!requestedContext.isPresent()) {
+            logger.debug("No particular authentication context is required for this request");
+            return new Pair<>(true, Optional.empty());
+        }
+
+        // validate the requested strategy
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
-                this.authenticationContextValidator.validate(assertion.getPrimaryAuthentication(), requestedContext, service);
+                this.authenticationContextValidator.validate(authentication, requestedContext.get(), service);
         return result;
     }
 
@@ -413,6 +418,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     
     public final void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
         this.argumentExtractor = argumentExtractor;
+    }
+
+    public void setMultifactorTriggerSelectionStrategy(final MultifactorTriggerSelectionStrategy strategy) {
+        this.multifactorTriggerSelectionStrategy = strategy;
     }
 
     /**
