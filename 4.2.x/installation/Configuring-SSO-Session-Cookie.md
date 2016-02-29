@@ -72,7 +72,6 @@ The controlling of this behavior is done via the `cas.properties` file:
 #
 # Indicates whether an SSO session should be created for renewed authentication requests.
 # create.sso.renewed.authn=true
-
 {% endhighlight %}
 
 # SSO Warning Session Cookie
@@ -92,5 +91,4 @@ The cookie is controlled via:
 
 # The path to which the SSO Warning cookie will be scoped
 # warn.cookie.path=/cas
-
 {% endhighlight %}
