@@ -774,7 +774,7 @@ ext.libraries = [
                 dependencies.create("org.springframework.boot:spring-boot-starter-tomcat:$springBootVersion") {
                     force = true
                 },
-                dependencies.create("org.apache.tomcat.embed:tomcat-embed-jasper:8.0.32") {
+                dependencies.create("org.apache.tomcat.embed:tomcat-embed-jasper:$springBootTomcatVersion") {
                     force = true
                 }
                 

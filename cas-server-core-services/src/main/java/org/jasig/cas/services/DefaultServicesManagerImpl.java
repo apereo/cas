@@ -186,6 +186,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * Load services that are provided by the DAO.
      */
     public void load() {
+        LOGGER.debug("Loading services from {}", this.serviceRegistryDao);
         this.services = this.serviceRegistryDao.load().stream()
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service {}", r.getServiceId());
