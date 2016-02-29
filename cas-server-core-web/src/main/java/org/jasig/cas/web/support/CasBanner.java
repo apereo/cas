@@ -17,11 +17,11 @@ import java.util.Properties;
 public class CasBanner implements Banner {
 
     private static final String[] BANNER = {
-            "   ______ ___    _____",
-            "  / ____//   |  / ___/",
-            " / /    / /| |  \\__ \\ ",
-            "/ /___ / ___ | ___/ / ",
-            "\\____//_/  |_|/____/  "};
+            "                       ______ ___    _____",
+            "                      / ____//   |  / ___/",
+            "                     / /    / /| |  \\__ \\ ",
+            "                    / /___ / ___ | ___/ / ",
+            "                    \\____//_/  |_|/____/  "};
     
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {

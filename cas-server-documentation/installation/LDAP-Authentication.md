@@ -209,8 +209,7 @@ Note that additional dependencies must be available to CAS at runtime depending 
 ## LDAP Properties Starter
 The following LDAP configuration properties provide a reasonable starting point for configuring the LDAP
 authentication handler. The `ldap.url` property must be changed at a minumum. LDAP properties may be added to the
-`cas.properties` configuration file; alternatively they may be isolated in an `ldap.properties` file and loaded
-into the Spring application context by modifying the `propertyFileConfigurer.xml` configuration file.
+`application.properties` configuration file.
 
 ```properties
 #========================================
