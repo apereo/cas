@@ -42,7 +42,6 @@ import org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.jasig.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
-import org.slf4j.impl.CasDelegatingLogger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -137,7 +136,6 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer());
         kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
 
-        kryo.register(CasDelegatingLogger.class, new DefaultSerializers.VoidSerializer());
 
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);

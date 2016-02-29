@@ -3,6 +3,7 @@ dependencies {
     compile project(':cas-server-core-api-ticket')
     compile project(':cas-server-core-web')
     compile libraries.spring
+    compile libraries.log4j
 }
 
 

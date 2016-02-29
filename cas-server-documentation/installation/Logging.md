@@ -32,7 +32,7 @@ you probably want to run them both as `WARN`.</p></div>
 ## Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath. 
-These may be overridden by the `cas.properties` file
+These may be overridden by the `application.properties` file
 
 ```bash
 # log4j.config.location=classpath:log4j2.xml
@@ -41,22 +41,6 @@ These may be overridden by the `cas.properties` file
 The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `appender` elements that
 decide where and how messages from components should be displayed. Two are provided by default that
 output messages to the system console and a `cas.log` file:
-
-### Multiple Logger Bindings
-CAS by default attempts to scan the runtime application context looking for suitable logger frameworks. 
-By default, the framework that is chosen is Log4j. If there are multiple logging frameworks found 
-on the application classpath at runtime, you can instruct CAS to specifically select Log4j as the logging framework
-via the following property passed to the JVM runtime instance:
-
-```bash
--DloggerFactory="org.apache.logging.slf4j.Log4jLoggerFactory"
-```
-
-### Alternative Loggers
-If you wish to use an alternative logging framework other than Log4j, you will need to exclude
-all `log4j` JAR artifacts and the `cas-server-core-logging` module from your configuration. Ensure
-an alternative framework such as Logback is provided instead to the application runtime and the necessary
-configuration is available per the framework. 
 
 ### Refresh Interval
 The `log4j2.xml` itself controls the refresh interval of the logging configuration. Log4j has the ability

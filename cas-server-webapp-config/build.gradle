@@ -4,6 +4,7 @@ dependencies {
     compile libraries.springboot
     compile libraries.hibernate
     compile libraries.commons
+    compile libraries.groovy
     compile libraries.cassecurityfilter
     compile project(':cas-server-core-web')
     compile project(':cas-server-webapp-actions')

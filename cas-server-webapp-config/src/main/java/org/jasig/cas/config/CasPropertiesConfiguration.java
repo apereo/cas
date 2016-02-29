@@ -26,5 +26,5 @@ public class CasPropertiesConfiguration {
     public Properties casProperties() {
         return new Properties();
     }
-
+    
 }

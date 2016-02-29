@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.PropertySource;
 
 /**
  * This is {@link CasWebApplication}.
@@ -21,30 +20,34 @@ import org.springframework.context.annotation.PropertySource;
  * @since 4.3.0
  */
 @SpringBootApplication(scanBasePackages = {"org.jasig.cas"},
-        exclude={HibernateJpaAutoConfiguration.class, 
-                JerseyAutoConfiguration.class, 
+        exclude = {HibernateJpaAutoConfiguration.class,
+                JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
                 DataSourceAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
-@ImportResource(locations = {"/WEB-INF/spring-configuration/*.xml", 
-                             "/WEB-INF/spring-configuration/*.groovy",
-                             "/WEB-INF/deployerConfigContext.xml", 
-                             "classpath*:/META-INF/spring/*.xml"})
+@ImportResource(locations = {"/WEB-INF/spring-configuration/*.xml",
+        "/WEB-INF/spring-configuration/*.groovy",
+        "/WEB-INF/deployerConfigContext.xml",
+        "classpath*:/META-INF/spring/*.xml"})
 @Import(AopAutoConfiguration.class)
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.
      */
-    protected CasWebApplication() {}
-    
+    protected CasWebApplication() {
+    }
+
     /**
      * Main entry point of the CAS web application.
      *
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasWebApplication.class).banner(new CasBanner()).run(args);
+        new SpringApplicationBuilder(CasWebApplication.class)
+                .banner(new CasBanner())
+                .run(args);
     }
-    
 }
+
+

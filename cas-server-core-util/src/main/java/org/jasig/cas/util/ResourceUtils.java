@@ -67,6 +67,10 @@ public final class ResourceUtils {
         return metadataLocationResource;
     }
 
+    public static File prepareClasspathResourceIfNeeded(final Resource resource) {
+        return prepareClasspathResourceIfNeeded(resource, false, resource.getFilename());
+    }
+
     /**
      * If the provided resource is a classpath resource, running inside an embedded container,
      * and if the container is running in a non-exploded form, classpath resources become non-accessible. 
