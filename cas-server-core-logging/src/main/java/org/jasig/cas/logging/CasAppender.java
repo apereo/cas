@@ -95,8 +95,8 @@ public class CasAppender extends AbstractAppender {
      */
     @PluginFactory
     public static CasAppender build(@PluginAttribute("name") final String name, 
-                                    @PluginElement("AppenderRef") AppenderRef appenderRef,
-                                    @PluginConfiguration Configuration config) {
+                                    @PluginElement("AppenderRef") final AppenderRef appenderRef,
+                                    @PluginConfiguration final Configuration config) {
         return new CasAppender(name, config, appenderRef);
     }
 

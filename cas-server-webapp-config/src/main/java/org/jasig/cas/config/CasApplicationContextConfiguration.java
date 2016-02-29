@@ -141,6 +141,11 @@ public class CasApplicationContextConfiguration {
         return new UrlFilenameViewController();
     }
 
+    /**
+     * Root controller controller.
+     *
+     * @return the controller
+     */
     @Bean(name="rootController")
     protected Controller rootController() {
         return new ParameterizableViewController() {

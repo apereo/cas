@@ -67,6 +67,12 @@ public final class ResourceUtils {
         return metadataLocationResource;
     }
 
+    /**
+     * Prepare classpath resource if needed file.
+     *
+     * @param resource the resource
+     * @return the file
+     */
     public static File prepareClasspathResourceIfNeeded(final Resource resource) {
         return prepareClasspathResourceIfNeeded(resource, false, resource.getFilename());
     }

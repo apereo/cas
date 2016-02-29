@@ -16,12 +16,22 @@ import java.util.Properties;
 @Configuration("casPropertiesConfiguration")
 @PropertySource(value={"${cas.properties.config.location:/WEB-INF/cas.properties}"})
 public class CasPropertiesConfiguration {
-    
+
+    /**
+     * Place holder configurer property sources placeholder configurer.
+     *
+     * @return the property sources placeholder configurer
+     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
+    /**
+     * Cas properties properties.
+     *
+     * @return the properties
+     */
     @Bean(name = "casProperties")
     public Properties casProperties() {
         return new Properties();
