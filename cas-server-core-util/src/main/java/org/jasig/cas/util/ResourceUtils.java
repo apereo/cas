@@ -62,7 +62,7 @@ public final class ResourceUtils {
     public static AbstractResource getResourceFrom(final String metadataLocation) throws IOException {
         final AbstractResource metadataLocationResource = getRawResourceFrom(metadataLocation);
         if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
-            throw new FileNotFoundException("Resource does not exist or is unreadable");
+            throw new FileNotFoundException("Resource " + metadataLocation + " does not exist or is unreadable");
         }
         return metadataLocationResource;
     }

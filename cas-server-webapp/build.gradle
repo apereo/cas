@@ -47,9 +47,9 @@ dependencies {
     
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j
+    runtime libraries.groovy
     runtime libraries.spring
     runtime libraries.cassecurityfilter
-    runtime libraries.groovy
     runtime libraries.metrics
     runtime libraries.hibernate
     runtime libraries.bouncycastle
