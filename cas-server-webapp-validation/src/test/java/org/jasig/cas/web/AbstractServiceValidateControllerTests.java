@@ -3,6 +3,7 @@ package org.jasig.cas.web;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockValidationSpecification;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -49,7 +50,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController.setArgumentExtractor(getArgumentExtractor());
         this.serviceValidateController.setServicesManager(getServicesManager());
         this.serviceValidateController.setValidationSpecification(new Cas20WithoutProxyingValidationSpecification());
-
+        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(new DefaultMultifactorTriggerSelectionStrategy());
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
