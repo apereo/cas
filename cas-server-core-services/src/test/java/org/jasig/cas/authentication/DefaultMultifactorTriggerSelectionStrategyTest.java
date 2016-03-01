@@ -1,11 +1,5 @@
 package org.jasig.cas.authentication;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -18,6 +12,15 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * @author Daniel Frett
+ * @since 4.3.0
+ */
 public class DefaultMultifactorTriggerSelectionStrategyTest {
     private static final String MFA_VALID_1 = "mfaValid1";
     private static final String MFA_VALID_2 = "mfaValid2";
@@ -81,7 +84,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_VALID_1, MFA_VALID_2), null)
                 .orElse(null),
                 is(MFA_VALID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS,null, mockService(MFA_INVALID), null).orElse(null),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID), null).orElse(null),
                 nullValue());
 
         // Principal attribute activated RegisteredService trigger - direct match
