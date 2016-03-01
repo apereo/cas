@@ -4,6 +4,7 @@ title: CAS - Configuring SSO Session Cookie
 ---
 
 # SSO Session Cookie
+
 A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. This cookie maintains login state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials. Services can opt out of single sign-on through the `renew` parameter. See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
 
 The cookie value is linked to the active ticket-granting ticket, the remote IP address that initiated the request
@@ -17,7 +18,9 @@ You may [use the following tool](https://github.com/mitreid-connect/json-web-key
 to generate your own JSON Web Tokens.
 
 ## Configuration
+
 The generation of the ticket-granting cookie is controlled via:
+
 ```properties
 # The encryption secret key. By default, must be a octet string of size 256.
 tgc.encryption.key=

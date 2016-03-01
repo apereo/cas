@@ -209,6 +209,6 @@ OR the principal must have a `member` attribute whose value is either of `admins
       "memberOf" : [ "java.util.HashSet", [ "admin" ] ]
     },
     "groupField" : "DISPLAY_EXTENSION"
-  },
+  }
 }
 ```
