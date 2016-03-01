@@ -6,6 +6,7 @@ import org.jasig.cas.security.ResponseHeadersEnforcementFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -17,6 +18,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
  * @since 4.3.0
  */
 @Configuration("casFiltersConfiguration")
+@Lazy(true)
 public class CasFiltersConfiguration {
 
     /**
