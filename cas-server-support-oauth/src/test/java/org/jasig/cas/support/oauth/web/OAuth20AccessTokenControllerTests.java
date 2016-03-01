@@ -3,6 +3,12 @@ package org.jasig.cas.support.oauth.web;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.BasicIdentifiableCredential;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
@@ -10,14 +16,12 @@ import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.validator.OAuthValidator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +37,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -301,7 +306,7 @@ public final class OAuth20AccessTokenControllerTests {
         map.put(NAME2, list);
 
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
-        final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
+        final Authentication authentication = getAuthentication(principal);
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
         expiringOAuthCodeFactory.setExpirationPolicy(state -> true);
         final Service service = new OAuthWebApplicationService(registeredService);
@@ -490,7 +495,7 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     private OAuthCode addCode(final Principal principal, final RegisteredService registeredService) {
-        final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
+        final Authentication authentication = getAuthentication(principal);
         final Service service = new OAuthWebApplicationService(registeredService);
         final OAuthCode code = oAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);
@@ -508,12 +513,26 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     private void clearAllServices() {
-        final Collection<RegisteredService> col  = servicesManager.getAllServices();
+        final Collection<RegisteredService> col = servicesManager.getAllServices();
 
         for (final RegisteredService r : col) {
             servicesManager.delete(r.getId());
         }
 
         ((ReloadableServicesManager) servicesManager).reload();
+    }
+
+    private Authentication getAuthentication(final Principal principal) {
+        final CredentialMetaData metadata = new BasicCredentialMetaData(
+                new BasicIdentifiableCredential(principal.getId()));
+        final HandlerResult handlerResult = new DefaultHandlerResult(principal.getClass().getCanonicalName(),
+                metadata, principal, new ArrayList<>());
+
+        return DefaultAuthenticationBuilder.newInstance()
+                .setPrincipal(principal)
+                .setAuthenticationDate(ZonedDateTime.now())
+                .addCredential(metadata)
+                .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
+                .build();
     }
 }

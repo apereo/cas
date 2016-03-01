@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -31,6 +32,7 @@ import java.util.Properties;
  * @since 4.3.0
  */
 @Configuration("casApplicationContextConfiguration")
+@Lazy(true)
 public class CasApplicationContextConfiguration {
 
     /**
