@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -29,6 +31,7 @@ import java.util.Locale;
  * @since 4.3.0
  */
 @Configuration("casWebAppConfiguration")
+@Lazy(true)
 public class CasWebAppConfiguration {
 
     /**
@@ -68,7 +71,7 @@ public class CasWebAppConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
+    
     /**
      * The Default locale.
      */
@@ -186,4 +189,16 @@ public class CasWebAppConfiguration {
         bean.setParamName(this.localeParamName);
         return bean;
     }
+
+
+    /**
+     * Simple controller handler adapter.
+     *
+     * @return the simple controller handler adapter
+     */
+    @Bean(name = "simpleControllerHandlerAdapter")
+    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
+        return new SimpleControllerHandlerAdapter();
+    }
+
 }

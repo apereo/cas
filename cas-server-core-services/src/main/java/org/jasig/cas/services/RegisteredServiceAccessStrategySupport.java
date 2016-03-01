@@ -44,20 +44,30 @@ public final class RegisteredServiceAccessStrategySupport {
      * @param service           the service
      * @param registeredService the registered service
      */
-    public static void ensureServiceAccessIsAllowed(final Service service, final RegisteredService registeredService) {
+    public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
         if (registeredService == null) {
             final String msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.",
-                    service.getId());
+                    service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.",
-                    service.getId());
+                    service);
 
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
+    }
+    
+    /**
+     * Ensure service access is allowed.
+     *
+     * @param service           the service
+     * @param registeredService the registered service
+     */
+    public static void ensureServiceAccessIsAllowed(final Service service, final RegisteredService registeredService) {
+        ensureServiceAccessIsAllowed(service.getId(), registeredService);
     }
 
     /**
