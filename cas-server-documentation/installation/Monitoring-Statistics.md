@@ -3,17 +3,31 @@ layout: default
 title: CAS - Monitoring & Statistics
 ---
 
-# Monitoring
+# Monitoring / Statistics
 The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software.
 Access is granted the following settings in `application.properties` file:
 
-```bash
-# security configuration based on IP address to access the /status and /statistics pages
+```properties
 # cas.securityContext.adminpages.ip=127\.0\.0\.1
 ```
 
+The following endpoints are secured and available:
 
-## Sample Output
+| Parameter                         | Description
+|-----------------------------------+-----------------------------------------+
+| `/status`                         | Monitor information, see below.
+| `/status/autoconfig`              | Describes how the application context is auto configured.
+| `/status/beans`                   | Displays all application context beans.
+| `/status/configprops`             | List of **internal** configuration properties.
+| `/status/dump`                    | Produces a thread dump.
+| `/status/env`                     | Produces a collection of application properties.
+| `/status/health`                  | General health of the system.
+| `/status/info`                    | CAS version information.
+| `/status/metrics`                 | Runtime metrics and stats.
+| `/status/mappings`                | Describes how requests are mapped and handled by CAS.
+| `/status/shutdown`                | Shut down the application, gracefully, via a `POST`. Disabled by default.
+
+## Monitors
 
 ```bash
 Health: OK
@@ -21,7 +35,7 @@ Health: OK
     1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 ```
 
-The list of configured monitors are all defined in `deployerConfigContext.xml` file:
+The list of configured monitors are by default the following:
 
 ```xml
 <util:list id="monitorsList">
@@ -32,7 +46,7 @@ The list of configured monitors are all defined in `deployerConfigContext.xml` f
 
 The following optional monitors are also available:
 
-- `MemcachedMonitor`
+- Memcached
 
 ```xml
 
@@ -60,7 +74,7 @@ The following settings are available:
 # cache.monitor.eviction.threshold=0
 ```
 
-- `EhcacheMonitor`
+- Ehcache
 
 ```xml
 
@@ -84,7 +98,7 @@ The following settings are available:
 # cache.monitor.eviction.threshold=0
 ```
 
-- `DataSourceMonitor`
+- JDBC
 
 ```xml
 
@@ -100,7 +114,7 @@ The following settings are available:
     p:corePoolSize="1"
     p:maxPoolSize="1"
     p:keepAliveSeconds="1" />
-          
+
 <util:list id="monitorsList">
     <ref bean="dataSourceMonitor" />
 </util:list>
@@ -109,7 +123,7 @@ The following settings are available:
 
 ```
 
-- `PooledConnectionFactoryMonitor`
+- LDAP
 
 ```xml
 
@@ -147,21 +161,7 @@ The following settings are available:
 
 ```
 
-## Internal Configuration Report
-
-CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes 
-settings defined in the `application.properties` file. The output of this endpoint is a JSON representation of the 
-runtime that is rendered into a modest visualization.
-
-# Statistics
-Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
-The CAS server also exposes a `/statistics` endpoint that may be used to inquire about the runtime state of the software.
-
-
-## Performance Statistics
-CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics.
-
-### Configuration
+### Metric Refresh Interval
 The reporting interval can be configured via the `application.properties` file:
 
 ```properties
@@ -219,34 +219,11 @@ type=METER, name=org.jasig.cas.CentralAuthenticationServiceImpl.CREATE_TICKET_GR
 type=METER, name=org.jasig.cas.CentralAuthenticationServiceImpl.DESTROY_TICKET_GRANTING_TICKET_METER, count=0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
 
 type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
-
 ```
-
-### Viewing Metrics on the Web
-The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser.
- The endpoint is protected by pac4j, and the access rules are placed inside the `application.properties` file:
-
-```bash
-# security configuration based on IP address to access the /status and /statistics pages
-# cas.securityContext.adminpages.ip=127\.0\.0\.1
-```
-
-Once access is granted, the following sub-endpoints can be used to query the CAS server's status and metrics:
-
-#### `/statistics/ping`
-Reports back `pong` to indicate that the CAS server is running.
-
-#### `/statistics/metrics?pretty=true`
-Reports back metrics and performance data. The optional `pretty` flag attempts to format the JSON output.
-
-#### `/statistics/threads`
-Reports back JVM thread info.
-
-#### `/statistics/healthcheck`
-Unused at this point, but may be used later to output health examinations of the CAS server's internals, such as ticket registry, etc.
 
 ## Routing logs to SysLog
-CAS logging framework does have the ability to route messages to an external syslog instance. To configure this, you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
+CAS logging framework does have the ability to route messages to an external syslog instance. To configure this,
+you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
 
 ```xml
 ...
@@ -290,4 +267,4 @@ the [CAS Logging functionality](Logging.html).
 
 ### SSO Sessions Report
 
-CAS also provides a `/statistics/ssosessions` endpoint that produces a report of all active non-expired SSO sessions. The output of this endpoint is a JSON representation of SSO sessions that is rendered into a modest visualization.
+CAS also provides a `/status/ssosessions` endpoint that produces a report of all active non-expired SSO sessions. The output of this endpoint is a JSON representation of SSO sessions that is rendered into a modest visualization.

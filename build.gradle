@@ -496,7 +496,7 @@ ext.libraries = [
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
                 },
-                dependencies.create("com.ryantenney.metrics:metrics-spring:$dropwizardMetricsVersion") {
+                dependencies.create("com.ryantenney.metrics:metrics-spring:$dropwizardMetricsSpringVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.springframework', module: 'spring-core')
                     exclude(group: 'org.springframework', module: 'spring-beans')

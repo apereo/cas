@@ -55,23 +55,6 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
         metrics.register("jvm.fd.usage", new FileDescriptorRatioGauge());
         return metrics;
     }
-
-    /**
-     * Metrics health servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    @Bean(name="metricsHealth")
-    public ServletRegistrationBean metricsHealth() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsHealth");
-        bean.setServlet(new HealthCheckServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/healthcheck"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
-
     /**
      * Metrics servlet servlet registration bean.
      *
@@ -83,42 +66,11 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
         bean.setEnabled(true);
         bean.setName("metricsServlet");
         bean.setServlet(new MetricsServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/metrics"));
+        bean.setUrlMappings(Collections.singleton("/status/metrics"));
         bean.setLoadOnStartup(1);
         return bean;
     }
-
-    /**
-     * Metrics threads servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    @Bean(name="metricsThreads")
-    public ServletRegistrationBean metricsThreads() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsThreads");
-        bean.setServlet(new ThreadDumpServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/threads"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
-
-    /**
-     * Metrics ping servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    @Bean(name="metricsPing")
-    public ServletRegistrationBean metricsPing() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsPing");
-        bean.setServlet(new PingServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/ping"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
+        
     /**
      * Health check metrics health check registry.
      *

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -133,14 +134,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the abstract caching view resolver
      */
     @Bean(name = "xmlViewResolver")
-    public AbstractCachingViewResolver xmlViewResolver() {
+    public ViewResolver xmlViewResolver() {
         if (xmlViewsFile.exists()) {
             final XmlViewResolver bean = new XmlViewResolver();
             bean.setOrder(URL_VIEW_RESOLVER_ORDER - 1);
             bean.setLocation(xmlViewsFile);
             return bean;
         }
-        final ScriptTemplateViewResolver bean = new ScriptTemplateViewResolver();
+        final BeanNameViewResolver bean = new BeanNameViewResolver();
         bean.setOrder(URL_VIEW_RESOLVER_ORDER - 1);
         return bean;
     }

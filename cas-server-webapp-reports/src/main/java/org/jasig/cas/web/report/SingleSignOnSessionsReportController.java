@@ -287,7 +287,7 @@ public final class SingleSignOnSessionsReportController {
      * @return the model and view where json data will be rendered
      * @throws Exception thrown during json processing
      */
-    @RequestMapping(value="/statistics/ssosessions", method = RequestMethod.GET)
+    @RequestMapping(value="/status/ssosessions", method = RequestMethod.GET)
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
     }
