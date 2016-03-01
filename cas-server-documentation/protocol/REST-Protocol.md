@@ -15,7 +15,7 @@ by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that
  only soberly and with due consideration of security aspects.</p></div>
 
 # Components
-Support is enabled by including the following in your `pom.xml` file:
+Support is enabled by including the following to the overlay:
 
 ```xml
 <dependency>

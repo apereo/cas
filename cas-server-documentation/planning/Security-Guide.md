@@ -145,7 +145,7 @@ open for all applications may create an opportunity for security attacks.
 </p></div>
 
 ### SSO Cookie Encryption
-A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. The cookie value is by default encrypted and signed via settings defined in `cas.properties`. While sample data is provided for initial deployments, these keys MUST be regenerated per your specific environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
+A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. The cookie value is by default encrypted and signed via settings defined in `application.properties`. While sample data is provided for initial deployments, these keys MUST be regenerated per your specific environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
 
 ### Ticket Expiration Policies
 Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows

@@ -35,7 +35,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. For each delegated authentication mechanism, you must define the appropriate client.
 
-Clients can be defined via properties for the most common ones (in the `cas.properties` file):
+Clients can be defined via properties for the most common ones (in the `application.properties` file):
 
 ```properties
 # cas.pac4j.facebook.id=
@@ -110,7 +110,7 @@ If you customize the login page, you can access the text to display (which is mo
 
 After a successful delegated authentication, a user is created inside the CAS server with a specific identifier: this one can be created only from the technical identifier received from the external identity provider (like 1234) or as a "typed identifier" (like FacebookProfile#1234), which is the default.
 
-This can be defined in the `cas.properties` file:
+This can be defined in the `application.properties` file:
 
 ```properties
 cas.pac4j.client.authn.typedidused=true

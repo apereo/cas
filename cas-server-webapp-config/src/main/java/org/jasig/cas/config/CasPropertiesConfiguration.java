@@ -14,7 +14,6 @@ import java.util.Properties;
  * @since 4.3.0
  */
 @Configuration("casPropertiesConfiguration")
-@PropertySource(value={"${cas.properties.config.location:/WEB-INF/cas.properties}"})
 public class CasPropertiesConfiguration {
 
     /**

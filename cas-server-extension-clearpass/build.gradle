@@ -1,0 +1,13 @@
+
+description = 'Apereo CAS ClearPass Extension - DEPRECATED'
+dependencies {
+  
+  compile project(':cas-server-core-util')
+  compile project(':cas-server-core-tickets')
+  compile libraries.ehcache
+  compile libraries.casclient
+  testCompile project(':cas-server-integration-ehcache')
+  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+  testCompile project(':cas-server-core-util')
+}
+

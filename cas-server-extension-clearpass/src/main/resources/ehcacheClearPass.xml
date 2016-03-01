@@ -1,0 +1,8 @@
+<ehcache name="ehCacheClearPassCache" updateCheck="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.sf.net/ehcache.xsd">
+        <diskStore path="java.io.tmpdir" />
+        <defaultCache maxElementsInMemory="10000" eternal="false"
+        timeToIdleSeconds="360" timeToLiveSeconds="360" overflowToDisk="false" />
+        <cache name="clearPassCache" maxElementsInMemory="100000"
+        eternal="true" overflowToDisk="false" />
+</ehcache>

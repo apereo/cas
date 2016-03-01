@@ -5,7 +5,7 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring
 The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software.
-Access is granted the following settings in `cas.properties` file:
+Access is granted the following settings in `application.properties` file:
 
 ```bash
 # security configuration based on IP address to access the /status and /statistics pages
@@ -150,26 +150,23 @@ The following settings are available:
 ## Internal Configuration Report
 
 CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes 
-settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the 
+settings defined in the `application.properties` file. The output of this endpoint is a JSON representation of the 
 runtime that is rendered into a modest visualization.
 
 # Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
-
-The CAS server exposes a `/statistics` endpoint that may be used to inquire about the runtime state of the software. Access to the endpoint is secured by pac4j at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml` like for the /status page.
+The CAS server also exposes a `/statistics` endpoint that may be used to inquire about the runtime state of the software.
 
 
 ## Performance Statistics
 CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics.
 
 ### Configuration
-The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
+The reporting interval can be configured via the `application.properties` file:
 
-```bash
-
+```properties
 # Define how often should metric data be reported. Default is 30 seconds.
 # metrics.refresh.internal=30
-
 ```
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
@@ -198,9 +195,9 @@ All performance data and metrics are routed to a log file via the Log4j configur
 
 ...
 
-<Logger name="perfStatsLogger" level="info" additivity="false">
-    <AppenderRef ref="perfFileAppender"/>
-</Logger>
+<CasAppender name="casPerf">
+    <AppenderRef ref="perfFileAppender" />
+</CasAppender>
 
 ```
 
@@ -226,7 +223,7 @@ type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TI
 ```
 
 ### Viewing Metrics on the Web
-The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by pac4j, and the access rules are placed inside the `cas.properties` file:
+The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by pac4j, and the access rules are placed inside the `application.properties` file:
 
 ```bash
 # security configuration based on IP address to access the /status and /statistics pages

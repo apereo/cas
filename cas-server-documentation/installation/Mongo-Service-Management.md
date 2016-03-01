@@ -23,7 +23,7 @@ This implementation auto-configures most of the internal details.
 ```
 
 
-The following configuration in `cas.properties` is required.
+The following configuration in `application.properties` is required.
 
 ```properties
 mongodb.host=mongodb database url

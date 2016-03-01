@@ -54,7 +54,7 @@ groovy:000>
 The following variables are available to the shell automatically:
 
 * All beans that are registered with the application context. In other words, every bean that 
-is registered with CAS application context inside its XML files is available to the console, 
+is registered with CAS application context is available to the console, 
 except of course those that cannot be instantiated, such as abstract beans. Note that you cannot invoke aliases for bean names. 
 You would instead need to invoke the actual bean name that is aliased. For instance, invoking `ticketRegistry` in the console has no 
 affect. Rather, you would need to invoke `defaultTicketRegistry` which is the real bean mapped to the alias `ticketRegistry`. 

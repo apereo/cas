@@ -107,7 +107,7 @@ Provide a JAAS `login.conf` file:
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
     };
 
-You may use the following configuration in `cas.properties`:
+You may use the following configuration in `application.properties`:
 
 ```properties
 # cas.spnego.ldap.attribute=spnegoattribute

@@ -159,8 +159,8 @@ in the Maven overlay must include a reference to the Maven Java compiler so clas
                         <groupId>org.jasig.cas</groupId>
                         <artifactId>cas-server-webapp</artifactId>
                         <excludes>
-                <exclude>WEB-INF/cas.properties</exclude>
-                            <exclude>WEB-INF/classes/log4j.xml</exclude>
+                            <exclude>WEB-INF/application.properties</exclude>
+                            <exclude>WEB-INF/classes/log4j2.xml</exclude>
                             <exclude>...</exclude>
                         </excludes>
                     </overlay>

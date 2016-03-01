@@ -37,7 +37,7 @@ The `public.key` and `private.p8` go into classpath. The `x509.pem` file should 
 uploaded into Google Apps under Security/SSO.
 
 ## Configure CAS
-Adjust the following settings in your `cas.properties`:
+Adjust the following settings in your `application.properties`:
 
 ```properties
 ##

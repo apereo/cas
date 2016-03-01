@@ -32,7 +32,7 @@ and must be cleared upon the termination of flow. Rather than storing this state
 and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication.
 
 Default encryption strategy controlled via the `loginFlowStateTranscoder` component is using the 128-bit AES in CBC ciphering mode with 
-compression turned on. These settings can be controlled via the following settings defined in the `cas.properties` file:
+compression turned on. These settings can be controlled via the following settings defined in the `application.properties` file:
 
 ```properties
 # cas.webflow.cipher.alg=AES
@@ -59,7 +59,7 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-This behavior is controlled via `cas.properties`:
+This behavior is controlled via `application.properties`:
 
 ```properties
 # Indicates whether an SSO session can be created if no service is present.

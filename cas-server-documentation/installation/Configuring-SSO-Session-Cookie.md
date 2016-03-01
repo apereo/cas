@@ -10,7 +10,7 @@ The cookie value is linked to the active ticket-granting ticket, the remote IP a
 as well as the user agent that submitted the request. The final cookie value is then encrypted and signed
 using `AES_128_CBC_HMAC_SHA_256` and `HMAC_SHA512` respectively.
 
-The secret keys are defined in the `cas.properties` file. While sample data is provided
+The secret keys are defined in the `application.properties` file. While sample data is provided
 for initial deployments, these keys **MUST** be regenerated per your specific environment. Each key
 is a JSON Web Token with a defined length per the algorithm used for encryption and signing.
 You may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator)
@@ -67,7 +67,7 @@ Plausibly, a CAS adopter may want this behavior to be different, such that loggi
 via CAS either does not create a CAS SSO session and the SSO session it creates is not honored for authenticating subsequently
 to an SSO-participating application. This might better match user expectations.
 
-The controlling of this behavior is done via the `cas.properties` file:
+The controlling of this behavior is done via the `application.properties` file:
 
 ```properties
 ##

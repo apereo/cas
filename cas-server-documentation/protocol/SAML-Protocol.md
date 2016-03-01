@@ -120,7 +120,7 @@ Content-Type: text/xml
 
 
 ## Configuration
-SAML configuration in CAS is contained within the `cas.properties` file.
+SAML configuration in CAS is contained within the `application.properties` file.
 
 ```properties
 # Indicates the SAML response issuer
