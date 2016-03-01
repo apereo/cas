@@ -1,9 +1,5 @@
 package org.jasig.cas.config;
 
-import com.codahale.metrics.servlets.HealthCheckServlet;
-import com.codahale.metrics.servlets.MetricsServlet;
-import com.codahale.metrics.servlets.PingServlet;
-import com.codahale.metrics.servlets.ThreadDumpServlet;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
@@ -31,7 +27,6 @@ import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
 
 import javax.validation.MessageInterpolator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -217,72 +212,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
         return map;
     }
-
-
-    /**
-     * Metrics health servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    @Bean(name="metricsHealth")
-    public ServletRegistrationBean metricsHealth() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsHealth");
-        bean.setServlet(new HealthCheckServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/healthcheck"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
-
-    /**
-     * Metrics servlet servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    @Bean(name="metricsServlet")
-    public ServletRegistrationBean metricsServlet() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsServlet");
-        bean.setServlet(new MetricsServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/metrics"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
-
-    /**
-     * Metrics threads servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    @Bean(name="metricsThreads")
-    public ServletRegistrationBean metricsThreads() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsThreads");
-        bean.setServlet(new ThreadDumpServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/threads"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
-
-    /**
-     * Metrics ping servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    @Bean(name="metricsPing")
-    public ServletRegistrationBean metricsPing() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("metricsPing");
-        bean.setServlet(new PingServlet());
-        bean.setUrlMappings(Collections.singleton("/statistics/ping"));
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
-
+    
     /**
      * Cas servlet registration bean.
      *

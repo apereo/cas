@@ -223,7 +223,8 @@ type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TI
 ```
 
 ### Viewing Metrics on the Web
-The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by pac4j, and the access rules are placed inside the `application.properties` file:
+The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser.
+ The endpoint is protected by pac4j, and the access rules are placed inside the `application.properties` file:
 
 ```bash
 # security configuration based on IP address to access the /status and /statistics pages

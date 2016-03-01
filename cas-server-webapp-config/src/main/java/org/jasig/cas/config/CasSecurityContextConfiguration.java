@@ -5,6 +5,8 @@ import org.pac4j.http.client.direct.IpClient;
 import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMapping;
+import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -56,7 +58,11 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(requiresAuthenticationInterceptor())
                 .addPathPatterns("/status/**", "/statistics/**");
 
-        registry.addInterceptor(webContentInterceptor())
-                .addPathPatterns("/*");
+        registry.addInterceptor(webContentInterceptor()).addPathPatterns("/*");
+    }
+
+    @Bean
+    public EndpointHandlerMappingCustomizer mappingCustomizer() {
+        return mapping -> mapping.setInterceptors(new Object[] {requiresAuthenticationInterceptor()});
     }
 }
