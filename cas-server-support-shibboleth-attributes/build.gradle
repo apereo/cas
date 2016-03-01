@@ -1,0 +1,18 @@
+apply plugin: 'groovy'
+
+dependencies {
+    compile libraries.groovy
+    compile libraries.persondirectory
+    compile libraries.shibidp
+    compile libraries.spring
+
+    compile "net.shibboleth.idp:idp-attribute-resolver-impl:${idpVersion}", {
+        transitive = false
+    }
+    compile "net.shibboleth.idp:idp-attribute-resolver-spring:${idpVersion}", {
+        transitive = false
+    }
+
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+    testCompile "org.spockframework:spock-spring:1.0-groovy-2.4"
+}
