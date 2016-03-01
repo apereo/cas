@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
  */
 @Component("defaultMultifactorTriggerSelectionStrategy")
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
-    private Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
+    private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
 
     @Value("${cas.mfa.request.parameter:authn_method}")
     private String requestParameter;
@@ -60,8 +60,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         if (!provider.isPresent() && service != null) {
             final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
             if (shouldApplyRegisteredServiceMultifactorPolicy(policy, principal)) {
-                provider = policy.getMultifactorAuthenticationProviders().stream().filter
-                        (availableProviders::contains).findFirst();
+                provider = policy.getMultifactorAuthenticationProviders().stream().filter(availableProviders::contains).findFirst();
             }
         }
 
@@ -69,8 +68,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         if (!provider.isPresent() && principal != null && StringUtils.hasText(principalAttribute)) {
             provider = StreamSupport.stream(ATTR_NAMES.split(principalAttribute).spliterator(), false)
                     // principal.getAttribute(name).values
-                    .map(principal.getAttributes()::get).filter(Objects::nonNull).map
-                            (CollectionUtils::convertValueToCollection).flatMap(Set::stream)
+                    .map(principal.getAttributes()::get).filter(Objects::nonNull)
+                    .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
                     // availableProviders.contains((String) value)
                     .filter(String.class::isInstance).map(String.class::cast).filter(availableProviders::contains)
                     .findFirst();
@@ -98,11 +97,11 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         // check to see if any of the specified attributes match the attrValue pattern
         return StreamSupport.stream(ATTR_NAMES.split(attrName).spliterator(), false)
                 // principal.getAttribute(name).values
-                .map(principal.getAttributes()::get).filter(Objects::nonNull).map
-                        (CollectionUtils::convertValueToCollection).flatMap(Set::stream)
+                .map(principal.getAttributes()::get).filter(Objects::nonNull)
+                .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
                 // value =~ /attrValue/
-                .filter(String.class::isInstance).map(String.class::cast).filter(Predicates.containsPattern
-                        (attrValue)::apply)
+                .filter(String.class::isInstance).map(String.class::cast)
+                .filter(Predicates.containsPattern(attrValue)::apply)
                 // return if any match
                 .findAny().isPresent();
     }
