@@ -24,8 +24,10 @@ The following endpoints are secured and available:
 | `/status/health`                  | General health of the system.
 | `/status/info`                    | CAS version information.
 | `/status/metrics`                 | Runtime metrics and stats.
+| `/status/stats`                   | Visual representation of CAS statistics.
+| `/status/config`                  | Visual representation of application properties and configuration.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
-| `/status/shutdown`                | Shut down the application, gracefully, via a `POST`. Disabled by default.
+| `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 
 ## Monitors
 

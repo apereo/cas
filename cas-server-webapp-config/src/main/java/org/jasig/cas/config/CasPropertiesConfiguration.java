@@ -33,17 +33,7 @@ public class CasPropertiesConfiguration {
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-    /**
-     * Cas properties properties.
-     *
-     * @return the properties
-     */
-    @Bean(name = "casProperties")
-    public Properties casProperties() {
-        return new Properties();
-    }
-    
+        
     @PostConstruct
     public void init() {
         final Properties sysProps = System.getProperties();

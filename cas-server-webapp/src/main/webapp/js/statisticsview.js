@@ -116,23 +116,3 @@ function upTime(countTo, el) {
 
     }
 }
-
-
-// Fill modal with content from link href
-$("#threadDumpModal").on("show.bs.modal", function (e) {
-    var link = $(e.relatedTarget);
-    $(this).find(".modal-body pre").load(link.val());
-});
-
-/**
- * Thread Dump Preview
- * Returnes the xx amount of characters from the end of the thread dump for preview sake.
- * The length can be changed by passing ini a value, otherwise it defaults to 400.
- */
-function getThreadDumpPreview(len) {
-    var len = len || 400;
-    $.get($('#threadDumpViewButton').val(), function (data) {
-        $('#threadDumpPreview').html(data.substr(-len));
-    });
-}
-

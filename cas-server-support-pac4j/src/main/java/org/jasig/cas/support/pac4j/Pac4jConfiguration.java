@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +30,13 @@ import java.util.Properties;
 @Configuration
 public class Pac4jConfiguration {
 
-    private static final String CAS_PAC4J_PREFIX = "cas.pac4j.";
+    private static final String CAS_PAC4J_PREFIX = "cas.pac4j";
 
     @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String serverLoginUrl;
 
     @Autowired(required = true)
-    @Qualifier("casProperties")
-    private Properties casProperties;
+    private ConfigurableEnvironment casProperties;
 
     @Autowired(required = false)
     private IndirectClient[] clients;
@@ -52,7 +52,7 @@ public class Pac4jConfiguration {
 
         // turn the properties file into a map of properties
         final Map<String, String> properties = new HashMap<>();
-        final Enumeration names = casProperties.propertyNames();
+        final Enumeration names = casProperties.getProperty(CAS_PAC4J_PREFIX, Enumeration.class);
         while (names.hasMoreElements()) {
             final String name = (String) names.nextElement();
             if (name.startsWith(CAS_PAC4J_PREFIX)) {

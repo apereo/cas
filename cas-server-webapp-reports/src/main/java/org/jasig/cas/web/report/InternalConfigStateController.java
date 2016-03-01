@@ -26,13 +26,6 @@ public final class InternalConfigStateController {
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired(required = true)
-    @Qualifier("casProperties")
-    private Properties casProperties;
-
     /**
      * Handle request.
      *
@@ -48,15 +41,5 @@ public final class InternalConfigStateController {
 
         return new ModelAndView(VIEW_CONFIG);
     }
-
-    /**
-     * Returns the current state of CAS properties.
-     * @return properties configured in CAS.
-     */
-    @RequestMapping(value = "/getProperties", method = RequestMethod.GET)
-    @ResponseBody
-    protected Set<Map.Entry<Object, Object>> getProperties() {
-        return casProperties.entrySet();
-    }
-
+    
 }

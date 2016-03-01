@@ -18,13 +18,7 @@
                     var maxMemory = new Gauge('#maxMemoryGauge', ${totalMemory / (maxMemory)}, {width: 200, height: 200, label: '<spring:message code="cas.statistics.section.serverstatistics.maxmemorygauge.label" />', textClass: 'runtimeStatistics'});
 
                     var server_uptime = upTime('${startTime}', 'uptime');
-
-                    /**
-                     * Populate the Thread Dump area.
-                     * Pass it how many characters to retrieve  Default is 400
-                     */
-                    getThreadDumpPreview(600);
-
+                    
                     $('#loading, .statisticsView').toggle();
                 }
             );
@@ -175,28 +169,6 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="row">
-        <%-- Thread Dump Section --%>
-            <div class="col-md-12">
-                <h3><spring:message code="cas.statistics.section.threaddump.title" /></h3>
-                <div class="well clearfix">
-                    <pre id="threadDumpPreview"></pre>
-                    <button id="threadDumpViewButton" type="button" class="btn btn-sm btn-default pull-right" 
-                            value="status/dump" data-toggle="modal" data-target="#threadDumpModal" 
-                            data-remote="false"><spring:message code="cas.statistics.section.threaddump.button" /></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-        <%-- Metrics Section --%>
-            <div class="col-sm-12">
-                <h3><spring:message code="cas.statistics.section.metrics.title" /></h3>
-                <a href="status/metrics" 
-                   class="btn btn-default"><spring:message code="cas.statistics.section.metrics.button" /></a>
             </div>
         </div>
     </div>

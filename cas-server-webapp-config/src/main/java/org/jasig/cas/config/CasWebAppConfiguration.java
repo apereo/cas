@@ -239,9 +239,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         list.add("/CentralAuthenticationService");
 
         list.add("/status");
-        list.add("/statistics");
-        list.add("/statistics/ssosessions/*");
-        list.add("/statistics/ssosessions");
         list.add("/status/config/*");
         list.add("/status/config");
         list.add("/authorizationFailure.html");

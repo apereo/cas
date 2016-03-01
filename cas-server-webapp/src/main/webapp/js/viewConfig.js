@@ -2,7 +2,7 @@ var viewConfigs = (function () {
     var createDataTable = function() {
         $('#viewConfigsTable').DataTable( {
             "initComplete": function(settings, json) {
-                if (!json || json.length == 0) {
+                if (!json) {
                     $('#loadingMessage').hide();
                     $('#viewConfigError').show();
                     $("#view-configuration").hide();
@@ -22,7 +22,7 @@ var viewConfigs = (function () {
             },
             "processing": true,
             "ajax": {
-                "url": '/cas/status/config/getProperties',
+                "url": '/cas/status/env',
                 "dataSrc": function (json) {
                     var return_data = new Array();
                     for(var i=0;i< json.length; i++){

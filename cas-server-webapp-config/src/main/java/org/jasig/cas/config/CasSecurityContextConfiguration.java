@@ -56,7 +56,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(requiresAuthenticationInterceptor())
-                .addPathPatterns("/status/**", "/statistics/**");
+                .addPathPatterns("/status/**");
 
         registry.addInterceptor(webContentInterceptor()).addPathPatterns("/*");
     }
