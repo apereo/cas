@@ -376,23 +376,6 @@ public final class WebUtils {
     }
 
     /**
-     * Gets credential from the context.
-     *
-     * @param context the context
-     * @return the credential, or null if it cant be found in the context or if it has no id.
-     */
-    public static Credential getCredential(@NotNull final RequestContext context) {
-        final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
-        final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
-
-        final Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
-        if (credential != null && StringUtils.isBlank(credential.getId())) {
-            return null;
-        }
-        return credential;
-    }
-
-    /**
      * Return the username of the authenticated user (based on pac4j security).
      *
      * @return the authenticated username.
@@ -480,5 +463,9 @@ public final class WebUtils {
             }
         }
         return loc;
+    }
+
+    public static void putGeoLocationTrackingIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("trackGeoLocation", value);
     }
 }

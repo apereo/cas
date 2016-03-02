@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.InternalResourceView;
+import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.XmlViewResolver;
 import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
@@ -268,6 +270,11 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
+    @Bean(name="error")
+    public View error() {
+        return new JstlView("/WEB-INF/view/jsp/errors.jsp");    
+    }
+    
     /**
      * Simple controller handler adapter simple controller handler adapter.
      *

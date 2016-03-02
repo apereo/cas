@@ -21,6 +21,7 @@ import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Principal;
@@ -55,7 +56,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
             final Resource trustStoreFile,
             @Value("${http.client.truststore.psw:changeit}")
             final String trustStorePassword) {
-        this(prepareTrustStoreFile(trustStoreFile), trustStorePassword, KeyStore.getDefaultType());
+        this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
     }
     
 
@@ -65,7 +66,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
      * @param trustStorePassword the trust store password
      * @param trustStoreType the trust store type
      */
-    public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword,
+    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, final String trustStorePassword,
                                           final String trustStoreType) {
         super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType));
     }
@@ -78,19 +79,14 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
      * @param trustStoreType the trust store type
      * @return the trusted ssl context
      */
-    private static SSLContext getTrustedSslContext(final File trustStoreFile, final String trustStorePassword,
+    private static SSLContext getTrustedSslContext(final Resource trustStoreFile, final String trustStorePassword,
                                             final String trustStoreType) {
         try {
-
-            if (!trustStoreFile.exists() || !trustStoreFile.canRead()) {
-                throw new FileNotFoundException("Truststore file cannot be located at "
-                    + trustStoreFile.getCanonicalPath());
-            }
 
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
             final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
-            try (final FileInputStream casStream = new FileInputStream(trustStoreFile)) {
+            try (final InputStream casStream = trustStoreFile.getInputStream()) {
                 casTrustStore.load(casStream, trustStorePasswordCharArray);
             }
 
@@ -269,14 +265,6 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
             final List<X509Certificate> certificates = new ArrayList<>();
             trustManagers.stream().forEach(trustManager -> certificates.addAll(Arrays.asList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[certificates.size()]);
-        }
-    }
-
-    private static File prepareTrustStoreFile(final Resource trustStoreFile) {
-        try {
-            return ResourceUtils.prepareClasspathResourceIfNeeded(trustStoreFile, false, trustStoreFile.getFilename());
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
         }
     }
 }

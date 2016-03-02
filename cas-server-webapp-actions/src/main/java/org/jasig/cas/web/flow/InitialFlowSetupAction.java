@@ -59,6 +59,9 @@ public final class InitialFlowSetupAction extends AbstractAction {
     private List<ArgumentExtractor> argumentExtractors;
 
 
+    @Value("${events.track.geolocation:false}")
+    private boolean trackGeoLocation;
+    
     /** If no authentication request from a service is present, halt and warn the user. */
     private boolean enableFlowOnAbsentServiceRequest = true;
 
@@ -90,6 +93,8 @@ public final class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putWarningCookie(context,
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
+        
         final Service service = WebUtils.getService(this.argumentExtractors, context);
 
 

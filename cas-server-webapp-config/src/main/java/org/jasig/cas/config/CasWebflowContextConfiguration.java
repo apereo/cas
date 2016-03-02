@@ -138,6 +138,7 @@ public class CasWebflowContextConfiguration {
         resolver.setPrefix(this.resolverPathPrefix);
         resolver.setSuffix(".jsp");
         resolver.setOrder(VIEW_RESOLVER_ORDER);
+        resolver.setExposeContextBeansAsAttributes(true);
         return resolver;
     }
 

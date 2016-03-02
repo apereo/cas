@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="<c:url value="${customCssFile}" />"/>
     <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon"/>
 
-    <script>var trackGeoLocation = <spring:eval expression="@casProperties.getProperty('events.track.geolocation', 'false')" />; </script>
+    <script>var trackGeoLocation = ${trackGeoLocation};</script>
 </head>
 <body id="cas">
 
