@@ -36,9 +36,13 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
      * @throws ComponentInitializationException thrown if there is a problem initializing
      */
     @PostConstruct
-    public void init() throws ComponentInitializationException {
+    public void init() {
         if (attributeResolver instanceof InitializableComponent && !((InitializableComponent) attributeResolver).isInitialized()) {
-            ((InitializableComponent) attributeResolver).initialize();
+            try {
+                ((InitializableComponent) attributeResolver).initialize();
+            } catch (final ComponentInitializationException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
