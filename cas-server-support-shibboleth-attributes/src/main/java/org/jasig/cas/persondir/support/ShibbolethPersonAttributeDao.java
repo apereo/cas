@@ -32,8 +32,6 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
 
     /**
      * Initializes the component. Right now, all it does is makes sure that the attribute resolver is initialized
-     *
-     * @throws ComponentInitializationException thrown if there is a problem initializing
      */
     @PostConstruct
     public void init() {
