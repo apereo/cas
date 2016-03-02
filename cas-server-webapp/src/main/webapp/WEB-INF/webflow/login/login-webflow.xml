@@ -142,7 +142,7 @@
     <action-state id="redirect">
         <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)"
                   result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response"/>
-        <transition to="producingMessage"/>
+        <transition to="postRedirectDecision"/>
     </action-state>
 
 
