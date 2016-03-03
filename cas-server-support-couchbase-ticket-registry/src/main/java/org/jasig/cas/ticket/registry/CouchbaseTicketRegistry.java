@@ -154,12 +154,12 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
         return runQuery(TicketGrantingTicket.PREFIX + '-');
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
         return runQuery(ServiceTicket.PREFIX + '-');
     }
 
