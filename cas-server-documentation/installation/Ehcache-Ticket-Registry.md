@@ -14,12 +14,13 @@ Ehcache integration is enabled by including the following dependency in the Mave
 </dependency>
 ```
 
-`EhCacheTicketRegistry` stores tickets in an [Ehcache](http://ehcache.org/) instance.
+This registry stores tickets in an [Ehcache](http://ehcache.org/) instance.
 
 
 ## Distributed Cache
 Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage
-subsystem.
+subsystem. A single cache instance is created to house all types of tickets, and is synchronously replicated 
+across the cluster of nodes that are defined in the configuration. 
 
 
 ### RMI Replication
@@ -88,7 +89,7 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
 ```
 
 ### Eviction Policy
-Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
+Ehcache manages the internal eviction policy of cached objects via the idle and alive settings.
 These settings control the general policy of the cache that is used to store various ticket types. In general,
 you need to ensure the cache is alive long enough to support the individual expiration policy of tickets, and let
 CAS clean the tickets as part of its own cleaner. 
