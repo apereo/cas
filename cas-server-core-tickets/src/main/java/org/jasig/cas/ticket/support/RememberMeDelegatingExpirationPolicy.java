@@ -78,12 +78,12 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     }
 
     @Override
-    public long getTimeToLive() {
+    public Long getTimeToLive() {
         return Long.MAX_VALUE;
     }
 
     @Override
-    public long getTimeToIdle() {
+    public Long getTimeToIdle() {
         return Long.MAX_VALUE;
     }
 

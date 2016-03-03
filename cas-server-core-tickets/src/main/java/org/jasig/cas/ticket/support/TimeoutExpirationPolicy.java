@@ -64,12 +64,12 @@ public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     }
 
     @Override
-    public long getTimeToLive() {
+    public Long getTimeToLive() {
         return Long.MAX_VALUE;
     }
 
     @Override
-    public long getTimeToIdle() {
+    public Long getTimeToIdle() {
         return this.timeToKillInMilliSeconds;
     }
 }

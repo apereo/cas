@@ -45,4 +45,10 @@ public interface Ticket extends Serializable {
      * @return the number of times this ticket was used.
      */
     int getCountOfUses();
+
+    /**
+     * Get expiration policy associated with ticket.
+     */
+    ExpirationPolicy getExpirationPolicy();
+    
 }

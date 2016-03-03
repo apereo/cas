@@ -69,6 +69,8 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
         final Element element = new Element(ticket.getId(), ticket);
+        element.setTimeToIdle(ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue());
+        element.setTimeToLive(ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue());
 
         logger.debug("Adding ticket {} to the cache {}", ticket.getId(), this.ehcacheTicketsCache.getName());
         this.ehcacheTicketsCache.put(element);
@@ -107,14 +109,28 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry {
             logger.debug("No ticket by id [{}] is found in the registry", ticketId);
             return null;
         }
-
         final Ticket proxiedTicket = decodeTicket((Ticket) element.getObjectValue());
         final Ticket ticket = getProxiedTicketInstance(proxiedTicket);
+        
+        final CacheConfiguration config = new CacheConfiguration();
+        config.setTimeToIdleSeconds(ticket.getExpirationPolicy().getTimeToIdle());
+        config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToIdle());
+        
+        if (element.isExpired(config) || ticket.isExpired()) {
+            logger.debug("Ticket {} has expired", ticket.getId());
+            this.ehcacheTicketsCache.evictExpiredElements();
+            this.ehcacheTicketsCache.flush();
+            return null;
+        }
+        
         return ticket;
     }
 
     @Override
     public Collection<Ticket> getTickets() {
+        this.ehcacheTicketsCache.evictExpiredElements();
+        this.ehcacheTicketsCache.flush();
+        
         final Collection<Element> cacheTickets = this.ehcacheTicketsCache.getAll(
                 this.ehcacheTicketsCache.getKeysWithExpiryCheck()).values();
         final Collection<Ticket> allTickets = new HashSet<>(cacheTickets.size());
