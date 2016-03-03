@@ -56,7 +56,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     /** The Slf4j logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Value("${ticket.registry.cleaner.enabled:false}")
+    @Value("${ticket.registry.cleaner.enabled:true}")
     private boolean cleanerEnabled;
 
     @Value("${ticket.registry.cleaner.repeatinterval:120}")
