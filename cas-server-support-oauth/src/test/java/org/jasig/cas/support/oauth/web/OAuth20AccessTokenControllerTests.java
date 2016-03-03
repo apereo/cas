@@ -22,6 +22,7 @@ import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.validator.OAuthValidator;
+import org.jasig.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -308,7 +309,7 @@ public final class OAuth20AccessTokenControllerTests {
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
-        expiringOAuthCodeFactory.setExpirationPolicy(state -> true);
+        expiringOAuthCodeFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
         final Service service = new OAuthWebApplicationService(registeredService);
         final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(code);

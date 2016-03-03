@@ -62,4 +62,14 @@ public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         return (ticketState == null)
             || (now.isAfter(expirationTime));
     }
+
+    @Override
+    public long getTimeToLive() {
+        return Long.MAX_VALUE;
+    }
+
+    @Override
+    public long getTimeToIdle() {
+        return this.timeToKillInMilliSeconds;
+    }
 }
