@@ -65,4 +65,14 @@ public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPoli
         return (ticketState == null) || ticketState.getCreationTime()
           .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isAfter(ZonedDateTime.now(ZoneOffset.UTC));
     }
+
+    @Override
+    public long getTimeToLive() {
+        return this.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public long getTimeToIdle() {
+        return Long.MIN_VALUE;
+    }
 }

@@ -24,4 +24,20 @@ public interface ExpirationPolicy extends Serializable {
      * @return true if the ticket is expired, false otherwise.
      */
     boolean isExpired(TicketState ticketState);
+
+    /**
+     * Describes the time duration where this policy should consider the item alive.
+     * Once this time passes, the item is considered expired and dead.
+     * @return alive time in milliseconds. A negative value indicates the time duration
+     * is not supported.
+     */
+    long getTimeToLive();
+
+    /**
+     * Describes the idle time duration for the item.
+     *
+     * @return idle time in milliseconds. A negative value indicates the time duration
+     * is not supported.
+     */
+    long getTimeToIdle();
 }
