@@ -277,13 +277,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         if (ticket == null) {
             return ticket;
         }
-
+        
         logger.info("Encoding [{}]", ticket);
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(
-                ByteSource.wrap(encodedTicketObject), encodedTicketId);
+                ByteSource.wrap(encodedTicketObject), 
+                encodedTicketId);
         logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
     }
