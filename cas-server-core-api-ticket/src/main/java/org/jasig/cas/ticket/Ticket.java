@@ -42,12 +42,16 @@ public interface Ticket extends Serializable {
     ZonedDateTime getCreationTime();
 
     /**
+     * Gets count of uses.
+     *
      * @return the number of times this ticket was used.
      */
     int getCountOfUses();
 
     /**
      * Get expiration policy associated with ticket.
+     *
+     * @return the expiration policy
      */
     ExpirationPolicy getExpirationPolicy();
     
