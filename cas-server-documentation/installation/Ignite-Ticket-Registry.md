@@ -18,12 +18,7 @@ This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 
 
 ## Distributed Cache
-Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage subsystem. The registry
-maintains service tickets and ticket-granting tickets in two separate caches, so that:
-
-* Ticket Granting Tickets remain valid for a long time, replicated asynchronously
-* Service Tickets are short lived and must be replicated right away because the requests
-  to validate them may very likely arrive at different CAS cluster nodes
+Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage subsystem. 
 
 Enable the registry via:
 
@@ -60,23 +55,15 @@ Additional TLS context configuration if performed by setting the following prope
 
 #### Configuration
 ```properties
-# ignite.servicesCache.name=serviceTicketsCache
-# ignite.servicesCache.cacheMode=REPLICATED
-# ignite.servicesCache.atomicityMode=TRANSACTIONAL
-# ignite.servicesCache.writeSynchronizationMode=FULL_SYNC
 # ignite.ticketsCache.name=ticketGrantingTicketsCache
 # ignite.ticketsCache.cacheMode=REPLICATED
 # ignite.ticketsCache.atomicityMode=TRANSACTIONAL
 # ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
+# ignite.ticketsCache.timeout=7200
 
 # Comma delimited list of addresses for distributed caches.
 # ignite.adresses=localhost:47500
 ```
-
-### Eviction Policy
-Ignite manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
-The default CAS ticket registry cleaner is then not needed, but could be used to enable
-[CAS single logout functionality](Logout-Single-Logout.html), if required.
 
 ### Troubleshooting Guidelines
 
