@@ -127,14 +127,14 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public int sessionCount() {
-        return countToInt(entityManager.createQuery(
+    public long sessionCount() {
+        return countToLong(entityManager.createQuery(
                 "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Override
-    public int serviceTicketCount() {
-        return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+    public long serviceTicketCount() {
+        return countToLong(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
     }
 
     @Override
@@ -206,15 +206,15 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
      * @param result the result
      * @return the int
      */
-    private static int countToInt(final Object result) {
-        final int intval;
+    private static long countToLong(final Object result) {
+        final long intval;
         if (result instanceof Long) {
-            intval = ((Long) result).intValue();
+            intval = (Long) result;
         } else if (result instanceof Integer) {
-            intval = (Integer) result;
+            intval = new Long((Integer) result);
         } else {
             // Must be a Number of some kind
-            intval = ((Number) result).intValue();
+            intval = ((Number) result).longValue();
         }
         return intval;
     }
