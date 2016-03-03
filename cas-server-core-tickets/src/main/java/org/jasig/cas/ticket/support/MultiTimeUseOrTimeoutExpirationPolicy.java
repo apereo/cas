@@ -96,12 +96,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     }
 
     @Override
-    public long getTimeToLive() {
+    public Long getTimeToLive() {
         return this.timeToKillInMilliSeconds;
     }
 
     @Override
-    public long getTimeToIdle() {
+    public Long getTimeToIdle() {
         return Long.MIN_VALUE;
     }
 

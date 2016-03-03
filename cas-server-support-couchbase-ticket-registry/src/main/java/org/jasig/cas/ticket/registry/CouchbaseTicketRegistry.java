@@ -1,16 +1,15 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,14 +53,6 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     @Qualifier("ticketRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
 
-    @Min(0)
-    @Value("${tgt.maxTimeToLiveInSeconds:28800}")
-    private int tgtTimeout;
-
-    @Min(0)
-    @Value("${st.timeToKillInSeconds:10}")
-    private int stTimeout;
-
 
     @Value("${ticketreg.couchbase.query.enabled:true}")
     private boolean queryEnabled;
@@ -77,7 +67,8 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
         logger.debug("Updating ticket {}", ticket);
         try {
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), getTimeout(ticket), ticket);
+                    SerializableDocument.create(ticket.getId(), 
+                            ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
             couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed updating {}: {}", ticket, e);
@@ -90,7 +81,8 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), getTimeout(ticket), ticket);
+                    SerializableDocument.create(ticket.getId(), 
+                            ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
             couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed adding {}: {}", ticketToAdd, e);
@@ -187,42 +179,6 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
         } else {
             return 0;
         }
-    }
-
-
-    /**
-     * Sets the time after which a ticket granting ticket will be
-     * purged from the registry.
-     *
-     * @param tgtTimeout Ticket granting ticket timeout in seconds.
-     */
-    public void setTgtTimeout(final int tgtTimeout) {
-        this.tgtTimeout = tgtTimeout;
-    }
-
-
-    /**
-     * Sets the time after which a session ticket will be purged
-     * from the registry.
-     *
-     * @param stTimeout Session ticket timeout in seconds.
-     */
-    public void setStTimeout(final int stTimeout) {
-        this.stTimeout = stTimeout;
-    }
-
-
-    /**
-     * @param t a CAS ticket.
-     * @return the ticket timeout for the ticket in the registry.
-     */
-    private int getTimeout(final Ticket t) {
-        if (t instanceof TicketGrantingTicket) {
-            return tgtTimeout;
-        } else if (t instanceof ServiceTicket) {
-            return stTimeout;
-        }
-        throw new IllegalArgumentException("Invalid ticket type");
     }
 
 
