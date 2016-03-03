@@ -289,13 +289,13 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache
             .size(CachePeekMode.ALL), (int) super.sessionCount());
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache
             .size(CachePeekMode.ALL), (int) super.serviceTicketCount());
     }
