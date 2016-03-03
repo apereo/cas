@@ -68,12 +68,12 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     }
 
     @Override
-    public long getTimeToLive() {
+    public Long getTimeToLive() {
         return this.maxTimeToLiveInMilliSeconds;
     }
 
     @Override
-    public long getTimeToIdle() {
+    public Long getTimeToIdle() {
         return this.timeToKillInMilliSeconds;
     }
 }

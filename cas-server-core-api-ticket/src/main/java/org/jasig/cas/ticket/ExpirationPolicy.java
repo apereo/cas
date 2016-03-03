@@ -28,16 +28,16 @@ public interface ExpirationPolicy extends Serializable {
     /**
      * Describes the time duration where this policy should consider the item alive.
      * Once this time passes, the item is considered expired and dead.
-     * @return alive time in milliseconds. A negative value indicates the time duration
+     * @return alive time in seconds. A negative value indicates the time duration
      * is not supported.
      */
-    long getTimeToLive();
+    Long getTimeToLive();
 
     /**
      * Describes the idle time duration for the item.
      *
-     * @return idle time in milliseconds. A negative value indicates the time duration
+     * @return idle time in seconds. A negative value indicates the time duration
      * is not supported.
      */
-    long getTimeToIdle();
+    Long getTimeToIdle();
 }

@@ -22,9 +22,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.cache.Cache;
+import javax.cache.expiry.Duration;
+import javax.cache.expiry.ExpiryPolicy;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -98,7 +101,22 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
         logger.debug("Adding ticket {} to the cache {}", ticket.getId(), this.ticketIgniteCache.getName());
-        this.ticketIgniteCache.put(ticket.getId(), ticket);
+        this.ticketIgniteCache.withExpiryPolicy(new ExpiryPolicy() {
+            @Override
+            public Duration getExpiryForCreation() {
+                return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToLive());
+            }
+
+            @Override
+            public Duration getExpiryForAccess() {
+                return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToIdle());
+            }
+
+            @Override
+            public Duration getExpiryForUpdate() {
+                return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToLive());
+            }
+        }).put(ticket.getId(), ticket);
     }
 
 
