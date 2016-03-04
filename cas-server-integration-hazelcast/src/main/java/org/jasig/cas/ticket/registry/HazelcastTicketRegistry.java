@@ -53,8 +53,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
      */
     @PostConstruct
     public void init() {
-        logger.info("Setting up Hazelcast Ticket Registry...");
-        logger.debug("Hazelcast instance: {} with name {}", this.hz, this.registry.getName());
+        logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}",
+                this.hz, this.registry.getName());
     }
 
     @Override
@@ -62,13 +62,11 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
         addTicket(ticket);
     }
 
-
     @Override
     protected boolean needsCallback() {
         return false;
     }
     
-
     @Override
     public void addTicket(final Ticket ticket) {
         logger.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
@@ -83,8 +81,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
         final Ticket ticket = decodeTicket(this.registry.get(encTicketId));
         return getProxiedTicketInstance(ticket);
     }
-
-
+    
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         return this.registry.remove(ticketId) != null;
