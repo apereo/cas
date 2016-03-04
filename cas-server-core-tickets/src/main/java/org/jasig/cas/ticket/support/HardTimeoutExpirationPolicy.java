@@ -73,6 +73,6 @@ public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPoli
 
     @Override
     public Long getTimeToIdle() {
-        return Long.MIN_VALUE;
+        return 0L;
     }
 }
