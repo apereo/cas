@@ -30,9 +30,14 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
+	<bean id="primaryPrincipalResolver"
+          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver" >
+        <property name="attributeRepository" ref="attributeRepository" />
+    </bean>
+    
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
-         <entry key-ref="ldapAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+         <entry key-ref="ldapAuthenticationHandler" value="#{null}" />
     </util:map>
     <util:list id="authenticationMetadataPopulators" />
 
@@ -41,7 +46,7 @@
 
     <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
     <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver" />
-
+    
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
         <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
@@ -84,6 +89,7 @@
                                 <entry key="eduPersonAffiliation" value="affiliation" />
                                 <entry key="mail" value="mail" />
                                 <entry key="displayName" value="displayName" />
+                                <entry key="entryUUID" value="entryUUID" />
                         </map>
                 </property>
         </bean>
