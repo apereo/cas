@@ -275,7 +275,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (ticket == null) {
-            return ticket;
+            logger.debug("Ticket passed is null and cannot be encoded");
+            return null;
         }
 
         logger.info("Encoding [{}]", ticket);
@@ -301,7 +302,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (result == null) {
-            return result;
+            logger.debug("Ticket passed is null and cannot be decoded");
+            return null;
         }
 
         logger.info("Attempting to decode {}", result);
@@ -390,8 +392,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected void scheduleCleanerJob() {
         try {
 
-            if (!cleanerEnabled) {
-                logger.info("Ticket registry cleaner is disabled. No cleaner processes will be scheduled");
+            if (!cleanerEnabled && isCleanerSupported()) {
+                logger.info("Ticket registry cleaner is disabled or is not supported by {}. No cleaner processes will be scheduled.",
+                        this.getClass().getName());
                 return;
             }
 
@@ -426,5 +429,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Indicates whether the registry supports automatic ticket cleanup. 
+     * Generally, a registry that is able to return a collection of available
+     * tickets should be able to support the cleanup process. Default is <code>true</code>.
+     *
+     * @return true/false.
+     */
+    protected boolean isCleanerSupported() {
+        return true;
     }
 }
