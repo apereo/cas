@@ -14,14 +14,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The {@link BaseCipherExecutor} is the default
+ * The {@link BaseStringCipherExecutor} is the default
  * implementation of {@link org.jasig.cas.CipherExecutor}. It provides
  * a facade API to encrypt, sign, and verify values.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
-public abstract class BaseCipherExecutor extends AbstractCipherExecutor<String, String> {
+public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<String, String> {
     private static final int ENCRYPTION_KEY_SIZE = 256;
 
     private static final int SIGNING_KEY_SIZE = 512;
@@ -30,7 +30,7 @@ public abstract class BaseCipherExecutor extends AbstractCipherExecutor<String, 
 
     private Key secretKeyEncryptionKey;
 
-    private BaseCipherExecutor() {}
+    private BaseStringCipherExecutor() {}
     
     /**
      * Instantiates a new cipher.
@@ -42,8 +42,8 @@ public abstract class BaseCipherExecutor extends AbstractCipherExecutor<String, 
      * @param secretKeyEncryption the secret key encryption; must be represented as a octet sequence JSON Web Key (JWK)
      * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
      */
-    public BaseCipherExecutor(final String secretKeyEncryption,
-                              final String secretKeySigning) {
+    public BaseStringCipherExecutor(final String secretKeyEncryption,
+                                    final String secretKeySigning) {
         this(secretKeyEncryption, secretKeySigning,
                 ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
     }
@@ -55,9 +55,9 @@ public abstract class BaseCipherExecutor extends AbstractCipherExecutor<String, 
      * @param secretKeySigning                     the key for signing
      * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
      */
-    public BaseCipherExecutor(final String secretKeyEncryption,
-                              final String secretKeySigning,
-                              final String contentEncryptionAlgorithmIdentifier) {
+    public BaseStringCipherExecutor(final String secretKeyEncryption,
+                                    final String secretKeySigning,
+                                    final String contentEncryptionAlgorithmIdentifier) {
 
         super();
 
