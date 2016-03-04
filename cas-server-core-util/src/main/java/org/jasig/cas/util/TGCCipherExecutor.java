@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @since 4.3.0
  */
 @Component("tgcCipherExecutor")
-public class TGCCipherExecutor extends BaseCipherExecutor {
+public class TGCCipherExecutor extends BaseStringCipherExecutor {
 
     /**
      * Instantiates a new Tgc cipher executor.

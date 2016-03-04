@@ -21,7 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
+public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final String UTF8_ENCODING = "UTF-8";
 
     private static final int SIGNING_KEY_SIZE = 512;
@@ -42,8 +42,8 @@ public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> 
      * @param encryptionSecretKey the encryption secret key
      * @param signingSecretKey the signing key
      */
-    public ShiroCipherExecutor(final String encryptionSecretKey,
-                               final String signingSecretKey) {
+    public BinaryCipherExecutor(final String encryptionSecretKey,
+                                final String signingSecretKey) {
         verifyAndSetKeys(encryptionSecretKey, signingSecretKey);
     }
 
