@@ -102,7 +102,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
     @Override
     public Long getTimeToIdle() {
-        return Long.MIN_VALUE;
+        return 0L;
     }
 
     /**

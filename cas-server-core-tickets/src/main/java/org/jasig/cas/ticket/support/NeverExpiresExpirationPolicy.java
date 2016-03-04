@@ -29,11 +29,11 @@ public final class NeverExpiresExpirationPolicy extends AbstractCasExpirationPol
 
     @Override
     public Long getTimeToLive() {
-        return Long.MIN_VALUE;
+        return new Long(Integer.MAX_VALUE);
     }
 
     @Override
     public Long getTimeToIdle() {
-        return Long.MIN_VALUE;
+        return new Long(Integer.MAX_VALUE);
     }
 }
