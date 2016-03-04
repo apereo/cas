@@ -103,7 +103,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return specified ticket from the registry
      */
     @Override
-    public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
+    public final <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
         final Ticket ticket = this.getTicket(ticketId);
