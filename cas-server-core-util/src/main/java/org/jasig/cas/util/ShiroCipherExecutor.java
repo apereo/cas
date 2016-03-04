@@ -61,7 +61,7 @@ public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> 
         if (StringUtils.isBlank(encryptionSecretKey)) {
             logger.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
             this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(ENCRYPTION_KEY_SIZE);
-            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS TGC settings.",
+            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
                     this.encryptionSecretKey, ENCRYPTION_KEY_SIZE);
         } else {
             this.encryptionSecretKey = encryptionSecretKey;
