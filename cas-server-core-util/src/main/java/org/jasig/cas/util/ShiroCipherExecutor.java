@@ -1,13 +1,18 @@
 package org.jasig.cas.util;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.OctJwkGenerator;
+import org.jose4j.jwk.OctetSequenceJsonWebKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
+import java.util.Map;
 
 /**
  * A implementation that is based on algorithms
@@ -16,33 +21,54 @@ import java.security.Key;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("shiroCipherExecutor")
 public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final String UTF8_ENCODING = "UTF-8";
 
+    private static final int SIGNING_KEY_SIZE = 512;
+
+    private static final int ENCRYPTION_KEY_SIZE = 16;
+    
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
 
-    private final String encryptionSecretKey;
+    private String encryptionSecretKey;
 
+    
     /**
      * Instantiates a new cryptic ticket cipher executor.
      *
      * @param encryptionSecretKey the encryption secret key
      * @param signingSecretKey the signing key
      */
-    @Autowired
-    public ShiroCipherExecutor(@Value("${ticket.encryption.secretkey:N0$ecr3T}")
-                               final String encryptionSecretKey,
-                               @Value("${ticket.signing.secretkey:N0$ecr3T}")
+    public ShiroCipherExecutor(final String encryptionSecretKey,
                                final String signingSecretKey) {
-        super(signingSecretKey);
-        this.encryptionSecretKey = encryptionSecretKey;
+        verifyAndSetKeys(encryptionSecretKey, signingSecretKey);
     }
 
-    @Autowired
-    public void setSecretKeyAlgorithm(@Value("${ticket.secretkey.alg:AES}")
-                                          final String secretKeyAlgorithm) {
+    private void verifyAndSetKeys(final String encryptionSecretKey, final String signingSecretKey) {
+
+        String signingKeyToUse = signingSecretKey;
+        if (StringUtils.isBlank(signingKeyToUse)) {
+            logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
+            signingKeyToUse = generateOctetJsonWebKeyOfSize(SIGNING_KEY_SIZE);
+            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
+                    signingKeyToUse, SIGNING_KEY_SIZE);
+        }
+        setSigningKey(signingKeyToUse);
+        
+        if (StringUtils.isBlank(encryptionSecretKey)) {
+            logger.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
+            this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(ENCRYPTION_KEY_SIZE);
+            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS TGC settings.",
+                    this.encryptionSecretKey, ENCRYPTION_KEY_SIZE);
+        } else {
+            this.encryptionSecretKey = encryptionSecretKey;
+        }
+    }
+
+    public void setSecretKeyAlgorithm(final String secretKeyAlgorithm) {
         this.secretKeyAlgorithm = secretKeyAlgorithm;
     }
 
@@ -75,5 +101,9 @@ public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> 
         }
     }
 
-
+    private String generateOctetJsonWebKeyOfSize(final int size) {
+        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
+        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        return params.get("k").toString();
+    }
 }
