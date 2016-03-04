@@ -1,6 +1,6 @@
 package org.jasig.cas;
 
-import org.jasig.cas.util.ShiroCipherExecutor;
+import org.jasig.cas.util.BinaryCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @since 4.3.0
  */
 @Component("webflowCipherExecutor")
-public class WebflowCipherExecutor extends ShiroCipherExecutor {
+public class WebflowCipherExecutor extends BinaryCipherExecutor {
 
     /**
      * Instantiates a new webflow cipher executor.

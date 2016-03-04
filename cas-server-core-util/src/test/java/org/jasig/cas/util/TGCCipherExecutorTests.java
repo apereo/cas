@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Test cases for {@link BaseCipherExecutor}.
+ * Test cases for {@link BaseStringCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 4.1
