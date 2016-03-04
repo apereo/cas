@@ -173,22 +173,5 @@
         </div>
     </div>
 
-<div class="modal fade" id="threadDumpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel"><spring:message code="cas.statistics.section.threaddump.modal.title" /></h4>
-      </div>
-      <div class="modal-body"><pre class="thread-dump-view"></pre></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="cas.statistics.modal.close.button" /></button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>

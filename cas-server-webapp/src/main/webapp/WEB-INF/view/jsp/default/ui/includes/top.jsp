@@ -18,7 +18,9 @@
     <link rel="stylesheet" href="<c:url value="${customCssFile}" />"/>
     <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon"/>
 
-    <script>var trackGeoLocation = ${trackGeoLocation};</script>
+    <script>
+        var trackGeoLocation = ("${trackGeoLocation}" === "true");
+    </script>
 </head>
 <body id="cas">
 
