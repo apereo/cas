@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * This is {@link DefaultTicketCipherExecutor}.
+ * This is {@link DefaultTicketCipherExecutor} that handles the encryption
+ * and signing of tickets during replication.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
