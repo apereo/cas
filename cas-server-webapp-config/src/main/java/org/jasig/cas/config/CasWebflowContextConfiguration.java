@@ -1,11 +1,8 @@
 package org.jasig.cas.config;
 
 import com.google.common.collect.ImmutableList;
-import org.cryptacular.bean.BufferedBlockCipherBean;
-import org.cryptacular.bean.KeyStoreFactoryBean;
-import org.cryptacular.generator.sp80038a.RBGNonce;
-import org.cryptacular.io.URLResource;
-import org.cryptacular.spec.BufferedBlockCipherSpec;
+import org.cryptacular.bean.CipherBean;
+import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.jasig.cas.web.flow.LogoutConversionService;
 import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;
@@ -17,7 +14,6 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.Resource;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -29,6 +25,10 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
+
+import javax.naming.OperationNotSupportedException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * This is {@link CasWebflowContextConfiguration} that attempts to create Spring-managed beans
@@ -50,49 +50,7 @@ public class CasWebflowContextConfiguration {
      */
     @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/")
     private String resolverPathPrefix;
-
-    /**
-     * The Keystore type.
-     */
-    @Value("${cas.webflow.keystore.type:JCEKS}")
-    private String keystoreType;
-
-    /**
-     * The Keystore password.
-     */
-    @Value("${cas.webflow.keystore.password:changeit}")
-    private String keystorePassword;
-
-    /**
-     * The Key password.
-     */
-    @Value("${cas.webflow.keypassword:changeit}")
-    private String keyPassword;
-
-    /**
-     * The Keystore file.
-     */
-    @Value("${cas.webflow.keystore:classpath:/etc/keystore.jceks}")
-    private Resource keystoreFile;
-
-    /**
-     * The Alg name.
-     */
-    @Value("${cas.webflow.cipher.alg:AES}")
-    private String algName;
-
-    /**
-     * The Cipher mode.
-     */
-    @Value("${cas.webflow.cipher.mode:CBC}")
-    private String cipherMode;
-
-    /**
-     * The Cipher padding.
-     */
-    @Value("${cas.webflow.cipher.padding:PKCS7}")
-    private String cipherPadding;
-
+    
     @Autowired
     @Qualifier("logoutFlowExecutor")
     @Lazy(true)
@@ -112,6 +70,10 @@ public class CasWebflowContextConfiguration {
     @Qualifier("loginFlowRegistry")
     @Lazy(true)
     private FlowDefinitionRegistry loginFlowRegistry;
+    
+    @Autowired
+    @Qualifier("webflowCipherExecutor")
+    private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
     
     /**
      * The Key alias.
@@ -186,29 +148,7 @@ public class CasWebflowContextConfiguration {
         resolver.setViewResolvers(ImmutableList.of(viewResolver(), internalViewResolver()));
         return resolver;
     }
-
-    /**
-     * Login flow cipher bean buffered block cipher bean.
-     *
-     * @return the buffered block cipher bean
-     */
-    @Bean(name = "loginFlowCipherBean")
-    public BufferedBlockCipherBean loginFlowCipherBean() {
-        try {
-            final KeyStoreFactoryBean factory = new KeyStoreFactoryBean(new URLResource(this.keystoreFile.getURL()),
-                    this.keystoreType, this.keystorePassword);
-            final BufferedBlockCipherBean resolver = new BufferedBlockCipherBean();
-            resolver.setKeyAlias(this.keyAlias);
-            resolver.setKeyStore(factory.newInstance());
-            resolver.setKeyPassword(this.keyPassword);
-            resolver.setNonce(new RBGNonce());
-            resolver.setBlockCipherSpec(new BufferedBlockCipherSpec(this.algName, this.cipherMode, this.cipherPadding));
-            return resolver;
-
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    
 
     /**
      * Login flow url handler cas default flow url handler.
@@ -246,6 +186,46 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
+    /**
+     * Login flow cipher bean buffered block cipher bean.
+     *
+     * @return the buffered block cipher bean
+     */
+    /**
+     * Login flow cipher bean buffered block cipher bean.
+     *
+     * @return the buffered block cipher bean
+     */
+    @Bean(name = "loginFlowCipherBean")
+    public CipherBean loginFlowCipherBean() {
+
+        try {
+            return new CipherBean() {
+                @Override
+                public byte[] encrypt(final byte[] bytes) {
+                    return webflowCipherExecutor.encode(bytes);
+                }
+
+                @Override
+                public void encrypt(final InputStream inputStream, final OutputStream outputStream) {
+                    throw new RuntimeException(new OperationNotSupportedException("Encrypting input stream is not supported"));
+                }
+
+                @Override
+                public byte[] decrypt(final byte[] bytes) {
+                    return webflowCipherExecutor.decode(bytes);
+                }
+
+                @Override
+                public void decrypt(final InputStream inputStream, final OutputStream outputStream) {
+                    throw new RuntimeException(new OperationNotSupportedException("Decrypting input stream is not supported"));
+                }
+            };
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     /**
      * Login flow state transcoder encrypted transcoder.
      *

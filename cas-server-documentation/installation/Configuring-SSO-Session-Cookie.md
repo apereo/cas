@@ -62,6 +62,13 @@ The cookie has the following properties:
 2. Depending on container support, the cookie would be marked as http-only automatically.
 3. The cookie value is encrypted and signed via secret keys that need to be generated upon deployment.
 
+If you wish to turn off cookie encryption, adjust your configuration to be the following:
+
+```xml
+<bean id="noOpCipherExecutor" class="org.jasig.cas.util.NoOpCipherExecutor" />
+<alias name="noOpCipherExecutor" alias="defaultCookieCipherExecutor" />
+```
+
 ## Cookie Generation for Renewed Authentications
 
 By default, forced authentication requests that challenge the user for credentials
