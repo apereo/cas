@@ -143,7 +143,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Value("${ehcache.timeIdle:0}")
     private int cacheTimeToIdle;
 
-    @Value("${ehcache.timeAlive:" + Integer.MAX_VALUE + "}")
+    @Value("${ehcache.timeAlive:" + Integer.MAX_VALUE + '}')
     private int cacheTimeToLive;
 
     /**
