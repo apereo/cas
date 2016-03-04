@@ -1,6 +1,6 @@
 package org.jasig.cas;
 
-import org.jasig.cas.util.ShiroCipherExecutor;
+import org.jasig.cas.util.BinaryCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @since 4.3.0
  */
 @Component("defaultTicketCipherExecutor")
-public class DefaultTicketCipherExecutor extends ShiroCipherExecutor {
+public class DefaultTicketCipherExecutor extends BinaryCipherExecutor {
 
     /**
      * Instantiates a new Default ticket cipher executor.

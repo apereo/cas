@@ -20,7 +20,7 @@ public final class NoOpCipherExecutor extends AbstractCipherExecutor<String, Str
         super(NoOpCipherExecutor.class.getName());
         LOGGER.warn("[{}] does no encryption and may NOT be safe in a production environment. "
                 + "Consider using other choices, such as [{}] that handle encryption, signing and verification of "
-                + "all appropriate values.", this.getClass().getName(), BaseCipherExecutor.class.getName());
+                + "all appropriate values.", this.getClass().getName(), BaseStringCipherExecutor.class.getName());
     }
 
     @Override
