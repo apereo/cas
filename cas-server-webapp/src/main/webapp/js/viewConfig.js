@@ -1,3 +1,4 @@
+
 var viewConfigs = (function () {
     var createDataTable = function() {
         $('#viewConfigsTable').DataTable( {
@@ -25,16 +26,21 @@ var viewConfigs = (function () {
                 "url": '/cas/status/env',
                 "dataSrc": function (json) {
                     var return_data = new Array();
-                    for(var i=0;i< json.length; i++){
-                        var obj = json[i];
-                        for (var key in obj) {
-                            if (obj.hasOwnProperty(key)) {
-                                return_data.push({
-                                    'key': key,
-                                    'value'  : obj[key],
-                                })
-                            }
+                    for (var section in json) {
+                        var sectionName;
+                        if (section.indexOf("applicationConfig") != -1) {
+                            sectionName = "applicationConfig";
+                        } else {
+                            sectionName = section;
                         }
+                        var object = json[section];
+                        for (var item in object) {
+                            return_data.push({
+                                'key': sectionName + "." + item,
+                                'value'  : object[item],
+                            })
+                        }
+
                     }
                     return return_data;
                 }
