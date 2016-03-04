@@ -1,16 +1,15 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -225,6 +224,11 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
         throw new IllegalArgumentException("Invalid ticket type");
     }
 
+    @Override
+    protected boolean isCleanerSupported() {
+        logger.info("{} does not support automatic ticket clean up processes", this.getClass().getName());
+        return false;
+    }
 
     /**
      * @param couchbase the client factory to use.
