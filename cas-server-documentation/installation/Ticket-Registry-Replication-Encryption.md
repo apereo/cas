@@ -17,10 +17,11 @@ when you use the above ticket registries. It requires explicit configuration bef
 
 ## Configuration
 
-Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. A typical cipher configuration may be the following, placed into the `ticketRegistry.xml` file:
+Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. A typical cipher configuration 
+may be the following, placed into the configuration:
 
 ```xml
-<alias name="shiroCipherExecutor" alias="ticketCipherExecutor" />
+<alias name="defaultTicketCipherExecutor" alias="ticketCipherExecutor" />
 ```
 
 The settings, algorithms and secret keys used for the cipher may be controlled via `cas.properties`:
@@ -28,10 +29,7 @@ The settings, algorithms and secret keys used for the cipher may be controlled v
 ```properties
 # Secret key to use when encrypting tickets in a distributed ticket registry.
 # ticket.encryption.secretkey=C@$W3bSecretKey!
-
-# Seed to use when encrypting tickets in a distributed ticket registry.
-# ticket.encryption.seed=S!ngl3$ign0n4W3b
-
+#
 # Secret key to use when signing tickets in a distributed ticket registry.
 # By default, must be a octet string of size 512.
 # ticket.signing.secretkey=szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w
