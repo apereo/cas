@@ -28,7 +28,7 @@ import java.util.List;
  * A Ticket Registry storage backend which uses the memcached protocol.
  * CouchBase is a multi host NoSQL database with a memcached interface
  * to persistent storage which also is quite usable as a replicated
- * tickage storage engine for multiple front end CAS servers.
+ * ticket storage engine for multiple front end CAS servers.
  *
  * @author Fredrik Jönsson "fjo@kth.se"
  * @author Misagh Moayyed
@@ -47,7 +47,6 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     });
     private static final String UTIL_DOCUMENT = "statistics";
 
-    /* Couchbase client factory */
     @NotNull
     @Autowired
     @Qualifier("ticketRegistryCouchbaseClientFactory")
@@ -142,7 +141,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
 
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("GetTickets not supported.");
+        throw new UnsupportedOperationException("getTickets() not supported.");
     }
 
     @Override
@@ -180,16 +179,13 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
             return 0;
         }
     }
-
-
-    /**
+    
     @Override
     protected boolean isCleanerSupported() {
         logger.info("{} does not support automatic ticket clean up processes", this.getClass().getName());
         return false;
     }
-     * @param couchbase the client factory to use.
-     */
+    
     public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
         this.couchbase = couchbase;
     }
