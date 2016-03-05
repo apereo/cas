@@ -114,8 +114,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
                 .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
                 .getResultList();
 
-        final List<Ticket> tickets = new ArrayList<>();
-        tickets.addAll(tgts);
+        final List<Ticket> tickets = new ArrayList<>(tgts);
         tickets.addAll(sts);
 
         return tickets;
@@ -140,7 +139,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
-        int failureCount = 0;
+        final int failureCount;
 
         if (ticket instanceof OAuthToken) {
             failureCount = deleteOAuthTokens(ticketId);
@@ -207,16 +206,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the int
      */
     private static long countToLong(final Object result) {
-        final long intval;
-        if (result instanceof Long) {
-            intval = (Long) result;
-        } else if (result instanceof Integer) {
-            intval = new Long((Integer) result);
-        } else {
-            // Must be a Number of some kind
-            intval = ((Number) result).longValue();
-        }
-        return intval;
+        return ((Number) result).longValue();
     }
 
     @Override
