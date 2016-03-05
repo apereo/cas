@@ -21,6 +21,7 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -31,6 +32,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+import java.io.File;
 import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.Set;
@@ -84,8 +86,9 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Autowired
     public void setShiroConfiguration(@Value("${shiro.authn.config.file:classpath:shiro.ini}") final Resource resource) {
         try {
-            if (resource.exists()) {
-                final String location = resource.getURI().toString();
+            final File shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
+            if (shiroResource.exists()) {
+                final String location = shiroResource.getCanonicalPath();
                 logger.debug("Loading Shiro configuration from {}", location);
 
                 final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
