@@ -74,7 +74,7 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
             return old;
         }
 
-        return this.ticketRegistry.getTicket(old.getId(), Ticket.class);
+        return this.ticketRegistry.getTicket(old.getId(), TicketGrantingTicket.class);
     }
 
     @Override

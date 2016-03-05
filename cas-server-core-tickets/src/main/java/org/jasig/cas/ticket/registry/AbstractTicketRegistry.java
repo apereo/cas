@@ -56,7 +56,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     /** The Slf4j logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Value("${ticket.registry.cleaner.enabled:false}")
+    @Value("${ticket.registry.cleaner.enabled:true}")
     private boolean cleanerEnabled;
 
     @Value("${ticket.registry.cleaner.repeatinterval:120}")
@@ -103,7 +103,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return specified ticket from the registry
      */
     @Override
-    public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
+    public final <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
         final Ticket ticket = this.getTicket(ticketId);
@@ -275,7 +275,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (ticket == null) {
-            return ticket;
+            logger.debug("Ticket passed is null and cannot be encoded");
+            return null;
         }
         
         logger.info("Encoding [{}]", ticket);
@@ -302,7 +303,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (result == null) {
-            return result;
+            logger.debug("Ticket passed is null and cannot be decoded");
+            return null;
         }
 
         logger.info("Attempting to decode {}", result);
@@ -391,8 +393,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected void scheduleCleanerJob() {
         try {
 
-            if (!cleanerEnabled) {
-                logger.info("Ticket registry cleaner is disabled. No cleaner processes will be scheduled");
+            if (!cleanerEnabled && isCleanerSupported()) {
+                logger.info("Ticket registry cleaner is disabled or is not supported by {}. No cleaner processes will be scheduled.",
+                        this.getClass().getName());
                 return;
             }
 
@@ -427,5 +430,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Indicates whether the registry supports automatic ticket cleanup. 
+     * Generally, a registry that is able to return a collection of available
+     * tickets should be able to support the cleanup process. Default is <code>true</code>.
+     *
+     * @return true/false.
+     */
+    protected boolean isCleanerSupported() {
+        return true;
     }
 }
