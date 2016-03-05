@@ -95,6 +95,16 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         return false;
     }
 
+    @Override
+    public Long getTimeToLive() {
+        return this.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public Long getTimeToIdle() {
+        return 0L;
+    }
+
     /**
      * The Proxy ticket expiration policy.
      */

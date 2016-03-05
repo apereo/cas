@@ -1,7 +1,6 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -59,7 +58,16 @@ public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime expirationTime = now.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
-        return (ticketState == null)
-            || (now.isAfter(expirationTime));
+        return ticketState == null || now.isAfter(expirationTime);
+    }
+
+    @Override
+    public Long getTimeToLive() {
+        return new Long(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public Long getTimeToIdle() {
+        return this.timeToKillInMilliSeconds;
     }
 }

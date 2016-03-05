@@ -77,6 +77,22 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
         return false;
     }
 
+    @Override
+    public Long getTimeToLive() {
+        if (this.rememberMeExpirationPolicy != null) {
+            return rememberMeExpirationPolicy.getTimeToLive();
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long getTimeToIdle() {
+        if (this.rememberMeExpirationPolicy != null) {
+            return rememberMeExpirationPolicy.getTimeToIdle();
+        }
+        return 0L;
+    }
+
     public void setRememberMeExpirationPolicy(
         final ExpirationPolicy rememberMeExpirationPolicy) {
         this.rememberMeExpirationPolicy = rememberMeExpirationPolicy;
