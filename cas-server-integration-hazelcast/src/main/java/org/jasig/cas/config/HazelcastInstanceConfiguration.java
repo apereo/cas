@@ -62,13 +62,14 @@ public class HazelcastInstanceConfiguration {
     /**
      * Get Hazelcast <code>Config</code> instance.
      *
-     * @param configLocation config location for hazelcast xml
+     * @param location config location for hazelcast xml
      * @return Hazelcast Config
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
-    private Config getConfig(final Resource configLocation) throws IOException {
+    private Config getConfig(final Resource location) throws IOException {
         final Config config;
         //We have a valid config location for hazelcast xml. Try to parse it and configure Hazelcast instance according to that source
+        final Resource configLocation = org.jasig.cas.util.ResourceUtils.prepareClasspathResourceIfNeeded(location);
         if (configLocation.exists()) {
             final URL configUrl = configLocation.getURL();
             config = new XmlConfigBuilder(configUrl).build();

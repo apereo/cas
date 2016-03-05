@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.util.PublicKeyFactoryBean;
+import org.jasig.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -77,11 +78,7 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
     public PublicKey createInstance() throws Exception {
         try {
             final PublicKeyFactoryBean factory = publicKeyFactoryBeanClass.newInstance();
-            if (this.location.startsWith("classpath:")) {
-                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, "classpath:")));
-            } else {
-                factory.setLocation(new FileSystemResource(this.location));
-            }
+            factory.setLocation(ResourceUtils.getResourceFrom(this.location));
             factory.setAlgorithm(this.algorithm);
             factory.setSingleton(false);
             return factory.getObject();
