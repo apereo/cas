@@ -1,5 +1,6 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
@@ -73,7 +74,7 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
             return old;
         }
 
-        return this.ticketRegistry.getTicket(old.getId(), Ticket.class);
+        return this.ticketRegistry.getTicket(old.getId(), TicketGrantingTicket.class);
     }
 
     @Override
@@ -94,6 +95,11 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
     @Override
     public boolean equals(final Object o) {
         return this.ticket.equals(o);
+    }
+
+    @Override
+    public ExpirationPolicy getExpirationPolicy() {
+        return ticket.getExpirationPolicy();
     }
 
     /**

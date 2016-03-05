@@ -271,6 +271,11 @@ public class KryoTranscoderTests {
         }
 
         @Override
+        public ExpirationPolicy getExpirationPolicy() {
+            return new NeverExpiresExpirationPolicy();
+        }
+
+        @Override
         public boolean equals(final Object other) {
             return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
         }
@@ -405,6 +410,11 @@ public class KryoTranscoderTests {
         @Override
         public int getCountOfUses() {
             return this.usageCount;
+        }
+
+        @Override
+        public ExpirationPolicy getExpirationPolicy() {
+            return new NeverExpiresExpirationPolicy();
         }
 
         @Override

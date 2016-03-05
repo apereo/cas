@@ -110,16 +110,12 @@
           class="org.jasig.cas.ticket.registry.HazelcastTicketRegistry">
         <constructor-arg name="hz" ref="hzInstance1"/>
         <constructor-arg name="mapName" value="tickets"/>
-        <constructor-arg name="ticketGrantingTicketTimeoutInSeconds" value="10"/>
-        <constructor-arg name="serviceTicketTimeoutInSeconds" value="10"/>
     </bean>
 
     <bean id="hzTicketRegistry2"
           class="org.jasig.cas.ticket.registry.HazelcastTicketRegistry">
         <constructor-arg name="hz" ref="hzInstance2"/>
         <constructor-arg name="mapName" value="tickets"/>
-        <constructor-arg name="ticketGrantingTicketTimeoutInSeconds" value="10"/>
-        <constructor-arg name="serviceTicketTimeoutInSeconds" value="10"/>
     </bean>
 
 </beans>
