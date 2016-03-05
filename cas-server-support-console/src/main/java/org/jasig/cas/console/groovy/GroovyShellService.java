@@ -19,6 +19,7 @@ package org.jasig.cas.console.groovy;
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import org.apache.commons.io.FilenameUtils;
+import org.jasig.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,22 +47,24 @@ import java.util.Map;
 public class GroovyShellService {
     private static final String CONTEXT_KEY = "ctx";
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String FILE_EXTENSION = "groovy";
 
-    private Thread serverThread;
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ServerSocket serverSocket;
 
     private final List<GroovyShellThread> threads = new ArrayList<>();
 
     @Value("${cas.console.scripts.location:classpath:/scripts}")
-    private Resource scriptsLocation;
+    private Resource scriptsLocationResource;
 
     @Value("${cas.console.socket.port:6789}")
     private int port;
 
     private Map<String, Object> bindings;
 
+    private File scriptsLocation;
+    
     @Autowired
     private ApplicationContext context;
 
@@ -86,7 +89,8 @@ public class GroovyShellService {
         try {
             this.serverSocket = new ServerSocket(port);
             logger.info("Opened server port {} on port {}", serverSocket, this.port);
-
+            this.scriptsLocation = ResourceUtils.prepareClasspathResourceIfNeeded(this.scriptsLocationResource, true, FILE_EXTENSION);
+            
             while (true) {
                 final Socket clientSocket;
                 try {
@@ -149,7 +153,8 @@ public class GroovyShellService {
      */
     @PostConstruct
     public void initialize() {
-        this.serverThread = new Thread() {
+
+        final Thread serverThread = new Thread() {
             @Override
             public void run() {
                 try {
@@ -187,11 +192,12 @@ public class GroovyShellService {
     }
 
     private void loadCustomGroovyScriptsIntoClasspath(final Binding binding) {
-        final FilenameFilter filter = (dir, name) -> name.endsWith("groovy");
+        final FilenameFilter filter = (dir, name) -> name.endsWith(FILE_EXTENSION);
 
         final ClassLoader thisClassLoader = this.getClass().getClassLoader();
         try (final GroovyClassLoader loader = new GroovyClassLoader(thisClassLoader)) {
-            final File[] files = this.scriptsLocation.getFile().listFiles(filter);
+            final File[] files = scriptsLocation.listFiles(filter);
+
             for (final File file : files) {
                 try {
                     final Class c = loader.parseClass(file);
