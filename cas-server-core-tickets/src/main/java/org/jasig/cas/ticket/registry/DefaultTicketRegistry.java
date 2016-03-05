@@ -89,7 +89,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long sessionCount() {
-        return (int) this.cache.values().stream().filter(t -> t instanceof TicketGrantingTicket).count();
+        return this.cache.values().stream().filter(t -> t instanceof TicketGrantingTicket).count();
     }
 
     @Override
