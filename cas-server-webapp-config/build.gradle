@@ -1,0 +1,12 @@
+description = 'Apereo CAS Web Application Configuration'
+dependencies {
+    compile libraries.spring
+    compile libraries.hibernate
+    compile libraries.commons
+    compile libraries.cassecurityfilter
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-webapp-actions')
+    provided project(':cas-server-webapp-themes')
+    provided libraries.bouncycastle
+}
+

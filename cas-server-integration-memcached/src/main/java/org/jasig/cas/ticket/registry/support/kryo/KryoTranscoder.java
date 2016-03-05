@@ -1,27 +1,5 @@
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.DefaultHandlerResult;
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.ticket.ServiceTicketImpl;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.ZonedDateTimeTranscoder;
-import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
-import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
-import org.jasig.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
-import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
-import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
@@ -43,8 +21,31 @@ import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.ticket.ServiceTicketImpl;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
+import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
+import org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer;
+import org.jasig.cas.ticket.registry.support.kryo.serial.ZonedDateTimeTranscoder;
+import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
+import org.jasig.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
+import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
+import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 import org.slf4j.impl.CasDelegatingLogger;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -69,12 +70,17 @@ import java.util.regex.Pattern;
  * @since 3.0.0
  */
 @SuppressWarnings("rawtypes")
+@Component("kryoTranscoder")
 public class KryoTranscoder implements Transcoder<Object> {
 
-    /** Kryo serializer. */
+    /**
+     * Kryo serializer.
+     */
     private final Kryo kryo = new KryoReflectionFactorySupport();
 
-    /** Map of class to serializer that handles it. */
+    /**
+     * Map of class to serializer that handles it.
+     */
     private Map<Class<?>, Serializer> serializerMap;
 
     /**
@@ -96,6 +102,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Initialize and register classes with kryo.
      */
+    @PostConstruct
     public void initialize() {
         // Register types we know about and do not require external configuration
         kryo.register(ArrayList.class);
@@ -138,7 +145,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         ImmutableSetSerializer.registerSerializers(kryo);
         ImmutableMapSerializer.registerSerializers(kryo);
         ImmutableMultimapSerializer.registerSerializers(kryo);
-        
+
         kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
         kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
         kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
@@ -182,7 +189,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     public Object decode(final CachedData d) {
         final byte[] bytes = d.getData();
         try (final Input input = new Input(new ByteArrayInputStream(bytes))) {
-            final Object obj =  kryo.readClassAndObject(input);
+            final Object obj = kryo.readClassAndObject(input);
             return obj;
         }
     }
@@ -190,7 +197,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Maximum size of encoded data supported by this transcoder.
      *
-     * @return  {@code net.spy.memcached.CachedData#MAX_SIZE}.
+     * @return {@code net.spy.memcached.CachedData#MAX_SIZE}.
      */
     @Override
     public int getMaxSize() {

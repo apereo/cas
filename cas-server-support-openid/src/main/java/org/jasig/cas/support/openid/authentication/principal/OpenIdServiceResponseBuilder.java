@@ -82,6 +82,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
             if ((associated && associationValid) || !associated) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
                 logger.debug("Validated openid ticket {} for {}", ticketId, service);
+            } else if (!associated) {
+                logger.debug("Responding to non-associated mode. Service ticket {} must be validated by the RP", ticketId);
             } else {
                 logger.warn("Association does not exist or is not valid");
                 successFullAuthentication = false;
@@ -134,11 +136,12 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                                                    final String id) {
 
         final Message response = serverManager.authResponse(this.parameterList, id, id,
-            successFullAuthentication, true);
+                successFullAuthentication, true);
         parameters.putAll(response.getParameterMap());
         if (!associated) {
             parameters.put(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, ticketId);
         }
+        logger.debug("Parameters passed for the OpenID response are {}", parameters.keySet());
         return buildRedirect(service, parameters);
     }
 

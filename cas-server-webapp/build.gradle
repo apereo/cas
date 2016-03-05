@@ -42,7 +42,9 @@ dependencies {
     compile project(':cas-server-webapp-cookie')
     compile project(':cas-server-webapp-reports')
     compile project(':cas-server-webapp-themes')
+    compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
+    
     compile libraries.pac4j
     runtime libraries.spring
     runtime libraries.cassecurityfilter
@@ -53,7 +55,7 @@ dependencies {
 }
 
 gretty {
-    jvmArgs = ["-DloggerFactory=\"org.apache.logging.slf4j.Log4jLoggerFactory\"", "-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug",
+    jvmArgs = ["-DloggerFactory=org.apache.logging.slf4j.Log4jLoggerFactory", "-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug",
                "-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     scanInterval = 5
     contextPath = '/cas'

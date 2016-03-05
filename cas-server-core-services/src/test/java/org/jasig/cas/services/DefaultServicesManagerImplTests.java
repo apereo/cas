@@ -53,7 +53,7 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
-    public void verifyMultiServicesBySameName() {
+    public void verifyMultiServicesBySameNameAndServiceId() {
         RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(666);
         r.setName("testServiceName");
@@ -64,7 +64,7 @@ public class DefaultServicesManagerImplTests  {
         r = new RegisteredServiceImpl();
         r.setId(999);
         r.setName("testServiceName");
-        r.setServiceId("testServiceB");
+        r.setServiceId("testServiceA");
 
         this.defaultServicesManagerImpl.save(r);
 

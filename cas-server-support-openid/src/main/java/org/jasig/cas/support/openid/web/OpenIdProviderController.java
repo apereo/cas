@@ -1,13 +1,13 @@
 package org.jasig.cas.support.openid.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 /**
  * Maps requests for usernames to a page that displays the Login URL for an
@@ -20,16 +20,16 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class OpenIdProviderController extends AbstractController {
 
     @NotNull
-    @Value("${server.prefix}/login")
-    private String loginUrl;
+    @Value("${server.prefix}")
+    private String serverPrefix;
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
-        return new ModelAndView("openIdProviderView", "openid_server", this.loginUrl);
+                                                 final HttpServletResponse response) throws Exception {
+        return new ModelAndView("openIdProviderView", "openid_server", this.serverPrefix);
     }
 
-    public void setLoginUrl(final String loginUrl) {
-        this.loginUrl = loginUrl;
+    public void setServerPrefix(final String serverPrefix) {
+        this.serverPrefix = serverPrefix;
     }
 }
