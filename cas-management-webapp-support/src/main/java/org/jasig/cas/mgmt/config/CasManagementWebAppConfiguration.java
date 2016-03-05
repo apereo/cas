@@ -25,18 +25,23 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.mvc.ParameterizableViewController;
+import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.view.InternalResourceView;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
-import javax.validation.MessageInterpolator;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -114,7 +119,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the character encoding filter
      */
     @Bean(name = "characterEncodingFilter")
-    public CharacterEncodingFilter a() {
+    public CharacterEncodingFilter characterEncodingFilter() {
         return new CharacterEncodingFilter("UTF-8", true);
     }
 
@@ -163,6 +168,23 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
     }
 
+
+    /**
+     * Root controller controller.
+     *
+     * @return the controller
+     */
+    @Bean(name="rootController")
+    protected Controller rootController() {
+        return new ParameterizableViewController() {
+            @Override
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+                    throws Exception {
+                final String url = request.getContextPath() + "/manage.html";
+                return new ModelAndView(new RedirectView(response.encodeURL(url)));
+            }
+        };
+    }
     /**
      * Handler mapping c simple url handler mapping.
      *
@@ -171,7 +193,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean(name = "handlerMappingC")
     public SimpleUrlHandlerMapping handlerMappingC() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
+        mapping.setRootHandler(rootController());
 
         final Properties properties = new Properties();
         properties.put("/*.html", new UrlFilenameViewController());
@@ -341,6 +365,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**").excludePathPatterns("/callback*", "/logout*", "/authorizationFailure.html");
     }
 
+    @Bean
+    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
+        return new SimpleControllerHandlerAdapter();
+    }
+    
     /**
      * Place holder configurer property sources placeholder configurer.
      *
