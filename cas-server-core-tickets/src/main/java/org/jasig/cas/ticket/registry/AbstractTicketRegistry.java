@@ -124,15 +124,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     @Override
     public long sessionCount() {
       logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
-                this.getClass().getName(), Integer.MIN_VALUE);
-      return Integer.MIN_VALUE;
+                this.getClass().getName(), Long.MIN_VALUE);
+      return Long.MIN_VALUE;
     }
 
     @Override
     public long serviceTicketCount() {
       logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
-                this.getClass().getName(), Integer.MIN_VALUE);
-      return Integer.MIN_VALUE;
+                this.getClass().getName(), Long.MIN_VALUE);
+      return Long.MIN_VALUE;
     }
 
     @Override
