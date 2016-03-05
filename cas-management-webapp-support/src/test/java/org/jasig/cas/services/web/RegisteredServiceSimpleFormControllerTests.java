@@ -1,17 +1,18 @@
 package org.jasig.cas.services.web;
 
+import org.jasig.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
-import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
-import org.jasig.cas.services.web.factory.AttributeFormDataPopulator;
-import org.jasig.cas.services.web.factory.DefaultRegisteredServiceFactory;
-import org.jasig.cas.services.web.factory.DefaultRegisteredServiceMapper;
-import org.jasig.cas.services.web.factory.RegisteredServiceMapper;
+import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
+import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.jasig.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
+import org.jasig.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.jasig.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.jasig.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 
 import com.google.common.collect.ImmutableList;

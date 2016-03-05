@@ -1,15 +1,16 @@
 package org.jasig.cas.services.web;
 
 import com.google.common.collect.ImmutableMap;
+import org.jasig.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
-import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
-import org.jasig.cas.services.web.factory.DefaultRegisteredServiceFactory;
-import org.jasig.cas.services.web.factory.DefaultRegisteredServiceMapper;
-import org.jasig.cas.services.web.factory.RegisteredServiceMapper;
+import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.jasig.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.jasig.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.jasig.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

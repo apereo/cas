@@ -21,6 +21,5 @@
     </util:map>
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao"/>
-
-   
+    
 </beans>

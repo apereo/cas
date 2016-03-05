@@ -1,17 +1,19 @@
 apply plugin: 'war'
+apply plugin: 'spring-boot'
 
 description = 'Apereo CAS Management Web Application'
+
 
 javadoc {
     enabled false
 }
 
 springBoot  {
-    mainClass = 'org.jasig.cas.web.CasWebApplication'
+    mainClass = 'org.jasig.cas.mgmt.web.CasManagementWebApplication'
 }
 
 bootRepackage {
-    mainClass = 'org.jasig.cas.web.CasWebApplication'
+    mainClass = 'org.jasig.cas.mgmt.web.CasManagementWebApplication'
 }
 
 war {
@@ -26,4 +28,8 @@ war {
 
 dependencies {
     runtime project(':cas-management-webapp-support')
+    providedRuntime libraries.springboottomcat
+    runtime libraries.hibernate
+    runtime libraries.groovy
+    runtime libraries.spring
 }
