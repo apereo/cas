@@ -15,7 +15,7 @@
     <meta name="_csrf" content="${pac4jCsrfToken}"/>
     <meta name="_csrf_header" content="pac4jCsrfToken"/>
     <link rel="icon" href="<c:url value="/images/favicon.ico" />" type="image/x-icon" />
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="<c:url value="/css/cas-management.css" />" type="text/css" />
 

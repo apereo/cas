@@ -28,11 +28,19 @@
     <context:annotation-config/>
 
     <!-- OAuth View -->
-    <bean id="oauthConfirmView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/oauth/confirm.jsp"/>
-
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <util:map id="authenticationHandlersResolvers"/>
+    <util:map id="authenticationHandlersResolvers">
+        <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+    </util:map>
+    <bean id="primaryAuthenticationHandler"
+          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
+        <property name="users">
+            <map>
+                <entry key="test" value="test"/>
+            </map>
+        </property>
+    </bean>
+    <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver" />
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />

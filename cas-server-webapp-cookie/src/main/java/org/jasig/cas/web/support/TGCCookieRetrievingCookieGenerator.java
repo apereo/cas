@@ -47,6 +47,12 @@ public class TGCCookieRetrievingCookieGenerator extends CookieRetrievingCookieGe
 
     @Override
     @Autowired
+    public void setCookieDomain(@Value("${tgc.domain:}") final String cookieDomain) {
+        super.setCookieDomain(cookieDomain);
+    }
+
+    @Override
+    @Autowired
     public void setCookieSecure(@Value("${tgc.secure:true}")
                                     final boolean cookieSecure) {
         super.setCookieSecure(cookieSecure);

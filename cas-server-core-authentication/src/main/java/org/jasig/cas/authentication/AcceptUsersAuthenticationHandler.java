@@ -79,8 +79,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
            throw new AccountNotFoundException(username + " not found in backing map.");
         }
 
-        final String encodedPassword = this.getPasswordEncoder().encode(credential.getPassword());
-        if (!cachedPassword.equals(encodedPassword)) {
+        if (!this.getPasswordEncoder().matches(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);

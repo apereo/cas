@@ -89,8 +89,6 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
         }
 
         SamlIdPUtils.logSamlObject(this.configBean, authnRequest);
-
-        storeAuthnRequest(request, authnRequest);
         issueAuthenticationRequestRedirect(authnRequest, request, response);
     }
 

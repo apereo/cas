@@ -109,18 +109,8 @@ public final class SerializationUtils {
      */
     public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
                                                   final Serializable object) {
-        final byte[] outBytes = serializeAndEncodeObject(object);
+        final byte[] outBytes = serialize(object);
         return cipher.encode(outBytes);
-    }
-
-    /**
-     * Serialize object.
-     *
-     * @param obj the object
-     * @return the byte []
-     */
-    public static byte[] serializeAndEncodeObject(final Serializable obj) {
-        return serialize(obj);
     }
 
     /**

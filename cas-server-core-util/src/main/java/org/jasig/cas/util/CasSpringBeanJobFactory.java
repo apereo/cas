@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
@@ -15,7 +16,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2
  */
-
+@Component("casSpringBeanJobFactory")
 public class CasSpringBeanJobFactory extends SpringBeanJobFactory {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
