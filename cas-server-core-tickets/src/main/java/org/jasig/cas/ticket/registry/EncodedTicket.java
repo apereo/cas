@@ -1,12 +1,12 @@
 package org.jasig.cas.ticket.registry;
 
 
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -47,6 +47,11 @@ public final class EncodedTicket implements Ticket {
     @Override
     public int getCountOfUses() {
         throw new UnsupportedOperationException("getCountOfUses() operation not supported");
+    }
+
+    @Override
+    public ExpirationPolicy getExpirationPolicy() {
+        throw new UnsupportedOperationException("getExpirationPolicy() operation not supported");
     }
 
     @Override
