@@ -23,10 +23,6 @@ class ShibbolethPersonAttributeDaoSpec extends Specification {
 
     def setupSpec() {}
 
-    def "simple test"() {
-        expect: true
-    }
-
     @Unroll
     def "static attributes from custom spring configuration"() {
         expect:
