@@ -7,13 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
-import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -21,18 +19,14 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
-import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.XmlViewResolver;
-import org.springframework.web.servlet.view.script.ScriptTemplateViewResolver;
 
 import javax.validation.MessageInterpolator;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -223,41 +217,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the servlet registration bean
      */
-    @Bean(name="dispatcherServlet")
-    public ServletRegistrationBean cas() {
-        final ServletRegistrationBean bean = new ServletRegistrationBean();
-        bean.setEnabled(true);
-        bean.setName("cas");
-        bean.setServlet(new DispatcherServlet());
-        
-        final List<String> list = new ArrayList<>();
-        list.add("/login");
-        list.add("/");
-        list.add("/logout");
-        list.add("/validate");
-        list.add("/serviceValidate");
-        list.add("/p3/serviceValidate");
-        list.add("/proxy");
-        list.add("/proxyValidate");
-        list.add("/p3/proxyValidate");
-        list.add("/CentralAuthenticationService");
-
-        list.add("/status");
-        list.add("/status/config/*");
-        list.add("/status/config");
-        list.add("/authorizationFailure.html");
-        list.add("/v1/*");
-        
-        bean.setUrlMappings(list);
-        bean.setLoadOnStartup(1);
-        
-        final Map<String, String> initParams = new HashMap<>();
-        initParams.put("contextConfigConfiguration", "/WEB-INF/cas-servlet.xml");
-        initParams.put("publishContext", "false");
-        bean.setInitParameters(initParams);
-        return bean;
-    }
-
+    
     /**
      * Log4j servlet context listener servlet listener registration bean.
      *
@@ -272,6 +232,11 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
+    /**
+     * Error view used by boot to route errors. 
+     *
+     * @return the error view
+     */
     @Bean(name="error")
     public View error() {
         return new JstlView("/WEB-INF/view/jsp/errors.jsp");    
@@ -286,16 +251,5 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-
-
-    /**
-     * Simple controller handler adapter.
-     *
-     * @return the simple controller handler adapter
-     */
-    @Bean(name = "simpleControllerHandlerAdapter")
-    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
-        return new SimpleControllerHandlerAdapter();
-    }
-
+    
 }

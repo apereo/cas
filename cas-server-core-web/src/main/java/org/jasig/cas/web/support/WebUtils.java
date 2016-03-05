@@ -1,7 +1,6 @@
 package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
@@ -465,6 +464,12 @@ public final class WebUtils {
         return loc;
     }
 
+    /**
+     * Put geo location tracking into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
     public static void putGeoLocationTrackingIntoFlowScope(final RequestContext context, final Object value) {
         context.getFlowScope().put("trackGeoLocation", value);
     }

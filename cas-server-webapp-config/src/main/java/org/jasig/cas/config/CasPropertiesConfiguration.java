@@ -4,9 +4,7 @@ import org.jasig.cas.CasVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.web.context.ConfigurableWebEnvironment;
 
@@ -33,7 +31,10 @@ public class CasPropertiesConfiguration {
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-        
+
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         final Properties sysProps = System.getProperties();

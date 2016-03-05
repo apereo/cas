@@ -764,6 +764,9 @@ ext.libraries = [
                 dependencies.create("org.springframework.boot:spring-boot:$springBootVersion") {
                     force = true
                 },
+                dependencies.create("org.springframework.boot:spring-boot-devtools:$springBootVersion") {
+                    force = true
+                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')

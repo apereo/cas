@@ -56,22 +56,27 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
-        super.prepareMergedOutputModel(model, request, response);
-
         final CasServiceResponse casResponse = new CasServiceResponse();
 
-        if (getAssertionFrom(model) != null){
-            final CasServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
-            casResponse.setAuthenticationSuccess(success);
-        } else {
+        try {
+            super.prepareMergedOutputModel(model, request, response);
+            
+            if (getAssertionFrom(model) != null) {
+                final CasServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
+                casResponse.setAuthenticationSuccess(success);
+            } else {
+                final CasServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
+                casResponse.setAuthenticationFailure(failure);
+            }
+        } catch (final Exception e) {
             final CasServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
             casResponse.setAuthenticationFailure(failure);
+        } finally {
+            final Map<String, Object> casModel = new HashMap<>();
+            casModel.put("serviceResponse", casResponse);
+            model.clear();
+            model.putAll(casModel);
         }
-
-        final Map<String, Object> casModel = new HashMap<>();
-        casModel.put("serviceResponse", casResponse);
-        model.clear();
-        model.putAll(casModel);
     }
 
     private CasServiceResponseAuthenticationFailure createAuthenticationFailure(final Map<String, Object> model) {

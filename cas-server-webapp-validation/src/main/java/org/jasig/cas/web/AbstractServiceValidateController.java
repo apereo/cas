@@ -1,10 +1,11 @@
 package org.jasig.cas.web;
 
 import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
@@ -14,7 +15,6 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -216,7 +216,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
             onSuccessfulValidation(serviceTicketId, assertion);
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
-            return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
+            return generateSuccessView(assertion, proxyIou, service, request, proxyGrantingTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
@@ -277,7 +277,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                            final HttpServletRequest request,
                                            final WebApplicationService service) {
 
-        final ModelAndView modelAndView = getModelAndView(false, service);
+        final ModelAndView modelAndView = getModelAndView(request, false, service);
         final String convertedDescription = this.context.getMessage(description, args,
             description, request.getLocale());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, code);
@@ -286,12 +286,23 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return modelAndView;
     }
 
-    private ModelAndView getModelAndView(final boolean isSuccess, final WebApplicationService service) {
-        if (service != null){
-            if (service.getFormat() == ValidationResponseType.JSON) {
-                return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
+    private ModelAndView getModelAndView(final HttpServletRequest request, 
+                                         final boolean isSuccess, final WebApplicationService service) {
+
+        ValidationResponseType type = service != null ? service.getFormat() : ValidationResponseType.XML;
+        final String format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
+        if (!StringUtils.isEmpty(format)) {
+            try {
+                type = ValidationResponseType.valueOf(format.toUpperCase());
+            } catch (final Exception e) {
+                logger.warn(e.getMessage(), e);
             }
         }
+        
+        if (type == ValidationResponseType.JSON) {
+            return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
+        }
+        
         return new ModelAndView(isSuccess ? this.successView : this.failureView);
     }
 
@@ -306,9 +317,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou,
                                              final WebApplicationService service,
+                                             final HttpServletRequest request,
                                              final TicketGrantingTicket proxyGrantingTicket) {
 
-        final ModelAndView modelAndView = getModelAndView(true, service);
+        final ModelAndView modelAndView = getModelAndView(request, true, service);
 
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);

@@ -44,7 +44,7 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
-    
+
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j
     runtime libraries.groovy

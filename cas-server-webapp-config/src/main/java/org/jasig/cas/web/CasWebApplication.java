@@ -1,6 +1,5 @@
 package org.jasig.cas.web;
 
-import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import org.jasig.cas.web.support.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
