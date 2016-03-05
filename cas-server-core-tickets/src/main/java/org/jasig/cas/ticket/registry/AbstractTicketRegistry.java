@@ -122,14 +122,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
       logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
       logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
@@ -278,13 +278,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             logger.debug("Ticket passed is null and cannot be encoded");
             return null;
         }
-
+        
         logger.info("Encoding [{}]", ticket);
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(
-                ByteSource.wrap(encodedTicketObject), encodedTicketId);
+                ByteSource.wrap(encodedTicketObject), 
+                encodedTicketId);
         logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
     }

@@ -26,4 +26,14 @@ public final class NeverExpiresExpirationPolicy extends AbstractCasExpirationPol
     public boolean isExpired(final TicketState ticketState) {
         return false;
     }
+
+    @Override
+    public Long getTimeToLive() {
+        return new Long(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public Long getTimeToIdle() {
+        return new Long(Integer.MAX_VALUE);
+    }
 }

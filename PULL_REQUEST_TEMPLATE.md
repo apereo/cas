@@ -1,6 +1,6 @@
 Closes #IssueNumber
 
-Ensure that you have reported the following:
+Ensure that you include the following:
 
 1. Brief description of changes applied
 2. Any documentation on how to configure, test
