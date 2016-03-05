@@ -45,7 +45,7 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
      */
     @Autowired
     public DefaultCasCookieValueManager(@Qualifier("defaultCookieCipherExecutor")
-                                            final CipherExecutor<String, String> cipherExecutor) {
+                                        final CipherExecutor<String, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
                 this.cipherExecutor.getClass());
