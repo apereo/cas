@@ -146,13 +146,11 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private boolean shouldScheduleCleanerJob() {
         if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
-            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
-                logger.debug("Found CAS servlet application context");
-                final String[] aliases =
-                    this.applicationContext.getAutowireCapableBeanFactory().getAliases("authenticationThrottle");
-                logger.debug("{} is used as the active authentication throttle", this.getClass().getSimpleName());
-                return aliases.length > 0 && aliases[0].equals(getName());
-            }
+            logger.debug("Found CAS servlet application context");
+            final String[] aliases =
+                this.applicationContext.getAutowireCapableBeanFactory().getAliases("authenticationThrottle");
+            logger.debug("{} is used as the active authentication throttle", this.getClass().getSimpleName());
+            return aliases.length > 0 && aliases[0].equals(getName());
         }
 
         return false;

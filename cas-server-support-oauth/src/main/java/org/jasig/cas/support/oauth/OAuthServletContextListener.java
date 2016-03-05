@@ -13,14 +13,13 @@ import org.jasig.cas.ticket.registry.AbstractTicketDelegator;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 import org.jasig.cas.util.Pair;
 import org.jasig.cas.web.AbstractServletContextListener;
-import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.annotation.WebListener;
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -28,7 +27,6 @@ import javax.servlet.annotation.WebListener;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@WebListener
 @Component
 public class OAuthServletContextListener extends AbstractServletContextListener {
 
@@ -42,18 +40,12 @@ public class OAuthServletContextListener extends AbstractServletContextListener 
     @Autowired
     private AbstractTicketRegistry ticketRegistry;
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Initialize servlet application context.
+     */
+    @PostConstruct
     protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.AUTHORIZE_URL,
-                "authorizeController");
-        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL,
-                "callbackAuthorizeController");
-        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.ACCESS_TOKEN_URL,
-                "accessTokenController");
-        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.PROFILE_URL, "profileController");
-
-        final String oAuthCallbackUrl = casServerUrl + OAuthConstants.BASE_OAUTH20_URL + "/"
+        final String oAuthCallbackUrl = casServerUrl + OAuthConstants.BASE_OAUTH20_URL + '/'
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         final ReloadableServicesManager servicesManager = getServicesManager();
         final Service callbackService = webApplicationServiceFactory.createService(oAuthCallbackUrl);
@@ -67,16 +59,14 @@ public class OAuthServletContextListener extends AbstractServletContextListener 
             servicesManager.reload();
         }
 
-        ticketRegistry.getTicketDelegators().add(0, new Pair(AccessToken.class,
-                AbstractTicketDelegator.getDefaultConstructor(AccessTokenDelegator.class)));
-        ticketRegistry.getTicketDelegators().add(1, new Pair(OAuthCode.class,
-                AbstractTicketDelegator.getDefaultConstructor(OAuthCodeDelegator.class)));
-    }
-
-    @Override
-    protected void initializeServletContext(final ServletContextEvent event) {
-        if (WebUtils.isCasServletInitializing(event)) {
-            addEndpointMappingToCasServlet(event, OAuthConstants.ENDPOINT_OAUTH2);
+        final List delegators = ticketRegistry.getTicketDelegators();
+        if (delegators != null) {
+            delegators.add(0, new Pair(AccessToken.class,
+                    AbstractTicketDelegator.getDefaultConstructor(AccessTokenDelegator.class)));
+            delegators.add(1, new Pair(OAuthCode.class,
+                    AbstractTicketDelegator.getDefaultConstructor(OAuthCodeDelegator.class)));
+        } else {
+            throw new RuntimeException("Ticket registry delegators cannot be determined");
         }
     }
 }

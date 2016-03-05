@@ -14,6 +14,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component("accessTokenController")
 public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
+    @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType("text/plain");

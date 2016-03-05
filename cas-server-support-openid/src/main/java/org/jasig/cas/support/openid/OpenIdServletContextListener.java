@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.annotation.WebListener;
+import javax.annotation.PostConstruct;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -19,7 +18,6 @@ import javax.servlet.annotation.WebListener;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@WebListener
 @Component
 public class OpenIdServletContextListener extends AbstractServletContextListener {
 
@@ -39,22 +37,14 @@ public class OpenIdServletContextListener extends AbstractServletContextListener
     @Qualifier("openIdServiceFactory")
     private OpenIdServiceFactory openIdServiceFactory;
 
-    @Override
+    /**
+     * Initialize root application context.
+     */
+    @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandlerPrincipalResolver(openIdCredentialsAuthenticationHandler, openIdPrincipalResolver);
-    }
-
-    @Override
-    protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(OpenIdProtocolConstants.ENDPOINT_OPENID, "openIdProviderController");
         addServiceTicketUniqueIdGenerator(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
         addServiceFactory(openIdServiceFactory);
     }
-
-    @Override
-    protected void initializeServletContext(final ServletContextEvent event) {
-        addEndpointMappingToCasServlet(event, OpenIdProtocolConstants.ENDPOINT_OPENID);
-    }
-
 
 }

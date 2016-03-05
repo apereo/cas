@@ -7,14 +7,13 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +32,13 @@ public class Pac4jConfiguration {
     @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String serverLoginUrl;
 
-    @Autowired(required = true)
-    private ConfigurableEnvironment casProperties;
-
     @Autowired(required = false)
     private IndirectClient[] clients;
 
+    @Autowired
+    @Qualifier("pac4jProperties")
+    private Pac4jProperties pac4jProperties;
+    
     /**
      * Returning the built clients.
      *
@@ -50,13 +50,44 @@ public class Pac4jConfiguration {
 
         // turn the properties file into a map of properties
         final Map<String, String> properties = new HashMap<>();
-        final Enumeration names = casProperties.getProperty(CAS_PAC4J_PREFIX, Enumeration.class);
-        while (names.hasMoreElements()) {
-            final String name = (String) names.nextElement();
-            if (name.startsWith(CAS_PAC4J_PREFIX)) {
-                properties.put(name.substring(CAS_PAC4J_PREFIX.length()), casProperties.getProperty(name));
-            }
-        }
+        
+        properties.put(PropertiesConfigFactory.FACEBOOK_ID, pac4jProperties.getFacebook().getId());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, pac4jProperties.getFacebook().getSecret());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, pac4jProperties.getFacebook().getScope());
+        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, pac4jProperties.getFacebook().getFields());
+
+        properties.put(PropertiesConfigFactory.TWITTER_ID, pac4jProperties.getTwitter().getId());
+        properties.put(PropertiesConfigFactory.TWITTER_SECRET, pac4jProperties.getTwitter().getSecret());
+        
+        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, pac4jProperties.getCas().getLoginUrl());
+        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, pac4jProperties.getCas().getProtocol());
+
+        properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH,
+                pac4jProperties.getSaml().getIdentityProviderMetadataPath());
+        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD,
+                pac4jProperties.getSaml().getKeystorePassword());
+        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH,
+                pac4jProperties.getSaml().getKeystorePath());
+        properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME,
+                pac4jProperties.getSaml().getMaximumAuthenticationLifetime());
+        properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD,
+                pac4jProperties.getSaml().getPrivateKeyPassword());
+        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
+                pac4jProperties.getSaml().getServiceProviderEntityId());
+        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
+                pac4jProperties.getSaml().getServiceProviderEntityId());
+        
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, pac4jProperties.getOidc().getCustomParamKey1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, pac4jProperties.getOidc().getCustomParamKey2());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, pac4jProperties.getOidc().getCustomParamValue1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, pac4jProperties.getOidc().getCustomParamValue2());
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, pac4jProperties.getOidc().getDiscoveryUri());
+        properties.put(PropertiesConfigFactory.OIDC_ID, pac4jProperties.getOidc().getId());
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, pac4jProperties.getOidc().getMaxClockSkew());
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, pac4jProperties.getOidc().getPreferredJwsAlgorithm());
+        properties.put(PropertiesConfigFactory.OIDC_SECRET, pac4jProperties.getOidc().getSecret());
+        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, pac4jProperties.getOidc().getUseNonce());
+        
         // add the new clients found via properties first
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
         final Config propertiesConfig = configFactory.build();

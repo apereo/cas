@@ -18,6 +18,7 @@ import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory oAuthCodeFactory;
 
+    @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.annotation.WebListener;
+import javax.annotation.PostConstruct;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -17,7 +17,6 @@ import javax.servlet.annotation.WebListener;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@WebListener
 @Component
 public class WsFedServletContextListener extends AbstractServletContextListener {
 
@@ -32,7 +31,10 @@ public class WsFedServletContextListener extends AbstractServletContextListener 
     @Value("${cas.wsfed.idp.attribute.resolver.enabled:true}")
     private boolean useResolver;
 
-    @Override
+    /**
+     * Initialize root application context.
+     */
+    @PostConstruct
     protected void initializeRootApplicationContext() {
         if (!this.useResolver) {
             addAuthenticationHandler(adfsAuthNHandler);

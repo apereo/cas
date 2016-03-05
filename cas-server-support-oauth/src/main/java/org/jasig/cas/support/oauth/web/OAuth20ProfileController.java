@@ -12,6 +12,7 @@ import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
+    @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 

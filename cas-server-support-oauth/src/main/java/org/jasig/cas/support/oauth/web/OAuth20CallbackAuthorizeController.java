@@ -1,10 +1,12 @@
 package org.jasig.cas.support.oauth.web;
 
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.CallbackController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -36,6 +38,7 @@ public class OAuth20CallbackAuthorizeController extends AbstractController {
         callbackController.setConfig(config);
     }
 
+    @RequestMapping(path= OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return new ModelAndView(callbackController.callback(request, response));

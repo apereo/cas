@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.annotation.WebListener;
+import javax.annotation.PostConstruct;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -15,7 +15,6 @@ import javax.servlet.annotation.WebListener;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@WebListener
 @Component
 public class SamlGoogleAppsServletContextListener extends AbstractServletContextListener {
 
@@ -28,9 +27,11 @@ public class SamlGoogleAppsServletContextListener extends AbstractServletContext
      */
     public SamlGoogleAppsServletContextListener() {}
 
-    @Override
+    /**
+     * Initialize root application context.
+     */
+    @PostConstruct
     protected void initializeRootApplicationContext() {
-        super.initializeRootApplicationContext();
         addServiceFactory(this.googleAccountsServiceFactory);
     }
 

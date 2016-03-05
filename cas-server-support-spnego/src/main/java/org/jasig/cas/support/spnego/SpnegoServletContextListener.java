@@ -8,14 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.annotation.WebListener;
+import javax.annotation.PostConstruct;
 
 /**
  * Initializes the spnego authentication context.
  * @author Misagh Moayyed
  * @since 4.2
  */
-@WebListener
 @Component
 public class SpnegoServletContextListener extends AbstractServletContextListener {
     @Autowired
@@ -30,7 +29,10 @@ public class SpnegoServletContextListener extends AbstractServletContextListener
     @Qualifier("successfulHandlerMetaDataPopulator")
     private AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator;
 
-    @Override
+    /**
+     * Initialize root application context.
+     */
+    @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandlerPrincipalResolver(spnegoHandler, spnegoPrincipalResolver);
         addAuthenticationMetadataPopulator(successfulHandlerMetaDataPopulator);

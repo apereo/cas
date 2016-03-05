@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.annotation.WebListener;
+import javax.annotation.PostConstruct;
 
 /**
  * Initializes the pac4j support for authentication delegation.
@@ -15,7 +15,6 @@ import javax.servlet.annotation.WebListener;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-@WebListener
 @Component("pac4jServletContextListener")
 public class Pac4jServletContextListener extends AbstractServletContextListener {
 
@@ -27,7 +26,10 @@ public class Pac4jServletContextListener extends AbstractServletContextListener 
     @Qualifier("clientAuthenticationMetaDataPopulator")
     private ClientAuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator;
 
-    @Override
+    /**
+     * Initialize root application context.
+     */
+    @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(clientAuthenticationHandler);
         addAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator);

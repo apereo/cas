@@ -167,6 +167,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
                 .append("usernameParameter", this.usernameParameter)
                 .append("thresholdRate", this.thresholdRate)
                 .toString();
+        
+        
     }
 
     /**

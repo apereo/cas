@@ -1,6 +1,5 @@
 package org.jasig.cas.services;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -8,8 +7,6 @@ import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.jasig.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 
 import java.io.Serializable;
 import java.security.PublicKey;

@@ -333,6 +333,11 @@ public class CasWebflowContextConfiguration {
     }
 
 
+    /**
+     * Login flow executor flow executor.
+     *
+     * @return the flow executor
+     */
     @Bean(name = "loginFlowExecutor")
     @Lazy(true)
     public FlowExecutorImpl loginFlowExecutor() {

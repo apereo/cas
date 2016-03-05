@@ -32,7 +32,6 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
-import java.io.File;
 import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.Set;
