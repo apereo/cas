@@ -62,11 +62,12 @@ Enable the registry via:
 # ehcache.repl.sync.puts=true
 # ehcache.repl.sync.putscopy=true
 # ehcache.repl.sync.updates=true
-# ehcache.repl.sync.updatesCopy=true
+# ehcache.repl.sync.updatescopy=true
 # ehcache.repl.sync.removals=true
 ```
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
+
 ```xml
 <ehcache name="ehCacheTicketRegistryCache"
     updateCheck="false"
@@ -100,8 +101,6 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
       properties="port=41001,remoteObjectPort=41002" />
 </ehcache>
 ```
-
-
 
 ### Eviction Policy
 Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.

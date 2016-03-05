@@ -62,6 +62,14 @@
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
         </AsyncLogger>
+        <AsyncLogger name="net.jradius" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.openid4java" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
         <AsyncLogger name="org.ldaptive" level="warn" additivity="false">
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>

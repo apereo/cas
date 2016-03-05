@@ -10,5 +10,5 @@ dependencies {
     compile libraries.spring
     compile libraries.hibernate
     testCompile project(':cas-server-core-web')
+    provided libraries.springsecurity
 }
-
