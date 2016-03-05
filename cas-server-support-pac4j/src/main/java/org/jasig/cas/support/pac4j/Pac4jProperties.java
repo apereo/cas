@@ -42,6 +42,9 @@ public class Pac4jProperties {
         return twitter;
     }
 
+    /**
+     * The type Facebook.
+     */
     public static class Facebook {
         private String id;
         private String secret;
@@ -81,6 +84,9 @@ public class Pac4jProperties {
         }
     }
 
+    /**
+     * The type Twitter.
+     */
     public static class Twitter {
         private String id;
         private String secret;
@@ -102,6 +108,9 @@ public class Pac4jProperties {
         }
     }
 
+    /**
+     * The type Saml.
+     */
     public static class Saml {
         private String keystorePassword;
         private String privateKeyPassword;
@@ -159,6 +168,9 @@ public class Pac4jProperties {
         }
     }
 
+    /**
+     * The type Cas.
+     */
     public static class Cas {
         private String loginUrl;
         private String protocol;
@@ -180,6 +192,9 @@ public class Pac4jProperties {
         }
     }
 
+    /**
+     * The type Oidc.
+     */
     public static class Oidc {
         private String id;
         private String secret;

@@ -365,6 +365,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**").excludePathPatterns("/callback*", "/logout*", "/authorizationFailure.html");
     }
 
+    /**
+     * Simple controller handler adapter simple controller handler adapter.
+     *
+     * @return the simple controller handler adapter
+     */
     @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
