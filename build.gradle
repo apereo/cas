@@ -448,7 +448,9 @@ ext.libraries = [
                 },
                 "org.hsqldb:hsqldb:$hsqlVersion",
                 "org.skyscreamer:jsonassert:$jsonassertVersion",
-                "org.springframework:spring-test:$springVersion"
+                "org.springframework:spring-test:$springVersion",
+                "org.spockframework:spock-core:$spockVersion",
+                "org.spockframework:spock-spring:$spockVersion"
         ],
         memcached        : [
                 "net.spy:spymemcached:$spymemcachedVersion",
@@ -742,10 +744,6 @@ ext.libraries = [
             exclude(group: 'org.slf4j', module: 'slf4j-api')
             force = true
         },
-        spockframework   : [
-                "org.spockframework:spock-core:$spockVersion",
-                "org.spockframework:spock-spring:$spockVersion"
-        ],
         springcloud      : [
                 dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClient") {
                     exclude(group: 'org.springframework', module: 'spring-web')
