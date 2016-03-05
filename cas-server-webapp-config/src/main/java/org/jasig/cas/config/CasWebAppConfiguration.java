@@ -10,6 +10,7 @@ import org.springframework.boot.context.embedded.ServletListenerRegistrationBean
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -42,6 +43,7 @@ import java.util.Map;
  * @since 4.3.0
  */
 @Configuration("casWebAppConfiguration")
+@Lazy(true)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     /**
@@ -81,7 +83,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
+    
     /**
      * The Default locale.
      */
@@ -284,4 +286,16 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
+
+
+    /**
+     * Simple controller handler adapter.
+     *
+     * @return the simple controller handler adapter
+     */
+    @Bean(name = "simpleControllerHandlerAdapter")
+    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
+        return new SimpleControllerHandlerAdapter();
+    }
+
 }

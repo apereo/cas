@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 
 import org.apache.shiro.crypto.hash.DefaultHashService;
@@ -129,7 +130,17 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
                         ALG_NAME);
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
-        q.setPasswordEncoder(password -> password.concat("1"));
+        q.setPasswordEncoder(new PasswordEncoder() {
+            @Override
+            public String encode(final String password) {
+                return password.concat("1");
+            }
+
+            @Override
+            public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
+                return false;
+            }
+        });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
         final HandlerResult r = q.authenticateUsernamePasswordInternal(

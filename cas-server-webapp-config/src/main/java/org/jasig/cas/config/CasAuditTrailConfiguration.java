@@ -32,6 +32,7 @@ import java.util.Map;
  */
 @Configuration("casAuditTrailConfiguration")
 @EnableAspectJAutoProxy
+@Lazy(true)
 public class CasAuditTrailConfiguration {
     /**
      * The App code.

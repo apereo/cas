@@ -67,7 +67,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).sessionCount();
         }
@@ -77,7 +77,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).serviceTicketCount();
         }

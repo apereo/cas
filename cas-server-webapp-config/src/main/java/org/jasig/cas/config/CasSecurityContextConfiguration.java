@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.WebContentInterceptor;
  * @since 4.3.0
  */
 @Configuration("casSecurityContextConfiguration")
+@Lazy(true)
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     
 

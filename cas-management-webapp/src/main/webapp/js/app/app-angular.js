@@ -51,7 +51,10 @@ if (array.length == 3) {
 
     app.factory('sharedFactoryCtrl', [
         function () {
-            var factory = {assignedId: null};
+            var factory = {
+                assignedId: null,
+                sourceId: null
+            };
 
             factory.httpHeaders = {};
             factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
@@ -60,9 +63,15 @@ if (array.length == 3) {
 
             factory.setItem = function (id) {
                 factory.assignedId = id;
+                factory.sourceId = null;
+            };
+            factory.duplicateItem = function (id) {
+                factory.assignedId = null;
+                factory.sourceId = id;
             };
             factory.clearItem = function () {
                 factory.assignedId = null;
+                factory.sourceId = null;
             };
             factory.getItem = function () {
                 return factory.assignedId;
@@ -102,6 +111,11 @@ if (array.length == 3) {
                 sharedFactory.clearItem();
                 $timeout(function(){ action.selectAction('add'); }, 100);
             };
+
+            this.serviceDuplicate = function (id) {
+                sharedFactory.duplicateItem(id);
+                $timeout(function(){ action.selectAction('add'); }, 100);
+            }
 
             this.serviceEdit = function (id) {
                 sharedFactory.setItem(id);
@@ -482,7 +496,7 @@ if (array.length == 3) {
                 serviceForm.radioWatchBypass = false;
             };
 
-            this.loadService = function (serviceId) {
+            this.loadService = function (serviceId, duplicate) {
                 serviceForm.radioWatchBypass = true;
 
                 $http.get(appContext + '/getService.html?id=' + serviceId)
@@ -498,6 +512,9 @@ if (array.length == 3) {
                             if(serviceForm.formData != response.data.formData)
                                 serviceForm.formData = response.data.formData;
                             serviceForm.serviceData = response.data.serviceData;
+                            if(duplicate) {
+                                serviceForm.serviceData.assignedId = 0;
+                            }
                             serviceDataTransformation('load');
                             showInstructions();
                         }
@@ -577,13 +594,20 @@ if (array.length == 3) {
             };
 
             $scope.$watch(
-                function() { return sharedFactory.assignedId; },
-                function (assignedId) {
+                function() {
+                    return {
+                        assignedId: sharedFactory.assignedId,
+                        sourceId: sharedFactory.sourceId
+                    };
+                },
+                function (registeredService) {
                     if(serviceForm.alert && serviceForm.alert.type != 'info')
                         serviceForm.alert = null;
-                    if(!assignedId) {serviceForm.newService(); }
-                    else { serviceForm.loadService(assignedId); }
-                }
+                    if(registeredService.assignedId) { serviceForm.loadService(registeredService.assignedId); }
+                    else if(registeredService.sourceId) { serviceForm.loadService(registeredService.sourceId, true); }
+                    else { serviceForm.newService(); }
+                },
+                true
             );
         }
     ]);

@@ -103,7 +103,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return specified ticket from the registry
      */
     @Override
-    public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
+    public final <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
         final Ticket ticket = this.getTicket(ticketId);
@@ -122,14 +122,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
       logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
       logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
@@ -275,15 +275,17 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (ticket == null) {
-            return ticket;
+            logger.debug("Ticket passed is null and cannot be encoded");
+            return null;
         }
-
+        
         logger.info("Encoding [{}]", ticket);
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(
-                ByteSource.wrap(encodedTicketObject), encodedTicketId);
+                ByteSource.wrap(encodedTicketObject), 
+                encodedTicketId);
         logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
     }
@@ -301,7 +303,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (result == null) {
-            return result;
+            logger.debug("Ticket passed is null and cannot be decoded");
+            return null;
         }
 
         logger.info("Attempting to decode {}", result);
@@ -390,8 +393,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected void scheduleCleanerJob() {
         try {
 
-            if (!cleanerEnabled) {
-                logger.info("Ticket registry cleaner is disabled. No cleaner processes will be scheduled");
+            if (!cleanerEnabled && isCleanerSupported()) {
+                logger.info("Ticket registry cleaner is disabled or is not supported by {}. No cleaner processes will be scheduled.",
+                        this.getClass().getName());
                 return;
             }
 
@@ -426,5 +430,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Indicates whether the registry supports automatic ticket cleanup. 
+     * Generally, a registry that is able to return a collection of available
+     * tickets should be able to support the cleanup process. Default is <code>true</code>.
+     *
+     * @return true/false.
+     */
+    protected boolean isCleanerSupported() {
+        return true;
     }
 }
