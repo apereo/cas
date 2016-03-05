@@ -6,21 +6,13 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-
-    <util:properties id="userProperties" location="${user.details.file.location:classpath:user-details.properties}" />
-
-    <!--
-    This bean defines the security roles for the Services Management application.
-    Simple deployments can use the in-memory version.
-    More robust deployments will want to use another option, such as the Jdbc version.
-    The name of this should remain "authorizationGenerator" in order for the pac4j security context to find it.
-    -->
-
-    <bean id="authorizationGenerator" class="org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator"
-          c:properties-ref="userProperties" />
-
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao" p:backingMap-ref="backingMap" />
+    
+    <bean id="authorizationGenerator"
+          class="org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator"
+          c:properties-ref="userProperties"/>
+    
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao" 
+          p:backingMap-ref="backingMap"/>
 
     <util:map id="backingMap">
         <entry key="uid" value="uid"/>
@@ -28,7 +20,7 @@
         <entry key="groupMembership" value="groupMembership"/>
     </util:map>
 
-    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao"/>
 
-    <bean id="auditTrailManager" class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"/>
+   
 </beans>

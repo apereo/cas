@@ -71,7 +71,7 @@
 
                     <table class="table-service">
                         <tr class="main-row">
-                            <td class="col-sm-3">
+                            <td class="col-sm-2">
                                 <div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div>
 <%-- TODO: How does uiSortable deal with keyboard accessibility requirements for drag-and-drop? --%>
                                 <span ng-bind="item.name"></span>
@@ -86,6 +86,12 @@
                                 <button class="btn btn-success" ng-click="action.serviceEdit( item.assignedId )">
                                     <i class="fa fa-lg fa-pencil"></i>
                                     <spring:message code="management.services.table.button.edit" />
+                                </button>
+                            </td>
+                            <td class="col-sm-1">
+                                <button class="btn btn-warning" ng-click="action.serviceDuplicate( item.assignedId )">
+                                    <i class="fa fa-lg fa-clone"></i>
+                                    <spring:message code="management.services.table.button.duplicate" />
                                 </button>
                             </td>
                             <td class="col-sm-1">

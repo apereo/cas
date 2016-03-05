@@ -1,6 +1,7 @@
 package org.jasig.cas.support.oauth.services;
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.services.RegisteredService;
 
 /**
  * OAuth web application service.
@@ -13,10 +14,9 @@ public final class OAuthWebApplicationService extends AbstractWebApplicationServ
     /**
      * Instantiates a new OAuth web application service impl.
      *
-     * @param id the id
-     * @param originalUrl the original url
+     * @param registeredService the registered service
      */
-    public OAuthWebApplicationService(final String id, final String originalUrl) {
-        super(id, originalUrl, null, null);
+    public OAuthWebApplicationService(final RegisteredService registeredService) {
+        super(registeredService != null ? String.valueOf(registeredService.getId()) : null, null, null, null);
     }
 }
