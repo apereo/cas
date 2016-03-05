@@ -12,7 +12,7 @@ import org.jasig.cas.support.oauth.ticket.registry.OAuthCodeDelegator;
 import org.jasig.cas.ticket.registry.AbstractTicketDelegator;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 import org.jasig.cas.util.Pair;
-import org.jasig.cas.web.AbstractServletContextListener;
+import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ import java.util.List;
  * @since 4.2
  */
 @Component
-public class OAuthServletContextListener extends AbstractServletContextListener {
+public class OAuthServletContextWrapper extends BaseApplicationContextWrapper {
 
     @Value("${server.prefix:http://localhost:8080/cas}")
     private String casServerUrl;

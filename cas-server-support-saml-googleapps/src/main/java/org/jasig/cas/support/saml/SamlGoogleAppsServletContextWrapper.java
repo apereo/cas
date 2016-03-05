@@ -2,7 +2,7 @@ package org.jasig.cas.support.saml;
 
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
-import org.jasig.cas.web.AbstractServletContextListener;
+import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @Component
-public class SamlGoogleAppsServletContextListener extends AbstractServletContextListener {
+public class SamlGoogleAppsServletContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
@@ -25,7 +25,7 @@ public class SamlGoogleAppsServletContextListener extends AbstractServletContext
     /**
      * Initialize the saml googleapps context.
      */
-    public SamlGoogleAppsServletContextListener() {}
+    public SamlGoogleAppsServletContextWrapper() {}
 
     /**
      * Initialize root application context.

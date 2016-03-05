@@ -3,7 +3,7 @@ package org.jasig.cas.support.wsfederation;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.web.AbstractServletContextListener;
+import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @Component
-public class WsFedServletContextListener extends AbstractServletContextListener {
+public class WsFedServletContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired
     @Qualifier("adfsAuthNHandler")

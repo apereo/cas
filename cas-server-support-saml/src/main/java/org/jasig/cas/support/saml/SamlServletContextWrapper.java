@@ -4,7 +4,7 @@ import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopul
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
-import org.jasig.cas.web.AbstractServletContextListener;
+import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @Component("samlServletContextListener")
-public class SamlServletContextListener extends AbstractServletContextListener {
+public class SamlServletContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired
     @Qualifier("samlServiceFactory")

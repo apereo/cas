@@ -26,7 +26,7 @@ import java.util.Map;
  * @since 4.2
  */
 @Component
-public abstract class AbstractServletContextListener implements ApplicationContextAware {
+public abstract class BaseApplicationContextWrapper implements ApplicationContextAware {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -36,7 +36,7 @@ public abstract class AbstractServletContextListener implements ApplicationConte
     /**
      * Instantiates a new servlet context initializer.
      */
-    protected AbstractServletContextListener() {}
+    protected BaseApplicationContextWrapper() {}
     
     /**
      * Add authentication handler principal resolver.
