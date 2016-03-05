@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * Monitors a {@link Cache} instance.
  * The accuracy of statistics is governed by the value of {@link Cache#getStatistics()}.
- * <p>
  * <p>NOTE: computation of highly accurate statistics is expensive.</p>
  *
  * @author Marvin S. Addison
@@ -42,8 +41,7 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
      */
     public EhCacheMonitor() {
     }
-
-
+    
     /**
      * Instantiates a new Eh cache monitor.
      *

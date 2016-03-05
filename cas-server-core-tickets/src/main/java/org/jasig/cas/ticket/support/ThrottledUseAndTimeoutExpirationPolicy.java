@@ -79,4 +79,14 @@ public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExp
 
         return false;
     }
+
+    @Override
+    public Long getTimeToLive() {
+        return this.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public Long getTimeToIdle() {
+        return this.timeInBetweenUsesInMilliSeconds;
+    }
 }
