@@ -185,12 +185,7 @@ public class CasWebflowContextConfiguration {
         handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
     }
-
-    /**
-     * Login flow cipher bean buffered block cipher bean.
-     *
-     * @return the buffered block cipher bean
-     */
+    
     /**
      * Login flow cipher bean buffered block cipher bean.
      *
