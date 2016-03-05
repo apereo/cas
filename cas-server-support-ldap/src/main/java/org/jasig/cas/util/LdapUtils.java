@@ -52,18 +52,7 @@ public final class LdapUtils {
         }
         return nullValue;
     }
-
-    /**
-     * Reads a Long value from the LdapEntry.
-     *
-     * @param ctx       the ldap entry
-     * @param attribute the attribute name
-     * @return the long value
-     */
-    public static Long getLong(final LdapEntry ctx, final String attribute) {
-        return getLong(ctx, attribute, Long.MIN_VALUE);
-    }
-
+    
     /**
      * Reads a Long value from the LdapEntry.
      *
