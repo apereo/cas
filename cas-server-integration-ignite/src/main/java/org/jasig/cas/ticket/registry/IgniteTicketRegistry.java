@@ -1,23 +1,19 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.cache.CachePeekMode;
 import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.ScanQuery;
-import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.apache.ignite.ssl.SslContextFactory;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +22,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.cache.Cache;
-import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
+import javax.cache.expiry.ExpiryPolicy;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
@@ -54,12 +50,8 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     @NotNull
-    @Value("${ignite.ticketsCache.name:serviceTicketsCache}")
-    private String servicesCacheName;
-
-    @NotNull
-    @Value("${ignite.ticketsCache.name:ticketGrantingTicketsCache}")
-    private String ticketsCacheName;
+    @Value("${ignite.ticketsCache.name:TicketsCache}")
+    private String cacheName;
 
     @Value("${ignite.keyStoreType:}")
     private String keyStoreType;
@@ -90,15 +82,8 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
     @Qualifier("igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
 
-    private IgniteCache<String, ServiceTicket> serviceTicketsCache;
-    private IgniteCache<String, TicketGrantingTicket> ticketGrantingTicketsCache;
-
-    @Value("${tgt.maxTimeToLiveInSeconds:28800}")
-    private long ticketGrantingTicketTimeoutInSeconds = 28800;
-
-    @Value("${st.timeToKillInSeconds:10}")
-    private long serviceTicketTimeoutInSeconds = 10;
-
+    private IgniteCache<String, Ticket> ticketIgniteCache;
+    
     private Ignite ignite;
 
     /**
@@ -115,25 +100,33 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
-        if (ticket instanceof ServiceTicket) {
-            logger.debug("Adding service ticket {} to the cache {}", ticket.getId(), this.serviceTicketsCache.getName());
-            this.serviceTicketsCache.put(ticket.getId(), (ServiceTicket) ticket);
-        } else if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(), this.ticketGrantingTicketsCache.getName());
-            this.ticketGrantingTicketsCache.put(ticket.getId(), (TicketGrantingTicket) ticket);
-        } else {
-            throw new IllegalArgumentException("Invalid ticket type " + ticket);
-        }
+        logger.debug("Adding ticket {} to the cache {}", ticket.getId(), this.ticketIgniteCache.getName());
+        this.ticketIgniteCache.withExpiryPolicy(new ExpiryPolicy() {
+            @Override
+            public Duration getExpiryForCreation() {
+                return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToLive());
+            }
+
+            @Override
+            public Duration getExpiryForAccess() {
+                return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToIdle());
+            }
+
+            @Override
+            public Duration getExpiryForUpdate() {
+                return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToLive());
+            }
+        }).put(ticket.getId(), ticket);
     }
 
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
-        if (ticket instanceof ServiceTicket) {
-            return this.serviceTicketsCache.remove(ticketId);
+        if (ticket != null) {
+            return this.ticketIgniteCache.remove(ticket.getId());
         }
-        return this.ticketGrantingTicketsCache.remove(ticketId);
+        return true;
     }
 
     @Override
@@ -143,48 +136,29 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
 
-        Ticket ticket = this.serviceTicketsCache.get(ticketId);
-        if (ticket == null) {
-            ticket = this.ticketGrantingTicketsCache.get(ticketId);
-        }
+        final Ticket ticket = this.ticketIgniteCache.get(ticketId);
         if (ticket == null) {
             logger.debug("No ticket by id [{}] is found in the registry", ticketId);
             return null;
         }
 
         final Ticket proxiedTicket = decodeTicket(ticket);
-        ticket = getProxiedTicketInstance(proxiedTicket);
-        return ticket;
+        return getProxiedTicketInstance(proxiedTicket);
     }
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Cache.Entry<String, Ticket>> serviceTickets;
-        final Collection<Cache.Entry<String, Ticket>> tgtTicketsTickets;
-
         final IgniteBiPredicate<String, Ticket> filter = (IgniteBiPredicate<String, Ticket>) (key, t) -> !t.isExpired();
-
-        QueryCursor<Cache.Entry<String, Ticket>> cursor = ticketGrantingTicketsCache.query(new ScanQuery<>(filter));
-        tgtTicketsTickets = cursor.getAll();
-
-        cursor = serviceTicketsCache.query(new ScanQuery<>(filter));
-        serviceTickets = cursor.getAll();
-
-        final Collection<Ticket> allTickets = new HashSet<>(serviceTickets.size() + tgtTicketsTickets.size());
-
-        serviceTickets.stream().forEach(entry -> allTickets.add(getProxiedTicketInstance(entry.getValue())));
-
-        tgtTicketsTickets.stream().forEach(entry -> allTickets.add(getProxiedTicketInstance(entry.getValue())));
-
+        final QueryCursor<Cache.Entry<String, Ticket>> cursor = this.ticketIgniteCache.query(new ScanQuery<>(filter));
+        final Collection<Cache.Entry<String, Ticket>> cacheTickets = cursor.getAll();
+        
+        final Collection<Ticket> allTickets = new HashSet<>(cacheTickets.size());
+        cacheTickets.stream().forEach(entry -> allTickets.add(getProxiedTicketInstance(entry.getValue())));
         return decodeTickets(allTickets);
     }
 
-    public void setServiceTicketsCache(final IgniteCache<String, ServiceTicket> serviceTicketsCache) {
-        this.serviceTicketsCache = serviceTicketsCache;
-    }
-
-    public void setTicketGrantingTicketsCache(final IgniteCache<String, TicketGrantingTicket> ticketGrantingTicketsCache) {
-        this.ticketGrantingTicketsCache = ticketGrantingTicketsCache;
+    public void setTicketIgniteCache(final IgniteCache<String, Ticket> ticketIgniteCache) {
+        this.ticketIgniteCache = ticketIgniteCache;
     }
 
     public void setIgniteConfiguration(final IgniteConfiguration igniteConfiguration){
@@ -194,12 +168,7 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
     public IgniteConfiguration getIgniteConfiguration(){
         return this.igniteConfiguration;
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("ticketGrantingTicketsCache", this.ticketGrantingTicketsCache)
-                .append("serviceTicketsCache", this.serviceTicketsCache).toString();
-    }
+    
 
     @Override
     protected void updateTicket(final Ticket ticket) {
@@ -269,8 +238,6 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
             logger.debug("igniteConfiguration.cacheConfiguration={}", igniteConfiguration.getCacheConfiguration());
             logger.debug("igniteConfiguration.getDiscoverySpi={}", igniteConfiguration.getDiscoverySpi());
             logger.debug("igniteConfiguration.getSslContextFactory={}", igniteConfiguration.getSslContextFactory());
-            logger.debug("Ticket-granting ticket timeout: [{}s]", this.ticketGrantingTicketTimeoutInSeconds);
-            logger.debug("Service ticket timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
         }
 
         if (Ignition.state() == IgniteState.STOPPED) {
@@ -279,25 +246,18 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
             ignite = Ignition.ignite();
         }
 
-        serviceTicketsCache = ignite.getOrCreateCache(servicesCacheName);
-        serviceTicketsCache.getConfiguration(CacheConfiguration.class)
-            .setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, serviceTicketTimeoutInSeconds)));
-
-        ticketGrantingTicketsCache = ignite.getOrCreateCache(ticketsCacheName);
-        ticketGrantingTicketsCache.getConfiguration(CacheConfiguration.class)
-            .setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, ticketGrantingTicketTimeoutInSeconds)));
+        ticketIgniteCache = ignite.getOrCreateCache(cacheName);
+        
     }
 
     @Override
-    public int sessionCount() {
-        return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache
-            .size(CachePeekMode.ALL), (int) super.sessionCount());
+    public long sessionCount() {
+        return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
     }
 
     @Override
-    public int serviceTicketCount() {
-        return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache
-            .size(CachePeekMode.ALL), (int) super.serviceTicketCount());
+    public long serviceTicketCount() {
+        return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
     }
 
     /**
@@ -308,19 +268,28 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
         Ignition.stopAll(true);
     }
 
-    public String getTicketsCacheName() {
-        return ticketsCacheName;
+    public String getCacheName() {
+        return cacheName;
     }
 
-    public void setTicketsCacheName(final String cacheName) {
-        this.ticketsCacheName = cacheName;
+    public void setCacheName(final String cacheName) {
+        this.cacheName = cacheName;
     }
 
-    public String getServicesCacheName() {
-        return servicesCacheName;
-    }
-
-    public void setServicesCacheName(final String cacheName) {
-        this.servicesCacheName = cacheName;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("cacheName", cacheName)
+                .append("keyStoreType", keyStoreType)
+                .append("keyStoreFilePath", keyStoreFilePath)
+                .append("keyStorePassword", keyStorePassword)
+                .append("trustStoreType", trustStoreType)
+                .append("protocol", protocol)
+                .append("keyAlgorithm", keyAlgorithm)
+                .append("trustStoreFilePath", trustStoreFilePath)
+                .append("trustStorePassword", trustStorePassword)
+                .append("supportRegistryState", supportRegistryState)
+                .toString();
     }
 }

@@ -33,15 +33,13 @@ public class TicketRegistryDecoratorTests {
     @Test
     public void verifyEhCacheTicketRegistryWithClearPass() {
         final Cache serviceTicketsCache = new Cache("serviceTicketsCache", 200, false, false, 100, 100);
-        final Cache ticketGrantingTicketCache = new Cache("ticketGrantingTicketCache", 200, false, false, 100, 100);
 
         final CacheManager manager = new CacheManager(this.getClass().getClassLoader().getResourceAsStream("ehcacheClearPass.xml"));
         manager.addCache(serviceTicketsCache);
-        manager.addCache(ticketGrantingTicketCache);
 
         final Map<String, String> map = new HashMap<>();
 
-        final TicketRegistry ticketRegistry = new EhCacheTicketRegistry(serviceTicketsCache, ticketGrantingTicketCache);
+        final TicketRegistry ticketRegistry = new EhCacheTicketRegistry(serviceTicketsCache);
         final TicketRegistryDecorator decorator = new TicketRegistryDecorator(ticketRegistry, map);
         assertNotNull(decorator);
 
