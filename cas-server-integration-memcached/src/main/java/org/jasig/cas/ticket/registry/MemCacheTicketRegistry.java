@@ -153,7 +153,7 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
      */
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("getTickets not supported.");
+        throw new UnsupportedOperationException("getTickets() not supported.");
     }
 
     /**
