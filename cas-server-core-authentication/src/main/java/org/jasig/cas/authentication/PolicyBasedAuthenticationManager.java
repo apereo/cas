@@ -100,8 +100,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
                 .resolve(this.handlerResolverMap.keySet(), transaction);
 
         final boolean success = credentials.stream().anyMatch(credential -> {
-            final boolean[] found = {false};
-            final boolean isSatisfied = handlerSet.stream().filter(handler -> handler.supports(credential) && (found[0] = true))
+            final boolean isSatisfied = handlerSet.stream().filter(handler -> handler.supports(credential))
                     .anyMatch(handler -> {
                         try {
                             authenticateAndResolvePrincipal(builder, credential, this.handlerResolverMap.get(handler), handler);
@@ -116,15 +115,14 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
                         }
                         return false;
                     });
+            
             if (isSatisfied) {
                 return true;
             }
 
-            if (!found[0]) {
-                logger.warn(
-                        "Cannot find authentication handler that supports [{}] of type [{}], which suggests a configuration problem.",
-                        credential, credential.getClass().getSimpleName());
-            }
+            logger.warn("Authentication has failed. Credentials may be incorrect or CAS cannot find authentication handler that "
+                    + "supports [{}] of type [{}], which suggests a configuration problem.",
+                    credential, credential.getClass().getSimpleName());
             return false;
         });
 

@@ -84,4 +84,14 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
         return false;
     }
 
+    @Override
+    public Long getTimeToLive() {
+        return this.maxTimeToLiveInMilliSeconds;
+    }
+
+    @Override
+    public Long getTimeToIdle() {
+        return this.timeToKillInMilliSeconds;
+    }
+
 }
