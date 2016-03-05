@@ -4,7 +4,10 @@ dependencies {
     compile libraries.pac4j
     compile libraries.inspektr
     compile libraries.spring
+    compile libraries.springboot
     compile libraries.casclient
+    compile libraries.javaximpl
+    providedRuntime libraries.springboottomcat
     runtime libraries.hibernate
     runtime libraries.groovy
     compile project(':cas-server-core-services')
@@ -15,5 +18,5 @@ dependencies {
     compile project(':cas-server-core-tickets')
     compile project(':cas-server-core-audit')
     compile project(':cas-server-support-oauth-core')
-    compile libraries.javaximpl
+
 }

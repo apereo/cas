@@ -6,6 +6,14 @@ javadoc {
     enabled false
 }
 
+springBoot  {
+    mainClass = 'org.jasig.cas.web.CasWebApplication'
+}
+
+bootRepackage {
+    mainClass = 'org.jasig.cas.web.CasWebApplication'
+}
+
 war {
     manifest {
         attributes("Implementation-Title": project.name,
