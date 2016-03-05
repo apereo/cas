@@ -108,6 +108,8 @@ public final class ResourceUtils {
             if (isDirectory) {
                 FileUtils.forceMkdir(destination);
                 FileUtils.cleanDirectory(destination);
+            } else {
+                FileUtils.forceDelete(destination);
             }
 
             final JarFile jFile = new JarFile(file);

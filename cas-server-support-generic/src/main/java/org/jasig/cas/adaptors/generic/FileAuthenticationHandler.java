@@ -52,7 +52,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throws GeneralSecurityException, PreventedException {
 
         try {
-            if (this.fileName == null || !this.fileName.exists()) {
+            if (this.fileName == null) {
                 throw new FileNotFoundException("Filename does not exist");
             }
 
@@ -96,9 +96,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private String getPasswordOnRecord(final String username) throws IOException {
 
-        try (BufferedReader bufferedReader =
-                     new BufferedReader(
-                             new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
+        try (final BufferedReader bufferedReader =
+                     new BufferedReader(new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);

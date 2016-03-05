@@ -66,7 +66,7 @@ public final class WsFederationConfiguration implements Serializable {
 
     @NotNull
     @Value("#{'${cas.wsfed.idp.signingcerts:classpath:adfs-signing.crt}'.split(',')}")
-    private List<Resource> signingCertificateFiles;
+    private List<Resource> signingCertificateResources;
 
     @NotNull
     @Value("${cas.wsfed.rp.id:urn:cas:localhost}")
@@ -86,7 +86,7 @@ public final class WsFederationConfiguration implements Serializable {
 
     @PostConstruct
     private void initCertificates() {
-        createSigningWallet(this.signingCertificateFiles);
+        createSigningWallet(this.signingCertificateResources);
     }
 
     /**
@@ -175,18 +175,18 @@ public final class WsFederationConfiguration implements Serializable {
      *
      * @return the list of files
      */
-    public List<Resource> getSigningCertificateFiles() {
-        return this.signingCertificateFiles;
+    public List<Resource> getSigningCertificateResources() {
+        return this.signingCertificateResources;
     }
 
     /**
      * sets the signing certs.
      *
-     * @param signingCertificateFiles a list of certificate files to read in.
+     * @param signingCertificateResources a list of certificate files to read in.
      */
-    public void setSigningCertificateFiles(final Resource... signingCertificateFiles) {
-        this.signingCertificateFiles = Arrays.asList(signingCertificateFiles);
-        createSigningWallet(this.signingCertificateFiles);
+    public void setSigningCertificateResources(final Resource... signingCertificateResources) {
+        this.signingCertificateResources = Arrays.asList(signingCertificateResources);
+        createSigningWallet(this.signingCertificateResources);
     }
 
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
