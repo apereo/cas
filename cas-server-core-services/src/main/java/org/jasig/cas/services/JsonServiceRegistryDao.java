@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.LockedOutputStream;
+import org.jasig.cas.util.ResourceUtils;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,9 +137,8 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     public JsonServiceRegistryDao(@Value("${service.registry.config.location:classpath:services}")
                                   final Resource configDirectory) throws Exception {
 
-        final File servicesDirectory = org.jasig.cas.util.ResourceUtils
-                .prepareClasspathResourceIfNeeded(configDirectory, true, FILE_EXTENSION);
-        initializeRegistry(Paths.get(servicesDirectory.getCanonicalFile().getCanonicalPath()), new RegisteredServiceJsonSerializer());
+        final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, FILE_EXTENSION);
+        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), new RegisteredServiceJsonSerializer());
     }
 
     

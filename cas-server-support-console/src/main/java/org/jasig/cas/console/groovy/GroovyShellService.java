@@ -62,8 +62,6 @@ public class GroovyShellService {
     private int port;
 
     private Map<String, Object> bindings;
-
-    private File scriptsLocation;
     
     @Autowired
     private ApplicationContext context;
@@ -89,7 +87,8 @@ public class GroovyShellService {
         try {
             this.serverSocket = new ServerSocket(port);
             logger.info("Opened server port {} on port {}", serverSocket, this.port);
-            this.scriptsLocation = ResourceUtils.prepareClasspathResourceIfNeeded(this.scriptsLocationResource, true, FILE_EXTENSION);
+            this.scriptsLocationResource = 
+                    ResourceUtils.prepareClasspathResourceIfNeeded(this.scriptsLocationResource, true, FILE_EXTENSION);
             
             while (true) {
                 final Socket clientSocket;
@@ -196,7 +195,7 @@ public class GroovyShellService {
 
         final ClassLoader thisClassLoader = this.getClass().getClassLoader();
         try (final GroovyClassLoader loader = new GroovyClassLoader(thisClassLoader)) {
-            final File[] files = scriptsLocation.listFiles(filter);
+            final File[] files = this.scriptsLocationResource.getFile().listFiles(filter);
 
             for (final File file : files) {
                 try {

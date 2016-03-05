@@ -73,7 +73,7 @@ public final class ResourceUtils {
      * @param resource the resource
      * @return the file
      */
-    public static File prepareClasspathResourceIfNeeded(final Resource resource) {
+    public static Resource prepareClasspathResourceIfNeeded(final Resource resource) {
         return prepareClasspathResourceIfNeeded(resource, false, resource.getFilename());
     }
 
@@ -88,16 +88,16 @@ public final class ResourceUtils {
      * @param containsName the resource name pattern
      * @return the file
      */
-    public static File prepareClasspathResourceIfNeeded(final Resource resource,
+    public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                         final boolean isDirectory,
                                                         final String containsName) {
         try {
 
             if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
-                return resource.getFile();
+                return resource;
             }
             if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
-                return resource.getFile();
+                return resource;
             }
             
             final URL url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
@@ -130,7 +130,7 @@ public final class ResourceUtils {
                     }
                 }
             }
-            return destination;
+            return new FileSystemResource(destination);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

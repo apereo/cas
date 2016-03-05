@@ -4,12 +4,15 @@ import com.google.common.collect.ImmutableSet;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
+import org.jasig.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+
+import java.io.File;
 
 /**
  * This is {@link EhcacheTicketRegistryConfiguration}.
@@ -176,7 +179,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean(name = "cacheManager")
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-        bean.setConfigLocation(this.configLocation);
+        bean.setConfigLocation(ResourceUtils.prepareClasspathResourceIfNeeded(this.configLocation));
         bean.setShared(this.shared);
         bean.setCacheManagerName(this.cacheManagerName);
 

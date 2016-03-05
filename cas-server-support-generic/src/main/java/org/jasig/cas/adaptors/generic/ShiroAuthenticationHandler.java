@@ -86,9 +86,9 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Autowired
     public void setShiroConfiguration(@Value("${shiro.authn.config.file:classpath:shiro.ini}") final Resource resource) {
         try {
-            final File shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
+            final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
             if (shiroResource.exists()) {
-                final String location = shiroResource.getCanonicalPath();
+                final String location = shiroResource.getURI().toString();
                 logger.debug("Loading Shiro configuration from {}", location);
 
                 final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
