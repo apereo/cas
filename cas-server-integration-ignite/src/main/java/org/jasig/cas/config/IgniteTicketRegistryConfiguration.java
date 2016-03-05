@@ -12,8 +12,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
+import javax.cache.expiry.CreatedExpiryPolicy;
+import javax.cache.expiry.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link IgniteTicketRegistryConfiguration}.
@@ -23,61 +26,40 @@ import java.util.List;
  */
 @Configuration("igniteConfiguration")
 public class IgniteTicketRegistryConfiguration {
-
+    
     /**
      * The Ignite addresses.
      */
     @Value("${ignite.adresses:localhost:47500}")
     private String igniteAddresses;
-
+    
     /**
-     * The St cache name.
+     * The cache name.
      */
-    @Value("${ignite.servicesCache.name:serviceTicketsCache}")
-    private String stCacheName;
+    @Value("${ignite.ticketsCache.name:TicketsCache}")
+    private String cacheName;
 
     /**
-     * The St cache mode.
-     */
-    @Value("${ignite.servicesCache.cacheMode:REPLICATED}")
-    private CacheMode stCacheMode;
-
-    /**
-     * The St atomicity mode.
-     */
-    @Value("${ignite.servicesCache.atomicityMode:TRANSACTIONAL}}")
-    private CacheAtomicityMode stAtomicityMode;
-
-    /**
-     * The St write synchronization mode.
-     */
-    @Value("${ignite.servicesCache.writeSynchronizationMode:FULL_SYNC}")
-    private CacheWriteSynchronizationMode stWriteSynchronizationMode;
-
-    /**
-     * The Tgt cache name.
-     */
-    @Value("${ignite.ticketsCache.name:serviceTicketsCache}")
-    private String tgtCacheName;
-
-    /**
-     * The Tgt cache mode.
+     * The cache mode.
      */
     @Value("${ignite.ticketsCache.cacheMode:REPLICATED}")
-    private CacheMode tgtCacheMode;
+    private CacheMode cacheMode;
 
     /**
-     * The Tgt atomicity mode.
+     * The atomicity mode.
      */
     @Value("${ignite.ticketsCache.atomicityMode:TRANSACTIONAL}}")
-    private CacheAtomicityMode tgtAtomicityMode;
+    private CacheAtomicityMode atomicityMode;
 
     /**
-     * The Tgt write synchronization mode.
+     * The write synchronization mode.
      */
     @Value("${ignite.ticketsCache.writeSynchronizationMode:FULL_SYNC}")
-    private CacheWriteSynchronizationMode tgtWriteSynchronizationMode;
-
+    private CacheWriteSynchronizationMode writeSynchronizationMode;
+    
+    @Value("${ignite.ticketsCache.timeout:" + Integer.MAX_VALUE + "}")
+    private long timeout;
+    
     /**
      * Ignite configuration ignite configuration.
      *
@@ -93,19 +75,14 @@ public class IgniteTicketRegistryConfiguration {
         config.setDiscoverySpi(spi);
 
         final List<CacheConfiguration> configurations = new ArrayList<>();
-        final CacheConfiguration servicesCache = new CacheConfiguration();
-        servicesCache.setName(this.stCacheName);
-        servicesCache.setCacheMode(this.stCacheMode);
-        servicesCache.setAtomicityMode(this.stAtomicityMode);
-        servicesCache.setWriteSynchronizationMode(this.stWriteSynchronizationMode);
 
         final CacheConfiguration ticketsCache = new CacheConfiguration();
-        ticketsCache.setName(this.tgtCacheName);
-        ticketsCache.setCacheMode(this.tgtCacheMode);
-        ticketsCache.setAtomicityMode(this.tgtAtomicityMode);
-        ticketsCache.setWriteSynchronizationMode(this.tgtWriteSynchronizationMode);
+        ticketsCache.setName(this.cacheName);
+        ticketsCache.setCacheMode(this.cacheMode);
+        ticketsCache.setAtomicityMode(this.atomicityMode);
+        ticketsCache.setWriteSynchronizationMode(this.writeSynchronizationMode);
+        ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, this.timeout)));
 
-        configurations.add(servicesCache);
         configurations.add(ticketsCache);
 
         config.setCacheConfiguration(configurations.toArray(new CacheConfiguration[]{}));
