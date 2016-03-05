@@ -183,6 +183,11 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
 
 
     /**
+    @Override
+    protected boolean isCleanerSupported() {
+        logger.info("{} does not support automatic ticket clean up processes", this.getClass().getName());
+        return false;
+    }
      * @param couchbase the client factory to use.
      */
     public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
