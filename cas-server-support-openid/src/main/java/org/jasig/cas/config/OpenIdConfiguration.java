@@ -13,7 +13,7 @@ import org.springframework.web.servlet.view.JstlView;
 import java.util.Arrays;
 
 /**
- * This this {@link OpenIdConfiguration}.
+ * This is {@link OpenIdConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
