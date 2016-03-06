@@ -1,6 +1,5 @@
 package org.jasig.cas.config;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jasig.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.jasig.cas.security.ResponseHeadersEnforcementFilter;
@@ -9,7 +8,6 @@ import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Collections;

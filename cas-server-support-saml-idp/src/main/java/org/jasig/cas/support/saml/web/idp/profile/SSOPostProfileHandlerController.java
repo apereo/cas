@@ -9,6 +9,7 @@ import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,7 +72,11 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
         final AuthnRequest authnRequest = decodeRequest(request, decoder, AuthnRequest.class);
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(authnRequest.getAssertionConsumerServiceURL());
+        
+        final AssertionConsumerService acs = 
+            SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, this.servicesManager, samlRegisteredServiceCachingMetadataResolver);
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
+        
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         registeredService, authnRequest);

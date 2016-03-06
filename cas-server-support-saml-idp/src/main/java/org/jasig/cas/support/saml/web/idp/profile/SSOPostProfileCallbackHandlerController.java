@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 /**
  * This is {@link SSOPostProfileCallbackHandlerController}, which handles
@@ -60,7 +59,9 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url for validation: [{}]", serviceUrl);
         final Assertion assertion = validator.validate(ticket, serviceUrl);
+        Thread.sleep(1);
         logCasValidationAssertion(assertion);
+
         if (!assertion.isValid()) {
             throw new SamlException("CAS assertion received is invalid. This normally indicates that the assertion received has expired "
             + " and is not valid within the time constraints of the authentication event");
