@@ -4,6 +4,8 @@ import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,12 +50,14 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
+        final String encoding = getEncodingScheme(request);
         builder.append(request.getRequestURI());
         builder.append('?');
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> flowParams = new LinkedHashMap<String, Object>(request.getParameterMap());
-        flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
-        appendQueryParameters(builder, flowParams, getEncodingScheme(request));
+
+        final Map<String, String[]> flowParams = new LinkedHashMap<>(request.getParameterMap());
+        flowParams.put(this.flowExecutionKeyParameter, new String[]{flowExecutionKey});
+        builder.append(toQueryString(flowParams, encoding));
+
         return builder.toString();
     }
 
@@ -62,5 +66,41 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
         return request.getRequestURI()
             + (request.getQueryString() != null ? '?'
             + request.getQueryString() : "");
+    }
+
+    private String toQueryString(final Map<String, String[]> flowParams, final String encoding) {
+        final StringBuilder builder = new StringBuilder();
+        for (final Map.Entry<String, String[]> entry : flowParams.entrySet()) {
+            if (builder.length() != 0) {
+                builder.append("&");
+            }
+
+            builder.append(encodeMultiParameter(entry.getKey(), entry.getValue(), encoding));
+        }
+        return builder.toString();
+    }
+
+    private String encodeMultiParameter(final String key, final String[] values, final String encoding) {
+        final StringBuilder builder = new StringBuilder();
+        for (final String value : values) {
+            if (builder.length() != 0) {
+                builder.append("&");
+            }
+
+            builder.append(encodeSingleParameter(key, value, encoding));
+        }
+        return builder.toString();
+    }
+
+    private String encodeSingleParameter(final String key, final String value, final String encoding) {
+        return urlEncode(key, encoding) + "=" + urlEncode(value, encoding);
+    }
+
+    private String urlEncode(final String value, final String encodingScheme) {
+        try {
+            return URLEncoder.encode(value, encodingScheme);
+        } catch (final UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Cannot url encode " + value);
+        }
     }
 }
