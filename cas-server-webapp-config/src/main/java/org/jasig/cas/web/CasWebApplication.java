@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.ImportResource;
         "/WEB-INF/deployerConfigContext.xml",
         "classpath*:/META-INF/spring/*.xml"})
 @Import(AopAutoConfiguration.class)
+@EnableConfigServer
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.

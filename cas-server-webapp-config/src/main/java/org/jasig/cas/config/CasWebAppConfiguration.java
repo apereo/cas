@@ -89,7 +89,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Value("${locale.param.name:locale}")
     private String localeParamName;
-
+    
     /**
      * Credentials validator local validator factory bean.
      *
@@ -251,5 +251,4 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-    
 }
