@@ -28,7 +28,9 @@ public final class CollectionUtils {
     @SuppressWarnings("unchecked")
     public static Set<Object> convertValueToCollection(final Object obj) {
         final Set<Object> c = new HashSet<>();
-        if (obj instanceof Collection) {
+        if (obj == null) {
+            LOGGER.debug("Converting null obj to empty collection");
+        } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
             LOGGER.debug("Converting multi-valued attribute [{}] for the authentication result", obj);
         } else if (obj instanceof Map) {
