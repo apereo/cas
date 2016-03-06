@@ -14,7 +14,7 @@ import org.junit.runners.Suite;
         GenerateServiceTicketActionTests.class, GenericSuccessViewActionTests.class,
         InitialFlowSetupActionTests.class, LogoutActionTests.class,
         SendTicketGrantingTicketActionTests.class, ServiceAuthorizationCheckTests.class,
-        TicketGrantingTicketCheckActionTests.class
+        TicketGrantingTicketCheckActionTests.class, CasDefaultFlowUrlHandlerTests.class
 })
 public class AllTestsSuite {
 }
