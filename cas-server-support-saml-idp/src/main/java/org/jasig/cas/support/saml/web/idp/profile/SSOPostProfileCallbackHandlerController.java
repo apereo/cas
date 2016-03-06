@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * This is {@link SSOPostProfileCallbackHandlerController}, which handles
@@ -61,7 +62,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final Assertion assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         if (!assertion.isValid()) {
-            throw new SamlException("CAS assertion received is invalid");
+            throw new SamlException("CAS assertion received is invalid. This normally indicates that the assertion received has expired "
+            + " and is not valid within the time constraints of the authentication event");
         }
         final SamlRegisteredService registeredService = verifySamlRegisteredService(authnRequest.getAssertionConsumerServiceURL());
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
@@ -72,4 +74,5 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
 
         
     }
+
 }

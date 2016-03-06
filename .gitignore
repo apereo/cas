@@ -29,3 +29,5 @@ MANIFEST.MF
 
 classes/
 *.bin
+
+**/tomcat/

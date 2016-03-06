@@ -1,6 +1,7 @@
 package org.jasig.cas.config;
 
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jasig.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.jasig.cas.security.ResponseHeadersEnforcementFilter;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link CasFiltersConfiguration} that attempts to create Spring-managed beans
@@ -106,16 +109,16 @@ public class CasFiltersConfiguration {
      */
     @Bean(name = "responseHeadersSecurityFilter")
     public FilterRegistrationBean rsponseHeadersSecurityFilter() {
-        final ResponseHeadersEnforcementFilter filter = new ResponseHeadersEnforcementFilter();
-        filter.setEnableCacheControl(this.headerCache);
-        filter.setEnableStrictTransportSecurity(this.headerHsts);
-        filter.setEnableXFrameOptions(this.headerXframe);
-        filter.setEnableXContentTypeOptions(this.headerXcontent);
-        filter.setEnableXSSProtection(this.headerXss);
-
+        final Map<String, String> initParams = new HashMap<>();
+        initParams.put("enableCacheControl", BooleanUtils.toStringTrueFalse(this.headerCache));
+        initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(this.headerXcontent));
+        initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(this.headerHsts));
+        initParams.put("enableXFrameOptions", BooleanUtils.toStringTrueFalse(this.headerXframe));
+        initParams.put("enableXSSProtection", BooleanUtils.toStringTrueFalse(this.headerXss));
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(filter);
+        bean.setFilter(new ResponseHeadersEnforcementFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");
         return bean;
         
@@ -128,16 +131,18 @@ public class CasFiltersConfiguration {
      */
     @Bean(name = "requestParameterSecurityFilter")
     public FilterRegistrationBean requestParameterSecurityFilter() {
-        final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
-        filter.setAllowMultiValueParameters(this.allowMultiValueParameters);
-        filter.setParametersToCheck(StringUtils.commaDelimitedListToSet(this.paramsToCheck));
-        filter.setCharactersToForbid(ImmutableSet.of());
-        filter.setOnlyPostParameters(StringUtils.commaDelimitedListToSet(this.onlyPostParams));
+        final Map<String, String> initParams = new HashMap<>();
+        initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK, this.paramsToCheck);
+        initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
+        initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS, 
+                BooleanUtils.toStringTrueFalse(this.allowMultiValueParameters));
+        initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS, this.onlyPostParams);
 
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(filter);
+        bean.setFilter(new RequestParameterPolicyEnforcementFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("requestParameterSecurityFilter");
+        bean.setInitParameters(initParams);
         return bean;
     }
 }

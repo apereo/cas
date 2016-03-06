@@ -1,12 +1,12 @@
+
 package org.jasig.cas.support.saml.services.idp.metadata;
 
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.util.DateTimeUtils;
-
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLException;
@@ -125,8 +125,8 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
 
             LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
                     registeredService.getName(), entityID);
-            LOGGER.info("Locating metadata for entityID [{}], with binding [{}] and ACS endpoint [{}]",
-                    entityID, SAMLConstants.SAML2_POST_BINDING_URI, entityID);
+            LOGGER.info("Locating metadata for entityID [{}] with binding [{}]",
+                    entityID, SAMLConstants.SAML2_POST_BINDING_URI);
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
