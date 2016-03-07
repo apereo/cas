@@ -29,7 +29,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
     /** The time to kill in milliseconds. */
-    @Value("#{${st.timeToKillInSeconds:10}*1000}")
+    @Value("#{${st.timeToKillInSeconds:10}*1000L}")
     private final long timeToKillInMilliSeconds;
 
     /** The maximum number of uses before expiration. */
