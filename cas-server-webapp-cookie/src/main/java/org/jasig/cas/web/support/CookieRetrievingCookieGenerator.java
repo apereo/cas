@@ -1,8 +1,9 @@
 package org.jasig.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
+
 import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.Cookie;
@@ -66,7 +67,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
         final String theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
 
-        if (!StringUtils.hasText(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
+        if (StringUtils.isNotBlank(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
             super.addCookie(response, theCookieValue);
         } else {
             final Cookie cookie = createCookie(theCookieValue);
@@ -86,8 +87,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      */
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
-            final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
-                    request, getCookieName());
+            final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
             return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
         } catch (final Exception e) {
             logger.debug(e.getMessage(), e);
@@ -97,5 +97,11 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
     public void setRememberMeMaxAge(final int maxAge) {
         this.rememberMeMaxAge = maxAge;
+    }
+
+    @Override
+    public void setCookieDomain(final String cookieDomain) {
+        
+        super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
     }
 }
