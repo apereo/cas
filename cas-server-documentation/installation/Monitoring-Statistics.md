@@ -28,6 +28,7 @@ The following endpoints are secured and available:
 | `/status/config`                  | Visual representation of application properties and configuration.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
+| `/status/dashboard`               | Control panel to CAS server functionality and management.
 
 ## Monitors
 

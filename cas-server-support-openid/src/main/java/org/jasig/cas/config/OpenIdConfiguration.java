@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.JstlView;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 /**
