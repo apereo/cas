@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ImportResource;
         "/WEB-INF/spring-configuration/*.groovy",
         "/WEB-INF/deployerConfigContext.xml",
         "classpath*:/META-INF/spring/*.xml"})
-@Import(AopAutoConfiguration.class)
+@Import(value= {AopAutoConfiguration.class})
 @EnableConfigServer
 public class CasWebApplication {
     /**
@@ -51,5 +51,3 @@ public class CasWebApplication {
                 .run(args);
     }
 }
-
-
