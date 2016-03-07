@@ -1,16 +1,19 @@
 package org.jasig.cas.config;
 
+import java.util.Arrays;
+
+import org.jasig.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.jasig.cas.web.AbstractDelegateController;
 import org.jasig.cas.web.DelegatingController;
 import org.openid4java.server.ServerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.JstlView;
-
-import java.util.Arrays;
 
 /**
  * This this {@link OpenIdConfiguration}.
@@ -21,12 +24,7 @@ import java.util.Arrays;
 @Configuration("openidConfiguration")
 public class OpenIdConfiguration {
 
-    /**
-     * The Smart open id association controller.
-     */
-    @Autowired
-    @Qualifier("smartOpenIdAssociationController")
-    private AbstractDelegateController smartOpenIdAssociationController;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
     /**
      * The Open id validate controller.
@@ -38,7 +36,7 @@ public class OpenIdConfiguration {
     /**
      * The Endpoint.
      */
-    @Value("${server.prefix}/login")
+    @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String endpoint;
 
     /**
@@ -105,11 +103,16 @@ public class OpenIdConfiguration {
     @Bean(name="openidDelegatingController")
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Arrays.asList(this.smartOpenIdAssociationController, 
+        controller.setDelegates(Arrays.asList(
+                this.smartOpenIdAssociationController(),
                 this.openIdValidateController));
         return controller;
     }
 
+    @Bean(name="smartOpenIdAssociationController")
+    public AbstractDelegateController smartOpenIdAssociationController () {
+        return new SmartOpenIdController();
+    }
     /**
      * Server manager server manager.
      *
@@ -120,6 +123,7 @@ public class OpenIdConfiguration {
         final ServerManager manager = new ServerManager();
         manager.setOPEndpointUrl(this.endpoint);
         manager.setEnforceRpId(this.enforceRpId);
+        LOGGER.info("Creating openid server manager with OP endpoint {}", this.endpoint);
         return manager;
     }
 }
