@@ -3,6 +3,8 @@ package org.jasig.cas.config;
 import org.jasig.cas.web.AbstractDelegateController;
 import org.jasig.cas.web.DelegatingController;
 import org.openid4java.server.ServerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.JstlView;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 /**
@@ -20,7 +23,20 @@ import java.util.Arrays;
  */
 @Configuration("openidConfiguration")
 public class OpenIdConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
+    
+    /**
+     * The Endpoint.
+     */
+    @Value("${server.prefix:http://localhost:8080/cas}/login")
+    private String endpoint;
+        
+    /**
+     * The Enforce rp id.
+     */
+    @Value("${cas.openid.enforce.rpid:false}")
+    private boolean enforceRpId;
+    
     /**
      * The Smart open id association controller.
      */
@@ -34,18 +50,6 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("openIdValidateController")
     private AbstractDelegateController openIdValidateController;
-
-    /**
-     * The Endpoint.
-     */
-    @Value("${server.prefix}/login")
-    private String endpoint;
-
-    /**
-     * The Enforce rp id.
-     */
-    @Value("${cas.openid.enforce.rpid:false}")
-    private boolean enforceRpId;
 
     /**
      * Cas open id service failure view jstl view.
@@ -120,6 +124,7 @@ public class OpenIdConfiguration {
         final ServerManager manager = new ServerManager();
         manager.setOPEndpointUrl(this.endpoint);
         manager.setEnforceRpId(this.enforceRpId);
+        LOGGER.info("Creating openid server manager with OP endpoint {}", this.endpoint);
         return manager;
     }
 }
