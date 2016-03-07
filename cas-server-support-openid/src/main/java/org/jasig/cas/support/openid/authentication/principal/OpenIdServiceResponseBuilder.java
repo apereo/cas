@@ -1,5 +1,8 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
@@ -15,9 +18,6 @@ import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Builds responses to Openid authN requests.
@@ -79,7 +79,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
         Assertion assertion = null;
         try {
-            if ((associated && associationValid) || !associated) {
+            if (associated && associationValid) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
                 logger.debug("Validated openid ticket {} for {}", ticketId, service);
             } else if (!associated) {
@@ -137,10 +137,10 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
         final Message response = serverManager.authResponse(this.parameterList, id, id,
                 successFullAuthentication, true);
+        //this will always include an association handle, either generated in
+        //a direct association request or specifically generated for signature
+        //verification
         parameters.putAll(response.getParameterMap());
-        if (!associated) {
-            parameters.put(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, ticketId);
-        }
         logger.debug("Parameters passed for the OpenID response are {}", parameters.keySet());
         return buildRedirect(service, parameters);
     }
