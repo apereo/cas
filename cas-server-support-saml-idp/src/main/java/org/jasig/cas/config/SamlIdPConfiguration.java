@@ -1,11 +1,11 @@
 package org.jasig.cas.config;
 
 import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
+import org.apache.commons.io.FileUtils;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.jasig.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -22,13 +22,7 @@ import java.util.Properties;
  */
 @Configuration("samlIdPConfiguration")
 public class SamlIdPConfiguration {
-
-    /**
-     * The Resource loader path.
-     */
-    @Value("#{'%{idp.views:%{idp.home}/views}'.trim()}")
-    private String resourceLoaderPath;
-
+    
     /**
      * Template sp metadata resource.
      *
@@ -72,7 +66,7 @@ public class SamlIdPConfiguration {
         properties.setProperty("file.resource.loader.class",
                 FileResourceLoader.class.getName());
 
-        properties.setProperty("file.resource.loader.path", this.resourceLoaderPath);
+        properties.setProperty("file.resource.loader.path", FileUtils.getTempDirectory().getAbsolutePath());
         properties.setProperty("file.resource.loader.cache", "false");
         bean.setOverrideLogging(false);
         bean.setVelocityProperties(properties);
