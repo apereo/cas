@@ -30,11 +30,11 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
     /** Maximum time this ticket is valid.  */
-    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
+    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000L}")
     private long maxTimeToLiveInMilliSeconds;
 
     /** Time to kill in milliseconds. */
-    @Value("#{${tgt.timeToKillInSeconds:7200}*1000}")
+    @Value("#{${tgt.timeToKillInSeconds:7200}*1000L}")
     private long timeToKillInMilliSeconds;
 
     private TicketGrantingTicketExpirationPolicy() {}
