@@ -196,6 +196,11 @@ public class HazelcastTicketRegistryTests {
         public int getCountOfUses() {
             return 0;
         }
+
+        @Override
+        public ExpirationPolicy getExpirationPolicy() {
+            return new NeverExpiresExpirationPolicy();
+        }
     }
 
     private static class MockSt implements ServiceTicket {
@@ -246,6 +251,11 @@ public class HazelcastTicketRegistryTests {
         @Override
         public int getCountOfUses() {
             return 0;
+        }
+
+        @Override
+        public ExpirationPolicy getExpirationPolicy() {
+            return new NeverExpiresExpirationPolicy();
         }
     }
 }

@@ -135,6 +135,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
+    public ExpirationPolicy getExpirationPolicy() {
+        throw new UnsupportedOperationException("getExpirationPolicy() is not supported");
+    }
+
+    @Override
     public Map<String, Service> getServices() {
         return this.services;
     }

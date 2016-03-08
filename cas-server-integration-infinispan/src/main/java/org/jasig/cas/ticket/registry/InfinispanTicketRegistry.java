@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +48,9 @@ public final class InfinispanTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
-        this.cache.put(ticket.getId(), ticket);
+        this.cache.put(ticket.getId(), ticket, 
+                ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS,
+                ticket.getExpirationPolicy().getTimeToIdle(), TimeUnit.SECONDS);
     }
 
     /**
