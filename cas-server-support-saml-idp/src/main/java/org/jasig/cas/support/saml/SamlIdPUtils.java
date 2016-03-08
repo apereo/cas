@@ -148,7 +148,6 @@ public final class SamlIdPUtils {
      * @param entityID        the entity id
      * @param resolver        the resolver
      * @return the chaining metadata resolver for all saml services
-     * @throws Exception the exception
      */
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
                                          final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
