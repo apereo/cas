@@ -32,6 +32,7 @@ org.jasig.cas.grouper.services
 org.jasig.cas.integration.pac4j.authentication.handler.support
 org.jasig.cas.logout
 org.jasig.cas.monitor
+org.jasig.cas.persondir.support
 org.jasig.cas.services
 org.jasig.cas.services.audit
 org.jasig.cas.services.convert
