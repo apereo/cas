@@ -61,8 +61,8 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
             results = groupsClient.execute().getResults();
         } catch (final Exception e) {
             logger.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
-                    + ", the url endpoint for Grouper WS is correctly configured and the subject " + principal
-                    + "  exists in Grouper.", e);
+                    + ", the url endpoint for Grouper WS is correctly configured and the subject {}"
+                    + "  exists in Grouper.", principal, e);
             return false;
         }
 

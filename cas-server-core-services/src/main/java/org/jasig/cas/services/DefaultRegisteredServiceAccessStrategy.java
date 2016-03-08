@@ -60,6 +60,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     /**
+     * Collection of attributes
+     * that will be rejected which will cause this
+     * policy to refuse access.
+     */
+    private Map<String, Set<String>> rejectedAttributes = new HashMap<>();
+    
+    /**
      * Indicates whether matching on required attribute values
      * should be done in a case-insensitive manner.
      */
@@ -163,51 +170,76 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     /**
+     * Sets rejected attributes. If the policy finds any of the attributes defined
+     * here, it will simply reject and refuse access. 
+     *
+     * @param rejectedAttributes the rejected attributes
+     */
+    public void setRejectedAttributes(final Map<String, Set<String>> rejectedAttributes) {
+        this.rejectedAttributes = rejectedAttributes;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Verify presence of service required attributes.
      * <ul>
+     *     <li>If no rejected attributes are specified, authz is granted.</li>
      *     <li>If no required attributes are specified, authz is granted.</li>
-     *     <li>If ALL required attributes must be present, and the principal contains all and there is
+     *     <li>If ALL attributes must be present, and the principal contains all and there is
+     *     at least one attribute value that matches the rejected, authz is denied.</li>
+     *     <li>If ALL attributes must be present, and the principal contains all and there is
      *     at least one attribute value that matches the required, authz is granted.</li>
-     *     <li>If ALL required attributes don't have to be present, and there is at least
+     *     <li>If ALL attributes don't have to be present, and there is at least
+     *     one principal attribute present whose value matches the rejected, authz is denied.</li>
+     *     <li>If ALL attributes don't have to be present, and there is at least
      *     one principal attribute present whose value matches the required, authz is granted.</li>
      *     <li>Otherwise, access is denied</li>
      * </ul>
-     * Note that comparison of principal/required attributes is case-sensitive. Exact matches are required
-     * for any individual attribute value.
      */
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        if (this.requiredAttributes.isEmpty()) {
-            logger.debug("No required attributes are specified");
+        if (this.rejectedAttributes.isEmpty() && this.requiredAttributes.isEmpty()) {
+            logger.debug("Skipping access strategy policy, since no attributes rules are defined");
             return true;
         }
-        if (principalAttributes.isEmpty()) {
-            logger.debug("No principal attributes are found to satisfy attribute requirements");
+        
+        if (!enoughAttributesAvailableToProcess(principal, principalAttributes)) {
+            logger.debug("Access is denied. There are not enough attributes available to satisfy requirements");
             return false;
         }
 
-        if (principalAttributes.size() < this.requiredAttributes.size()) {
-            logger.debug("The size of the principal attributes that are [{}] does not match requirements, "
-                    + "which means the principal is not carrying enough data to grant authorization",
-                    principalAttributes);
+        if (doRejectedAttributesRefusePrincipalAccess(principalAttributes)) {
+            logger.debug("Access is denied. The principal carries attributes that would reject service access");
+            return false;
+        }
+                
+        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes)) {
+            logger.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
 
-        final Map<String, Set<String>> requiredAttrs = this.getRequiredAttributes();
+
+        return true;
+    }
+
+    private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
         logger.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
-                requiredAttrs, principalAttributes);
-
-        final Sets.SetView<String> difference = Sets.intersection(requiredAttrs.keySet(), principalAttributes.keySet());
+                this.requiredAttributes, principalAttributes);
+        final Sets.SetView<String> difference = Sets.intersection(this.requiredAttributes.keySet(), principalAttributes.keySet());
         final Set<String> copy = difference.immutableCopy();
 
+        if (this.requiredAttributes.isEmpty()) {
+            logger.debug("No required attributes are defined");
+            return true;
+        }
+        
         if (this.requireAllAttributes && copy.size() < this.requiredAttributes.size()) {
             logger.debug("Not all required attributes are available to the principal");
             return false;
         }
-
-        final boolean authorized = copy.stream().filter(key -> {
+        
+        return copy.stream().filter(key -> {
             final Set<String> requiredValues = this.requiredAttributes.get(key);
             final Set<String> availableValues;
 
@@ -232,14 +264,81 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             }
             return false;
         }).findFirst().isPresent();
+    }
+    
+    private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
+        logger.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.",
+                this.rejectedAttributes, principalAttributes);
+        final Sets.SetView<String> rejectedDifference = Sets.intersection(this.rejectedAttributes.keySet(), principalAttributes.keySet());
+        final Set<String> rejectedCopy = rejectedDifference.immutableCopy();
 
-        if (!authorized) {
-            logger.info("Principal is denied access as the required attributes for the registered service are missing");
+        if (this.rejectedAttributes.isEmpty()) {
+            logger.debug("No rejected attributes are defined");
+            return false;
+        }
+        
+        if (this.requireAllAttributes && rejectedCopy.size() < rejectedAttributes.size()) {
+            logger.debug("Not all rejected attributes are available to the process");
+            return false;
+        }
+        
+        return rejectedCopy.stream().filter(key -> {
+            final Set<String> rejectedValues = this.rejectedAttributes.get(key);
+            final Set<String> availableValues;
+
+            final Object objVal = principalAttributes.get(key);
+            if (objVal instanceof Collection) {
+                availableValues = Sets.newHashSet(((Collection) objVal).iterator());
+            } else {
+                availableValues = Sets.newHashSet(objVal.toString());
+            }
+
+            final Set<?> differenceInValues;
+            final Pattern pattern = RegexUtils.concatenate(rejectedValues, this.caseInsensitive);
+            if (pattern != null) {
+                differenceInValues = Sets.filter(availableValues, Predicates.contains(pattern));
+            } else {
+                differenceInValues = Sets.intersection(availableValues, rejectedValues);
+            }
+
+            if (!differenceInValues.isEmpty()) {
+                logger.info("Principal is denied access since there are rejected attributes [{}] defined as [{}}",
+                        key, differenceInValues);
+                return true;
+            }
+            return false;
+        }).findFirst().isPresent();
+    }
+    /**
+     * Enough attributes available to process? Check collection sizes and determine
+     * if we have enough data to move on. 
+     *
+     * @param principal           the principal
+     * @param principalAttributes the principal attributes
+     * @return true/false
+     */
+    protected boolean enoughAttributesAvailableToProcess(final String principal, final Map<String, Object> principalAttributes) {
+        if (principalAttributes.isEmpty() && !this.requiredAttributes.isEmpty()) {
+            logger.debug("No principal attributes are found to satisfy defined attribute requirements");
+            return false;
         }
 
-        return authorized;
-    }
+        if (principalAttributes.size() < this.rejectedAttributes.size()) {
+            logger.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
+                            + "which means the principal is not carrying enough data to grant authorization",
+                    principalAttributes);
+            return false;
+        }
 
+        if (principalAttributes.size() < this.requiredAttributes.size()) {
+            logger.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
+                        + "which means the principal is not carrying enough data to grant authorization",
+                    principalAttributes);
+            return false;
+        }
+        return true;
+    }
+    
     @Override
     public boolean isServiceAccessAllowedForSso() {
         if (!this.ssoEnabled) {
@@ -277,6 +376,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.requiredAttributes, rhs.requiredAttributes)
                 .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
                 .append(this.caseInsensitive, rhs.caseInsensitive)
+                .append(this.rejectedAttributes, rhs.rejectedAttributes)
                 .isEquals();
     }
 
@@ -289,6 +389,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.requiredAttributes)
                 .append(this.unauthorizedRedirectUrl)
                 .append(this.caseInsensitive)
+                .append(this.rejectedAttributes)
                 .toHashCode();
     }
 
@@ -302,6 +403,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("requiredAttributes", requiredAttributes)
                 .append("unauthorizedRedirectUrl", unauthorizedRedirectUrl)
                 .append("caseInsensitive", caseInsensitive)
+                .append("rejectedAttributes", rejectedAttributes)
                 .toString();
     }
 

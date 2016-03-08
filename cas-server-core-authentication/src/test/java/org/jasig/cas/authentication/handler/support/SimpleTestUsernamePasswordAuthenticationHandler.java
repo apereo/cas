@@ -87,7 +87,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
         } else if (exception instanceof RuntimeException) {
             throw (RuntimeException) exception;
         } else if (exception != null) {
-            logger.debug("Cannot throw checked exception {} since it is not declared by method signature.", exception);
+            logger.debug("Cannot throw checked exception since it is not declared by method signature.", exception);
         }
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
