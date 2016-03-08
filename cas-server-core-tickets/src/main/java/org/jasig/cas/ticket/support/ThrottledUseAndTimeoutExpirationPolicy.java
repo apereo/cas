@@ -27,11 +27,11 @@ public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExp
     private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.throttled.maxTimeToLiveInSeconds:28800}*1000}")
+    @Value("#{${tgt.throttled.maxTimeToLiveInSeconds:28800}*1000L}")
     private long timeToKillInMilliSeconds;
 
     /** Time time between which a ticket must wait to be used again. */
-    @Value("#{${tgt.throttled.timeInBetweenUsesInSeconds:5}*1000}")
+    @Value("#{${tgt.throttled.timeInBetweenUsesInSeconds:5}*1000L}")
     private long timeInBetweenUsesInMilliSeconds;
 
     /**
