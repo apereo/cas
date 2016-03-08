@@ -31,12 +31,6 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     private final Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
 
-    /** The view to redirect to on a successful validation. */
-    private String successView;
-
-    /** The view to redirect to on a unsuccessful validation. */
-    private String failureView;
-
     @Autowired
     @Qualifier("serverManager")
     private ServerManager serverManager;
@@ -55,10 +49,10 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
             if(message.isSignatureVerified()) {
                 logger.debug("Signature verification request successful.");
-                return new ModelAndView(successView, "parameters", parameters);
+                return new ModelAndView(getSuccessView(), "parameters", parameters);
             } else {
                 logger.debug("Signature verification request unsuccessful.");
-                return new ModelAndView(failureView, "parameters", parameters);
+                return new ModelAndView(getFailureView(), "parameters", parameters);
             }
         } else {
             // we should probably fail here(?),
@@ -78,14 +72,12 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     @Autowired
     public void setFailureView(@Value("casOpenIdServiceFailureView") final String failureView) {
         super.setFailureView(failureView);
-        this.failureView = failureView;
     }
 
     @Override
     @Autowired
     public void setSuccessView(@Value("casOpenIdServiceSuccessView") final String successView) {
         super.setSuccessView(successView);
-        this.successView = successView;
     }
 
     @Override
