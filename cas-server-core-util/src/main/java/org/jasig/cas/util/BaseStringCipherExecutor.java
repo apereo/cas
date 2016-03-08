@@ -34,7 +34,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
     
     /**
      * Instantiates a new cipher.
-     * <p>
      * <p>Note that in order to customize the encryption algorithms,
      * you will need to download and install the JCE Unlimited Strength Jurisdiction
      * Policy File into your Java installation.</p>
