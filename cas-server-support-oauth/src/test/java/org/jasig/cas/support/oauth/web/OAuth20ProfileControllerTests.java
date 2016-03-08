@@ -14,7 +14,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
 import org.jasig.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
-import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +91,7 @@ public final class OAuth20ProfileControllerTests {
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, new HashMap<>());
         final Authentication authentication = getAuthentication(principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory();
-        expiringAccessTokenFactory.setExpirationPolicy((ExpirationPolicy) ticketState -> true);
+        expiringAccessTokenFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
         final AccessTokenImpl accessToken = (AccessTokenImpl) expiringAccessTokenFactory.create(TestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 

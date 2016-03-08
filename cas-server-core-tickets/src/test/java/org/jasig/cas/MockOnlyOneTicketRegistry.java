@@ -30,7 +30,7 @@ public final class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         return (T) this.ticket;
     }
 

@@ -5,9 +5,8 @@ import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.jose4j.jwk.OctJwkGenerator;
+import org.jose4j.jwk.OctetSequenceJsonWebKey;
 
 import javax.validation.constraints.NotNull;
 import java.security.Key;
@@ -15,33 +14,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The {@link DefaultCipherExecutor} is the default
+ * The {@link BaseStringCipherExecutor} is the default
  * implementation of {@link org.jasig.cas.CipherExecutor}. It provides
  * a facade API to encrypt, sign, and verify values.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Component("defaultCookieCipherExecutor")
-public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, String> {
+public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<String, String> {
+    private static final int ENCRYPTION_KEY_SIZE = 256;
+
+    private static final int SIGNING_KEY_SIZE = 512;
+
     private String contentEncryptionAlgorithmIdentifier;
 
     private Key secretKeyEncryptionKey;
 
+    private BaseStringCipherExecutor() {}
+    
     /**
      * Instantiates a new cipher.
-     *
+     * <p>
      * <p>Note that in order to customize the encryption algorithms,
      * you will need to download and install the JCE Unlimited Strength Jurisdiction
      * Policy File into your Java installation.</p>
+     *
      * @param secretKeyEncryption the secret key encryption; must be represented as a octet sequence JSON Web Key (JWK)
-     * @param secretKeySigning the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
+     * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
      */
-    @Autowired
-    public DefaultCipherExecutor(@Value("${tgc.encryption.key:}")
-                                 final String secretKeyEncryption,
-                                 @Value("${tgc.signing.key:}")
-                                 final String secretKeySigning) {
+    public BaseStringCipherExecutor(final String secretKeyEncryption,
+                                    final String secretKeySigning) {
         this(secretKeyEncryption, secretKeySigning,
                 ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
     }
@@ -49,41 +51,50 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
     /**
      * Instantiates a new cipher.
      *
-     * @param secretKeyEncryption the key for encryption
-     * @param secretKeySigning the key for signing
+     * @param secretKeyEncryption                  the key for encryption
+     * @param secretKeySigning                     the key for signing
      * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
      */
-    public DefaultCipherExecutor(final String secretKeyEncryption,
-                                 final String secretKeySigning,
-                                 final String contentEncryptionAlgorithmIdentifier) {
+    public BaseStringCipherExecutor(final String secretKeyEncryption,
+                                    final String secretKeySigning,
+                                    final String contentEncryptionAlgorithmIdentifier) {
 
         super();
 
-        if (StringUtils.isBlank(secretKeyEncryption)) {
-            logger.debug("secretKeyEncryption is not defined");
-            return;
-        }
-        if (StringUtils.isBlank(secretKeySigning)) {
-            logger.debug("secretKeySigning is not defined");
-            return;
-        }
         if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
             logger.debug("contentEncryptionAlgorithmIdentifier is not defined");
             return;
         }
 
-        setSigningKey(secretKeySigning);
-        this.secretKeyEncryptionKey =  prepareJsonWebTokenKey(secretKeyEncryption);
+        String secretKeyToUse = secretKeyEncryption;
+        if (StringUtils.isBlank(secretKeyToUse)) {
+            logger.warn("Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key");
+            secretKeyToUse = generateOctetJsonWebKeyOfSize(ENCRYPTION_KEY_SIZE);
+            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
+                    secretKeyToUse, ENCRYPTION_KEY_SIZE);
+        }
+
+        String signingKeyToUse = secretKeySigning;
+        if (StringUtils.isBlank(signingKeyToUse)) {
+            logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
+            signingKeyToUse = generateOctetJsonWebKeyOfSize(SIGNING_KEY_SIZE);
+            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
+                    signingKeyToUse, SIGNING_KEY_SIZE);
+        }
+
+
+        setSigningKey(signingKeyToUse);
+        this.secretKeyEncryptionKey = prepareJsonWebTokenKey(secretKeyToUse);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
 
         logger.debug("Initialized cipher encryption sequence via [{}]",
-                 contentEncryptionAlgorithmIdentifier);
+                contentEncryptionAlgorithmIdentifier);
 
     }
 
     @Override
     public String encode(final String value) {
-        final String encoded = encryptValue(value.toString());
+        final String encoded = encryptValue(value);
         final String signed = new String(sign(encoded.getBytes()));
         return signed;
     }
@@ -104,6 +115,7 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
      * @return the key
      */
     private Key prepareJsonWebTokenKey(final String secret) {
+
         try {
             final Map<String, Object> keys = new HashMap<>(2);
             keys.put("kty", "oct");
@@ -153,5 +165,11 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String generateOctetJsonWebKeyOfSize(final int size) {
+        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
+        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        return params.get("k").toString();
     }
 }
