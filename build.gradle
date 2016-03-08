@@ -132,6 +132,16 @@ ext.libraries = [
                 },
                 "commons-codec:commons-codec:$commonsCodecVersion"
         ],
+        shibattributes   : [
+                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-impl:${idpVersion}") {
+                    transitive = false
+                    force = true
+                },
+                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-spring:${idpVersion}") {
+                    transitive = false
+                    force = true
+                }
+        ],
         shibidp          : [
                 dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
@@ -442,7 +452,9 @@ ext.libraries = [
                 },
                 "org.hsqldb:hsqldb:$hsqlVersion",
                 "org.skyscreamer:jsonassert:$jsonassertVersion",
-                "org.springframework:spring-test:$springVersion"
+                "org.springframework:spring-test:$springVersion",
+                "org.spockframework:spock-core:$spockVersion",
+                "org.spockframework:spock-spring:$spockVersion"
         ],
         memcached        : [
                 "net.spy:spymemcached:$spymemcachedVersion",

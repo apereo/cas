@@ -39,6 +39,7 @@ The CAS project provides the following additional implementations:
 | Component         					| Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `LdapPersonAttributeDao`| Queries an LDAP directory to populate person attributes using the bundled CAS LDAP libraries.
+| `ShibbolethPersonAttributeDao` | *EXPERIMENTAL* Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes
 
 ### Sample Usage
 
@@ -125,4 +126,27 @@ Note that this snippet below strictly uses the Person Directory components for r
         </bean>
     </property>
 </bean>
+```
+
+
+#### Shibboleth
+Note that this module is *EXPERIMENTAL*.
+
+Make sure to include the `cas-server-support-shibboleth-attributes` as a dependency. You'll also want to make sure that
+the Shibboleth Maven repository is included [https://build.shibboleth.net/nexus/content/repositories/releases].
+
+The module provides a bean called `shibbolethPersonAttributeDao` that used the property `shibboleth.attributeResolver.resources`
+for configuration.
+
+1. Alias bean
+
+```xml
+<alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
+```
+
+1. Modify either `cas.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
+comma seperated list of resources to use for the configuration
+
+```shell
+-Dshibboleth.attributeResolver.resources=classpath:attribute-resolver.xml
 ```
