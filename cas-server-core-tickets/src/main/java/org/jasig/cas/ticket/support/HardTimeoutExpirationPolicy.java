@@ -21,7 +21,7 @@ public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPoli
     private static final long serialVersionUID = 6728077010285422290L;
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.timeout.hard.maxTimeToLiveInSeconds:28800}*1000}")
+    @Value("#{${tgt.timeout.hard.maxTimeToLiveInSeconds:28800}*1000L}")
     private long timeToKillInMilliSeconds;
 
     /** No-arg constructor for serialization support. */
