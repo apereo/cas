@@ -151,7 +151,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                 logger.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
                         resolvers.size());
                 this.metadataResolver.initialize();
-                logger.info("Metadata aggregate initialized successfully with {} resolvers.", resolvers.size());
+                logger.info("Metadata aggregate initialized successfully with size {}.", resolvers.size());
             }
         } catch (final Exception e) {
             logger.warn("Could not retrieve input stream from resource. Moving on...", e);
