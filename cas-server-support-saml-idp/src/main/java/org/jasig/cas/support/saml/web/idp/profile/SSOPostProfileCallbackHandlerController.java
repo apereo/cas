@@ -7,9 +7,11 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPConstants;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,11 +61,16 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url for validation: [{}]", serviceUrl);
         final Assertion assertion = validator.validate(ticket, serviceUrl);
+        Thread.sleep(1);
         logCasValidationAssertion(assertion);
         if (!assertion.isValid()) {
-            throw new SamlException("CAS assertion received is invalid");
+            throw new SamlException("CAS assertion received is invalid. This normally indicates that the assertion received has expired "
+                    + " and is not valid within the time constraints of the authentication event");
         }
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(authnRequest.getAssertionConsumerServiceURL());
+        final AssertionConsumerService acs =
+                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest,
+                        this.servicesManager, samlRegisteredServiceCachingMetadataResolver);
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 
         logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
