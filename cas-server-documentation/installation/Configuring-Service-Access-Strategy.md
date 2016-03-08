@@ -18,10 +18,11 @@ The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service w
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
 | `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
-| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
+| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes **MUST** be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
 | `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
 | `unauthorizedRedirectUrl`         | Optional url to redirect the flow in case service access is not allowed.
 | `caseInsensitive`                 | Indicates whether matching on required attribute values should be done in a case-insensitive manner. Default is `false`
+| `rejectedAttributes`              | A `Map` of rejected principal attribute names along with the set of values for each attribute. These attributes **MUST NOT** be available to the authenticated Principal so that access may be granted. If none is defined, the check is entirely ignored.
 
 
 <div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attribute <strong>names</strong> is
@@ -167,6 +168,35 @@ OR the principal must have a `member` attribute whose value is either of `admins
       "@class" : "java.util.HashMap",
       "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
       "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+    }
+  }
+}
+```
+
+* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
+OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`. The principal
+also must not have an attribute "role" whose value matches the pattern "deny.+"
+
+
+```json
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "requireAllAttributes" : false,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
+      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+    },
+    "rejectedAttributes" : {
+      "@class" : "java.util.HashMap",
+      "role" : [ "java.util.HashSet", [ "deny.+" ] ],
     }
   }
 }
