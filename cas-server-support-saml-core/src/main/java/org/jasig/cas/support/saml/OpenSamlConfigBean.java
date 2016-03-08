@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 /**
- * Load the opensaml config context.
+ * Load the OpenSAML config context.
  * @author Misagh Moayyed
  * @since 4.1
  */
