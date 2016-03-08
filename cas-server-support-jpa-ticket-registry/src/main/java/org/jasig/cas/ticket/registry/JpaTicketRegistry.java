@@ -114,8 +114,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
                 .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
                 .getResultList();
 
-        final List<Ticket> tickets = new ArrayList<>();
-        tickets.addAll(tgts);
+        final List<Ticket> tickets = new ArrayList<>(tgts);
         tickets.addAll(sts);
 
         return tickets;
@@ -127,20 +126,20 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public int sessionCount() {
-        return countToInt(entityManager.createQuery(
+    public long sessionCount() {
+        return countToLong(entityManager.createQuery(
                 "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Override
-    public int serviceTicketCount() {
-        return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+    public long serviceTicketCount() {
+        return countToLong(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
-        int failureCount = 0;
+        final int failureCount;
 
         if (ticket instanceof OAuthToken) {
             failureCount = deleteOAuthTokens(ticketId);
@@ -206,17 +205,8 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry {
      * @param result the result
      * @return the int
      */
-    private static int countToInt(final Object result) {
-        final int intval;
-        if (result instanceof Long) {
-            intval = ((Long) result).intValue();
-        } else if (result instanceof Integer) {
-            intval = (Integer) result;
-        } else {
-            // Must be a Number of some kind
-            intval = ((Number) result).intValue();
-        }
-        return intval;
+    private static long countToLong(final Object result) {
+        return ((Number) result).longValue();
     }
 
     @Override

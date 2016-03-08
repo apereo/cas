@@ -66,4 +66,14 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
 
         return false;
     }
+
+    @Override
+    public Long getTimeToLive() {
+        return this.maxTimeToLiveInMilliSeconds;
+    }
+
+    @Override
+    public Long getTimeToIdle() {
+        return this.timeToKillInMilliSeconds;
+    }
 }
