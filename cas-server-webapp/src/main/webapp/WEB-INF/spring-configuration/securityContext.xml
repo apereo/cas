@@ -14,7 +14,7 @@
             <bean class="org.pac4j.http.client.direct.IpClient">
                 <property name="authenticator">
                     <bean class="org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator">
-                        <constructor-arg name="regexpPattern" value="${cas.securityContext.adminpages.ip:127\.0\.\.1}" />
+                        <constructor-arg name="regexpPattern" value="${cas.securityContext.adminpages.ip:127\.0\.0\.1}" />
                     </bean>
                 </property>
             </bean>
