@@ -47,7 +47,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -171,7 +170,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
         // resolve MFA auth context for this request
-        final Set<String> providers = this.context.getBeansOfType(MultifactorAuthenticationProvider.class).keySet();
+        final Map<String, MultifactorAuthenticationProvider> providers = context.getBeansOfType(MultifactorAuthenticationProvider.class);
         final Authentication authentication = assertion.getPrimaryAuthentication();
         final Optional<String> requestedContext = multifactorTriggerSelectionStrategy.resolve(providers, request,
                 service, authentication.getPrincipal());
