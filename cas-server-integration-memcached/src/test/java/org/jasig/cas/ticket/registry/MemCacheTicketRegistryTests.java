@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -77,6 +78,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
     public void verifyWriteGetDelete() throws Exception {
         final String id = "ST-1234567890ABCDEFGHIJKL-crud";
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
+        when(ticket.getExpirationPolicy()).thenReturn(new NeverExpiresExpirationPolicy());
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
         final ServiceTicket ticketFromRegistry = (ServiceTicket) registry.getTicket(id);
@@ -90,11 +92,9 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
     public void verifyExpiration() throws Exception {
         final String id = "ST-1234567890ABCDEFGHIJKL-exp";
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
+        when(ticket.getExpirationPolicy()).thenReturn(new AlwaysExpiresExpirationPolicy());
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
-        Assert.assertNotNull(registry.getTicket(id, ServiceTicket.class));
-        // Sleep a little longer than service ticket expiry defined in Spring context
-        Thread.sleep(2100);
         Assert.assertNull(registry.getTicket(id, ServiceTicket.class));
     }
 
