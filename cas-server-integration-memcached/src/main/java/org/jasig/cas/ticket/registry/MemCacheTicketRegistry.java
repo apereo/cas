@@ -176,11 +176,17 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
     protected boolean needsCallback() {
         return true;
     }
-    
-    private int getTimeout(final Ticket ticket) {
+
+    /**
+     * If not time out value is specified, expire the ticket at 1 millisecond.
+     *
+     * @param ticket the ticket
+     * @return timeout in milliseconds. 
+     */
+    private static int getTimeout(final Ticket ticket) {
         final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (ttl <= 0) {
-            return -1;
+            return 1;
         }
         return ttl;
     }

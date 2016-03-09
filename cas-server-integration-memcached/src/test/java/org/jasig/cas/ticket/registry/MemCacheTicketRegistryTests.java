@@ -95,6 +95,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         when(ticket.getExpirationPolicy()).thenReturn(new AlwaysExpiresExpirationPolicy());
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
+        Thread.sleep(500);
         Assert.assertNull(registry.getTicket(id, ServiceTicket.class));
     }
 
