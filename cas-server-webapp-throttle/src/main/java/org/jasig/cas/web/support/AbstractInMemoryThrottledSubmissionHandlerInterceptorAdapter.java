@@ -129,7 +129,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plus(this.startDelay, ChronoUnit.MILLIS)))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshInterval)
+                        .withIntervalInMilliseconds(this.refreshInterval)
                         .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
