@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @Component
-public class OpenIdServletContextWrapper extends BaseApplicationContextWrapper {
+public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")

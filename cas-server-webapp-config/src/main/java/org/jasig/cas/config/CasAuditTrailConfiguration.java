@@ -166,7 +166,7 @@ public class CasAuditTrailConfiguration {
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", new DefaultAuditActionResolver());
         map.put("GRANT_SERVICE_TICKET_RESOLVER", ticketCreationActionResolver());
         map.put("GRANT_PROXY_TICKET_RESOLVER", ticketCreationActionResolver());
-        map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
         return map;
     }
 

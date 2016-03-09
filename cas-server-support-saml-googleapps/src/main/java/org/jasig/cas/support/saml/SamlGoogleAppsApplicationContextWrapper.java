@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @Component
-public class SamlGoogleAppsServletContextWrapper extends BaseApplicationContextWrapper {
+public class SamlGoogleAppsApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
@@ -25,7 +25,7 @@ public class SamlGoogleAppsServletContextWrapper extends BaseApplicationContextW
     /**
      * Initialize the saml googleapps context.
      */
-    public SamlGoogleAppsServletContextWrapper() {}
+    public SamlGoogleAppsApplicationContextWrapper() {}
 
     /**
      * Initialize root application context.

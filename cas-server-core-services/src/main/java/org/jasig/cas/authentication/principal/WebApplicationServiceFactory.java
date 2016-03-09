@@ -21,22 +21,13 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
-        final String targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
-        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        final String serviceAttribute = (String) request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+
         final String method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
         final String format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
 
-        final String serviceToUse;
-        if (StringUtils.isNotBlank(targetService)) {
-            serviceToUse = targetService;
-        } else if (StringUtils.isNotBlank(service)) {
-            serviceToUse = service;
-        } else {
-            serviceToUse = serviceAttribute;
-        }
-
+        final String serviceToUse = getRequestedService(request);
         if (StringUtils.isBlank(serviceToUse)) {
+            logger.debug("No service is specified in the request. Skipping service creation");
             return null;
         }
 
@@ -60,6 +51,31 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return null;
         }
         return webApplicationService;
+    }
+
+    /**
+     * Gets requested service.
+     *
+     * @param request the request
+     * @return the requested service
+     */
+    protected String getRequestedService(final HttpServletRequest request) {
+        final String targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
+        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        final String serviceAttribute = (String) request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+        final String serviceToUse;
+        if (StringUtils.isNotBlank(targetService)) {
+            serviceToUse = targetService;
+        } else if (StringUtils.isNotBlank(service)) {
+            serviceToUse = service;
+        } else {
+            serviceToUse = serviceAttribute;
+        }
+
+        if (StringUtils.isBlank(serviceToUse)) {
+            return null;
+        }
+        return serviceToUse;
     }
 
     @Override

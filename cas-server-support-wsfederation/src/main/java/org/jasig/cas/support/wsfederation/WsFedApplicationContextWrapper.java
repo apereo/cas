@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @Component
-public class WsFedServletContextWrapper extends BaseApplicationContextWrapper {
+public class WsFedApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired
     @Qualifier("adfsAuthNHandler")

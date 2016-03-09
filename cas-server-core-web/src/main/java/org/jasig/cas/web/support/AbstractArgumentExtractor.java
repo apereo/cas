@@ -60,7 +60,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         if (service == null) {
             logger.debug("Extractor did not generate service.");
         } else {
-            logger.debug("Extractor generated service for: {}", service.getId());
+            logger.debug("Extractor generated service type {} for: {}", service.getClass().getName(), service.getId());
         }
 
         return service;

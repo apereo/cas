@@ -15,8 +15,8 @@ import javax.annotation.PostConstruct;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-@Component("pac4jServletContextListener")
-public class Pac4jServletContextWrapper extends BaseApplicationContextWrapper {
+@Component
+public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired
     @Qualifier("clientAuthenticationHandler")

@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @Component
-public class SpnegoServletContextWrapper extends BaseApplicationContextWrapper {
+public class SpnegoApplicationContextWrapper extends BaseApplicationContextWrapper {
     @Autowired
     @Qualifier("spnegoHandler")
     private AuthenticationHandler spnegoHandler;
