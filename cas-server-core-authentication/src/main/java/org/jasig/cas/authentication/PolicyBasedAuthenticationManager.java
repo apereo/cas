@@ -122,19 +122,16 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         Assert.notEmpty(map, "At least one authentication handler is required");
         this.handlerResolverMap = map;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
     @Override
     @Audit(
         action="AUTHENTICATION",
         actionResolverName="AUTHENTICATION_RESOLVER",
         resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
-    @Timed(name="AUTHENTICATE")
-    @Metered(name="AUTHENTICATE")
-    @Counted(name="AUTHENTICATE", monotonic=true)
-    public final Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
+    @Timed(name="AUTHENTICATE_TIMED")
+    @Metered(name="AUTHENTICATE_METER")
+    @Counted(name="AUTHENTICATE_COUNT", monotonic=true)
+    public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
 
         final AuthenticationBuilder builder = authenticateInternal(transaction.getCredentials());
         final Authentication authentication = builder.build();
