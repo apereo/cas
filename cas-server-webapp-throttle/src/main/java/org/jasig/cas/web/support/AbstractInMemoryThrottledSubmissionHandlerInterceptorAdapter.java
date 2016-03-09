@@ -128,7 +128,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .startAt(new Date(System.currentTimeMillis() + this.startDelay))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshInterval)
+                        .withIntervalInMilliseconds(this.refreshInterval)
                         .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
