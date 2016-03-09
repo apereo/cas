@@ -3,6 +3,7 @@ package org.jasig.cas.authentication;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.jasig.cas.util.CollectionUtils;
@@ -11,9 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -42,25 +45,31 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     }
 
     @Override
-    public Optional<String> resolve(final Set<String> availableProviders, final HttpServletRequest request,
-                                    final RegisteredService service, final Principal principal) {
+    public Optional<String> resolve(final Map<String, MultifactorAuthenticationProvider> availableProviders,
+                                    final HttpServletRequest request, final RegisteredService service, final Principal principal) {
         Optional<String> provider = Optional.empty();
 
         // short-circuit if we don't have any available MFA providers
         if (availableProviders == null || availableProviders.isEmpty()) {
             return provider;
         }
+        final Set<String> validProviderIds = availableProviders.values().stream()
+                .map(MultifactorAuthenticationProvider::getId)
+                .collect(Collectors.toSet());
 
-        // check for an opt-in parameter trigger, we only care about the first value
+        // check for an opt-in provider id parameter trigger, we only care about the first value
         if (!provider.isPresent() && request != null) {
-            provider = Optional.ofNullable(request.getParameter(requestParameter)).filter(availableProviders::contains);
+            provider = Optional.ofNullable(request.getParameter(requestParameter)).filter(validProviderIds::contains);
         }
 
         // check for a RegisteredService configured trigger
         if (!provider.isPresent() && service != null) {
             final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
             if (shouldApplyRegisteredServiceMultifactorPolicy(policy, principal)) {
-                provider = policy.getMultifactorAuthenticationProviders().stream().filter(availableProviders::contains).findFirst();
+                provider = policy.getMultifactorAuthenticationProviders().stream()
+                        .map(availableProviders::get).filter(Objects::nonNull)
+                        .map(MultifactorAuthenticationProvider::getId)
+                        .findFirst();
             }
         }
 
@@ -70,8 +79,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
-                    // availableProviders.contains((String) value)
-                    .filter(String.class::isInstance).map(String.class::cast).filter(availableProviders::contains)
+                    // validProviderIds.contains((String) value)
+                    .filter(String.class::isInstance).map(String.class::cast).filter(validProviderIds::contains)
                     .findFirst();
         }
 
@@ -101,8 +110,6 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
                 // value =~ /attrValue/
                 .filter(String.class::isInstance).map(String.class::cast)
-                .filter(Predicates.containsPattern(attrValue)::apply)
-                // return if any match
-                .findAny().isPresent();
+                .anyMatch(Predicates.containsPattern(attrValue)::apply);
     }
 }
