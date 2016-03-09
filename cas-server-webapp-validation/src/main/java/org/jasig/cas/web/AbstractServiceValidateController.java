@@ -384,7 +384,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     /**
-     * Return the failureView
+     * Return the failureView.
      * @return the failureView
      */
     public String getFailureView() {
