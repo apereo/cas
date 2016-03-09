@@ -16,11 +16,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
-import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * The {@link ShibbolethAttributeResolverConfiguration}.
