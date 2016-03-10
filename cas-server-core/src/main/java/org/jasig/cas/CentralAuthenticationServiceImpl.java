@@ -243,9 +243,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         verifyRegisteredServiceProperties(registeredService, service);
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
+        
+        if (sanitizedCredentials.isEmpty() && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso() 
+                && ticketGrantingTicket.getCountOfUses() > 0) {
+            logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
+            throw new UnauthorizedSsoServiceException();
+        }
 
         Authentication currentAuthentication = null;
-        if (sanitizedCredentials.size() > 0) {
+        if (!sanitizedCredentials.isEmpty()) {
             currentAuthentication = this.authenticationManager.authenticate(
                     sanitizedCredentials.toArray(new Credential[] {}));
             final Authentication original = ticketGrantingTicket.getAuthentication();
@@ -255,12 +261,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
             ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
         }
-
-        if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
-            logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
-            throw new UnauthorizedSsoServiceException();
-        }
-
+        
         final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
             logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
