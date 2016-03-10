@@ -62,6 +62,10 @@
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
         </AsyncLogger>
+        <AsyncLogger name="com.ryantenney.metrics" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
         <AsyncLogger name="net.jradius" level="warn" additivity="false">
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
