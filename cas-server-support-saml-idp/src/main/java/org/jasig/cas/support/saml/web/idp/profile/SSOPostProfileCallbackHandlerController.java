@@ -69,7 +69,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
             + " and is not valid within the time constraints of the authentication event");
         }
         final AssertionConsumerService acs =
-                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, this.servicesManager, this.samlRegisteredServiceCachingMetadataResolver);
+                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, this.servicesManager, 
+                        this.samlRegisteredServiceCachingMetadataResolver);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 

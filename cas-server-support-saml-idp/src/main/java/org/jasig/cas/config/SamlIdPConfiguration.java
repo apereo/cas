@@ -1,6 +1,5 @@
 package org.jasig.cas.config;
 
-import org.apache.commons.io.FileUtils;
 import org.jasig.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
