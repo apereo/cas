@@ -357,140 +357,151 @@
 <a class="jxr_linenumber" name="L349" href="#L349">349</a>         assertNotNull(serviceTicket);
 <a class="jxr_linenumber" name="L350" href="#L350">350</a>     }
 <a class="jxr_linenumber" name="L351" href="#L351">351</a> 
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>     @Test(expected= UnauthorizedSsoServiceException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>     @Test
 <a class="jxr_linenumber" name="L353" href="#L353">353</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGrantServiceTicketWithNoCredsAndSsoFalse() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 <a class="jxr_linenumber" name="L356" href="#L356">356</a> 
 <a class="jxr_linenumber" name="L357" href="#L357">357</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"TestSsoFalse"</span>);
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>         assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, <strong class="jxr_keyword">null</strong>));
 <a class="jxr_linenumber" name="L359" href="#L359">359</a>     }
 <a class="jxr_linenumber" name="L360" href="#L360">360</a> 
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>     @Test
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketNoAttributesReturned() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService();
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>                 service);
-<a class="jxr_linenumber" name="L368" href="#L368">368</a> 
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>                 service);
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>         assertEquals(0, auth.getPrincipal().getAttributes().size());
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>     }
-<a class="jxr_linenumber" name="L374" href="#L374">374</a> 
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>     @Test
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketReturnAllAttributes() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"eduPersonTest"</span>);
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>     @Test(expected=UnauthorizedSsoServiceException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyGrantServiceTicketWithNoCredsAndSsoFalseAndTgtUsed() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>         
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"eduPersonTest"</span>);
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service);
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"TestSsoFalse"</span>);
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>     }
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>     
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>     @Test
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketNoAttributesReturned() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService();
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>                 service);
+<a class="jxr_linenumber" name="L379" href="#L379">379</a> 
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
 <a class="jxr_linenumber" name="L381" href="#L381">381</a>                 service);
-<a class="jxr_linenumber" name="L382" href="#L382">382</a> 
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>                 service);
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>         assertEquals(3, auth.getPrincipal().getAttributes().size());
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>     }
-<a class="jxr_linenumber" name="L388" href="#L388">388</a> 
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>     @Test
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketReturnOnlyAllowedAttribute() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"eduPersonTestInvalid"</span>);
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         assertEquals(0, auth.getPrincipal().getAttributes().size());
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>     }
+<a class="jxr_linenumber" name="L385" href="#L385">385</a> 
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>     @Test
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketReturnAllAttributes() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"eduPersonTest"</span>);
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>                 service);
+<a class="jxr_linenumber" name="L393" href="#L393">393</a> 
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
 <a class="jxr_linenumber" name="L395" href="#L395">395</a>                 service);
-<a class="jxr_linenumber" name="L396" href="#L396">396</a> 
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>                 service);
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes = auth.getPrincipal().getAttributes();
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>         assertEquals(1, attributes.size());
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>         assertEquals(<span class="jxr_string">"adopters"</span>, attributes.get(<span class="jxr_string">"groupMembership"</span>));
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>     }
-<a class="jxr_linenumber" name="L404" href="#L404">404</a> 
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>     @Test
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketAnonymous() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"testAnonymous"</span>);
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>                 service);
-<a class="jxr_linenumber" name="L412" href="#L412">412</a> 
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>                 service);
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>         assertNotEquals(cred.getUsername(), auth.getPrincipal().getId());
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>     }
-<a class="jxr_linenumber" name="L418" href="#L418">418</a> 
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>     @Test
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketWithInvalidUsernameAttribute() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>         assertEquals(3, auth.getPrincipal().getAttributes().size());
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>     }
+<a class="jxr_linenumber" name="L399" href="#L399">399</a> 
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>     @Test
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketReturnOnlyAllowedAttribute() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"eduPersonTestInvalid"</span>);
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>                 service);
+<a class="jxr_linenumber" name="L407" href="#L407">407</a> 
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>                 service);
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes = auth.getPrincipal().getAttributes();
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>         assertEquals(1, attributes.size());
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>         assertEquals(<span class="jxr_string">"adopters"</span>, attributes.get(<span class="jxr_string">"groupMembership"</span>));
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>     }
+<a class="jxr_linenumber" name="L415" href="#L415">415</a> 
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>     @Test
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketAnonymous() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>         <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"testAnonymous"</span>);
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>                 service);
 <a class="jxr_linenumber" name="L423" href="#L423">423</a> 
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"eduPersonTestInvalid"</span>);
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc);
-<a class="jxr_linenumber" name="L426" href="#L426">426</a> 
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>                 service);
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>         assertNotEquals(cred.getUsername(), auth.getPrincipal().getId());
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>     }
 <a class="jxr_linenumber" name="L429" href="#L429">429</a> 
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="L431" href="#L431">431</a> <em class="jxr_comment">         * The attribute specified for this service does not resolve.</em>
-<a class="jxr_linenumber" name="L432" href="#L432">432</a> <em class="jxr_comment">         * Therefore, we expect the default to be returned.</em>
-<a class="jxr_linenumber" name="L433" href="#L433">433</a> <em class="jxr_comment">         */</em>
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>     }
-<a class="jxr_linenumber" name="L436" href="#L436">436</a> 
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L438" href="#L438">438</a> <em class="jxr_javadoccomment">     * This test simulates :</em>
-<a class="jxr_linenumber" name="L439" href="#L439">439</a> <em class="jxr_javadoccomment">     * - a first authentication for a default service</em>
-<a class="jxr_linenumber" name="L440" href="#L440">440</a> <em class="jxr_javadoccomment">     * - a second authentication with the renew parameter and the same service (and same credentials)</em>
-<a class="jxr_linenumber" name="L441" href="#L441">441</a> <em class="jxr_javadoccomment">     * - a validation of the second ticket.</em>
-<a class="jxr_linenumber" name="L442" href="#L442">442</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L443" href="#L443">443</a> <em class="jxr_javadoccomment">     * When supplemental authentications were returned with the chained authentications, the validation specification</em>
-<a class="jxr_linenumber" name="L444" href="#L444">444</a> <em class="jxr_javadoccomment">     * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the</em>
-<a class="jxr_linenumber" name="L445" href="#L445">445</a> <em class="jxr_javadoccomment">     * chained authentications. Both concepts are orthogonal.</em>
-<a class="jxr_linenumber" name="L446" href="#L446">446</a> <em class="jxr_javadoccomment">     *  </em>
-<a class="jxr_linenumber" name="L447" href="#L447">447</a> <em class="jxr_javadoccomment">     * @throws org.jasig.cas.ticket.TicketException</em>
-<a class="jxr_linenumber" name="L448" href="#L448">448</a> <em class="jxr_javadoccomment">     * @throws AuthenticationException</em>
-<a class="jxr_linenumber" name="L449" href="#L449">449</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>     @Test
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> authenticateTwiceWithRenew() <strong class="jxr_keyword">throws</strong> TicketException, AuthenticationException {
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>         <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = getCentralAuthenticationService();
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"testDefault"</span>);
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtId = cas.createTicketGrantingTicket(goodCredential);
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>         cas.grantServiceTicket(tgtId.getId(), svc);
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>         <em class="jxr_comment">// simulate renew with new good same credentials</em>
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>         <strong class="jxr_keyword">final</strong> ServiceTicket st2Id = cas.grantServiceTicket(tgtId.getId(), svc, goodCredential);
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = cas.validateServiceTicket(st2Id.getId(), svc);
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>         <strong class="jxr_keyword">final</strong> ValidationSpecification validationSpecification = <strong class="jxr_keyword">new</strong> Cas20WithoutProxyingValidationSpecification();
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>         assertTrue(validationSpecification.isSatisfiedBy(assertion));
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>     }
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>     
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L465" href="#L465">465</a> <em class="jxr_javadoccomment">     * This test checks that the TGT destruction happens properly for a remote registry.</em>
-<a class="jxr_linenumber" name="L466" href="#L466">466</a> <em class="jxr_javadoccomment">     * It previously failed when the deletion happens before the ticket was marked expired because an update was necessary for that.</em>
-<a class="jxr_linenumber" name="L467" href="#L467">467</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L468" href="#L468">468</a> <em class="jxr_javadoccomment">     * @throws AuthenticationException</em>
-<a class="jxr_linenumber" name="L469" href="#L469">469</a> <em class="jxr_javadoccomment">     * @throws org.jasig.cas.ticket.TicketException</em>
-<a class="jxr_linenumber" name="L470" href="#L470">470</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>     @Test
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDestroyRemoteRegistry() <strong class="jxr_keyword">throws</strong> TicketException, AuthenticationException {
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/MockOnlyOneTicketRegistry.html">MockOnlyOneTicketRegistry</a> registry = <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/MockOnlyOneTicketRegistry.html">MockOnlyOneTicketRegistry</a>();
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicketImpl tgt = <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(<span class="jxr_string">"TGT-1"</span>, mock(Authentication.<strong class="jxr_keyword">class</strong>),
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>                 mock(ExpirationPolicy.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/MockExpireUpdateTicketLogoutManager.html">MockExpireUpdateTicketLogoutManager</a> logoutManager = <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/MockExpireUpdateTicketLogoutManager.html">MockExpireUpdateTicketLogoutManager</a>(registry);
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>         <em class="jxr_comment">// consider authentication has happened and the TGT is in the registry</em>
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>         registry.addTicket(tgt);
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>         <em class="jxr_comment">// create a new CASimpl</em>
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>         <strong class="jxr_keyword">final</strong> CentralAuthenticationServiceImpl cas = <strong class="jxr_keyword">new</strong> CentralAuthenticationServiceImpl(registry,  <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>,
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>                 <strong class="jxr_keyword">null</strong>, logoutManager);
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>         <em class="jxr_comment">// destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry</em>
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>         cas.destroyTicketGrantingTicket(tgt.getId());
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>     }
-<a class="jxr_linenumber" name="L485" href="#L485">485</a> }
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>     @Test
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidateServiceTicketWithInvalidUsernameAttribute() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+<a class="jxr_linenumber" name="L434" href="#L434">434</a> 
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"eduPersonTestInvalid"</span>);
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc);
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> 
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), svc);
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>         <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getPrimaryAuthentication();
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> 
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>         <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L442" href="#L442">442</a> <em class="jxr_comment">         * The attribute specified for this service does not resolve.</em>
+<a class="jxr_linenumber" name="L443" href="#L443">443</a> <em class="jxr_comment">         * Therefore, we expect the default to be returned.</em>
+<a class="jxr_linenumber" name="L444" href="#L444">444</a> <em class="jxr_comment">         */</em>
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     }
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> 
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L449" href="#L449">449</a> <em class="jxr_javadoccomment">     * This test simulates :</em>
+<a class="jxr_linenumber" name="L450" href="#L450">450</a> <em class="jxr_javadoccomment">     * - a first authentication for a default service</em>
+<a class="jxr_linenumber" name="L451" href="#L451">451</a> <em class="jxr_javadoccomment">     * - a second authentication with the renew parameter and the same service (and same credentials)</em>
+<a class="jxr_linenumber" name="L452" href="#L452">452</a> <em class="jxr_javadoccomment">     * - a validation of the second ticket.</em>
+<a class="jxr_linenumber" name="L453" href="#L453">453</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L454" href="#L454">454</a> <em class="jxr_javadoccomment">     * When supplemental authentications were returned with the chained authentications, the validation specification</em>
+<a class="jxr_linenumber" name="L455" href="#L455">455</a> <em class="jxr_javadoccomment">     * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the</em>
+<a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">     * chained authentications. Both concepts are orthogonal.</em>
+<a class="jxr_linenumber" name="L457" href="#L457">457</a> <em class="jxr_javadoccomment">     *  </em>
+<a class="jxr_linenumber" name="L458" href="#L458">458</a> <em class="jxr_javadoccomment">     * @throws org.jasig.cas.ticket.TicketException</em>
+<a class="jxr_linenumber" name="L459" href="#L459">459</a> <em class="jxr_javadoccomment">     * @throws AuthenticationException</em>
+<a class="jxr_linenumber" name="L460" href="#L460">460</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>     @Test
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> authenticateTwiceWithRenew() <strong class="jxr_keyword">throws</strong> TicketException, AuthenticationException {
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>         <strong class="jxr_keyword">final</strong> CentralAuthenticationService cas = getCentralAuthenticationService();
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(<span class="jxr_string">"testDefault"</span>);
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>         <strong class="jxr_keyword">final</strong> UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtId = cas.createTicketGrantingTicket(goodCredential);
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         cas.grantServiceTicket(tgtId.getId(), svc);
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>         <em class="jxr_comment">// simulate renew with new good same credentials</em>
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>         <strong class="jxr_keyword">final</strong> ServiceTicket st2Id = cas.grantServiceTicket(tgtId.getId(), svc, goodCredential);
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = cas.validateServiceTicket(st2Id.getId(), svc);
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>         <strong class="jxr_keyword">final</strong> ValidationSpecification validationSpecification = <strong class="jxr_keyword">new</strong> Cas20WithoutProxyingValidationSpecification();
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>         assertTrue(validationSpecification.isSatisfiedBy(assertion));
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>     }
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>     
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L476" href="#L476">476</a> <em class="jxr_javadoccomment">     * This test checks that the TGT destruction happens properly for a remote registry.</em>
+<a class="jxr_linenumber" name="L477" href="#L477">477</a> <em class="jxr_javadoccomment">     * It previously failed when the deletion happens before the ticket was marked expired because an update was necessary for that.</em>
+<a class="jxr_linenumber" name="L478" href="#L478">478</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L479" href="#L479">479</a> <em class="jxr_javadoccomment">     * @throws AuthenticationException</em>
+<a class="jxr_linenumber" name="L480" href="#L480">480</a> <em class="jxr_javadoccomment">     * @throws org.jasig.cas.ticket.TicketException</em>
+<a class="jxr_linenumber" name="L481" href="#L481">481</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>     @Test
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyDestroyRemoteRegistry() <strong class="jxr_keyword">throws</strong> TicketException, AuthenticationException {
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/MockOnlyOneTicketRegistry.html">MockOnlyOneTicketRegistry</a> registry = <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/MockOnlyOneTicketRegistry.html">MockOnlyOneTicketRegistry</a>();
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicketImpl tgt = <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(<span class="jxr_string">"TGT-1"</span>, mock(Authentication.<strong class="jxr_keyword">class</strong>),
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>                 mock(ExpirationPolicy.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/MockExpireUpdateTicketLogoutManager.html">MockExpireUpdateTicketLogoutManager</a> logoutManager = <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/MockExpireUpdateTicketLogoutManager.html">MockExpireUpdateTicketLogoutManager</a>(registry);
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>         <em class="jxr_comment">// consider authentication has happened and the TGT is in the registry</em>
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>         registry.addTicket(tgt);
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>         <em class="jxr_comment">// create a new CASimpl</em>
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>         <strong class="jxr_keyword">final</strong> CentralAuthenticationServiceImpl cas = <strong class="jxr_keyword">new</strong> CentralAuthenticationServiceImpl(registry,  <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>,
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>                 <strong class="jxr_keyword">null</strong>, logoutManager);
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>         <em class="jxr_comment">// destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry</em>
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>         cas.destroyTicketGrantingTicket(tgt.getId());
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>     }
+<a class="jxr_linenumber" name="L496" href="#L496">496</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2016 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>
