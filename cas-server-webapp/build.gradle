@@ -44,7 +44,6 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
-    compile project(':cas-server-support-saml-idp')
 
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j

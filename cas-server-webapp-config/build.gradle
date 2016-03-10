@@ -3,11 +3,11 @@ dependencies {
     compile libraries.spring
     compile libraries.springboot
     compile libraries.springcloud
-    compile libraries.hibernate
     compile libraries.commons
     compile libraries.groovy
     compile libraries.cassecurityfilter
     compile project(':cas-server-core-web')
+    compile libraries.hibernate
     compile project(':cas-server-webapp-actions')
     provided project(':cas-server-webapp-themes')
     provided project(':cas-server-core')

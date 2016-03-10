@@ -36,8 +36,8 @@
     <hr>
 
     <ul>
-        <li><a href="/cas/settings/cas/default">Configuration Server: Default Profile</a></li>
-        <li><a href="/cas/settings/cas/native">Configuration Server: Native Profile</a></li>
+        <li><a href="/cas/configserver/cas/default">Configuration Server: Default Profile</a></li>
+        <li><a href="/cas/configserver/cas/native">Configuration Server: Native Profile</a></li>
     </ul>
     
 </div>
