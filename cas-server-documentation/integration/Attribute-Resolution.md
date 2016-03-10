@@ -4,13 +4,18 @@ title: CAS - Attribute Resolution
 ---
 
 # Attribute Resolution
-Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory‎). The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
+Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory‎). 
+The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. 
+This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
 
-<div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, attributes are cached to the length of the SSO session. This means that while the underlying component provided by Person Directory may have a different caching model, attributes by default and from a CAS perspective will not be refreshed and retrieved again on subsequent requests as long as the SSO session exists.</p></div>
+<div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, attributes are cached to the length of the SSO session. 
+This means that while the underlying component provided by Person Directory may have a different caching model, attributes by default and from 
+a CAS perspective will not be refreshed and retrieved again on subsequent requests as long as the SSO session exists.</p></div>
 
 
 ## Components
-A Person Directory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 
+A Person Directory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched 
+for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 
 
 ### Person Directory
 
@@ -132,10 +137,20 @@ Note that this snippet below strictly uses the Person Directory components for r
 #### Shibboleth
 Note that this module is *EXPERIMENTAL*.
 
-Make sure to include the `cas-server-support-shibboleth-attributes` as a dependency. You'll also want to make sure that
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-shibboleth-attributes</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+You'll also want to make sure that
 the Shibboleth Maven repository is included [https://build.shibboleth.net/nexus/content/repositories/releases].
 
-The module provides a bean called `shibbolethPersonAttributeDao` that used the property `shibboleth.attributeResolver.resources`
+The module provides a `shibbolethPersonAttributeDao` that uses the property `shibboleth.attributeResolver.resources`
 for configuration.
 
 1. Alias bean

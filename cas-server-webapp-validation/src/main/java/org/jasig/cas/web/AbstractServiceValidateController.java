@@ -1,5 +1,13 @@
 package org.jasig.cas.web;
 
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.CentralAuthenticationService;
@@ -32,13 +40,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -395,12 +396,27 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     /**
+     * Return the failureView.
+     * @return the failureView
+     */
+    public String getFailureView() {
+        return this.failureView;
+    }
+
+    /**
      * @param successView The successView to set.
      */
     public void setSuccessView(final String successView) {
         this.successView = successView;
     }
 
+    /**
+     * Return the successView.
+     * @return the successView
+     */
+    public String getSuccessView() {
+        return this.successView;
+    }
     /**
      * @param proxyHandler The proxyHandler to set.
      */

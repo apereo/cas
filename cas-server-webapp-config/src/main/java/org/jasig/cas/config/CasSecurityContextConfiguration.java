@@ -28,7 +28,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     /**
      * The Regex pattern.
      */
-    @Value("${cas.securityContext.adminpages.ip:127\\.0\\.\\.1}")
+    @Value("${cas.securityContext.adminpages.ip:127\\.0\\.0\\.1}")
     private String regexPattern;
 
     /**
