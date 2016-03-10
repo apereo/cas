@@ -6,7 +6,6 @@ import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Initialize the CAS logging framework by updating the location of the log configuration file.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -48,7 +48,7 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
 
 
     @Override
-    public void initializeApplicationContext(final ConfigurableApplicationContext configurableApplicationContext) {
+    public void initializeRootApplicationContext() {
         if (this.logConfigurationFile == null || !this.logConfigurationFile.exists()) {
             throw new RuntimeException("Log4j configuration file cannot be located");
         }
