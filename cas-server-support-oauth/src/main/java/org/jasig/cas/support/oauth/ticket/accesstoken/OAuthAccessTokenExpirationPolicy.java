@@ -23,18 +23,19 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     private static final long serialVersionUID = -8383186650682727360L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthAccessTokenExpirationPolicy.class);
-    /** Maximum time this ticket is valid.  */
-    @Value("#{${oauth.access.token.maxTimeToLiveInSeconds:28800}*1000}")
+
+    /** Maximum time this token is valid.  */
+    @Value("#{${oauth.access.token.maxTimeToLiveInSeconds:28800}*1000L}")
     private long maxTimeToLiveInMilliSeconds;
 
     /** Time to kill in milliseconds. */
-    @Value("#{${oauth.access.token.timeToKillInSeconds:7200}*1000}")
+    @Value("#{${oauth.access.token.timeToKillInSeconds:7200}*1000L}")
     private long timeToKillInMilliSeconds;
 
     private OAuthAccessTokenExpirationPolicy() {}
 
     /**
-     * Instantiates a new Ticket granting ticket expiration policy.
+     * Instantiates a new OAuth access token expiration policy.
      *
      * @param maxTimeToLive the max time to live
      * @param timeToKill the time to kill
@@ -50,14 +51,14 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         final ZonedDateTime currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime creationTime = ticketState.getCreationTime();
 
-        // Ticket has been used, check maxTimeToLive (hard window)
+        // token has been used, check maxTimeToLive (hard window)
         ZonedDateTime expirationTime = creationTime.plus(maxTimeToLiveInMilliSeconds, ChronoUnit.MILLIS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
             return true;
         }
 
-        // Ticket is within hard window, check timeToKill (sliding window)
+        // token is within hard window, check timeToKill (sliding window)
         expirationTime = creationTime.plus(timeToKillInMilliSeconds, ChronoUnit.MILLIS);
         if (ticketState.getLastTimeUsed().isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInMilliseconds");

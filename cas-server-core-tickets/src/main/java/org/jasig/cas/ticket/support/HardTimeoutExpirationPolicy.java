@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.1.2
  */
 @Component("hardTimeoutExpirationPolicy")
-public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 6728077010285422290L;
