@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -65,6 +66,9 @@ public class CasWebflowContextConfiguration {
     @Value("${webflow.redirect.same.state:false}")
     private boolean redirectSameState;
 
+    @Autowired
+    @Qualifier("thymeleafViewResolver")
+    private ViewResolver thymeleafViewResolver;
     
     @Autowired
     @Qualifier("webflowCipherExecutor")
@@ -113,20 +117,7 @@ public class CasWebflowContextConfiguration {
         resolver.setExposeContextBeansAsAttributes(true);
         return resolver;
     }
-
-    /**
-     * View resolver resource bundle view resolver.
-     *
-     * @return the resource bundle view resolver
-     */
-    @Bean(name = "viewResolver")
-    public ResourceBundleViewResolver viewResolver() {
-        final ResourceBundleViewResolver resolver = new ResourceBundleViewResolver();
-        resolver.setOrder(0);
-        resolver.setBasename("cas_views");
-        return resolver;
-    }
-
+    
     /**
      * View factory creator mvc view factory creator.
      *
@@ -135,7 +126,7 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "viewFactoryCreator")
     public MvcViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
-        resolver.setViewResolvers(ImmutableList.of(viewResolver(), internalViewResolver()));
+        resolver.setViewResolvers(ImmutableList.of(thymeleafViewResolver, internalViewResolver()));
         return resolver;
     }
 

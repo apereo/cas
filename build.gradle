@@ -380,6 +380,8 @@ ext.libraries = [
         ],
         thmyeleaf        : [
                 dependencies.create("org.thymeleaf:thymeleaf-spring4:$thymeleafVersion") {
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.javassist', module: 'javassist')
                     force = true
                 }
         ],
