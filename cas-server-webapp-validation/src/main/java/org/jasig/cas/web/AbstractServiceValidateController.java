@@ -439,12 +439,27 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     /**
+     * Return the failureView.
+     * @return the failureView
+     */
+    public String getFailureView() {
+        return this.failureView;
+    }
+
+    /**
      * @param successView The successView to set.
      */
     public void setSuccessView(final String successView) {
         this.successView = successView;
     }
 
+    /**
+     * Return the successView.
+     * @return the successView
+     */
+    public String getSuccessView() {
+        return this.successView;
+    }
     /**
      * @param proxyHandler The proxyHandler to set.
      */

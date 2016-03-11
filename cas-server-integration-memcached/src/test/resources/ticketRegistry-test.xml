@@ -9,8 +9,6 @@
 
   <bean id="testCase1" class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry">
     <constructor-arg index="0" value="localhost:11211" />
-    <constructor-arg index="1" value="36000" />
-    <constructor-arg index="2" value="2" />
   </bean>
 
 
@@ -27,8 +25,6 @@
         </property>
       </bean>
     </constructor-arg>
-    <constructor-arg index="1" value="36000" />
-    <constructor-arg index="2" value="2" />
   </bean>
 
   <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
