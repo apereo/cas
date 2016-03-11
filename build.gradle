@@ -378,6 +378,11 @@ ext.libraries = [
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
         ],
+        thmyeleaf        : [
+                dependencies.create("org.thymeleaf:thymeleaf-spring4:$thymeleafVersion") {
+                    force = true
+                }
+        ],
         jackson          : [
                 "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {

@@ -52,20 +52,20 @@ public class CasWebflowContextConfiguration {
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
 
     private static final int VIEW_RESOLVER_ORDER = 10000;
-
-    /**
-     * The Application context.
-     */
+    
     @Autowired
     private ApplicationContext applicationContext;
-
-    /**
-     * The Resolver path prefix.
-     */
+    
     @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/")
     private String resolverPathPrefix;
+    
+    @Value("${webflow.always.pause.redirect:false}")
+    private boolean alwaysPauseOnRedirect;
 
+    @Value("${webflow.redirect.same.state:false}")
+    private boolean redirectSameState;
 
+    
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
@@ -301,8 +301,8 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "logoutFlowExecutor")
     public FlowExecutor logoutFlowExecutor() {
         final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
-        builder.setAlwaysRedirectOnPause(false);
-        builder.setRedirectInSameState(false);
+        builder.setAlwaysRedirectOnPause(this.alwaysPauseOnRedirect);
+        builder.setRedirectInSameState(this.redirectSameState);
         return builder.build();
     }
 
