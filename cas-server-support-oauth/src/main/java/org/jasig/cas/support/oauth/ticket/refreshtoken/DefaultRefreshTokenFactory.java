@@ -1,4 +1,4 @@
-package org.jasig.cas.support.oauth.ticket.accesstoken;
+package org.jasig.cas.support.oauth.ticket.refreshtoken;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 
 /**
- * Default OAuth access token factory.
+ * Default OAuth refresh token factory.
  *
  * @author Jerome Leleu
  * @since 4.3.0
  */
-@Component("defaultAccessTokenFactory")
-public class DefaultAccessTokenFactory implements AccessTokenFactory {
+@Component("defaultRefreshTokenFactory")
+public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -30,19 +30,18 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     @NotNull
     @Autowired(required = false)
     @Qualifier("refreshTokenIdGenerator")
-    protected UniqueTicketIdGenerator accessTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
+    protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-
-    /** ExpirationPolicy for access tokens. */
+    /** ExpirationPolicy for refresh tokens. */
     @NotNull
     @Autowired
-    @Qualifier("oAuthAcccessTokenExpirationPolicy")
+    @Qualifier("oAuthRefreshTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
-    public AccessToken create(final Service service, final Authentication authentication) {
-        final String codeId = accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-        return new AccessTokenImpl(codeId, service, authentication, expirationPolicy);
+    public RefreshToken create(final Service service, final Authentication authentication) {
+        final String codeId = refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
+        return new RefreshTokenImpl(codeId, service, authentication, expirationPolicy);
     }
 
     @Override
@@ -50,12 +49,12 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
         return (T) this;
     }
 
-    public UniqueTicketIdGenerator getAccessTokenIdGenerator() {
-        return accessTokenIdGenerator;
+    public UniqueTicketIdGenerator getRefreshTokenIdGenerator() {
+        return refreshTokenIdGenerator;
     }
 
-    public void setAccessTokenIdGenerator(final UniqueTicketIdGenerator accessTokenIdGenerator) {
-        this.accessTokenIdGenerator = accessTokenIdGenerator;
+    public void setRefreshTokenIdGenerator(final UniqueTicketIdGenerator refreshTokenIdGenerator) {
+        this.refreshTokenIdGenerator = refreshTokenIdGenerator;
     }
 
     public ExpirationPolicy getExpirationPolicy() {
