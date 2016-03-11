@@ -1,0 +1,218 @@
+body {
+    font: 16px '나눔고딕',NanumGothic,'돋움',Dotum,AppleGothic,sans-serif;
+}
+/* login */
+#wrap { width: 90%; margin:0 auto;}
+.group_main { margin: 80px auto; }
+.fl img { display: block; margin-left: auto; margin-right: auto;
+    margin-bottom: 25px;}
+.seciton_log .info_area div {
+    margin: 10px auto;
+}
+.seciton_log .info_area label {
+    display: inline-block;
+    width: 28%;
+    text-align: center;
+}
+.seciton_log .info_area input {
+    width: 70%;
+    border: 1px solid #e1e1e1;
+    line-height: 25px;
+    height: 30px;
+}
+
+.btn_red {
+    font-size: 16px;
+    width: 98%;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #ff2c01;
+    color: white;
+    display: block;
+}
+
+.input_login {
+    margin: 0px;
+}
+
+.errors {
+    color: #ff2c01;
+    padding: 0px 11px;
+    font-weight: bold;
+}
+
+@media (min-width: 768px) {
+    body {
+        font: 12px '나눔고딕',NanumGothic,'돋움',Dotum,AppleGothic,sans-serif;
+    }
+
+    #wrap {
+        width: 755px;
+        margin: 0 auto;
+    }
+
+    .seciton_log {
+        position: relative;
+        padding: 140px 0 229px
+    }
+
+    .seciton_log .group_main {
+        height: 146px;
+        padding-top: 41px;
+        border: 2px solid #d9d9d9
+    }
+
+    .seciton_log .group_main .fl {
+        float: left;
+        width: 325px;
+        height: 94px;
+        border-right: 1px solid #e0e0e0;
+        padding: 10px 0;
+    }
+
+    .seciton_log .group_main .fl h1 {
+        padding-top: 5px;
+        text-align: center
+    }
+
+    .seciton_log .rgt {
+        float: left;
+        padding-left: 31px
+    }
+
+    .seciton_log .rgt .btn_login {
+        margin: 1px 0 0 5px
+    }
+
+    .seciton_log .info_area {
+        clear: both
+    }
+
+    .input_login {
+        float: left;
+    }
+
+    .input_login_info {
+        float: left;
+    }
+
+    .btn_red {
+        width: 90px;
+        float: left;
+        font-size: 14px;
+        margin: 22px 12px;
+        padding: 23px 18px;
+        background-color: #ff2c01;
+        color: white;
+    }
+
+    .seciton_log .info_area dl {
+        float: left;
+        width: 214px;
+        zoom: 1;
+        padding-top: 1px
+    }
+
+    .seciton_log .info_area dt {
+        clear: left;
+        float: left;
+        width: 74px;
+        height: 8px
+    }
+
+    .seciton_log .info_area dt label {
+        overflow: hidden;
+        display: block;
+        margin: 9px 0 9px 0;
+    }
+
+    .seciton_log .info_area dt label.txt_id {
+        width: 10px
+    }
+
+    .seciton_log .info_area dt label.txt_pw {
+        width: 56px;
+        background-position: -20px 0
+    }
+
+    .seciton_log .info_area dd {
+        float: left;
+        margin-bottom: 4px
+    }
+
+    .seciton_log .info_area dd .inpt_type {
+        width: 128px;
+        padding: 5px 5px;
+        border: 1px solid #e1e1e1;
+        line-height: 14px
+    }
+
+    .seciton_log .more_area {
+        clear: both;
+        margin: 6px 0 0 75px
+    }
+
+    .seciton_log .more_area .txt_remb, .seciton_log .more_area .txt_forget, .more_area .txt_helpdesk {
+        overflow: hidden;
+        display: inline-block;
+        background: url(http://staticdev.nhnent.com/static/site/whatsup/resources_ent/img/sp_login.png?ver=20150118) no-repeat;
+        line-height: 999px;
+        vertical-align: middle
+    }
+
+    .seciton_log .more_area .txt_remb {
+        display: inline-block;
+        width: 90px;
+        height: 7px;
+        margin-left: 2px;
+        background-position: 0 -20px
+    }
+
+    .seciton_log .more_area .area_help {
+        margin-top: 6px
+    }
+
+    .seciton_log .more_area .area_help .txt_forget {
+        width: 121px;
+        height: 11px;
+        background-position: 0 -38px
+    }
+
+    .seciton_log .more_area .area_help .txt_helpdesk {
+        width: 60px;
+        height: 11px;
+        margin-left: 8px;
+        background-position: 0 -58px
+    }
+
+    .seciton_log .more_area .chck_type {
+        vertical-align: middle
+    }
+
+    .seciton_log .opt_area {
+        clear: both;
+        margin: 10px 6px 0 0;
+        text-align: right
+    }
+
+    .seciton_log .opt_area .txt_lan {
+        overflow: hidden;
+        display: inline-block;
+        width: 50px;
+        height: 7px;
+        margin: 2px 7px 0 0;
+        background: url(http://staticdev.nhnent.com/static/site/whatsup/resources_ent/img/sp_login.png?ver=20150118) -90px 0 no-repeat;
+        line-height: 999px;
+        vertical-align: middle
+    }
+
+    .seciton_log .opt_area select {
+        height: 18px;
+        vertical-align: middle
+    }
+
+    .errors {
+        color: #ff2c01;
+        font-weight: bold;
+    }
+}

@@ -428,7 +428,7 @@
                             <goal>test-jar</goal>
                         </goals>
                         <configuration>
-                            <classifier>client</classifier>
+                            <!--<classifier>client</classifier>-->
                             <excludes>
                                 <exclude>**/persistence.xml</exclude>
                             </excludes>

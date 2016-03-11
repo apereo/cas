@@ -43,7 +43,8 @@
           c:secretKeySigning="${tgc.signing.key}"/>
 
     <bean id="cookieValueManager" class="org.jasig.cas.web.support.DefaultCasCookieValueManager"
-          c:cipherExecutor-ref="cookieCipherExecutor"/>
+          c:cipherExecutor-ref="cookieCipherExecutor"
+          p:skipCheckRemoteAddress="true"/>
 
     <!-- As an alternative, the cookie value verification and encryption can be turned off via
     the following configuration

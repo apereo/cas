@@ -22,30 +22,52 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <description>
         Configuration for the default TicketRegistry which stores the tickets in-memory and cleans them out as specified
         intervals.
     </description>
 
     <!-- Ticket Registry -->
-    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry"/>
+    <!--<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry"/>-->
+    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry"
+          c:client-ref="memcachedClient"
+          c:ticketGrantingTicketTimeOut="${tgt.maxTimeToLiveInSeconds}"
+          c:serviceTicketTimeOut="${st.timeToKillInSeconds}" />
+
+    <bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+          p:servers="${memcached.servers}"
+          p:protocol="${memcached.protocol}"
+          p:locatorType="${memcached.locatorType}"
+          p:failureMode="${memcached.failureMode}"
+          p:transcoder-ref="kryoTranscoder">
+        <property name="hashAlg">
+            <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.${memcached.hashAlgorithm}" />
+        </property>
+    </bean>
+
+    <bean id="kryoTranscoder"
+          class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder"
+          init-method="initialize"
+          c:initialBufferSize="8192" />
 
     <!--Quartz -->
     <!-- TICKET REGISTRY CLEANER -->
-    <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-          c:centralAuthenticationService-ref="centralAuthenticationService"
-          c:ticketRegistry-ref="ticketRegistry"/>
+    <!--<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"-->
+          <!--c:centralAuthenticationService-ref="centralAuthenticationService"-->
+          <!--c:ticketRegistry-ref="ticketRegistry"/>-->
 
-    <bean id="jobDetailTicketRegistryCleaner"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-          p:targetObject-ref="ticketRegistryCleaner"
-          p:targetMethod="clean"/>
+    <!--<bean id="jobDetailTicketRegistryCleaner"-->
+          <!--class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"-->
+          <!--p:targetObject-ref="ticketRegistryCleaner"-->
+          <!--p:targetMethod="clean"/>-->
 
-    <bean id="triggerJobDetailTicketRegistryCleaner"
-          class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
-          p:jobDetail-ref="jobDetailTicketRegistryCleaner"
-          p:startDelay="20000"
-          p:repeatInterval="5000000"/>
+    <!--<bean id="triggerJobDetailTicketRegistryCleaner"-->
+          <!--class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"-->
+          <!--p:jobDetail-ref="jobDetailTicketRegistryCleaner"-->
+          <!--p:startDelay="20000"-->
+          <!--p:repeatInterval="5000000"/>-->
 </beans>

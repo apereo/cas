@@ -42,6 +42,8 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
     /** The cipher exec that is responsible for encryption and signing of the cookie. */
     private final CipherExecutor cipherExecutor;
 
+    private boolean skipCheckRemoteAddress;
+
     /**
      * Instantiates a new Cas cookie value manager.
      * Set the default cipher to do absolutely  nothing.
@@ -84,6 +86,10 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
         return this.cipherExecutor.encode(res);
     }
 
+    public void setSkipCheckRemoteAddress(boolean skipCheckRemoteAddress) {
+        this.skipCheckRemoteAddress = skipCheckRemoteAddress;
+    }
+
     @Override
     public String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
         final String cookieValue = this.cipherExecutor.decode(cookie.getValue());
@@ -106,9 +112,11 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
             throw new IllegalStateException("Invalid cookie. Required fields are empty");
         }
 
-        if (!remoteAddr.equals(request.getRemoteAddr())) {
-            throw new IllegalStateException("Invalid cookie. Required remote address does not match "
-                    + request.getRemoteAddr());
+        if (!this.skipCheckRemoteAddress) {
+            if (!remoteAddr.equals(request.getRemoteAddr())) {
+                throw new IllegalStateException("Invalid cookie. Required remote address does not match "
+                        + request.getRemoteAddr());
+            }
         }
 
         if (!userAgent.equals(request.getHeader("user-agent"))) {

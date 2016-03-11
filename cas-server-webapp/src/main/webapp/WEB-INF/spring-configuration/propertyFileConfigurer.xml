@@ -36,7 +36,8 @@
         can be moved between tiers without modification.
     </description>
 
-    <util:properties id="casProperties" location="${cas.properties.filepath:/WEB-INF/cas.properties}, ${cas.properties.filepath:/WEB-INF/ldap.properties}, ${cas.properties.filepath:/WEB-INF/legacy-sso.properties}"/>
+    <util:properties id="casProperties"
+         location="${cas.properties.filepath:/WEB-INF/cas.properties}, ${cas.properties.filepath:/WEB-INF/ldap.properties}, ${cas.properties.filepath:/WEB-INF/legacy-sso.properties}, ${cas.properties.filepath:/WEB-INF/cache.properties}"/>
 
     <context:property-placeholder properties-ref="casProperties"/>
 

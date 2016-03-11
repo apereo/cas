@@ -19,6 +19,8 @@
 package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
@@ -41,7 +43,7 @@ import java.lang.reflect.Method;
  *
  */
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CookieRetrievingCookieGenerator.class);
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
 
     /** The maximum age the cookie should be remembered for.
@@ -86,13 +88,16 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
         if (!StringUtils.hasText(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
             super.addCookie(response, theCookieValue);
+            LOGGER.debug("add cookie(not remember me): " + theCookieValue);
         } else {
             final Cookie cookie = createCookie(theCookieValue);
             cookie.setMaxAge(this.rememberMeMaxAge);
             if (isCookieSecure()) {
                 cookie.setSecure(true);
             }
+            cookie.setDomain(".nhnent.com");
             response.addCookie(cookie);
+            LOGGER.debug("add cookie: " + theCookieValue);
         }
     }
 
