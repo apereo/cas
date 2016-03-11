@@ -27,7 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -38,7 +37,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -51,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
 
-    @Value("${ticket.registry.cleaner.repeatinterval:5000}")
+    @Value("${ticket.registry.cleaner.repeatinterval:300}")
     private int refreshInterval;
 
     @Value("${ticket.registry.cleaner.startdelay:20}")
@@ -256,7 +254,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
                 scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
-                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+                    this.refreshInterval);
             }
         } catch (final Exception e){
             logger.warn(e.getMessage(), e);
@@ -281,7 +279,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
             logger.info("Beginning ticket cleanup...");
             final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
                 @Override
-                public boolean apply(@Nullable final Ticket ticket) {
+                public boolean apply(final Ticket ticket) {
                     if (ticket.isExpired()) {
                         if (ticket instanceof TicketGrantingTicket) {
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
