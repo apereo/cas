@@ -143,8 +143,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         verifyRegisteredServiceProperties(registeredService, service);
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
-
-        if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
+        
+        if (ticketGrantingTicket.getCountOfUses() > 0 && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
@@ -218,8 +218,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         verifyRegisteredServiceProperties(registeredService, service);
 
-        if (proxyGrantingTicketObject.getAuthentication() == null
-                && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
@@ -386,10 +385,5 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
 
         return ticketGrantingTicket;
-
-
     }
-
-
-
 }
