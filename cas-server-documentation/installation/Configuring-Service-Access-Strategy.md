@@ -196,7 +196,7 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
     },
     "rejectedAttributes" : {
       "@class" : "java.util.HashMap",
-      "role" : [ "java.util.HashSet", [ "deny.+" ] ],
+      "role" : [ "java.util.HashSet", [ "deny.+" ] ]
     }
   }
 }
