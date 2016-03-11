@@ -249,7 +249,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO for proxying.", service.getId());
                 throw new UnauthorizedSsoServiceException();
             } else if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0) {
-                logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO for proxying.", service.getId());
+                logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
                 throw new UnauthorizedSsoServiceException();
             }
         }
