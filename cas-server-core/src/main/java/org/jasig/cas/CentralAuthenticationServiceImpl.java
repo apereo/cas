@@ -143,7 +143,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
 
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
-        RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, currentAuthentication);
+        RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket);
         evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
