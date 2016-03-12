@@ -1,7 +1,3 @@
-<%@ page session="false" contentType="application/xml; charset=UTF-8" %>
-<%@ page import="java.util.*, java.util.Map.Entry" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
     <cas:authenticationSuccess>
         <cas:user>${fn:escapeXml(principal.id)}</cas:user>

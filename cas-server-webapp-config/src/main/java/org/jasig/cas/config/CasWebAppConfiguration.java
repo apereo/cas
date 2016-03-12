@@ -2,7 +2,6 @@ package org.jasig.cas.config;
 
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
@@ -21,9 +18,6 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
-import org.springframework.web.servlet.view.InternalResourceView;
-import org.springframework.web.servlet.view.JstlView;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.XmlViewResolver;
 
 import javax.validation.MessageInterpolator;
@@ -233,7 +227,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setListener(new Log4jServletContextListener());
         return bean;
     }
-        
+
     /**
      * Simple controller handler adapter simple controller handler adapter.
      *

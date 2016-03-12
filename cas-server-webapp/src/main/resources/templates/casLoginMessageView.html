@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/top"/>
+
+<body id="cas">
+<div id="container">
+    <div th:replace="fragments/logo"/>
+
+    <div id="content">
+        <div id="msg" class="warn">
+            <h2 th:text="#{screen.authentication.warning}" />
+            <div th:each="message : ${messages}">
+                <p class="message" th:text="${message.text}" />
+            </div>
+            <div id="big-buttons">
+                <a class="button" th:href="@{/login(execution=${flowExecutionKey},_eventId=proceed)}">
+                    <span th:text="#{screen.button.continue}"/></a>
+            </div>
+        </div>
+    </div>
+    <div th:include="fragments/footer"/>
+</div>
+</body>
+<div th:include="fragments/bottom"/>
+</html>

@@ -148,7 +148,11 @@
         </on-entry>
     </end-state>
     
-    <end-state id="showWarningView" view="casConfirmView"/>
+    <end-state id="showWarningView" view="casConfirmView">
+        <on-entry>
+            <evaluate expression="serviceWarningAction" />
+        </on-entry>
+    </end-state>
 
     <!-- Password policy failure states -->
     <end-state id="abstactPasswordChangeView">

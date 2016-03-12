@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.DefaultMessageDescriptor;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +12,10 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -82,7 +85,9 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (!this.getPasswordEncoder().matches(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+        final List<MessageDescriptor> list = new ArrayList<>();
+        list.add(new DefaultMessageDescriptor("password.expiration.warning", "Hello World People"));
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
     }
 
     /**
