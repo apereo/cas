@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/top"/>
+
+<body id="cas">
+<div id="container">
+    <div th:replace="fragments/logo"/>
+
+    <div id="content">
+        <div id="msg" class="errors">
+            <h2 th:utext="#{screen.badworkstation.heading}"/>
+            <p th:utext="#{screen.badworkstation.message}"/>
+        </div>
+    </div>
+    <div th:include="fragments/footer"/>
+</div>
+</body>
+<div th:include="fragments/bottom"/>
+</html>
+
