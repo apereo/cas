@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<div th:include="fragments/top"/>
+<div th:replace="fragments/top"/>
 
+<body id="cas">
+    <div id="container">
+        <div th:replace="fragments/logo"/>
+
+        <div id="content">
+            <div th:replace="fragments/insecure"/>
+            <div th:replace="fragments/cookies"/>
+            <div th:replace="fragments/serviceui"/>
+            <div th:replace="fragments/loginform" />
+            <div th:replace="fragments/loginsidebar" />
+        </div>
+        <div th:include="fragments/footer"/>
+    </div>
+</body>
 <div th:include="fragments/bottom"/>
-
 </html>
 

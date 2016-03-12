@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -148,7 +149,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      * Url based view resolver url based view resolver.
      *
      * @return the url based view resolver
-     */
+     
     @Bean(name = "urlBasedViewResolver")
     public UrlBasedViewResolver urlBasedViewResolver() {
         final UrlBasedViewResolver bean = new UrlBasedViewResolver();
@@ -158,12 +159,12 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setOrder(URL_VIEW_RESOLVER_ORDER);
         return bean;
     }
-
+     */
     /**
      * Internal view resolver registered service theme based view resolver.
      *
      * @return the registered service theme based view resolver
-     */
+     
     @Bean(name = "internalViewResolver")
     public RegisteredServiceThemeBasedViewResolver internalViewResolver() {
         final RegisteredServiceThemeBasedViewResolver bean = new RegisteredServiceThemeBasedViewResolver(this.servicesManager);
@@ -171,7 +172,8 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setOrder(URL_VIEW_RESOLVER_ORDER + 1);
         return bean;
     }
-
+     */
+    
     /**
      * Locale resolver cookie locale resolver.
      *
@@ -239,7 +241,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean(name="error")
     public View error() {
-        return new JstlView("/WEB-INF/view/jsp/errors.jsp");    
+        return new ModelAndView("error").getView();
     }
     
     /**

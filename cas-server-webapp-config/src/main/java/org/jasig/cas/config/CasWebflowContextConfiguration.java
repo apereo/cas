@@ -106,7 +106,7 @@ public class CasWebflowContextConfiguration {
      * Internal view resolver internal resource view resolver.
      *
      * @return the internal resource view resolver
-     */
+    
     @Bean(name = "internalViewResolver")
     public InternalResourceViewResolver internalViewResolver() {
         final InternalResourceViewResolver resolver = new InternalResourceViewResolver();
@@ -117,6 +117,7 @@ public class CasWebflowContextConfiguration {
         resolver.setExposeContextBeansAsAttributes(true);
         return resolver;
     }
+     */
     
     /**
      * View factory creator mvc view factory creator.
@@ -126,7 +127,7 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "viewFactoryCreator")
     public MvcViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
-        resolver.setViewResolvers(ImmutableList.of(thymeleafViewResolver, internalViewResolver()));
+        resolver.setViewResolvers(ImmutableList.of(thymeleafViewResolver));
         return resolver;
     }
 

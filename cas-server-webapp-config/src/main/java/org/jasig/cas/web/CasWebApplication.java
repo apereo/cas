@@ -27,9 +27,9 @@ import org.springframework.context.annotation.ImportResource;
                 DataSourceAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
-@ImportResource(locations = {"/WEB-INF/spring-configuration/*.xml",
-        "/WEB-INF/spring-configuration/*.groovy",
-        "/WEB-INF/deployerConfigContext.xml",
+@ImportResource(locations = {"classpath:/spring-configuration/*.xml",
+        "classpath:/spring-configuration/*.groovy",
+        "classpath:/deployerConfigContext.xml",
         "classpath*:/META-INF/spring/*.xml"})
 @Import(value= {AopAutoConfiguration.class})
 @EnableConfigServer

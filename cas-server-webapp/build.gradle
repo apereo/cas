@@ -47,6 +47,7 @@ dependencies {
 
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j
+    compile libraries.thmyeleaf
     runtime libraries.groovy
     runtime libraries.spring
     runtime libraries.cassecurityfilter

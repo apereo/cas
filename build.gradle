@@ -383,6 +383,9 @@ ext.libraries = [
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.javassist', module: 'javassist')
                     force = true
+                },
+                dependencies.create("net.sourceforge.nekohtml:nekohtml:$nekoHtmlVersion") {
+                    
                 }
         ],
         jackson          : [

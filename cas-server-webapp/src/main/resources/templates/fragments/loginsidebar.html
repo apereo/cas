@@ -1,0 +1,14 @@
+<div id="sidebar">
+    <div class="sidebar-content">
+        <p th:utext="#{screen.welcome.security}"/>
+
+        <div id="list-providers" th:if="${pac4jUrls}">
+            <h3 th:utext="#{screen.welcome.label.loginwith}" />
+            <form>
+                <ul th:each="entry : ${pac4jUrls}">
+                    <li><a href="${entry.value}" th:text="${entry.key}"/></li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>

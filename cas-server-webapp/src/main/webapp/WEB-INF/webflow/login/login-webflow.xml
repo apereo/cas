@@ -44,11 +44,7 @@
         <evaluate expression="serviceAuthorizationCheck"/>
         <transition to="generateLoginTicket"/>
     </action-state>
-
-    <!--
-        The "warn" action makes the determination of whether to redirect directly to the requested
-        service or display the "confirmation" page to go back to the server.
-    -->
+    
     <decision-state id="warn">
         <if test="flowScope.warnCookieValue" then="showWarningView" else="redirect"/>
     </decision-state>
@@ -67,13 +63,11 @@
             <binding property="rememberMe" />
             -->
         </binder>
+        <!--
         <on-entry>
-            <set name="viewScope.commandName" value="'credential'"/>
-
-            <!--
             <evaluate expression="samlMetadataUIParserAction" />
-            -->
         </on-entry>
+        -->
         <transition on="submit" bind="true" validate="true" to="realSubmit"/>
     </view-state>
 
@@ -145,12 +139,7 @@
     <decision-state id="postRedirectDecision">
         <if test="requestScope.response.responseType.name() == 'POST'" then="postView" else="redirectView"/>
     </decision-state>
-
-    <!--
-        the "viewGenericLoginSuccess" is the end state for when a user attempts to login without coming directly from a service.
-        They have only initialized their single-sign on session.
-    -->
-
+    
     <end-state id="viewGenericLoginSuccess" view="casGenericSuccessView">
         <on-entry>
             <evaluate expression="genericSuccessViewAction.getAuthenticationPrincipal(flowScope.ticketGrantingTicketId)"
@@ -158,13 +147,7 @@
                       result-type="org.jasig.cas.authentication.principal.Principal"/>
         </on-entry>
     </end-state>
-
-
-    <!--
-    The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned")
-    to be turned on.  It delegates to a view defines in default_views.properties that display the
-    "Please click here to go to the service." message.
-    -->
+    
     <end-state id="showWarningView" view="casConfirmView"/>
 
     <!-- Password policy failure states -->
@@ -186,11 +169,7 @@
             <set name="requestScope.originalUrl" value="flowScope.service.id"/>
         </on-entry>
     </end-state>
-
-    <!--
-        The "redirect" end state allows CAS to properly end the workflow while still redirecting
-        the user back to the service required.
-    -->
+    
     <end-state id="redirectView" view="externalRedirect:#{requestScope.response.url}"/>
 
     <end-state id="viewServiceErrorView" view="serviceErrorView"/>
