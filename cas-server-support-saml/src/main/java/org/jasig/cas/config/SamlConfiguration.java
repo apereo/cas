@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 4.3.0
  */
 @Configuration("samlConfiguration")
+@Lazy(true)
 public class SamlConfiguration {
 
     /**

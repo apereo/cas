@@ -233,17 +233,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setListener(new Log4jServletContextListener());
         return bean;
     }
-
-    /**
-     * Error view used by boot to route errors. 
-     *
-     * @return the error view
-     */
-    @Bean(name="error")
-    public View error() {
-        return new ModelAndView("error").getView();
-    }
-    
+        
     /**
      * Simple controller handler adapter simple controller handler adapter.
      *

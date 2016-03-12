@@ -181,8 +181,6 @@
     </decision-state>
 
     <end-state id="viewRedirectToUnauthorizedUrlView" view="externalRedirect:#{flowScope.unauthorizedRedirectUrl}"/>
-    <end-state id="viewServiceSsoErrorView" view="serviceErrorSsoView" />
-
     <global-transitions>
         <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException"/>
         <transition to="viewServiceErrorView"

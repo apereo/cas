@@ -26,8 +26,7 @@ import java.util.List;
  * @author Jj
  * @since 4.3.0
  */
-
-@Configuration
+@Configuration("shibbolethAttributeResolverConfiguration")
 @ComponentScan("org.jasig.cas.persondir.support")
 public class ShibbolethAttributeResolverConfiguration {
     @Autowired(required = false)

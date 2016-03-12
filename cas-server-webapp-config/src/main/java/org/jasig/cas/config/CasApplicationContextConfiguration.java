@@ -190,9 +190,8 @@ public class CasApplicationContextConfiguration {
         bean.setAlwaysUseFullPath(true);
 
         final Properties properties = new Properties();
-        properties.put("/authorizationFailure.html", passThroughController());
-        properties.put("/", rootController());
         bean.setMappings(properties);
+        bean.setRootHandler(rootController());
         return bean;
     }
 }

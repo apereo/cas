@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.JstlView;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @Configuration("oauthConfiguration")
 @ComponentScan(basePackages = {"org.pac4j.springframework"})
+@Lazy(true)
 public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     /**

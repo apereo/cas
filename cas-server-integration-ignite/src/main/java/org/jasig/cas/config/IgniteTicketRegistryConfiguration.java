@@ -10,6 +10,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.StringUtils;
 
 import javax.cache.expiry.CreatedExpiryPolicy;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.3.0
  */
 @Configuration("igniteConfiguration")
+@Lazy(true)
 public class IgniteTicketRegistryConfiguration {
     
     /**

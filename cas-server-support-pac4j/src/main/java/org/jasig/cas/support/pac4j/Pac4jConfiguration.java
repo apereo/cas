@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +25,8 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-@Configuration
+@Configuration("pac4jConfiguration")
+@Lazy(true)
 public class Pac4jConfiguration {
 
     private static final String CAS_PAC4J_PREFIX = "cas.pac4j";

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.view.JstlView;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.view.JstlView;
  * @since 4.3.0
  */
 @Configuration("openidConfiguration")
+@Lazy(true)
 public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
     

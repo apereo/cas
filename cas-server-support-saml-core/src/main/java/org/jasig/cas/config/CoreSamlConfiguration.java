@@ -15,6 +15,7 @@ import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
 import java.util.HashMap;
@@ -27,7 +28,8 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Configuration
+@Configuration("coreSamlConfiguration")
+@Lazy(true)
 public class CoreSamlConfiguration {
     
     /**

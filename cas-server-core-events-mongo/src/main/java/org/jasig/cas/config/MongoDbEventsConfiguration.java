@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  * @since 4.3.0
  */
 @Configuration("mongoDbEventsConfiguration")
+@Lazy(true)
 public class MongoDbEventsConfiguration {
 
     /**

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.3.0
  */
 @Configuration("casMetricsConfiguration")
+@Lazy(true)
 @EnableMetrics
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
 

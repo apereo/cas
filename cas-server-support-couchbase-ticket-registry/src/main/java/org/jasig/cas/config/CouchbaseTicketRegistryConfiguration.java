@@ -4,6 +4,7 @@ import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.StringUtils;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.util.StringUtils;
  * @since 4.3.0
  */
 @Configuration("couchbaseTicketRegistryConfiguration")
+@Lazy(true)
 public class CouchbaseTicketRegistryConfiguration {
 
     /**
