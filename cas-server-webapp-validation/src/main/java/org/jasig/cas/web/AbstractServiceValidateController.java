@@ -172,7 +172,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         // resolve MFA auth context for this request
         final Map<String, MultifactorAuthenticationProvider> providers = context.getBeansOfType(MultifactorAuthenticationProvider.class);
         final Authentication authentication = assertion.getPrimaryAuthentication();
-        final Optional<String> requestedContext = multifactorTriggerSelectionStrategy.resolve(providers, request,
+        final Optional<String> requestedContext = multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
                 service, authentication.getPrincipal());
 
         // no MFA auth context found

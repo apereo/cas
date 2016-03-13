@@ -30,11 +30,8 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     private static final String MFA_PROVIDER_ID_2 = "mfa-id2";
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_1 = mock(MultifactorAuthenticationProvider.class);
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_2 = mock(MultifactorAuthenticationProvider.class);
-    private static final ImmutableMap<String, MultifactorAuthenticationProvider> VALID_PROVIDERS = ImmutableMap.of(
-            MFA_BEAN_1, MFA_PROVIDER_1,
-            MFA_BEAN_2, MFA_PROVIDER_2
-    );
-    private static final ImmutableMap<String, MultifactorAuthenticationProvider> NO_PROVIDERS = ImmutableMap.of();
+    private static final ImmutableSet<MultifactorAuthenticationProvider> VALID_PROVIDERS = ImmutableSet.of(MFA_PROVIDER_1, MFA_PROVIDER_2);
+    private static final ImmutableSet<MultifactorAuthenticationProvider> NO_PROVIDERS = ImmutableSet.of();
 
     private static final String REQUEST_PARAM = "authn_method";
 
