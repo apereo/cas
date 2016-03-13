@@ -4,8 +4,8 @@
 
     <title>CAS &#8211; Central Authentication Service</title>
 
-    <link rel="stylesheet" th:href="${#themes.code('standard.custom.css.file')}" />
-    <link rel="icon" th:href="@{favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{${#themes.code('standard.custom.css.file')}}" />
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
 
     <script>
         var trackGeoLocation = ("${trackGeoLocation}" === "true");
