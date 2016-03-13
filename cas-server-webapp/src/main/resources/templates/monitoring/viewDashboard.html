@@ -1,45 +1,67 @@
-<%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<div class="viewDashboard">
+<div th:replace="fragments/top"/>
 
-    <h1>CAS Dashboard</h1>
-    
-    <ul>
-        <li><a href="/cas/status">Status</a></li>
-        <li><a href="/cas/status/autoconfig">Auto Configuration</a></li>
-        <li><a href="/cas/status/beans">Beans</a></li>
-        <li><a href="/cas/status/mappings">Endpoint Mappings</a></li>
-        <li><a href="/cas/status/configprops">Configuration Properties</a></li>
-        <li><a href="/cas/status/dump">Thread Dump</a></li>
-        <li><a href="/cas/status/env">Environment</a></li>
-        <li><a href="/cas/status/health">Health</a></li>
-        <li><a href="/cas/status/info">Info</a></li>
-        <li><a href="/cas/status/metrics">Metrics</a></li>
-        <li><a href="/cas/status/stats">Statistics Panel</a></li>
-        <li><a href="/cas/status/config">Configuration Panel</a></li>
-    </ul>
-    
-    <hr>
+<body id="cas">
+<div id="container">
+    <div th:replace="fragments/logo"/>
 
-    <form method="post" action="/cas/status/restart">
-        <button type="submit">Restart</button>
-    </form>
+    <div id="content">
 
-    <form method="post" action="/cas/status/refresh">
-        <button type="submit">Refresh</button>
-    </form>
+        <div class="viewDashboard">
 
-    <form method="post" action="/cas/status/shutdown">
-        <button type="submit">Shutdown</button>
-    </form>
-    
-    <hr>
+            <h1>CAS Dashboard</h1>
 
-    <ul>
-        <li><a href="/cas/configserver/cas/default">Configuration Server: Default Profile</a></li>
-        <li><a href="/cas/configserver/cas/native">Configuration Server: Native Profile</a></li>
-    </ul>
-    
+            <ul>
+                <li><a href="/cas/status">Status</a></li>
+                <li><a href="/cas/status/autoconfig">Auto Configuration</a></li>
+                <li><a href="/cas/status/beans">Beans</a></li>
+                <li><a href="/cas/status/mappings">Endpoint Mappings</a></li>
+                <li><a href="/cas/status/configprops">Configuration Properties</a></li>
+                <li><a href="/cas/status/dump">Thread Dump</a></li>
+                <li><a href="/cas/status/env">Environment</a></li>
+                <li><a href="/cas/status/health">Health</a></li>
+                <li><a href="/cas/status/info">Info</a></li>
+                <li><a href="/cas/status/metrics">Metrics</a></li>
+                <li><a href="/cas/status/stats">Statistics Panel</a></li>
+                <li><a href="/cas/status/config">Configuration Panel</a></li>
+            </ul>
+
+            <hr/>
+
+            <form method="post" action="/cas/status/restart">
+                <div id="login">
+                    <button class="btn-submit" type="submit">Restart</button>
+                </div>
+                
+                
+            </form>
+
+            <form method="post" action="/cas/status/refresh">
+                <div id="login">
+                    <button class="btn-submit" type="submit">Refresh</button>
+                </div>
+            </form>
+
+            <form method="post" action="/cas/status/shutdown">
+                <div id="login">
+                    <button class="btn-submit" type="submit">Shutdown</button>
+                </div>
+            </form>
+
+            <hr/>
+
+            <ul>
+                <li><a href="/cas/configserver/cas/default">Configuration Server: Default Profile</a></li>
+                <li><a href="/cas/configserver/cas/native">Configuration Server: Native Profile</a></li>
+            </ul>
+
+        </div>
+
+    </div>
+    <div th:include="fragments/footer"/>
 </div>
-
-<%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
+</body>
+<div th:include="fragments/bottom"/>
+</html>
