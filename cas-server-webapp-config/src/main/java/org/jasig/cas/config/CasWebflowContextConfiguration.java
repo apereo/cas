@@ -54,8 +54,10 @@ public class CasWebflowContextConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
     
+    /*
     @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/")
     private String resolverPathPrefix;
+    */
     
     @Value("${webflow.always.pause.redirect:false}")
     private boolean alwaysPauseOnRedirect;
@@ -303,7 +305,7 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "logoutFlowRegistry")
     public FlowDefinitionRegistry logoutFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath("/WEB-INF/webflow");
+        builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/logout/*-webflow.xml");
         return builder.build();
     }
@@ -316,7 +318,7 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "loginFlowRegistry")
     public FlowDefinitionRegistry loginFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath("/WEB-INF/webflow");
+        builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
     }
