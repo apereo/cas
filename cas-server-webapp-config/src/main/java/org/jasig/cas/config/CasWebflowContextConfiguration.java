@@ -3,6 +3,8 @@ package org.jasig.cas.config;
 import com.google.common.collect.ImmutableList;
 import org.cryptacular.bean.CipherBean;
 import org.jasig.cas.CipherExecutor;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.jasig.cas.web.flow.LogoutConversionService;
 import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;
@@ -49,30 +51,27 @@ public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
 
-    private static final int VIEW_RESOLVER_ORDER = 10000;
-    
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
     @Autowired
     private ApplicationContext applicationContext;
-    
-    /*
-    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/")
-    private String resolverPathPrefix;
-    */
-    
+
     @Value("${webflow.always.pause.redirect:false}")
     private boolean alwaysPauseOnRedirect;
 
     @Value("${webflow.redirect.same.state:false}")
     private boolean redirectSameState;
-
-    @Autowired
-    @Qualifier("thymeleafViewResolver")
-    private ViewResolver thymeleafViewResolver;
     
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
 
+    @Autowired
+    @Qualifier("registeredServiceViewResolver")
+    private ViewResolver registeredServiceViewResolver;
+    
     @Autowired
     @Qualifier("authenticationThrottle")
     @Lazy(true)
@@ -102,23 +101,6 @@ public class CasWebflowContextConfiguration {
     }
 
     /**
-     * Internal view resolver internal resource view resolver.
-     *
-     * @return the internal resource view resolver
-    
-    @Bean(name = "internalViewResolver")
-    public InternalResourceViewResolver internalViewResolver() {
-        final InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setViewClass(JstlView.class);
-        resolver.setPrefix(this.resolverPathPrefix);
-        resolver.setSuffix(".jsp");
-        resolver.setOrder(VIEW_RESOLVER_ORDER);
-        resolver.setExposeContextBeansAsAttributes(true);
-        return resolver;
-    }
-     */
-    
-    /**
      * View factory creator mvc view factory creator.
      *
      * @return the mvc view factory creator
@@ -126,7 +108,7 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "viewFactoryCreator")
     public MvcViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
-        resolver.setViewResolvers(ImmutableList.of(thymeleafViewResolver));
+        resolver.setViewResolvers(ImmutableList.of(this.registeredServiceViewResolver));
         return resolver;
     }
 
@@ -339,7 +321,7 @@ public class CasWebflowContextConfiguration {
         final FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
         factory.setExecutionKeyFactory(repository);
         repository.setFlowExecutionFactory(factory);
-        
+
         return new FlowExecutorImpl(loginFlowRegistry(), factory, repository);
     }
 }

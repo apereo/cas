@@ -1,7 +1,6 @@
 package org.jasig.cas.config;
 
 import org.apache.logging.log4j.web.Log4jServletContextListener;
-import org.jasig.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,25 +53,11 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     private String themeParamName;
 
     /**
-     * The Path prefix.
-     */
-    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/")
-    private String pathPrefix;
-
-
-    /**
      * The Xml views file.
      */
-    @Value("${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}")
+    @Value("${cas.viewResolver.xmlFile:classpath:/views.xml}")
     private Resource xmlViewsFile;
 
-    /**
-     * The Services manager.
-     */
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-    
     /**
      * The Default locale.
      */
@@ -84,7 +69,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Value("${locale.param.name:locale}")
     private String localeParamName;
-    
+
     /**
      * Credentials validator local validator factory bean.
      *
@@ -134,40 +119,10 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
             bean.setLocation(xmlViewsFile);
             return bean;
         }
-        final BeanNameViewResolver bean = new BeanNameViewResolver();
-        bean.setOrder(URL_VIEW_RESOLVER_ORDER - 1);
-        return bean;
+        return beanNameViewResolver();
     }
 
-    /**
-     * Url based view resolver url based view resolver.
-     *
-     * @return the url based view resolver
-     
-    @Bean(name = "urlBasedViewResolver")
-    public UrlBasedViewResolver urlBasedViewResolver() {
-        final UrlBasedViewResolver bean = new UrlBasedViewResolver();
-        bean.setViewClass(InternalResourceView.class);
-        bean.setPrefix(this.pathPrefix);
-        bean.setSuffix(".jsp");
-        bean.setOrder(URL_VIEW_RESOLVER_ORDER);
-        return bean;
-    }
-     */
-    /**
-     * Internal view resolver registered service theme based view resolver.
-     *
-     * @return the registered service theme based view resolver
-     
-    @Bean(name = "internalViewResolver")
-    public RegisteredServiceThemeBasedViewResolver internalViewResolver() {
-        final RegisteredServiceThemeBasedViewResolver bean = new RegisteredServiceThemeBasedViewResolver(this.servicesManager);
-        bean.setPrefix(this.pathPrefix);
-        bean.setOrder(URL_VIEW_RESOLVER_ORDER + 1);
-        return bean;
-    }
-     */
-    
+
     /**
      * Locale resolver cookie locale resolver.
      *
@@ -207,19 +162,13 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
         return map;
     }
-    
-    /**
-     * Cas servlet registration bean.
-     *
-     * @return the servlet registration bean
-     */
-    
+
     /**
      * Log4j servlet context listener servlet listener registration bean.
      *
      * @return the servlet listener registration bean
      */
-    @Bean(name="log4jServletContextListener")
+    @Bean(name = "log4jServletContextListener")
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
         bean.setEnabled(true);
@@ -233,7 +182,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the simple controller handler adapter
      */
-    @Bean(name="simpleControllerHandlerAdapter")
+    @Bean(name = "simpleControllerHandlerAdapter")
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }

@@ -6,45 +6,49 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
-import org.springframework.web.servlet.view.InternalResourceView;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.thymeleaf.spring4.view.AbstractThymeleafView;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+
+import javax.annotation.PostConstruct;
+import java.util.Locale;
 
 /**
  * {@link RegisteredServiceThemeBasedViewResolver} is an alternate Spring View Resolver that utilizes a service's
  * associated theme to selectively choose which set of UI views will be used to generate
- * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
- * <p>Views associated with a particular theme by default are expected to be found at:
- * {@link #getPrefix()}/{@code themeId/ui}. A starting point may be to
- * clone the default set of view pages into a new directory based on the theme id.</p>
- * <p>Note: There also exists a {@link org.jasig.cas.services.web.ServiceThemeResolver}
- * that attempts to resolve the view name based on the service theme id. The difference
- * however is that {@link org.jasig.cas.services.web.ServiceThemeResolver} only decorates
- * the default view pages with additional tags and coloring, such as CSS and JS. The
- * component presented here on the other hand has the ability to load an entirely new
- * set of pages that are may be totally different from that of the default's. This
- * is specially useful in cases where the set of pages for a theme that are targetted
- * for a different type of audience are entirely different structurally that simply
- * using the {@link org.jasig.cas.services.web.ServiceThemeResolver} is not practical
- * to augment the default views. In such cases, new view pages may be required.</p>
+ * the standard views.
  *
  * @author John Gasper
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
+@Component("registeredServiceViewResolver")
+public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
-    private static final String THEME_LOCATION_PATTERN = "%s/%s/ui/";
 
+    @Autowired
+    @Qualifier("thymeleafViewResolver")
+    private ThymeleafViewResolver thymeleafViewResolver;
+    
     /**
      * The ServiceRegistry to look up the service.
      */
-    private final ServicesManager servicesManager;
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
+    /**
+     * Instantiates a new Registered service theme based view resolver.
+     */
+    public RegisteredServiceThemeBasedViewResolver() {
+    }
 
     /**
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
@@ -54,72 +58,50 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
      */
     public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager) {
         super();
-        super.setCache(false);
-
         this.servicesManager = servicesManager;
     }
 
     /**
-     * Uses the viewName and the theme associated with the service.
-     * being requested and returns the appropriate view.
-     *
-     * @param viewName the name of the view to be resolved
-     * @return a theme-based UrlBasedView
-     * @throws Exception an exception
+     * Init.
      */
+    @PostConstruct
+    public void init() {
+        setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
+        setCache(this.thymeleafViewResolver.isCache());
+        setCacheLimit(this.thymeleafViewResolver.getCacheLimit());
+        setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
+        setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
+        setContentType(this.thymeleafViewResolver.getContentType());
+        setExcludedViewNames(this.thymeleafViewResolver.getExcludedViewNames());
+        setOrder(this.thymeleafViewResolver.getOrder());
+        setRedirectContextRelative(this.thymeleafViewResolver.isRedirectContextRelative());
+        setRedirectHttp10Compatible(this.thymeleafViewResolver.isRedirectHttp10Compatible());
+        setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
+        setTemplateEngine(this.thymeleafViewResolver.getTemplateEngine());
+        setViewNames(this.thymeleafViewResolver.getViewNames());
+    }
+    
     @Override
-    protected AbstractUrlBasedView buildView(final String viewName) throws Exception {
+    protected View loadView(final String viewName, final Locale locale) throws Exception {
+        final View view = super.loadView(viewName, locale);
+
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
         final WebApplicationService service = WebUtils.getService(requestContext);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        final InternalResourceView view = (InternalResourceView) BeanUtils.instantiateClass(getViewClass());
-
-        final String defaultThemePrefix = String.format(THEME_LOCATION_PATTERN, getPrefix(), "default");
-        final String defaultViewUrl = defaultThemePrefix + viewName + getSuffix();
-        view.setUrl(defaultViewUrl);
-
         if (service != null && registeredService != null
-            && registeredService.getAccessStrategy().isServiceAccessAllowed()
-            && StringUtils.hasText(registeredService.getTheme())) {
-
+                && registeredService.getAccessStrategy().isServiceAccessAllowed()
+                && StringUtils.hasText(registeredService.getTheme())
+                && view instanceof AbstractThymeleafView) {
             LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
-                registeredService.getServiceId(), registeredService.getTheme());
+                    registeredService.getServiceId(), registeredService.getTheme());
 
-            final String themePrefix = String.format(THEME_LOCATION_PATTERN, getPrefix(), registeredService.getTheme());
-            LOGGER.debug("Prefix [{}] set for service [{}] with theme [{}]", themePrefix, service,
-                registeredService.getTheme());
-            final String viewUrl = themePrefix + viewName + getSuffix();
-            view.setUrl(viewUrl);
-
+            final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
+            final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
+            thymeleafView.setTemplateName(viewUrl);
         }
-
-        final String contentType = getContentType();
-        if (contentType != null) {
-            view.setContentType(contentType);
-        }
-        view.setRequestContextAttribute(getRequestContextAttribute());
-        view.setAttributesMap(getAttributesMap());
         
-        view.setAlwaysInclude(false);
-        view.setExposeContextBeansAsAttributes(false);
-        view.setPreventDispatchLoop(true);
-
-        LOGGER.debug("View resolved: {}", view.getUrl());
-
+        LOGGER.debug("View resolved: {}", view);
         return view;
     }
-
-    /**
-     * setCache is not supported in the {@link RegisteredServiceThemeBasedViewResolver} because each
-     * request must be independently evaluated.
-     *
-     * @param cache a value indicating whether the view should cache results.
-     */
-    @Override
-    public void setCache(final boolean cache) {
-        LOGGER.warn("The {} does not support caching. Turned off caching forcefully.", this.getClass().getSimpleName());
-        super.setCache(false);
-    }
-
 }
