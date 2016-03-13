@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -45,15 +45,15 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     }
 
     @Override
-    public Optional<String> resolve(final Map<String, MultifactorAuthenticationProvider> availableProviders,
+    public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                     final HttpServletRequest request, final RegisteredService service, final Principal principal) {
         Optional<String> provider = Optional.empty();
 
         // short-circuit if we don't have any available MFA providers
-        if (availableProviders == null || availableProviders.isEmpty()) {
+        if (providers == null || providers.isEmpty()) {
             return provider;
         }
-        final Set<String> validProviderIds = availableProviders.values().stream()
+        final Set<String> validProviderIds = providers.stream()
                 .map(MultifactorAuthenticationProvider::getId)
                 .collect(Collectors.toSet());
 
