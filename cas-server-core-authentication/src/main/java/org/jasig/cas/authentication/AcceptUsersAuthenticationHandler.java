@@ -86,7 +86,6 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new FailedLoginException();
         }
         final List<MessageDescriptor> list = new ArrayList<>();
-        list.add(new DefaultMessageDescriptor("password.expiration.warning", "Hello World People"));
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
     }
 

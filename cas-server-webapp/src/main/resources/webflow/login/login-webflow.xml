@@ -176,7 +176,7 @@
     
     <end-state id="redirectView" view="externalRedirect:#{requestScope.response.url}"/>
 
-    <end-state id="viewServiceErrorView" view="serviceErrorView"/>
+    <end-state id="viewServiceErrorView" view="casServiceErrorView"/>
 
     <decision-state id="serviceUnauthorizedCheck">
         <if test="flowScope.unauthorizedRedirectUrl != null"

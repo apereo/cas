@@ -30,7 +30,8 @@ To instruct CAS to render UI in compatibility mode, add the following to relevan
 # Getting Started
 
 ## CSS
-The default styles are all contained in a single file located in `css/cas.css`. This location is set in `WEB-INF/classes/cas-theme-default.properties`. If you would like to create your own `css/custom.css file`, for example, you will need to update `standard.custom.css.file` key in that file.
+The default styles are all contained in a single file located in `css/cas.css`. This location is set in `WEB-INF/classes/cas-theme-default.properties`. 
+If you would like to create your own `css/custom.css file`, for example, you will need to update `standard.custom.css.file` key in that file.
 
 ```bash
 standard.custom.css.file=/css/cas.css
@@ -172,7 +173,8 @@ The following JSP tag libraries are used by the user interface:
 | `casGenericSuccess` | Displayed when the user has been logged in without providing a service to be redirected to.
 | `casLoginView`  | Main login form.
 | `casLogoutView` | Main logout view.
-| `serviceErrorView` | Used in conjunction with the service registry feature, displayed when the service the user is trying to access is not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
+| `casServiceErrorView` | Used in conjunction with the service registry feature, displayed when the service the user is trying to access is
+ not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
 | `serviceErrorSsoView` | Displayed when a user would otherwise have experienced non-interactive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
 
 

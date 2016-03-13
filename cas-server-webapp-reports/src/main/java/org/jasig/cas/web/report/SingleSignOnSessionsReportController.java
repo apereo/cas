@@ -38,6 +38,7 @@ import java.util.Set;
  * @since 4.1
  */
 @Controller("singleSignOnSessionsReportController")
+@RequestMapping(value="/status/ssosessions")
 public final class SingleSignOnSessionsReportController {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
@@ -287,7 +288,7 @@ public final class SingleSignOnSessionsReportController {
      * @return the model and view where json data will be rendered
      * @throws Exception thrown during json processing
      */
-    @RequestMapping(value="/status/ssosessions", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
     }

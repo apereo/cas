@@ -54,7 +54,7 @@ public interface OAuthConstants {
     String CONFIRM_VIEW = "oauthConfirmView";
 
     /** The error view. */
-    String ERROR_VIEW = "serviceErrorView";
+    String ERROR_VIEW = "casServiceErrorView";
 
     /** The invalid request. */
     String INVALID_REQUEST = "invalid_request";

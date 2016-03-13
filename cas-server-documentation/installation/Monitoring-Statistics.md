@@ -29,6 +29,7 @@ The following endpoints are secured and available:
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `/status/dashboard`               | Control panel to CAS server functionality and management.
+| `/status/ssosessions`             | Report of active SSO sessions and authentications.
 
 ## Monitors
 
@@ -268,6 +269,3 @@ You can also configure the remote destination output over SSL and specify the re
 For additional logging functionality, please refer to the Log4j configuration url or view
 the [CAS Logging functionality](Logging.html).
 
-### SSO Sessions Report
-
-CAS also provides a `/status/ssosessions` endpoint that produces a report of all active non-expired SSO sessions. The output of this endpoint is a JSON representation of SSO sessions that is rendered into a modest visualization.
