@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.cryptacular.bean.CipherBean;
 import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.jasig.cas.web.flow.LogoutConversionService;
 import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;

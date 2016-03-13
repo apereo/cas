@@ -1,9 +1,7 @@
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.DefaultMessageDescriptor;
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

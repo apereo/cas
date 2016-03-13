@@ -8,16 +8,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.AbstractThymeleafView;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -34,15 +38,21 @@ public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafView
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
 
     @Autowired
+    private ThymeleafProperties properties;
+
+    @Autowired
     @Qualifier("thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
-    
-    /**
-     * The ServiceRegistry to look up the service.
-     */
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Resource(name = "argumentExtractors")
+    private List argumentExtractors;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     /**
      * Instantiates a new Registered service theme based view resolver.
@@ -54,7 +64,6 @@ public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafView
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
      *
      * @param servicesManager the serviceManager implementation
-     * @see #setCache(boolean)
      */
     public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager) {
         super();
@@ -67,8 +76,10 @@ public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafView
     @PostConstruct
     public void init() {
         setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
-        setCache(this.thymeleafViewResolver.isCache());
-        setCacheLimit(this.thymeleafViewResolver.getCacheLimit());
+        setCache(this.properties.isCache());
+        if (!isCache()) {
+            setCacheLimit(0);
+        }
         setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
         setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
         setContentType(this.thymeleafViewResolver.getContentType());
@@ -77,16 +88,19 @@ public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafView
         setRedirectContextRelative(this.thymeleafViewResolver.isRedirectContextRelative());
         setRedirectHttp10Compatible(this.thymeleafViewResolver.isRedirectHttp10Compatible());
         setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
-        setTemplateEngine(this.thymeleafViewResolver.getTemplateEngine());
+
+        final SpringTemplateEngine engine = this.thymeleafViewResolver.getTemplateEngine();
+        setTemplateEngine(engine);
         setViewNames(this.thymeleafViewResolver.getViewNames());
     }
-    
+
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
         final View view = super.loadView(viewName, locale);
 
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
-        final WebApplicationService service = WebUtils.getService(requestContext);
+
+        final WebApplicationService service = WebUtils.getService(this.argumentExtractors, requestContext);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (service != null && registeredService != null
@@ -100,8 +114,6 @@ public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafView
             final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
             thymeleafView.setTemplateName(viewUrl);
         }
-        
-        LOGGER.debug("View resolved: {}", view);
         return view;
     }
 }
