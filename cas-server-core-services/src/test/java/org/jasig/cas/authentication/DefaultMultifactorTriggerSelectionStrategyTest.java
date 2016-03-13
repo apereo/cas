@@ -23,8 +23,6 @@ import static org.mockito.Mockito.*;
  * @since 4.3.0
  */
 public class DefaultMultifactorTriggerSelectionStrategyTest {
-    private static final String MFA_BEAN_1 = "mfaBean1";
-    private static final String MFA_BEAN_2 = "mfaBean2";
     private static final String MFA_INVALID = "mfaInvalid";
     private static final String MFA_PROVIDER_ID_1 = "mfa-id1";
     private static final String MFA_PROVIDER_ID_2 = "mfa-id2";
@@ -65,9 +63,8 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
 
     @Test
     public void verifyNoProviders() throws Exception {
-        assertThat(strategy.resolve(NO_PROVIDERS, mockRequest(MFA_BEAN_1), mockService(MFA_BEAN_1), null)
-                .orElse(null),
-                nullValue());
+        assertThat(strategy.resolve(NO_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), mockService(MFA_PROVIDER_ID_1), null).isPresent(),
+                is(false));
     }
 
     @Test
@@ -75,7 +72,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
         // opt-in parameter only
         assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), null, null).orElse(null), is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_2), null, null).orElse(null), is(MFA_PROVIDER_ID_2));
-        assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_INVALID), null, null).orElse(null), nullValue());
+        assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_INVALID), null, null).isPresent(), is(false));
     }
 
     @Test
@@ -84,9 +81,9 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_1), null).orElse(null), is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_2), null).orElse(null), is(MFA_PROVIDER_ID_2));
 
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_PROVIDER_ID_1, MFA_PROVIDER_ID_2), null).orElse(null),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_PROVIDER_ID_1, MFA_PROVIDER_ID_2), null).get(),
                 is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID), null).orElse(null), nullValue());
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID), null).isPresent(), is(false));
 
         // Principal attribute activated RegisteredService trigger - direct match
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTR_1, VALUE_1),
@@ -114,9 +111,8 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12,
                 VALUE_PATTERN), mockPrincipal(RS_ATTR_2, VALUE_2)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12,
-                VALUE_PATTERN), mockPrincipal(RS_ATTR_2, VALUE_NOMATCH)).orElse(null),
-                nullValue());
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_PATTERN),
+                mockPrincipal(RS_ATTR_2, VALUE_NOMATCH)).isPresent(), is(false));
     }
 
     @Test
@@ -126,14 +122,13 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
                 is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, null, mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2)).orElse(null),
                 is(MFA_PROVIDER_ID_2));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, null, mockPrincipal(P_ATTR_1, MFA_INVALID)).orElse(null),
-                nullValue());
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, null, mockPrincipal(P_ATTR_1, MFA_INVALID)).isPresent(), is(false));
     }
 
     @Test
     public void verifyMultipleTriggers() throws Exception {
         // opt-in overrides everything
-        assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), mockService(MFA_BEAN_2),
+        assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), mockService(MFA_PROVIDER_ID_2),
                 mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
 
