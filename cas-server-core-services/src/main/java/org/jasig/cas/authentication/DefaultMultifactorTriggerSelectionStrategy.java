@@ -67,8 +67,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
             if (shouldApplyRegisteredServiceMultifactorPolicy(policy, principal)) {
                 provider = policy.getMultifactorAuthenticationProviders().stream()
-                        .map(availableProviders::get).filter(Objects::nonNull)
-                        .map(MultifactorAuthenticationProvider::getId)
+                        .filter(validProviderIds::contains)
                         .findFirst();
             }
         }
