@@ -40,10 +40,11 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AbstractCasWebflowEventResolver} that provides parent
@@ -215,17 +216,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Set<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy != null) {
-            final Set<String> providers = policy.getMultifactorAuthenticationProviders();
-            final Set<MultifactorAuthenticationProvider> providersSet = new HashSet<>(providers.size());
-
-            for (final String provider : providers) {
-                final MultifactorAuthenticationProvider providerInst = getMultifactorAuthenticationProviderFromApplicationContext(provider);
-                if (providerInst != null) {
-                    logger.debug("Added multifactor authentication provider {} as an available provider for {}", providerInst, service);
-                    providersSet.add(providerInst);
-                }
-            }
-            return providersSet;
+            return policy.getMultifactorAuthenticationProviders().stream()
+                    .map(this::getMultifactorAuthenticationProviderFromApplicationContext)
+                    .filter(Optional::isPresent).map(Optional::get)
+                    .collect(Collectors.toSet());
         }
         return null;
     }
@@ -455,20 +449,22 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     /**
-     * Load multifactor authentication provider registered service multifactor authentication provider.
+     * Find the MultifactorAuthenticationProvider in the application contact that matches the specified providerId (e.g. "mfa-duo").
      *
-     * @param provider the provider
+     * @param providerId the provider id
      * @return the registered service multifactor authentication provider
      */
-    protected MultifactorAuthenticationProvider getMultifactorAuthenticationProviderFromApplicationContext(final String provider) {
+    protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(
+            final String providerId) {
         try {
-            logger.debug("Locating bean definition for {}", provider);
-            return this.applicationContext.getBean(provider, MultifactorAuthenticationProvider.class);
+            logger.debug("Locating bean definition for {}", providerId);
+            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class).values().stream()
+                    .filter(p -> p.getId().equals(providerId))
+                    .findFirst();
         } catch (final Exception e) {
-            logger.debug("Could not locate [{}] bean id in the application context as an authentication provider.", provider);
+            logger.debug("Could not locate [{}] bean id in the application context as an authentication provider.", providerId);
         }
-        return null;
-
+        return Optional.empty();
     }
 
     /**
