@@ -84,40 +84,40 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     @Test
     public void verifyRegisteredServiceTrigger() throws Exception {
         // regular RegisteredService trigger
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_BEAN_1), null).orElse(null), is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_BEAN_2), null).orElse(null), is(MFA_PROVIDER_ID_2));
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_1), null).orElse(null), is(MFA_PROVIDER_ID_1));
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_2), null).orElse(null), is(MFA_PROVIDER_ID_2));
 
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_BEAN_1, MFA_BEAN_2), null).orElse(null),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_PROVIDER_ID_1, MFA_PROVIDER_ID_2), null).orElse(null),
                 is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID), null).orElse(null), nullValue());
 
         // Principal attribute activated RegisteredService trigger - direct match
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTR_1, VALUE_1),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTR_1, VALUE_1),
                 mockPrincipal(RS_ATTR_1, VALUE_1)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTR_1, VALUE_1),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTR_1, VALUE_1),
                 mockPrincipal(RS_ATTR_1, VALUE_2)).orElse(null),
                 nullValue());
 
         // Principal attribute activated RegisteredService trigger - multiple attrs
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTRS_12, VALUE_1),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_1),
                 mockPrincipal(RS_ATTR_1, VALUE_1)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTRS_12, VALUE_1),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_1),
                 mockPrincipal(RS_ATTR_2, VALUE_1)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTRS_12, VALUE_1),
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_1),
                 mockPrincipal(RS_ATTR_3, VALUE_1)).orElse(null),
                 nullValue());
 
         // Principal attribute activated RegisteredService trigger - pattern value
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTRS_12,
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12,
                 VALUE_PATTERN), mockPrincipal(RS_ATTR_2, VALUE_1)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTRS_12,
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12,
                 VALUE_PATTERN), mockPrincipal(RS_ATTR_2, VALUE_2)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
-        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_BEAN_1, RS_ATTRS_12,
+        assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12,
                 VALUE_PATTERN), mockPrincipal(RS_ATTR_2, VALUE_NOMATCH)).orElse(null),
                 nullValue());
     }
@@ -141,7 +141,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
                 is(MFA_PROVIDER_ID_1));
 
         // RegisteredService overrides Principal attribute
-        assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_INVALID), mockService(MFA_BEAN_1),
+        assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_INVALID), mockService(MFA_PROVIDER_ID_1),
                 mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2)).orElse(null),
                 is(MFA_PROVIDER_ID_1));
     }
