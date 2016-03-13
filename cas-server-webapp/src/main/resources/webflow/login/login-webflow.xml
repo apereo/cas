@@ -167,7 +167,7 @@
     <end-state id="casBadHoursView" view="casBadHoursView"/>
     <end-state id="casBadWorkstationView" view="casBadWorkstationView"/>
 
-    <end-state id="postView" view="postResponseView">
+    <end-state id="postView" view="protocol/casPostResponseView">
         <on-entry>
             <set name="requestScope.parameters" value="requestScope.response.attributes"/>
             <set name="requestScope.originalUrl" value="flowScope.service.id"/>

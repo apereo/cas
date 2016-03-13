@@ -52,17 +52,11 @@ public class CasProtocolViewsConfiguration {
      */
     @Value("${view.cas3.failure:/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp}")
     private String cas3FailureView;
-
+    
     /**
-     * The Post response view.
-     */
-    @Value("${view.cas.post.response:/WEB-INF/view/jsp/protocol/casPostResponseView.jsp}")
-    private String postResponseView;
-
-    /**
-     * Cas 2 jstl success view jstl view.
+     * Cas 2  success view.
      *
-     * @return the jstl view
+     * @return the  view
      */
     @Bean(name = "cas2JstlSuccessView")
     public JstlView cas2JstlSuccessView() {
@@ -70,9 +64,9 @@ public class CasProtocolViewsConfiguration {
     }
 
     /**
-     * Cas 2 service failure view jstl view.
+     * Cas 2 service failure view.
      *
-     * @return the jstl view
+     * @return the  view
      */
     @Bean(name = "cas2ServiceFailureView")
     public JstlView cas2ServiceFailureView() {
@@ -80,9 +74,9 @@ public class CasProtocolViewsConfiguration {
     }
 
     /**
-     * Cas 2 proxy failure view jstl view.
+     * Cas 2 proxy failure view.
      *
-     * @return the jstl view
+     * @return the  view
      */
     @Bean(name = "cas2ProxyFailureView")
     public JstlView cas2ProxyFailureView() {
@@ -90,9 +84,9 @@ public class CasProtocolViewsConfiguration {
     }
 
     /**
-     * Cas 2 proxy success view jstl view.
+     * Cas 2 proxy success view.
      *
-     * @return the jstl view
+     * @return the view
      */
     @Bean(name = "cas2ProxySuccessView")
     public JstlView cas2ProxySuccessView() {
@@ -100,9 +94,9 @@ public class CasProtocolViewsConfiguration {
     }
 
     /**
-     * Cas 3 jstl success view jstl view.
+     * Cas 3 success view.
      *
-     * @return the jstl view
+     * @return the view
      */
     @Bean(name = "cas3JstlSuccessView")
     public JstlView cas3JstlSuccessView() {
@@ -110,22 +104,13 @@ public class CasProtocolViewsConfiguration {
     }
 
     /**
-     * Cas 3 service failure view jstl view.
+     * Cas 3 service failure view.
      *
-     * @return the jstl view
+     * @return the view
      */
     @Bean(name = "cas3ServiceFailureView")
     public JstlView cas3ServiceFailureView() {
         return new JstlView(this.cas3FailureView);
     }
-
-    /**
-     * Post response view jstl view.
-     *
-     * @return the jstl view
-     */
-    @Bean(name = "postResponseView")
-    public JstlView postResponseView() {
-        return new JstlView(this.postResponseView);
-    }
+    
 }
