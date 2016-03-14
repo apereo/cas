@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -64,22 +63,17 @@ public class HazelcastInstanceConfiguration {
     /**
      * Get Hazelcast <code>Config</code> instance.
      *
-     * @param location config location for hazelcast xml
+     * @param configLocation config location for hazelcast xml
      * @return Hazelcast Config
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
-    private Config getConfig(final Resource location) throws IOException {
+    private Config getConfig(final Resource configLocation) throws IOException {
         final Config config;
         //We have a valid config location for hazelcast xml. Try to parse it and configure Hazelcast instance according to that source
-        final Resource configLocation = org.jasig.cas.util.ResourceUtils.prepareClasspathResourceIfNeeded(location);
         if (configLocation.exists()) {
             final URL configUrl = configLocation.getURL();
-            config = new XmlConfigBuilder(configUrl).build();
-            if (ResourceUtils.isFileURL(configUrl)) {
-                config.setConfigurationFile(configLocation.getFile());
-            } else {
-                config.setConfigurationUrl(configUrl);
-            }
+            config = new XmlConfigBuilder(configLocation.getInputStream()).build();
+            config.setConfigurationUrl(configUrl);
         } else {
             //No config location, so do a default config programmatically with handful of properties exposed by CAS
             config = new Config();
