@@ -32,10 +32,10 @@ you probably want to run them both as `WARN`.</p></div>
 ## Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath. 
-These may be overridden by the `cas.properties` file
+These may be overridden via the following system property pass to the container
 
 {% highlight bash %}
-# log4j.config.location=classpath:log4j2.xml
+-Dlog4j.configurationFile=/etc/cas/log4j2.xml
 {% endhighlight %}
 
 The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `appender` elements that
