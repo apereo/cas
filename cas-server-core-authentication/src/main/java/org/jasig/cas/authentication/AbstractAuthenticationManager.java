@@ -153,10 +153,10 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             action="AUTHENTICATION",
             actionResolverName="AUTHENTICATION_RESOLVER",
             resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
-    @Timed(name="AUTHENTICATE")
-    @Metered(name="AUTHENTICATE")
-    @Counted(name="AUTHENTICATE", monotonic=true)
-    public final Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
+    @Timed(name="AUTHENTICATE_TIMER")
+    @Metered(name="AUTHENTICATE_METER")
+    @Counted(name="AUTHENTICATE_COUNT", monotonic=true)
+    public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
