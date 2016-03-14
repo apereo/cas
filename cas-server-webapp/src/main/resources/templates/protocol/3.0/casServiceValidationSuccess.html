@@ -5,8 +5,12 @@
         <cas:proxies th:if="${not #lists.isEmpty(chainedAuthentications)}">
             <cas:proxy th:each="proxy : ${chainedAuthentications}">[[${proxy.principal.id}]]</cas:proxy>
         </cas:proxies>
-        <cas:attributes th:if="${not #lists.isEmpty(attributes)}">
-            <span th:remove="tag" th:each="attr : ${attributes}" th:utext="${attr}"></span>
+        <cas:attributes th:if="${not #maps.isEmpty(attributes)}">
+            <span th:remove="tag" th:each="attr : ${attributes.keySet()}">
+                <span th:remove="tag" th:each="attrvalue : ${attributes.get(attr)}">
+                    &lt;cas:[[${attr}]]&gt;<span th:remove="tag" th:text="${attrvalue}"/>&lt;/cas:[[${attr}]]&gt;
+                </span>
+            </span>
         </cas:attributes>
     </cas:authenticationSuccess>
 </cas:serviceResponse>
