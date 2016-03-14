@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Component("defaultAuthenticationSupport")
+@Component("defaultTicketRegistrySupport")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
     @Autowired

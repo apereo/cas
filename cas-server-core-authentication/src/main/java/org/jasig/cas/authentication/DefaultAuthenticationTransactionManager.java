@@ -32,8 +32,9 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
             authenticationResult.collect(authentication);
+        } else {
+            LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         }
-        LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         return this;
     }
 

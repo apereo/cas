@@ -2,6 +2,7 @@ package org.jasig.cas.web.flow.resolver;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import org.apache.shiro.util.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -20,6 +21,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.jasig.cas.web.support.WebUtils;
@@ -78,6 +80,14 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     @Qualifier("defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
+
+    /**
+     * Ticket registry support.
+     */
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    protected TicketRegistrySupport ticketRegistrySupport;
+    
     /**
      * The Services manager.
      */
@@ -194,12 +204,35 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         final AuthenticationResult authenticationResult =
                 authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
 
+        boolean issueTicketGrantingTicket = true;
         final Authentication authentication = authenticationResult.getAuthentication();
-        logger.debug("Resulting final authentication is {} with principal {}", authentication, authentication.getPrincipal());
-        final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+        final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        if (StringUtils.hasText(ticketGrantingTicket)) {
+            logger.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
+            final Authentication authenticationFromTgt = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {
+                logger.debug("Resulting authentication matches the authentication from context");
+                issueTicketGrantingTicket = false;
+            } else {
+                logger.debug("Resulting authentication is different from the context");
+            }
+        }
+        
+        final TicketGrantingTicket tgt;
+        if (issueTicketGrantingTicket) {
+            tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+
+        } else {
+            tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+            tgt.getAuthentication().update(authentication.getAttributes());
+            this.centralAuthenticationService.updateTicket(tgt);
+        }
+
+
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
-
+        WebUtils.putAuthentication(tgt.getAuthentication(), context);
+        
         if (addWarningMessagesToMessageContextIfNeeded(tgt, context.getMessageContext())) {
             return newEvent(SUCCESS_WITH_WARNINGS);
         }

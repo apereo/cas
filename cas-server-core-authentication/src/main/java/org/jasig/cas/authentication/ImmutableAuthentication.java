@@ -189,4 +189,9 @@ public final class ImmutableAuthentication implements Authentication {
         }
         return Collections.emptyMap();
     }
+
+    @Override
+    public void update(final Map<String, Object> attributes) {
+        this.attributes.putAll(attributes);
+    }
 }
