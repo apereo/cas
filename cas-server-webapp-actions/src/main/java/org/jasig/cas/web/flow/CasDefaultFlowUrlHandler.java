@@ -4,8 +4,11 @@ import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Provides special handling for parameters in requests made to the CAS login
@@ -48,12 +51,19 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
+        final String encoding = getEncodingScheme(request);
         builder.append(request.getRequestURI());
         builder.append('?');
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> flowParams = new LinkedHashMap<>(request.getParameterMap());
-        flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
-        appendQueryParameters(builder, flowParams, getEncodingScheme(request));
+
+        final Map<String, String[]> flowParams = new LinkedHashMap<>(request.getParameterMap());
+        flowParams.put(this.flowExecutionKeyParameter, new String[]{flowExecutionKey});
+
+        final String queryString = flowParams.entrySet().stream()
+                .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
+                .reduce((param1, param2) -> param1 + "&" + param2)
+                .orElse("");
+
+        builder.append(queryString);
         return builder.toString();
     }
 
@@ -62,5 +72,21 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
         return request.getRequestURI()
             + (request.getQueryString() != null ? '?'
             + request.getQueryString() : "");
+    }
+
+    private Stream<String> encodeMultiParameter(final String key, final String[] values, final String encoding) {
+        return Stream.of(values).map(value -> encodeSingleParameter(key, value, encoding));
+    }
+
+    private String encodeSingleParameter(final String key, final String value, final String encoding) {
+        return urlEncode(key, encoding) + "=" + urlEncode(value, encoding);
+    }
+
+    private String urlEncode(final String value, final String encodingScheme) {
+        try {
+            return URLEncoder.encode(value, encodingScheme);
+        } catch (final UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Cannot url encode " + value);
+        }
     }
 }
