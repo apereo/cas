@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Text;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -194,8 +193,8 @@ public class CasProtocolViewsConfiguration {
      * @return the view
      */
     @Bean(name = "openIdProviderView")
-    public JstlView openIdProviderView() {
-        return new JstlView("/WEB-INF/view/jsp/protocol/openid/user.jsp");
+    public View openIdProviderView() {
+        return new CasProtocolView("protocol/openid/user", applicationContext, springTemplateEngine);
     }
 
 

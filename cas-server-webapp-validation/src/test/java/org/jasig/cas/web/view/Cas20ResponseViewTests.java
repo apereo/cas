@@ -11,9 +11,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContext;
-import org.springframework.web.servlet.view.JstlView;
 
 import java.util.Locale;
 
@@ -34,9 +34,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     @Test
     public void verifyView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        final JstlView v = (JstlView) resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
+        final View v = resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
-        v.setServletContext(req.getServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE,
                 new GenericWebApplicationContext(req.getServletContext()));
 

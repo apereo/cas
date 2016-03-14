@@ -1,11 +1,11 @@
 package org.jasig.cas.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
@@ -19,9 +19,9 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContext;
-import org.springframework.web.servlet.view.JstlView;
 
 import javax.crypto.Cipher;
 import java.security.PrivateKey;
@@ -49,9 +49,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     private Map<?, ?> renderView() throws Exception{
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        final JstlView v = (JstlView) resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
+        final View v = resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
-        v.setServletContext(req.getServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE,
                 new GenericWebApplicationContext(req.getServletContext()));
 

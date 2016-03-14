@@ -255,10 +255,6 @@
             <property name="serviceId" value="^test.*"/>
             <property name="evaluationOrder" value="100"/>
         </bean>
-
-
-
-
     </util:list>
 
 
@@ -268,58 +264,8 @@
         <entry key=".*Safari.*Pre.*" value="safari"/>
         <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
     </util:map>
-
-    <!-- CAS 2.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
-
-    <!-- Proxy Response Protocol Views: /proxy -->
-
-    <!-- Failure Proxy Views -->
-    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
-
-    <!-- Successful Proxy Views -->
-    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
-
-    <!-- CAS 3.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <!-- Successful Validation Views -->
-
-    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
-
-    <!-- Post View -->
-    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
-
+    
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
-
-    <bean id="protocolCas2ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/2.0/}"
-          p:suffix=".jsp"
-          p:order="0"/>
-
-    <bean id="protocolCas3ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/3.0/}"
-          p:suffix=".jsp"
-          p:order="1"/>
 
     <bean id="cachingPrincipalAttributeRepository"
           class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
