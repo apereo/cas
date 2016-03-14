@@ -201,8 +201,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         } else {
             principal = resolvePrincipal(handler.getName(), resolver, credential);
         }
-        // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
-        // require principal to be non-null
         if (principal != null) {
             builder.setPrincipal(principal);
         }
