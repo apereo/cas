@@ -298,7 +298,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     @Override
     public Authentication build() {
-        return new ImmutableAuthentication(
+        return new DefaultAuthentication(
                 this.authenticationDate,
                 this.credentials,
                 this.principal,

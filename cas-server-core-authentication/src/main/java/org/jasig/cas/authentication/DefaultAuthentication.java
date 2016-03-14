@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @since 3.0.0
  */
-public final class ImmutableAuthentication implements Authentication {
+public final class DefaultAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
@@ -44,7 +44,7 @@ public final class ImmutableAuthentication implements Authentication {
     private final Map<String, Class<? extends Exception>> failures;
 
     /** No-arg constructor for serialization support. */
-    private ImmutableAuthentication() {
+    private DefaultAuthentication() {
         this.authenticationDate = null;
         this.credentials = null;
         this.principal = null;
@@ -61,7 +61,7 @@ public final class ImmutableAuthentication implements Authentication {
      * @param attributes Nullable map of authentication metadata.
      * @param successes Non-null map of authentication successes containing at least one entry.
      */
-    public ImmutableAuthentication(
+    public DefaultAuthentication(
             final ZonedDateTime date,
             final Principal principal,
             final Map<String, Object> attributes,
@@ -90,7 +90,7 @@ public final class ImmutableAuthentication implements Authentication {
      * @param successes Non-null map of authentication successes containing at least one entry.
      * @param failures Nullable map of authentication failures.
      */
-    public ImmutableAuthentication(
+    public DefaultAuthentication(
             final ZonedDateTime date,
             final List<CredentialMetaData> credentials,
             final Principal principal,
