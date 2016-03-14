@@ -46,7 +46,6 @@ public class RegisteredServiceResourceTests {
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.registeredServiceResource)
                 .defaultRequest(get("/")
                 .contextPath("/cas")
-                .servletPath("/v1")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .build();
     }

@@ -65,7 +65,6 @@ public class TicketsResourceTests {
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
                 .contextPath("/cas")
-                .servletPath("/v1")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .build();
     }
