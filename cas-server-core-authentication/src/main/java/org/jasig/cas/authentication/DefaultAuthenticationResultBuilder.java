@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 
 import com.google.common.collect.ImmutableSet;
+import org.jasig.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +114,7 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
                     final Object oldValue = authenticationAttributes.remove(attrName);
 
                     LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
-                    final Collection<Object> listOfValues = convertValueToCollection(oldValue);
+                    final Collection<Object> listOfValues = CollectionUtils.convertValueToCollection(oldValue);
                     listOfValues.add(authn.getAttributes().get(attrName));
                     authenticationAttributes.put(attrName, listOfValues);
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
@@ -145,31 +146,7 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
         return this.principalElectionStrategy.nominate(ImmutableSet.copyOf(authentications), principalAttributes);
     }
-
-    /**
-     * Convert the object given into a {@link Collection} instead.
-     * @param obj the object to convert into a collection
-     * @return The collection instance containing the object provided
-     */
-    @SuppressWarnings("unchecked")
-    public static Set<Object> convertValueToCollection(final Object obj) {
-        //does this method belong here? Looks like a general utility method
-        final Set<Object> c = new HashSet<>();
-        if (obj instanceof Collection) {
-            c.addAll((Collection<Object>) obj);
-            LOGGER.debug("Converting multi-valued attribute [{}] for the authentication result", obj);
-        } else if (obj instanceof Map) {
-            throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
-        } else if (obj.getClass().isArray()) {
-            c.addAll(Arrays.asList((Object[]) obj));
-            LOGGER.debug("Converting array attribute [{}] for the authentication result", obj);
-        } else {
-            c.add(obj);
-            LOGGER.debug("Converting attribute [{}] for the authentication result", obj);
-        }
-        return c;
-    }
-
+    
     public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {
         this.principalElectionStrategy = principalElectionStrategy;
     }

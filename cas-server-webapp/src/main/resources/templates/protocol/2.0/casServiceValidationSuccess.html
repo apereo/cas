@@ -2,8 +2,8 @@
     <cas:authenticationSuccess>
         <cas:user>[[${principal.id}]]</cas:user>
         <cas:proxyGrantingTicket th:if="${pgtIou}">[[${pgtIou}]]</cas:proxyGrantingTicket>
-        <cas:proxies th:if="${not #lists.isEmpty(chainedAuthentications)}" th:each="proxy : ${chainedAuthentications}">
-            <cas:proxy>[[${proxy.principal.id}]]</cas:proxy>
+        <cas:proxies th:if="${not #lists.isEmpty(chainedAuthentications)}">
+            <cas:proxy th:each="proxy : ${chainedAuthentications}">[[${proxy.principal.id}]]</cas:proxy>
         </cas:proxies>
     </cas:authenticationSuccess>
 </cas:serviceResponse>

@@ -1,32 +1,13 @@
-<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
+<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas' th:inline="text">
     <cas:authenticationSuccess>
-        <cas:user>${fn:escapeXml(principal.id)}</cas:user>
-        <c:if test="${not empty pgtIou}">
-            <cas:proxyGrantingTicket>${pgtIou}</cas:proxyGrantingTicket>
-        </c:if>
-        <c:if test="${fn:length(chainedAuthentications) > 0}">
-            <cas:proxies>
-                <c:forEach var="proxy" items="${chainedAuthentications}" varStatus="loopStatus" begin="0"
-                           end="${fn:length(chainedAuthentications)}" step="1">
-                    <cas:proxy>${fn:escapeXml(proxy.principal.id)}</cas:proxy>
-                </c:forEach>
-            </cas:proxies>
-        </c:if>
-
-        <c:if test="${fn:length(attributes) > 0}">
-            <cas:attributes>
-                <c:forEach var="attr"
-                           items="${attributes}"
-                           varStatus="loopStatus" begin="0"
-                           end="${fn:length(attributes)}"
-                           step="1">
-
-                    <c:forEach var="attrval" items="${attr.value}">
-                        <cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attrval)}</cas:${fn:escapeXml(attr.key)}>
-                    </c:forEach>
-                </c:forEach>
-            </cas:attributes>
-        </c:if>
-
+        <cas:user>[[${principal.id}]]</cas:user>
+        <cas:proxyGrantingTicket th:if="${pgtIou}">[[${pgtIou}]]</cas:proxyGrantingTicket>
+        <cas:proxies th:if="${not #lists.isEmpty(chainedAuthentications)}">
+            <cas:proxy th:each="proxy : ${chainedAuthentications}">[[${proxy.principal.id}]]</cas:proxy>
+        </cas:proxies>
+        <cas:attributes th:if="${not #lists.isEmpty(attributes)}">
+            <span th:remove="tag" th:each="attr : ${attributes}" th:utext="${attr}"></span>
+        </cas:attributes>
     </cas:authenticationSuccess>
 </cas:serviceResponse>
+

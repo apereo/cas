@@ -3,6 +3,7 @@ package org.jasig.cas.web.view;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -10,9 +11,12 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Renders and prepares CAS3 views. This view is responsible
@@ -95,10 +99,22 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @param registeredService the registered service
      */
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
-                                                     final Map<String, Object> attributes, final RegisteredService registeredService) {
+                                                     final Map<String, Object> attributes, 
+                                                     final RegisteredService registeredService) {
+        
+        final List<String> attributesForModel = new ArrayList<>();
+        final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
+        encodedAttributes.keySet().forEach(key -> {
+            final Object valueEncoded = encodedAttributes.get(key);
+            final Set<Object> values =  CollectionUtils.convertValueToCollection(valueEncoded);
+            values.forEach(val -> {
+                attributesForModel.add("<cas:".concat(key).concat(">").concat(val.toString()).concat("</cas:").concat(key).concat(">"));
+            });
+        });
+        
         super.putIntoModel(model,
                 CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
-                this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model)));
+                attributesForModel);
     }
 
     /**
