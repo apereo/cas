@@ -1,13 +1,5 @@
 package org.jasig.cas.web;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.CentralAuthenticationService;
@@ -41,6 +33,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -208,14 +207,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                         CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null, request, service);
             }
 
-            String proxyIou = null;
-            if (serviceCredential != null && this.proxyHandler.canHandle(serviceCredential)) {
-                proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
-                if (StringUtils.isEmpty(proxyIou)) {
-                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            new Object[] {serviceCredential.getId()}, request, service);
-                }
+            final String proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
+            if (StringUtils.isEmpty(proxyIou) && serviceCredential != null) {
+                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                        CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                        new Object[] {serviceCredential.getId()}, request, service);
             }
 
             onSuccessfulValidation(serviceTicketId, assertion);
@@ -235,6 +231,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
     }
 
+    private String handleProxyIouDelivery(final Credential serviceCredential, 
+                                          final TicketGrantingTicket proxyGrantingTicketId) {
+        if (serviceCredential != null && this.proxyHandler.canHandle(serviceCredential)) {
+            return this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
+        }
+        return null;
+    }
     /**
      * Validate assertion.
      *
