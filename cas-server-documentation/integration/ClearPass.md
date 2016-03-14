@@ -12,9 +12,6 @@ applications with CAS.
 No applications will be able to obtain the user credentials unless ClearPass is explicitly turned on by the
 below configuration.</p></div>
 
-<div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>If you wish to review the configuration
-for ClearPass via proxying, please <a href="ClearPass-Proxy-Authentication.html">see this link instead</a>.</p></div>
-
 ## Architecture
 CAS is able to issue the credential password directly in the CAS validation response. This previously was handled
 via a proxy authentication sequence and obtaining a proxy-granting ticket for the ClearPass service and was necessary
