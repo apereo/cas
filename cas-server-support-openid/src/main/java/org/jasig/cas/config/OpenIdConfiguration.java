@@ -1,16 +1,16 @@
 package org.jasig.cas.config;
 
+import java.util.Arrays;
+
+import org.jasig.cas.support.openid.web.mvc.OpenIdValidateController;
+import org.jasig.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.jasig.cas.web.AbstractDelegateController;
 import org.jasig.cas.web.DelegatingController;
 import org.openid4java.server.ServerManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.JstlView;
-
-import java.util.Arrays;
 
 /**
  * This this {@link OpenIdConfiguration}.
@@ -20,20 +20,6 @@ import java.util.Arrays;
  */
 @Configuration("openidConfiguration")
 public class OpenIdConfiguration {
-
-    /**
-     * The Smart open id association controller.
-     */
-    @Autowired
-    @Qualifier("smartOpenIdAssociationController")
-    private AbstractDelegateController smartOpenIdAssociationController;
-
-    /**
-     * The Open id validate controller.
-     */
-    @Autowired
-    @Qualifier("openIdValidateController")
-    private AbstractDelegateController openIdValidateController;
 
     /**
      * The Endpoint.
@@ -105,9 +91,32 @@ public class OpenIdConfiguration {
     @Bean(name="openidDelegatingController")
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Arrays.asList(this.smartOpenIdAssociationController, 
-                this.openIdValidateController));
+        controller.setDelegates(Arrays.asList(
+                this.smartOpenIdAssociationController(),
+                this.openIdValidateController()));
         return controller;
+    }
+
+    /**
+     * Smart OpenId Association controller.
+     * Handles OpenId association requests.
+     *
+     * @return the association controller
+     */
+    @Bean(name="smartOpenIdAssociationController")
+    public AbstractDelegateController smartOpenIdAssociationController() {
+        return new SmartOpenIdController();
+    }
+
+    /**
+     * OpenId validate controller.
+     * Handles signature verification requests.
+     *
+     * @return the signature verification controller
+     */
+    @Bean(name="openIdValidateController")
+    public AbstractDelegateController openIdValidateController() {
+        return new OpenIdValidateController();
     }
 
     /**

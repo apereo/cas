@@ -1,15 +1,7 @@
 description = 'Apereo CAS SAML Server and Validation Support'
 dependencies {
-    compile libraries.opensaml
-    compile libraries.shibidp
-    compile libraries.bouncycastle
-    compile project(':cas-server-core-web')
-    compile project(':cas-server-core-services')
-    compile project(':cas-server-core-authentication')
-    compile project(':cas-server-webapp-validation')
-    compile libraries.jdom
-    runtime libraries.hibernate
-    runtime libraries.xmlapis
+    compile project(':cas-server-support-saml-core')
+
     testCompile project(':cas-server-core-util')
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-logout')
