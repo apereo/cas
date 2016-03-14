@@ -79,8 +79,7 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
         final Ticket ticket = encodeTicket(ticketToUpdate);
         logger.debug("Updating ticket {}", ticket);
         try {
-            if (!this.client.replace(ticket.getId(), ticket.getExpirationPolicy().getTimeToLive().intValue(),
-                    ticket).get()) {
+            if (!this.client.replace(ticket.getId(),  getTimeout(ticket), ticket).get()) {
                 logger.error("Failed updating {}", ticket);
             }
         } catch (final InterruptedException e) {
@@ -101,9 +100,7 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
         final Ticket ticket = encodeTicket(ticketToAdd);
         logger.debug("Adding ticket {}", ticket);
         try {
-            if (!this.client.add(ticket.getId(), 
-                    ticket.getExpirationPolicy().getTimeToLive().intValue(), 
-                    ticket).get()) {
+            if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
                 logger.error("Failed adding {}", ticket);
             }
         } catch (final InterruptedException e) {
@@ -178,5 +175,19 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
     @Override
     protected boolean needsCallback() {
         return true;
+    }
+
+    /**
+     * If not time out value is specified, expire the ticket immediately.
+     *
+     * @param ticket the ticket
+     * @return timeout in milliseconds. 
+     */
+    private static int getTimeout(final Ticket ticket) {
+        final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        if (ttl == 0) {
+            return 1;
+        }
+        return ttl;
     }
 }
