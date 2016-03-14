@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.1.2
  */
 @Component("hardTimeoutExpirationPolicy")
-public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 6728077010285422290L;
@@ -63,7 +63,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null) || ticketState.getCreationTime()
-          .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isAfter(ZonedDateTime.now(ZoneOffset.UTC));
+          .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     @Override

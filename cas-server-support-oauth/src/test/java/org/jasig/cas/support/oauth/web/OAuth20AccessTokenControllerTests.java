@@ -378,7 +378,8 @@ public final class OAuth20AccessTokenControllerTests {
         internalVerifyClientOK(service, true, true);
     }
 
-    private void internalVerifyClientOK(final RegisteredService service, final boolean basicAuth, final boolean refreshToken) throws Exception {
+    private void internalVerifyClientOK(final RegisteredService service, final boolean basicAuth, final boolean refreshToken)
+            throws Exception {
 
         final Principal principal = createPrincipal();
         final OAuthCode code = addCode(principal, service);
@@ -421,7 +422,8 @@ public final class OAuth20AccessTokenControllerTests {
     private int getTimeLeft(final String body, final boolean refreshToken) {
         final int timeLeft;
         if (refreshToken) {
-            timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuthConstants.EXPIRES + '=', '&' + OAuthConstants.REFRESH_TOKEN));
+            timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuthConstants.EXPIRES + '=',
+                    '&' + OAuthConstants.REFRESH_TOKEN));
         } else {
             timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES + '='));
         }
@@ -554,12 +556,88 @@ public final class OAuth20AccessTokenControllerTests {
     // refresh token grant type tests
     //
     //
+    @Test
+    public void verifyRefreshTokenExpiredToken() throws Exception {
+
+        final Principal principal = createPrincipal();
+        final RegisteredService registeredService = addRegisteredService();
+        final Authentication authentication = getAuthentication(principal);
+        final Service service = new OAuthWebApplicationService(registeredService);
+        final DefaultRefreshTokenFactory expiringRefreshTokenFactory = new DefaultRefreshTokenFactory();
+        expiringRefreshTokenFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
+        final RefreshToken refreshToken = expiringRefreshTokenFactory.create(service, authentication);
+        oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+                + OAuthConstants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
+        assertEquals(400, mockResponse.getStatus());
+        assertEquals("error=" + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
+    }
+
+    @Test
+    public void verifyRefreshTokenBadCredentials() throws Exception {
+
+        final Principal principal = createPrincipal();
+        final RegisteredService service = addRegisteredService();
+        final RefreshToken refreshToken = addRefreshToken(principal, service);
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+                + OAuthConstants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
+        mockRequest.setParameter(OAuthConstants.REFRESH_TOKEN, refreshToken.getId());
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
+        assertEquals(401, mockResponse.getStatus());
+        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+    }
+
+    @Test
+    public void verifyRefreshTokenMissingToken() throws Exception {
+
+        addRegisteredService();
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+                + OAuthConstants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
+        assertEquals(400, mockResponse.getStatus());
+        assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+    }
 
     @Test
     public void verifyRefreshTokenOK() throws Exception {
 
-        final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
+
+        internalVerifyRefreshTokenOk(service);
+    }
+
+    @Test
+    public void verifyRefreshTokenOKWithRefreshToken() throws Exception {
+
+        final OAuthRegisteredService service = addRegisteredService();
+        service.setGenerateRefreshToken(true);
+
+        internalVerifyRefreshTokenOk(service);
+    }
+
+    private void internalVerifyRefreshTokenOk(final RegisteredService service) throws Exception {
+
+        final Principal principal = createPrincipal();
         final RefreshToken refreshToken = addRefreshToken(principal, service);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
