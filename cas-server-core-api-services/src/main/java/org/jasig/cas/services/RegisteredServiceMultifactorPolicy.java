@@ -27,7 +27,12 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
         /**
          * Disallow MFA, proceed with authentication and communicate MFA to the RP.
          */
-        PHANTOM
+        PHANTOM,
+
+        /**
+         * Do not check for failure at all.
+         */
+        NONE
     }
 
     /**

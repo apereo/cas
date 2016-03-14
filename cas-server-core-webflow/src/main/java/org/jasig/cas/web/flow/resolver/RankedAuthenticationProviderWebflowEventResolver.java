@@ -5,11 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationContextValidator;
 import org.jasig.cas.authentication.AuthenticationResultBuilder;
-import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.jasig.cas.util.Pair;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
@@ -20,7 +17,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,21 +28,12 @@ import java.util.Set;
  */
 @Component("rankedAuthenticationProviderWebflowEventResolver")
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
-
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-
-    @NotNull
-    @Autowired(required = false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
+    
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -83,7 +70,9 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         if (event.getId().equals(CasWebflowConstants.TRANSITION_ID_ERROR)
-            || event.getId().equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)) {
+            || event.getId().equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
+            || event.getId().equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+            logger.debug("Returning webflow event as {}", event.getId());
             return ImmutableSet.of(event);
         }
 

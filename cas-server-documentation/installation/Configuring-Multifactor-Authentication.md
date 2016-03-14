@@ -59,14 +59,14 @@ MFA can be triggered for a specific application registered inside the CAS servic
   "id" : 100,
   "multifactorPolicy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ]
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ]
   }
 }
 ```
 
 ### Principal Attribute
 MFA can be triggered for all users/subjects carrying a specific attribute that matches configured attribute value. The attribute
-value is a regex pattern and must match the authentication flow
+value is a regex pattern and must match the provider
 id of an available MFA provider described above. See below to learn about how to configure MFA settings. 
 
 ### Opt-In Request Parameter
@@ -92,7 +92,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
   "id" : 100,
   "multifactorPolicy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ],
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
     "principalAttributeNameTrigger" : "memberOf",
     "principalAttributeValueToMatch" : "faculty|allMfaMembers"
   }
@@ -125,6 +125,7 @@ The following failure modes are supported:
 | `CLOSED`                  | Authentication is blocked if the provider cannot be reached. 
 | `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
+| `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
 
 ## Ranking Providers
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
