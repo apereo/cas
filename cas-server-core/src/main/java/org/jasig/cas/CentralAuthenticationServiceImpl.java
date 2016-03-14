@@ -244,10 +244,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         verifyRegisteredServiceProperties(registeredService, service);
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
         
-        if (sanitizedCredentials.isEmpty() && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso() 
-                && ticketGrantingTicket.getCountOfUses() > 0) {
-            logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
-            throw new UnauthorizedSsoServiceException();
+        if (sanitizedCredentials.isEmpty() && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
+            if (ticketGrantingTicket.getProxiedBy() != null) {
+                logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO for proxying.", service.getId());
+                throw new UnauthorizedSsoServiceException();
+            } else if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0) {
+                logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
+                throw new UnauthorizedSsoServiceException();
+            }
         }
 
         Authentication currentAuthentication = null;
