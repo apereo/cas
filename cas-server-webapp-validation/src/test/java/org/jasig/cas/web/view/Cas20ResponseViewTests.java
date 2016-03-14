@@ -15,7 +15,10 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -37,8 +40,21 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
         final Cas20ResponseView view = new Cas20ResponseView();
         final MockHttpServletResponse resp = new MockHttpServletResponse();
-        view.render(modelAndView.getModel(), req, resp);
+        
+        view.setView(new View() {
+            @Override
+            public String getContentType() {
+                return "text/html";
+            }
 
+            @Override
+            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response)
+                    throws Exception {
+                map.forEach((k, v) -> request.setAttribute(k, v));
+            }
+        });
+        view.render(modelAndView.getModel(), req, resp);
+        
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));

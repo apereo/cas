@@ -99,20 +99,10 @@ public class Cas30ResponseView extends Cas20ResponseView {
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
                                                      final Map<String, Object> attributes, 
                                                      final RegisteredService registeredService) {
-        
-        final List<String> attributesForModel = new ArrayList<>();
         final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
-        encodedAttributes.keySet().forEach(key -> {
-            final Object valueEncoded = encodedAttributes.get(key);
-            final Set<Object> values =  CollectionUtils.convertValueToCollection(valueEncoded);
-            values.forEach(val -> {
-                attributesForModel.add("<cas:".concat(key).concat(">").concat(val.toString()).concat("</cas:").concat(key).concat(">"));
-            });
-        });
-        
         super.putIntoModel(model,
                 CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
-                attributesForModel);
+                encodedAttributes);
     }
 
     /**
@@ -120,6 +110,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
      */
     @Component("cas3ServiceSuccessView")
     public static class Success extends Cas30ResponseView {
+        /**
+         * Instantiates a new Success.
+         */
         public Success() {
             super();
         }
