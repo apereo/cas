@@ -132,7 +132,7 @@ public class CasProtocolViewsConfiguration {
         return new CasProtocolView("protocol/oauth/confirm.jsp", applicationContext, springTemplateEngine);
     }
 
-    public static class CasProtocolView extends ThymeleafView {
+    private static class CasProtocolView extends ThymeleafView {
         /**
          * Instantiates a new Cas protocol view.
          *
@@ -140,7 +140,7 @@ public class CasProtocolViewsConfiguration {
          * @param applicationContext the application context
          * @param templateEngine     the template engine
          */
-        public CasProtocolView(final String templateName, final ApplicationContext applicationContext, 
+        CasProtocolView(final String templateName, final ApplicationContext applicationContext, 
                                final SpringTemplateEngine templateEngine) {
             super(templateName);
             setApplicationContext(applicationContext);

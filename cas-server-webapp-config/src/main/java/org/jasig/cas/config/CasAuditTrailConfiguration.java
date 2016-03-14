@@ -180,7 +180,9 @@ public class CasAuditTrailConfiguration {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
+        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
         map.put("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);

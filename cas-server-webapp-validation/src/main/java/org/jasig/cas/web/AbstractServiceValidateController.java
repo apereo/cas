@@ -25,6 +25,7 @@ import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.AbstractTicketValidationException;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
@@ -153,24 +154,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param credential the service credential
      * @return the ticket granting ticket
      */
-    private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) {
-        TicketGrantingTicket proxyGrantingTicketId = null;
-
-        try {
-            final ServiceTicket serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
-            final AuthenticationResult authenticationResult =
-                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(),
-                            credential);
-
-            proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
-                    authenticationResult);
-            logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
-                    proxyGrantingTicketId.getId(), serviceTicketId, credential);
-        } catch (final AuthenticationException e) {
-            logger.warn("Failed to authenticate service credential {}", credential);
-        } catch (final AbstractTicketException e) {
-            logger.error("Failed to create proxy granting ticket for {}", credential, e);
-        }
+    private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) 
+        throws AuthenticationException, AbstractTicketException {
+        final ServiceTicket serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
+        final AuthenticationResult authenticationResult =
+                this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(),
+                        credential);
+        final TicketGrantingTicket proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
+                authenticationResult);
+        logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
+                proxyGrantingTicketId.getId(), serviceTicketId, credential);
 
         return proxyGrantingTicketId;
     }
@@ -191,10 +184,20 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             TicketGrantingTicket proxyGrantingTicketId = null;
             final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
             if (serviceCredential != null) {
-                proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
-                if (proxyGrantingTicketId == null) {
+                try {
+                    proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
+                } catch (final AuthenticationException e) {
+                    logger.warn("Failed to authenticate service credential {}", serviceCredential);
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                            new Object[]{serviceCredential.getId()}, request, service);
+                } catch (final InvalidTicketException e) {
+                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                    return generateErrorView(e.getCode(), e.getCode(),
+                            new Object[]{serviceTicketId}, request, service);
+                } catch (final AbstractTicketException e) {
+                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                    return generateErrorView(e.getCode(), e.getCode(),
                             new Object[]{serviceCredential.getId()}, request, service);
                 }
             }
