@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -21,6 +22,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Locale;
 
@@ -99,8 +101,15 @@ public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafView
         final View view = super.loadView(viewName, locale);
 
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
-
-        final WebApplicationService service = WebUtils.getService(this.argumentExtractors, requestContext);
+        final WebApplicationService service;
+        
+        if (requestContext != null) {
+            service = WebUtils.getService(this.argumentExtractors, requestContext);    
+        } else {
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+            service = WebUtils.getService(this.argumentExtractors, request);
+        }
+        
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (service != null && registeredService != null

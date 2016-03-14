@@ -112,8 +112,8 @@ public class Cas30ResponseView extends Cas20ResponseView {
          * @param view the view
          */
         @Autowired
-        public Success(@Qualifier("cas3JstlSuccessView")
-                       final AbstractUrlBasedView view) {
+        public Success(@Qualifier("cas3SuccessView")
+                       final View view) {
             super(view);
             super.setSuccessResponse(true);
         }

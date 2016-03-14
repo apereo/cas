@@ -62,14 +62,19 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     protected String getRequestedService(final HttpServletRequest request) {
         final String targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
         final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        final String serviceAttribute = (String) request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
-        final String serviceToUse;
+        final Object serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+        
+        String serviceToUse = null;
         if (StringUtils.isNotBlank(targetService)) {
             serviceToUse = targetService;
         } else if (StringUtils.isNotBlank(service)) {
             serviceToUse = service;
-        } else {
-            serviceToUse = serviceAttribute;
+        } else if (serviceAttribute != null) {
+            if (serviceAttribute instanceof Service) {
+                serviceToUse = ((Service) serviceAttribute).getId();
+            } else {
+                serviceToUse = serviceAttribute.toString();
+            }
         }
 
         if (StringUtils.isBlank(serviceToUse)) {

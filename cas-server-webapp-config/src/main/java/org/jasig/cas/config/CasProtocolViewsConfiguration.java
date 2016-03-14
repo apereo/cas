@@ -1,10 +1,16 @@
 package org.jasig.cas.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.View;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.view.ThymeleafView;
+
+import java.util.Locale;
 
 /**
  * This is {@link CasProtocolViewsConfiguration} that attempts to create Spring-managed beans
@@ -16,51 +22,54 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration("casProtocolViewsConfiguration")
 @Lazy(true)
 public class CasProtocolViewsConfiguration {
-
-    /**
-     * The Cas 2 success view.
-     */
-    @Value("${view.cas2.success:/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp}")
+    
+    @Autowired
+    private ApplicationContext applicationContext;
+    
+    @Autowired
+    private SpringTemplateEngine springTemplateEngine;
+    
+    @Value("${view.cas2.success:protocol/2.0/casServiceValidationSuccess}")
     private String cas2SuccessView;
 
     /**
      * The Cas 2 failure view.
      */
-    @Value("${view.cas2.failure:/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp}")
+    @Value("${view.cas2.failure:protocol/2.0/casServiceValidationFailure}")
     private String cas2FailureView;
 
     /**
      * The Cas 2 proxy success view.
      */
-    @Value("${view.cas2.proxy.success:/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp}")
+    @Value("${view.cas2.proxy.success:protocol/2.0/casProxySuccessView}")
     private String cas2ProxySuccessView;
 
     /**
      * The Cas 2 proxy failure view.
      */
-    @Value("${view.cas2.proxy.failure:/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp}")
+    @Value("${view.cas2.proxy.failure:protocol/2.0/casProxyFailureView}")
     private String cas2ProxyFailureView;
 
     /**
      * The Cas 3 success view.
      */
-    @Value("${view.cas3.success:/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp}")
+    @Value("${view.cas3.success:protocol/3.0/casServiceValidationSuccess}")
     private String cas3SuccessView;
 
     /**
      * The Cas 3 failure view.
      */
-    @Value("${view.cas3.failure:/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp}")
+    @Value("${view.cas3.failure:protocol/3.0/casServiceValidationFailure}")
     private String cas3FailureView;
-    
+
     /**
      * Cas 2  success view.
      *
      * @return the  view
      */
-    @Bean(name = "cas2JstlSuccessView")
-    public JstlView cas2JstlSuccessView() {
-        return new JstlView(this.cas2SuccessView);
+    @Bean(name = "cas2SuccessView")
+    public View cas2SuccessView() {
+        return new CasProtocolView(this.cas2SuccessView, applicationContext, springTemplateEngine);
     }
 
     /**
@@ -69,8 +78,8 @@ public class CasProtocolViewsConfiguration {
      * @return the  view
      */
     @Bean(name = "cas2ServiceFailureView")
-    public JstlView cas2ServiceFailureView() {
-        return new JstlView(this.cas2FailureView);
+    public View cas2ServiceFailureView() {
+        return new CasProtocolView(this.cas2FailureView, applicationContext, springTemplateEngine);
     }
 
     /**
@@ -79,8 +88,8 @@ public class CasProtocolViewsConfiguration {
      * @return the  view
      */
     @Bean(name = "cas2ProxyFailureView")
-    public JstlView cas2ProxyFailureView() {
-        return new JstlView(this.cas2ProxyFailureView);
+    public View cas2ProxyFailureView() {
+        return new CasProtocolView(this.cas2ProxyFailureView, applicationContext, springTemplateEngine);
     }
 
     /**
@@ -89,8 +98,8 @@ public class CasProtocolViewsConfiguration {
      * @return the view
      */
     @Bean(name = "cas2ProxySuccessView")
-    public JstlView cas2ProxySuccessView() {
-        return new JstlView(this.cas2ProxySuccessView);
+    public View cas2ProxySuccessView() {
+        return new CasProtocolView(this.cas2ProxySuccessView, applicationContext, springTemplateEngine);
     }
 
     /**
@@ -98,9 +107,9 @@ public class CasProtocolViewsConfiguration {
      *
      * @return the view
      */
-    @Bean(name = "cas3JstlSuccessView")
-    public JstlView cas3JstlSuccessView() {
-        return new JstlView(this.cas3SuccessView);
+    @Bean(name = "cas3SuccessView")
+    public View cas3SuccessView() {
+        return new CasProtocolView(this.cas3SuccessView, applicationContext, springTemplateEngine);
     }
 
     /**
@@ -109,8 +118,34 @@ public class CasProtocolViewsConfiguration {
      * @return the view
      */
     @Bean(name = "cas3ServiceFailureView")
-    public JstlView cas3ServiceFailureView() {
-        return new JstlView(this.cas3FailureView);
+    public View cas3ServiceFailureView() {
+        return new CasProtocolView(this.cas3FailureView, applicationContext, springTemplateEngine);
     }
-    
+
+    /**
+     * Oauth confirm view jstl view.
+     *
+     * @return the jstl view
+     */
+    @Bean(name = "oauthConfirmView")
+    public View oauthConfirmView() {
+        return new CasProtocolView("protocol/oauth/confirm.jsp", applicationContext, springTemplateEngine);
+    }
+
+    public static class CasProtocolView extends ThymeleafView {
+        /**
+         * Instantiates a new Cas protocol view.
+         *
+         * @param templateName       the template name
+         * @param applicationContext the application context
+         * @param templateEngine     the template engine
+         */
+        public CasProtocolView(final String templateName, final ApplicationContext applicationContext, 
+                               final SpringTemplateEngine templateEngine) {
+            super(templateName);
+            setApplicationContext(applicationContext);
+            setTemplateEngine(templateEngine);
+            setLocale(Locale.getDefault());
+        }
+    }
 }

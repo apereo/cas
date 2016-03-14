@@ -48,7 +48,7 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
          * @param view the view
          */
         @Autowired
-        public Success(@Qualifier("cas2JstlSuccessView")
+        public Success(@Qualifier("cas2SuccessView")
                        final View view) {
             super(view);
             super.setSuccessResponse(true);

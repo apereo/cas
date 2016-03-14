@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.JstlView;
 
 /**
  * This this {@link OAuthConfiguration}.
@@ -51,17 +50,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      */
     @Value("${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize")
     private String callbackUrl;
-
-    /**
-     * Oauth confirm view jstl view.
-     *
-     * @return the jstl view
-     */
-    @Bean(name = "oauthConfirmView")
-    public JstlView oauthConfirmView() {
-        return new JstlView("/WEB-INF/view/jsp/protocol/oauth/confirm.jsp");
-    }
-
+    
     /**
      * Oauth sec config config.
      *
