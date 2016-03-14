@@ -5,7 +5,7 @@ import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -20,12 +20,12 @@ public interface MultifactorTriggerSelectionStrategy {
      * Resolve the multifactor authentication provider id for the specified HttpServletRequest, RegisteredService and
      * Principal.
      *
-     * @param availableProviders a Map of available MFA providers loaded in the spring context
-     * @param request            The original request to check for MFA requirements
-     * @param service            The service to check for MFA requirements
-     * @param principal          The principal to check for MFA requirements
+     * @param providers a Map of available MFA providers loaded in the spring context
+     * @param request   The original request to check for MFA requirements
+     * @param service   The service to check for MFA requirements
+     * @param principal The principal to check for MFA requirements
      * @return the provider id of the MFA provider required for authentication
      */
-    Optional<String> resolve(Map<String, MultifactorAuthenticationProvider> availableProviders, HttpServletRequest request,
-                             RegisteredService service, Principal principal);
+    Optional<String> resolve(Collection<MultifactorAuthenticationProvider> providers, HttpServletRequest request, RegisteredService service,
+                             Principal principal);
 }
