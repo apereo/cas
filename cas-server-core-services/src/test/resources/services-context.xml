@@ -238,7 +238,15 @@
         </bean>
 
     </util:list>
+    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <util:map id="uniqueIdGeneratorsMap">
+        <entry
+                key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                value-ref="serviceTicketUniqueIdGenerator"/>
+    </util:map>
+
 </beans>

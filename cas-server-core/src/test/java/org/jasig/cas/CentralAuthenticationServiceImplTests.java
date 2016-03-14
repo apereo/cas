@@ -312,15 +312,26 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         assertNotNull(serviceTicket);
     }
 
-    @Test(expected = UnauthorizedSsoServiceException.class)
+    @Test
     public void verifyGrantServiceTicketWithNoCredsAndSsoFalse() throws Exception {
         final Service svc = getService("TestSsoFalse");
         final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-
-        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null);
+        assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null));
     }
 
+    @Test(expected=UnauthorizedSsoServiceException.class)
+    public void verifyGrantServiceTicketWithNoCredsAndSsoFalseAndSsoFalse() throws Exception {
+        final Service svc = getService("TestSsoFalse");
+        final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
+
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        final Service service = getService("eduPersonTest");
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
+
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
+    }
+    
     @Test
     public void verifyValidateServiceTicketNoAttributesReturned() throws Exception {
         final Service service = getService();

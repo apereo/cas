@@ -393,8 +393,20 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected void scheduleCleanerJob() {
         try {
 
-            if (!cleanerEnabled && isCleanerSupported()) {
-                logger.info("Ticket registry cleaner is disabled or is not supported by {}. No cleaner processes will be scheduled.",
+            if (scheduler == null) {
+                logger.warn("Ticket registry cleaner scheduler is not defined for {}. No cleaner processes will be scheduled.",
+                        this.getClass().getName());
+                return;
+            }
+
+            if (!cleanerEnabled) {
+                logger.info("Ticket registry cleaner is disabled for {}. No cleaner processes will be scheduled.",
+                        this.getClass().getName());
+                return;
+            }
+            
+            if (!isCleanerSupported()) {
+                logger.info("Ticket registry cleaner is not supported by {}. No cleaner processes will be scheduled.",
                         this.getClass().getName());
                 return;
             }
