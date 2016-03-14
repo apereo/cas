@@ -84,7 +84,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), "CasOAuthClient");
     }
-
+    
     /**
      * Requires authentication access token interceptor requires authentication interceptor.
      *
