@@ -22,11 +22,9 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
 
     /**
      * Instantiates a new Abstract cas jstl view.
-     *
-     * @param view the view
      */
-    protected Cas20ResponseView(final View view) {
-        super(view);
+    protected Cas20ResponseView() {
+        super();
     }
 
     @Override
@@ -43,15 +41,14 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
      */
     @Component("cas2ServiceSuccessView")
     public static class Success extends Cas20ResponseView {
-        /**
-         * Instantiates a new Success.
-         * @param view the view
-         */
-        @Autowired
-        public Success(@Qualifier("cas2SuccessView")
-                       final View view) {
-            super(view);
-            super.setSuccessResponse(true);
+        public Success() {
+            super();
+        }
+
+        @Autowired(required=false)
+        @Override
+        public void setView(@Qualifier("cas2SuccessView") final View view) {
+            super.setView(view);
         }
     }
 }

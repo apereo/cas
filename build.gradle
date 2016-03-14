@@ -774,11 +774,13 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.slf4j', module: 'jul-to-slf4j')
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion") {
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     exclude(group: 'org.springframework', module: 'spring-web')
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     exclude(group: 'org.springframework', module: 'spring-core')
@@ -839,6 +841,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigServerVersion") {
@@ -863,6 +866,7 @@ ext.libraries = [
                     exclude(group: 'org.yaml', module: 'snakeyaml')
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudStarterVersion") {
@@ -883,6 +887,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContextVersion") {
@@ -903,6 +908,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     force = true
                 }
                 /*

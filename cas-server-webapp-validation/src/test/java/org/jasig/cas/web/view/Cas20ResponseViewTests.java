@@ -27,19 +27,15 @@ import static org.junit.Assert.*;
  */
 public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
 
-    @Autowired
-    @Qualifier("protocolCas2ViewResolver")
-    private ViewResolver resolver;
 
     @Test
     public void verifyView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        final View v = resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE,
                 new GenericWebApplicationContext(req.getServletContext()));
 
-        final Cas20ResponseView view = new Cas20ResponseView(v);
+        final Cas20ResponseView view = new Cas20ResponseView();
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
 

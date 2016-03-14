@@ -22,8 +22,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContext;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.servlet.view.velocity.VelocityView;
 
 import javax.crypto.Cipher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.Locale;
 import java.util.Map;
@@ -40,23 +44,30 @@ import static org.junit.Assert.*;
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
-    @Qualifier("protocolCas3ViewResolver")
-    private ViewResolver resolver;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
+        
     private Map<?, ?> renderView() throws Exception{
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        final View v = resolver.resolveViewName(modelAndView.getViewName(), Locale.getDefault());
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE,
                 new GenericWebApplicationContext(req.getServletContext()));
 
-        final Cas30ResponseView view = new Cas30ResponseView(v);
+        final Cas30ResponseView view = new Cas30ResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.servicesManager));
+        view.setView(new View() {
+            @Override
+            public String getContentType() {
+                return "text/html";
+            }
+
+            @Override
+            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) 
+                    throws Exception {
+                map.forEach((k, v) -> request.setAttribute(k, v));
+            }
+        });
 
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);

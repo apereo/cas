@@ -29,11 +29,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
     /**
      * Instantiates a new Abstract cas response view.
-     *
-     * @param view the view
      */
-    protected Cas30ResponseView(final View view) {
-        super(view);
+    protected Cas30ResponseView() {
+        super();
     }
 
     @Override
@@ -122,15 +120,15 @@ public class Cas30ResponseView extends Cas20ResponseView {
      */
     @Component("cas3ServiceSuccessView")
     public static class Success extends Cas30ResponseView {
-        /**
-         * Instantiates a new Success.
-         * @param view the view
-         */
-        @Autowired
-        public Success(@Qualifier("cas3SuccessView")
-                       final View view) {
-            super(view);
-            super.setSuccessResponse(true);
+        public Success() {
+            super();
         }
+
+        @Autowired(required=false)
+        @Override
+        public void setView(@Qualifier("cas3SuccessView") final View view) {
+            super.setView(view);
+        }
+        
     }
 }

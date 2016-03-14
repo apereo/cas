@@ -15,15 +15,13 @@ import java.util.Map;
  */
 public abstract class AbstractDelegatingCasView extends AbstractCasView {
     /** View to delegate. */
-    private final View view;
+    private View view;
 
     /**
-     * Instantiates a new Abstract cas jstl view.
-     *
-     * @param view the view
+     * Instantiates a new Abstract cas view.
      */
-    protected AbstractDelegatingCasView(final View view) {
-        this.view = view;
+    protected AbstractDelegatingCasView() {
+        
     }
 
     @Override
@@ -34,7 +32,12 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
 
         logger.trace("Prepared output model with objects [{}]. Now rendering view...",
                 model.keySet().toArray());
-        this.view.render(model, request, response);
+    
+        if (this.view != null) {
+            this.view.render(model, request, response);
+        } else {
+            logger.warn("No view is available to render the output for {}", this.getClass().getName());
+        }
     }
 
     /**
@@ -48,7 +51,11 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
                                                      HttpServletResponse response) throws Exception;
 
-    public final View getDelegatedView() {
+    public void setView(final View view) {
+        this.view = view;
+    }
+
+    public final View getView() {
         return view;
     }
 }
