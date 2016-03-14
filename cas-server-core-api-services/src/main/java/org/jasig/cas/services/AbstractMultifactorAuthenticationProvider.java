@@ -28,10 +28,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     @Override
     public final boolean verify(final RegisteredService service) throws AuthenticationException {
-        if (isAvailable()) {
-            return true;
-        }
-
         RegisteredServiceMultifactorPolicy.FailureModes failureMode = RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy != null) {
@@ -41,16 +37,24 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
             failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
             logger.debug("Using global multifactor failure mode for {} defined as {}", service.getServiceId(), failureMode);
         }
+        
+        if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.NONE) {
+            if (isAvailable()) {
+                return true;
+            }
+            if (failureMode == RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
+                logger.warn("{} could not be reached. Authentication shall fail for {}", 
+                        getClass().getSimpleName(), service.getServiceId());
+                throw new AuthenticationException();
+            }
 
-        if (failureMode == RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
-            logger.warn("{} could not be reached. Authentication shall fail for {}", getClass().getSimpleName(), service.getServiceId());
-            throw new AuthenticationException();
+            logger.warn("{} could not be reached. Since the authentication provider is configured for the "
+                            + "failure mode of {} authentication will proceed without {} for service {}",
+                    getClass().getSimpleName(), failureMode, getClass().getSimpleName(), service.getServiceId());
+            return false;
         }
-
-        logger.warn("{} could not be reached. Since the authentication provider is configured for the "
-                        + "failure mode of {} authentication will proceed without {} for service {}",
-                getClass().getSimpleName(), failureMode, getClass().getSimpleName(), service.getServiceId());
-        return false;
+        logger.debug("Failure mode is set to {}. Assuming the provider is available.", failureMode);
+        return true;
     }
 
     /**
