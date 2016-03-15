@@ -63,7 +63,7 @@ public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPoli
     @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null) || ticketState.getCreationTime()
-          .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+          .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isAfter(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     @Override
