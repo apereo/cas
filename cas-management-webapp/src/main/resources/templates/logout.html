@@ -1,10 +1,21 @@
-<%@include file="includes/header.noauth.jsp" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" ng-app="casmgmt">
+
+<div th:replace="fragments/head"/>
+<div th:replace="fragments/headernoauth"/>
+
+<body class="casmgmt-app" ng-controller="actionsController as action">
 
 <div class="col-sm-12">
     <div id="msg" class="success">
-        <h2><spring:message code="screen.logout.header"/></h2>
-        <p><spring:message code="screen.logout.success"/></p>
+        <h2 th:text="#{screen.logout.header}"/>
+        <p th:text="#{screen.logout.success}" />
     </div>
 </div>
 
-<%@include file="includes/footer.jsp" %>
+</body>
+</html>
+
+
+

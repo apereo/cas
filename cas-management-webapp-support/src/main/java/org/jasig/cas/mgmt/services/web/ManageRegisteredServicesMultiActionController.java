@@ -139,7 +139,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * @param response the response
      * @return the Model and View to go to after the services are loaded.
      */
-    @RequestMapping(value="/manage", method={RequestMethod.GET})
+    @RequestMapping(value="/manage.html", method={RequestMethod.GET})
     public ModelAndView manage(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();

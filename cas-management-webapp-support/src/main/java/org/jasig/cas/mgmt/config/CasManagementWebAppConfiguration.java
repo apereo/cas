@@ -30,12 +30,20 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
+import org.springframework.web.servlet.mvc.UrlFilenameViewController;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -152,6 +160,32 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return cfg;
     }
 
+    @Bean(name="rootController")
+    protected Controller rootController() {
+        return new ParameterizableViewController() {
+            @Override
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+                    throws Exception {
+                final String url = request.getContextPath() + "/manage.html";
+                return new ModelAndView(new RedirectView(response.encodeURL(url)));
+            }
+
+        };
+    }
+    
+    @Bean(name = "handlerMappingC")
+    public SimpleUrlHandlerMapping handlerMappingC() {
+        final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        mapping.setOrder(1);
+        mapping.setAlwaysUseFullPath(true);
+        mapping.setRootHandler(rootController());
+
+        final Properties properties = new Properties();
+        properties.put("/*.html", new UrlFilenameViewController());
+        mapping.setMappings(properties);
+        return mapping;
+    }
+    
     /**
      * Cas management security interceptor requires authentication interceptor.
      *

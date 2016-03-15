@@ -1,20 +1,21 @@
-<!-- Add/Manage Service Form -->
-<form class="service-editor form-horizontal" autocomplete="off" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.validateAndSave()" novalidate>
+
+<form class="service-editor form-horizontal" autocomplete="off" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" 
+      ng-submit="serviceFormCtrl.validateAndSave()" novalidate>
     <div class="services-button-group-top">
         <button href="javascript://" ng-click="serviceFormCtrl.saveForm()" class="btn btn-primary">
             <i class="fa fa-floppy-o"></i>
-            <spring:message code="services.form.button.save" />
+            <span th:remove="tag" th:text="#{services.form.button.save}" />
         </button>
         <a href="javascript://" ng-click="action.homepage()" class="btn btn-default">
             <i class="fa fa-times"></i>
-            <spring:message code="services.form.button.cancel" />
+            <span th:remove="tag" th:text="#{services.form.button.cancel}" />
         </a>
     </div>
 
     <h1>
         <i class="fa fa-plus-circle"></i>
-        <span ng-if="action.isSelected('edit')"><spring:message code="services.form.header.page.editService" /></span>
-        <span ng-if="!action.isSelected('edit')"><spring:message code="services.form.header.page.addService" /></span>
+        <span ng-if="action.isSelected('edit')" th:text="#{services.form.header.page.editService}"></span>
+        <span ng-if="!action.isSelected('edit')" th:text="#{services.form.header.page.addService}"></span>
     </h1>
 
     <div class="alert alert-{{ serviceFormCtrl.alert.type }}" role="alert" ng-show="serviceFormCtrl.alert">
@@ -656,15 +657,16 @@
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <spring:message code="services.form.header.pubKey" />
+                            <span th:text="#{services.form.header.pubKey}" />
                         </h3>
                     </div> <!-- end .panel-header div -->
                     <div class="panel-body">
 
                         <!-- Public Key Location -->
                         <div class="form-group">
-                            <label class="col-sm-4" for="publicKeyLocation">
-                                <spring:message code="services.form.label.pubKey.location" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.location" />"></i>
+                            <label class="col-sm-4" for="publicKeyLocation"/>
+                                <span th:text="#{services.form.header.pubKey.location}" />
+                                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.location" />"></i>
                             </label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.serviceData.publicKey.location">
@@ -673,7 +675,8 @@
                         <!-- Public Key Algorithm -->
                         <div class="form-group">
                             <label class="col-sm-4" for="publicKeyAlgorithm">
-                                <spring:message code="services.form.label.pubKey.algorithm" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.algorithm" />"></i>
+                                <span th:text="#{services.form.header.pubKey.algorithm}" />
+                                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.algorithm" />"></i>
                             </label>
                             <div class="col-sm-8">
                                 <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.serviceData.publicKey.algorithm" disabled>
@@ -690,7 +693,7 @@
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <spring:message code="services.form.header.proxyPolicy" />
+                            <span th:text="#{services.form.header.proxyPolicy}" />
                         </h3>
                     </div><%-- end .panel-header div --%>
                     <div class="panel-body">
@@ -698,26 +701,28 @@
 
                             <!-- Proxy Policy Radio Button - Refuse -->
                             <label class="radio-inline">
-                                <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="refuse" ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" ng-checked="true">
-                                <spring:message code="services.form.label.proxyPolicy.refuse" />
+                                <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="refuse" 
+                                       ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" ng-checked="true" />
+                                <span th:text="#{services.form.label.proxyPolicy.refuse}" />
                             </label>
 
                             <!-- Proxy Policy Radio Button - Regex -->
                             <label class="radio-inline">
                                 <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="regex" ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" >
-                                <spring:message code="services.form.label.proxyPolicy.regex" />
+                                <span th:text="#{services.form.label.proxyPolicy.regex}" />
                             </label>
                         </div><%-- end .radio-group div --%>
 
                         <!-- Proxy Policy Refuse Options -->
                         <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'refuse'">
+                            <span th:text="#{management.services.service.noAction}" />
                             <spring:message code="management.services.service.noAction" />
                         </div>
 
                         <!-- Proxy Policy Regex Options -->
                         <div class="form-group" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'regex'">
                             <label class="col-sm-3" for="proxyPolicyRegex">
-                                <spring:message code="services.form.label.proxyPolicy.regex" />
+                                <span th:text="#{services.form.label.proxyPolicy.regex}" />
                                 <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.proxyPolicy.regex" />"></i>
                             </label>
                             <div class="col-sm-9">
@@ -736,11 +741,11 @@
                 <div class="form-group services-button-group">
                     <button href="javascript://" ng-click="serviceFormCtrl.saveForm()" class="btn btn-primary">
                         <i class="fa fa-floppy-o"></i>
-                        <spring:message code="services.form.button.save" />
+                        <span th:text="#{services.form.button.save}" />
                     </button>
                     <a href="javascript://" ng-click="action.homepage()" class="btn btn-default">
                         <i class="fa fa-times"></i>
-                        <spring:message code="services.form.button.cancel" />
+                        <span th:text="#{services.form.button.cancel}" />
                     </a>
                 </div><%-- end services-button-group div --%>
             </div>
