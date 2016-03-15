@@ -110,5 +110,6 @@
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 
 </beans>
