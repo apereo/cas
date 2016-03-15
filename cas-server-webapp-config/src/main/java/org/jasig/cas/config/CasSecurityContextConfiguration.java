@@ -7,6 +7,7 @@ import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link CasSecurityContextConfiguration} that attempts to create Spring-managed beans
@@ -16,12 +17,13 @@ import org.springframework.context.annotation.Configuration;
  * @since 4.3.0
  */
 @Configuration("casSecurityContextConfiguration")
+@Lazy(true)
 public class CasSecurityContextConfiguration {
 
     /**
      * The Regex pattern.
      */
-    @Value("${cas.securityContext.adminpages.ip:127\\.0\\.\\.1}")
+    @Value("${cas.securityContext.adminpages.ip:127\\.0\\.0\\.1}")
     private String regexPattern;
 
     /**

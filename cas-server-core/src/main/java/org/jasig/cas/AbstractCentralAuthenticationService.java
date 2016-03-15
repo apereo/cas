@@ -161,7 +161,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Metered(name = "GET_TICKET_METER")
     @Counted(name="GET_TICKET_COUNTER", monotonic=true)
     @Override
-    public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz)
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz)
             throws InvalidTicketException {
         Assert.notNull(ticketId, "ticketId cannot be null");
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
@@ -187,7 +187,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name="GET_TICKETS_COUNTER", monotonic=true)
     @Override
-    public final Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
+    public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
         final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
         final Iterator<Ticket> it = c.iterator();
         while (it.hasNext()) {

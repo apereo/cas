@@ -59,6 +59,11 @@ public class MockServiceTicket implements ServiceTicket {
     }
 
     @Override
+    public ExpirationPolicy getExpirationPolicy() {
+        throw new UnsupportedOperationException("getExpirationPolicy() is not supported");
+    }
+
+    @Override
     public String getId() {
         return id;
     }

@@ -62,7 +62,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
             final String password = credential.getPassword();
-            if (StringUtils.isNotBlank(password) && this.getPasswordEncoder().encode(password).equals(passwordOnRecord)) {
+            if (this.getPasswordEncoder().matches(password, passwordOnRecord)) {
                 return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {

@@ -1,12 +1,9 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
+import org.jasig.cas.ticket.Ticket;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,16 +31,6 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
     private MemcachedClientIF client;
 
     /**
-     * TGT cache entry timeout in seconds.
-     */
-    private int tgtTimeout;
-
-    /**
-     * ST cache entry timeout in seconds.
-     */
-    private int stTimeout;
-
-    /**
      * Instantiates a new Mem cache ticket registry.
      */
     public MemCacheTicketRegistry() {
@@ -53,16 +40,10 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
      * Creates a new instance that stores tickets in the given memcached hosts.
      *
      * @param hostnames                   Array of memcached hosts where each element is of the form host:port.
-     * @param ticketGrantingTicketTimeOut TGT timeout in seconds.
-     * @param serviceTicketTimeOut        ST timeout in seconds.
      */
     @Autowired
     public MemCacheTicketRegistry(@Value("${memcached.servers:}")
-                                  final String[] hostnames,
-                                  @Value("${tgt.maxTimeToLiveInSeconds:28800}")
-                                  final int ticketGrantingTicketTimeOut,
-                                  @Value("${st.timeToKillInSeconds:10}")
-                                  final int serviceTicketTimeOut) {
+                                  final String[] hostnames) {
 
         try {
             final List<String> hostNamesArray = Arrays.asList(hostnames);
@@ -70,9 +51,6 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
                 logger.debug("No memcached hosts are define. Client shall not be configured");
             } else {
                 logger.info("Setting up Memcached Ticket Registry...");
-                this.tgtTimeout = ticketGrantingTicketTimeOut;
-                this.stTimeout = serviceTicketTimeOut;
-
                 this.client = new MemcachedClient(AddrUtil.getAddresses(hostNamesArray));
             }
         } catch (final IOException e) {
@@ -86,13 +64,8 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
      * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
      *
      * @param client                      Memcached client.
-     * @param ticketGrantingTicketTimeOut TGT timeout in seconds.
-     * @param serviceTicketTimeOut        ST timeout in seconds.
      */
-    public MemCacheTicketRegistry(final MemcachedClientIF client, final int ticketGrantingTicketTimeOut,
-                                  final int serviceTicketTimeOut) {
-        this.tgtTimeout = ticketGrantingTicketTimeOut;
-        this.stTimeout = serviceTicketTimeOut;
+    public MemCacheTicketRegistry(final MemcachedClientIF client) {
         this.client = client;
     }
 
@@ -106,7 +79,7 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
         final Ticket ticket = encodeTicket(ticketToUpdate);
         logger.debug("Updating ticket {}", ticket);
         try {
-            if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
+            if (!this.client.replace(ticket.getId(),  getTimeout(ticket), ticket).get()) {
                 logger.error("Failed updating {}", ticket);
             }
         } catch (final InterruptedException e) {
@@ -177,7 +150,7 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
      */
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("getTickets not supported.");
+        throw new UnsupportedOperationException("getTickets() not supported.");
     }
 
     /**
@@ -193,6 +166,11 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
         this.client.shutdown();
     }
 
+    @Override
+    protected boolean isCleanerSupported() {
+        logger.info("{} does not support automatic ticket clean up processes", this.getClass().getName());
+        return false;
+    }
 
     @Override
     protected boolean needsCallback() {
@@ -200,17 +178,16 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
     }
 
     /**
-     * Gets the timeout value for the ticket.
+     * If not time out value is specified, expire the ticket immediately.
      *
-     * @param t the t
-     * @return the timeout
+     * @param ticket the ticket
+     * @return timeout in milliseconds. 
      */
-    private int getTimeout(final Ticket t) {
-        if (t instanceof TicketGrantingTicket) {
-            return this.tgtTimeout;
-        } else if (t instanceof ServiceTicket) {
-            return this.stTimeout;
+    private static int getTimeout(final Ticket ticket) {
+        final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        if (ttl == 0) {
+            return 1;
         }
-        throw new IllegalArgumentException("Invalid ticket type");
+        return ttl;
     }
 }

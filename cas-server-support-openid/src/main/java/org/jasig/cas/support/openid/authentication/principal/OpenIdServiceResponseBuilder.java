@@ -1,5 +1,8 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
@@ -15,9 +18,6 @@ import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Builds responses to Openid authN requests.
@@ -82,6 +82,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
             if (associated && associationValid) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
                 logger.debug("Validated openid ticket {} for {}", ticketId, service);
+            } else if (!associated) {
+                logger.debug("Responding to non-associated mode. Service ticket {} must be validated by the RP", ticketId);
             } else {
                 logger.warn("Association does not exist or is not valid");
                 successFullAuthentication = false;
@@ -93,7 +95,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
         final String id = determineIdentity(service, assertion);
 
-        return buildAuthenticationResponse(serverManager, ticketId, service, parameters, associated,
+        return buildAuthenticationResponse(serverManager, service, parameters, associated,
             successFullAuthentication, id);
     }
 
@@ -117,9 +119,12 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
     /**
      * We sign directly (final 'true') because we don't add extensions
      * response message can be either a DirectError or an AuthSuccess here.
+     * Note:
+     * The association handle returned in the Response is either the 'public'
+     * created in a previous association, or is a 'private' handle created
+     * specifically for the verification step when in non-association mode
      *
      * @param serverManager the server manager
-     * @param ticketId the ticket id
      * @param service the service
      * @param parameters the parameters
      * @param associated the associated
@@ -128,17 +133,15 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * @return response response
      */
     protected Response buildAuthenticationResponse(final ServerManager serverManager,
-                                                   final String ticketId, final OpenIdService service,
+                                                   final OpenIdService service,
                                                    final Map<String, String> parameters,
                                                    final boolean associated, final boolean successFullAuthentication,
                                                    final String id) {
 
         final Message response = serverManager.authResponse(this.parameterList, id, id,
-            successFullAuthentication, true);
+                successFullAuthentication, true);
         parameters.putAll(response.getParameterMap());
-        if (!associated) {
-            parameters.put(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, ticketId);
-        }
+        logger.debug("Parameters passed for the OpenID response are {}", parameters.keySet());
         return buildRedirect(service, parameters);
     }
 

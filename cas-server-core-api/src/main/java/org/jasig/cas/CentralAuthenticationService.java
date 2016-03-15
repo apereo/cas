@@ -68,7 +68,7 @@ public interface CentralAuthenticationService {
      * @throws InvalidTicketException the invalid ticket exception
      * @since 4.1.0
      */
-    <T extends Ticket> T getTicket(@NotNull String ticketId, @NotNull Class<? extends Ticket> clazz)
+    <T extends Ticket> T getTicket(@NotNull String ticketId, @NotNull Class<T> clazz)
             throws InvalidTicketException;
 
     /**

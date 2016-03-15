@@ -19,13 +19,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.ResourceBundleViewResolver;
@@ -43,6 +43,7 @@ import java.util.Properties;
  * @since 4.3.0
  */
 @Configuration("casManagementWebAppConfiguration")
+@Lazy(true)
 public class CasManagementWebAppConfiguration {
 
     /**
@@ -281,15 +282,6 @@ public class CasManagementWebAppConfiguration {
         return resolver;
     }
 
-    /**
-     * Locale change interceptor locale change interceptor.
-     *
-     * @return the locale change interceptor
-     */
-    @Bean(name = "localeChangeInterceptor")
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        return new LocaleChangeInterceptor();
-    }
 
     /**
      * Credentials validator local validator factory bean.
