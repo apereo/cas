@@ -1,0 +1,9 @@
+<div class="form-group">
+    <label class="col-sm-3" for="reqHandler">
+        <span th:remove="tag" th:text="#{services.form.label.requiredHandlers}" />
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.requiredHandlers}"></i>
+    </label>
+    <div class="col-sm-9">
+        <textarea class="form-control noresize" id="reqHandler" rows="4" ng-model="serviceFormCtrl.serviceData.reqHandlersStr"></textarea>
+    </div>
+</div>
