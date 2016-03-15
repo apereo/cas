@@ -21,9 +21,9 @@ The first step is to generate DSA/RSA public and private keys. These are used to
 After keys are created, the public key needs to be registered with Google.
 
 The keys will also need to be available to the CAS application (but not publicly available over the Internet)
-via the classpath (i.e. `WEB-INF/classes`) though any location accessible by the user running the web server 
-instance and not served publicly to the Internet is acceptable.  Thus, inside `WEB-INF` is 
-nice because `WEB-INF` is scoped to the web application but not normally served. `/etc/cas/` 
+via the classpath though any location accessible by the user running the web server 
+instance and not served publicly to the Internet is acceptable.  Thus, inside `src/main/resources` is 
+nice because it is scoped to the web application but not normally served. `/etc/cas/` 
 is also fine as well and protects the key from being overwritten on deploy of a new CAS webapp version.
 
 ```bash

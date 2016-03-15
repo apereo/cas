@@ -20,16 +20,16 @@ A sample Maven overlay for the services management webapp is provided here: [htt
 
 ## Services Registry
 
-You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml`
+You also need to define the *common* services registry by overriding the `src/main/resources/managementConfigContext.xml`
 file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
-It should be the same configuration you already use in your CAS server in the `WEB-INF/deployerConfigContext.xml` file.
+It should be the same configuration you already use in your CAS server in the `/deployerConfigContext.xml` file.
 
 ## Authentication Method
 
 By default, the `cas-management-webapp` is configured to authenticate against a CAS server. 
 
 ## Configuration
-The following properties are applicable and must be adjusted by overriding the default `WEB-INF/cas-management.properties` file:
+The following properties are applicable and must be adjusted by overriding the default `src/main/resources/cas-management.properties` file:
 
 ```properties
 # CAS
@@ -47,7 +47,7 @@ cas-management.securityContext.serviceProperties.adminRoles=ROLE_ADMIN
 
 ## Securing Access and Authorization
 Access to the management webapp is controlled via pac4j. Rules are defined in 
-the `/WEB-INF/managementConfigContext.xml` file.
+the `src/main/resources/managementConfigContext.xml` file.
 
 
 ### Static List of Users

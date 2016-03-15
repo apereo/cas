@@ -77,9 +77,8 @@ your `attributeRepository` configuration.
 
 ### Handling CAS Logout
 
-An optional step, it is recommended that the `casLogoutView.jsp` be replace to redirect to ADFS's logout page.
+An optional step, the `casLogoutView.html` can be modified to place a link to ADFS's logout page.
 
-```jsp
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:redirect url="https://adfs.example.org/adfs/ls/?wa=wsignout1.0"/>
+```html
+<a href="https://adfs.example.org/adfs/ls/?wa=wsignout1.0">Logout</a>
 ```

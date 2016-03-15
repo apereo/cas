@@ -65,7 +65,7 @@ Clients can be defined via properties for the most common ones (in the `applicat
 # cas.pac4j.oidc.customParamValue2=
 ```
 
-Or like any bean, in a dedicated `WEB-INF/spring-configuration/pac4jContext.xml` file:
+Or like any bean, in a dedicated `spring-configuration/pac4jContext.xml` file:
 
 ```xml
 <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">

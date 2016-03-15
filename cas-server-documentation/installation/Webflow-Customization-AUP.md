@@ -31,4 +31,4 @@ by uncommenting the following entry:
 <transition on="success" to="acceptableUsagePolicyCheck" />
 ```
 
-- Customize the policy by modifying `casAcceptableUsagePolicyView.jsp`.
+- Customize the policy by modifying `casAcceptableUsagePolicyView.html`.
