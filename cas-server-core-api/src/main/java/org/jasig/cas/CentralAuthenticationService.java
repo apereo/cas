@@ -162,7 +162,7 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
      * to other Services.
      *
-     * @param serviceTicketId      The service ticket identifier that will delegate to a 
+     * @param serviceTicketId The service ticket identifier that will delegate to a
      * {@link org.jasig.cas.ticket.TicketGrantingTicket}.
      * @param authenticationResult The current authentication context before this ticket can be granted.
      * @return Non -null ticket-granting ticket identifier that can grant {@link org.jasig.cas.ticket.ServiceTicket} 
