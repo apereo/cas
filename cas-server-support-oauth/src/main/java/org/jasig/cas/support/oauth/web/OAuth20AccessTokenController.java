@@ -8,6 +8,7 @@ import org.jasig.cas.support.oauth.profile.OAuthClientProfile;
 import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.OAuthToken;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
 import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshTokenFactory;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
@@ -119,7 +120,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             }
             return null;
         }
-        ticketRegistry.deleteTicket(token.getId());
+        if (token instanceof OAuthCode) {
+            ticketRegistry.deleteTicket(token.getId());
+        }
 
         return token;
     }
