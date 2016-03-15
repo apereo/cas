@@ -55,7 +55,7 @@ public class CasWebAppConfiguration {
     /**
      * The Path prefix.
      */
-    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/")
+    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}")
     private String pathPrefix;
 
 
