@@ -388,6 +388,16 @@ ext.libraries = [
                     
                 }
         ],
+        thmyeleafboot        : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion") {
+                    exclude(group: 'com.fasterxml', module: 'classmate')
+                    exclude(group: 'ch.qos.logback', module: 'logback-core')
+                    exclude(group: 'ch.qos.logback', module: 'logback-classic')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
+                    force = true
+                }
+        ],
+        
         jackson          : [
                 "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {

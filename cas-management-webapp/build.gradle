@@ -27,9 +27,12 @@ war {
 }
 
 dependencies {
+    compile libraries.springboot
     runtime project(':cas-management-webapp-support')
     providedRuntime libraries.springboottomcat
     runtime libraries.hibernate
     runtime libraries.groovy
-    runtime libraries.spring
+    compile libraries.spring
+    compile libraries.thmyeleaf
+    compile libraries.thmyeleafboot
 }

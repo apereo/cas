@@ -1,6 +1,5 @@
 package org.jasig.cas.mgmt.web;
 
-import org.jasig.cas.web.support.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -27,7 +26,7 @@ import org.springframework.context.annotation.ImportResource;
                 DataSourceAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
-@ImportResource(locations = {"/WEB-INF/managementConfigContext.xml", "classpath*:/META-INF/spring/*.xml"})
+@ImportResource(locations = {"classpath:/managementConfigContext.xml"})
 @Import(AopAutoConfiguration.class)
 public class CasManagementWebApplication {
     /**
@@ -42,8 +41,6 @@ public class CasManagementWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasManagementWebApplication.class)
-                .banner(new CasBanner())
-                .run(args);
+        new SpringApplicationBuilder(CasManagementWebApplication.class).run(args);
     }
 }

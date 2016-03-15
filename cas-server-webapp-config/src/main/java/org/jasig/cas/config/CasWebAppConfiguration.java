@@ -100,7 +100,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the bean name view resolver
      */
     @Bean(name = "beanNameViewResolver")
-    public BeanNameViewResolver beanNameViewResolver() {
+    public ViewResolver beanNameViewResolver() {
         final BeanNameViewResolver bean = new BeanNameViewResolver();
         bean.setOrder(1);
         return bean;

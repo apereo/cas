@@ -28,6 +28,10 @@
             <AppenderRef ref="cas-management"/>
             <AppenderRef ref="console"/>
         </AsyncLogger>
+        <AsyncLogger name="org.thymeleaf" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="cas-management"/>
+        </AsyncLogger>
         <AsyncLogger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
             <AppenderRef ref="cas-management"/>
         </AsyncLogger>

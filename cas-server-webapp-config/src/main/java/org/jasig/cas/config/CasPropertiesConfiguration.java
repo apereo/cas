@@ -39,7 +39,9 @@ public class CasPropertiesConfiguration {
     public void init() {
         final Properties sysProps = System.getProperties();
         final Properties properties = new Properties();
-        properties.put("info.cas.version", CasVersion.getVersion());
+        if (CasVersion.getVersion() != null) {
+            properties.put("info.cas.version", CasVersion.getVersion());
+        }
         properties.put("info.cas.date", CasVersion.getDateTime());
         properties.put("info.cas.java.home", sysProps.get("java.home"));
         properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));

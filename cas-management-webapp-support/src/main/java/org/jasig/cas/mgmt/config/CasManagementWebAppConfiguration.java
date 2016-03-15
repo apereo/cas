@@ -1,6 +1,7 @@
 package org.jasig.cas.mgmt.config;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.http.HttpStatus;
 import org.jasig.cas.audit.spi.ServiceManagementResourceResolver;
 import org.jasig.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
 import org.jasig.inspektr.audit.AuditTrailManagementAspect;
@@ -14,7 +15,10 @@ import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.AuthorizationGenerator;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,23 +30,14 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-import org.springframework.web.servlet.mvc.Controller;
-import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
-import org.springframework.web.servlet.mvc.UrlFilenameViewController;
-import org.springframework.web.servlet.view.InternalResourceView;
-import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.servlet.view.ResourceBundleViewResolver;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -163,46 +158,18 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @Bean(name = "casManagementSecurityInterceptor")
-    public RequiresAuthenticationInterceptor casManagementSecurityInterceptor() {
-        return new RequiresAuthenticationInterceptor(config(), "CasClient",
-                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
-    }
-
-
-    /**
-     * Root controller controller.
-     *
-     * @return the controller
-     */
-    @Bean(name="rootController")
-    protected Controller rootController() {
-        return new ParameterizableViewController() {
+    public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
+        final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(config(), "CasClient",
+                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer") {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
-                final String url = request.getContextPath() + "/manage.html";
-                return new ModelAndView(new RedirectView(response.encodeURL(url)));
+            protected void forbidden(final WebContext context, final List<Client> currentClients, final UserProfile profile) {
+                context.setResponseStatus(HttpStatus.SC_MOVED_TEMPORARILY);
+                context.setResponseHeader("location", "authorizationFailure");
             }
         };
+        return interceptor;
     }
-    /**
-     * Handler mapping c simple url handler mapping.
-     *
-     * @return the simple url handler mapping
-     */
-    @Bean(name = "handlerMappingC")
-    public SimpleUrlHandlerMapping handlerMappingC() {
-        final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-        mapping.setOrder(1);
-        mapping.setAlwaysUseFullPath(true);
-        mapping.setRootHandler(rootController());
-
-        final Properties properties = new Properties();
-        properties.put("/*.html", new UrlFilenameViewController());
-        mapping.setMappings(properties);
-        return mapping;
-    }
-
+    
     /**
      * Save service resource resolver parameters as string resource resolver.
      *
@@ -304,35 +271,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         resolver.setDefaultLocale(Locale.ENGLISH);
         return resolver;
     }
-    
-    /**
-     * Url based view resolver url based view resolver.
-     *
-     * @return the url based view resolver
-     */
-    @Bean(name = "urlBasedViewResolver")
-    public UrlBasedViewResolver urlBasedViewResolver() {
-        final UrlBasedViewResolver bean = new UrlBasedViewResolver();
-        bean.setViewClass(InternalResourceView.class);
-        bean.setPrefix("/WEB-INF/view/jsp/");
-        bean.setSuffix(".jsp");
-        bean.setOrder(2);
-        return bean;
-    }
-
-    /**
-     * View resolver resource bundle view resolver.
-     *
-     * @return the resource bundle view resolver
-     */
-    @Bean(name = "viewResolver")
-    public ResourceBundleViewResolver viewResolver() {
-        final ResourceBundleViewResolver bean = new ResourceBundleViewResolver();
-        bean.setOrder(0);
-        bean.setBasename(this.baseName);
-        return bean;
-    }
-    
+        
     /**
      * Audit resource resolver map map.
      *
@@ -362,7 +301,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(casManagementSecurityInterceptor())
-                .addPathPatterns("/**").excludePathPatterns("/callback*", "/logout*", "/authorizationFailure.html");
+                .addPathPatterns("/**").excludePathPatterns("/callback*", "/logout*", "/authorizationFailure");
     }
 
     /**

@@ -1,6 +1,5 @@
 package org.jasig.cas.mgmt.web;
 
-import org.jasig.cas.web.support.CasBanner;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 
@@ -14,6 +13,6 @@ public class CasManagementWebApplicationServletInitializer extends SpringBootSer
     
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder.sources(CasManagementWebApplication.class).banner(new CasBanner());
+        return builder.sources(CasManagementWebApplication.class);
     }
 }

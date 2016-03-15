@@ -88,7 +88,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      *
      * @return the view name.
      */
-    @RequestMapping(value="authorizationFailure.html", method={RequestMethod.GET})
+    @RequestMapping(value="/authorizationFailure", method={RequestMethod.GET})
     public String authorizationFailureView() {
         return "authorizationFailure";
     }
@@ -100,7 +100,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * @param session the session
      * @return the view name.
      */
-    @RequestMapping(value="logout.html", method={RequestMethod.GET})
+    @RequestMapping(value="/logout", method={RequestMethod.GET})
     public String logoutView(final HttpServletRequest request, final HttpSession session) {
         logger.debug("Invalidating application session...");
         session.invalidate();
@@ -115,7 +115,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * @param idAsLong the id
      * @param response the response
      */
-    @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.POST})
+    @RequestMapping(value="/deleteRegisteredService", method={RequestMethod.POST})
     public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
                                         final HttpServletResponse response) {
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
@@ -139,7 +139,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * @param response the response
      * @return the Model and View to go to after the services are loaded.
      */
-    @RequestMapping(value="manage.html", method={RequestMethod.GET})
+    @RequestMapping(value="/manage", method={RequestMethod.GET})
     public ModelAndView manage(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
@@ -153,7 +153,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      *
      * @param response the response
      */
-    @RequestMapping(value="getServices.html", method={RequestMethod.GET})
+    @RequestMapping(value="/getServices", method={RequestMethod.GET})
     public void getServices(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
@@ -171,7 +171,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * @param response the response
      * @param id the service ids, whose order also determines the service evaluation order
      */
-    @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.POST})
+    @RequestMapping(value="/updateRegisteredServiceEvaluationOrder", method={RequestMethod.POST})
     public void updateRegisteredServiceEvaluationOrder(final HttpServletResponse response,
                                                        @RequestParam("id") final long... id) {
         if (id == null || id.length == 0) {
