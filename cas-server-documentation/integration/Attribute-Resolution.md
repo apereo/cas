@@ -4,7 +4,7 @@ title: CAS - Attribute Resolution
 ---
 
 # Attribute Resolution
-Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory‎). The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
+Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory). The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
 
 <div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, attributes are cached to the length of the SSO session. This means that while the underlying component provided by Person Directory may have a different caching model, attributes by default and from a CAS perspective will not be refreshed and retrieved again on subsequent requests as long as the SSO session exists.</p></div>
 
