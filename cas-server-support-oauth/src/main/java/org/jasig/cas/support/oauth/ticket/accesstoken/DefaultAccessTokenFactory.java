@@ -29,14 +29,13 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     /** Default instance for the ticket id generator. */
     @NotNull
     @Autowired(required = false)
-    @Qualifier("refreshTokenIdGenerator")
+    @Qualifier("accessTokenIdGenerator")
     protected UniqueTicketIdGenerator accessTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
-
 
     /** ExpirationPolicy for access tokens. */
     @NotNull
     @Autowired
-    @Qualifier("oAuthAcccessTokenExpirationPolicy")
+    @Qualifier("accessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
