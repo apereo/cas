@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Component("oAuthAcccessTokenExpirationPolicy")
+@Component("accessTokenExpirationPolicy")
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -8383186650682727360L;
 

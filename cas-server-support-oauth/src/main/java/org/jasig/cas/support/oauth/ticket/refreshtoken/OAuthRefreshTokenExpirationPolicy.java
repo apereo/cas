@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit;
  * @author Jerome Leleu
  * @since 4.3.0
  */
-@Component("oAuthRefreshTokenExpirationPolicy")
+@Component("refreshTokenExpirationPolicy")
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
