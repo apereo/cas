@@ -67,7 +67,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the endpoint handler mapping customizer
      */
-    @Bean
+    @Bean(name="mappingCustomizer")
     public EndpointHandlerMappingCustomizer mappingCustomizer() {
         return mapping -> mapping.setInterceptors(new Object[] {requiresAuthenticationInterceptor()});
     }

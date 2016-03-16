@@ -160,6 +160,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return cfg;
     }
 
+    /**
+     * Root controller controller.
+     *
+     * @return the controller
+     */
     @Bean(name="rootController")
     protected Controller rootController() {
         return new ParameterizableViewController() {
@@ -172,7 +177,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
         };
     }
-    
+
+    /**
+     * Handler mapping c simple url handler mapping.
+     *
+     * @return the simple url handler mapping
+     */
     @Bean(name = "handlerMappingC")
     public SimpleUrlHandlerMapping handlerMappingC() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
