@@ -32,7 +32,6 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     @Qualifier("oAuthCodeIdGenerator")
     protected UniqueTicketIdGenerator oAuthCodeIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-
     /** ExpirationPolicy for OAuth code. */
     @NotNull
     @Autowired

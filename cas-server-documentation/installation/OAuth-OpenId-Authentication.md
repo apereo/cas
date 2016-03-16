@@ -63,6 +63,8 @@ With the access token, you'll be able to query the `/profile` endpoint and get t
 
 To get refresh tokens, the OAuth client must be configured to return refresh tokens (`generateRefreshToken` property).
 
+Notice that sensitive information (`client_secret`, `password` and `refresh_token`) should be sent via POST requests.
+
 
 ## Add OAuth Clients
 

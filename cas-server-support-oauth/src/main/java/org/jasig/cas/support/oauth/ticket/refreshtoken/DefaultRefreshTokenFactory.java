@@ -35,7 +35,7 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     /** ExpirationPolicy for refresh tokens. */
     @NotNull
     @Autowired
-    @Qualifier("oAuthRefreshTokenExpirationPolicy")
+    @Qualifier("refreshTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
