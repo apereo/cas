@@ -185,6 +185,14 @@
                                     <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthBypass" />"></i>
                                 </label>
                             </div>
+                            <!-- OAuth Refresh token generation -->
+                            <div class="checkbox">
+                                <label for="oauthRefreshToken">
+                                    <input type="checkbox" id="oauthRefreshToken" ng-model="serviceFormCtrl.serviceData.oauth.refreshToken" />
+                                    <spring:message code="services.form.label.oauthRefreshToken" />
+                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthRefreshToken" />"></i>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

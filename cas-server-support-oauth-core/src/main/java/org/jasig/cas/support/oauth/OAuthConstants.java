@@ -41,6 +41,9 @@ public interface OAuthConstants {
     /** The access token. */
     String ACCESS_TOKEN = "access_token";
 
+    /** The refresh token. */
+    String REFRESH_TOKEN = "refresh_token";
+
     /** The bearer token. */
     String BEARER_TOKEN = "Bearer";
 
