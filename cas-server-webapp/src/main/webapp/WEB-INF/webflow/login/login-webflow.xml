@@ -234,12 +234,12 @@
     <end-state id="viewServiceErrorView" view="serviceErrorView"/>
 
     <decision-state id="serviceUnauthorizedCheck">
-        <if test="flowScope.registeredService.accessStrategy.unauthorizedRedirectUrl != null"
+        <if test="flowScope.unauthorizedRedirectUrl != null"
             then="viewRedirectToUnauthorizedUrlView"
             else="viewServiceErrorView"/>
     </decision-state>
 
-    <end-state id="viewRedirectToUnauthorizedUrlView" view="externalRedirect:#{flowScope.registeredService.accessStrategy.unauthorizedRedirectUrl}"/>
+    <end-state id="viewRedirectToUnauthorizedUrlView" view="externalRedirect:#{flowScope.unauthorizedRedirectUrl}"/>
     <end-state id="viewServiceSsoErrorView" view="serviceErrorSsoView" />
 
     <global-transitions>
