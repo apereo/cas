@@ -17,6 +17,10 @@ war {
     }
 }
 
+bootRun {
+    addResources = true
+}
+
 springBoot  {
     mainClass = 'org.jasig.cas.web.CasWebApplication'
 }

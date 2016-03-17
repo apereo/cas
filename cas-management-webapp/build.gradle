@@ -3,9 +3,12 @@ apply plugin: 'spring-boot'
 
 description = 'Apereo CAS Management Web Application'
 
-
 javadoc {
     enabled false
+}
+
+bootRun {
+    addResources = true
 }
 
 springBoot  {
