@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.0.0
  */
 @Component("defaultTicketRegistry")
-public final class DefaultTicketRegistry extends AbstractTicketRegistry {
+public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     /**
      * A HashMap to contain the tickets.

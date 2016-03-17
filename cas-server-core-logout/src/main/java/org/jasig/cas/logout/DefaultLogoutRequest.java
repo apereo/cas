@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class DefaultLogoutRequest implements LogoutRequest {
+public class DefaultLogoutRequest implements LogoutRequest {
 
     /** Generated serialVersionUID. */
     private static final long serialVersionUID = -6411421298859045022L;

@@ -23,7 +23,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.5.1
  **/
 @Component("serviceAuthorizationCheck")
-public final class ServiceAuthorizationCheck extends AbstractAction {
+public class ServiceAuthorizationCheck extends AbstractAction {
 
     @NotNull
     private final ServicesManager servicesManager;

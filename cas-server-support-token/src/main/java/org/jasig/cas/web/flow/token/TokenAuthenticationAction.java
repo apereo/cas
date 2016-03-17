@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.2.0
  */
 @Component("tokenAuthenticationAction")
-public final class TokenAuthenticationAction extends AbstractAction {
+public class TokenAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationAction.class);
 
     @NotNull

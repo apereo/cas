@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.4
  */
-public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
+public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     /**
      * Default flow execution key parameter name, {@value}.

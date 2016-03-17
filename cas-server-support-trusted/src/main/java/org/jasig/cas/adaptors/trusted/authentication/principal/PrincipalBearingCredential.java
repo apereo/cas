@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
  * @author Andrew Petro
  * @since 3.0.0
  */
-public final class PrincipalBearingCredential extends AbstractCredential {
+public class PrincipalBearingCredential extends AbstractCredential {
 
     /** Serialization version marker. */
     private static final long serialVersionUID = 8866786438439775669L;

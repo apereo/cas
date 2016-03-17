@@ -11,7 +11,7 @@ import org.jasig.cas.ticket.proxy.ProxyTicket;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class CasProxyTicketGrantedEvent extends AbstractCasEvent {
+public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
 

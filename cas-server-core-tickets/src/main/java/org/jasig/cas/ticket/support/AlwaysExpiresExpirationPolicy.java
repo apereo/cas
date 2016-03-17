@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @since 4.2
  */
 @Component("alwaysExpiresExpirationPolicy")
-public final class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
+public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serializable Unique ID. */
     private static final long serialVersionUID = 3836547698242303540L;

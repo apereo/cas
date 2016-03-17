@@ -20,7 +20,7 @@ import java.security.PublicKey;
  * @since 3.1
  */
 @Deprecated
-public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtractor {
+public class GoogleAccountsArgumentExtractor extends AbstractArgumentExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsArgumentExtractor.class);
 

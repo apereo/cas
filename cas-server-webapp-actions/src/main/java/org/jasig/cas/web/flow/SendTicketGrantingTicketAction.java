@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.0.0
  */
 @Component("sendTicketGrantingTicketAction")
-public final class SendTicketGrantingTicketAction extends AbstractAction {
+public class SendTicketGrantingTicketAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
     @Value("${create.sso.renewed.authn:true}")

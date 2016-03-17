@@ -30,7 +30,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Component("errorHandlerResolver")
-public final class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
+public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 
     /** Instance of a logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

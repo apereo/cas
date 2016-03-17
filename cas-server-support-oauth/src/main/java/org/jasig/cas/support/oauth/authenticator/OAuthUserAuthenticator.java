@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 4.3.0
  */
 @Component("oAuthUserAuthenticator")
-public final class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
+public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
 
     @NotNull
     @Autowired

@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 @Component("openIdSingleSignOnAction")
-public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
+public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     @NotNull
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();

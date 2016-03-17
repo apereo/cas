@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class OpenSamlConfigBean {
+public class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
 
     @Autowired

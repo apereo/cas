@@ -57,7 +57,7 @@ import javax.validation.constraints.NotNull;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Component("clientAction")
-public final class ClientAction extends AbstractAction {
+public class ClientAction extends AbstractAction {
     /**
      * All the urls and names of the pac4j clients.
      */

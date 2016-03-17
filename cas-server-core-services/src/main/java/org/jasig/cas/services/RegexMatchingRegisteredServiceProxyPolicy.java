@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
+public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
     private static final long serialVersionUID = -211069319543047324L;
     

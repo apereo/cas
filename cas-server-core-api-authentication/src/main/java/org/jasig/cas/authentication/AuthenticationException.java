@@ -1,6 +1,7 @@
 package org.jasig.cas.authentication;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -78,8 +79,8 @@ public class AuthenticationException extends Exception {
             final Map<String, Class<? extends Exception>> handlerErrors,
             final Map<String, HandlerResult> handlerSuccesses) {
         super(message);
-        this.handlerErrors = Collections.unmodifiableMap(handlerErrors);
-        this.handlerSuccesses = Collections.unmodifiableMap(handlerSuccesses);
+        this.handlerErrors = new HashMap<>(handlerErrors);
+        this.handlerSuccesses = new HashMap<>(handlerSuccesses);
     }
 
     /**

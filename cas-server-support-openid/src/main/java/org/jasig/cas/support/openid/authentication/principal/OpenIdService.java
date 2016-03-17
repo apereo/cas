@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class OpenIdService extends AbstractWebApplicationService {
+public class OpenIdService extends AbstractWebApplicationService {
 
     /** The Constant LOGGER. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);

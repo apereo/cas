@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Component("accessTokenController")
-public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
+public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
     @Override

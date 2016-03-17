@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.2.0
  */
 @Component("wsFederationAction")
-public final class WsFederationAction extends AbstractAction {
+public class WsFederationAction extends AbstractAction {
 
     private static final String LOCALE = "locale";
     private static final String METHOD = "method";

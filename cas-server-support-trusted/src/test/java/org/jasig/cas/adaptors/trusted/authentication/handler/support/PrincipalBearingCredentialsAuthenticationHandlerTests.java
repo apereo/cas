@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
  * @author Andrew Petro
  * @since 3.0.0
  */
-public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
+public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler
                 = new PrincipalBearingCredentialsAuthenticationHandler();

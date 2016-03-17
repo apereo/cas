@@ -3,7 +3,6 @@ package org.jasig.cas.config;
 import com.google.common.collect.ImmutableList;
 import org.cryptacular.bean.CipherBean;
 import org.jasig.cas.CipherExecutor;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.jasig.cas.web.flow.LogoutConversionService;
 import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,11 +49,7 @@ import java.io.OutputStream;
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
+    
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -81,6 +77,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the web flow spring el expression parser
      */
+    @RefreshScope
     @Bean(name = "expressionParser")
     public WebFlowSpringELExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
@@ -94,6 +91,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the conversion service
      */
+    @RefreshScope
     @Bean(name = "logoutConversionService")
     public ConversionService logoutConversionService() {
         return new LogoutConversionService();
@@ -104,6 +102,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the mvc view factory creator
      */
+    @RefreshScope
     @Bean(name = "viewFactoryCreator")
     public MvcViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
@@ -117,6 +116,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the cas default flow url handler
      */
+    @RefreshScope
     @Bean(name = "loginFlowUrlHandler")
     public CasDefaultFlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
@@ -127,6 +127,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the cas default flow url handler
      */
+    @RefreshScope
     @Bean(name = "logoutFlowUrlHandler")
     public CasDefaultFlowUrlHandler logoutFlowUrlHandler() {
         final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
@@ -139,6 +140,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the selective flow handler adapter
      */
+    @RefreshScope
     @Bean(name = "logoutHandlerAdapter")
     public SelectiveFlowHandlerAdapter logoutHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
@@ -153,6 +155,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the buffered block cipher bean
      */
+    @RefreshScope
     @Bean(name = "loginFlowCipherBean")
     public CipherBean loginFlowCipherBean() {
 
@@ -188,6 +191,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow builder services
      */
+    @RefreshScope
     @Bean(name = "builder")
     public FlowBuilderServices builder() {
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
@@ -202,6 +206,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the encrypted transcoder
      */
+    @RefreshScope
     @Bean(name = "loginFlowStateTranscoder")
     public EncryptedTranscoder loginFlowStateTranscoder() {
         try {
@@ -216,6 +221,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the selective flow handler adapter
      */
+    @RefreshScope
     @Bean(name = "loginHandlerAdapter")
     public SelectiveFlowHandlerAdapter loginHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
@@ -230,6 +236,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the locale change interceptor
      */
+    @RefreshScope
     @Bean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
         return new LocaleChangeInterceptor();
@@ -240,6 +247,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow handler mapping
      */
+    @RefreshScope
     @Bean(name = "logoutFlowHandlerMapping")
     public FlowHandlerMapping logoutFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -255,6 +263,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow handler mapping
      */
+    @RefreshScope
     @Bean(name = "loginFlowHandlerMapping")
     public FlowHandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -270,6 +279,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow executor
      */
+    @RefreshScope
     @Bean(name = "logoutFlowExecutor")
     public FlowExecutor logoutFlowExecutor() {
         final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
@@ -283,6 +293,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow definition registry
      */
+    @RefreshScope
     @Bean(name = "logoutFlowRegistry")
     public FlowDefinitionRegistry logoutFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
@@ -296,6 +307,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow definition registry
      */
+    @RefreshScope
     @Bean(name = "loginFlowRegistry")
     public FlowDefinitionRegistry loginFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
@@ -310,6 +322,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow executor
      */
+    @RefreshScope
     @Bean(name = "loginFlowExecutor")
     @Lazy(true)
     public FlowExecutorImpl loginFlowExecutor() {

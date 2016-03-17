@@ -9,6 +9,7 @@ import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +57,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the config
      */
+    @RefreshScope
     @Bean(name = "oauthSecConfig")
     public Config oauthSecConfig() {
         final CasClient oauthCasClient = new CasClient(this.casLoginUrl);
@@ -80,6 +82,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the requires authentication interceptor
      */
+    @RefreshScope
     @Bean(name = "requiresAuthenticationAuthorizeInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), "CasOAuthClient");
@@ -90,6 +93,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the requires authentication interceptor
      */
+    @RefreshScope
     @Bean(name = "requiresAuthenticationAccessTokenInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationAccessTokenInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");

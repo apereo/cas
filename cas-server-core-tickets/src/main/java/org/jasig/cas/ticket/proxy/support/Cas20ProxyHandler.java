@@ -28,7 +28,7 @@ import java.net.URL;
  * @since 3.0.0
  */
 @Component("proxy20Handler")
-public final class Cas20ProxyHandler implements ProxyHandler {
+public class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
     /** The proxy granting ticket identifier parameter. */

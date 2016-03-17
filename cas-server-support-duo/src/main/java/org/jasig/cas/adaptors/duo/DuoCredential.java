@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class DuoCredential implements Credential, Serializable {
+public class DuoCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -7570600733132111037L;
 

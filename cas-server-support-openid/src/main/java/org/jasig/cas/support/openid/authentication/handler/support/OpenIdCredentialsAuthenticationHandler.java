@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 @Component("openIdCredentialsAuthenticationHandler")
-public final class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
+public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     @NotNull
     @Autowired

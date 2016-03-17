@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  * @since 3.2.1
  *
  */
-public final class RememberMeDelegatingExpirationPolicyTests {
+public class RememberMeDelegatingExpirationPolicyTests {
 
     /** Factory to create the principal type. **/
     @NotNull

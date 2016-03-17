@@ -18,7 +18,7 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
-public final class WsFederationCredential implements Credential {
+public class WsFederationCredential implements Credential {
     private final Logger logger = LoggerFactory.getLogger(WsFederationCredential.class);
 
     private String audience;

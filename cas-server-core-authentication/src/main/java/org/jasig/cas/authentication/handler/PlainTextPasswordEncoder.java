@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @since 3.0.0
  */
 @Component("plainTextPasswordEncoder")
-public final class PlainTextPasswordEncoder implements PasswordEncoder {
+public class PlainTextPasswordEncoder implements PasswordEncoder {
 
     @Override
     public String encode(final String password) {

@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
  *  @author Misagh Moayyed
  *  @since 4.1
  */
-public final class ReverseDNSRunnable implements Runnable {
+public class ReverseDNSRunnable implements Runnable {
 
     /** Logger instance. **/
     private static final Logger LOGGER = LoggerFactory.getLogger(ReverseDNSRunnable.class);

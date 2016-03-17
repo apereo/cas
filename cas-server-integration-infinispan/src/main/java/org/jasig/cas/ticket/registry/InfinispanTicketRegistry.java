@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @since 4.2.0
  */
 @Component("infinispanTicketRegistry")
-public final class InfinispanTicketRegistry extends AbstractTicketRegistry {
+public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Resource(name="infinispanTicketsCache")
     private Cache<String, Ticket> cache;

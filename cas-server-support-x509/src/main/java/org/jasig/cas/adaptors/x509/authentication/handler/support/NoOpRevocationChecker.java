@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
  * @since 3.4.6
  */
 @Component("noOpRevocationChecker")
-public final class NoOpRevocationChecker implements RevocationChecker {
+public class NoOpRevocationChecker implements RevocationChecker {
 
     /**
      * NO-OP check implementation.

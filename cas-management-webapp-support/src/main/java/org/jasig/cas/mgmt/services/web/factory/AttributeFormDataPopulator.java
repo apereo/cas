@@ -18,7 +18,7 @@ import java.util.List;
  * @since 4.2
  */
 @Component("attributeFormDataPopulator")
-public final class AttributeFormDataPopulator implements FormDataPopulator {
+public class AttributeFormDataPopulator implements FormDataPopulator {
     /**
      * Instance of AttributeRegistry.
      */

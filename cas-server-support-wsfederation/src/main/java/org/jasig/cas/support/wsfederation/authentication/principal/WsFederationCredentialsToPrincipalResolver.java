@@ -22,7 +22,7 @@ import org.jasig.cas.support.wsfederation.WsFederationConfiguration.WsFedPrincip
  * @since 4.2.0
  */
 @Component("adfsPrincipalResolver")
-public final class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
+public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     private final Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
 

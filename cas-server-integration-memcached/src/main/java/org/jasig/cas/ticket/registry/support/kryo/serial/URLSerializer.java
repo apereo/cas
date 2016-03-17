@@ -14,7 +14,7 @@ import com.esotericsoftware.kryo.io.Output;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class URLSerializer extends Serializer<URL> {
+public class URLSerializer extends Serializer<URL> {
 
     @Override
     public URL read(final Kryo kryo, final Input input, final  Class<URL> type) {

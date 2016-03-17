@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  * @since 3.1
  */
 @Component("servicesManager")
-public final class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
+public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 

@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.0.0
  */
 @Component("generateServiceTicketAction")
-public final class GenerateServiceTicketAction extends AbstractAction {
+public class GenerateServiceTicketAction extends AbstractAction {
     /** Instance of CentralAuthenticationService. */
     @NotNull
     @Autowired

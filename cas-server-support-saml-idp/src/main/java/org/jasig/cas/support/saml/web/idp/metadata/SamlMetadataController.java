@@ -29,7 +29,7 @@ import java.io.PrintWriter;
  * @since 4.3
  */
 @Controller("samlMetadataController")
-public final class SamlMetadataController {
+public class SamlMetadataController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

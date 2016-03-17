@@ -56,7 +56,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:/oauth-context.xml"})
 @DirtiesContext()
-public final class OAuth20AccessTokenControllerTests {
+public class OAuth20AccessTokenControllerTests {
 
     private static final String CONTEXT = "/oauth2.0/";
 

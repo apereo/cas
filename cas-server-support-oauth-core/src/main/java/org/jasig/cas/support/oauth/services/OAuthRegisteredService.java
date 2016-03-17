@@ -19,7 +19,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("oauth")
-public final class OAuthRegisteredService extends RegexRegisteredService {
+public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 

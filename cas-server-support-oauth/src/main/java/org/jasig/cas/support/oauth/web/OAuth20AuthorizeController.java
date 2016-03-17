@@ -35,7 +35,7 @@ import java.util.Map;
  * @since 3.5.0
  */
 @Component("authorizeController")
-public final class OAuth20AuthorizeController extends BaseOAuthWrapperController {
+public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     @NotNull
     @Autowired

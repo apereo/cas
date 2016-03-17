@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class SimpleMetadataUIInfo implements Serializable {
+public class SimpleMetadataUIInfo implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleMetadataUIInfo.class);
 
     private static final long serialVersionUID = -1434801982864628179L;

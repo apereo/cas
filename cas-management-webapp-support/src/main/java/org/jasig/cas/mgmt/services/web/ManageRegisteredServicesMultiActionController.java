@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @since 3.1
  */
 @Controller("manageRegisteredServicesMultiActionController")
-public final class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
+public class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
 
     /**
      * Instance of the RegisteredServiceFactory.

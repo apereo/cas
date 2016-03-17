@@ -12,7 +12,7 @@ import java.nio.channels.FileLock;
  * @author Marvin S. Addison
  * @since 4.1.0
  */
-public final class LockedOutputStream extends BufferedOutputStream {
+public class LockedOutputStream extends BufferedOutputStream {
 
     /** Lock held on file underneath stream. */
     private final FileLock lock;

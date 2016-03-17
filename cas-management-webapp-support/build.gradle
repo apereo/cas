@@ -5,6 +5,7 @@ dependencies {
     compile libraries.inspektr
     compile libraries.spring
     compile libraries.springboot
+    compile libraries.springcloud
     compile libraries.casclient
     compile libraries.javaximpl
     compile libraries.hibernate

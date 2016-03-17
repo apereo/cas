@@ -32,7 +32,7 @@ import java.util.Collections;
  * @since 4.1.0
  */
 @Component("ldapServiceRegistryMapper")
-public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
+public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
 

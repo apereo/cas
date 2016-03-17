@@ -20,7 +20,7 @@ import java.time.temporal.ChronoUnit;
  * @since 3.0.0
  */
 @Component("throttledUseAndTimeoutExpirationPolicy")
-public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 205979491183779408L;

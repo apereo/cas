@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * @since 3.0.0
  */
 @Component("serviceThemeResolver")
-public final class ServiceThemeResolver extends AbstractThemeResolver {
+public class ServiceThemeResolver extends AbstractThemeResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
 

@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
  * @since 3.0.0
  */
 @Component("simpleTestUsernamePasswordAuthenticationHandler")
-public final class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
+public class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 

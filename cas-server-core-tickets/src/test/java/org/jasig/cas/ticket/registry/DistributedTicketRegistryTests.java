@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  * @since 3.1
  *
  */
-public final class DistributedTicketRegistryTests {
+public class DistributedTicketRegistryTests {
 
     private TestDistributedTicketRegistry ticketRegistry;
 

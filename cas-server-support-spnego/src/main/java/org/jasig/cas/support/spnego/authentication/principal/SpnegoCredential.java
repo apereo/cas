@@ -19,7 +19,7 @@ import java.util.Arrays;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
-public final class SpnegoCredential implements Credential, Serializable {
+public class SpnegoCredential implements Credential, Serializable {
 
     /**
      * Unique id for serialization.

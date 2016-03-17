@@ -29,7 +29,7 @@ import java.nio.charset.Charset;
  * @since 3.1
  */
 @Component
-public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
+public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
 
     @Value("${cas.spnego.ntlm.allowed:true}")

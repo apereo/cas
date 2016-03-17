@@ -4,7 +4,7 @@ dependencies {
   compile libraries.spring
   compile libraries.memcached
   compile libraries.hibernate
-
+  provided libraries.springcloud
   compile project(':cas-server-core-logging')
   compile project(':cas-server-core-tickets')
   compile project(':cas-server-core-services')

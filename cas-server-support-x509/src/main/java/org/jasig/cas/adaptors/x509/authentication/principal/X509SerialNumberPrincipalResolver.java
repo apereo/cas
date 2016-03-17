@@ -11,7 +11,7 @@ import java.security.cert.X509Certificate;
  * @since 3.0.0
  */
 @Component("x509SerialNumberPrincipalResolver")
-public final class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
+public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
     @Override
     protected String resolvePrincipalInternal(

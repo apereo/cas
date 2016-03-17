@@ -16,7 +16,7 @@ import org.jasig.cas.util.AopUtils;
  * @since 3.1.2
  *
  */
-public final class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
+public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {

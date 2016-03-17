@@ -14,7 +14,7 @@ import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public final class SimpleWebApplicationServiceSerializer extends Serializer<SimpleWebApplicationServiceImpl> {
+public class SimpleWebApplicationServiceSerializer extends Serializer<SimpleWebApplicationServiceImpl> {
 
     @Override
     public void write(final Kryo kryo, final Output output, final SimpleWebApplicationServiceImpl service) {

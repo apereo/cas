@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.2.0
  */
 @Component("defaultAuthenticationTransactionManager")
-public final class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
+public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
 

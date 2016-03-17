@@ -86,8 +86,8 @@ public class KryoTranscoderTests {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final AuthenticationBuilder bldr = new DefaultAuthenticationBuilder(
                 new DefaultPrincipalFactory()
-                        .createPrincipal("user", Collections.unmodifiableMap(this.principalAttributes)));
-        bldr.setAttributes(Collections.unmodifiableMap(this.principalAttributes));
+                        .createPrincipal("user", new HashMap<>(this.principalAttributes)));
+        bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC));
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", AccountNotFoundException.class);
@@ -140,7 +140,7 @@ public class KryoTranscoderTests {
     public void verifyEncodeDecodeTGTWithUnmodifiableMap() throws Exception {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket(TGT_ID, userPassCredential, Collections.unmodifiableMap(this.principalAttributes));
+                new MockTicketGrantingTicket(TGT_ID, userPassCredential, new HashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
     }

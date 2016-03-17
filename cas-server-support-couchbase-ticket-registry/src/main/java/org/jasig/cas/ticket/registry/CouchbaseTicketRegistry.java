@@ -35,7 +35,7 @@ import java.util.List;
  * @since 4.2.0
  */
 @Component("couchbaseTicketRegistry")
-public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
+public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
     private static final String END_TOKEN = "\u02ad";
 
     private static final View ALL_TICKETS_VIEW = DefaultView.create(

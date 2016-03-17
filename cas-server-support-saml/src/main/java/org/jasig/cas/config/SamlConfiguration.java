@@ -7,6 +7,7 @@ import org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -52,6 +53,7 @@ public class SamlConfiguration {
      *
      * @return the saml 10 success response view
      */
+    @RefreshScope
     @Bean(name="casSamlServiceSuccessView")
     public Saml10SuccessResponseView casSamlServiceSuccessView() {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
@@ -67,6 +69,7 @@ public class SamlConfiguration {
      *
      * @return the saml 10 failure response view
      */
+    @RefreshScope
     @Bean(name="casSamlServiceFailureView")
     public Saml10FailureResponseView casSamlServiceFailureView() {
         final Saml10FailureResponseView view = new Saml10FailureResponseView();

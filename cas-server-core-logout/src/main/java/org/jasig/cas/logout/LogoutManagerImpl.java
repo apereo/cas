@@ -24,7 +24,7 @@ import java.util.List;
  * @since 4.0.0
  */
 @Component("logoutManager")
-public final class LogoutManagerImpl implements LogoutManager {
+public class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);

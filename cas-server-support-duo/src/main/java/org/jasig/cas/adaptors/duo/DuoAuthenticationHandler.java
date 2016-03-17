@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * @since 4.2
  */
 @Component("duoAuthenticationHandler")
-public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final DuoAuthenticationService duoAuthenticationService;
 

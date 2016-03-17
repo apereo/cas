@@ -32,7 +32,7 @@ import java.util.Collection;
  *
  */
 @Component("auditablePrincipalResolver")
-public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
+public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);

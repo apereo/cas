@@ -16,7 +16,7 @@ import java.util.List;
  * @since 3.1
  */
 @Deprecated
-public final class CasArgumentExtractor extends AbstractArgumentExtractor {
+public class CasArgumentExtractor extends AbstractArgumentExtractor {
     /**
      * Create a CAS argument extractor.
      * @param serviceFactory service factory

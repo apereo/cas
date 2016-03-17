@@ -26,7 +26,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapter implements Job {
+public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapter implements Job {
     private static final int DEFAULT_METADATA_REFRESH_INTERNAL_MINS = 300;
 
     /**

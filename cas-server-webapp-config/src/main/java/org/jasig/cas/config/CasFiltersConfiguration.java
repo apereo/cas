@@ -5,6 +5,7 @@ import org.jasig.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.jasig.cas.security.ResponseHeadersEnforcementFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -91,6 +92,7 @@ public class CasFiltersConfiguration {
      *
      * @return the character encoding filter
      */
+    @RefreshScope
     @Bean(name = "characterEncodingFilter")
     public FilterRegistrationBean characterEncodingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
@@ -105,6 +107,7 @@ public class CasFiltersConfiguration {
      *
      * @return the response headers enforcement filter
      */
+    @RefreshScope
     @Bean(name = "responseHeadersSecurityFilter")
     public FilterRegistrationBean rsponseHeadersSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
@@ -127,6 +130,7 @@ public class CasFiltersConfiguration {
      *
      * @return the request parameter policy enforcement filter
      */
+    @RefreshScope
     @Bean(name = "requestParameterSecurityFilter")
     public FilterRegistrationBean requestParameterSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();

@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/ticketRegistry.xml")
-public final class IgniteTicketRegistryTests {
+public class IgniteTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 

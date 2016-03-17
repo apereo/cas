@@ -6,6 +6,7 @@ import com.mongodb.WriteConcern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -122,6 +123,7 @@ public class MongoDbServiceRegistryConfiguration {
      *
      * @return the persistence exception translation post processor
      */
+    @RefreshScope
     @Bean(name = "persistenceExceptionTranslationPostProcessor")
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
@@ -132,6 +134,7 @@ public class MongoDbServiceRegistryConfiguration {
      *
      * @return the mongo mapping context
      */
+    @RefreshScope
     @Bean(name = "mappingContext")
     public MongoMappingContext mappingContext() {
         return new MongoMappingContext();
@@ -143,6 +146,7 @@ public class MongoDbServiceRegistryConfiguration {
      * @param mongo the mongo
      * @return the mongo template
      */
+    @RefreshScope
     @Bean(name = "mongoTemplate")
     public MongoTemplate mongoTemplate(final Mongo mongo) {
         return new MongoTemplate(new SimpleMongoDbFactory(mongo,
@@ -156,6 +160,7 @@ public class MongoDbServiceRegistryConfiguration {
      * @param mongoClientOptions the mongo client options
      * @return the mongo client factory bean
      */
+    @RefreshScope
     @Bean(name = "mongo")
     public MongoClientFactoryBean mongo(final MongoClientOptions mongoClientOptions) {
         final MongoClientFactoryBean bean = new MongoClientFactoryBean();
@@ -170,6 +175,7 @@ public class MongoDbServiceRegistryConfiguration {
      *
      * @return the mongo client options factory bean
      */
+    @RefreshScope
     @Bean(name = "mongoClientOptions")
     public MongoClientOptionsFactoryBean mongo() {
         final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();

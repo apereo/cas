@@ -11,7 +11,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public final class CasServiceTicketGrantedEvent extends AbstractCasEvent {
+public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
 

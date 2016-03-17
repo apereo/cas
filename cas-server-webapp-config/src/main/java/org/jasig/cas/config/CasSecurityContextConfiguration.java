@@ -6,6 +6,7 @@ import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCustomizer;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -24,10 +25,6 @@ import org.springframework.web.servlet.mvc.WebContentInterceptor;
 @Lazy(true)
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     
-
-    /**
-     * The Regex pattern.
-     */
     @Value("${cas.securityContext.adminpages.ip:127\\.0\\.0\\.1}")
     private String regexPattern;
 
@@ -36,6 +33,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the web content interceptor
      */
+    @RefreshScope
     @Bean(name = "webContentInterceptor")
     public WebContentInterceptor webContentInterceptor() {
         final WebContentInterceptor interceptor = new WebContentInterceptor();
@@ -49,6 +47,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the requires authentication interceptor
      */
+    @RefreshScope
     @Bean(name = "requiresAuthenticationStatusStatsInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationInterceptor() {
         return new RequiresAuthenticationInterceptor(new Config(new IpClient(new IpRegexpAuthenticator(this.regexPattern))), "IpClient");
@@ -67,6 +66,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the endpoint handler mapping customizer
      */
+    @RefreshScope
     @Bean(name="mappingCustomizer")
     public EndpointHandlerMappingCustomizer mappingCustomizer() {
         return mapping -> mapping.setInterceptors(new Object[] {requiresAuthenticationInterceptor()});

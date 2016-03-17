@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.1
  */
 @Component("defaultCookieValueManager")
-public final class DefaultCasCookieValueManager implements CookieValueManager {
+public class DefaultCasCookieValueManager implements CookieValueManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;

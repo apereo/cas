@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * @since 3.2.1
  */
 @Component("rememberMeAuthenticationMetaDataPopulator")
-public final class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeAuthenticationMetaDataPopulator.class);
 

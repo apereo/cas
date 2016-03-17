@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @since 3.1
  */
 @Component("openIdPrincipalResolver")
-public final class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
+public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     protected String extractPrincipalId(final Credential credential) {

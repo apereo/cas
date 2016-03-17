@@ -8,7 +8,7 @@ import org.jasig.cas.authentication.AbstractCredential;
  * @since 3.2.1
  *
  */
-public final class RemoteAddressCredential extends AbstractCredential {
+public class RemoteAddressCredential extends AbstractCredential {
 
     /** Serialization version marker. */
     private static final long serialVersionUID = -3638145328441211073L;

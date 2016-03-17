@@ -23,7 +23,7 @@ import javax.validation.Validator;
  *
  */
 @Component("validationAnnotationBeanPostProcessor")
-public final class CustomBeanValidationPostProcessor extends BeanValidationPostProcessor {
+public class CustomBeanValidationPostProcessor extends BeanValidationPostProcessor {
 
     /**
      * Instantiates a new custom bean validation post processor.

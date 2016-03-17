@@ -74,7 +74,7 @@ class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
                         further watch events. If the key is no longer valid, the directory
                         is inaccessible so exit the loop.
                      */
-                    final boolean valid = (key != null && key.reset());
+                    final boolean valid = key != null && key.reset();
                     if (!valid) {
                         LOGGER.warn("Directory key is no longer valid. Quitting watcher service");
                         break;

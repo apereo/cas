@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.3.0`
  */
 @Component("igniteTicketRegistry")
-public final class IgniteTicketRegistry extends AbstractTicketRegistry {
+public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     @NotNull

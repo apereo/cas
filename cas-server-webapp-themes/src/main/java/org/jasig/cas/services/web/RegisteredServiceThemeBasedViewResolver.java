@@ -35,7 +35,7 @@ import java.util.Locale;
  * @since 4.1.0
  */
 @Component("registeredServiceViewResolver")
-public final class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
+public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
 
     @Autowired

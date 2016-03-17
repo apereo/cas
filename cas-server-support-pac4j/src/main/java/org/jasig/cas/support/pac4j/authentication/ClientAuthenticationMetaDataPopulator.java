@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @since 3.5.0
  */
 @Component("clientAuthenticationMetaDataPopulator")
-public final class ClientAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class ClientAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     /***
      * The name of the client used to perform the authentication.

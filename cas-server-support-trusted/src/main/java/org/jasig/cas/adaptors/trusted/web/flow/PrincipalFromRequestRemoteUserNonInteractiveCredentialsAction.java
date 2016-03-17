@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.0.0
  */
 @Component("principalFromRemoteUserAction")
-public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
+public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

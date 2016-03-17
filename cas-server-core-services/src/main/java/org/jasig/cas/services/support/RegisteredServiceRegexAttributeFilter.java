@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public final class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
+public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
     private static final long serialVersionUID = 403015306984610128L;
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

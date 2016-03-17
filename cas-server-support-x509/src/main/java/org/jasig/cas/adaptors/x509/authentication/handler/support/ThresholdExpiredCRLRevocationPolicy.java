@@ -23,7 +23,7 @@ import java.time.ZonedDateTime;
  *
  */
 @Component("thresholdExpiredCRLRevocationPolicy")
-public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
+public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
     /** Default threshold is 48 hours. */
     private static final int DEFAULT_THRESHOLD = 172800;
 

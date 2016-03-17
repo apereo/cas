@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -86,6 +87,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the audit trail manager
      */
+    @RefreshScope
     @Bean(name = "auditTrailManager")
     public AuditTrailManager auditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
@@ -100,6 +102,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the client info thread local filter
      */
+    @RefreshScope
     @Bean(name = "casClientInfoLoggingFilter")
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
@@ -114,6 +117,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
+    @RefreshScope
     @Bean(name = "authenticationActionResolver")
     public DefaultAuditActionResolver authenticationActionResolver() {
         return new DefaultAuditActionResolver("_SUCCESS", "_FAILED");
@@ -124,6 +128,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
+    @RefreshScope
     @Bean(name = "ticketCreationActionResolver")
     public DefaultAuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
@@ -134,6 +139,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
+    @RefreshScope
     @Bean(name = "ticketValidationActionResolver")
     public DefaultAuditActionResolver ticketValidationActionResolver() {
         return new DefaultAuditActionResolver("D", "_FAILED");
@@ -144,6 +150,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the return value as string resource resolver
      */
+    @RefreshScope
     @Bean(name = "returnValueResourceResolver")
     public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
@@ -155,6 +162,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the map
      */
+    @RefreshScope
     @Bean(name="auditActionResolverMap")
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
@@ -175,6 +183,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the map
      */
+    @RefreshScope
     @Bean(name="auditResourceResolverMap")
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();

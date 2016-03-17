@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @since 3.1
  */
 @Component("defaultOpenIdUserNameExtractor")
-public final class DefaultOpenIdUserNameExtractor implements OpenIdUserNameExtractor {
+public class DefaultOpenIdUserNameExtractor implements OpenIdUserNameExtractor {
 
     @Override
     public String extractLocalUsernameFromUri(final String uri) {

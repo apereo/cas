@@ -22,7 +22,7 @@ import java.nio.charset.Charset;
  * @since 3.1
  */
 @Component("defaultPasswordEncoder")
-public final class DefaultPasswordEncoder implements PasswordEncoder {
+public class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
 

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class CachingPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
+public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
     private static final long serialVersionUID = 6350244643948535906L;
     private static final long DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
 

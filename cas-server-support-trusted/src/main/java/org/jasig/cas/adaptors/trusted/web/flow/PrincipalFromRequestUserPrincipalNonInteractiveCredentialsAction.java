@@ -23,7 +23,7 @@ import java.security.Principal;
  * @since 3.0.5
  */
 @Component("principalFromRemoteUserPrincipalAction")
-public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
+public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

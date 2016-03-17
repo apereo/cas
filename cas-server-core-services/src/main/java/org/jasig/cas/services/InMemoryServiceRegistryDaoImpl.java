@@ -19,7 +19,7 @@ import java.util.List;
  * @since 3.1
  */
 @Component("inMemoryServiceRegistryDao")
-public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
+public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
 

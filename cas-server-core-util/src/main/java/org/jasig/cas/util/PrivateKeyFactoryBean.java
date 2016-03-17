@@ -26,7 +26,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
  * @since 3.1
  *
  */
-public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
+public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PrivateKeyFactoryBean.class);
 
     static {

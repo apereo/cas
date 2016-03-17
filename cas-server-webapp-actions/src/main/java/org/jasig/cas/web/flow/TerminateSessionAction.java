@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.0.0
  */
 @Component("terminateSessionAction")
-public final class TerminateSessionAction {
+public class TerminateSessionAction {
 
     /** Webflow event helper component. */
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();

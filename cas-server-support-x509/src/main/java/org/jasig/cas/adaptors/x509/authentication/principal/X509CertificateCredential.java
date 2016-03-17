@@ -15,7 +15,7 @@ import java.security.cert.X509Certificate;
  * @since 3.0.0
  *
  */
-public final class X509CertificateCredential extends AbstractCredential {
+public class X509CertificateCredential extends AbstractCredential {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = 631753409512746474L;

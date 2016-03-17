@@ -17,5 +17,5 @@ import org.junit.runners.Suite;
         GoogleAccountsServiceTests.class,
         GoogleAccountsServiceFactoryTests.class,
 })
-public final class AllTestsSuite {
+public class AllTestsSuite {
 }

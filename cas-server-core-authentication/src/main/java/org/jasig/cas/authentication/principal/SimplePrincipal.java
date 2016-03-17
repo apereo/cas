@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
-public final class SimplePrincipal implements Principal {
+public class SimplePrincipal implements Principal {
     /** Serialization support. */
     private static final long serialVersionUID = -1255260750151385796L;
 
@@ -58,7 +58,7 @@ public final class SimplePrincipal implements Principal {
      */
     @Override
     public Map<String, Object> getAttributes() {
-        return Collections.unmodifiableMap(this.attributes);
+        return new HashMap<>(this.attributes);
     }
 
     @Override

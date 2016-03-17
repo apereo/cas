@@ -35,7 +35,7 @@ import java.util.List;
  * @since 4.1.0
  */
 @Component("trustStoreSslSocketFactory")
-public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
+public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileTrustStoreSslSocketFactory.class);
 

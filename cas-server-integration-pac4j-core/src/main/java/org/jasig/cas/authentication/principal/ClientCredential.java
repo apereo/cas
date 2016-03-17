@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class ClientCredential implements Credential, Serializable {
+public class ClientCredential implements Credential, Serializable {
 
     /**
      * The servialVersionUID.

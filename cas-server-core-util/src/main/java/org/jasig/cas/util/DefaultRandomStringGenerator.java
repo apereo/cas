@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
  * @since 3.0.0
  */
-public final class DefaultRandomStringGenerator implements RandomStringGenerator {
+public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     /** The default maximum length. */
     protected static final int DEFAULT_MAX_RANDOM_LENGTH = 35;

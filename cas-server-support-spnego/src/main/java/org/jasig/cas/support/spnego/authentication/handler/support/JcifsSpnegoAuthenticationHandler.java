@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @since 3.1
  */
 @Component("spnegoHandler")
-public final class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     @Autowired
     @Qualifier("spnegoAuthentication")

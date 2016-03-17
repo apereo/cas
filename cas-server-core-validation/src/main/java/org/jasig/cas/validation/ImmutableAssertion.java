@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
  *
  * @since 3.0.0
  */
-public final class ImmutableAssertion implements Assertion, Serializable {
+public class ImmutableAssertion implements Assertion, Serializable {
 
     /** Unique Id for Serialization. */
     private static final long serialVersionUID = -3348826049921010423L;

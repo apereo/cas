@@ -17,7 +17,7 @@ import com.esotericsoftware.kryo.io.Output;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public final class SamlServiceSerializer extends AbstractWebApplicationServiceSerializer<SamlService> {
+public class SamlServiceSerializer extends AbstractWebApplicationServiceSerializer<SamlService> {
     private static final Constructor CONSTRUCTOR;
 
     static {

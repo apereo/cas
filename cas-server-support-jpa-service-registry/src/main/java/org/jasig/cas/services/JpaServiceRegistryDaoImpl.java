@@ -14,7 +14,7 @@ import java.util.List;
  * @since 3.1
  */
 @Component("jpaServiceRegistryDao")
-public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
+public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     @NotNull
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;

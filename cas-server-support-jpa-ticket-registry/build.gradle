@@ -1,6 +1,6 @@
 description = 'Apereo CAS JPA Ticket Registry Support'
 dependencies {
-
+    provided libraries.springcloud
     compile project(':cas-server-core-tickets')
     compile project(':cas-server-core-monitor')
     compile project(':cas-server-core-util')

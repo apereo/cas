@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 @Component("ldapServiceRegistryDao")
-public final class LdapServiceRegistryDao implements ServiceRegistryDao {
+public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

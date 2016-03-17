@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component("ticketResourceResolver")
-public final class TicketAsFirstParameterResourceResolver implements AuditResourceResolver {
+public class TicketAsFirstParameterResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @since 3.0.0
  */
 @Component("trustedPrincipalResolver")
-public final class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
+public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     protected String extractPrincipalId(final Credential credential) {

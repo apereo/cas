@@ -17,7 +17,7 @@ import java.util.List;
  * @since 4.2
  */
 @Component("defaultArgumentExtractor")
-public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
+public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     /**
      * Default extractor.

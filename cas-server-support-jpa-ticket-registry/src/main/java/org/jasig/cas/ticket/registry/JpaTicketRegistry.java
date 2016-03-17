@@ -34,7 +34,7 @@ import java.util.List;
  * @since 3.2.1
  */
 @Component("jpaTicketRegistry")
-public final class JpaTicketRegistry extends AbstractTicketRegistry {
+public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     @Qualifier("jpaLockingStrategy")

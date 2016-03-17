@@ -9,6 +9,7 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -92,6 +93,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the default advisor auto proxy creator
      */
+    @RefreshScope
     @Bean(name = "advisorAutoProxyCreator")
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
@@ -102,6 +104,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the list
      */
+    @RefreshScope
     @Bean(name = "serviceFactoryList")
     public List serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
@@ -114,6 +117,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the list
      */
+    @RefreshScope
     @Bean(name = "argumentExtractors")
     public List argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
@@ -126,6 +130,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the map
      */
+    @RefreshScope
     @Bean(name = "uniqueIdGeneratorsMap")
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
@@ -138,6 +143,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the url filename view controller
      */
+    @RefreshScope
     @Bean(name = "passThroughController")
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
@@ -148,6 +154,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the controller
      */
+    @RefreshScope
     @Bean(name="rootController")
     protected Controller rootController() {
         return new ParameterizableViewController() {
@@ -165,6 +172,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the scheduler factory bean
      */
+    @RefreshScope
     @Bean(name = "scheduler")
     public SchedulerFactoryBean scheduler() {
         final SchedulerFactoryBean factory = new SchedulerFactoryBean();

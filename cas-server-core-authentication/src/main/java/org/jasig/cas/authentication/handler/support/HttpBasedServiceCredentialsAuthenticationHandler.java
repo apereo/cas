@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component("proxyAuthenticationHandler")
-public final class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
+public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /** Log instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());

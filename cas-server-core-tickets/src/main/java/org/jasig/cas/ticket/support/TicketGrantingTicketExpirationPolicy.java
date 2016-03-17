@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.10
  */
 @Component("ticketGrantingTicketExpirationPolicy")
-public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements InitializingBean {
+public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements InitializingBean {
 
     /** Serialization support. */
     private static final long serialVersionUID = 7670537200691354820L;

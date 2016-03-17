@@ -8,6 +8,7 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -59,7 +60,7 @@ public class IgniteTicketRegistryConfiguration {
     @Value("${ignite.ticketsCache.writeSynchronizationMode:FULL_SYNC}")
     private CacheWriteSynchronizationMode writeSynchronizationMode;
     
-    @Value("${ignite.ticketsCache.timeout:" + Integer.MAX_VALUE + "}")
+    @Value("${ignite.ticketsCache.timeout:" + Integer.MAX_VALUE + '}')
     private long timeout;
     
     /**
@@ -67,6 +68,7 @@ public class IgniteTicketRegistryConfiguration {
      *
      * @return the ignite configuration
      */
+    @RefreshScope
     @Bean(name = "igniteConfiguration")
     private IgniteConfiguration igniteConfiguration() {
         final IgniteConfiguration config = new IgniteConfiguration();

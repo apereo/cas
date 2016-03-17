@@ -31,7 +31,7 @@ import java.util.List;
  * @since 3.0.0
  */
 @Component("logoutAction")
-public final class LogoutAction extends AbstractLogoutAction {
+public class LogoutAction extends AbstractLogoutAction {
 
     /** The services manager. */
     @NotNull

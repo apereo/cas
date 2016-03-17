@@ -53,7 +53,7 @@ import java.util.List;
  * @since 4.2.0
  */
 @Component("wsFederationHelper")
-public final class WsFederationHelper {
+public class WsFederationHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationHelper.class);
 
     @Autowired

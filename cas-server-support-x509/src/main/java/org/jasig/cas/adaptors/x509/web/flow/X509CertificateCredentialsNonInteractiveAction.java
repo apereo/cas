@@ -17,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 @Component("x509Check")
-public final class X509CertificateCredentialsNonInteractiveAction extends AbstractNonInteractiveCredentialsAction {
+public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonInteractiveCredentialsAction {
 
     private static final String CERTIFICATE_REQUEST_ATTRIBUTE = "javax.servlet.request.X509Certificate";
 

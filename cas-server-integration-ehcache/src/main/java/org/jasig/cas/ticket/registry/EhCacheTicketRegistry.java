@@ -27,7 +27,7 @@ import java.util.HashSet;
  * @since 3.5
  */
 @Component("ehcacheTicketRegistry")
-public final class EhCacheTicketRegistry extends AbstractTicketRegistry {
+public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     @Qualifier("ehcacheTicketsCache")

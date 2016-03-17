@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.2
  */
 @Component("duoAuthenticationService")
-public final class DuoAuthenticationService {
+public class DuoAuthenticationService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String duoIntegrationKey;

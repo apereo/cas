@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
-public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
+public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     /** Namespace for custom attributes in the saml validation payload. */
     private static final String VALIDATION_SAML_ATTRIBUTE_NAMESPACE = "http://www.ja-sig.org/products/cas/";
 

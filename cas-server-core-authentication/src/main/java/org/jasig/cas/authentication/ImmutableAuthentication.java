@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import java.util.Map;
  *
  * @since 3.0.0
  */
-public final class ImmutableAuthentication implements Authentication {
+public class ImmutableAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
@@ -135,7 +136,7 @@ public final class ImmutableAuthentication implements Authentication {
 
     @Override
     public Map<String, HandlerResult> getSuccesses() {
-        return Collections.unmodifiableMap(this.successes);
+        return new HashMap<>(this.successes);
     }
 
     @Override
@@ -185,7 +186,7 @@ public final class ImmutableAuthentication implements Authentication {
      */
     private static <K, V> Map<K, V> wrap(final Map<K, V> source) {
         if (source != null) {
-            return Collections.unmodifiableMap(source);
+            return new HashMap<>(source);
         }
         return Collections.emptyMap();
     }

@@ -3,6 +3,7 @@ package org.jasig.cas.config;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -143,6 +144,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the hibernate jpa vendor adapter
      */
+    @RefreshScope
     @Bean(name = "ticketJpaVendorAdapter")
     public HibernateJpaVendorAdapter ticketJpaVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
@@ -156,6 +158,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the string [ ]
      */
+    @RefreshScope
     @Bean(name = "ticketPackagesToScan")
     public String[] ticketPackagesToScan() {
         return new String[] {
@@ -169,6 +172,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
+    @RefreshScope
     @Bean(name = "ticketEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
@@ -192,6 +196,7 @@ public class JpaTicketRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
+    @RefreshScope
     @Bean(name = "ticketTransactionManager")
     public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {
@@ -205,6 +210,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the combo pooled data source
      */
+    @RefreshScope
     @Bean(name = "dataSourceTicket")
     public ComboPooledDataSource dataSourceTicket() {
         try {

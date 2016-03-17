@@ -20,7 +20,7 @@ import java.net.UnknownHostException;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
+public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
     /**
      * Instantiates a new Host name based unique ticket id generator.
      *

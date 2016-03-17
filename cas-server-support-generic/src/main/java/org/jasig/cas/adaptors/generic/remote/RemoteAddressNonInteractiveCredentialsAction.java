@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.2.1
  */
 @Component("remoteAddressCheck")
-public final class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
+public class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
     
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {

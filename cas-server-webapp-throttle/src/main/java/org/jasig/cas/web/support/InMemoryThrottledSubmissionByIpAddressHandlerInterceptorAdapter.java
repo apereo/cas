@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.3.5
  */
 @Component("inMemoryIpAddressThrottle")
-public final class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter
+public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter
              extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
     @Override

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -33,40 +34,22 @@ import java.util.Map;
 @Configuration("casWebAppConfiguration")
 @Lazy(true)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
-
-    /**
-     * The constant URL_VIEW_RESOLVER_ORDER.
-     */
+    
     private static final int URL_VIEW_RESOLVER_ORDER = 2000;
-
-    /**
-     * The Message interpolator.
-     */
+    
     @Autowired
     @Qualifier("messageInterpolator")
     private MessageInterpolator messageInterpolator;
-
-    /**
-     * The Theme param name.
-     */
+    
     @Value("${cas.themeResolver.param.name:theme}")
     private String themeParamName;
-
-    /**
-     * The Xml views file.
-     */
+    
     @Value("${cas.viewResolver.xmlFile:classpath:/views.xml}")
     private Resource xmlViewsFile;
-
-    /**
-     * The Default locale.
-     */
+    
     @Value("${locale.default:en}")
     private Locale defaultLocale;
-
-    /**
-     * The Locale param name.
-     */
+    
     @Value("${locale.param.name:locale}")
     private String localeParamName;
 
@@ -75,6 +58,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the local validator factory bean
      */
+    @RefreshScope
     @Bean(name = "credentialsValidator")
     public LocalValidatorFactoryBean credentialsValidator() {
         final LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
@@ -87,6 +71,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the theme change interceptor
      */
+    @RefreshScope
     @Bean(name = "themeChangeInterceptor")
     public ThemeChangeInterceptor themeChangeInterceptor() {
         final ThemeChangeInterceptor bean = new ThemeChangeInterceptor();
@@ -99,6 +84,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the bean name view resolver
      */
+    @RefreshScope
     @Bean(name = "beanNameViewResolver")
     public ViewResolver beanNameViewResolver() {
         final BeanNameViewResolver bean = new BeanNameViewResolver();
@@ -111,6 +97,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the abstract caching view resolver
      */
+    @RefreshScope
     @Bean(name = "xmlViewResolver")
     public ViewResolver xmlViewResolver() {
         if (xmlViewsFile.exists()) {
@@ -128,6 +115,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the cookie locale resolver
      */
+    @RefreshScope
     @Bean(name = "localeResolver")
     public CookieLocaleResolver localeResolver() {
         final CookieLocaleResolver bean = new CookieLocaleResolver();
@@ -140,6 +128,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the locale change interceptor
      */
+    @RefreshScope
     @Bean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
@@ -152,6 +141,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the map
      */
+    @RefreshScope
     @Bean(name = "serviceThemeResolverSupportedBrowsers")
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
@@ -168,6 +158,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the servlet listener registration bean
      */
+    @RefreshScope
     @Bean(name = "log4jServletContextListener")
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
@@ -182,6 +173,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the simple controller handler adapter
      */
+    @RefreshScope
     @Bean(name = "simpleControllerHandlerAdapter")
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();

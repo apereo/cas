@@ -12,7 +12,7 @@ import org.jasig.cas.ticket.proxy.ProxyTicket;
  * @author Daniel Frett
  * @since 4.2.0
  */
-public final class ProxyGrantingTicketDelegator extends TicketGrantingTicketDelegator<ProxyGrantingTicket> implements
+public class ProxyGrantingTicketDelegator extends TicketGrantingTicketDelegator<ProxyGrantingTicket> implements
         ProxyGrantingTicket {
     private static final long serialVersionUID = 684505809948112983L;
 

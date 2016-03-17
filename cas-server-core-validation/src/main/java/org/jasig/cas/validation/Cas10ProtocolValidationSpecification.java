@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("cas10ProtocolValidationSpecification")
 @Scope(value = "prototype")
-public final class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
+public class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
     /**
      * Instantiates a new cas10 protocol validation specification.

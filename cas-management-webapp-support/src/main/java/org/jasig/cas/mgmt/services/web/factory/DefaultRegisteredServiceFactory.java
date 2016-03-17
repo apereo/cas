@@ -25,7 +25,7 @@ import java.util.List;
  * @since 4.2
  */
 @Component("registeredServiceFactory")
-public final class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
+public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
     @Autowired(required = false)
     private ApplicationContext applicationContext;
 

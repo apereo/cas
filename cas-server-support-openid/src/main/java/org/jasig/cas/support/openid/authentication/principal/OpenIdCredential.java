@@ -6,7 +6,7 @@ import org.jasig.cas.authentication.Credential;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class OpenIdCredential implements Credential {
+public class OpenIdCredential implements Credential {
 
     private static final long serialVersionUID = -6535869729412406133L;
 

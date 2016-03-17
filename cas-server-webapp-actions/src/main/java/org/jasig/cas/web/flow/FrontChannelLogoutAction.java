@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.0.0
  */
 @Component("frontChannelLogoutAction")
-public final class FrontChannelLogoutAction extends AbstractLogoutAction {
+public class FrontChannelLogoutAction extends AbstractLogoutAction {
     /** Defines the default logout parameter for requests. */
     public static final String DEFAULT_LOGOUT_PARAMETER = "SAMLRequest";
 

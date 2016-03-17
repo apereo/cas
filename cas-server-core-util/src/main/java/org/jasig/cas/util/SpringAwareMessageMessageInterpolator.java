@@ -19,7 +19,7 @@ import java.util.Locale;
  * @since 3.4
  */
 @Component("messageInterpolator")
-public final class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
+public class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 
     private final MessageInterpolator defaultMessageInterpolator =
             Validation.byDefaultProvider().configure().getDefaultMessageInterpolator();

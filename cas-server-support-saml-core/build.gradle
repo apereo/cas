@@ -3,6 +3,7 @@ dependencies {
     compile libraries.opensaml
     compile libraries.shibidp
     compile libraries.bouncycastle
+    provided libraries.springcloud
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-services')
     compile project(':cas-server-core-authentication')

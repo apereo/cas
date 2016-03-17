@@ -22,7 +22,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
+public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
     private static final long serialVersionUID = 6180465589526463843L;
 

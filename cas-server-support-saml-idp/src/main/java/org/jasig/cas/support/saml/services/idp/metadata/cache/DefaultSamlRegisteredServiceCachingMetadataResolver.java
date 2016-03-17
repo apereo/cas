@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.3.0
  */
 @Component("defaultSamlRegisteredServiceCachingMetadataResolver")
-public final class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
+public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
 
     @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")

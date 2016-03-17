@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class DefaultAuthenticationResult implements AuthenticationResult {
+public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResult.class);
 

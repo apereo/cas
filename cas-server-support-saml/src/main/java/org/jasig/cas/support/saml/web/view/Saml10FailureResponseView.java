@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
-public final class Saml10FailureResponseView extends AbstractSaml10ResponseView {
+public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {

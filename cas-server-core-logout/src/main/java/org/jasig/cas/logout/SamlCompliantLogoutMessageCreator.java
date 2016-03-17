@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @since 4.0.0
  */
 @Component("logoutBuilder")
-public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
+public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlCompliantLogoutMessageCreator.class);

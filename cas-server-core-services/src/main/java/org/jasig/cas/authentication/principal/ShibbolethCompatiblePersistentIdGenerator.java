@@ -26,7 +26,7 @@ import java.nio.charset.Charset;
  * @since 3.1
  */
 @Component("shibbolethCompatiblePersistentIdGenerator")
-public final class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
+public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
 

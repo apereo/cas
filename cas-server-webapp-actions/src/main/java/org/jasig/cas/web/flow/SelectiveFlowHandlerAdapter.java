@@ -5,7 +5,7 @@ import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -18,15 +18,21 @@ import java.util.Set;
 public class SelectiveFlowHandlerAdapter extends FlowHandlerAdapter {
 
     /** List of supported flow IDs. */
-    @NotNull
+
     private Set<String> supportedFlowIds;
 
     public void setSupportedFlowIds(final Set<String> flowIdSet) {
         this.supportedFlowIds = flowIdSet;
     }
 
-    public void setSupportedFlowId(final String flowId) {
-        this.supportedFlowIds = Collections.singleton(flowId);
+    /**
+     * Sets supported flow id.
+     *
+     * @param flowId the flow id
+     */
+    public void setSupportedFlowId(@NotNull final String flowId) {
+        this.supportedFlowIds = new HashSet<>();
+        this.supportedFlowIds.add(flowId);
     }
 
     @Override

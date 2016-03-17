@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public final class HttpRequestGeoLocation {
+public class HttpRequestGeoLocation {
     private String latitude;
     private String longitude;
     private String accuracy;

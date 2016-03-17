@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
  * @since 4.2
  */
 @Component(DefaultUsernameAttributeProviderMapper.BEAN_NAME)
-public final class DefaultUsernameAttributeProviderMapper implements UsernameAttributeProviderMapper {
+public class DefaultUsernameAttributeProviderMapper implements UsernameAttributeProviderMapper {
     /**
      * Name of this bean within the Spring context.
      */

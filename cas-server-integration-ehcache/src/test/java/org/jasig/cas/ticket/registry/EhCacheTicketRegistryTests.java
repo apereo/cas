@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:ticketRegistry.xml")
-public final class EhCacheTicketRegistryTests {
+public class EhCacheTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 

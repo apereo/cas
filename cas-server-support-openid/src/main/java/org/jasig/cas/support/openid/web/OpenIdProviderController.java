@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 @Component("openIdProviderController")
-public final class OpenIdProviderController extends AbstractController {
+public class OpenIdProviderController extends AbstractController {
 
     @NotNull
     @Value("${server.prefix}")

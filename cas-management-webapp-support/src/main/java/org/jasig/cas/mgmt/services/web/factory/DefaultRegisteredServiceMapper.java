@@ -33,7 +33,7 @@ import java.util.regex.PatternSyntaxException;
  * @since 4.2
  */
 @Component(DefaultRegisteredServiceMapper.BEAN_NAME)
-public final class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
+public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
     /**
      * Name of this bean within the Spring context.
      */

@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.1
  */
 @Component("negociateSpnego")
-public final class SpnegoNegociateCredentialsAction extends AbstractAction {
+public class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegociateCredentialsAction.class);
 

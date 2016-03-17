@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class RegisteredServiceEditBean implements Serializable {
+public class RegisteredServiceEditBean implements Serializable {
     private static final long serialVersionUID = 4882440567964605644L;
 
     private FormData formData = new FormData();

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class TokenCredential extends BasicIdentifiableCredential {
+public class TokenCredential extends BasicIdentifiableCredential {
 
     private static final long serialVersionUID = 2749515041385101770L;
 

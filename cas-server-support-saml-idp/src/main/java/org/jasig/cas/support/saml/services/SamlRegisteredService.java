@@ -18,7 +18,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("saml")
-public final class SamlRegisteredService extends RegexRegisteredService {
+public class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 
     private String metadataLocation;

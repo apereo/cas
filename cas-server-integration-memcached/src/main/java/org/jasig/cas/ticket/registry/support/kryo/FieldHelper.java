@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public final class FieldHelper {
+public class FieldHelper {
     private final Map<String, Field> fieldCache = new HashMap<>();
 
     /**

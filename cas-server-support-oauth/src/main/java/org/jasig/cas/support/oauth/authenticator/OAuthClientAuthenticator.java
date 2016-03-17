@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.3.0
  */
 @Component("oAuthClientAuthenticator")
-public final class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
+public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
 
     /** The OAuth validator. */
     @NotNull

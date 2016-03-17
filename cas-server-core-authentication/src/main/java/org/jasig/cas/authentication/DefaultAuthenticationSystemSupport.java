@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @since 4.2.0
  */
 @Component("defaultAuthenticationSystemSupport")
-public final class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
+public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationTransactionManager")

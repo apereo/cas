@@ -18,7 +18,7 @@ import java.util.Locale;
  * @since 3.1
  */
 @Component("spnegoPrincipalResolver")
-public final class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
+public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     /** Transformation types. **/
     public enum Transform {NONE, UPPERCASE, LOWERCASE}

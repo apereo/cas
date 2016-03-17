@@ -19,7 +19,7 @@ import java.util.Set;
  * @since 4.2
  */
 @Component(DefaultAccessStrategyMapper.BEAN_NAME)
-public final class DefaultAccessStrategyMapper implements AccessStrategyMapper {
+public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
     /**
      * Name of this bean within the Spring context.
      */

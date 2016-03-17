@@ -37,7 +37,7 @@ import java.util.Queue;
  */
 @Controller("statisticsController")
 @RequestMapping("/status/stats")
-public final class StatisticsController implements ServletContextAware {
+public class StatisticsController implements ServletContextAware {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 

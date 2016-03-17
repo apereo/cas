@@ -25,7 +25,7 @@ import java.security.GeneralSecurityException;
  *
  */
 @Component("remoteAddressAuthenticationHandler")
-public final class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
+public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
     private final Logger logger = LoggerFactory.getLogger(getClass());

@@ -24,7 +24,7 @@ import java.security.cert.X509Certificate;
  * @since 3.1
  */
 @Component("x509SerialNumberAndIssuerDNPrincipalResolver")
-public final class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
+public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /** Prefix for Certificate Serial Number. */
     @NotNull

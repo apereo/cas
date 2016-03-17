@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Deprecated
 @Component("samlArgumentExtractor")
-public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
+public class SamlArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {

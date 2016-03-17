@@ -1,6 +1,7 @@
 package org.jasig.cas.config;
 
 import org.jasig.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -20,6 +21,7 @@ public class SamlIdPConfiguration {
      *
      * @return the resource
      */
+    @RefreshScope
     @Bean(name="templateSpMetadata")
     public Resource templateSpMetadata() {
         return new ClassPathResource("template-sp-metadata.xml");
@@ -30,6 +32,7 @@ public class SamlIdPConfiguration {
      *
      * @return the saml idp single logout service logout url builder
      */
+    @RefreshScope
     @Bean(name={"defaultSingleLogoutServiceLogoutUrlBuilder",
                 "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {

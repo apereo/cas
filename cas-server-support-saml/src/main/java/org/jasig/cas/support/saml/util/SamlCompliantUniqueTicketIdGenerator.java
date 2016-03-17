@@ -22,7 +22,7 @@ import java.security.SecureRandom;
  * @since 3.0.0
  */
 @Component("samlServiceTicketUniqueIdGenerator")
-public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
+public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /** Assertion handles are randomly-generated 20-byte identifiers. */
     private static final int ASSERTION_HANDLE_SIZE = 20;

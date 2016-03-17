@@ -13,7 +13,7 @@ import java.util.TimeZone;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class ISOStandardDateFormat extends FastDateFormat {
+public class ISOStandardDateFormat extends FastDateFormat {
 
     private static final long serialVersionUID = 9196017562782775535L;
 

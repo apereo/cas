@@ -21,7 +21,7 @@ import javax.annotation.PostConstruct;
  *
  */
 @Component("rememberMeDelegatingExpirationPolicy")
-public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
+public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -2735975347698196127L;

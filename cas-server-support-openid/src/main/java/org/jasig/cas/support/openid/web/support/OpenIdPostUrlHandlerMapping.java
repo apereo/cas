@@ -18,7 +18,7 @@ import java.util.Properties;
  * @since 3.1
  */
 @Component("openIdPostUrlHandlerMapping")
-public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
+public class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
     @Autowired
     @Qualifier("openidDelegatingController")

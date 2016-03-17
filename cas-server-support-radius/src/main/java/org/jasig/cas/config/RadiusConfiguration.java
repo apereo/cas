@@ -5,6 +5,7 @@ import org.jasig.cas.adaptors.radius.RadiusClientFactory;
 import org.jasig.cas.adaptors.radius.RadiusProtocol;
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -109,6 +110,7 @@ public class RadiusConfiguration {
      *
      * @return the j radius server
      */
+    @RefreshScope
     @Bean(name="radiusServer")
     public JRadiusServerImpl radiusServer() {
         final JRadiusServerImpl impl = new JRadiusServerImpl(this.protocol, radiusClientFactory());
@@ -127,6 +129,7 @@ public class RadiusConfiguration {
      *
      * @return the list
      */
+    @RefreshScope
     @Bean(name="radiusServers")
     public List radiusServers() {
         final List<JRadiusServerImpl> list = new ArrayList<>();
@@ -139,6 +142,7 @@ public class RadiusConfiguration {
      *
      * @return the radius client factory
      */
+    @RefreshScope
     @Bean(name="radiusClientFactory")
     public RadiusClientFactory radiusClientFactory() {
         final RadiusClientFactory factory = new RadiusClientFactory();

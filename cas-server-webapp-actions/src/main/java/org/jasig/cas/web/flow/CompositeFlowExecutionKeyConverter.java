@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.repository.support.CompositeFlowExe
  * @since 4.0.0
  */
 @SuppressWarnings("rawtypes")
-public final class CompositeFlowExecutionKeyConverter implements Converter {
+public class CompositeFlowExecutionKeyConverter implements Converter {
 
     /**
      * {@inheritDoc}

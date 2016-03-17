@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 3.1
  */
-public final class JRadiusServerImpl implements RadiusServer {
+public class JRadiusServerImpl implements RadiusServer {
 
     /**
      * Default retry count, {@value}.

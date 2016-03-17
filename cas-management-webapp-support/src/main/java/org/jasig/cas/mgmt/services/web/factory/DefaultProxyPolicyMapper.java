@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * @since 4.2
  */
 @Component(DefaultProxyPolicyMapper.BEAN_NAME)
-public final class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
+public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
     /**
      * Name of this bean within the Spring context.
      */

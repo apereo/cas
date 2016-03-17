@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 4.2.0
  */
 @Component("adfsAuthNHandler")
-public final class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /**
      * Determines if this handler can support the credentials provided.

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component("allowRevocationPolicy")
-public final class AllowRevocationPolicy implements RevocationPolicy<Void> {
+public class AllowRevocationPolicy implements RevocationPolicy<Void> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
 

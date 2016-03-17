@@ -13,5 +13,5 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         SamlMetadataUIParserActionTests.class,
 })
-public final class AllTestsSuite {
+public class AllTestsSuite {
 }

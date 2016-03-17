@@ -5,7 +5,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.util.PublicKeyFactoryBean;
-import org.jasig.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -19,7 +18,7 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
+public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

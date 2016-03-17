@@ -8,6 +8,7 @@ import org.jasig.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -152,6 +153,7 @@ public class EhcacheTicketRegistryConfiguration {
      *
      * @return the rmi synchronous cache replicator
      */
+    @RefreshScope
     @Bean(name = "ticketRMISynchronousCacheReplicator")
     public RMISynchronousCacheReplicator ticketRMISynchronousCacheReplicator() {
         return new RMISynchronousCacheReplicator(this.replicatePuts, this.replicatePutsViaCopy,
@@ -163,6 +165,7 @@ public class EhcacheTicketRegistryConfiguration {
      *
      * @return the rmi bootstrap cache loader
      */
+    @RefreshScope
     @Bean(name = "ticketCacheBootstrapCacheLoader")
     public RMIBootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
         return new RMIBootstrapCacheLoader(this.loaderAsync, this.maxChunkSize);
@@ -174,6 +177,7 @@ public class EhcacheTicketRegistryConfiguration {
      *
      * @return the eh cache manager factory bean
      */
+    @RefreshScope
     @Bean(name = "cacheManager")
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
@@ -190,6 +194,7 @@ public class EhcacheTicketRegistryConfiguration {
      * @param manager the manager
      * @return the eh cache factory bean
      */
+    @RefreshScope
     @Bean(name = "ehcacheTicketsCache")
     public EhCacheFactoryBean ehcacheTicketsCache(final CacheManager manager) {
         final EhCacheFactoryBean bean = new EhCacheFactoryBean();

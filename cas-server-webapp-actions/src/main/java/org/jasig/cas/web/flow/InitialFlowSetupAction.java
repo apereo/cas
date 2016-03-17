@@ -38,7 +38,7 @@ import java.util.List;
  * @since 3.1
  */
 @Component("initialFlowSetupAction")
-public final class InitialFlowSetupAction extends AbstractAction {
+public class InitialFlowSetupAction extends AbstractAction {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/

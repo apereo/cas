@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.2
  */
 @SuppressWarnings("rawtypes")
-public final class ClientActionTests {
+public class ClientActionTests {
 
     private static final String TGT_NAME = "ticketGrantingTicketId";
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";

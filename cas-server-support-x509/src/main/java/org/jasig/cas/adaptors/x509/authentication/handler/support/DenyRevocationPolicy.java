@@ -13,7 +13,7 @@ import java.security.GeneralSecurityException;
  *
  */
 @Component("denyRevocationPolicy")
-public final class DenyRevocationPolicy implements RevocationPolicy<Void> {
+public class DenyRevocationPolicy implements RevocationPolicy<Void> {
 
     /**
      * Policy application throws GeneralSecurityException to stop execution of

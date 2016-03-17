@@ -11,7 +11,6 @@ import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +90,6 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @param users The users to set.
      */
     public final void setUsers(@NotNull final Map<String, String> users) {
-        this.users = Collections.unmodifiableMap(users);
+        this.users = new HashMap<>(users);
     }
 }

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @author Arnaud Lesueur
  * @since 3.1
  */
-public final class DefaultResponse implements Response {
+public class DefaultResponse implements Response {
     /** Log instance. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(DefaultResponse.class);
 

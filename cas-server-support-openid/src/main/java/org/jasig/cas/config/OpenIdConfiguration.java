@@ -8,6 +8,7 @@ import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -42,6 +43,7 @@ public class OpenIdConfiguration {
      *
      * @return the delegating controller
      */
+    @RefreshScope
     @Bean(name="openidDelegatingController")
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
@@ -57,6 +59,7 @@ public class OpenIdConfiguration {
      *
      * @return the association controller
      */
+    @RefreshScope
     @Bean(name="smartOpenIdAssociationController")
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController();
@@ -68,6 +71,7 @@ public class OpenIdConfiguration {
      *
      * @return the signature verification controller
      */
+    @RefreshScope
     @Bean(name="openIdValidateController")
     public AbstractDelegateController openIdValidateController() {
         return new OpenIdValidateController();
@@ -78,6 +82,7 @@ public class OpenIdConfiguration {
      *
      * @return the server manager
      */
+    @RefreshScope
     @Bean(name="serverManager")
     public ServerManager serverManager() {
         final ServerManager manager = new ServerManager();

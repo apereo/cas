@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @since 4.2.0
  */
 @Component("wsFedConfig")
-public final class WsFederationConfiguration implements Serializable {
+public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

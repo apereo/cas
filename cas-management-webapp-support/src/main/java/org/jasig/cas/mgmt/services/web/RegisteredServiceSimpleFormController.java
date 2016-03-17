@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 3.1
  */
 @Controller("registeredServiceSimpleFormController")
-public final class RegisteredServiceSimpleFormController extends AbstractManagementController {
+public class RegisteredServiceSimpleFormController extends AbstractManagementController {
 
     /**
      * Instance of the RegisteredServiceFactory.

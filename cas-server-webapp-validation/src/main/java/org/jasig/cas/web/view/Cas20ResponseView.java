@@ -41,6 +41,9 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
      */
     @Component("cas2ServiceSuccessView")
     public static class Success extends Cas20ResponseView {
+        /**
+         * Instantiates a new Success.
+         */
         public Success() {
             super();
         }

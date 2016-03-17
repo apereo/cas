@@ -22,7 +22,7 @@ import java.security.GeneralSecurityException;
  * @since 3.0.0
  */
 @Component("principalBearingCredentialsAuthenticationHandler")
-public final class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
+public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

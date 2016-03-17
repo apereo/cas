@@ -23,7 +23,7 @@ import java.util.List;
  * @since 3.3
  */
 @Component("memcachedTicketRegistry")
-public final class MemCacheTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
+public class MemCacheTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
     /**
      * Memcached client.

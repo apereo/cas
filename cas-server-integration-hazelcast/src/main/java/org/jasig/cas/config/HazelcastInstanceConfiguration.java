@@ -13,6 +13,7 @@ import com.hazelcast.core.HazelcastInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -52,6 +53,7 @@ public class HazelcastInstanceConfiguration {
      * @return HazelcastInstance bean.
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
+    @RefreshScope
     @Bean(name="hazelcast")
     public HazelcastInstance hazelcast(@Value("${hz.config.location:NO_CONFIG_PROVIDED}") final String hazelcastConfigLocation,
                                        final ResourceLoader resourceLoader) throws IOException {

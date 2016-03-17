@@ -18,7 +18,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 4.2.0
  */
-public final class JcifsConfig implements InitializingBean {
+public class JcifsConfig implements InitializingBean {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
 

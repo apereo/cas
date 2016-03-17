@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @since 3.3.6
  */
 @Component("prefixSuffixPrincipalNameTransformer")
-public final class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
+public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private String prefix;
 

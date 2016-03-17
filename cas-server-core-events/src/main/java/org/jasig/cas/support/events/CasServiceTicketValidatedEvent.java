@@ -10,7 +10,7 @@ import org.jasig.cas.validation.Assertion;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public final class CasServiceTicketValidatedEvent extends AbstractCasEvent {
+public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 
     private final Assertion assertion;
 

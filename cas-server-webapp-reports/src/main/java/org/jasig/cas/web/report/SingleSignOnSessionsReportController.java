@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Controller("singleSignOnSessionsReportController")
 @RequestMapping(value="/status/ssosessions")
-public final class SingleSignOnSessionsReportController {
+public class SingleSignOnSessionsReportController {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
 

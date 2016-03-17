@@ -63,7 +63,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Component("centralAuthenticationService")
-public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
+public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
     private static final long serialVersionUID = -8943828074939533986L;
 

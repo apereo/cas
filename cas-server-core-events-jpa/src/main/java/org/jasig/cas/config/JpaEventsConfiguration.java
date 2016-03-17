@@ -3,6 +3,7 @@ package org.jasig.cas.config;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -144,6 +145,7 @@ public class JpaEventsConfiguration {
      *
      * @return the hibernate jpa vendor adapter
      */
+    @RefreshScope
     @Bean(name = "jpaEventVendorAdapter")
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
@@ -158,6 +160,7 @@ public class JpaEventsConfiguration {
      *
      * @return the combo pooled data source
      */
+    @RefreshScope
     @Bean(name = "dataSourceEvent")
     public ComboPooledDataSource dataSourceEvent() {
         try {
@@ -187,6 +190,7 @@ public class JpaEventsConfiguration {
      *
      * @return the string [ ]
      */
+    @RefreshScope
     @Bean(name = "jpaEventPackagesToScan")
     public String[] jpaEventPackagesToScan() {
         return new String[]{"org.jasig.cas.support.events.dao"};
@@ -197,6 +201,7 @@ public class JpaEventsConfiguration {
      *
      * @return the local container entity manager factory bean
      */
+    @RefreshScope
     @Bean(name = "eventsEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
@@ -222,6 +227,7 @@ public class JpaEventsConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
+    @RefreshScope
     @Bean(name = "transactionManagerEvents")
     public JpaTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory")
                                                           final EntityManagerFactory emf) {

@@ -25,7 +25,7 @@ import java.util.List;
  * @since 4.1
  */
 @Repository("mongoServiceRegistryDao")
-public final class MongoServiceRegistryDao implements ServiceRegistryDao {
+public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
 

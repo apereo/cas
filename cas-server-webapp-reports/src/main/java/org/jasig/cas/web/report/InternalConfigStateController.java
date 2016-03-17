@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.1
  */
 @Controller("internalConfigController")
-public final class InternalConfigStateController {
+public class InternalConfigStateController {
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 

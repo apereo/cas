@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @since 3.0.0
  */
 @Component("proxy10Handler")
-public final class Cas10ProxyHandler implements ProxyHandler {
+public class Cas10ProxyHandler implements ProxyHandler {
 
     @Override
     public String handle(final Credential credential,
