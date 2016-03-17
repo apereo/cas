@@ -112,6 +112,13 @@ public final class InitialFlowSetupAction extends AbstractAction {
                         registeredService.getServiceId(),
                         registeredService.getId());
                 WebUtils.putRegisteredService(context, registeredService);
+
+                if (registeredService.getAccessStrategy().getUnauthorizedRedirectUrl() != null) {
+                    logger.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
+                            registeredService.getAccessStrategy().getUnauthorizedRedirectUrl(),
+                            registeredService.getServiceId());
+                    WebUtils.putUnauthorizedRedirectUrl(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+                }
             }
         } else if (!this.enableFlowOnAbsentServiceRequest) {
             logger.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
