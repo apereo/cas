@@ -23,36 +23,47 @@ Support is enabled by including the following dependency in the Maven WAR overla
 After enabling OAuth support, three new urls will be available:
 
 * **/oauth2.0/authorize**  
-It's the url to call to authorize the user: the CAS login page will be displayed and the user will authenticate. Required input GET parameters: *client_id* and *redirect_uri*.
+It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
 
 * **/oauth2.0/accessToken**  
-It's the url to call to exchange the code for an access token. Required input GET parameters: *client_id*, *redirect_uri*, *client_secret* and *code*.
+It's the url to call to get an access token.
 
 * **/oauth2.0/profile**  
-It's the url to call to get the profile of the authorized user. Required input GET parameter: *access_token*. The response is in JSON format with all attributes of the user.
+It's the url to call to get the profile of the authorized user. The response is in JSON format with all attributes of the user.
 
 
 ## Grant types
 
-Three grant types are supported:
+Four grant types are supported: they allow you to get an access token representing the current user and OAuth client application.
+With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
-### The authorization code grant type has three steps:
+`/cas/oauth2.0/profile?access_token=ACCESS_TOKEN` returns the user profile.
+
+
+### The authorization code grant type is made for UI interactions: the user will enter his own credentials
 
 1) `/cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the CALLBACK url
 
-2) `/cas/oauth2.0/accessToken?client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
+2) `/cas/oauth2.0/accessToken?grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
 
-3) `/cas/oauth2.0/profile?access_token=TOKEN` returns the user profile.
 
-### The implicit grant type has two steps:
+### The implicit grant type is also made for UI interactions, but for Javascript applications
 
 1) `/cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the CALLBACK url
 
-2) `/cas/oauth2.0/profile?access_token=TOKEN` returns the user profile.
 
-### The resource owner password credentials grant types has one step:
+### The resource owner password credentials grant type allows the OAuth client to directly send the user's credentials to the OAuth server
 
-1) `/cas/oauth2.0/authorize?response_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token (based on the username/password credentials of a user).
+1) `/cas/oauth2.0/accessToken?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token (based on the username/password credentials of a user)
+
+
+### The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token), when this previous access token is expired
+
+1) `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token
+
+To get refresh tokens, the OAuth client must be configured to return refresh tokens (`generateRefreshToken` property).
+
+Notice that sensitive information (`client_secret`, `password` and `refresh_token`) should be sent via POST requests.
 
 
 ## Add OAuth Clients
@@ -73,7 +84,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 
 ## OAuth Code Expiration Policy
 
-The expiration policy for OAuth codes are controlled by the following properties:
+The expiration policy for OAuth codes is controlled by the following properties:
 
 ```properties
 # oauth.code.numberOfUses=1
@@ -83,11 +94,19 @@ The expiration policy for OAuth codes are controlled by the following properties
 
 ## OAuth Access Token Expiration Policy
 
-The expiration policy for OAuth access tokens are controlled by the following properties:
+The expiration policy for OAuth access tokens is controlled by the following properties:
 
 ```properties
 # oauth.access.token.maxTimeToLiveInSeconds=28800
 # oauth.access.token.timeToKillInSeconds=7200
+```
+
+## OAuth Refresh Token Expiration Policy
+
+The expiration policy for OAuth refresh tokens is controlled by the following property:
+
+```properties
+# oauth.refresh.token.timeToKillInSeconds=2592000
 ```
 
 # OpenID Authentication
