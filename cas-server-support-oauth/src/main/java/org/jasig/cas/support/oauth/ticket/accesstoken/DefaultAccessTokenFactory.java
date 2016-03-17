@@ -32,11 +32,10 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     @Qualifier("accessTokenIdGenerator")
     protected UniqueTicketIdGenerator accessTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-
     /** ExpirationPolicy for access tokens. */
     @NotNull
     @Autowired
-    @Qualifier("oAuthAcccessTokenExpirationPolicy")
+    @Qualifier("accessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

@@ -26,7 +26,7 @@ public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPo
     @Autowired
     public OAuthCodeExpirationPolicy(@Value("${oauth.code.numberOfUses:1}")
                                      final int numberOfUses,
-                                     @Value("#{${oauth.code.timeToKillInSeconds:30}*1000}")
+                                     @Value("#{${oauth.code.timeToKillInSeconds:30}*1000L}")
                                      final long timeToKillInMilliSeconds) {
         super(numberOfUses, timeToKillInMilliSeconds);
     }

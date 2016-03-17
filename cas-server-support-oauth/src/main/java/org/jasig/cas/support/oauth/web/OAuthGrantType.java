@@ -14,5 +14,9 @@ public enum OAuthGrantType {
     /**
      * For the resource owner password grant type.
      */
-    PASSWORD
+    PASSWORD,
+    /**
+     * For the refresh token grant type.
+     */
+    REFRESH_TOKEN
 }
