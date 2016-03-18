@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  * This is {@link SamlProfileSamlSubjectBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("samlProfileSamlSubjectBuilder")
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {

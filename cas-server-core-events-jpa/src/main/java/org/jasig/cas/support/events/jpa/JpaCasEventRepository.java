@@ -14,7 +14,7 @@ import java.util.Collection;
  * This is {@link JpaCasEventRepository} that stores event data into a RDBMS database.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Repository("casEventRepository")
 @Transactional

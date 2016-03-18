@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * Validate OAuth inputs.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("oAuthValidator")
 public class OAuthValidator {

@@ -22,7 +22,7 @@ import java.util.Map;
  * This is {@link CasEvent}, which represents a single event stored in the events repository.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Entity
 @Table(name = "CasEvent")

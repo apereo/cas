@@ -19,7 +19,7 @@ import java.net.URL;
  * This is {@link SamlIdPSingleLogoutServiceLogoutUrlBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutServiceLogoutUrlBuilder {
 

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * the profile callback request to build the final saml response.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Controller("ssoPostProfileCallbackHandlerController")
 public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {

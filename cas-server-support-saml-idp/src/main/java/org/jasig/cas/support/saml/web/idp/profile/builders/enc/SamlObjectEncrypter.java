@@ -44,7 +44,7 @@ import java.util.List;
  * This is {@link SamlObjectEncrypter}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("samlObjectEncrypter")
 public class SamlObjectEncrypter {
