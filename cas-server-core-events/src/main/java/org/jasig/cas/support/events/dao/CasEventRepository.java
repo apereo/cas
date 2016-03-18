@@ -6,7 +6,7 @@ import java.util.Collection;
  * Defines DAO operations over an events repository.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface CasEventRepository {
     /**

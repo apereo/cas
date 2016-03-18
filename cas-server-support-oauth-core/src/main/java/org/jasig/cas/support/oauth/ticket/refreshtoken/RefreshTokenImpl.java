@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
  * An OAuth refresh token implementation.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Entity
 @DiscriminatorValue(RefreshToken.PREFIX)

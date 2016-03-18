@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * This is {@link RegisteredServiceAuthenticationHandlerResolverTests}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class RegisteredServiceAuthenticationHandlerResolverTests {
 

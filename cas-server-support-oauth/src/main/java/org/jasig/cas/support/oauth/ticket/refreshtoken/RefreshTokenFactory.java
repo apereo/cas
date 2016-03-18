@@ -8,7 +8,7 @@ import org.jasig.cas.ticket.TicketFactory;
  * Factory to create OAuth refresh tokens.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface RefreshTokenFactory extends TicketFactory {
 

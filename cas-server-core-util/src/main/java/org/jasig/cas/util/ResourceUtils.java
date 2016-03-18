@@ -12,7 +12,7 @@ import java.io.IOException;
  * Utility class to assist with resource operations.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public final class ResourceUtils {
 
