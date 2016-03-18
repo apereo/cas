@@ -7,7 +7,7 @@ import org.jasig.cas.ticket.ServiceTicket;
  * OAuth tokens are mostly like service tickets: they deal with authentication and service.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface OAuthToken extends ServiceTicket {
 

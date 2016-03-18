@@ -9,7 +9,7 @@ import org.jasig.cas.ticket.registry.ServiceTicketDelegator;
  * This is a specific delegator for {@link RefreshToken}.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class RefreshTokenDelegator<T extends RefreshToken>  extends ServiceTicketDelegator<T>
         implements RefreshToken {

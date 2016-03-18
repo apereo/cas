@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
  * Default OAuth code factory.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultOAuthCodeFactory")
 public class DefaultOAuthCodeFactory implements OAuthCodeFactory {

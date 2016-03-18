@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * and signing of tickets during replication.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultTicketCipherExecutor")
 public class DefaultTicketCipherExecutor extends BinaryCipherExecutor {

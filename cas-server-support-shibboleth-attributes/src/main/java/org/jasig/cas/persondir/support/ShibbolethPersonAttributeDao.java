@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} to resolve attributes.
  *
  * @author Jj
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("shibbolethPersonAttributeDao")
 public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
