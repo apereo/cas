@@ -51,6 +51,10 @@ public class CasWebflowContextConfiguration {
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
     
     @Autowired
+    @Qualifier("registeredServiceViewResolver")
+    private ViewResolver registeredServiceViewResolver;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Value("${webflow.always.pause.redirect:false}")
@@ -58,15 +62,11 @@ public class CasWebflowContextConfiguration {
 
     @Value("${webflow.redirect.same.state:false}")
     private boolean redirectSameState;
-    
+
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
 
-    @Autowired
-    @Qualifier("registeredServiceViewResolver")
-    private ViewResolver registeredServiceViewResolver;
-    
     @Autowired
     @Qualifier("authenticationThrottle")
     @Lazy(true)
@@ -96,7 +96,7 @@ public class CasWebflowContextConfiguration {
     public ConversionService logoutConversionService() {
         return new LogoutConversionService();
     }
-
+    
     /**
      * View factory creator mvc view factory creator.
      *
@@ -109,8 +109,7 @@ public class CasWebflowContextConfiguration {
         resolver.setViewResolvers(ImmutableList.of(this.registeredServiceViewResolver));
         return resolver;
     }
-
-
+    
     /**
      * Login flow url handler cas default flow url handler.
      *
@@ -315,8 +314,7 @@ public class CasWebflowContextConfiguration {
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
     }
-
-
+    
     /**
      * Login flow executor flow executor.
      *

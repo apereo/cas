@@ -2,6 +2,8 @@ package org.jasig.cas.services.web;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategy;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -9,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
@@ -51,10 +52,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
     @Resource(name = "argumentExtractors")
     private List argumentExtractors;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
+    
     /**
      * Instantiates a new Registered service theme based view resolver.
      */
@@ -101,26 +99,29 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
         final WebApplicationService service;
-        
+
         if (requestContext != null) {
-            service = WebUtils.getService(this.argumentExtractors, requestContext);    
+            service = WebUtils.getService(this.argumentExtractors, requestContext);
         } else {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
             service = WebUtils.getService(this.argumentExtractors, request);
         }
+
+        if (service == null) {
+            return view;
+        }
         
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService != null) {
+            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
+            if (StringUtils.hasText(registeredService.getTheme())  && view instanceof AbstractThymeleafView) {
+                LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
+                        registeredService.getServiceId(), registeredService.getTheme());
 
-        if (service != null && registeredService != null
-                && registeredService.getAccessStrategy().isServiceAccessAllowed()
-                && StringUtils.hasText(registeredService.getTheme())
-                && view instanceof AbstractThymeleafView) {
-            LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
-                    registeredService.getServiceId(), registeredService.getTheme());
-
-            final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
-            final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
-            thymeleafView.setTemplateName(viewUrl);
+                final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
+                final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
+                thymeleafView.setTemplateName(viewUrl);
+            }
         }
         return view;
     }
