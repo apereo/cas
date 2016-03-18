@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  * handling requests for SAML2 SLO.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Controller("sloPostProfileHandlerController")
 public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerController {

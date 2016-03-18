@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
  * An OAuth code implementation.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Entity
 @Table(name="OAUTH_TOKENS")
