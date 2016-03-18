@@ -9,7 +9,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.Resource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -17,8 +16,6 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
-import org.springframework.web.servlet.view.BeanNameViewResolver;
-import org.springframework.web.servlet.view.XmlViewResolver;
 
 import javax.validation.MessageInterpolator;
 import java.util.HashMap;
@@ -35,17 +32,12 @@ import java.util.Map;
 @Lazy(true)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     
-    private static final int URL_VIEW_RESOLVER_ORDER = 2000;
-    
     @Autowired
     @Qualifier("messageInterpolator")
     private MessageInterpolator messageInterpolator;
     
     @Value("${cas.themeResolver.param.name:theme}")
     private String themeParamName;
-    
-    @Value("${cas.viewResolver.xmlFile:classpath:/views.xml}")
-    private Resource xmlViewsFile;
     
     @Value("${locale.default:en}")
     private Locale defaultLocale;
@@ -78,38 +70,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setParamName(this.themeParamName);
         return bean;
     }
-
-    /**
-     * Bean name view resolver bean name view resolver.
-     *
-     * @return the bean name view resolver
-     */
-    @RefreshScope
-    @Bean(name = "beanNameViewResolver")
-    public ViewResolver beanNameViewResolver() {
-        final BeanNameViewResolver bean = new BeanNameViewResolver();
-        bean.setOrder(1);
-        return bean;
-    }
-
-    /**
-     * Xml view resolver abstract caching view resolver.
-     *
-     * @return the abstract caching view resolver
-     */
-    @RefreshScope
-    @Bean(name = "xmlViewResolver")
-    public ViewResolver xmlViewResolver() {
-        if (xmlViewsFile.exists()) {
-            final XmlViewResolver bean = new XmlViewResolver();
-            bean.setOrder(URL_VIEW_RESOLVER_ORDER - 1);
-            bean.setLocation(xmlViewsFile);
-            return bean;
-        }
-        return beanNameViewResolver();
-    }
-
-
+    
     /**
      * Locale resolver cookie locale resolver.
      *
