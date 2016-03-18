@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * This is {@link AbstractCasEventRepository}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public abstract class AbstractCasEventRepository implements CasEventRepository {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

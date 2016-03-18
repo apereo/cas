@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
  * This is {@link SamlProfileSamlConditionsBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("samlProfileSamlConditionsBuilder")
 public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Conditions> {

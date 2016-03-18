@@ -19,7 +19,7 @@ import java.util.Collection;
  * This is {@link MongoDbCasEventRepository} that stores event data into a mongodb database.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Repository("casEventRepository")
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {

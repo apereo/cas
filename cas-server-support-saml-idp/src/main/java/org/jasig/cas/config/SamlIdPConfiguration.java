@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
  * The {@link SamlIdPConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("samlIdPConfiguration")
 public class SamlIdPConfiguration {

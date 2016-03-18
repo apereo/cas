@@ -40,7 +40,7 @@ import java.util.List;
  * This is {@link SamlIdPUtils}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public final class SamlIdPUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPUtils.class);

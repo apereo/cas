@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Lazy;
  * backed by external configuration.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casSecurityContextConfiguration")
 @Lazy(true)

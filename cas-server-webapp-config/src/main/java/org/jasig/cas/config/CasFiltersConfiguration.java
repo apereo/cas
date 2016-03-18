@@ -15,7 +15,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
  * backed by external configuration.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casFiltersConfiguration")
 @Lazy(true)

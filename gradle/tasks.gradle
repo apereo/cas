@@ -14,10 +14,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-task wrapper(type: Wrapper, description: "Gradle's wrapper") {
-    gradleVersion = project.gradleVersion
-}
-
 task cleanLogs(description: "Clean build log files") {
     delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
 }

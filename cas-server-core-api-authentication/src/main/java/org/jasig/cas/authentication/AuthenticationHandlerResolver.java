@@ -7,7 +7,7 @@ import java.util.Set;
  * authentication handlers shall be chosen for a given authN event.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface AuthenticationHandlerResolver {
 

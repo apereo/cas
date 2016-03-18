@@ -26,7 +26,7 @@ import java.util.Map;
  * This is {@link SamlProfileSamlNameIdBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("samlProfileSamlNameIdBuilder")
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
