@@ -429,4 +429,15 @@ public final class WebUtils {
     public static void putGeoLocationTrackingIntoFlowScope(final RequestContext context, final Object value) {
         context.getFlowScope().put("trackGeoLocation", value);
     }
+
+    /**
+     * Put unauthorized redirect url into flowscope.
+     *
+     * @param context the context
+     * @param unauthorizedRedirectUrl the url to redirect to
+     */
+    public static void putUnauthorizedRedirectUrl(final RequestContext context,
+                                            final URI unauthorizedRedirectUrl) {
+        context.getFlowScope().put("unauthorizedRedirectUrl", unauthorizedRedirectUrl);
+    }
 }

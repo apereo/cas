@@ -50,7 +50,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
         }
         logger.debug("{}: {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
-        try (final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter())) {
+        try (final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(response.getWriter())) {
             response.setContentType("application/json");
             // accessToken is required
             if (StringUtils.isBlank(accessToken)) {

@@ -14,6 +14,7 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
     private String clientSecret;
     private String clientId;
     private boolean bypass;
+    private boolean refreshToken;
 
     public String getClientSecret() {
         return clientSecret;
@@ -37,5 +38,13 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
 
     public void setBypass(final boolean bypass) {
         this.bypass = bypass;
+    }
+
+    public boolean isRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(final boolean refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
