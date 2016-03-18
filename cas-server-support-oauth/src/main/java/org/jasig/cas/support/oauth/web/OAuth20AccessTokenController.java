@@ -7,28 +7,39 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.profile.OAuthClientProfile;
 import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.cas.support.oauth.ticket.OAuthToken;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
+import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshTokenFactory;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 /**
  * This controller returns an access token according to the given OAuth code and client credentials (authorization code grant type)
- * or according to the user identity (resource owner password grant type).
+ * or according to the refresh token and client credentials (refresh token grant type) or according to the user identity
+ * (resource owner password grant type).
  *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 @Component("accessTokenController")
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
+
+    @Autowired
+    @Qualifier("defaultRefreshTokenFactory")
+    private RefreshTokenFactory refreshTokenFactory;
 
     @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
     @Override
@@ -42,36 +53,79 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
         final Service service;
         final Authentication authentication;
-        // authorization code grant type
-        if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
-            final String codeParameter = request.getParameter(OAuthConstants.CODE);
-            final OAuthCode code = ticketRegistry.getTicket(codeParameter, OAuthCode.class);
-            // code should not be expired
-            if (code == null || code.isExpired()) {
-                logger.error("Code expired: {}", code);
-                if (code != null) {
-                    ticketRegistry.deleteTicket(code.getId());
-                }
+        final boolean generateRefreshToken;
+        // authorization code and refresh token grant types
+        if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
+
+            final J2EContext context = new J2EContext(request, response);
+            final ProfileManager manager = new ProfileManager(context);
+            final UserProfile profile = manager.get(true);
+            final String clientId = profile.getId();
+            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            // we generate a refresh token if requested by the service but not from a refresh token
+            generateRefreshToken = registeredService.isGenerateRefreshToken() && isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE);
+
+            final String parameterName;
+            if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
+                parameterName = OAuthConstants.CODE;
+            } else {
+                parameterName = OAuthConstants.REFRESH_TOKEN;
+            }
+
+            final OAuthToken token = getToken(request, parameterName);
+            if (token == null) {
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
             }
-            ticketRegistry.deleteTicket(code.getId());
+            service = token.getService();
+            authentication = token.getAuthentication();
 
-            service = code.getService();
-            authentication = code.getAuthentication();
         } else {
+            final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+            final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            generateRefreshToken = registeredService.isGenerateRefreshToken();
             // resource owner password grant type
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
             final OAuthUserProfile  profile = (OAuthUserProfile) manager.get(true);
-            final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-            service = createService(OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId));
+            service = createService(registeredService);
             authentication = createAuthentication(profile);
         }
         final AccessToken accessToken = generateAccessToken(service, authentication);
 
-        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken.getId(), OAuthConstants.EXPIRES, timeout);
+        String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken.getId(), OAuthConstants.EXPIRES, timeout);
+        if (generateRefreshToken) {
+            final RefreshToken refreshToken = refreshTokenFactory.create(service, authentication);
+            ticketRegistry.addTicket(refreshToken);
+            text += "&" + OAuthConstants.REFRESH_TOKEN + "=" + refreshToken.getId();
+        }
         logger.debug("OAuth access token response: {}", text);
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
+    }
+
+    /**
+     * Return the OAuth token (a code or a refresh token).
+     *
+     * @param request the HTTP request
+     * @param parameterName the parameter name
+     * @return the OAuth token
+     */
+    private OAuthToken getToken(final HttpServletRequest request, final String parameterName) {
+
+        final String codeParameter = request.getParameter(parameterName);
+        final OAuthToken token = ticketRegistry.getTicket(codeParameter, OAuthToken.class);
+        // token should not be expired
+        if (token == null || token.isExpired()) {
+            logger.error("Code or refresh token expired: {}", token);
+            if (token != null) {
+                ticketRegistry.deleteTicket(token.getId());
+            }
+            return null;
+        }
+        if (token instanceof OAuthCode) {
+            ticketRegistry.deleteTicket(token.getId());
+        }
+
+        return token;
     }
 
     /**
@@ -85,7 +139,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
         // must have the right grant type
         final String grantType = request.getParameter(OAuthConstants.GRANT_TYPE);
-        if (!checkGrantTypes(grantType, OAuthGrantType.AUTHORIZATION_CODE, OAuthGrantType.PASSWORD)) {
+        if (!checkGrantTypes(grantType, OAuthGrantType.AUTHORIZATION_CODE, OAuthGrantType.PASSWORD, OAuthGrantType.REFRESH_TOKEN)) {
             return false;
         }
 
@@ -108,6 +162,11 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
                     && validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
                     && validator.checkParameterExist(request, OAuthConstants.CODE)
                     && validator.checkCallbackValid(registeredService, redirectUri);
+
+        } else if (isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)){
+            // refresh token grant type
+            return profile instanceof OAuthClientProfile
+                    && validator.checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
 
         } else {
 
@@ -149,5 +208,13 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
      */
     private boolean isGrantType(final String type, final OAuthGrantType expectedType) {
         return expectedType != null && expectedType.name().toLowerCase().equals(type);
+    }
+
+    public RefreshTokenFactory getRefreshTokenFactory() {
+        return refreshTokenFactory;
+    }
+
+    public void setRefreshTokenFactory(final RefreshTokenFactory refreshTokenFactory) {
+        this.refreshTokenFactory = refreshTokenFactory;
     }
 }
