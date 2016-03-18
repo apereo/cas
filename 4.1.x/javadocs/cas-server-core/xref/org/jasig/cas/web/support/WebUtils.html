@@ -329,7 +329,18 @@
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>         }
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">return</strong> credential;
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>     }
-<a class="jxr_linenumber" name="L324" href="#L324">324</a> }
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> 
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> <em class="jxr_javadoccomment">     * Put unauthorized redirect url into flowscope.</em>
+<a class="jxr_linenumber" name="L327" href="#L327">327</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L328" href="#L328">328</a> <em class="jxr_javadoccomment">     * @param context the context</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a> <em class="jxr_javadoccomment">     * @param unauthorizedRedirectUrl the url to redirect to</em>
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> putUnauthorizedRedirectUrl(<strong class="jxr_keyword">final</strong> RequestContext context,
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>                                             <strong class="jxr_keyword">final</strong> URI unauthorizedRedirectUrl) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>         context.getFlowScope().put(<span class="jxr_string">"unauthorizedRedirectUrl"</span>, unauthorizedRedirectUrl);
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>     }
+<a class="jxr_linenumber" name="L335" href="#L335">335</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2016 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>
