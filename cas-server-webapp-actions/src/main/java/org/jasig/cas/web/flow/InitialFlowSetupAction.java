@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -107,6 +108,14 @@ public class InitialFlowSetupAction extends AbstractAction {
                         registeredService.getServiceId(),
                         registeredService.getId());
                 WebUtils.putRegisteredService(context, registeredService);
+
+                final RegisteredServiceAccessStrategy accessStrategy = registeredService.getAccessStrategy();
+                if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
+                    logger.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
+                            accessStrategy.getUnauthorizedRedirectUrl(),
+                            registeredService.getServiceId());
+                    WebUtils.putUnauthorizedRedirectUrl(context, accessStrategy.getUnauthorizedRedirectUrl());
+                }
             }
         } else if (!this.enableFlowOnAbsentServiceRequest) {
             logger.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
