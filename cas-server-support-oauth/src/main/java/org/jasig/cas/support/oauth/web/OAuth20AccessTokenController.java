@@ -8,11 +8,11 @@ import org.jasig.cas.support.oauth.profile.OAuthClientProfile;
 import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.OAuthToken;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
 import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshTokenFactory;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -24,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 /**
  * This controller returns an access token according to the given OAuth code and client credentials (authorization code grant type)
