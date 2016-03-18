@@ -8,7 +8,7 @@ import org.junit.runners.Suite;
  * running all cas mongo test cases.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({MongoServiceRegistryDaoCloudTests.class, MongoServiceRegistryDaoTests.class})

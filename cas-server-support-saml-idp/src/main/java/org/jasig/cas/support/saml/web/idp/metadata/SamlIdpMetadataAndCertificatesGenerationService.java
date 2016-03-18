@@ -7,7 +7,7 @@ import java.io.File;
  * responsible for generating metadata and required certificates for signing and encryption.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface SamlIdpMetadataAndCertificatesGenerationService {
 

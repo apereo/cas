@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * Utility class to assist with regex operations.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public final class RegexUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);

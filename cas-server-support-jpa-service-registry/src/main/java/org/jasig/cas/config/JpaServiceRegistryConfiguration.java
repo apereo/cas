@@ -16,7 +16,7 @@ import java.util.Properties;
  * This this {@link JpaServiceRegistryConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("jpaServiceRegistryConfiguration")
 public class JpaServiceRegistryConfiguration {

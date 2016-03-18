@@ -21,7 +21,7 @@ import java.net.InetAddress;
  * Default caching of the databases is enabled by default.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Service("maxmindDatabaseGeoLocationService")
 public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
