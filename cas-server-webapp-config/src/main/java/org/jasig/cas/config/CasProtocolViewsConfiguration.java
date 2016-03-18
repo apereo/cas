@@ -1,6 +1,5 @@
 package org.jasig.cas.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -10,18 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.View;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Text;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafView;
-import org.thymeleaf.templatemode.TemplateModeHandler;
-import org.thymeleaf.templateparser.xmlsax.XhtmlAndHtml5NonValidatingSAXTemplateParser;
-import org.thymeleaf.templatewriter.AbstractGeneralTemplateWriter;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.CharBuffer;
 import java.util.Locale;
 
 /**
@@ -209,38 +199,7 @@ public class CasProtocolViewsConfiguration {
     public View openIdProviderView() {
         return new CasProtocolView("protocol/openid/user", applicationContext, springTemplateEngine);
     }
-
-
-    /**
-     * Init.
-     */
-    @PostConstruct
-    public void init() {
-        this.springTemplateEngine.addTemplateModeHandler(
-                new TemplateModeHandler(properties.getMode(),
-                        new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), new
-                        WhiteSpaceNormalizedTemplateWriter()));
-    }
-
-    private static class WhiteSpaceNormalizedTemplateWriter extends AbstractGeneralTemplateWriter {
-        @Override
-        protected boolean shouldWriteXmlDeclaration() {
-            return false;
-        }
-
-        @Override
-        protected boolean useXhtmlTagMinimizationRules() {
-            return true;
-        }
-
-        @Override
-        protected void writeText(final Arguments arguments, final Writer writer, final Text text) throws IOException {
-            final char[] textChars = text.getContent().toCharArray();
-            if (StringUtils.isNotBlank(CharBuffer.wrap(textChars))) {
-                writer.write(textChars);
-            }
-        }
-    }
+    
 
     private static class CasProtocolView extends ThymeleafView {
         /**
