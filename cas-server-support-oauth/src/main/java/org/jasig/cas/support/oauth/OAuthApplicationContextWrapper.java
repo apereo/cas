@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * Initializes the CAS root servlet context to make sure
  * OAuth endpoint can be activated by the main CAS servlet.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -51,7 +52,7 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         final ReloadableServicesManager servicesManager = getServicesManager();
         final Service callbackService = webApplicationServiceFactory.createService(oAuthCallbackUrl);
-        if (!servicesManager.matchesExistingService(callbackService))  {
+        if (!servicesManager.matchesExistingService(callbackService)) {
             final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
             service.setName("OAuth Callback url");
             service.setDescription("OAuth Wrapper Callback Url");
@@ -61,11 +62,13 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
             servicesManager.reload();
         }
 
-        ticketRegistry.getTicketDelegators().add(0, new Pair(RefreshToken.class,
-                AbstractTicketDelegator.getDefaultConstructor(RefreshTokenDelegator.class)));
-        ticketRegistry.getTicketDelegators().add(1, new Pair(AccessToken.class,
+        final List delegators = ticketRegistry.getTicketDelegators();
+        if (delegators != null) {
+            ticketRegistry.getTicketDelegators().add(0, new Pair(RefreshToken.class,
+                    AbstractTicketDelegator.getDefaultConstructor(RefreshTokenDelegator.class)));
+            ticketRegistry.getTicketDelegators().add(1, new Pair(AccessToken.class,
                     AbstractTicketDelegator.getDefaultConstructor(AccessTokenDelegator.class)));
-        ticketRegistry.getTicketDelegators().add(2, new Pair(OAuthCode.class,
+            ticketRegistry.getTicketDelegators().add(2, new Pair(OAuthCode.class,
                     AbstractTicketDelegator.getDefaultConstructor(OAuthCodeDelegator.class)));
         } else {
             throw new RuntimeException("Ticket registry delegators cannot be determined");
