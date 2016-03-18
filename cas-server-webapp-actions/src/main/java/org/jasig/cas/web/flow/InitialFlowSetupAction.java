@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -129,6 +130,14 @@ public final class InitialFlowSetupAction extends AbstractAction {
                 this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
         WebUtils.putWarningCookie(context,
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
+
+                final RegisteredServiceAccessStrategy accessStrategy = registeredService.getAccessStrategy();
+                if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
+                    logger.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
+                            accessStrategy.getUnauthorizedRedirectUrl(),
+                            registeredService.getServiceId());
+                    WebUtils.putUnauthorizedRedirectUrl(context, accessStrategy.getUnauthorizedRedirectUrl());
+                }
     }
 
     @Autowired
