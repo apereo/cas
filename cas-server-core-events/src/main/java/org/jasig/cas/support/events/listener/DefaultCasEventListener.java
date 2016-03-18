@@ -20,7 +20,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
  * via {@link CasEventRepository}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultCasEventListener")
 public class DefaultCasEventListener {

@@ -23,7 +23,7 @@ import java.time.ZonedDateTime;
  * This is {@link SamlProfileSamlAuthNStatementBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("samlProfileSamlAuthNStatementBuilder")
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder

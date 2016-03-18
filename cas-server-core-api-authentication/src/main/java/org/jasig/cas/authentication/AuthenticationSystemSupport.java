@@ -39,7 +39,7 @@ public interface AuthenticationSystemSupport {
      *
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      *
-     * @since 4.3.0
+     * @since 5.0.0
      */
     AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication);
 
@@ -51,7 +51,7 @@ public interface AuthenticationSystemSupport {
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      *
      * @throws AuthenticationException exception to indicate authentication processing failure.
-     * @since 4.3.0
+     * @since 5.0.0
      */
     AuthenticationResultBuilder handleInitialAuthenticationTransaction(Credential... credential) throws AuthenticationException;
 
@@ -64,7 +64,7 @@ public interface AuthenticationSystemSupport {
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      *
      * @throws AuthenticationException exception to indicate authentication processing failure.
-     * @since 4.3.0
+     * @since 5.0.0
      */
     AuthenticationResultBuilder handleAuthenticationTransaction(AuthenticationResultBuilder authenticationResultBuilder,
                                                                 Credential... credential)
@@ -78,7 +78,7 @@ public interface AuthenticationSystemSupport {
      *
      * @return authentication result representing a final outcome of the authentication event.
      *
-     * @since 4.3.0
+     * @since 5.0.0
      */
     AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, Service service);
 
@@ -91,7 +91,7 @@ public interface AuthenticationSystemSupport {
      * @return authentication result representing a final outcome of the authentication event.
      *
      * @throws AuthenticationException exception to indicate authentication processing failure.
-     * @since 4.3.0
+     * @since 5.0.0
      */
     AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(Service service, Credential... credential)
             throws AuthenticationException;
