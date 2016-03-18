@@ -15,7 +15,7 @@ import org.springframework.core.io.Resource;
  * This is {@link EhcacheTicketRegistryConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("ehcacheTicketRegistryConfiguration")
 public class EhcacheTicketRegistryConfiguration {

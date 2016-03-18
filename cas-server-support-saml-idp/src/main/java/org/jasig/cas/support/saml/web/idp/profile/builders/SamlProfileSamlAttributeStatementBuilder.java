@@ -18,7 +18,7 @@ import java.util.Map;
  * This is {@link SamlProfileSamlAttributeStatementBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("samlProfileSamlAttributeStatementBuilder")
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements

@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 
 /**
  * @author Timur Duehr timur.duehr@nccgroup.trust
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class ZonedDateTimeTranscoder extends Serializer<ZonedDateTime> {
     @Override

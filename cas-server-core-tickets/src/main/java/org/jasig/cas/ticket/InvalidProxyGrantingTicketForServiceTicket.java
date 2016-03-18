@@ -6,7 +6,7 @@ import org.jasig.cas.authentication.principal.Service;
  * Exception thrown when a ST has already granted a PGT and is asked to do so again.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class InvalidProxyGrantingTicketForServiceTicket extends AbstractTicketValidationException {
     private static final long serialVersionUID = 2120177571513373134L;

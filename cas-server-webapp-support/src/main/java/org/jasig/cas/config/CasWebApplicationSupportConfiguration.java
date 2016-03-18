@@ -11,7 +11,7 @@ import java.util.Map;
  * This is {@link CasWebApplicationSupportConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casWebApplicationSupportConfiguration")
 public class CasWebApplicationSupportConfiguration {

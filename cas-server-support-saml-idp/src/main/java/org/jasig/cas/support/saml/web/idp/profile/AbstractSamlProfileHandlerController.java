@@ -52,7 +52,7 @@ import java.security.SecureRandom;
  * controllers to respond to end points.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public abstract class AbstractSamlProfileHandlerController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

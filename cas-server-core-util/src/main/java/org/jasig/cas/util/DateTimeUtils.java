@@ -13,7 +13,7 @@ import java.util.Date;
 
 /**
  * @author Timur Duehr timur.duehr@nccgroup.trust
- * @since 4.3.0
+ * @since 5.0.0
  */
 public final class DateTimeUtils {
 

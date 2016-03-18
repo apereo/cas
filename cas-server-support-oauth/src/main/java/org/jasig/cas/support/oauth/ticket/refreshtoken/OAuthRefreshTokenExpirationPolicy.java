@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
  * This is OAuth refresh token expiration policy (max time to live = 1 month by default).
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("refreshTokenExpirationPolicy")
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
