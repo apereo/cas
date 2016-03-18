@@ -1,4 +1,4 @@
-package org.jasig.cas.support.oauth.ticket.code;
+package org.jasig.cas.support.oauth.ticket.refreshtoken;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -16,32 +16,32 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 
 /**
- * Default OAuth code factory.
+ * Default OAuth refresh token factory.
  *
  * @author Jerome Leleu
  * @since 4.3.0
  */
-@Component("defaultOAuthCodeFactory")
-public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
+@Component("defaultRefreshTokenFactory")
+public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     @NotNull
     @Autowired(required = false)
-    @Qualifier("oAuthCodeIdGenerator")
-    protected UniqueTicketIdGenerator oAuthCodeIdGenerator = new DefaultUniqueTicketIdGenerator();
+    @Qualifier("refreshTokenIdGenerator")
+    protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    /** ExpirationPolicy for OAuth code. */
+    /** ExpirationPolicy for refresh tokens. */
     @NotNull
     @Autowired
-    @Qualifier("oAuthCodeExpirationPolicy")
+    @Qualifier("refreshTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
-    public OAuthCode create(final Service service, final Authentication authentication) {
-        final String codeId = oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
-        return new OAuthCodeImpl(codeId, service, authentication, expirationPolicy);
+    public RefreshToken create(final Service service, final Authentication authentication) {
+        final String codeId = refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
+        return new RefreshTokenImpl(codeId, service, authentication, expirationPolicy);
     }
 
     @Override
@@ -49,22 +49,12 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
         return (T) this;
     }
 
-    /**
-     * Get the OAuth code identifier generator.
-     *
-     * @return the OAuth code identifier generator.
-     */
-    public UniqueTicketIdGenerator getoAuthCodeIdGenerator() {
-        return oAuthCodeIdGenerator;
+    public UniqueTicketIdGenerator getRefreshTokenIdGenerator() {
+        return refreshTokenIdGenerator;
     }
 
-    /**
-     * Set the OAuth code identifier generator.
-     *
-     * @param oAuthCodeIdGenerator the OAuth code identifier generator.
-     */
-    public void setoAuthCodeIdGenerator(final UniqueTicketIdGenerator oAuthCodeIdGenerator) {
-        this.oAuthCodeIdGenerator = oAuthCodeIdGenerator;
+    public void setRefreshTokenIdGenerator(final UniqueTicketIdGenerator refreshTokenIdGenerator) {
+        this.refreshTokenIdGenerator = refreshTokenIdGenerator;
     }
 
     public ExpirationPolicy getExpirationPolicy() {
