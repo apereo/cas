@@ -174,7 +174,7 @@
         </on-entry>
     </end-state>
     
-    <end-state id="redirectView" view="externalRedirect:#{requestScope.response.url}"/>
+    <end-state id="redirectView" view="externalRedirect:#{requestScope.response.url}" />
 
     <end-state id="viewServiceErrorView" view="casServiceErrorView"/>
 
@@ -187,8 +187,7 @@
     <end-state id="viewRedirectToUnauthorizedUrlView" view="externalRedirect:#{flowScope.unauthorizedRedirectUrl}"/>
     <global-transitions>
         <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException"/>
-        <transition to="viewServiceErrorView"
-                    on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException"/>
+        <transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException"/>
         <transition to="serviceUnauthorizedCheck" on-exception="org.jasig.cas.services.UnauthorizedServiceException"/>
     </global-transitions>
 </flow>
