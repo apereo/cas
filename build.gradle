@@ -9,6 +9,10 @@ ext {
     sonatypePassword = System.getProperty("sonatypePassword")
 }
 
+/*
+Override the hibernate version used by Spring boot
+to match ours.
+ */
 ext['hibernate.version'] = "$hibernateVersion"
 
 ext.libraries = [
@@ -1135,9 +1139,6 @@ subprojects {
 
     configurations {
         tests
-
-        provided
-        compile.extendsFrom(provided)
     }
 
     configurations.all {
@@ -1166,11 +1167,7 @@ subprojects {
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
     }
-
-    javadoc {
-        classpath += configurations.provided
-    }
-
+    
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
@@ -1226,6 +1223,8 @@ subprojects {
         compile libraries.jodatime
         compile libraries.inspektr
 
+        compileOnly libraries.javax
+        
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektraspects
             aspectpath libraries.inspektraspects

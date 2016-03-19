@@ -4,7 +4,7 @@ dependencies {
   compile libraries.spring
   compile libraries.memcached
   compile libraries.hibernate
-  provided libraries.springcloud
+  compileOnly libraries.springcloud
   compile project(':cas-server-core-logging')
   compile project(':cas-server-core-tickets')
   compile project(':cas-server-core-services')
@@ -14,8 +14,8 @@ dependencies {
   testCompile libraries.metrics
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
   testCompile project(path: ":cas-server-core-services", configuration: "tests")
-  provided project(':cas-server-support-saml') 
-  provided project(':cas-server-support-saml-googleapps')
+  compileOnly project(':cas-server-support-saml') 
+  compileOnly project(':cas-server-support-saml-googleapps')
 }
 
 

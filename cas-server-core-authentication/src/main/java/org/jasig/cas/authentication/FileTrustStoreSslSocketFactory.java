@@ -140,13 +140,6 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         return (X509TrustManager) factory.getTrustManagers()[0];
     }
 
-    private static class DoesNotTrustStrategy implements TrustStrategy {
-        @Override
-        public boolean isTrusted(final X509Certificate[] x509Certificates, final String s) throws CertificateException {
-            return false;
-        }
-    }
-
     private static class CompositeX509KeyManager implements X509KeyManager {
 
         private final List<X509KeyManager> keyManagers;

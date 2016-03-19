@@ -5,7 +5,7 @@ dependencies {
     compile project(':cas-server-core-web')
     compile project(':cas-server-integration-pac4j-core')
     compile libraries.pac4j
-    provided libraries.springcloud
+    compileOnly libraries.springcloud
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-services')
     testCompile project(path: ":cas-server-core-services", configuration: "tests")

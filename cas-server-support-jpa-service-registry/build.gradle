@@ -7,7 +7,7 @@ dependencies {
     compile libraries.quartz
     compile libraries.hibernate    
     runtime libraries.javaximpl
-    provided libraries.springcloud
+    compileOnly libraries.springcloud
     testCompile libraries.tests
     testCompile project(':cas-server-core-authentication')
     testCompile project(':cas-server-core-tickets')

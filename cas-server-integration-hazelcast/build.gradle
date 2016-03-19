@@ -3,7 +3,7 @@ dependencies {
 
     compile project(':cas-server-core-tickets')
     compile libraries.hazelcast
-    provided libraries.springcloud
+    compileOnly libraries.springcloud
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-util')
     testCompile project(':cas-server-core-services')

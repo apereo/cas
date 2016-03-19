@@ -8,7 +8,7 @@ dependencies {
     compile libraries.shibidp
     runtime libraries.hibernate
     runtime libraries.groovy
-    provided libraries.springcloud
+    compileOnly libraries.springcloud
     testCompile libraries.metrics
     testCompile libraries.log4j
     testCompile project(':cas-server-core-util')

@@ -1,7 +1,7 @@
 description = 'Apereo CAS Ehcache Integration'
 dependencies {
     compile libraries.ehcache
-    provided libraries.springcloud
+    compileOnly libraries.springcloud
     compile project(':cas-server-core-tickets')
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-services')

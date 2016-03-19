@@ -9,7 +9,7 @@ dependencies {
   testCompile project(path: ":cas-server-integration-memcached", configuration: "tests")
   testCompile project(':cas-server-core')
   testCompile project(':cas-server-core-logout')
-  provided project(':cas-server-support-saml')
+  compileOnly project(':cas-server-support-saml')
   testCompile libraries.tests
   testCompile libraries.metrics
 }
