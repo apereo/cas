@@ -91,14 +91,6 @@
             org.jasig.cas.CasEnvironmentContextListener
         </listener-class>
     </listener>
-    <!-- 
-    	Creates the Wavity environment
-    -->
-    <listener>
-        <listener-class>
-            org.jasig.cas.WavityEnvironmentContextListener
-        </listener-class>
-    </listener>
 
     <!--
       - This is the Spring dispatcher servlet which delegates all requests to the
