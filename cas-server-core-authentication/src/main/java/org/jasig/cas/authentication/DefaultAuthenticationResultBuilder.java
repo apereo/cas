@@ -44,9 +44,9 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
     public Optional<Authentication> getInitialAuthentication() {
         if (this.authentications.isEmpty()) {
             LOGGER.warn("Authentication chain is empty as no authentications have been collected");
-            return Optional.empty();
         }
-        return Optional.of(this.authentications.iterator().next());
+
+        return this.authentications.stream().findFirst();
     }
 
     @Override
