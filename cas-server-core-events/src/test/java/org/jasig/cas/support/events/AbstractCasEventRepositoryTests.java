@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * This is {@link AbstractCasEventRepositoryTests}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public abstract class AbstractCasEventRepositoryTests {
 

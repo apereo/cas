@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.jasig.cas.audit.spi.ServiceManagementResourceResolver;
 import org.jasig.cas.services.audit.Pac4jAuditablePrincipalResolver;
 import org.jasig.inspektr.audit.AuditTrailManagementAspect;
+import org.jasig.inspektr.audit.AuditTrailManager;
 import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.jasig.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.jasig.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
@@ -40,7 +41,7 @@ import java.util.Properties;
  * This is {@link CasManagementWebAppConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casManagementWebAppConfiguration")
 @Lazy(true)
@@ -249,7 +250,7 @@ public class CasManagementWebAppConfiguration {
      * @return the audit trail management
      */
     @Bean(name = "auditTrailManager")
-    public Slf4jLoggingAuditTrailManager auditTrailManager() {
+    public AuditTrailManager auditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 

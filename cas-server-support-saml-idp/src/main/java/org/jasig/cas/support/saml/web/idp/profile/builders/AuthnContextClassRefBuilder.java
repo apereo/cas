@@ -9,7 +9,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
  * This is {@link AuthnContextClassRefBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface AuthnContextClassRefBuilder {
 

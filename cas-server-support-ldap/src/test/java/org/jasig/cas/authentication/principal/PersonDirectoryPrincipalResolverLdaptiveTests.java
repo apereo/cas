@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * This is {@link PersonDirectoryPrincipalResolverLdaptiveTests}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/resolver-context.xml"})

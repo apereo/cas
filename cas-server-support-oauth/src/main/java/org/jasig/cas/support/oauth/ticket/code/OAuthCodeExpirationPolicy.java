@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * This is {@link OAuthCodeExpirationPolicy}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("oAuthCodeExpirationPolicy")
 public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {

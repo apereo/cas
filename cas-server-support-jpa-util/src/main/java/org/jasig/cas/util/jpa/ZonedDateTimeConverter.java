@@ -10,7 +10,7 @@ import org.jasig.cas.util.DateTimeUtils;
 /**
  * Converts ZonedDateTime &lt;-&gt; Date.
  * @author Timur Duehr timur.duehr@nccgroup.trust
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Converter(autoApply = true)
 public class ZonedDateTimeConverter implements AttributeConverter<ZonedDateTime, Date> {
