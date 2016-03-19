@@ -18,7 +18,7 @@ import java.io.Serializable;
  * in one spot.
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
- * @since 4.3
+ * @since 5.0.0
  */
 public final class SerializationUtils {
 
@@ -29,7 +29,7 @@ public final class SerializationUtils {
      * Serialize an object.
      * @param object The object to be serialized
      * @return the +byte[]+ containing the object
-     * @since 4.3
+     * @since 5.0.0
      */
     public static byte[] serialize(final Serializable object) {
         final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -41,7 +41,7 @@ public final class SerializationUtils {
      * Serialize an object.
      * @param object The object to be serialized
      * @param outputStream The stream to receive the object
-     * @since 4.3
+     * @since 5.0.0
      */
     public static void serialize(final Serializable object, @NotNull final OutputStream outputStream) {
         ObjectOutputStream out = null;
@@ -66,7 +66,7 @@ public final class SerializationUtils {
      * @param <T>  the type parameter
      * @param inBytes The bytes to be deserialized
      * @return the object
-     * @since 4.3
+     * @since 5.0.0
      */
     public static <T> T deserialize(@NotNull final byte[] inBytes) {
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(inBytes);
@@ -78,7 +78,7 @@ public final class SerializationUtils {
      * @param <T>  the type parameter
      * @param inputStream The stream to be deserialized
      * @return the object
-     * @since 4.3
+     * @since 5.0.0
      */
     public static <T> T deserialize(@NotNull final InputStream inputStream) {
         ObjectInputStream in = null;

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * backed by external configuration.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casMetricsConfiguration")
 @Lazy(true)

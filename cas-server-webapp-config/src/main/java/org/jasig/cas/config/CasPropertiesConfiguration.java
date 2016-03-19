@@ -15,7 +15,7 @@ import java.util.Properties;
  * This is {@link CasPropertiesConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casPropertiesConfiguration")
 public class CasPropertiesConfiguration {

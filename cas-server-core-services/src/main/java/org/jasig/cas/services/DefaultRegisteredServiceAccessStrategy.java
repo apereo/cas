@@ -151,7 +151,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Sets case insensitive.
      *
      * @param caseInsensitive the case insensitive
-     * @since 4.3
+     * @since 5.0.0
      */
     public void setCaseInsensitive(final boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;

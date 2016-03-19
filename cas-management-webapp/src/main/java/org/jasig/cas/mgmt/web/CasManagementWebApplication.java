@@ -16,7 +16,7 @@ import org.springframework.context.annotation.ImportResource;
  * This is {@link CasManagementWebApplication}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @SpringBootApplication(scanBasePackages = {"org.jasig.cas.mgmt", "org.jasig.cas.services", 
                                            "org.pac4j.springframework"},

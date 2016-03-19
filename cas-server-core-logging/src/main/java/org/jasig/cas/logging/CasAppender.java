@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * This is {@link CasAppender}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Plugin(name="CasAppender", category="Core", elementType="appender", printObject=true)
 public class CasAppender extends AbstractAppender {

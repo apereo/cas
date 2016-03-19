@@ -14,7 +14,7 @@ import javax.persistence.Entity;
  * The {@link SamlRegisteredService} is responsible for managing the SAML metadata for a given SP.
  *
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 5.0.0
  */
 @Entity
 @DiscriminatorValue("saml")

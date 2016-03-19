@@ -16,7 +16,7 @@ import java.net.URI;
  * screen is displayed. 
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("serviceWarningAction")
 public class ServiceWarningAction extends AbstractAction {

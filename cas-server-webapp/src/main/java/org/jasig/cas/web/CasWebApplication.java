@@ -18,7 +18,7 @@ import org.springframework.context.annotation.ImportResource;
  * This is {@link CasWebApplication}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @SpringBootApplication(scanBasePackages = {"org.jasig.cas"},
         exclude = {HibernateJpaAutoConfiguration.class,

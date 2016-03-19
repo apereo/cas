@@ -3,8 +3,6 @@ package org.jasig.cas.config;
 import com.google.common.collect.ImmutableList;
 import org.cryptacular.bean.CipherBean;
 import org.jasig.cas.CipherExecutor;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.jasig.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.jasig.cas.web.flow.LogoutConversionService;
 import org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter;
@@ -19,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.Resource;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ViewResolver;
@@ -27,8 +24,6 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.config.FlowExecutorBuilder;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.springframework.web.servlet.view.XmlViewResolver;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
@@ -54,15 +49,7 @@ import java.io.OutputStream;
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
-    private static final int VIEW_RESOLVER_RESOURCE_ORDER = 100;
-    private static final int VIEW_RESOLVER_BEAN_ORDER = 101;
-    private static final int VIEW_RESOLVER_XML_ORDER = 102;
-    private static final int VIEW_RESOLVER_SERVICE_ORDER = 103;
-    private static final int VIEW_RESOLVER_URL_ORDER = 104;
-    private static final int VIEW_RESOLVER_INTERNAL_ORDER = 105;
-    
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+
     @Autowired
     @Qualifier("registeredServiceViewResolver")
     private ViewResolver registeredServiceViewResolver;
@@ -85,12 +72,6 @@ public class CasWebflowContextConfiguration {
     @Lazy(true)
     private HandlerInterceptor authenticationThrottle;
 
-    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp/}")
-    private String pathPrefix;
-    
-    @Value("${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}")
-    private Resource xmlViewsFile;
-    
     /**
      * Expression parser web flow spring el expression parser.
      *
@@ -115,79 +96,6 @@ public class CasWebflowContextConfiguration {
     public ConversionService logoutConversionService() {
         return new LogoutConversionService();
     }
-    
-    /**
-     * View resolver resource bundle view resolver.
-     *
-     * @return the resource bundle view resolver
-     */
-    @Bean(name = "resourceBundleViewResolver")
-    public ResourceBundleViewResolver resourceBundleViewResolver() {
-        final ResourceBundleViewResolver resolver = new ResourceBundleViewResolver();
-        resolver.setOrder(VIEW_RESOLVER_RESOURCE_ORDER);
-        resolver.setBasename("cas_views");
-        resolver.setCache(false);
-        return resolver;
-    }
-
-    /**
-     * Bean name view resolver bean name view resolver.
-     *
-     * @return the bean name view resolver
-     */
-    @Bean(name = "beanNameViewResolver")
-    public BeanNameViewResolver beanNameViewResolver() {
-        final BeanNameViewResolver bean = new BeanNameViewResolver();
-        bean.setOrder(VIEW_RESOLVER_BEAN_ORDER);
-        return bean;
-    }
-
-    /**
-     * Xml view resolver abstract caching view resolver.
-     *
-     * @return the abstract caching view resolver
-     */
-    @Bean(name = "xmlViewResolver")
-    public ViewResolver xmlViewResolver() {
-        if (xmlViewsFile.exists()) {
-            final XmlViewResolver bean = new XmlViewResolver();
-            bean.setOrder(VIEW_RESOLVER_XML_ORDER);
-            bean.setLocation(xmlViewsFile);
-            return bean;
-        }
-        return beanNameViewResolver();
-    }
-
-    /**
-     * Internal view resolver registered service theme based view resolver.
-     *
-     * @return the registered service theme based view resolver
-     */
-    @Bean(name = "registeredServiceThemeBasedViewResolver")
-    public RegisteredServiceThemeBasedViewResolver registeredServiceThemeBasedViewResolver() {
-        final RegisteredServiceThemeBasedViewResolver bean = new RegisteredServiceThemeBasedViewResolver(this.servicesManager);
-        bean.setPrefix(this.pathPrefix);
-        bean.setSuffix(".jsp");
-        bean.setCache(false);
-        bean.setOrder(VIEW_RESOLVER_SERVICE_ORDER);
-        return bean;
-    }
-        
-    /**
-     * Url based view resolver url based view resolver.
-     *
-     * @return the url based view resolver
-     */
-    @Bean(name = "urlBasedViewResolver")
-    public UrlBasedViewResolver urlBasedViewResolver() {
-        final UrlBasedViewResolver bean = new UrlBasedViewResolver();
-        bean.setViewClass(InternalResourceView.class);
-        bean.setPrefix(this.pathPrefix);
-        bean.setSuffix(".jsp");
-        bean.setOrder(VIEW_RESOLVER_URL_ORDER);
-        bean.setCache(false);
-        return bean;
-    }
 
     /**
      * View factory creator mvc view factory creator.
@@ -199,10 +107,9 @@ public class CasWebflowContextConfiguration {
     public MvcViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
         resolver.setViewResolvers(ImmutableList.of(this.registeredServiceViewResolver));
-                registeredServiceThemeBasedViewResolver(), internalViewResolver()));
         return resolver;
     }
-    
+
     /**
      * Login flow url handler cas default flow url handler.
      *
@@ -407,7 +314,7 @@ public class CasWebflowContextConfiguration {
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
     }
-    
+
     /**
      * Login flow executor flow executor.
      *

@@ -58,7 +58,7 @@ import java.util.List;
  * This is {@link SamlObjectSigner}.
  *
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 5.0.0
  */
 @Component("samlObjectSigner")
 public class SamlObjectSigner {

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  * This is {@link DashboardController}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Controller("dashboardController")
 public class DashboardController {

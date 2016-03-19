@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Joe McCall
- * @since 4.3
+ * @since 5.0.0
  */
 public class SpringSecurityDelegatingPasswordEncoderTests {
 

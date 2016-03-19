@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Misagh Moayyed
  * @param <T> the type parameter
- * @since 4.3
+ * @since 5.0.0
  */
 public interface SamlProfileObjectBuilder<T extends SAMLObject> {
 

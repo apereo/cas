@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
  * password encoder.
  *
  * @author Joe McCall
- * @since 4.3
+ * @since 5.0.0
  */
 public class SpringSecurityDelegatingPasswordEncoder implements PasswordEncoder {
 

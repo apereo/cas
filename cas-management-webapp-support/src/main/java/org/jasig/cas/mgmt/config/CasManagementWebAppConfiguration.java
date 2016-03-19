@@ -5,6 +5,7 @@ import org.apache.http.HttpStatus;
 import org.jasig.cas.audit.spi.ServiceManagementResourceResolver;
 import org.jasig.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
 import org.jasig.inspektr.audit.AuditTrailManagementAspect;
+import org.jasig.inspektr.audit.AuditTrailManager;
 import org.jasig.inspektr.audit.spi.AuditActionResolver;
 import org.jasig.inspektr.audit.spi.AuditResourceResolver;
 import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;

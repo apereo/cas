@@ -14,7 +14,7 @@ import java.net.Socket;
 
 /**
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 5.0.0
  */
 final class GroovyShellThread extends Thread {
     private static final String OUT_KEY = "out";

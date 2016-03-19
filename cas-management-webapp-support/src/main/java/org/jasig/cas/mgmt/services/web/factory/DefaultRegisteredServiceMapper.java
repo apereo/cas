@@ -17,11 +17,10 @@ import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.util.RegexUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
-
-import static org.slf4j.LoggerFactory.*;
 
 /**
  * Default mapper for converting {@link RegisteredService} to/from {@link ServiceData}.
@@ -36,7 +35,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
      */
     public static final String BEAN_NAME = "defaultRegisteredServiceMapper";
 
-    private static final Logger LOGGER = getLogger(DefaultRegisteredServiceMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceMapper.class);
 
     @Override
     public void mapRegisteredService(final RegisteredService svc, final ServiceData bean) {

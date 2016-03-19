@@ -26,7 +26,7 @@ import java.io.PrintWriter;
  * to produce saml metadata for CAS as an identity provider.
  *
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 5.0.0
  */
 @Controller("samlMetadataController")
 public class SamlMetadataController {
