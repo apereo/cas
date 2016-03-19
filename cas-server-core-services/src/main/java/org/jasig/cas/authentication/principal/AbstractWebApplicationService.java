@@ -26,18 +26,18 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The id of the service. */
-    private final String id;
+    private String id;
 
     /** The original url provided, used to reconstruct the redirect url. */
-    private final String originalUrl;
+    private String originalUrl;
 
-    private final String artifactId;
+    private String artifactId;
 
     private Principal principal;
 
     private boolean loggedOutAlready;
 
-    private final ResponseBuilder<WebApplicationService> responseBuilder;
+    private ResponseBuilder<WebApplicationService> responseBuilder;
 
     private ValidationResponseType format = ValidationResponseType.XML;
 

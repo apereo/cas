@@ -29,7 +29,7 @@ public class AbstractRegisteredServiceTests {
     private static final boolean ALLOWED_TO_PROXY = false;
     private static final boolean SSO_ENABLED = false;
     
-    private final AbstractRegisteredService r = new AbstractRegisteredService() {
+    private AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
         @Override

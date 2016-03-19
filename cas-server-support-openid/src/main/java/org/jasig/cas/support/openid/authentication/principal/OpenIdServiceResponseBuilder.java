@@ -29,8 +29,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     private static final long serialVersionUID = -4581238964007702423L;
 
-    private final ParameterList parameterList;
-    private final String openIdPrefixUrl;
+    private ParameterList parameterList;
+    private String openIdPrefixUrl;
 
     /**
      * Instantiates a new Open id service response builder.

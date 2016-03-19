@@ -27,13 +27,13 @@ public class ServiceAuthorizationCheckTests {
 
     private ServiceAuthorizationCheck serviceAuthorizationCheck;
 
-    private final WebApplicationService authorizedService = mock(WebApplicationService.class);
+    private WebApplicationService authorizedService = mock(WebApplicationService.class);
 
-    private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
+    private WebApplicationService unauthorizedService = mock(WebApplicationService.class);
 
-    private final WebApplicationService undefinedService = mock(WebApplicationService.class);
+    private WebApplicationService undefinedService = mock(WebApplicationService.class);
 
-    private final ServicesManager servicesManager = mock(ServicesManager.class);
+    private ServicesManager servicesManager = mock(ServicesManager.class);
 
 
     @Before

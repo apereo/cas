@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class LdapTestUtils {
+public final class LdapTestUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapTestUtils.class);
 
     /**

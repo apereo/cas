@@ -27,22 +27,22 @@ public class ImmutableAuthentication implements Authentication {
     private static final long serialVersionUID = 3206127526058061391L;
 
     /** Authentication date stamp. */
-    private final ZonedDateTime authenticationDate;
+    private ZonedDateTime authenticationDate;
 
     /** List of metadata about credentials presented at authentication. */
-    private final List<CredentialMetaData> credentials;
+    private List<CredentialMetaData> credentials;
 
     /** Authenticated principal. */
-    private final Principal principal;
+    private Principal principal;
 
     /** Authentication metadata attributes. */
-    private final Map<String, Object> attributes;
+    private Map<String, Object> attributes;
 
     /** Map of handler name to handler authentication success event. */
-    private final Map<String, HandlerResult> successes;
+    private Map<String, HandlerResult> successes;
 
     /** Map of handler name to handler authentication failure cause. */
-    private final Map<String, Class<? extends Exception>> failures;
+    private Map<String, Class<? extends Exception>> failures;
 
     /** No-arg constructor for serialization support. */
     private ImmutableAuthentication() {

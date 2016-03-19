@@ -39,7 +39,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
     private String logoutRequestParameter = DEFAULT_LOGOUT_PARAMETER;
 
     @NotNull
-    private final LogoutManager logoutManager;
+    private LogoutManager logoutManager;
 
     /**
      * Build from the logout manager.

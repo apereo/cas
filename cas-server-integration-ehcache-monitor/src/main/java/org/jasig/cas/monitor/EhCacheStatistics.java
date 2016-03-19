@@ -17,7 +17,7 @@ public class EhCacheStatistics implements CacheStatistics {
 
     private static final double TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE = 1048510.0;
     private static final int PERCENTAGE_VALUE = 100;
-    private final Cache cache;
+    private Cache cache;
 
     // Flag to determine whether size units are in bytes or simple object counts
     private boolean useBytes;

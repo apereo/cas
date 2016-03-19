@@ -15,8 +15,8 @@ public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
-    private final ServiceTicket serviceTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
+    private ServiceTicket serviceTicket;
 
     /**
      * Instantiates a new Cas service ticket granted event.

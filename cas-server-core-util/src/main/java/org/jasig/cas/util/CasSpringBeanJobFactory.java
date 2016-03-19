@@ -18,10 +18,10 @@ import javax.validation.constraints.NotNull;
  */
 @Component("casSpringBeanJobFactory")
 public class CasSpringBeanJobFactory extends SpringBeanJobFactory {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
-    private final ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     /**
      * Instantiates a new Cas spring bean job factory.

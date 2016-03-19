@@ -21,7 +21,7 @@ public class RegisteredServiceProxyPolicyBean implements Serializable {
         /** Allow type. */
         REGEX("regex");
 
-        private final String value;
+        private String value;
 
         /**
          * Instantiates a new AlgorithmTypes.

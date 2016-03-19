@@ -12,7 +12,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public class TestUtils {
+public final class TestUtils {
 
     private TestUtils() {}
 

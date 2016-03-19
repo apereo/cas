@@ -74,7 +74,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Kryo serializer.
      */
-    private final Kryo kryo = new KryoReflectionFactorySupport();
+    private Kryo kryo = new KryoReflectionFactorySupport();
 
     /**
      * Map of class to serializer that handles it.

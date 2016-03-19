@@ -33,7 +33,7 @@ import java.util.Map;
 public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 
     /** Instance of a logger. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private String modelKey = "exception.message";

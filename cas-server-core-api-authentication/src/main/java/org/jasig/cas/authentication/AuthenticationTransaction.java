@@ -20,8 +20,8 @@ public class AuthenticationTransaction implements Serializable {
 
     private static final long serialVersionUID = 6213904009424725484L;
 
-    private final Collection<Credential> credentials;
-    private final Service service;
+    private Collection<Credential> credentials;
+    private Service service;
 
     /**
      * Instantiates a new Default authentication transaction.

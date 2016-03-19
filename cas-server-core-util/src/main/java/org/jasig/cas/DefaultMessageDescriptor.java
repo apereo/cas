@@ -20,11 +20,11 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
     /** Serialization support. */
     private static final long serialVersionUID = 1227390629186486032L;
 
-    private final String code;
+    private String code;
 
-    private final String defaultMessage;
+    private String defaultMessage;
 
-    private final Serializable[] params;
+    private Serializable[] params;
 
     /**
      * Instantiates a new message.

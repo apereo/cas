@@ -23,7 +23,7 @@ public class AttributeFormDataPopulator implements FormDataPopulator {
      * Instance of AttributeRegistry.
      */
     @NotNull
-    private final IPersonAttributeDao personAttributeDao;
+    private IPersonAttributeDao personAttributeDao;
 
     /**
      * Default constructor.

@@ -45,7 +45,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler implements Authenti
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of logging for subclasses. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Map of special usernames to exceptions that are raised when a user with that name attempts authentication. */
     private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;

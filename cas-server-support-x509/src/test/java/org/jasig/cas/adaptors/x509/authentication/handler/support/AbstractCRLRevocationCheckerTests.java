@@ -22,10 +22,10 @@ public abstract class AbstractCRLRevocationCheckerTests {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Certificate to be tested. */
-    private final X509Certificate[] certificates;
+    private X509Certificate[] certificates;
 
     /** Expected result of check; null for success. */
-    private final GeneralSecurityException expected;
+    private GeneralSecurityException expected;
 
     /**
      * Creates a new test instance with given parameters.

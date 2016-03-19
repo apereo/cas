@@ -21,7 +21,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         /** Mapped type. */
         CACHED("cached");
 
-        private final String value;
+        private String value;
 
         /**
          * Instantiates a new AlgorithmTypes.
@@ -54,7 +54,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         /** add type. */
         ADD("add");
 
-        private final String value;
+        private String value;
 
         /**
          * Instantiates a new AttributeMergerTypes.

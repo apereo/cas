@@ -18,7 +18,7 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
 
     private static final long serialVersionUID = -211069319543047324L;
     
-    private final Pattern pattern;
+    private Pattern pattern;
 
     /**
      * Instantiates a new Regex matching registered service proxy policy.

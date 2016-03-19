@@ -74,7 +74,7 @@ public class TicketsResource {
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired(required = false)
-    private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
+    private CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -84,7 +84,7 @@ public class TicketsResource {
     @Qualifier("defaultAuthenticationSupport")
     private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
 
-    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
+    private ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
 
     /**

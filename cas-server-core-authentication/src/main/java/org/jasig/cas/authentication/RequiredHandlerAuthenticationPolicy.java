@@ -19,7 +19,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
 
     /** Authentication handler name that is required to satisfy policy. */
     @NotNull
-    private final String requiredHandlerName;
+    private String requiredHandlerName;
 
     /** Flag to try all credentials before policy is satisfied. */
     private boolean tryAll;

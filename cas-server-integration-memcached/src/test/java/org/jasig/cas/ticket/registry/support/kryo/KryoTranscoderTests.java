@@ -67,9 +67,9 @@ public class KryoTranscoderTests {
     private static final String NICKNAME_KEY = "nickname";
     private static final String NICKNAME_VALUE = "bob";
 
-    private final KryoTranscoder transcoder;
+    private KryoTranscoder transcoder;
 
-    private final Map<String, Object> principalAttributes;
+    private Map<String, Object> principalAttributes;
 
     public KryoTranscoderTests() {
         transcoder = new KryoTranscoder();
@@ -292,19 +292,19 @@ public class KryoTranscoderTests {
 
         private static final long serialVersionUID = 4829406617873497061L;
 
-        private final String id;
+        private String id;
 
         private int usageCount;
 
         private Service proxiedBy;
 
-        private final ZonedDateTime creationDate = ZonedDateTime.now(ZoneOffset.UTC);
+        private ZonedDateTime creationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-        private final Authentication authentication;
+        private Authentication authentication;
 
         /** Factory to create the principal type. **/
         @NotNull
-        private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {

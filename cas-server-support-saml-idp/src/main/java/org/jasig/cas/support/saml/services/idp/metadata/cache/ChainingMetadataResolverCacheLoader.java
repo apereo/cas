@@ -76,7 +76,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
     private long metadataCacheExpirationMinutes;
 
-    private final transient Object lock = new Object();
+    private transient Object lock = new Object();
 
     @Value("${cas.samlidp.metadata.failfast.init:true}")
     private boolean failFastInitialization = true;

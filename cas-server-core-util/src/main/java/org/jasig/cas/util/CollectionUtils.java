@@ -15,7 +15,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CollectionUtils {
+public final class CollectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionUtils.class);
 
     private CollectionUtils() {

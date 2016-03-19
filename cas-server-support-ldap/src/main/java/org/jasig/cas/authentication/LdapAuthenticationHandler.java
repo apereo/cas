@@ -55,7 +55,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Performs LDAP authentication given username/password.
      **/
     @NotNull
-    private final Authenticator authenticator;
+    private Authenticator authenticator;
 
     /** Component name. */
     @NotNull

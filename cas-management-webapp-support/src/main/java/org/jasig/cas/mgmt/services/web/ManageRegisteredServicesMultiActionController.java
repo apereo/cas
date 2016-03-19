@@ -42,10 +42,10 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * Instance of the RegisteredServiceFactory.
      */
     @NotNull
-    private final RegisteredServiceFactory registeredServiceFactory;
+    private RegisteredServiceFactory registeredServiceFactory;
 
     @NotNull
-    private final Service defaultService;
+    private Service defaultService;
 
     /**
      * Instantiates a new manage registered services multi action controller.

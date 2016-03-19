@@ -73,7 +73,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     /** Credential that stores only an ID. */
     private static class IdentifiableCredential implements Credential {
         /** Credential identifier. */
-        private final String id;
+        private String id;
 
         /**
          * Creates a new instance with the given ID.

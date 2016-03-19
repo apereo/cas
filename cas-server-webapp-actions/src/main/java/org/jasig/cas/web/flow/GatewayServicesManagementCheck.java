@@ -25,10 +25,10 @@ import javax.validation.constraints.NotNull;
 @Component("gatewayServicesManagementCheck")
 public class GatewayServicesManagementCheck extends AbstractAction {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @NotNull
-    private final ServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
     /**
      * Initialize the component with an instance of the services manager.

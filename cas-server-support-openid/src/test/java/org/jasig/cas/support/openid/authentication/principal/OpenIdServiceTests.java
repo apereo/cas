@@ -22,7 +22,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
     private OpenIdService openIdService;
 
-    private final MockHttpServletRequest request = new MockHttpServletRequest();
+    private MockHttpServletRequest request = new MockHttpServletRequest();
 
     private Association association;
 

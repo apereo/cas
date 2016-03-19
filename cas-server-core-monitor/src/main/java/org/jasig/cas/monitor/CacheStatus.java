@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class CacheStatus extends Status {
 
-    private final CacheStatistics[] statistics;
+    private CacheStatistics[] statistics;
 
     /**
      * Creates a new instance describing cache status.

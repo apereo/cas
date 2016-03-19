@@ -19,9 +19,9 @@ import java.net.Socket;
 final class GroovyShellThread extends Thread {
     private static final String OUT_KEY = "out";
 
-    private final Socket socket;
-    private final Binding binding;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Socket socket;
+    private Binding binding;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Instantiates a new Groovy shell thread.

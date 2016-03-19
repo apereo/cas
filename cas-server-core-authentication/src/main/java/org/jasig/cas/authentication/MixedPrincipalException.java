@@ -15,10 +15,10 @@ public class MixedPrincipalException extends PrincipalException {
     private static final long serialVersionUID = -9040132618070273997L;
 
     /** First resolved principal. */
-    private final Principal first;
+    private Principal first;
 
     /** Second resolved principal. */
-    private final Principal second;
+    private Principal second;
 
     /**
      * Creates a new instance from what would otherwise have been a successful authentication event and the two

@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private Resource resource;

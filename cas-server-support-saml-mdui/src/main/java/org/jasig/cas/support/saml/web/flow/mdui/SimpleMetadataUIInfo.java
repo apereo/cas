@@ -31,7 +31,7 @@ public class SimpleMetadataUIInfo implements Serializable {
 
     private transient UIInfo uiInfo;
 
-    private final transient RegisteredService registeredService;
+    private transient RegisteredService registeredService;
 
     /**
      * Instantiates a new Simple metadata uI info.

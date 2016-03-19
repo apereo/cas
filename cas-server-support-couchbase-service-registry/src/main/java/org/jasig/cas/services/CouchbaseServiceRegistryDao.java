@@ -50,7 +50,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     private static final String UTIL_DOCUMENT = "utils";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     @Autowired
@@ -60,7 +60,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     @Value("${svcreg.couchbase.query.enabled:true}")
     private boolean queryEnabled;
 
-    private final JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
+    private JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
 
     /**
      * Default constructor.

@@ -14,11 +14,11 @@ public class ServiceContext {
 
     /** Service principal. */
     @NotNull
-    private final Service service;
+    private Service service;
 
     /** Registered service corresponding to service principal. */
     @NotNull
-    private final RegisteredService registeredService;
+    private RegisteredService registeredService;
 
     /**
      * Creates a new instance with required parameters.

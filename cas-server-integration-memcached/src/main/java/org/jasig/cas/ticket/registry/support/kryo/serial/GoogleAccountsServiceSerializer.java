@@ -21,9 +21,9 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
 
     private static final Constructor CONSTRUCTOR;
 
-    private final PrivateKey privateKey;
-    private final PublicKey publicKey;
-    private final String alternateUsername;
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
+    private String alternateUsername;
 
     static {
         try {

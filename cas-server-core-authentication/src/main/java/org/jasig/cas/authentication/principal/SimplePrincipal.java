@@ -22,10 +22,10 @@ public class SimplePrincipal implements Principal {
     private static final long serialVersionUID = -1255260750151385796L;
 
     /** The unique identifier for the principal. */
-    private final String id;
+    private String id;
 
     /** Principal attributes. **/
-    private final Map<String, Object> attributes;
+    private Map<String, Object> attributes;
 
     /** No-arg constructor for serialization support. */
     private SimplePrincipal() {

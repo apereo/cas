@@ -21,8 +21,8 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long serialVersionUID = 6350244643948535906L;
     private static final long DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
 
-    private final transient Cache<String, Map<String, Object>> cache;
-    private final transient PrincipalAttributesCacheLoader cacheLoader =
+    private transient Cache<String, Map<String, Object>> cache;
+    private transient PrincipalAttributesCacheLoader cacheLoader =
             new PrincipalAttributesCacheLoader();
 
     private long maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;

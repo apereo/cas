@@ -26,7 +26,7 @@ public class AcceptableUsagePolicyFormAction {
     /** Logger instance. **/
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
+    private Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 
     /**
      * Verify whether the policy is accepted.

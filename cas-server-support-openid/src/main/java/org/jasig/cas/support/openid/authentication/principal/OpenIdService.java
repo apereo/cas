@@ -18,7 +18,7 @@ public class OpenIdService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 5776500133123291301L;
 
-    private final String identity;
+    private String identity;
 
     /**
      * Instantiates a new OpenID service.

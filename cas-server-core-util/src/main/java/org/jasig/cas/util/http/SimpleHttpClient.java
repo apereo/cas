@@ -45,13 +45,13 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
     /** the acceptable codes supported by this client. */
-    private final List<Integer> acceptableCodes;
+    private List<Integer> acceptableCodes;
 
     /** the HTTP client for this client. */
-    private final CloseableHttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     /** the request executor service for this client. */
-    private final FutureRequestExecutionService requestExecutorService;
+    private FutureRequestExecutionService requestExecutorService;
 
     /**
      * Instantiates a new Simple HTTP client, based on the provided inputs.

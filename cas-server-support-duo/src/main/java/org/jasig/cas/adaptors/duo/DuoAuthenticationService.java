@@ -20,12 +20,12 @@ import javax.validation.constraints.NotNull;
  */
 @Component("duoAuthenticationService")
 public class DuoAuthenticationService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final String duoIntegrationKey;
-    private final String duoSecretKey;
-    private final String duoApplicationKey;
-    private final String duoApiHost;
+    private String duoIntegrationKey;
+    private String duoSecretKey;
+    private String duoApplicationKey;
+    private String duoApiHost;
 
     /**
      * Creates the duo authentication service.

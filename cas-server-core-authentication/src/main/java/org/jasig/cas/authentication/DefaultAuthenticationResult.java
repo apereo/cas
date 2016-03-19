@@ -17,9 +17,9 @@ public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResult.class);
 
-    private final Authentication authentication;
+    private Authentication authentication;
 
-    private final Service service;
+    private Service service;
 
     /**
      * Instantiates a new Default authentication result.

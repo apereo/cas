@@ -17,7 +17,7 @@ public class TokenCredential extends BasicIdentifiableCredential {
     private static final long serialVersionUID = 2749515041385101770L;
 
     @NotNull
-    private final Service service;
+    private Service service;
 
     /**
      * Instantiates a new Token credential.

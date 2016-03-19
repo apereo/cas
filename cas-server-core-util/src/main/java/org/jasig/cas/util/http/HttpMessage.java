@@ -19,14 +19,14 @@ public class HttpMessage {
     /** The default asynchronous callbacks enabled. */
     private static final boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
     
-    private final URL url;
-    private final String message;
+    private URL url;
+    private String message;
     
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    private final boolean asynchronous;
+    private boolean asynchronous;
     
     /**
      * The content type for this message once submitted.

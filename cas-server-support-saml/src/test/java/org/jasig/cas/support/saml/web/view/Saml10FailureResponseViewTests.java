@@ -19,7 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  */
 public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
-    private final Saml10FailureResponseView view = new Saml10FailureResponseView();
+    private Saml10FailureResponseView view = new Saml10FailureResponseView();
 
     @Test
     public void verifyResponse() throws Exception {

@@ -69,7 +69,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /** The services associated to this ticket. */
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = Integer.MAX_VALUE)
-    private final HashMap<String, Service> services = new HashMap<>();
+    private HashMap<String, Service> services = new HashMap<>();
 
     /** The {@link TicketGrantingTicket} this is associated with. */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
@@ -77,11 +77,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     /** The PGTs associated to this ticket. */
     @OneToMany(targetEntity = TicketGrantingTicketImpl.class, mappedBy = "ticketGrantingTicket", fetch = FetchType.EAGER)
-    private final Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
+    private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = Integer.MAX_VALUE)
-    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
+    private ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
     /**
      * Instantiates a new ticket granting ticket impl.

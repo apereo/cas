@@ -12,9 +12,9 @@ import org.jasig.cas.validation.Assertion;
  */
 public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 
-    private final Assertion assertion;
+    private Assertion assertion;
 
-    private final ServiceTicket serviceTicket;
+    private ServiceTicket serviceTicket;
 
     /**
      * Instantiates a new Cas service ticket validated event.

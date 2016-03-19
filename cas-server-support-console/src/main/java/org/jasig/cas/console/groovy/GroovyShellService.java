@@ -53,7 +53,7 @@ public class GroovyShellService {
 
     private ServerSocket serverSocket;
 
-    private final List<GroovyShellThread> threads = new ArrayList<>();
+    private List<GroovyShellThread> threads = new ArrayList<>();
 
     @Value("${cas.console.scripts.location:classpath:/scripts}")
     private Resource scriptsLocationResource;

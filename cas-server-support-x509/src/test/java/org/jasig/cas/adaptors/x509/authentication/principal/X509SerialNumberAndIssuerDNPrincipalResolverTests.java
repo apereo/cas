@@ -15,7 +15,7 @@ import org.junit.Test;
  */
 public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX509CertificateTests {
 
-    private final X509SerialNumberAndIssuerDNPrincipalResolver
+    private X509SerialNumberAndIssuerDNPrincipalResolver
         resolver = new X509SerialNumberAndIssuerDNPrincipalResolver();
 
     @Test

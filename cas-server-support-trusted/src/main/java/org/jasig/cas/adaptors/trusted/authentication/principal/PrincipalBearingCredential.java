@@ -24,7 +24,7 @@ public class PrincipalBearingCredential extends AbstractCredential {
     private static final long serialVersionUID = 8866786438439775669L;
 
     /** The trusted principal. */
-    private final Principal principal;
+    private Principal principal;
 
     /**
      * Instantiates a new principal bearing credential.

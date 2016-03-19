@@ -21,10 +21,10 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
         .toCharArray();
 
     /** An instance of secure random to ensure randomness is secure. */
-    private final SecureRandom randomizer = new SecureRandom();
+    private SecureRandom randomizer = new SecureRandom();
 
     /** The maximum length the random string can be. */
-    private final int maximumRandomLength;
+    private int maximumRandomLength;
 
     /**
      * Instantiates a new default random string generator

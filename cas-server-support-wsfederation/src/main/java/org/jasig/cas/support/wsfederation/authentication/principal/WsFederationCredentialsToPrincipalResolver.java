@@ -24,7 +24,7 @@ import org.jasig.cas.support.wsfederation.WsFederationConfiguration.WsFedPrincip
 @Component("adfsPrincipalResolver")
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private final Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
+    private Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
 
     @Autowired
     @Qualifier("wsFedConfig")

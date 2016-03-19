@@ -33,7 +33,7 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     private String[] basenames;
     
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Override
     protected String getDefaultMessage(final String code) {

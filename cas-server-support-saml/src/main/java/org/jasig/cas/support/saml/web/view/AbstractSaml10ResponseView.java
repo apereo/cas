@@ -33,7 +33,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
 
-    private final ArgumentExtractor samlArgumentExtractor;
+    private ArgumentExtractor samlArgumentExtractor;
 
     @NotNull
     private String encoding = DEFAULT_ENCODING;

@@ -26,9 +26,9 @@ import javax.validation.constraints.NotNull;
 public class ServiceAuthorizationCheck extends AbstractAction {
 
     @NotNull
-    private final ServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Initialize the component with an instance of the services manager.

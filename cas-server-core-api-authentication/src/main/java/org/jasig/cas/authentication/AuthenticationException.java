@@ -19,10 +19,10 @@ public class AuthenticationException extends Exception {
     private static final long serialVersionUID = -6032827784134751797L;
 
     /** Immutable map of handler names to the errors they raised. */
-    private final Map<String, Class<? extends Exception>> handlerErrors;
+    private Map<String, Class<? extends Exception>> handlerErrors;
 
     /** Immutable map of handler names to an authentication success metadata instance. */
-    private final Map<String, HandlerResult> handlerSuccesses;
+    private Map<String, HandlerResult> handlerSuccesses;
 
     /**
      * Creates a new instance for the case when no handlers were attempted, i.e. no successes or failures.

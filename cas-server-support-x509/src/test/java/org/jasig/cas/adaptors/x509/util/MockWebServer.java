@@ -22,10 +22,10 @@ import org.springframework.core.io.Resource;
  */
 public class MockWebServer {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Request handler. */
-    private final Worker worker;
+    private Worker worker;
 
     /** Controls the worker thread. */
     private Thread workerThread;
@@ -89,19 +89,19 @@ public class MockWebServer {
         /** Response buffer size. */
         private static final int BUFFER_SIZE = 2048;
 
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private Logger logger = LoggerFactory.getLogger(this.getClass());
 
         /** Run flag. */
         private boolean running;
 
         /** Server socket. */
-        private final ServerSocket serverSocket;
+        private ServerSocket serverSocket;
 
         /** Resource to serve. */
-        private final Resource resource;
+        private Resource resource;
 
         /** MIME content type of resource to serve. */
-        private final String contentType;
+        private String contentType;
 
 
         /**

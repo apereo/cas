@@ -51,9 +51,9 @@ public class StatisticsController implements ServletContextAware {
 
     private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
+    private ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Value("${host.name:cas01.example.org}")
     private String casTicketSuffix;

@@ -42,7 +42,7 @@ public enum RadiusProtocol {
     PEAP("peap");
 
     /** The name. */
-    private final String name;
+    private String name;
 
     /**
      * Instantiates a new radius protocol.

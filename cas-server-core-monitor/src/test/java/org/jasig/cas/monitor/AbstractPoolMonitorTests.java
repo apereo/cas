@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractPoolMonitorTests {
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
     public void verifyObserveOK() throws Exception {

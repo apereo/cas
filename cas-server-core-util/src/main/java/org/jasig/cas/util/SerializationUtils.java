@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-public class SerializationUtils {
+public final class SerializationUtils {
 
     private SerializationUtils() {
     }

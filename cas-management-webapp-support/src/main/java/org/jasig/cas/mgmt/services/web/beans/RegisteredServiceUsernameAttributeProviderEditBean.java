@@ -29,7 +29,7 @@ public class RegisteredServiceUsernameAttributeProviderEditBean implements Seria
          */
         ANONYMOUS("anon");
 
-        private final String value;
+        private String value;
 
         /**
          * Instantiates a new AlgorithmTypes.

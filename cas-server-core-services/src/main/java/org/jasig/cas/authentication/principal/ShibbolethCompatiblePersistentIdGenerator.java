@@ -38,7 +38,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
     @JsonProperty
-    private final String salt;
+    private String salt;
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.

@@ -26,7 +26,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
 
-    private final String encodingAlgorithm;
+    private String encodingAlgorithm;
 
     @Value("${cas.authn.password.encoding.char:}")
     private String characterEncoding;

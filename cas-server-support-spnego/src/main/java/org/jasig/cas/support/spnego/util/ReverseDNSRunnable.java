@@ -21,7 +21,7 @@ public class ReverseDNSRunnable implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReverseDNSRunnable.class);
 
     /** Remote user IP address. **/
-    private final String ipAddress;
+    private String ipAddress;
 
     /** Remote user hostname. **/
     private String hostName;

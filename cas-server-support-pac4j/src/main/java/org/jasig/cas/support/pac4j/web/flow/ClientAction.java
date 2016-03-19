@@ -72,7 +72,7 @@ public class ClientAction extends AbstractAction {
     /**
      * The logger.
      */
-    private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
+    private Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
     /**
      * The clients used for authentication.

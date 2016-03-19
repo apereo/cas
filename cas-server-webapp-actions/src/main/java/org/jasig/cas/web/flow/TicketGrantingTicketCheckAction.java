@@ -48,7 +48,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      * The Central authentication service.
      */
     @NotNull
-    private final CentralAuthenticationService centralAuthenticationService;
+    private CentralAuthenticationService centralAuthenticationService;
 
 
     /**

@@ -34,7 +34,7 @@ import java.util.Properties;
 public class InMemoryTestLdapDirectoryServer implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryTestLdapDirectoryServer.class);
 
-    private final InMemoryDirectoryServer directoryServer;
+    private InMemoryDirectoryServer directoryServer;
 
     private Collection<LdapEntry> ldapEntries;
 

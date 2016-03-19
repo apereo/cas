@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-public class DigestUtils {
+public final class DigestUtils {
     private static String SHA512 = "SHA512";
     private static String SHA = "SHA";
 

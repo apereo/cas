@@ -11,7 +11,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public class TestUtils {
+public final class TestUtils {
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
 

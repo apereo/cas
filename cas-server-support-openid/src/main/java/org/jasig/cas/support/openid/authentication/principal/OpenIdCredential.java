@@ -10,9 +10,9 @@ public class OpenIdCredential implements Credential {
 
     private static final long serialVersionUID = -6535869729412406133L;
 
-    private final String ticketGrantingTicketId;
+    private String ticketGrantingTicketId;
 
-    private final String username;
+    private String username;
 
     /**
      * Instantiates a new OpenID credential.

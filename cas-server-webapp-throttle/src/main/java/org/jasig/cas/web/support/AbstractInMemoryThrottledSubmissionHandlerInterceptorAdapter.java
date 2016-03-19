@@ -60,7 +60,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     @Qualifier("scheduler")
     private Scheduler scheduler;
 
-    private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
 
     @Override
     protected boolean exceedsThreshold(final HttpServletRequest request) {

@@ -41,8 +41,8 @@ public class CasAppender extends AbstractAppender {
      */
     private static final int VISIBLE_ID_TAIL_LENGTH = 10;
 
-    private final Configuration config;
-    private final AppenderRef appenderRef;
+    private Configuration config;
+    private AppenderRef appenderRef;
 
 
     /**

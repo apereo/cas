@@ -24,10 +24,10 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
 
     private static final long serialVersionUID = -3546719400741715137L;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @NotNull
-    private final String usernameAttribute;
+    private String usernameAttribute;
 
     /**
      * Private constructor to get around serialization issues.

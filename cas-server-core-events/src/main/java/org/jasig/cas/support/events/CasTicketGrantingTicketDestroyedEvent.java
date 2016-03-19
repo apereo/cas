@@ -15,7 +15,7 @@ public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 584961303690286494L;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
 
     /**
      * Instantiates a new Cas sso session destroyed event.

@@ -15,9 +15,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private final String relayState;
+    private String relayState;
 
-    private final String requestId;
+    private String requestId;
 
     /**
      * Instantiates a new google accounts service.

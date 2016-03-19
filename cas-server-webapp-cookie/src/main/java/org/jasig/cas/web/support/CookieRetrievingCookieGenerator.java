@@ -32,7 +32,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     private int rememberMeMaxAge = DEFAULT_REMEMBER_ME_MAX_AGE;
 
     /** Responsible for manging and verifying the cookie value. **/
-    private final CookieValueManager casCookieValueManager;
+    private CookieValueManager casCookieValueManager;
 
     /**
      * Instantiates a new cookie retrieving cookie generator

@@ -142,7 +142,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
     private static class CompositeX509KeyManager implements X509KeyManager {
 
-        private final List<X509KeyManager> keyManagers;
+        private List<X509KeyManager> keyManagers;
 
         /**
          * Represents an ordered list of {@link X509KeyManager}s with most-preferred managers first.
@@ -204,7 +204,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
         private static final Logger LOGGER = LoggerFactory.getLogger(CompositeX509TrustManager.class);
 
-        private final List<X509TrustManager> trustManagers;
+        private List<X509TrustManager> trustManagers;
 
         /**
          * Instantiates a new Composite x 509 trust manager.

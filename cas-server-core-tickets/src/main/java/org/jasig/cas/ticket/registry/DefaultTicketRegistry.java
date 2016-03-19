@@ -25,7 +25,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     /**
      * A HashMap to contain the tickets.
      */
-    private final Map<String, Ticket> cache;
+    private Map<String, Ticket> cache;
 
     /**
      * Instantiates a new default ticket registry.

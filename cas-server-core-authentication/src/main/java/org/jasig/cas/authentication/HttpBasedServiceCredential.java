@@ -21,13 +21,13 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     private static final long serialVersionUID = 1492607216336354503L;
 
     /** The callbackURL to check that identifies the application. */
-    private final URL callbackUrl;
+    private URL callbackUrl;
 
     /** String form of callbackUrl. */
-    private final String callbackUrlAsString;
+    private String callbackUrlAsString;
 
     /** The registered service associated with this callback. **/
-    private final RegisteredService service;
+    private RegisteredService service;
 
     /**
      * Empty constructor used by Kryo for de-serialization.

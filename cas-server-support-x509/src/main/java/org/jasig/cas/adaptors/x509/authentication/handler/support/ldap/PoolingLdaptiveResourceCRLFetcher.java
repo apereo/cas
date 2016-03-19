@@ -28,7 +28,7 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     protected BlockingConnectionPool connectionPool;
 
     /** Map of connection pools. */
-    private final Map<String, PooledConnectionFactory> connectionPoolMap = new HashMap<>();
+    private Map<String, PooledConnectionFactory> connectionPoolMap = new HashMap<>();
 
     /** Serialization support. */
     protected PoolingLdaptiveResourceCRLFetcher() {}

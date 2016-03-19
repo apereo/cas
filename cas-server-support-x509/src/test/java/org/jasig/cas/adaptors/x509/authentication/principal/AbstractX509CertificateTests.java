@@ -34,7 +34,7 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
          */
         private static final long serialVersionUID = -4449243195531417769L;
 
-        private final boolean valid;
+        private boolean valid;
 
         protected CasX509Certificate(final boolean valid) {
             this.valid = valid;

@@ -188,10 +188,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected static final class UsernamePasswordCallbackHandler implements CallbackHandler {
 
         /** The username of the principal we are trying to authenticate. */
-        private final String userName;
+        private String userName;
 
         /** The password of the principal we are trying to authenticate. */
-        private final String password;
+        private String password;
 
         /**
          * Constructor accepts name and password to be used for authentication.

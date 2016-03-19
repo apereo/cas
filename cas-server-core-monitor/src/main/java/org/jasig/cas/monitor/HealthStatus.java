@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class HealthStatus extends Status {
     /** Map of names (e.g. monitor that produced it) to status information. */
-    private final Map<String, Status> details;
+    private Map<String, Status> details;
 
 
     /**

@@ -23,16 +23,16 @@ public class ImmutableAssertion implements Assertion, Serializable {
     private static final long serialVersionUID = -3348826049921010423L;
 
     /** Primary authentication. */
-    private final Authentication primaryAuthentication;
+    private Authentication primaryAuthentication;
 
     /** Chained authentications. */
-    private final List<Authentication> chainedAuthentications;
+    private List<Authentication> chainedAuthentications;
 
     /** Was this the result of a new login. */
-    private final boolean fromNewLogin;
+    private boolean fromNewLogin;
 
     /** The service we are asserting this ticket for. */
-    private final Service service;
+    private Service service;
 
     /**
      * Creates a new instance with required parameters.

@@ -19,7 +19,7 @@ public class SamlService extends AbstractWebApplicationService {
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
-    private final String requestId;
+    private String requestId;
 
 
     /**

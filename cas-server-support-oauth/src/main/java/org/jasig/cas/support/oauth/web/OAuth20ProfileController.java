@@ -34,7 +34,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ATTRIBUTES = "attributes";
 
-    private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
+    private JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
     @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL)
     @Override

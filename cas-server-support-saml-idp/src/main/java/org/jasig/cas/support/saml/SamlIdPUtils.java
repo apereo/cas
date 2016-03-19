@@ -50,7 +50,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlIdPUtils {
+public final class SamlIdPUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPUtils.class);
 
     private SamlIdPUtils() {

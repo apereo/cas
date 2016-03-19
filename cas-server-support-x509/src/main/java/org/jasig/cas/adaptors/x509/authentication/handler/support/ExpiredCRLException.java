@@ -18,13 +18,13 @@ public class ExpiredCRLException extends GeneralSecurityException {
     private static final long serialVersionUID = 5157864033250359972L;
 
     /** Identifier/name of CRL. */
-    private final String id;
+    private String id;
 
     /** CRL expiration date. */
-    private final ZonedDateTime expirationDate;
+    private ZonedDateTime expirationDate;
 
     /** Leniency of expiration. */
-    private final int leniency;
+    private int leniency;
 
     /**
      * Creates a new instance describing a CRL that expired on the given date.

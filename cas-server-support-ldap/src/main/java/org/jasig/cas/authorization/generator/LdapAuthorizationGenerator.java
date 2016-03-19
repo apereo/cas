@@ -45,7 +45,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
 
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Source of LDAP connections. */
     @Nullable

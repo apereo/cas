@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {

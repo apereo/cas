@@ -12,7 +12,7 @@ import org.jasig.cas.validation.ValidationSpecification;
  */
 public class MockValidationSpecification implements ValidationSpecification {
 
-    private final boolean test;
+    private boolean test;
 
     public MockValidationSpecification(final boolean test) {
         this.test = test;

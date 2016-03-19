@@ -16,15 +16,15 @@ public class DefaultLogoutRequest implements LogoutRequest {
     private static final long serialVersionUID = -6411421298859045022L;
 
     /** The service ticket id. */
-    private final String ticketId;
+    private String ticketId;
 
     /** The service. */
-    private final SingleLogoutService service;
+    private SingleLogoutService service;
 
     /** The status of the logout request. */
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
 
-    private final URL logoutUrl;
+    private URL logoutUrl;
 
     /**
      * Build a logout request from ticket identifier and service.

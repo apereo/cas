@@ -17,7 +17,7 @@ public class UnauthorizedServiceException extends RuntimeException {
     /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
 
-    private final String code;
+    private String code;
     
     /**
      * Construct the exception object with the associated error code.

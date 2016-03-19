@@ -27,7 +27,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** The time to kill in milliseconds. */
     @Value("#{${tgt.timeout.maxTimeToLiveInSeconds:28800}*1000}")
-    private final long timeToKillInMilliSeconds;
+    private long timeToKillInMilliSeconds;
 
 
     /** No-arg constructor for serialization support. */

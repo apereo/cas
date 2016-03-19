@@ -24,7 +24,7 @@ import java.util.Map;
 public class TestOneTimePasswordAuthenticationHandler implements AuthenticationHandler {
 
     @NotNull
-    private final Map<String, String> credentialMap;
+    private Map<String, String> credentialMap;
 
     /** Handler name. */
     private String name;

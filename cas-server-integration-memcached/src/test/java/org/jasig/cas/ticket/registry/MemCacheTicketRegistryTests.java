@@ -37,9 +37,9 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private MemCacheTicketRegistry registry;
 
-    private final String registryBean;
+    private String registryBean;
 
-    private final boolean binaryProtocol;
+    private boolean binaryProtocol;
 
     public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
         registryBean = beanName;

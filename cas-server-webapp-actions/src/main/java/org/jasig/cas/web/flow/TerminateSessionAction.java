@@ -29,7 +29,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class TerminateSessionAction {
 
     /** Webflow event helper component. */
-    private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
+    private EventFactorySupport eventFactorySupport = new EventFactorySupport();
 
     /** The CORE to which we delegate for all CAS functionality. */
     @NotNull

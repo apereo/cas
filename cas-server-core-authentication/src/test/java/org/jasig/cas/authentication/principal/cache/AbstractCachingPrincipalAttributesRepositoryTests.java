@@ -30,7 +30,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     private Map<String, List<Object>> attributes;
 
-    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     private Principal principal;
 

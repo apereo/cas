@@ -239,7 +239,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     }
 
     private static class MockRegisteredServiceMapper implements RegisteredServiceMapper {
-        private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
+        private RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
 
         @Override
         public void mapRegisteredService(final RegisteredService svc,

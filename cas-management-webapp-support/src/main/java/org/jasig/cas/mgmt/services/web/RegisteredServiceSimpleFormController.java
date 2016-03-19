@@ -33,7 +33,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * Instance of the RegisteredServiceFactory.
      */
     @NotNull
-    private final RegisteredServiceFactory registeredServiceFactory;
+    private RegisteredServiceFactory registeredServiceFactory;
 
     /**
      * Instantiates a new registered service simple form controller.

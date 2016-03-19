@@ -28,7 +28,7 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
     private static final int DEFAULT_THRESHOLD = 172800;
 
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
 
     /** Expired threshold period in seconds. */

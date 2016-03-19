@@ -36,12 +36,12 @@ public class SpnegoCredential implements Credential, Serializable {
             Byte.valueOf((byte) 'M'), CHAR_S_BYTE, CHAR_S_BYTE,
             Byte.valueOf((byte) 'P'), Byte.valueOf((byte) 0)};
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The SPNEGO Init Token.
      */
-    private final ByteSource initToken;
+    private ByteSource initToken;
 
     /**
      * The SPNEGO Next Token.
@@ -56,7 +56,7 @@ public class SpnegoCredential implements Credential, Serializable {
     /**
      * The authentication type should be Kerberos or NTLM.
      */
-    private final boolean isNtlm;
+    private boolean isNtlm;
 
     /**
      * Instantiates a new SPNEGO credential.

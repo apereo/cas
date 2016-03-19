@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class JaasAuthenticationHandlerTests {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private JaasAuthenticationHandler handler;
 

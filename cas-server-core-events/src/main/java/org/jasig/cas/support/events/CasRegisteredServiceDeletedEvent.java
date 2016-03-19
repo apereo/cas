@@ -13,7 +13,7 @@ import org.jasig.cas.services.RegisteredService;
 public class CasRegisteredServiceDeletedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -8963214046458085393L;
-    private final RegisteredService registeredService;
+    private RegisteredService registeredService;
 
     /**
      * Instantiates a new cas sso event.

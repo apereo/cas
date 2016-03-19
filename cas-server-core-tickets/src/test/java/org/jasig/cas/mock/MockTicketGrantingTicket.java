@@ -35,11 +35,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private static final long serialVersionUID = 6546995681334670659L;
 
-    private final String id;
+    private String id;
 
-    private final Authentication authentication;
+    private Authentication authentication;
 
-    private final ZonedDateTime created;
+    private ZonedDateTime created;
 
     private int usageCount;
 
@@ -47,9 +47,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private Service proxiedBy;
 
-    private final Map<String, Service> services = new HashMap<>();
+    private Map<String, Service> services = new HashMap<>();
 
-    private final HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
+    private HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");

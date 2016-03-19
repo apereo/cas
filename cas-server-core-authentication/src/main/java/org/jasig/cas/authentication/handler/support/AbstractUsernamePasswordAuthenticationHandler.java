@@ -11,11 +11,8 @@ import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.authentication.support.PasswordPolicyConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**

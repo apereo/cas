@@ -42,7 +42,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
     public static final int DEFAULT_REFRESH_INTERVAL = 3600;
 
     /** Executor responsible for refreshing CRL data. */
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /** CRL refresh interval in seconds. */
     private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
@@ -56,7 +56,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
     private CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
-    private final Map<X500Principal, X509CRL> crlIssuerMap =
+    private Map<X500Principal, X509CRL> crlIssuerMap =
             Collections.synchronizedMap(new HashMap<>());
 
     /** Resource CRLs. **/
@@ -141,7 +141,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
 
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = new Runnable() {
-            private final Logger logger = LoggerFactory.getLogger(this.getClass());
+            private Logger logger = LoggerFactory.getLogger(this.getClass());
 
             @Override
             public void run() {

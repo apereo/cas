@@ -32,7 +32,7 @@ public class JsonServiceRegistryDaoTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistryDao dao;
+    private ServiceRegistryDao dao;
 
     public JsonServiceRegistryDaoTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE);

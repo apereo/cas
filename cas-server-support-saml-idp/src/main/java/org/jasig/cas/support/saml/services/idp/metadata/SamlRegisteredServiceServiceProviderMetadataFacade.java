@@ -46,9 +46,9 @@ import java.util.stream.Collectors;
 public class SamlRegisteredServiceServiceProviderMetadataFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
 
-    private final SPSSODescriptor ssoDescriptor;
-    private final EntityDescriptor entityDescriptor;
-    private final MetadataResolver metadataResolver;
+    private SPSSODescriptor ssoDescriptor;
+    private EntityDescriptor entityDescriptor;
+    private MetadataResolver metadataResolver;
 
     private SamlRegisteredServiceServiceProviderMetadataFacade(final SPSSODescriptor ssoDescriptor,
                                                                final EntityDescriptor entityDescriptor,

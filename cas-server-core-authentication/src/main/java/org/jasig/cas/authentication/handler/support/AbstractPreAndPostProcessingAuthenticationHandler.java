@@ -8,8 +8,6 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.principal.Principal;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;

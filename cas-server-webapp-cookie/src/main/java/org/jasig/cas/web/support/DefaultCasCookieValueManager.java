@@ -28,7 +28,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
     /** The cipher exec that is responsible for encryption and signing of the cookie. */
-    private final CipherExecutor<String, String> cipherExecutor;
+    private CipherExecutor<String, String> cipherExecutor;
 
     /**
      * Instantiates a new Cas cookie value manager.

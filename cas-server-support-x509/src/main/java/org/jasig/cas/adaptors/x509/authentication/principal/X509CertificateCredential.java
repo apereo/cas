@@ -21,7 +21,7 @@ public class X509CertificateCredential extends AbstractCredential {
     private static final long serialVersionUID = 631753409512746474L;
 
     /** The collection of certificates sent with the request. */
-    private final X509Certificate[] certificates;
+    private X509Certificate[] certificates;
 
     /** The certificate that we actually use. */
     private X509Certificate certificate;

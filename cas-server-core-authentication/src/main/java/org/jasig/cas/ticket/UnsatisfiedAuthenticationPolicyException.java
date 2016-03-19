@@ -19,7 +19,7 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
     private static final String CODE = "UNSATISFIED_AUTHN_POLICY";
 
     /** Unfulfilled policy that caused this exception. */
-    private final ContextualAuthenticationPolicy<?> policy;
+    private ContextualAuthenticationPolicy<?> policy;
 
     /**
      * Creates a new instance with no cause.
@@ -39,5 +39,9 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
      */
     public ContextualAuthenticationPolicy<?> getPolicy() {
         return policy;
+    }
+
+    public void setPolicy(final ContextualAuthenticationPolicy<?> policy) {
+        this.policy = policy;
     }
 }

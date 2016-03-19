@@ -103,8 +103,8 @@ public class DistributedTicketRegistryTests {
     }
 
     private static class TestDistributedTicketRegistry extends AbstractTicketRegistry {
-        private final DistributedTicketRegistryTests parent;
-        private final Map<String, Ticket> tickets = new HashMap<>();
+        private DistributedTicketRegistryTests parent;
+        private Map<String, Ticket> tickets = new HashMap<>();
 
         TestDistributedTicketRegistry(final DistributedTicketRegistryTests parent) {
             this.parent = parent;

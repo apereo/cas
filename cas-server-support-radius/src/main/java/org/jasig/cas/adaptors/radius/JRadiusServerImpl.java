@@ -45,11 +45,11 @@ public class JRadiusServerImpl implements RadiusServer {
 
     /** RADIUS protocol. */
     @NotNull
-    private final RadiusProtocol protocol;
+    private RadiusProtocol protocol;
 
     /** Produces RADIUS client instances for authentication. */
     @NotNull
-    private final RadiusClientFactory radiusClientFactory;
+    private RadiusClientFactory radiusClientFactory;
 
     /** Number of times to retry authentication when no response is received. */
     @Min(0)

@@ -15,7 +15,7 @@ public class CasTicketGrantingTicketCreatedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1862937393590213844L;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
 
     /**
      * Instantiates a new Cas sso session established event.

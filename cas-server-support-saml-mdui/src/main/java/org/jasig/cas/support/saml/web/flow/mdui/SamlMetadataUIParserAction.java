@@ -47,13 +47,13 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
-    private final String entityIdParameterName;
+    private String entityIdParameterName;
 
     @NotNull
-    private final MetadataResolverAdapter metadataAdapter;
+    private MetadataResolverAdapter metadataAdapter;
 
     @Autowired
     @NotNull

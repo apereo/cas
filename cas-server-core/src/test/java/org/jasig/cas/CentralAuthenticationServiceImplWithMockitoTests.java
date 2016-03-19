@@ -78,7 +78,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private TicketRegistry ticketRegMock;
 
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
-        private final String id;
+        private String id;
 
         VerifyServiceByIdMatcher(final String id) {
             this.id = id;

@@ -11,10 +11,10 @@ package org.jasig.cas.util;
 public class Pair<A, B> {
 
     /** The first object of the pair. */
-    private final A first;
+    private A first;
 
     /** The second object of the pair. */
-    private final B second;
+    private B second;
 
     /**
      * Build a pair.

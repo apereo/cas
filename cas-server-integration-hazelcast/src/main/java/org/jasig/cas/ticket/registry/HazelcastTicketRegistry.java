@@ -28,9 +28,9 @@ import java.util.concurrent.TimeUnit;
 @Component("hazelcastTicketRegistry")
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
-    private final IMap<String, Ticket> registry;
+    private IMap<String, Ticket> registry;
     
-    private final HazelcastInstance hz;
+    private HazelcastInstance hz;
 
 
     /**

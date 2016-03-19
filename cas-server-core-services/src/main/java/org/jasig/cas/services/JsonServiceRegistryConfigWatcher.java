@@ -30,13 +30,13 @@ import static java.nio.file.StandardWatchEventKinds.*;
 class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryConfigWatcher.class);
 
-    private final AtomicBoolean running = new AtomicBoolean(false);
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
-    private final Lock readLock = this.lock.readLock();
+    private AtomicBoolean running = new AtomicBoolean(false);
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Lock readLock = this.lock.readLock();
 
-    private final WatchService watcher;
+    private WatchService watcher;
 
-    private final JsonServiceRegistryDao serviceRegistryDao;
+    private JsonServiceRegistryDao serviceRegistryDao;
 
     /**
      * Instantiates a new Json service registry config watcher.

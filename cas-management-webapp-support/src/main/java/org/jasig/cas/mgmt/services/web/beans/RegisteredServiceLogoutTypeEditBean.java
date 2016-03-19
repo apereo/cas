@@ -23,7 +23,7 @@ public enum RegisteredServiceLogoutTypeEditBean {
      */
     BACK("back");
 
-    private final String value;
+    private String value;
 
     /**
      * Instantiates a new AlgorithmTypes.

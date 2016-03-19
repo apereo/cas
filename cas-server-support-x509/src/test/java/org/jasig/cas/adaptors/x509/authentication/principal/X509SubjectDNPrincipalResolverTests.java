@@ -15,7 +15,7 @@ import org.junit.Test;
  */
 public class X509SubjectDNPrincipalResolverTests extends AbstractX509CertificateTests {
 
-    private final X509SubjectDNPrincipalResolver
+    private X509SubjectDNPrincipalResolver
         resolver = new X509SubjectDNPrincipalResolver();
 
     @Test

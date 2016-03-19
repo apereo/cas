@@ -19,7 +19,7 @@ public class OAuthRegisteredServiceTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistryDao dao;
+    private ServiceRegistryDao dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE);

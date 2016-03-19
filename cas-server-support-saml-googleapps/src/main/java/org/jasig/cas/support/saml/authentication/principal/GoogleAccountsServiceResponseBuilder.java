@@ -36,9 +36,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -4584732364007702423L;
 
-    private final PrivateKey privateKey;
-    private final PublicKey publicKey;
-    private final GoogleSaml20ObjectBuilder samlObjectBuilder;
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
+    private GoogleSaml20ObjectBuilder samlObjectBuilder;
     private int skewAllowance;
 
     /**

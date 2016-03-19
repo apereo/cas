@@ -48,7 +48,7 @@ public class SingleSignOnSessionsReportController {
         PROXIED("proxied"),
         DIRECT("direct");
 
-        private final String type;
+        private String type;
 
         /**
          * Instantiates a new Sso session report options.
@@ -83,7 +83,7 @@ public class SingleSignOnSessionsReportController {
         IS_PROXIED("is_proxied"),
         NUMBER_OF_USES("number_of_uses");
 
-        private final String attributeKey;
+        private String attributeKey;
 
         /**
          * Instantiates a new Sso session attribute keys.

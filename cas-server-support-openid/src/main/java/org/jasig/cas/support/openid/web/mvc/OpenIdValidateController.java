@@ -29,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Component("openIdValidateController")
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
-    private final Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
+    private Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
 
     @Autowired
     @Qualifier("serverManager")

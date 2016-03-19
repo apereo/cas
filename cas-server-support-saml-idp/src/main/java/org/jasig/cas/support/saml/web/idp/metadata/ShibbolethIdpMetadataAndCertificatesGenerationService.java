@@ -26,7 +26,7 @@ import java.util.List;
 @Component("shibbolethIdpMetadataAndCertificatesGenerationService")
 public class ShibbolethIdpMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private File metadataFile;
     private File signingCertFile;
