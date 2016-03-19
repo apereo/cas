@@ -28,7 +28,6 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
@@ -133,7 +132,6 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(EnumSet.class, new EnumSetSerializer());
 
         // we add these ones for tests only
-        kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer());
         kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
 
 

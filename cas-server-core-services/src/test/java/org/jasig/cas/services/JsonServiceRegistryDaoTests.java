@@ -45,7 +45,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -60,7 +60,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void execSaveMethodWithDefaultUsernameAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultUsernameAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -72,7 +72,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void ensureSaveMethodWithDefaultPrincipalAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultPrincipalAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -83,7 +83,7 @@ public class JsonServiceRegistryDaoTests {
     }
     @Test
     public void verifySaveMethodWithDefaultAnonymousAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultAnonymousAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -104,7 +104,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAttributeReleasePolicy() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicy");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -122,7 +122,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithExistingServiceNoAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -138,7 +138,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAttributeReleasePolicyMappingRules() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyMappingRules");
         r.setServiceId("testId");
 
@@ -163,7 +163,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAttributeReleasePolicyAllowedAttrRules() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRules");
         r.setServiceId("testId");
 

@@ -6,7 +6,6 @@ import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
@@ -86,7 +85,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyAddRegisteredServiceWithValues() throws Exception {
-        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("serviceId");
         svc.setName("name");
@@ -107,7 +106,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyEditRegisteredServiceWithValues() throws Exception {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId("test");
@@ -115,7 +114,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         this.manager.save(r);
 
-        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("serviceId1");
         svc.setName("name");
@@ -168,7 +167,7 @@ public class RegisteredServiceSimpleFormControllerTests {
                 new MockHttpServletResponse(),
                 data, mock(BindingResult.class));
 
-        svc = new RegisteredServiceImpl();
+        svc = new RegexRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
         svc.setName("name");

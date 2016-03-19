@@ -1,30 +1,27 @@
 package org.jasig.cas.mgmt.services.web.factory;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.services.AbstractRegisteredService;
-import org.jasig.cas.services.LogoutType;
-import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.RegisteredServicePublicKey;
-import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceLogoutTypeEditBean;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceOAuthTypeEditBean;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServicePublicKeyEditBean;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceTypeEditBean;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.LogoutType;
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServicePublicKey;
+import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 
 import java.net.URL;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+
+import static org.slf4j.LoggerFactory.*;
 
 /**
  * Default mapper for converting {@link RegisteredService} to/from {@link ServiceData}.
@@ -124,7 +121,11 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
                 ((OAuthRegisteredService) regSvc).setGenerateRefreshToken(oauthBean.isRefreshToken());
             } else {
-                regSvc = determineServiceTypeByPattern(data.getServiceId());
+                if (RegexUtils.isValidRegex(data.getServiceId())) {
+                    regSvc = new RegexRegisteredService();
+                } else {
+                    throw new RuntimeException("Invalid service type.");
+                }
             }
 
             // set the assigned Id
@@ -165,28 +166,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             throw new RuntimeException(e);
         }
     }
-
-    /**
-     * Determine service type by pattern.
-     *
-     * @param serviceId the service id
-     * @return the abstract registered service
-     */
-    private AbstractRegisteredService determineServiceTypeByPattern(final String serviceId) {
-        try {
-            Pattern.compile(serviceId);
-            LOGGER.debug("Service id {} is a valid regex.", serviceId);
-            return new RegexRegisteredService();
-        } catch (final PatternSyntaxException exception) {
-            LOGGER.debug("Service id {} is not a valid regex. Checking ant patterns...", serviceId);
-            if (new AntPathMatcher().isPattern(serviceId)) {
-                LOGGER.debug("Service id {} is a valid ant pattern.", serviceId);
-                return new RegisteredServiceImpl();
-            }
-        }
-        throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
-    }
-
+    
     /**
      * Parse raw logout type string to {@link LogoutType}.
      *

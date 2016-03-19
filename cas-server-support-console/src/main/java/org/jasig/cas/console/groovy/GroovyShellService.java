@@ -85,7 +85,7 @@ public class GroovyShellService {
         logger.info("Launching groovy shell service...");
 
         try {
-            this.serverSocket = new ServerSocket(port);
+            this.serverSocket = new ServerSocket(this.port);
             logger.info("Opened server port {} on port {}", serverSocket, this.port);
             this.scriptsLocationResource = 
                     ResourceUtils.prepareClasspathResourceIfNeeded(this.scriptsLocationResource, true, FILE_EXTENSION);

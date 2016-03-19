@@ -52,8 +52,8 @@ public class AbstractRegisteredServiceTests {
     public void verifyAllowToProxyIsFalseByDefault() {
         final RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
         assertFalse(regexRegisteredService.getProxyPolicy().isAllowedToProxy());
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        assertFalse(registeredServiceImpl.getProxyPolicy().isAllowedToProxy());
+        final RegexRegisteredService service = new RegexRegisteredService();
+        assertFalse(service.getProxyPolicy().isAllowedToProxy());
     }
 
     @Test
@@ -79,8 +79,8 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void verifyEquals() throws Exception {
         assertTrue(r.equals(r.clone()));
-        assertFalse(new RegisteredServiceImpl().equals(null));
-        assertFalse(new RegisteredServiceImpl().equals(new Object()));
+        assertFalse(new RegexRegisteredService().equals(null));
+        assertFalse(new RegexRegisteredService().equals(new Object()));
     }
     
     private void prepareService() {

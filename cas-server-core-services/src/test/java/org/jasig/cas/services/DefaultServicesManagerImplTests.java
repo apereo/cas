@@ -28,7 +28,7 @@ public class DefaultServicesManagerImplTests  {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         final List<RegisteredService> list = new ArrayList<>();
 
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
@@ -43,7 +43,7 @@ public class DefaultServicesManagerImplTests  {
 
     @Test
     public void verifySaveAndGet() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("test");
         r.setServiceId("test");
@@ -54,14 +54,14 @@ public class DefaultServicesManagerImplTests  {
 
     @Test
     public void verifyMultiServicesBySameNameAndServiceId() {
-        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        RegexRegisteredService r = new RegexRegisteredService();
         r.setId(666);
         r.setName("testServiceName");
         r.setServiceId("testServiceA");
 
         this.defaultServicesManagerImpl.save(r);
 
-        r = new RegisteredServiceImpl();
+        r = new RegexRegisteredService();
         r.setId(999);
         r.setName("testServiceName");
         r.setServiceId("testServiceA");
@@ -74,7 +74,7 @@ public class DefaultServicesManagerImplTests  {
 
     @Test
     public void verifySaveWithReturnedPersistedInstance() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000L);
         r.setName("test");
         r.setServiceId("test");
@@ -86,7 +86,7 @@ public class DefaultServicesManagerImplTests  {
 
     @Test
     public void verifyDeleteAndGet() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("test");
         r.setServiceId("test");
@@ -105,7 +105,7 @@ public class DefaultServicesManagerImplTests  {
 
     @Test
     public void verifyMatchesExistingService() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("test");
         r.setServiceId("test");
@@ -122,7 +122,7 @@ public class DefaultServicesManagerImplTests  {
 
     @Test
     public void verifyAllService() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("test");
         r.setServiceId("test");
@@ -162,19 +162,19 @@ public class DefaultServicesManagerImplTests  {
     
     @Test
     public void verifyEvaluationOrderOfServices() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(100);
         r.setName("test");
         r.setServiceId("test");
         r.setEvaluationOrder(200);
 
-        final RegisteredServiceImpl r2 = new RegisteredServiceImpl();
+        final RegexRegisteredService r2 = new RegexRegisteredService();
         r2.setId(101);
         r2.setName("test");
         r2.setServiceId("test");
         r2.setEvaluationOrder(80);
 
-        final RegisteredServiceImpl r3 = new RegisteredServiceImpl();
+        final RegexRegisteredService r3 = new RegexRegisteredService();
         r3.setId(102);
         r3.setName("Sample test service");
         r3.setServiceId("test");
