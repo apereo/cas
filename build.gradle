@@ -249,16 +249,38 @@ subprojects {
         compile group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
         compile group: 'javax.validation', name: 'validation-api', version: javaxValidationVersion
         compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+        
+        // wavity
+        compile (group: 'wavity-dependency', name: 'wavity-dependency', version: project.versions.wavityDependencyVersion) {
+        	transitive = true
+			exclude group: 'javax.json', module: 'javax.json-api'
+			exclude group: 'javax', module: 'javaee-api'
+			exclude group: 'javax', module: 'javaee-web-api'
+			exclude group: 'javax', module: 'javaee-endorsed-api'
+			exclude group: 'junit', module: 'junit'
+			exclude group: 'org.slf4j'
+			exclude group: 'net.sf.ehcache'
+			exclude group: 'org.ehcache'
+			exclude group: 'com.fasterxml.jackson.core'
+			exclude group: 'org.codehaus.jackson'
+			exclude group: 'log4j'
+			exclude group: 'org.apache.logging.log4j'
+			exclude group: 'org.apache.zookeeper'
+			exclude group: 'org.javassist'
+			exclude group: 'com.google.guava'
+		}
 
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
+                exclude(module: 'slf4j-api')
             }
 
             aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
+                exclude(module: 'slf4j-api')
             }
         }
 
