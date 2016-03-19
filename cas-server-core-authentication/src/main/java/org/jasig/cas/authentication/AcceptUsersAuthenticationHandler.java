@@ -3,6 +3,7 @@ package org.jasig.cas.authentication;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
  *
  * @since 3.0.0
  */
+@RefreshScope
 @Component("acceptUsersAuthenticationHandler")
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -65,7 +67,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (users == null || users.isEmpty()) {
@@ -89,7 +91,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * @param users The users to set.
      */
-    public final void setUsers(@NotNull final Map<String, String> users) {
+    public void setUsers(@NotNull final Map<String, String> users) {
         this.users = new HashMap<>(users);
     }
 }

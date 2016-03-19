@@ -33,7 +33,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
     /** Logger object. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Min(0)
     private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;
@@ -54,7 +54,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
 
     @Override
-    public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
+    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
         // we only care about post because that's the only instance where we can get anything useful besides IP address.
         if (!"POST".equals(request.getMethod())) {
             return true;
@@ -73,7 +73,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     }
 
     @Override
-    public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
+    public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object o, final ModelAndView modelAndView) throws Exception {
         if (!"POST".equals(request.getMethod())) {
             return;
@@ -95,21 +95,21 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     }
 
     @Autowired
-    public final void setFailureThreshold(@Value("${cas.throttle.failure.threshold:"
+    public void setFailureThreshold(@Value("${cas.throttle.failure.threshold:"
                                             + DEFAULT_FAILURE_THRESHOLD + '}')
                                           final int failureThreshold) {
         this.failureThreshold = failureThreshold;
     }
 
     @Autowired
-    public final void setFailureRangeInSeconds(@Value("${cas.throttle.failure.range.seconds:"
+    public void setFailureRangeInSeconds(@Value("${cas.throttle.failure.range.seconds:"
                                                         + DEFAULT_FAILURE_RANGE_IN_SECONDS + '}')
                                                final int failureRangeInSeconds) {
         this.failureRangeInSeconds = failureRangeInSeconds;
     }
 
     @Autowired
-    public final void setUsernameParameter(@Value("${cas.throttle.username.parameter:"
+    public void setUsernameParameter(@Value("${cas.throttle.username.parameter:"
                                                 + DEFAULT_USERNAME_PARAMETER + '}')
                                                final String usernameParameter) {
         this.usernameParameter = usernameParameter;

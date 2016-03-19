@@ -32,7 +32,7 @@ import java.util.Map;
 @Component("personDirectoryPrincipalResolver")
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Repository of principal attributes to be retrieved.
@@ -58,7 +58,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected String principalAttributeName;
 
     @Autowired
-    public final void setAttributeRepository(@Qualifier("attributeRepository")
+    public void setAttributeRepository(@Qualifier("attributeRepository")
                                              final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
     }

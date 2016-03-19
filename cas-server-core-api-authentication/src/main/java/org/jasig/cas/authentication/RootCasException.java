@@ -61,7 +61,7 @@ public abstract class RootCasException extends Exception {
      * calls {@code getCode()} on the cause of the chained exception rather than the returning
      * the code itself.
      */
-    public final String getCode() {
+    public String getCode() {
         final Throwable cause = this.getCause();
         if (cause instanceof RootCasException) {
             return ((RootCasException) cause).getCode();

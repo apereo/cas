@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,16 +21,14 @@ import javax.validation.constraints.NotNull;
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /** Instance of logging for subclasses. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
-    @NotNull
     @Autowired
     @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** The services manager instance, as the entry point to the registry. **/
-    @NotNull
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;

@@ -377,12 +377,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param centralAuthenticationService The centralAuthenticationService to
      * set.
      */
-    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
     
-    public final void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
+    public void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
         this.argumentExtractor = argumentExtractor;
     }
 
@@ -435,7 +435,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      *
      * @param servicesManager the new services manager
      */
-    public final void setServicesManager(final ServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 

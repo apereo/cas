@@ -55,7 +55,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     private static final long serialVersionUID = -7572316677901391166L;
 
     /** Log instance for logging events, info, warnings, errors, etc. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application event publisher. */
     @Autowired
@@ -119,7 +119,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.ticketFactory = ticketFactory;
     }
 
-    public final void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
+    public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
     }
 
@@ -133,7 +133,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param principalFactory the principal factory
      */
     @Autowired
-    public final void setPrincipalFactory(@Qualifier("principalFactory")
+    public void setPrincipalFactory(@Qualifier("principalFactory")
                                     final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
@@ -143,7 +143,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      *
      * @param e the event
      */
-    protected final void doPublishEvent(final ApplicationEvent e) {
+    protected void doPublishEvent(final ApplicationEvent e) {
         logger.debug("Publishing {}", e);
         this.eventPublisher.publishEvent(e);
     }
@@ -206,7 +206,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @return the authentication satisfied by policy
      * @throws AbstractTicketException the ticket exception
      */
-    protected final Authentication getAuthenticationSatisfiedByPolicy(
+    protected Authentication getAuthenticationSatisfiedByPolicy(
             final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
@@ -226,7 +226,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param ticketGrantingTicket the ticket granting ticket
      * @param registeredService the registered service
      */
-    protected final void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket,
+    protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket,
                                                 final RegisteredService registeredService) {
         final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {

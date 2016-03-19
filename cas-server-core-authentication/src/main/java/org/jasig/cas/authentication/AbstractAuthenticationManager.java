@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     /** Log instance for logging events, errors, warnings, etc. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
@@ -225,7 +225,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param populators Non-null list of metadata populators.
      */
     @Resource(name="authenticationMetadataPopulators")
-    public final void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
+    public void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
         this.authenticationMetaDataPopulators = populators;
     }
 

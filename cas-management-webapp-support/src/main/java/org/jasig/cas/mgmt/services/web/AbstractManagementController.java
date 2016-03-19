@@ -25,11 +25,11 @@ public abstract class AbstractManagementController {
     private static final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
 
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Instance of ServicesManager. */
     @NotNull
-    protected final ReloadableServicesManager servicesManager;
+    protected ReloadableServicesManager servicesManager;
 
     /**
      * Instantiates a new manage registered services multi action controller.

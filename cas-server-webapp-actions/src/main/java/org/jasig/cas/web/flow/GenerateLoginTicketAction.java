@@ -37,7 +37,7 @@ public class GenerateLoginTicketAction {
      * @param context the context
      * @return {@code "generated"}
      */
-    public final String generate(final RequestContext context) {
+    public String generate(final RequestContext context) {
         final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
         logger.debug("Generated login ticket {}", loginTicket);
         WebUtils.putLoginTicket(context, loginTicket);

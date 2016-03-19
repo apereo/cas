@@ -48,7 +48,7 @@ public class AuthenticationViaFormAction {
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull
@@ -75,7 +75,7 @@ public class AuthenticationViaFormAction {
      * @return the event
      * @since 4.1.0
      */
-    public final Event submit(final RequestContext context, final Credential credential,
+    public Event submit(final RequestContext context, final Credential credential,
                               final MessageContext messageContext)  {
         if (!checkLoginTicketIfExists(context)) {
             return returnInvalidLoginTicketEvent(context, messageContext);

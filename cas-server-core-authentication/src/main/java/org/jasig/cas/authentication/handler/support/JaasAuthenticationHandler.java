@@ -97,7 +97,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (this.kerberosKdcSystemProperty != null) {
@@ -152,7 +152,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @since 4.1.0
      */
     @Autowired
-    public final void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
+    public void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
                                                          final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
     }
@@ -174,7 +174,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @since 4.1.0
      */
     @Autowired
-    public final void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
+    public void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
                                                        final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }

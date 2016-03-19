@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class AuthenticationTransaction implements Serializable {
+public class AuthenticationTransaction implements Serializable {
 
     private static final long serialVersionUID = 6213904009424725484L;
 

@@ -55,7 +55,7 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
     }
 
     @Autowired
-    public final void setToUpperCase(@Value("${cas.principal.transform.upperCase:false}") final boolean toUpperCase) {
+    public void setToUpperCase(@Value("${cas.principal.transform.upperCase:false}") final boolean toUpperCase) {
         this.toUpperCase = toUpperCase;
     }
 

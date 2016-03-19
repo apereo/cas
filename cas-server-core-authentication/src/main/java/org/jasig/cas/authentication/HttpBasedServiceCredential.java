@@ -59,7 +59,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     /**
      * @return Returns the callbackUrl.
      */
-    public final URL getCallbackUrl() {
+    public URL getCallbackUrl() {
         return this.callbackUrl;
     }
 
@@ -68,7 +68,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
      *
      * @return the service
      */
-    public final RegisteredService getService() {
+    public RegisteredService getService() {
         return this.service;
     }
 

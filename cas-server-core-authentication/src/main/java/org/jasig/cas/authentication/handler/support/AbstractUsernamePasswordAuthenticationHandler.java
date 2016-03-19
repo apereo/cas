@@ -11,6 +11,8 @@ import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.authentication.support.PasswordPolicyConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.constraints.NotNull;
@@ -31,10 +33,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * PasswordEncoder to be used by subclasses to encode passwords for
      * comparing against a resource.
      */
-    @NotNull
     private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
-
-    @NotNull
+    
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /** The password policy configuration to be used by extensions. */
@@ -44,7 +44,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * {@inheritDoc}
      **/
     @Override
-    protected final HandlerResult doAuthentication(final Credential credential)
+    protected HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
         final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
         if (userPass.getUsername() == null) {
@@ -78,15 +78,15 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      *
      * @return the PasswordEncoder associated with this class.
      */
-    protected final PasswordEncoder getPasswordEncoder() {
+    protected PasswordEncoder getPasswordEncoder() {
         return this.passwordEncoder;
     }
 
-    protected final PrincipalNameTransformer getPrincipalNameTransformer() {
+    protected PrincipalNameTransformer getPrincipalNameTransformer() {
         return this.principalNameTransformer;
     }
     
-    protected final PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
+    protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
     }
 
@@ -97,19 +97,19 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * passwords.
      */
     @Autowired(required=false)
-    public final void setPasswordEncoder(@Qualifier("passwordEncoder")
+    public void setPasswordEncoder(@Qualifier("passwordEncoder")
                                              final PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
     @Autowired(required=false)
-    public final void setPrincipalNameTransformer(@Qualifier("principalNameTransformer")
+    public void setPrincipalNameTransformer(@Qualifier("principalNameTransformer")
                                                       final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
 
     @Autowired(required=false)
-    public final void setPasswordPolicyConfiguration(@Qualifier("passwordPolicyConfiguration")
+    public void setPasswordPolicyConfiguration(@Qualifier("passwordPolicyConfiguration")
                                                          final PasswordPolicyConfiguration passwordPolicyConfiguration) {
         this.passwordPolicyConfiguration = passwordPolicyConfiguration;
     }

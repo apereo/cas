@@ -24,7 +24,7 @@ public class AcceptableUsagePolicyFormAction {
     protected static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 
@@ -65,7 +65,7 @@ public class AcceptableUsagePolicyFormAction {
      *
      * @return the event
      */
-    protected final Event success() {
+    protected Event success() {
         return new EventFactorySupport().success(this);
     }
 
@@ -74,7 +74,7 @@ public class AcceptableUsagePolicyFormAction {
      *
      * @return the event
      */
-    protected final Event accept() {
+    protected Event accept() {
         return new EventFactorySupport().event(this, EVENT_ID_MUST_ACCEPT);
     }
 }

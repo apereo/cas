@@ -8,6 +8,8 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -51,7 +53,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * {@inheritDoc}
      **/
     @Override
-    public final HandlerResult authenticate(final Credential credential)
+    public HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (!preAuthenticate(credential)) {
@@ -87,7 +89,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings the warnings
      * @return the constructed handler result
      */
-    protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
+    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal,
                                                       final List<MessageDescriptor> warnings) {
         return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }

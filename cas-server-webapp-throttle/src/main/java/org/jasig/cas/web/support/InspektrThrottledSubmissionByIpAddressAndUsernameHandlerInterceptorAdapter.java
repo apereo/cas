@@ -164,11 +164,11 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         }
     }
 
-    public final void setApplicationCode(final String applicationCode) {
+    public void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
     }
 
-    public final void setAuthenticationFailureCode(final String authenticationFailureCode) {
+    public void setAuthenticationFailureCode(final String authenticationFailureCode) {
         this.authenticationFailureCode = authenticationFailureCode;
     }
 
