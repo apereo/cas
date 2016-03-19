@@ -30,7 +30,7 @@ import java.util.Map;
  * This is {@link CasAuditTrailConfiguration} that configures relevant audit trail beans.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casAuditTrailConfiguration")
 @EnableAspectJAutoProxy

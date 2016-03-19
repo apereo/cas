@@ -25,7 +25,7 @@ import java.util.Map;
  * This is {@link CasWebAppConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casWebAppConfiguration")
 @Lazy(true)

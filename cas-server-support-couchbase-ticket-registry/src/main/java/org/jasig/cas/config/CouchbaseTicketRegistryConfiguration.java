@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
  * This is {@link CouchbaseTicketRegistryConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("couchbaseTicketRegistryConfiguration")
 @Lazy(true)

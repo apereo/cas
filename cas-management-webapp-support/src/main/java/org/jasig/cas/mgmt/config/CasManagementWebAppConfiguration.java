@@ -54,7 +54,7 @@ import java.util.Properties;
  * This is {@link CasManagementWebAppConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("casManagementWebAppConfiguration")
 @Lazy(true)
@@ -283,7 +283,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the audit trail management
      */
     @Bean(name = "auditTrailManager")
-    public Slf4jLoggingAuditTrailManager auditTrailManager() {
+    public AuditTrailManager auditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 

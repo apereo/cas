@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * semantics before processing the resolution of metadata for a SAML service.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultSamlRegisteredServiceCachingMetadataResolver")
 public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {

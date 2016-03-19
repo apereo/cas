@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -23,6 +24,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Locale;
+
 import java.util.Locale;
 
 /**
@@ -57,7 +60,8 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
      */
     public RegisteredServiceThemeBasedViewResolver() {
     }
-
+    private String suffix;
+    private int order;
     /**
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
      *
@@ -67,10 +71,8 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         super();
         this.servicesManager = servicesManager;
     }
-
-    /**
+    
      * Init.
-     */
     @PostConstruct
     public void init() {
         setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
@@ -98,6 +100,9 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
         final WebApplicationService service;
+                && StringUtils.hasText(registeredService.getTheme())) {
+
+            final InternalResourceView view = BeanUtils.instantiateClass(InternalResourceView.class);
 
         if (requestContext != null) {
             service = WebUtils.getService(this.argumentExtractors, requestContext);
@@ -121,7 +126,27 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
                 final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
                 thymeleafView.setTemplateName(viewUrl);
             }
+            return view;
         }
-        return view;
+        return null;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(final String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(final String suffix) {
+        this.suffix = suffix;
+    }
+    public void setOrder(final int order) {
+        this.order = order;
     }
 }

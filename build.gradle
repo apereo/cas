@@ -1311,6 +1311,14 @@ subprojects {
                             id 'robertoschwald'
                             name 'Robert Oschwald'
                         }
+                        developer {
+                            id 'frett'
+                            name 'Daniel Frett'
+                        }
+                        developer {
+                            id 'dima767'
+                            name 'Dmitriy Kopylenko'
+                        }
                     }
 
                     contributors {
@@ -1325,14 +1333,6 @@ subprojects {
                         contributor {
                             name "Arnaud Lesueur"
                             email "arnaud.lesueur@gmail.com"
-                        }
-                        contributor {
-                            name "Daniel Frett"
-                            email "daniel.frett@ccci.org"
-                        }
-                        contributor {
-                            name "Dmitriy Kopylenko"
-                            email "dima767@gmail.com"
                         }
                         contributor {
                             name "Drew Mazurek"
@@ -1437,13 +1437,10 @@ subprojects {
                             }
                         }
                     }
-
                 }
             }
         }
-
     }
-
 }
 
 /**
@@ -1453,4 +1450,8 @@ task javadoc(type: Javadoc) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, 'javadoc')
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+}
+
+task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+    gradleVersion = project.gradleVersion
 }

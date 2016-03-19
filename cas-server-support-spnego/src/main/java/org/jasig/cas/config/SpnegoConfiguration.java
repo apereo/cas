@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link SpnegoConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("spnegoConfiguration")
 public class SpnegoConfiguration {

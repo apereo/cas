@@ -21,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * This this {@link OAuthConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
 @ComponentScan(basePackages = {"org.pac4j.springframework"})

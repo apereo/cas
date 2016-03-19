@@ -21,7 +21,7 @@ import java.util.Map;
  * Authenticator for user credentials authentication.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("oAuthUserAuthenticator")
 public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {

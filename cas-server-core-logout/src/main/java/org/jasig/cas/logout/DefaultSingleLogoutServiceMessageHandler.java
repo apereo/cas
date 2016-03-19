@@ -19,7 +19,7 @@ import java.net.URL;
  * to logout endpoints processed by the logout manager.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultSingleLogoutServiceMessageHandler")
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {

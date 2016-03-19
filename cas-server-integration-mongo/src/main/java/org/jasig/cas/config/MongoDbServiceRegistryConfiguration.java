@@ -22,7 +22,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
  * This is {@link MongoDbServiceRegistryConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
 public class MongoDbServiceRegistryConfiguration {

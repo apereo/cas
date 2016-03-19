@@ -27,7 +27,7 @@ import java.util.Properties;
  * This is {@link CoreSamlConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("coreSamlConfiguration")
 @Lazy(true)

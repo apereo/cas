@@ -6,7 +6,7 @@ import org.pac4j.http.profile.HttpProfile;
  * Specific profile for OAuth client authentication.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class OAuthClientProfile extends HttpProfile {
 

@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
  * Default OAuth access token factory.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultAccessTokenFactory")
 public class DefaultAccessTokenFactory implements AccessTokenFactory {

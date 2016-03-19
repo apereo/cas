@@ -18,7 +18,7 @@ import java.util.Properties;
  * This this {@link JpaTicketRegistryConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("jpaTicketRegistryConfiguration")
 @Lazy(true)

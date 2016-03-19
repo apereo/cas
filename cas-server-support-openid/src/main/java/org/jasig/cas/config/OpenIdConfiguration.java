@@ -19,7 +19,7 @@ import java.util.Arrays;
  * This is {@link OpenIdConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("openidConfiguration")
 @Lazy(true)

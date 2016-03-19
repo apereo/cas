@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
- * @since 4.3.0`
+ * @since 5.0.0`
  */
 @Component("igniteTicketRegistry")
 public class IgniteTicketRegistry extends AbstractTicketRegistry {

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * This is {@link IgniteTicketRegistryConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("igniteConfiguration")
 @Lazy(true)

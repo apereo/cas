@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
  * This is {@link HttpRequestGeoLocation}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class HttpRequestGeoLocation {
     private String latitude;

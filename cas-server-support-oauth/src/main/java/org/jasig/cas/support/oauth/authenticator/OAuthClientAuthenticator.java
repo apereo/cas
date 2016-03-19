@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
  * Authenticator for client credentials authentication.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("oAuthClientAuthenticator")
 public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {

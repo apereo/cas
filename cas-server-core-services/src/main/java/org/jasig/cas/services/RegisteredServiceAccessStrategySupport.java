@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
- * @since 4.3.0
+ * @since 5.0.0
  */
 public final class RegisteredServiceAccessStrategySupport {
 
