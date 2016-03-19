@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.View;
 
@@ -23,6 +24,9 @@ import java.util.Map;
  */
 public class Cas30ResponseView extends Cas20ResponseView {
 
+    @Value("${cas.attrs.protocol.release:true}")
+    private boolean releaseProtocolAttributes;
+    
     /**
      * Instantiates a new Abstract cas response view.
      */
@@ -40,7 +44,10 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.putAll(getCasPrincipalAttributes(model, registeredService));
-        attributes.putAll(getCasProtocolAuthenticationAttributes(model, registeredService));
+        
+        if (this.releaseProtocolAttributes) {
+            attributes.putAll(getCasProtocolAuthenticationAttributes(model, registeredService));
+        }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
