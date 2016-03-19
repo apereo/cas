@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * This is {@link OAuthAccessTokenExpirationPolicy}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("accessTokenExpirationPolicy")
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {

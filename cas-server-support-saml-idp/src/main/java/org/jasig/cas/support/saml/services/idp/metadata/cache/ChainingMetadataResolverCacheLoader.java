@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
  * to run various validation filters on the metadata before finally caching the resolver.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("chainingMetadataResolverCacheLoader")
 public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {

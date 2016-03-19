@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * handling profile requests for SAML2 Web SSO.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Controller("ssoPostProfileHandlerController")
 public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerController {

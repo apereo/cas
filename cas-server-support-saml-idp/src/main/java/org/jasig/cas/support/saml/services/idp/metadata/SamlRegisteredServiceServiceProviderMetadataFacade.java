@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  * further saml processing. A metadata adaptor is always linked to a saml service.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
