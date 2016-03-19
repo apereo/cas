@@ -20,7 +20,7 @@ import java.util.Set;
  * detect which handler(s) should be resolved for authentication.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("registeredServiceAuthenticationHandlerResolver")
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {

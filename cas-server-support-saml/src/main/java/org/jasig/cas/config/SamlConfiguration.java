@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("samlConfiguration")
 public class SamlConfiguration {

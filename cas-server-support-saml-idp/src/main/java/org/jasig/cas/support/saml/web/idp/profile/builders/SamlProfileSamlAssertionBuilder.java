@@ -26,7 +26,7 @@ import java.util.List;
  * This is {@link SamlProfileSamlAssertionBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("samlProfileSamlAssertionBuilder")
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {

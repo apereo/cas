@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
  * This is {@link CouchbaseServiceRegistryConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
 public class CouchbaseServiceRegistryConfiguration {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * and presents a cipher.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("tgcCipherExecutor")
 public class TGCCipherExecutor extends BaseStringCipherExecutor {

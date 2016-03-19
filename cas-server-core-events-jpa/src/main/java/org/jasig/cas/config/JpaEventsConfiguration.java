@@ -17,7 +17,7 @@ import java.util.Properties;
  * while delegating some to Spring namespaces inside the context config file.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("jpaEventsConfiguration")
 public class JpaEventsConfiguration {

@@ -5,7 +5,7 @@ package org.jasig.cas.logout;
  * for a service that supports SLO should be handled.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface SingleLogoutServiceMessageHandler {
 

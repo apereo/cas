@@ -6,7 +6,7 @@ import java.net.InetAddress;
  * This is {@link GeoLocationService}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface GeoLocationService {
 

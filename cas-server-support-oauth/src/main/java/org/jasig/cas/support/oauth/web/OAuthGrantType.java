@@ -4,7 +4,7 @@ package org.jasig.cas.support.oauth.web;
  * The OAuth grant types (on the access token request).
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 public enum OAuthGrantType {
     /**

@@ -19,7 +19,7 @@ import java.util.List;
  * This is {@link DefaultAuthnContextClassRefBuilder}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component
 @Qualifier("defaultAuthnContextClassRefBuilder")
