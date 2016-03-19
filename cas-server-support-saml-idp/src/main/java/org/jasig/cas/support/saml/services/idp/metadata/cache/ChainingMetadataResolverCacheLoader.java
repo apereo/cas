@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component("chainingMetadataResolverCacheLoader")
 public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Config bean.
@@ -92,7 +92,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     }
 
     @Override
-    public final ChainingMetadataResolver load(final SamlRegisteredService service) throws Exception {
+    public ChainingMetadataResolver load(final SamlRegisteredService service) throws Exception {
         try {
             final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
 

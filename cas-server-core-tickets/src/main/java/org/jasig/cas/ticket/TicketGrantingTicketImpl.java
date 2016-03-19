@@ -130,12 +130,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     @Override
-    public final TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 
     @Override
-    public final Authentication getAuthentication() {
+    public Authentication getAuthentication() {
         return this.authentication;
     }
 
@@ -147,7 +147,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * configuration, the ticket may be considered expired.
      */
     @Override
-    public final synchronized ServiceTicket grantServiceTicket(final String id,
+    public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided, final boolean onlyTrackMostRecentSession) {
 
@@ -209,7 +209,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     @Override
-    public final synchronized Map<String, Service> getServices() {
+    public synchronized Map<String, Service> getServices() {
         return ImmutableMap.copyOf(this.services);
     }
 
@@ -222,7 +222,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * Remove all services of the TGT (at logout).
      */
     @Override
-    public final void removeAllServices() {
+    public void removeAllServices() {
         services.clear();
     }
 
@@ -232,19 +232,19 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return if the TGT has no parent.
      */
     @Override
-    public final boolean isRoot() {
+    public boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
 
 
     @Override
-    public final void markTicketExpired() {
+    public void markTicketExpired() {
         this.expired = Boolean.TRUE;
     }
 
 
     @Override
-    public final TicketGrantingTicket getRoot() {
+    public TicketGrantingTicket getRoot() {
         TicketGrantingTicket current = this;
         TicketGrantingTicket parent = current.getGrantingTicket();
         while (parent != null) {
@@ -260,19 +260,19 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return if the TGT is expired.
      */
     @Override
-    public final boolean isExpiredInternal() {
+    public boolean isExpiredInternal() {
         return this.expired;
     }
 
 
     @Override
-    public final List<Authentication> getSupplementalAuthentications() {
+    public List<Authentication> getSupplementalAuthentications() {
         return this.supplementalAuthentications;
     }
 
 
     @Override
-    public final List<Authentication> getChainedAuthentications() {
+    public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<>();
 
         list.add(getAuthentication());
@@ -286,13 +286,13 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     @Override
-    public final Service getProxiedBy() {
+    public Service getProxiedBy() {
         return this.proxiedBy;
     }
 
 
     @Override
-    public final boolean equals(final Object object) {
+    public boolean equals(final Object object) {
         if (object == null) {
             return false;
         }

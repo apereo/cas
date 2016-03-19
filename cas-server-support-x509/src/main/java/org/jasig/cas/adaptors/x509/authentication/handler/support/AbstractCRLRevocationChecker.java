@@ -25,7 +25,7 @@ import java.util.List;
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Flag to indicate whether all
@@ -147,7 +147,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      *
      * @return CRL for given cert, or null
      */
-    public final X509CRL getCRL(final X509Certificate cert) {
+    public X509CRL getCRL(final X509Certificate cert) {
         final Collection<X509CRL> list = getCRLs(cert);
         if (list != null && !list.isEmpty()) {
             return list.iterator().next();

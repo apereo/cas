@@ -31,7 +31,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     /**
      * The Saml object builder.
      */
-    protected final Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
+    protected Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
 
     private final ArgumentExtractor samlArgumentExtractor;
 

@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 @Component("defaultProxyGrantingTicketFactory")
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Used to generate ids for {@link TicketGrantingTicket}s

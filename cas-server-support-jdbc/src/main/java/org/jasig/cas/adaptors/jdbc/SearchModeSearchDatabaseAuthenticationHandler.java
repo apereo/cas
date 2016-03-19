@@ -47,7 +47,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     private String sql;
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
@@ -82,7 +82,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
      * @param fieldPassword The fieldPassword to set.
      */
     @Autowired
-    public final void setFieldPassword(@Value("${cas.jdbc.authn.search.password:}") final String fieldPassword) {
+    public void setFieldPassword(@Value("${cas.jdbc.authn.search.password:}") final String fieldPassword) {
         this.fieldPassword = fieldPassword;
     }
 
@@ -90,7 +90,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
      * @param fieldUser The fieldUser to set.
      */
     @Autowired
-    public final void setFieldUser(@Value("${cas.jdbc.authn.search.user:}") final String fieldUser) {
+    public void setFieldUser(@Value("${cas.jdbc.authn.search.user:}") final String fieldUser) {
         this.fieldUser = fieldUser;
     }
 
@@ -98,7 +98,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
      * @param tableUsers The tableUsers to set.
      */
     @Autowired
-    public final void setTableUsers(@Value("${cas.jdbc.authn.search.table:}") final String tableUsers) {
+    public void setTableUsers(@Value("${cas.jdbc.authn.search.table:}") final String tableUsers) {
         this.tableUsers = tableUsers;
     }
 

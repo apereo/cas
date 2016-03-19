@@ -62,7 +62,7 @@ import java.util.List;
  */
 @Component("samlObjectSigner")
 public class SamlObjectSigner {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Override signature canonicalization algorithm.
@@ -132,7 +132,7 @@ public class SamlObjectSigner {
      * @return the t
      * @throws SamlException the saml exception
      */
-    public final <T extends SAMLObject> T encode(final T samlObject,
+    public <T extends SAMLObject> T encode(final T samlObject,
                                                  final SamlRegisteredService service,
                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                  final HttpServletResponse response,

@@ -20,7 +20,7 @@ import java.util.zip.InflaterInputStream;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public final class CompressionUtils {
+public class CompressionUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CompressionUtils.class);
 

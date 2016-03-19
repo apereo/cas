@@ -32,7 +32,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
      * {@link org.springframework.web.context.request.RequestContextHolder}.
      * @return the request or null
      */
-    protected final HttpServletRequest getRequest() {
+    protected HttpServletRequest getRequest() {
         return WebUtils.getHttpServletRequest();
     }
 }

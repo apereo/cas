@@ -61,7 +61,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param cipher the cipher
      * @param registeredService the registered service
      */
-    protected final void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
+    protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
                                                       final Map<String, String> cachedAttributesToEncode,
                                                       final RegisteredServiceCipherExecutor cipher,
                                                       final RegisteredService registeredService) {
@@ -78,7 +78,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param cipher the cipher
      * @param registeredService the registered service
      */
-    protected final void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
+    protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
                                                        final Map<String, String> cachedAttributesToEncode,
                                                        final RegisteredServiceCipherExecutor cipher,
                                                        final RegisteredService registeredService) {
@@ -95,7 +95,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param cipher the cipher
      * @param registeredService the registered service
      */
-    protected final void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
+    protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
                                                            final Map<String, String> cachedAttributesToEncode,
                                                            final String cachedAttributeName,
                                                            final RegisteredServiceCipherExecutor cipher,

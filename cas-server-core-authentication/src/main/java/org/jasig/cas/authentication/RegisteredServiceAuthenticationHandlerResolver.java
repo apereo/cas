@@ -24,7 +24,7 @@ import java.util.Set;
  */
 @Component("registeredServiceAuthenticationHandlerResolver")
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Services manager.

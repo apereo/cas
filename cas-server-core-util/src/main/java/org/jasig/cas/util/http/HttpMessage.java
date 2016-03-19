@@ -61,19 +61,19 @@ public class HttpMessage {
         return this.asynchronous;
     }
 
-    protected final URL getUrl() {
+    protected URL getUrl() {
         return this.url;
     }
     
-    protected final String getMessage() {
+    protected String getMessage() {
         return this.formatOutputMessageInternal(this.message);
     }
     
-    protected final String getContentType() {
+    protected String getContentType() {
         return this.contentType;
     }
     
-    protected final void setContentType(final String type) {
+    protected void setContentType(final String type) {
         this.contentType = type;
     }
     

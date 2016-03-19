@@ -40,10 +40,10 @@ import java.util.Map;
 @Component("accountStateHandler")
 public class DefaultAccountStateHandler implements AccountStateHandler {
     /** Map of account state error to CAS authentication exception. */
-    protected final Map<AccountState.Error, LoginException> errorMap;
+    protected Map<AccountState.Error, LoginException> errorMap;
 
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Instantiates a new account state handler, that populates

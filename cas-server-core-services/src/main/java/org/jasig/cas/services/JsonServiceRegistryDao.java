@@ -157,7 +157,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
     
     @Override
-    public final RegisteredService save(final RegisteredService service) {
+    public RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
             LOGGER.debug("Service id not set. Calculating id based on system time...");
             ((AbstractRegisteredService) service).setId(System.nanoTime());
@@ -178,7 +178,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    public final synchronized boolean delete(final RegisteredService service) {
+    public synchronized boolean delete(final RegisteredService service) {
         try {
             final File f = makeFile(service);
             final boolean result = f.delete();
@@ -195,7 +195,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    public final synchronized List<RegisteredService> load() {
+    public synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
         final int[] errorCount = {0};
         final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[] {FILE_EXTENSION}, true);
@@ -225,7 +225,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    public final RegisteredService findServiceById(final long id) {
+    public RegisteredService findServiceById(final long id) {
         return serviceMap.get(id);
     }
 

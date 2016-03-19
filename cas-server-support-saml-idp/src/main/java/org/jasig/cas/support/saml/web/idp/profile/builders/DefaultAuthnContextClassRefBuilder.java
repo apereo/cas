@@ -24,7 +24,7 @@ import java.util.List;
 @Component
 @Qualifier("defaultAuthnContextClassRefBuilder")
 public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefBuilder {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public String build(final Assertion assertion, final AuthnRequest authnRequest,

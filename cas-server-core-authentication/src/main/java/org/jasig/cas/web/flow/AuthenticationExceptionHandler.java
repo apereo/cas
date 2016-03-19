@@ -82,7 +82,7 @@ public class AuthenticationExceptionHandler {
         this.errors = errors;
     }
 
-    public final List<Class<? extends Exception>> getErrors() {
+    public List<Class<? extends Exception>> getErrors() {
         return Collections.unmodifiableList(this.errors);
     }
     

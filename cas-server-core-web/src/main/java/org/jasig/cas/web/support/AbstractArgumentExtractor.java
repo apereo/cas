@@ -20,7 +20,7 @@ import java.util.List;
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The factory responsible for creating service objects based on the arguments extracted. */
     @Resource(name="serviceFactoryList")
@@ -54,7 +54,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     }
 
     @Override
-    public final WebApplicationService extractService(final HttpServletRequest request) {
+    public WebApplicationService extractService(final HttpServletRequest request) {
         final WebApplicationService service = extractServiceInternal(request);
 
         if (service == null) {
@@ -74,11 +74,11 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      */
     protected abstract WebApplicationService extractServiceInternal(HttpServletRequest request);
 
-    public final ServiceFactory<? extends WebApplicationService> getServiceFactory() {
+    public ServiceFactory<? extends WebApplicationService> getServiceFactory() {
         return serviceFactoryList.get(0);
     }
 
-    protected final List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
+    protected List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
         return serviceFactoryList;
     }
 

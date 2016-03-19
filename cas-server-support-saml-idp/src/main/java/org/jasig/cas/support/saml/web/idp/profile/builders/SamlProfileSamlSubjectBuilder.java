@@ -31,7 +31,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     private SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder;
 
     @Override
-    public final Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                                final Assertion assertion, final SamlRegisteredService service,
                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {

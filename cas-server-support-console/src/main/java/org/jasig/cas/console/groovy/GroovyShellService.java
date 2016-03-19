@@ -49,7 +49,7 @@ public class GroovyShellService {
 
     private static final String FILE_EXTENSION = "groovy";
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ServerSocket serverSocket;
 

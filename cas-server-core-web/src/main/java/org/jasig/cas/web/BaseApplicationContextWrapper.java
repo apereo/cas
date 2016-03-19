@@ -28,7 +28,7 @@ import java.util.Map;
 @Component
 public abstract class BaseApplicationContextWrapper implements ApplicationContextAware {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application context. */
     protected ApplicationContext applicationContext;
@@ -44,7 +44,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
      * @param handler the handler
      * @param resolver the resolver
      */
-    protected final void addAuthenticationHandlerPrincipalResolver(final AuthenticationHandler handler,
+    protected void addAuthenticationHandlerPrincipalResolver(final AuthenticationHandler handler,
                                                               final PrincipalResolver resolver) {
         logger.debug("Adding {} and {} to application context", handler, resolver);
         final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
@@ -57,7 +57,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
      *
      * @param handler the handler
      */
-    protected final void addAuthenticationHandler(final AuthenticationHandler handler) {
+    protected void addAuthenticationHandler(final AuthenticationHandler handler) {
         addAuthenticationHandlerPrincipalResolver(handler, null);
     }
 
@@ -65,7 +65,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
      * Add authentication metadata populator.
      * @param populator the populator
      */
-    protected final void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
+    protected void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
         addAuthenticationMetadataPopulator(populator, 0);
     }
 
@@ -75,7 +75,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
      * @param populator the populator
      * @param index     the index
      */
-    protected final void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator, final int index) {
+    protected void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator, final int index) {
         logger.debug("Adding {} to application context", populator);
         final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
                 applicationContext.getBean("authenticationMetadataPopulators", List.class);
@@ -88,13 +88,13 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
      *
      * @param svc the svc
      */
-    protected final void addRegisteredServiceToServicesManager(final RegisteredService svc) {
+    protected void addRegisteredServiceToServicesManager(final RegisteredService svc) {
         logger.debug("Adding {} to application context services", svc);
         final ServicesManager manager = getServicesManager();
         manager.save(svc);
     }
 
-    protected final ReloadableServicesManager getServicesManager() {
+    protected ReloadableServicesManager getServicesManager() {
         return this.applicationContext.getBean("servicesManager", ReloadableServicesManager.class);
     }
         
@@ -126,7 +126,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
      * @param serviceName the service name
      * @param gen the gen
      */
-    protected final void addServiceTicketUniqueIdGenerator(final String serviceName,
+    protected void addServiceTicketUniqueIdGenerator(final String serviceName,
                                                            final UniqueTicketIdGenerator gen) {
         logger.debug("Adding [{}] for {} application context", serviceName, gen);
         final Map<String, UniqueTicketIdGenerator> map =

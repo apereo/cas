@@ -37,7 +37,7 @@ public class DelegatingController extends AbstractController {
      * @throws Exception if an error occurs during request handling
      */
     @Override
-    protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
                                                     throws Exception {
         for (final AbstractDelegateController delegate : delegates) {
             if (delegate.canHandle(request, response)) {
@@ -75,7 +75,7 @@ public class DelegatingController extends AbstractController {
     /**
      * @param failureView The failureView to set.
      */
-    public final void setFailureView(final String failureView) {
+    public void setFailureView(final String failureView) {
         this.failureView = failureView;
     }
 }

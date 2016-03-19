@@ -23,11 +23,11 @@ import java.util.Map;
  */
 @Component("defaultProxyTicketFactory")
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     @NotNull
-    protected final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    protected UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
     @NotNull
@@ -69,11 +69,11 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         return (T) this;
     }
 
-    public final boolean isOnlyTrackMostRecentSession() {
+    public boolean isOnlyTrackMostRecentSession() {
         return onlyTrackMostRecentSession;
     }
 
-    public final void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
+    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
         this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 

@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class SamlRegisteredServiceServiceProviderMetadataFacade {
+public class SamlRegisteredServiceServiceProviderMetadataFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
 
     private final SPSSODescriptor ssoDescriptor;

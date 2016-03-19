@@ -147,7 +147,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     }
 
     @Override
-    public final TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 

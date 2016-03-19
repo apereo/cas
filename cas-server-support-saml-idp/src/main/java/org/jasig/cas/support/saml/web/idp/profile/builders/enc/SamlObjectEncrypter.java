@@ -48,7 +48,7 @@ import java.util.List;
  */
 @Component("samlObjectEncrypter")
 public class SamlObjectEncrypter {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The encryption cert file.
@@ -104,7 +104,7 @@ public class SamlObjectEncrypter {
      * @return the t
      * @throws SamlException the saml exception
      */
-    public final EncryptedAssertion encode(final Assertion samlObject,
+    public EncryptedAssertion encode(final Assertion samlObject,
                                            final SamlRegisteredService service,
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final HttpServletResponse response,

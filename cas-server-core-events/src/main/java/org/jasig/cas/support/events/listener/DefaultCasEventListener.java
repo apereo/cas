@@ -24,7 +24,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
  */
 @Component("defaultCasEventListener")
 public class DefaultCasEventListener {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired(required = false)
     @Qualifier("casEventRepository")

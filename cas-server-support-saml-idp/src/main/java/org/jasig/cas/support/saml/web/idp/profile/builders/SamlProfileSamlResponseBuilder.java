@@ -74,7 +74,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     private SamlObjectEncrypter samlObjectEncrypter;
 
     @Override
-    public final Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
+    public Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
                                 final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
                                 final SamlRegisteredService service,
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {

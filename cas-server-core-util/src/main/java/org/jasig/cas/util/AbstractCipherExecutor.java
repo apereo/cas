@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private AesKey signingKey;
 

@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
 public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
 
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Monitor name. */
     protected String name;

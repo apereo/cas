@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0.2
  */
-public final class TestUtils {
+public class TestUtils {
 
     public static final String CONST_USERNAME = "test";
 

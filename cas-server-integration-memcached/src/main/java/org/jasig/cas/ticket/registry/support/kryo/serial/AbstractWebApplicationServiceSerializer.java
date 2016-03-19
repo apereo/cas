@@ -17,7 +17,7 @@ import com.esotericsoftware.kryo.io.Output;
 public abstract class AbstractWebApplicationServiceSerializer<T extends AbstractWebApplicationService>
         extends Serializer<T> {
     /** FieldHelper instance. **/
-    protected final FieldHelper fieldHelper;
+    protected FieldHelper fieldHelper;
 
     /**
      * Instantiates a new abstract web application service serializer.

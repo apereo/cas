@@ -55,7 +55,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
     @Autowired(required=false)
     @Override
-    public final void setPrincipalNameTransformer(@Qualifier("tokenPrincipalNameTransformer")
+    public void setPrincipalNameTransformer(@Qualifier("tokenPrincipalNameTransformer")
                                             final PrincipalNameTransformer principalNameTransformer) {
         if (principalNameTransformer != null) {
             super.setPrincipalNameTransformer(principalNameTransformer);

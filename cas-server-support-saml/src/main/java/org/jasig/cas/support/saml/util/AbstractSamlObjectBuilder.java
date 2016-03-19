@@ -75,7 +75,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private  static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Create a new SAML object.
@@ -84,7 +84,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param objectType the object type
      * @return the t
      */
-    public final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
+    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         final QName qName = getSamlObjectQName(objectType);
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
@@ -135,7 +135,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param elementName the element name
      * @return the xS string
      */
-    protected final XSString newAttributeValue(final Object value, final QName elementName) {
+    protected XSString newAttributeValue(final Object value, final QName elementName) {
         final XSStringBuilder attrValueBuilder = new XSStringBuilder();
         final XSString stringValue = attrValueBuilder.buildObject(elementName, XSString.TYPE_NAME);
         if (value instanceof String) {
@@ -199,7 +199,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param publicKey the public key
      * @return the response
      */
-    public final String signSamlResponse(final String samlResponse,
+    public String signSamlResponse(final String samlResponse,
                                          final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXml(samlResponse);
 

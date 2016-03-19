@@ -31,7 +31,7 @@ public class Pair<A, B> {
      * Return the first object of the pair.
      * @return the first object of the pair.
      */
-    public final A getFirst() {
+    public A getFirst() {
         return this.first;
     }
 
@@ -39,7 +39,7 @@ public class Pair<A, B> {
      * Return the second object of the pair.
      * @return the second object of the pair.
      */
-    public final B getSecond() {
+    public B getSecond() {
         return this.second;
     }
 }

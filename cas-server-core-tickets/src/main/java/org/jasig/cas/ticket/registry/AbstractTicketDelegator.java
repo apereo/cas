@@ -51,12 +51,12 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
     }
 
     @Override
-    public final String getId() {
+    public String getId() {
         return this.ticket.getId();
     }
 
     @Override
-    public final boolean isExpired() {
+    public boolean isExpired() {
         if (!callback) {
             return this.ticket.isExpired();
         }
@@ -67,7 +67,7 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
     }
 
     @Override
-    public final TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getGrantingTicket() {
         final TicketGrantingTicket old = this.ticket.getGrantingTicket();
 
         if (old == null || !callback) {
@@ -78,12 +78,12 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
     }
 
     @Override
-    public final ZonedDateTime getCreationTime() {
+    public ZonedDateTime getCreationTime() {
         return this.ticket.getCreationTime();
     }
 
     @Override
-    public final int getCountOfUses() {
+    public int getCountOfUses() {
         return this.ticket.getCountOfUses();
     }
 

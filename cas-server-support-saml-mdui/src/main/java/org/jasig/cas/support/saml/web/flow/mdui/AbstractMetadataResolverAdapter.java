@@ -36,11 +36,11 @@ import java.util.Set;
  */
 public abstract class AbstractMetadataResolverAdapter implements MetadataResolverAdapter {
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Metadata resources along with filters to perform validation. */
     @NotNull
-    protected final Map<Resource, MetadataFilterChain> metadataResources;
+    protected Map<Resource, MetadataFilterChain> metadataResources;
 
     /** Whether the metadata resolver should require valid metadata. Default is true. */
     protected boolean requireValidMetadata = true;
@@ -107,7 +107,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * Build metadata resolver aggregate.
      *
      */
-    protected final void buildMetadataResolverAggregate() {
+    protected void buildMetadataResolverAggregate() {
         buildMetadataResolverAggregate(null);
     }
 
@@ -116,7 +116,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * and attempts to resolve the metadata.
      * @param entityId the entity id
      */
-    public final void buildMetadataResolverAggregate(final String entityId) {
+    public void buildMetadataResolverAggregate(final String entityId) {
         try {
             final Set<Map.Entry<Resource, MetadataFilterChain>> entries = metadataResources.entrySet();
             for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {

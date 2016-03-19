@@ -34,11 +34,11 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
      *
      * @return a fully created JdbcTemplate.
      */
-    protected final JdbcTemplate getJdbcTemplate() {
+    protected JdbcTemplate getJdbcTemplate() {
         return this.jdbcTemplate;
     }
 
-    protected final DataSource getDataSource() {
+    protected DataSource getDataSource() {
         return this.dataSource;
     }
 }

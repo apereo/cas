@@ -24,7 +24,7 @@ import java.time.ZonedDateTime;
  * @since 3.4.6
  *
  */
-public final class CertUtils {
+public class CertUtils {
 
     /** X509 certificate type. */
     public static final String X509_CERTIFICATE_TYPE = "X509";

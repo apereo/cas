@@ -55,7 +55,7 @@ public abstract class AbstractCasView extends AbstractView {
     protected ServicesManager servicesManager;
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Gets the assertion from the model.
@@ -63,7 +63,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the assertion from
      */
-    protected final Assertion getAssertionFrom(final Map<String, Object> model) {
+    protected Assertion getAssertionFrom(final Map<String, Object> model) {
         return (Assertion) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION);
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the error code from
      */
-    protected final String getErrorCodeFrom(final Map<String, Object> model) {
+    protected String getErrorCodeFrom(final Map<String, Object> model) {
         return model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE).toString();
     }
 
@@ -83,7 +83,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the error description from
      */
-    protected final String getErrorDescriptionFrom(final Map<String, Object> model) {
+    protected String getErrorDescriptionFrom(final Map<String, Object> model) {
         return model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION).toString();
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the pgt id
      */
-    protected final String getProxyGrantingTicketId(final Map<String, Object> model) {
+    protected String getProxyGrantingTicketId(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
     }
     /**
@@ -102,7 +102,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the pgt-iou id
      */
-    protected final String getProxyGrantingTicketIou(final Map<String, Object> model) {
+    protected String getProxyGrantingTicketIou(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the assertion from
      * @since 4.1.0
      */
-    protected final Authentication getPrimaryAuthenticationFrom(final Map<String, Object> model) {
+    protected Authentication getPrimaryAuthenticationFrom(final Map<String, Object> model) {
         return getAssertionFrom(model).getPrimaryAuthentication();
     }
 
@@ -125,7 +125,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the model attributes
      */
-    protected final Map<String, Object> getModelAttributes(final Map<String, Object> model) {
+    protected Map<String, Object> getModelAttributes(final Map<String, Object> model) {
         return (Map<String, Object>) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
     }
 
@@ -135,7 +135,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the authentication attribute
      */
-    protected final Map<String, Object> getAuthenticationAttributes(final Map<String, Object> model) {
+    protected Map<String, Object> getAuthenticationAttributes(final Map<String, Object> model) {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
         return authn.getAttributes();
     }
@@ -147,7 +147,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param attributeName the attribute name
      * @return the authentication attribute
      */
-    protected final String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
+    protected String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
         return (String) authn.getAttributes().get(attributeName);
     }
@@ -158,7 +158,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the assertion from
      * @since 4.1.0
      */
-    protected final Principal getPrincipal(final Map<String, Object> model) {
+    protected Principal getPrincipal(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getPrincipal();
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
      * @since 4.1.0
      */
-    protected final Map<String, Object> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
+    protected Map<String, Object> getPrincipalAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrincipal(model).getAttributes());
     }
 
@@ -184,7 +184,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
      * @since 4.1.0
      */
-    protected final Map<String, Object> getAuthenticationAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
+    protected Map<String, Object> getAuthenticationAttributesAsMultiValuedAttributes(final Map<String, Object> model) {
         return convertAttributeValuesToMultiValuedObjects(getPrimaryAuthenticationFrom(model).getAttributes());
     }
 
@@ -195,7 +195,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return true if remember-me, false if otherwise.
      */
-    protected final boolean isRememberMeAuthentication(final Map<String, Object> model) {
+    protected boolean isRememberMeAuthentication(final Map<String, Object> model) {
         final Map<String, Object> authnAttributes = getAuthenticationAttributesAsMultiValuedAttributes(model);
         final Collection authnMethod = (Collection) authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
         return authnMethod != null && authnMethod.contains(Boolean.TRUE) && isAssertionBackedByNewLogin(model);
@@ -208,7 +208,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return true/false.
      */
-    protected final boolean isAssertionBackedByNewLogin(final Map<String, Object> model) {
+    protected boolean isAssertionBackedByNewLogin(final Map<String, Object> model) {
         return getAssertionFrom(model).isFromNewLogin();
     }
 
@@ -238,7 +238,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the authentication date
      * @since 4.1.0
      */
-    protected final ZonedDateTime getAuthenticationDate(final Map<String, Object> model) {
+    protected ZonedDateTime getAuthenticationDate(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getAuthenticationDate();
     }
 
@@ -248,7 +248,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the validated service from
      */
-    protected final Service getServiceFrom(final Map<String, Object> model) {
+    protected Service getServiceFrom(final Map<String, Object> model) {
         return (Service) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
     }
 
@@ -258,7 +258,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the chained authentications
      */
-    protected final Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
+    protected Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
         final Collection<Authentication> chainedAuthenticationsToReturn = new ArrayList<>();
 
         final Assertion assertion = getAssertionFrom(model);
@@ -358,7 +358,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param key the key
      * @param value the value
      */
-    protected final void putIntoModel(final Map<String, Object> model, final String key, final Object value){
+    protected void putIntoModel(final Map<String, Object> model, final String key, final Object value){
         model.put(key, value);
     }
 
@@ -368,7 +368,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @param values the values
      */
-    protected final void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values){
+    protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values){
         model.putAll(values);
     }
 
@@ -406,7 +406,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param successResponse the success response
      * @since 4.1.0
      */
-    public final void setSuccessResponse(final boolean successResponse) {
+    public void setSuccessResponse(final boolean successResponse) {
         this.successResponse = successResponse;
     }
 }

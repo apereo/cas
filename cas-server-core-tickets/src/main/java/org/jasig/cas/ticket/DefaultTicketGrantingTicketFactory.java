@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @Component("defaultTicketGrantingTicketFactory")
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s

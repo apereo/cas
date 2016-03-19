@@ -5,24 +5,24 @@ public class Base64 {
     /*  ******** P U B L I C F I E L D S ******** */
 
     /** No options specified. Value is zero. */
-    public final static int NO_OPTIONS = 0;
+    public static int NO_OPTIONS = 0;
 
     /** Specify encoding in first bit. Value is one. */
-    public final static int ENCODE = 1;
+    public static int ENCODE = 1;
 
     /** Specify decoding in first bit. Value is zero. */
-    public final static int DECODE = 0;
+    public static int DECODE = 0;
 
     /** Specify that data should be gzip-compressed in second bit. Value is two. */
-    public final static int GZIP = 2;
+    public static int GZIP = 2;
 
     /**
      * Specify that gzipped data should <em>not</em> be automatically gunzipped.
      */
-    public final static int DONT_GUNZIP = 4;
+    public static int DONT_GUNZIP = 4;
 
     /** Do break lines when encoding. Value is 8. */
-    public final static int DO_BREAK_LINES = 8;
+    public static int DO_BREAK_LINES = 8;
 
     /**
      * Encode using Base64-like encoding that is URL- and Filename-safe as
@@ -33,14 +33,14 @@ public class Base64 {
      * very least should not be called Base64 without also specifying that is
      * was encoded using the URL- and Filename-safe dialect.
      */
-    public final static int URL_SAFE = 16;
+    public static int URL_SAFE = 16;
 
     /**
      * Encode using the special "ordered" dialect of Base64 described here: <a
      * href="http://www.faqs.org/qa/rfcc-1940.html">http://www.faqs.org/qa/rfcc-
      * 1940.html</a>.
      */
-    public final static int ORDERED = 32;
+    public static int ORDERED = 32;
 
     /*  ******** P R I V A T E F I E L D S ******** */
 

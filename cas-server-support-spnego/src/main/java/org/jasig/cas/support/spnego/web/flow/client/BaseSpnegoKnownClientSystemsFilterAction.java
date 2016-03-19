@@ -33,7 +33,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private static final int DEFAULT_TIMEOUT = 2000;
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Pattern of ip addresses to check. **/
     @Value("${cas.spnego.ip.pattern:127.+}")
@@ -93,7 +93,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * {@link #no()} otherwise.
      */
     @Override
-    protected final Event doExecute(final RequestContext context) {
+    protected Event doExecute(final RequestContext context) {
         final String remoteIp = getRemoteIp(context);
         logger.debug("Current user IP {}", remoteIp);
         return shouldDoSpnego(remoteIp) ? yes() : no();
@@ -167,7 +167,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * Alternative header to be used for retrieving the remote system IP address.
      * @param alternativeRemoteHostAttribute the alternative remote host attribute
      */
-    public final void setAlternativeRemoteHostAttribute(@NotNull final String alternativeRemoteHostAttribute) {
+    public void setAlternativeRemoteHostAttribute(@NotNull final String alternativeRemoteHostAttribute) {
         this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
     }
 
@@ -175,13 +175,13 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * Regular expression string to define IPs which should be considered.
      * @param ipsToCheckPattern the ips to check as a regex pattern
      */
-    public final void setIpsToCheckPattern(@NotNull final String ipsToCheckPattern) {
+    public void setIpsToCheckPattern(@NotNull final String ipsToCheckPattern) {
         this.ipsToCheckPattern = Pattern.compile(ipsToCheckPattern);
     }
 
 
     @Override
-    public final String toString() {
+    public String toString() {
         return new ToStringBuilder(this)
                 .append("ipsToCheckPattern", this.ipsToCheckPattern)
                 .append("alternativeRemoteHostAttribute", this.alternativeRemoteHostAttribute)
@@ -194,7 +194,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * fall-through authentication mechanisms.
      * @param timeout # of milliseconds to wait for a DNS request to return
      */
-    public final void setTimeout(final long timeout) {
+    public void setTimeout(final long timeout) {
         this.timeout = timeout;
     }
 

@@ -55,7 +55,7 @@ import java.security.SecureRandom;
  * @since 5.0.0
  */
 public abstract class AbstractSamlProfileHandlerController {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Saml object signer.

@@ -58,7 +58,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
         }
     }
 
-    public final String getTestDN() {
+    public String getTestDN() {
         return DN;
     }
 }

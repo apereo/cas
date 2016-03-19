@@ -98,7 +98,7 @@ public class TicketsResource {
      * @throws JsonProcessingException in case of JSON parsing failure
      */
     @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                    final HttpServletRequest request) throws JsonProcessingException {
         try (Formatter fmt = new Formatter()) {
 
@@ -149,7 +149,7 @@ public class TicketsResource {
      * @return {@link ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+    public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
@@ -181,7 +181,7 @@ public class TicketsResource {
      * {@link HttpStatus#OK} when successful.
      */
     @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
-    public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
+    public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }

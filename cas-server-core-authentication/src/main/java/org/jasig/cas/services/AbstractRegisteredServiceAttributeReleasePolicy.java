@@ -22,7 +22,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     private static final long serialVersionUID = 5325460875620586503L;
 
     /** The logger. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The attribute filter. */
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
@@ -37,11 +37,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     private boolean authorizedToReleaseProxyGrantingTicket;
 
     @Override
-    public final void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
+    public void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
         this.registeredServiceAttributeFilter = filter;
     }
 
-    public final void setPrincipalAttributesRepository(final PrincipalAttributesRepository repository) {
+    public void setPrincipalAttributesRepository(final PrincipalAttributesRepository repository) {
         this.principalAttributesRepository = repository;
     }
 
@@ -54,7 +54,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      *
      * @return the attribute filter
      */
-    public final RegisteredServiceAttributeFilter getAttributeFilter() {
+    public RegisteredServiceAttributeFilter getAttributeFilter() {
         return this.registeredServiceAttributeFilter;
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     @Override
-    public final Map<String, Object> getAttributes(final Principal p) {
+    public Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> principalAttributes = this.principalAttributesRepository == null
                 ? p.getAttributes() : this.principalAttributesRepository.getAttributes(p);
         final Map<String, Object> attributesToRelease = getAttributesInternal(principalAttributes);

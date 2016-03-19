@@ -58,7 +58,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         final String password = getPasswordEncoder().encode(credential.getPassword());
@@ -98,7 +98,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      * @param failoverOnAuthenticationFailure boolean on whether to failover or
      * not.
      */
-    public final void setFailoverOnAuthenticationFailure(
+    public void setFailoverOnAuthenticationFailure(
             final boolean failoverOnAuthenticationFailure) {
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
     }
@@ -109,11 +109,11 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      *
      * @param failoverOnException boolean on whether to failover or not.
      */
-    public final void setFailoverOnException(final boolean failoverOnException) {
+    public void setFailoverOnException(final boolean failoverOnException) {
         this.failoverOnException = failoverOnException;
     }
 
-    public final void setServers(final List<RadiusServer> servers) {
+    public void setServers(final List<RadiusServer> servers) {
         this.servers = servers;
     }
 }

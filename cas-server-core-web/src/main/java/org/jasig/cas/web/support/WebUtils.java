@@ -34,7 +34,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class WebUtils {
+public class WebUtils {
 
     /** Default CAS Servlet name. **/
     public static final String CAS_SERVLET_NAME = "cas";

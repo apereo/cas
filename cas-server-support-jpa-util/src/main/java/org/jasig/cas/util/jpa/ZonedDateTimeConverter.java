@@ -16,7 +16,7 @@ import org.jasig.cas.util.DateTimeUtils;
 public class ZonedDateTimeConverter implements AttributeConverter<ZonedDateTime, Date> {
 
     @Override
-    public final Date convertToDatabaseColumn(final ZonedDateTime zonedDateTime){
+    public Date convertToDatabaseColumn(final ZonedDateTime zonedDateTime){
         return DateTimeUtils.dateOf(zonedDateTime);
     }
 

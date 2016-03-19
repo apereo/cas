@@ -37,7 +37,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     private static final long serialVersionUID = 1245279151345635245L;
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Is the service allowed at all? **/
     private boolean enabled = true;
@@ -92,7 +92,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.ssoEnabled = ssoEnabled;
     }
 
-    public final void setEnabled(final boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -100,7 +100,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Set to enable/authorize this service.
      * @param ssoEnabled true to enable service
      */
-    public final void setSsoEnabled(final boolean ssoEnabled) {
+    public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
 
@@ -117,11 +117,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Default requires that all attributes be present and match the principal's.
      * @param requireAllAttributes the require all attributes
      */
-    public final void setRequireAllAttributes(final boolean requireAllAttributes) {
+    public void setRequireAllAttributes(final boolean requireAllAttributes) {
         this.requireAllAttributes = requireAllAttributes;
     }
 
-    public final boolean isRequireAllAttributes() {
+    public boolean isRequireAllAttributes() {
         return this.requireAllAttributes;
     }
 
@@ -165,7 +165,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      *
      * @param requiredAttributes the required attributes
      */
-    public final void setRequiredAttributes(final Map<String, Set<String>> requiredAttributes) {
+    public void setRequiredAttributes(final Map<String, Set<String>> requiredAttributes) {
         this.requiredAttributes = requiredAttributes;
     }
 

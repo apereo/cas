@@ -30,7 +30,7 @@ import java.sql.SQLException;
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (getDataSource() == null) {

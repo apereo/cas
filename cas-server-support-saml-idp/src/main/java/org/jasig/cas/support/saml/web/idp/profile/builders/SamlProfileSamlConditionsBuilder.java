@@ -30,7 +30,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
     private int skewAllowance;
 
     @Override
-    public final Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                                   final Assertion assertion, final SamlRegisteredService service,
                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {

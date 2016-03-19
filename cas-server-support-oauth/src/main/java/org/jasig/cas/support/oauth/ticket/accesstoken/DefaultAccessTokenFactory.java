@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 @Component("defaultAccessTokenFactory")
 public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     @NotNull

@@ -102,7 +102,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
         try {
             final RememberMeUsernamePasswordCredential credential =

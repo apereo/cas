@@ -36,7 +36,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private String sql;
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {

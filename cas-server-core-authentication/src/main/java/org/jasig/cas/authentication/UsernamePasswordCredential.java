@@ -43,21 +43,21 @@ public class UsernamePasswordCredential implements Credential, Serializable {
         this.password = password;
     }
 
-    public final String getPassword() {
+    public String getPassword() {
         return this.password;
     }
 
 
-    public final void setPassword(final String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
 
-    public final String getUsername() {
+    public String getUsername() {
         return this.username;
     }
 
-    public final void setUsername(final String userName) {
+    public void setUsername(final String userName) {
         this.username = userName;
     }
 

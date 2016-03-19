@@ -48,7 +48,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         try {
@@ -75,7 +75,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param fileName The fileName to set.
      */
     @Autowired
-    public final void setFileName(@Value("${file.authn.filename:}") final Resource fileName) {
+    public void setFileName(@Value("${file.authn.filename:}") final Resource fileName) {
         this.fileName = fileName;
     }
 
@@ -83,7 +83,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param separator The separator to set.
      */
     @Autowired
-    public final void setSeparator(@Value("${file.authn.separator:" + DEFAULT_SEPARATOR + '}') final String separator) {
+    public void setSeparator(@Value("${file.authn.separator:" + DEFAULT_SEPARATOR + '}') final String separator) {
         this.separator = separator;
     }
 

@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState, Job {
 
     /** The Slf4j logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${ticket.registry.cleaner.enabled:true}")
     private boolean cleanerEnabled;
@@ -103,7 +103,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return specified ticket from the registry
      */
     @Override
-    public final <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
         final Ticket ticket = this.getTicket(ticketId);
@@ -136,7 +136,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     @Override
-    public final boolean deleteTicket(final String ticketId) {
+    public boolean deleteTicket(final String ticketId) {
         if (ticketId == null) {
             return false;
         }
@@ -220,7 +220,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @param ticket the ticket
      * @return the proxied ticket instance
      */
-    protected final Ticket getProxiedTicketInstance(final Ticket ticket) {
+    protected Ticket getProxiedTicketInstance(final Ticket ticket) {
         if (ticket == null) {
             return null;
         }
@@ -344,7 +344,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     /**
      * Common code to go over expired tickets and clean them up.
      **/
-    protected final void cleanupTickets() {
+    protected void cleanupTickets() {
         try {
             if (preCleanupTickets()) {
                 logger.debug("Beginning ticket cleanup...");
@@ -435,7 +435,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     @Override
-    public final void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             cleanupTickets();

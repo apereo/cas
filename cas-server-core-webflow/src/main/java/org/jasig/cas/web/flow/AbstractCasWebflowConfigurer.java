@@ -124,7 +124,7 @@ public abstract class AbstractCasWebflowConfigurer {
 
     private static final String FLOW_ID_LOGIN = "login";
 
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -144,7 +144,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * Initialize.
      */
     @PostConstruct
-    public final void initialize() {
+    public void initialize() {
         try {
             logger.debug("Initializing CAS webflow configuration...");
             doInitialize();

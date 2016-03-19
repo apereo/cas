@@ -33,7 +33,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     private static final long serialVersionUID = -6231886395225437320L;
 
     @Override
-    public final NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                               final Assertion assertion, final SamlRegisteredService service,
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {

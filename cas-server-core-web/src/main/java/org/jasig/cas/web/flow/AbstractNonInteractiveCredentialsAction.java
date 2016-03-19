@@ -38,7 +38,7 @@ import javax.validation.constraints.NotNull;
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
 
     /** The logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Principal factory instance. */
     @Autowired
@@ -66,12 +66,12 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @param context the context
      * @return true, if  renew present
      */
-    protected final boolean isRenewPresent(final RequestContext context) {
+    protected boolean isRenewPresent(final RequestContext context) {
         return StringUtils.hasText(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW));
     }
 
     @Override
-    protected final Event doExecute(final RequestContext context) {
+    protected Event doExecute(final RequestContext context) {
         final Credential credential = constructCredentialsFromRequest(context);
 
         if (credential == null) {
@@ -122,7 +122,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         return centralAuthenticationService;
     }
 
-    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

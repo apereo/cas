@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class TestUtils {
+public class TestUtils {
 
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";

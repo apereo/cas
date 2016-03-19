@@ -19,7 +19,7 @@ import java.security.cert.CertPath;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class Converters {
+public class Converters {
     /**
      * Instantiates a new Converters.
      */
@@ -34,7 +34,7 @@ public final class Converters {
         /**
          * The Logger.
          */
-        protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+        protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
         @Override
         public O convert(final I i) {

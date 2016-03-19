@@ -124,7 +124,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     @Override
-    protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
         final X509CertificateCredential x509Credential = (X509CertificateCredential) credential;
         final X509Certificate[] certificates = x509Credential.getCertificates();

@@ -16,7 +16,7 @@ import java.net.URL;
  */
 @Component("defaultSingleLogoutServiceLogoutUrlBuilder")
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {

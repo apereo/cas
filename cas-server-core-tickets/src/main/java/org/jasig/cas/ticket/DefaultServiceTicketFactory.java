@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Component("defaultServiceTicketFactory")
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     @NotNull
@@ -73,11 +73,11 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         return (T) this;
     }
 
-    public final boolean isOnlyTrackMostRecentSession() {
+    public boolean isOnlyTrackMostRecentSession() {
         return onlyTrackMostRecentSession;
     }
 
-    public final void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
+    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
         this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 

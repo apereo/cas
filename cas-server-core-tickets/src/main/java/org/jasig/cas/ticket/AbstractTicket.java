@@ -86,12 +86,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     @Override
-    public final String getId() {
+    public String getId() {
         return this.id;
     }
 
     @Override
-    public final void update() {
+    public void update() {
         this.previousLastTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
@@ -103,27 +103,27 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     @Override
-    public final int getCountOfUses() {
+    public int getCountOfUses() {
         return this.countOfUses;
     }
 
     @Override
-    public final ZonedDateTime getCreationTime() {
+    public ZonedDateTime getCreationTime() {
         return this.creationTime;
     }
 
     @Override
-    public final ZonedDateTime getLastTimeUsed() {
+    public ZonedDateTime getLastTimeUsed() {
         return this.lastTimeUsed;
     }
 
     @Override
-    public final ZonedDateTime getPreviousTimeUsed() {
+    public ZonedDateTime getPreviousTimeUsed() {
         return this.previousLastTimeUsed;
     }
 
     @Override
-    public final boolean isExpired() {
+    public boolean isExpired() {
         final TicketGrantingTicket tgt = getGrantingTicket();
         return this.expirationPolicy.isExpired(this)
                 || (tgt != null && tgt.isExpired())
@@ -135,12 +135,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return new HashCodeBuilder(13, 133).append(this.getId()).toHashCode();
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return this.getId();
     }
 

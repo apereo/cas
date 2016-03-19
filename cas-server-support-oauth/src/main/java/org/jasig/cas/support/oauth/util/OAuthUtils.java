@@ -21,7 +21,7 @@ import java.io.PrintWriter;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuthUtils {
+public class OAuthUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
 

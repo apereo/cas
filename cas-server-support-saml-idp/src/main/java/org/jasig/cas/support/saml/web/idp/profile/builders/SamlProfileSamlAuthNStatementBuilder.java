@@ -39,7 +39,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     private AuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     @Override
-    public final AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                                       final Assertion assertion, final SamlRegisteredService service,
                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {

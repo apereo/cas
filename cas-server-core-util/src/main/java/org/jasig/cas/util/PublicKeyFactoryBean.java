@@ -30,7 +30,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     private String algorithm;
 
     @Override
-    protected final PublicKey createInstance() throws Exception {
+    protected PublicKey createInstance() throws Exception {
         logger.debug("Creating public key instance from [{}] using [{}]",
                 this.resource.getFilename(), this.algorithm);
 

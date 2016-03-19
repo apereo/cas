@@ -23,7 +23,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     private static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The id of the service. */
     private final String id;
@@ -58,22 +58,22 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return this.id;
     }
 
     @Override
-    public final String getId() {
+    public String getId() {
         return this.id;
     }
 
     @Override
-    public final String getArtifactId() {
+    public String getArtifactId() {
         return this.artifactId;
     }
 
     @Override
-    public final Map<String, Object> getAttributes() {
+    public Map<String, Object> getAttributes() {
         return EMPTY_MAP;
     }
 
@@ -84,7 +84,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
      * @return the original url provided.
      */
     @Override
-    public final String getOriginalUrl() {
+    public String getOriginalUrl() {
         return this.originalUrl;
     }
 
@@ -149,7 +149,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
      * @param loggedOutAlready if the service is already logged out.
      */
     @Override
-    public final void setLoggedOutAlready(final boolean loggedOutAlready) {
+    public void setLoggedOutAlready(final boolean loggedOutAlready) {
         this.loggedOutAlready = loggedOutAlready;
     }
 

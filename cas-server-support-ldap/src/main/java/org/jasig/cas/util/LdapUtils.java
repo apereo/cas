@@ -14,7 +14,7 @@ import java.nio.charset.Charset;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-public final class LdapUtils {
+public class LdapUtils {
 
     /** The Constant OBJECTCLASS_ATTRIBUTE. */
     public static final String OBJECTCLASS_ATTRIBUTE = "objectClass";

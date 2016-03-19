@@ -52,7 +52,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     /** The logger instance. */
     @Transient
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The unique identifier for this service. */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
@@ -173,7 +173,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * @since 4.1
      */
     @PostLoad
-    public final void postLoad() {
+    public void postLoad() {
         if (this.proxyPolicy == null) {
             this.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
         }
@@ -317,7 +317,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public final LogoutType getLogoutType() {
+    public LogoutType getLogoutType() {
         return logoutType;
     }
 
@@ -326,12 +326,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param logoutType the logout type of the service.
      */
-    public final void setLogoutType(final LogoutType logoutType) {
+    public void setLogoutType(final LogoutType logoutType) {
         this.logoutType = logoutType;
     }
 
     @Override
-    public final AbstractRegisteredService clone() {
+    public AbstractRegisteredService clone() {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
         return clone;
@@ -434,12 +434,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param policy the new attribute filtering policy
      */
-    public final void setAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy) {
+    public void setAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy) {
         this.attributeReleasePolicy = policy;
     }
 
     @Override
-    public final RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy() {
+    public RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy() {
         return this.attributeReleasePolicy;
     }
 

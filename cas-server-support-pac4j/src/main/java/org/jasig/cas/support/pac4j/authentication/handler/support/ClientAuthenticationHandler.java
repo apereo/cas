@@ -41,7 +41,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     private Clients clients;
 
     @Override
-    public final boolean supports(final Credential credential) {
+    public boolean supports(final Credential credential) {
         return credential != null && ClientCredential.class.isAssignableFrom(credential.getClass());
     }
 

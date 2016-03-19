@@ -69,6 +69,10 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
+        <AsyncLogger name="org.springframework.aop" level="warn" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </AsyncLogger>
         <AsyncLogger name="org.springframework.boot" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>

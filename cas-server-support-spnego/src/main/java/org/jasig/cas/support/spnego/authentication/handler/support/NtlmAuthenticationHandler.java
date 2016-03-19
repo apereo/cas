@@ -50,7 +50,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     private String includePattern;
 
     @Override
-    protected final HandlerResult doAuthentication(
+    protected HandlerResult doAuthentication(
             final Credential credential) throws GeneralSecurityException, PreventedException {
 
         final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;

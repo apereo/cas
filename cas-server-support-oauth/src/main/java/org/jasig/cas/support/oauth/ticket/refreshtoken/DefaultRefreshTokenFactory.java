@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 @Component("defaultRefreshTokenFactory")
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     @NotNull

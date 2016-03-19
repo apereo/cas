@@ -62,7 +62,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     }
 
     @Override
-    public final void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
 
         final String credentialsClass = credential.getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);

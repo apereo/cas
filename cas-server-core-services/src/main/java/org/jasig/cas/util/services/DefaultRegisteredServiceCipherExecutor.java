@@ -22,7 +22,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     private static final String UTF8_ENCODING = "UTF-8";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Encrypt using the given cipher associated with the service,
@@ -33,7 +33,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * @return the encoded piece of data in base64
      */
     @Override
-    public final String encode(final String data, final RegisteredService service) {
+    public String encode(final String data, final RegisteredService service) {
         try {
             final PublicKey publicKey = createRegisteredServicePublicKey(service);
             final byte[] result = encodeInternal(data, publicKey, service);

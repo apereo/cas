@@ -30,7 +30,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     /**
      * Logger instance.
      */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Creates a new instance using the specified resources for CRL data.
@@ -39,7 +39,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     }
 
     @Override
-    public final Set<X509CRL> fetch(final Set<Resource> crls) throws IOException, CRLException, CertificateException {
+    public Set<X509CRL> fetch(final Set<Resource> crls) throws IOException, CRLException, CertificateException {
         final Set<X509CRL> results = new HashSet<>();
         for (final Resource r : crls) {
             logger.debug("Fetching CRL data from {}", r);

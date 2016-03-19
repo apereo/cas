@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public final class RegisteredServiceAccessStrategySupport {
+public class RegisteredServiceAccessStrategySupport {
 
     /**
      * The constant LOGGER.

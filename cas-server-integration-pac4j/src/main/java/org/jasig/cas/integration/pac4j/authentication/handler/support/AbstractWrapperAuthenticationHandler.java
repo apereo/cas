@@ -33,7 +33,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
     @Override
-    public final boolean supports(final Credential credential) {
+    public boolean supports(final Credential credential) {
         return credential != null && getCasCredentialsType().isAssignableFrom(credential.getClass());
     }
 

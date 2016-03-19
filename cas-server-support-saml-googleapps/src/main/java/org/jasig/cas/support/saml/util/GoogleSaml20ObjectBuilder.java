@@ -20,7 +20,7 @@ public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     private static final long serialVersionUID = 2979638064754730668L;
 
     @Override
-    public final QName getSamlObjectQName(final Class objectType) throws RuntimeException {
+    public QName getSamlObjectQName(final Class objectType) throws RuntimeException {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
             final String name = f.get(null).toString();

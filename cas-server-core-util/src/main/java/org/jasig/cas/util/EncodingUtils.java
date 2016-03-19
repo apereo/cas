@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-public final class EncodingUtils {
+public class EncodingUtils {
 
     private EncodingUtils() {
     }

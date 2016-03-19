@@ -30,7 +30,7 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
     protected ServicesManager servicesManager;
 
     /** The Logger. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     @Qualifier("registeredServiceCipherExecutor")
@@ -63,7 +63,7 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
     }
 
     @Override
-    public final Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
+    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes,
                                                       final Service service) {
         logger.debug("Starting to encode attributes for release to service [{}]", service);
         final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
@@ -108,7 +108,7 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
      * @param attributes the new encoded attributes
      * @return a map of attributes that are to be encoded and encrypted
      */
-    protected final Map<String, String> initialize(final Map<String, Object> attributes) {
+    protected Map<String, String> initialize(final Map<String, Object> attributes) {
         final Map<String, String> cachedAttributesToEncode = new HashMap<>(attributes.size());
 
         Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);

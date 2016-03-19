@@ -26,7 +26,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     private static final long serialVersionUID = 1815697787562189088L;
 
     @Override
-    public final AttributeStatement build(final AuthnRequest authnRequest,
+    public AttributeStatement build(final AuthnRequest authnRequest,
                                           final HttpServletRequest request, final HttpServletResponse response,
                                           final Assertion assertion, final SamlRegisteredService service,
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
