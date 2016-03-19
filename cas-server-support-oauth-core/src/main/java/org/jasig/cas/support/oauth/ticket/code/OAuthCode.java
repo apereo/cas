@@ -7,7 +7,7 @@ import org.jasig.cas.support.oauth.ticket.OAuthToken;
  * It is used to grant access tokens.
  *
  * @author Jerome Leleu
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface OAuthCode extends OAuthToken {
 

@@ -9,7 +9,7 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
  * registered service.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface SamlRegisteredServiceCachingMetadataResolver {
 

@@ -12,7 +12,7 @@ import java.net.URL;
  * service to determine how the logout url endpoint should be decided.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultSingleLogoutServiceLogoutUrlBuilder")
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {

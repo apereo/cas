@@ -27,7 +27,7 @@ import java.util.Map;
  * around an authentication manager implementation.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     /** Log instance for logging events, errors, warnings, etc. */

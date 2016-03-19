@@ -21,7 +21,7 @@ import java.util.List;
  * A metadata generator based on the Shibboleth IdP's {@link MetadataGenerator}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("shibbolethIdpMetadataAndCertificatesGenerationService")
 public class ShibbolethIdpMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {

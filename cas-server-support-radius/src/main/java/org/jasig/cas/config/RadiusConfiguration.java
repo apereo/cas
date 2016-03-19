@@ -15,7 +15,7 @@ import java.util.List;
  * This this {@link RadiusConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("radiusConfiguration")
 public class RadiusConfiguration {
