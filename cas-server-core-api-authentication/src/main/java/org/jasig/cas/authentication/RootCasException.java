@@ -19,7 +19,7 @@ public abstract class RootCasException extends Exception {
     /**
      * The code description of the exception.
      */
-    private String code;
+    private final String code;
 
     /**
      * Constructor that takes a {@code code} description of the error along with the exception

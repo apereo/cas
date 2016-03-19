@@ -27,7 +27,7 @@ import java.util.zip.ZipEntry;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ResourceUtils {
+public final class ResourceUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
     
     private ResourceUtils() {

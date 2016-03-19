@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
-public class CasVersion {
+public final class CasVersion {
 
     /**
      * Private constructor for CasVersion. You should not be able to instantiate

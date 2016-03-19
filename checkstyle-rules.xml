@@ -9,11 +9,11 @@
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
         <module name="JavadocMethod">
-      <property name="scope" value="protected"/>
+            <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
-      <property name="allowThrowsTagsForSubclasses" value="true"/>
+            <property name="allowThrowsTagsForSubclasses" value="true"/>
         </module>
         <module name="JavadocType">
             <property name="severity" value="error"/>
@@ -377,13 +377,6 @@
         <property name="severity" value="error"/>
         <property name="format" value="(java.util.Random)|(new Random\()"/>
         <property name="message" value="For security purposes, use 'java.security.SecureRandom' instead"/>
-    </module>
-    <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="final clone() method"/>
-        <property name="severity" value="error"/>
-        <property name="format" value="public\s+\w+\s+clone\(\)"/>
-        <property name="message"
-                  value="Consider marking the clone() method as final to reduce chances of data corruption"/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="JUnit Assert static import"/>

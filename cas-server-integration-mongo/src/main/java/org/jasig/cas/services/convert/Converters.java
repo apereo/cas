@@ -19,7 +19,7 @@ import java.security.cert.CertPath;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class Converters {
+public final class Converters {
     /**
      * Instantiates a new Converters.
      */

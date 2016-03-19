@@ -13,7 +13,7 @@ public class InvalidTicketException extends AbstractTicketException {
     /** The code description. */
     private static final String CODE = "INVALID_TICKET";
 
-    private String ticketId;
+    private final String ticketId;
 
     /**
      * Constructs a InvalidTicketException with the default exception code.

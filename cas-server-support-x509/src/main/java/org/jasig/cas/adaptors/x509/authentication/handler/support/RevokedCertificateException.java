@@ -80,13 +80,13 @@ public class RevokedCertificateException extends GeneralSecurityException {
     }
 
     /** The revocation date. */
-    private ZonedDateTime revocationDate;
+    private final ZonedDateTime revocationDate;
 
     /** The serial. */
-    private BigInteger serial;
+    private final BigInteger serial;
 
     /** The reason. */
-    private Reason reason;
+    private final Reason reason;
 
     /**
      * Instantiates a new revoked certificate exception.
