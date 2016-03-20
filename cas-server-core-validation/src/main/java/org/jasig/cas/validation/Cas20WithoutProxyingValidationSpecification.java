@@ -1,5 +1,8 @@
 package org.jasig.cas.validation;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 /**
  * Validation specification for the CAS 2.0 protocol. This specification extends
  * the Cas20ProtocolValidationSpecification, checking for the presence of
@@ -10,6 +13,8 @@ package org.jasig.cas.validation;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Component("cas20WithoutProxyProtocolValidationSpecification")
+@Scope(value = "prototype")
 public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
     /**

@@ -55,10 +55,9 @@ public interface Authentication extends Serializable {
     /**
      * Gets a list of metadata about the credentials supplied at authentication time.
      *
-     * @return Non-null list of supplied credentials represented as metadata that should be considered safe for
-     * long-term storage (e.g. serializable and secure with respect to credential disclosure). The order of items in
-     * the returned list SHOULD be the same as the order in which the source credentials were presented and subsequently
-     * processed.
+     * @return Non -null list of supplied credentials represented as metadata that should be considered safe for long-term storage
+     * (e.g. serializable and secure with respect to credential disclosure). The order of items in the returned list SHOULD be
+     * the same as the order in which the source credentials were presented and subsequently processed.
      */
     List<CredentialMetaData> getCredentials();
 
@@ -76,4 +75,11 @@ public interface Authentication extends Serializable {
      * @return Map of authentication handler names to the authentication errors produced on attempted authentication.
      */
     Map<String, Class<? extends Exception>> getFailures();
+
+    /**
+     * Updates the authentication attributes, replacing existing values with new ones.
+     *
+     * @param attributes the attributes
+     */
+    void update(final Map<String, Object> attributes);
 }

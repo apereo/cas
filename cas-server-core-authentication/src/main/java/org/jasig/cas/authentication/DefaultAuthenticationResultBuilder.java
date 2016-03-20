@@ -1,21 +1,20 @@
 package org.jasig.cas.authentication;
 
+import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-
-import com.google.common.collect.ImmutableSet;
+import org.jasig.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -39,6 +38,15 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
      */
     public DefaultAuthenticationResultBuilder(final PrincipalElectionStrategy principalElectionStrategy) {
         this.principalElectionStrategy = principalElectionStrategy;
+    }
+
+    @Override
+    public Optional<Authentication> getInitialAuthentication() {
+        if (this.authentications.isEmpty()) {
+            LOGGER.warn("Authentication chain is empty as no authentications have been collected");
+        }
+
+        return this.authentications.stream().findFirst();
     }
 
     @Override
@@ -113,8 +121,9 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
                     final Object oldValue = authenticationAttributes.remove(attrName);
 
                     LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
-                    final Collection<Object> listOfValues = convertValueToCollection(oldValue);
-                    listOfValues.add(authn.getAttributes().get(attrName));
+                    final Collection<Object> listOfValues = CollectionUtils.convertValueToCollection(oldValue);
+                    final Object newValue = authn.getAttributes().get(attrName);
+                    listOfValues.addAll(CollectionUtils.convertValueToCollection(newValue));
                     authenticationAttributes.put(attrName, listOfValues);
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
                 } else {
@@ -146,29 +155,6 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
         return this.principalElectionStrategy.nominate(ImmutableSet.copyOf(authentications), principalAttributes);
     }
 
-    /**
-     * Convert the object given into a {@link Collection} instead.
-     * @param obj the object to convert into a collection
-     * @return The collection instance containing the object provided
-     */
-    @SuppressWarnings("unchecked")
-    public static Set<Object> convertValueToCollection(final Object obj) {
-        //does this method belong here? Looks like a general utility method
-        final Set<Object> c = new HashSet<>();
-        if (obj instanceof Collection) {
-            c.addAll((Collection<Object>) obj);
-            LOGGER.debug("Converting multi-valued attribute [{}] for the authentication result", obj);
-        } else if (obj instanceof Map) {
-            throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
-        } else if (obj.getClass().isArray()) {
-            c.addAll(Arrays.asList((Object[]) obj));
-            LOGGER.debug("Converting array attribute [{}] for the authentication result", obj);
-        } else {
-            c.add(obj);
-            LOGGER.debug("Converting attribute [{}] for the authentication result", obj);
-        }
-        return c;
-    }
 
     public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {
         this.principalElectionStrategy = principalElectionStrategy;

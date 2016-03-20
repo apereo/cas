@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
@@ -146,4 +147,21 @@ public interface AuthenticationBuilder extends Serializable {
      */
     AuthenticationBuilder setAttributes(Map<String, Object> attributes);
 
+    /**
+     * Merge attribute.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the authentication builder
+     */
+    AuthenticationBuilder mergeAttribute(String key, Object value);
+
+    /**
+     * Has attribute boolean.
+     *
+     * @param name  the name
+     * @param value the value
+     * @return the boolean
+     */
+    boolean hasAttribute(String name, Predicate<Object> value);
 }

@@ -89,10 +89,6 @@
         <AsyncLogger name="perfStatsLogger" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="perfFileAppender"/>
         </AsyncLogger>
-
-        <AsyncLogger name="org.jasig.cas.web.flow" level="info" additivity="true" includeLocation="true">
-            <AppenderRef ref="file"/>
-        </AsyncLogger>
         <AsyncLogger name="org.jasig.inspektr.audit.support" level="info" includeLocation="true">
             <AppenderRef ref="auditlogfile"/>
             <AppenderRef ref="file"/>

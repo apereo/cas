@@ -1,7 +1,9 @@
 package org.jasig.cas.web.v3;
 
+import org.jasig.cas.validation.ValidationSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,12 +37,11 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
 
     @Override
     @Autowired
-    public void setValidationSpecificationClass(@Value("org.jasig.cas.validation.Cas20ProtocolValidationSpecification")
-                                                final Class<?> validationSpecificationClass) {
-        super.setValidationSpecificationClass(validationSpecificationClass);
+    @Scope("prototype")
+    public void setValidationSpecification(
+            @Qualifier("cas20ProtocolValidationSpecification")
+            final ValidationSpecification validationSpecification) {
+        super.setValidationSpecification(validationSpecification);
     }
-
-
-
 
 }
