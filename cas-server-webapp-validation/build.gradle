@@ -12,5 +12,6 @@ dependencies {
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile group: 'javax.servlet', name: 'jstl', version: javaxJstlVersion
     testCompile project(path: ":cas-server-core-validation", configuration: "tests")
+  testCompile project(':cas-server-webapp-cookie')
 }
 

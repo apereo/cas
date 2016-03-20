@@ -30,13 +30,14 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
         createEndState(flow, "wsFederationRedirect", viewFactory);
         final ActionState actionState = createActionState(flow, "wsFederationAction", createEvaluateAction("wsFederationAction"));
-        actionState.getTransitionSet().add(createTransition(TRANSITION_ID_SUCCESS, TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR, getStartState(flow).getId()));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         setStartState(flow, actionState);
 
-        final TransitionableState loginTicketState = flow.getTransitionableState(STATE_ID_GENERATE_LOGIN_TICKET);
-        for (final Transition transition : loginTicketState.getTransitionSet()) {
-            if (transition.getId().equals(TRANSITION_ID_GENERATED)) {
+        final TransitionableState initLoginState = flow.getTransitionableState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        for (final Transition transition : initLoginState.getTransitionSet()) {
+            if (transition.getId().equals(CasWebflowConstants.TRANSITION_ID_GENERATED)) {
                 final TargetStateResolver targetStateResolver = (TargetStateResolver) fromStringTo(TargetStateResolver.class)
                         .execute("wsFederationRedirect");
                 transition.setTargetStateResolver(targetStateResolver);

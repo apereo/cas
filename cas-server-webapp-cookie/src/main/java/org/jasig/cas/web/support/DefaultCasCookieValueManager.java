@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * The {@link DefaultCasCookieValueManager} is responsible creating
- * the CAS SSO sookie and encrypting and signing its value.
+ * the CAS SSO cookie and encrypting and signing its value.
  *
  * @author Misagh Moayyed
  * @since 4.1

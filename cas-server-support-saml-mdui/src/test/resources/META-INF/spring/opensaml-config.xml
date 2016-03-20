@@ -185,5 +185,5 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
     
-
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 </beans>

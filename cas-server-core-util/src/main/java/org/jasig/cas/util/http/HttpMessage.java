@@ -57,18 +57,18 @@ public class HttpMessage {
         this.asynchronous = async;
     }
     
-    protected boolean isAsynchronous() {
+    public boolean isAsynchronous() {
         return this.asynchronous;
     }
 
-    protected URL getUrl() {
+    public URL getUrl() {
         return this.url;
     }
     
-    protected String getMessage() {
+    public String getMessage() {
         return this.formatOutputMessageInternal(this.message);
     }
-    
+
     protected String getContentType() {
         return this.contentType;
     }

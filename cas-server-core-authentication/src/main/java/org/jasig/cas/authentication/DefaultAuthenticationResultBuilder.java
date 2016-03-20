@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -37,6 +38,15 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      */
     public DefaultAuthenticationResultBuilder(final PrincipalElectionStrategy principalElectionStrategy) {
         this.principalElectionStrategy = principalElectionStrategy;
+    }
+
+    @Override
+    public Optional<Authentication> getInitialAuthentication() {
+        if (this.authentications.isEmpty()) {
+            LOGGER.warn("Authentication chain is empty as no authentications have been collected");
+        }
+
+        return this.authentications.stream().findFirst();
     }
 
     @Override
@@ -112,7 +122,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
                     LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
                     final Collection<Object> listOfValues = CollectionUtils.convertValueToCollection(oldValue);
-                    listOfValues.add(authn.getAttributes().get(attrName));
+                    final Object newValue = authn.getAttributes().get(attrName);
+                    listOfValues.addAll(CollectionUtils.convertValueToCollection(newValue));
                     authenticationAttributes.put(attrName, listOfValues);
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
                 } else {

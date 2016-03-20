@@ -38,7 +38,7 @@ public class ImmutableAuthenticationTests {
         successes.put("handler1", new DefaultHandlerResult(authenticationHandler, credential1));
         final Map<String, Class<? extends Exception>> failures = new HashMap<>();
         failures.put("handler2", FailedLoginException.class);
-        final ImmutableAuthentication auth = new ImmutableAuthentication(
+        final DefaultAuthentication auth = new DefaultAuthentication(
                 ZonedDateTime.now(ZoneOffset.UTC),
                 credentials,
                 new DefaultPrincipalFactory().createPrincipal("test"),

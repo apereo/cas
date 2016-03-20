@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class AuthenticationException extends Exception {
+public class AuthenticationException extends RuntimeException {
 
     /** Serialization metadata. */
     private static final long serialVersionUID = -6032827784134751797L;
@@ -32,15 +32,15 @@ public class AuthenticationException extends Exception {
     public AuthenticationException(final String msg) {
         this(
             msg,
-            Collections.<String, Class<? extends Exception>>emptyMap(),
-            Collections.<String, HandlerResult>emptyMap());
+            Collections.emptyMap(),
+            Collections.emptyMap());
     }
 
     /**
      * Instantiates a new Authentication exception.
      */
     public AuthenticationException() {
-        this("No supported authentication handlers found for given credentials.");
+        this("No supported authentication handlers found for given credentials");
     }
 
     /**
@@ -49,7 +49,7 @@ public class AuthenticationException extends Exception {
      * @param handlerErrors Map of handler names to errors.
      */
     public AuthenticationException(final Map<String, Class<? extends Exception>> handlerErrors) {
-        this(handlerErrors, Collections.<String, HandlerResult>emptyMap());
+        this(handlerErrors, Collections.emptyMap());
     }
 
     /**

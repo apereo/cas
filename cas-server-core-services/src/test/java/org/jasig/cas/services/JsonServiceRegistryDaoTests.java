@@ -59,6 +59,28 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
+    public void execSaveWithAuthnMethodPolicy() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("execSaveWithAuthnMethodPolicy");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+
+        final DefaultRegisteredServiceMultifactorPolicy policy =
+                new DefaultRegisteredServiceMultifactorPolicy();
+        policy.setFailureMode(RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM);
+
+        final Set<String> set = new HashSet<>();
+        set.add("duoAuthenticationProvider");
+        policy.setMultifactorAuthenticationProviders(set);
+        policy.setPrincipalAttributeNameTrigger("memberOf");
+        policy.setPrincipalAttributeValueToMatch("cas|CAS|admin");
+        r.setMultifactorPolicy(policy);
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
     public void execSaveMethodWithDefaultUsernameAttribute() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultUsernameAttribute");

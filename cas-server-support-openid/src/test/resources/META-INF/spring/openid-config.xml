@@ -83,5 +83,6 @@
         <entry key=".*Safari.*Pre.*" value="safari"/>
         <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
     </util:map>
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 
 </beans>

@@ -109,4 +109,5 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 </beans>

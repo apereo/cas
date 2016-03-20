@@ -160,24 +160,6 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     }
 
     /**
-     * The type Login ticket id generator.
-     */
-    @Component("loginTicketUniqueIdGenerator")
-    public static class LoginTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
-        @Autowired
-        @Override
-        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
-            super.setSuffix(suffix);
-        }
-
-        @Autowired
-        @Override
-        public void setMaxLength(@Value("${lt.ticket.maxlength:20}") final int maxLength) {
-            super.setMaxLength(maxLength);
-        }
-    }
-
-    /**
      * The type Proxy ticket id generator.
      */
     @Component("proxy20TicketUniqueIdGenerator")

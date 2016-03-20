@@ -214,7 +214,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         if (policy.isSatisfiedBy(ticket.getAuthentication())) {
             return ticket.getAuthentication();
         }
-        return (Authentication) ticket.getSupplementalAuthentications().stream().filter(policy::isSatisfiedBy)
+        return ticket.getSupplementalAuthentications().stream().filter(policy::isSatisfiedBy)
                 .findFirst().orElseThrow(() -> new UnsatisfiedAuthenticationPolicyException(policy));
     }
 
@@ -250,6 +250,12 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         } else {
             logger.trace("TGT is not proxied by another service");
         }
+    }
+
+    @Override
+    public Ticket updateTicket(@NotNull final Ticket ticket) {
+        this.ticketRegistry.addTicket(ticket);
+        return ticket;
     }
 
     @Override

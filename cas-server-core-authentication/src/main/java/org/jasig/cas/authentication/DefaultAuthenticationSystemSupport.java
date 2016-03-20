@@ -41,6 +41,13 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
+    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication) {
+        final AuthenticationResultBuilder builder =
+                new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
+        return builder;
+    }
+
+    @Override
     public AuthenticationResultBuilder handleAuthenticationTransaction(final AuthenticationResultBuilder authenticationResultBuilder,
                                                                        final Credential... credential)
             throws AuthenticationException {
@@ -53,14 +60,6 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     public AuthenticationResult finalizeAllAuthenticationTransactions(final AuthenticationResultBuilder authenticationResultBuilder,
                                                                       final Service service) {
         return authenticationResultBuilder.build(service);
-    }
-
-    @Override
-    public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication){
-        final AuthenticationResultBuilder builder =
-                new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
-        return builder;
-
     }
 
     @Override

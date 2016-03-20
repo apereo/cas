@@ -44,7 +44,7 @@ import java.util.Set;
 @Inheritance
 @DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
                      columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
-@Table(name = "RegisteredServiceImpl")
+@Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
 
@@ -108,6 +108,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy =
             new ReturnAllowedAttributeReleasePolicy();
 
+    /** The mfa policy. */
+    @Lob
+    @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
+    private RegisteredServiceMultifactorPolicy multifactorPolicy =
+            new DefaultRegisteredServiceMultifactorPolicy();
+
     @Column(name = "logo")
     private URL logo;
 
@@ -124,7 +130,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private RegisteredServicePublicKey publicKey;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="RegisteredServiceImpl_Properties")
+    @JoinTable(name="RegexRegisteredService_Properties")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @Override
@@ -189,6 +195,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         if (this.accessStrategy == null) {
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
+        if (this.multifactorPolicy == null) {
+            this.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+        }
         if (this.properties == null) {
             this.properties = new HashMap<>();
         }
@@ -231,6 +240,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.requiredHandlers, that.requiredHandlers)
                 .append(this.proxyPolicy, that.proxyPolicy)
                 .append(this.properties, that.properties)
+                .append(this.multifactorPolicy, that.multifactorPolicy)
                 .isEquals();
     }
 
@@ -253,6 +263,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.requiredHandlers)
                 .append(this.proxyPolicy)
                 .append(this.properties)
+                .append(this.multifactorPolicy)
                 .toHashCode();
     }
 
@@ -359,6 +370,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
         this.setProperties(source.getProperties());
+        this.setMultifactorPolicy(source.getMultifactorPolicy());
+
     }
 
     /**
@@ -397,6 +410,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logoutUrl", this.logoutUrl);
         toStringBuilder.append("requiredHandlers", this.requiredHandlers);
         toStringBuilder.append("properties", this.properties);
+        toStringBuilder.append("multifactorPolicy", this.multifactorPolicy);
 
         return toStringBuilder.toString();
     }
@@ -468,5 +482,13 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
         this.properties = (Map) properties;
+    }
+
+    public RegisteredServiceMultifactorPolicy getMultifactorPolicy() {
+        return multifactorPolicy;
+    }
+
+    public void setMultifactorPolicy(final RegisteredServiceMultifactorPolicy multifactorPolicy) {
+        this.multifactorPolicy = multifactorPolicy;
     }
 }

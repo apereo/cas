@@ -46,7 +46,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired
-    @Qualifier("defaultAuthenticationSupport")
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override
@@ -78,8 +78,6 @@ public class GenerateServiceTicketAction extends AbstractAction {
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
 
-        } catch (final AuthenticationException e) {
-            logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -87,10 +85,8 @@ public class GenerateServiceTicketAction extends AbstractAction {
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
-            return newEvent(AbstractCasWebflowConfigurer.EVENT_AUTHENTICATION_FAILURE, e);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
-
-        return error();
     }
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {

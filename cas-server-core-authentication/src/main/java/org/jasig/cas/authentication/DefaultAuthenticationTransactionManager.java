@@ -26,14 +26,15 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
 
     @Override
     public AuthenticationTransactionManager handle(final AuthenticationTransaction authenticationTransaction,
-                                                   final AuthenticationResultBuilder authenticationContext)
+                                                   final AuthenticationResultBuilder authenticationResult)
                                                     throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
-            authenticationContext.collect(authentication);
+            authenticationResult.collect(authentication);
+        } else {
+            LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         }
-        LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         return this;
     }
 

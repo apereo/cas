@@ -81,14 +81,14 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="1"/>
             <property name="name" value="Test Default Service"/>
             <property name="serviceId" value="testDefault"/>
             <property name="evaluationOrder" value="2"/>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="2"/>
             <property name="name" value="EduPerson Test Service"/>
             <property name="serviceId" value="eduPersonTest"/>
@@ -103,7 +103,7 @@
 
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="3"/>
             <property name="name" value="EduPerson Test Invalid Service"/>
             <property name="serviceId" value="eduPersonTestInvalid"/>
@@ -123,7 +123,7 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="333"/>
             <property name="name" value="proxyService"/>
             <property name="serviceId" value="proxyService"/>
@@ -134,7 +134,7 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="4"/>
             <property name="name" value="Test Service anonymous"/>
             <property name="serviceId" value="testAnonymous"/>
@@ -156,7 +156,7 @@
         </bean>
 
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="335"/>
             <property name="name" value="usernameAttributeProviderService"/>
             <property name="serviceId" value="usernameAttributeProviderService"/>

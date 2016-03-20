@@ -61,7 +61,7 @@ public class ReverseDNSRunnable implements Runnable {
     }
 
     /**
-     * Getter method to provide result of lookup.
+     * Getter method to buildIdentifier result of lookup.
      * @return the remote host name, or the IP address if name not found
      */
     public synchronized String get() {

@@ -26,6 +26,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
@@ -54,6 +55,7 @@ import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,72 +68,19 @@ import java.util.List;
  */
 @Component("casWebflowConfigurer")
 public abstract class AbstractCasWebflowConfigurer {
-    /** Authentication failure result. */
-    public static final String EVENT_AUTHENTICATION_FAILURE = "authenticationFailure";
-
-    /**
-     * The transition state 'success'.
-     */
-    protected static final String TRANSITION_ID_SUCCESS = "success";
-
-    /**
-     * The transition state 'yes'.
-     */
-    protected static final String TRANSITION_ID_YES = "yes";
-
-    /**
-     * The transition state 'no'.
-     */
-    protected static final String TRANSITION_ID_NO = "no";
-
-    /**
-     * The transition state 'submit'.
-     */
-    protected static final String TRANSITION_ID_SUBMIT = "submit";
-    /**
-     * The transition state 'generated'.
-     */
-    protected static final String TRANSITION_ID_GENERATED = "generated";
-    /**
-     * The transition state 'error'.
-     */
-    protected static final String TRANSITION_ID_ERROR = "error";
-    /**
-     * The transition state 'warn'.
-     */
-    protected static final String TRANSITION_ID_WARN = "warn";
-
-    /**
-     * The transition state 'sendTicketGrantingTicket'.
-     */
-    protected static final String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
-
-    /**
-     * The transition state 'viewLoginForm'.
-     */
-    protected static final String TRANSITION_ID_VIEW_LOGIN_FORM = "viewLoginForm";
-
-
-    /**
-     * The transition state 'ticketGrantingTicketCheck'.
-     */
-    protected static final String TRANSITION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
-
-    /**
-     * The action state 'generateLoginTicket'.
-     */
-    protected static final String STATE_ID_GENERATE_LOGIN_TICKET = "generateLoginTicket";
-
     private static final String FLOW_ID_LOGIN = "login";
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private FlowBuilderServices flowBuilderServices;
-
+    /**
+     * The Login flow definition registry.
+     */
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("logoutFlowRegistry")
@@ -508,6 +457,20 @@ public abstract class AbstractCasWebflowConfigurer {
     }
 
     /**
+     * Register flow definition into login flow registry.
+     *
+     * @param sourceRegistry the source registry
+     */
+    protected void registerFlowDefinitionIntoLoginFlowRegistry(final FlowDefinitionRegistry sourceRegistry) {
+        final String[] flowIds = sourceRegistry.getFlowDefinitionIds();
+        for (final String flowId : flowIds) {
+            final FlowDefinition definition = sourceRegistry.getFlowDefinition(flowId);
+            logger.debug("Registering flow definition [{}]", flowId);
+            this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
+        }
+    }
+
+    /**
      * Add view state.
      *
      * @param flow       the flow
@@ -567,6 +530,18 @@ public abstract class AbstractCasWebflowConfigurer {
     }
 
     /**
+     * Create subflow state subflow state.
+     *
+     * @param flow    the flow
+     * @param id      the id
+     * @param subflow the subflow
+     * @return the subflow state
+     */
+    protected SubflowState createSubflowState(final Flow flow, final String id, final String subflow) {
+        return createSubflowState(flow, id, subflow, null);
+    }
+
+    /**
      * Create mapper to subflow state.
      *
      * @param mappings the mappings
@@ -613,5 +588,35 @@ public abstract class AbstractCasWebflowConfigurer {
      */
     protected SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, final Mapper outputMapper) {
         return new GenericSubflowAttributeMapper(inputMapper, outputMapper);
+    }
+
+    /**
+     * Register multifactor provider authentication webflow.
+     *
+     * @param flow      the flow
+     * @param subflowId the subflow id
+     * @param registry  the registry
+     */
+    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
+                                                                    final FlowDefinitionRegistry registry) {
+
+        final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
+        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        final String targetStateId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+
+        final List<DefaultMapping> mappings = new ArrayList<>();
+        final Mapper inputMapper = createMapperToSubflowState(mappings);
+        final SubflowAttributeMapper subflowMapper = createSubflowAttributeMapper(inputMapper, null);
+        subflowState.setAttributeMapper(subflowMapper);
+        subflowState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId));
+
+        logger.debug("Retrieved action state {}", actionState.getId());
+        createTransitionForState(actionState, subflowId, subflowId);
+
+        registerFlowDefinitionIntoLoginFlowRegistry(registry);
+
+        final TransitionableState state = flow.getTransitionableState(CasWebflowConstants
+                .TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+        createTransitionForState(state, subflowId, subflowId);
     }
 }

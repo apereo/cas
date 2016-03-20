@@ -437,7 +437,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket st2Id = cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         final Assertion assertion = cas.validateServiceTicket(st2Id.getId(), svc);
         final ValidationSpecification validationSpecification = new Cas20WithoutProxyingValidationSpecification();
-        assertTrue(validationSpecification.isSatisfiedBy(assertion));
+        assertTrue(validationSpecification.isSatisfiedBy(assertion, new MockHttpServletRequest()));
     }
 
     /**

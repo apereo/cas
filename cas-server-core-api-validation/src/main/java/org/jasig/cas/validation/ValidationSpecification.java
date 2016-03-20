@@ -1,5 +1,7 @@
 package org.jasig.cas.validation;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * An interface to impose restrictions and requirements on validations (e.g.
  * renew=true).
@@ -10,9 +12,11 @@ package org.jasig.cas.validation;
 public interface ValidationSpecification {
 
     /**
-     * @param assertion The assertion we want to confirm is satisfied by this
-     * spec.
+     * Is satisfied.
+     *
+     * @param assertion The assertion we want to confirm is satisfied by this spec.
+     * @param request   the request
      * @return true if it is, false otherwise.
      */
-    boolean isSatisfiedBy(Assertion assertion);
+    boolean isSatisfiedBy(Assertion assertion, HttpServletRequest request);
 }

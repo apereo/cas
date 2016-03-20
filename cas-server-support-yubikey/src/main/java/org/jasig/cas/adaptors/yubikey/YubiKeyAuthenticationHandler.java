@@ -33,7 +33,7 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Component("yubiKeyAuthenticationHandler")
+@Component("yubikeyAuthenticationHandler")
 public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler
         implements InitializingBean {
 
@@ -44,15 +44,15 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
     /**
      * Prepares the Yubico client with the received clientId and secretKey. If you wish to
      * limit the usage of this handler only to a particular set of yubikey accounts for a special
-     * group of users, you may provide an compliant implementation of {@link YubiKeyAccountRegistry}.
+     * group of users, you may verify an compliant implementation of {@link YubiKeyAccountRegistry}.
      * By default, all accounts are allowed.
      *
      * @param clientId the client id
      * @param secretKey the secret key
      */
     @Autowired
-    public YubiKeyAuthenticationHandler(@NotNull @Value("${yubikey.client.id:}") final Integer clientId,
-                                        @NotNull @Value("${yubikey.secret.key:}") final String secretKey) {
+    public YubiKeyAuthenticationHandler(@NotNull @Value("${cas.mfa.yubikey.client.id:}") final Integer clientId,
+                                        @NotNull @Value("${cas.mfa.yubikey.secret.key:}") final String secretKey) {
         this.client = YubicoClient.getClient(clientId, secretKey);
     }
 
@@ -118,5 +118,9 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     public YubiKeyAccountRegistry getRegistry() {
         return registry;
+    }
+
+    public YubicoClient getClient() {
+        return client;
     }
 }

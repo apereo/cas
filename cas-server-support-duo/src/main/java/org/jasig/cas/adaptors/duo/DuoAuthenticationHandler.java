@@ -22,18 +22,13 @@ import java.util.ArrayList;
 @Component("duoAuthenticationHandler")
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
+    @Qualifier("duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 
     /**
      * Creates the duo authentication handler.
-     * @param duoAuthenticationService the duo authentication service
      */
-    @Autowired
-    public DuoAuthenticationHandler(@Qualifier("duoAuthenticationService")
-                                        final DuoAuthenticationService duoAuthenticationService) {
-        this.duoAuthenticationService = duoAuthenticationService;
-    }
-
+    private DuoAuthenticationHandler() {}
 
     /**
      * Do an out of band request using the DuoWeb api (encapsulated in DuoAuthenticationService)

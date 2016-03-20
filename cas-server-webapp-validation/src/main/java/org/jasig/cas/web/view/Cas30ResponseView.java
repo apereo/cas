@@ -2,6 +2,7 @@ package org.jasig.cas.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Renders and prepares CAS3 views. This view is responsible
@@ -26,7 +28,11 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
     @Value("${cas.attrs.protocol.release:true}")
     private boolean releaseProtocolAttributes;
-    
+
+
+    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    private String authenticationContextAttribute;
+
     /**
      * Instantiates a new Abstract cas response view.
      */
@@ -64,21 +70,23 @@ public class Cas30ResponseView extends Cas20ResponseView {
      */
     protected Map<String, Object> getCasProtocolAuthenticationAttributes(final Map<String, Object> model,
                                                                  final RegisteredService registeredService) {
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
-                Collections.singleton(getAuthenticationDate(model)));
-        attributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                Collections.singleton(isAssertionBackedByNewLogin(model)));
-        attributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                Collections.singleton(isRememberMeAuthentication(model)));
 
         final Map<String, Object> filteredAuthenticationAttributes = new HashMap<>(getAuthenticationAttributes(model));
-        filteredAuthenticationAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
-        filteredAuthenticationAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
-        filteredAuthenticationAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
-        attributes.putAll(filteredAuthenticationAttributes);
 
-        return attributes;
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
+                Collections.singleton(getAuthenticationDate(model)));
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
+                Collections.singleton(isAssertionBackedByNewLogin(model)));
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
+                Collections.singleton(isRememberMeAuthentication(model)));
+
+        final Optional<MultifactorAuthenticationProvider> contextProvider = getSatisfiedMultifactorAuthenticationProvider(model);
+        if (contextProvider.isPresent()) {
+            filteredAuthenticationAttributes.put(this.authenticationContextAttribute,
+                    Collections.singleton(contextProvider.get().getId()));
+        }
+
+        return filteredAuthenticationAttributes;
     }
 
     /**

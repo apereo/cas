@@ -88,32 +88,6 @@ In other words, the security model is decentralized rather than centralized. The
 some centralized control of proxy authentication by exposing a proxy authentication flag that can enabled or disabled
 on a per-service basis. By default registered services are not granted proxy authentication capability.
 
-
-### Multi-factor Authentication
-CAS provides support for multi-factor authentication in one of two modes: global and per-service. The global case
-where multiple credentials are invariably required on the login form is straightforward: the user interface is
-modified to accept multiple credentials and authentication components are configured to require successful
-authentication of all provided credentials.
-
-The per-service case is both more interesting and more complicated:
-
-* Levels of identity assurance (LOA) for credentials and groups of credentials must be established.
-* Security policy versus credential LOA must be established per service.
-* Service access policy must be configured via the [service management](#service-management) facility.
-
-The first two tasks are vital but outside the scope of this document. Application of service access policy via the
-service management facility is implemented by declaring the
-[authentication handlers](../installation/Configuring-Authentication-Components.html#authentication-handlers)
-that must successfully authenticate credentials in order to permit access; for example, an LDAP authentication
-handler and an RSA SecureID authentication handler.
-
-Since multi-factor authentication requires development of institutional security policy, advanced component
-configuration (and possibly custom component development), and UI design, it should be regarded more as a framework
-than a feature. See the
-[multi-factor configuration](../installation/Configuring-Authentication-Components.html#multifactor-authentication-mfa)
-section for detailed discussion of configuration concerns and implementation recommendations.
-
-
 ### Credential Caching and Replay
 The _ClearPass_ extension provides a mechanism to capture primary authentication credentials, cache them (encrypted),
 and replay on demand as needed to access legacy services. While [proxy authentication](#proxy-authentication)
@@ -131,6 +105,7 @@ decentralized security policy model.) Some highlights of service management cont
 * Attribute release
 * Proxy authentication control
 * Theme control
+* Service authorization control
 * Multi-factor service access policy
 
 The service management facility is comprised of a service registry containing one or more registered services, each
