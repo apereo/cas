@@ -22,12 +22,10 @@ following dependencies in the Maven WAR overlay:
 
 ## Configuration
 
-The authentication handler may be configured as such:
-
-```xml
-<bean class="org.jasig.cas.adaptors.yubikey.YubiKeyAuthenticationHandler"
-   	c:clientId="${yubikey.apiKey.id}"
-   	c:secretKey="${yubikey.apiKey.secret}"/>
+```properties
+# cas.mfa.yubikey.client.id=
+# cas.mfa.yubikey.secret.key=
+# cas.mfa.yubikey.rank = 0
 ```
 
 By default, all YubiKey accounts for users are allowed to authenticate. If you wish to plug in a custom registry implementation that would determine 
@@ -35,10 +33,7 @@ which users are allowed to use their YubiKey accounts for authentication, you ma
 that allows you to provide a mapping between usernames and YubiKey public keys.
 
 ```xml
-<bean class="org.jasig.cas.adaptors.yubikey.YubiKeyAuthenticationHandler"
-    c:clientId="${yubikey.apiKey.id}"
-    c:secretKey="${yubikey.apiKey.secret}"
-    c:registry-ref="customYubiKeyAccountRegistry" />
+<alias name="customYubiKeyAccountRegistry" alias="yubiKeyAccountRegistry" />
 ```
 
 
