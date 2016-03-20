@@ -112,7 +112,7 @@ functionality, if that provider cannot respond.
   "id" : 100,
   "multifactorPolicy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ],
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
     "failureMode" : "CLOSED"
   }
 }
