@@ -1,5 +1,6 @@
 package org.jasig.cas.services.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -7,8 +8,10 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-import org.springframework.util.StringUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceView;
@@ -43,13 +46,14 @@ public final class RegisteredServiceThemeBasedViewResolver extends AbstractCachi
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
     private static final String THEME_LOCATION_PATTERN = "%s/%s/ui/";
 
-    /**
-     * The ServiceRegistry to look up the service.
-     */
+    @Autowired
+    private ResourceLoader resourceLoader;
+    
     private final ServicesManager servicesManager;
     private String prefix;
     private String suffix;
     private int order;
+    
     /**
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
      *
@@ -71,13 +75,9 @@ public final class RegisteredServiceThemeBasedViewResolver extends AbstractCachi
 
         if (service != null && registeredService != null
                 && registeredService.getAccessStrategy().isServiceAccessAllowed()
-                && StringUtils.hasText(registeredService.getTheme())) {
+                && StringUtils.isNotBlank(registeredService.getTheme())) {
 
             final InternalResourceView view = BeanUtils.instantiateClass(InternalResourceView.class);
-
-            final String defaultThemePrefix = String.format(THEME_LOCATION_PATTERN, getPrefix(), "default");
-            final String defaultViewUrl = defaultThemePrefix + viewName + getSuffix();
-            view.setUrl(defaultViewUrl);
 
             LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
                     registeredService.getServiceId(), registeredService.getTheme());
@@ -85,15 +85,18 @@ public final class RegisteredServiceThemeBasedViewResolver extends AbstractCachi
             final String themePrefix = String.format(THEME_LOCATION_PATTERN, getPrefix(), registeredService.getTheme());
             LOGGER.debug("Prefix [{}] set for service [{}] with theme [{}]", themePrefix, service,
                     registeredService.getTheme());
-            final String viewUrl = themePrefix + viewName + getSuffix();
-            view.setUrl(viewUrl);
+            final String viewUrl = StringUtils.replace(themePrefix + viewName + getSuffix(), "//", "/");
+            final Resource resource = this.resourceLoader.getResource(viewUrl);
+            
+            if (resource.exists()) {
+                view.setUrl(viewUrl);
+                view.setAlwaysInclude(false);
+                view.setExposeContextBeansAsAttributes(false);
+                view.setPreventDispatchLoop(true);
+                LOGGER.debug("View resolved: {}", view.getUrl());
 
-            view.setAlwaysInclude(false);
-            view.setExposeContextBeansAsAttributes(false);
-            view.setPreventDispatchLoop(true);
-            LOGGER.debug("View resolved: {}", view.getUrl());
-
-            return view;
+                return view;
+            }
         }
         return null;
     }
