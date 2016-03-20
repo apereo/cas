@@ -2,8 +2,9 @@
 description = 'Apereo CAS YubiKey Support'
 dependencies {
     compile project(':cas-server-core-authentication')
-	compile libraries.guava
-	compile libraries.yubicoapi
+    compile project(':cas-server-core-webflow')
+    compile libraries.guava
+    compile libraries.yubicoapi
 }
 
 

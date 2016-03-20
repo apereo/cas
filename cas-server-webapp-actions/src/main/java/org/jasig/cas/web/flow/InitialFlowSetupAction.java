@@ -124,14 +124,14 @@ public final class InitialFlowSetupAction extends AbstractAction {
 
     @Autowired
     public void setTicketGrantingTicketCookieGenerator(
-        @Qualifier("ticketGrantingTicketCookieGenerator")
-        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
     @Autowired
     public void setWarnCookieGenerator(@Qualifier("warnCookieGenerator")
-                                           final CookieRetrievingCookieGenerator warnCookieGenerator) {
+                                       final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
@@ -160,7 +160,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
      */
     @Autowired
     public void setEnableFlowOnAbsentServiceRequest(@Value("${create.sso.missing.service:true}")
-                                                        final boolean enableFlowOnAbsentServiceRequest) {
+                                                    final boolean enableFlowOnAbsentServiceRequest) {
         this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
     }
 }
