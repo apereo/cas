@@ -2,6 +2,7 @@ package org.jasig.cas.validation;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;
 
@@ -20,23 +21,24 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void verifySatisfiesSpecOfTrue() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true)));
+        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true), new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyNotSatisfiesSpecOfTrue() {
         this.validationSpecification.setRenew(true);
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyDoesNotSatisfiesSpecOfFalse() {
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] {"test2"})));
+        assertFalse(this.validationSpecification.isSatisfiedBy(
+                TestUtils.getAssertion(false, new String[] {"test2"}), new MockHttpServletRequest()));
     }
 
     @Test

@@ -1,7 +1,9 @@
-
 description = 'Apereo CAS DuoSecurity Support'
 dependencies {
-	
-	compile project(':cas-server-core-authentication')
+
+    compile libraries.duojava
+    compile libraries.jackson
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-webflow')
 }
 

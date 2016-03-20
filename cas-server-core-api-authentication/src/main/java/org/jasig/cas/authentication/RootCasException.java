@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  *         see org.jasig.cas.authentication.handler.AuthenticationException
  * @since 4.0.0
  */
-public abstract class RootCasException extends Exception {
+public abstract class RootCasException extends RuntimeException {
 
     private static final long serialVersionUID = -2384466176716541689L;
 
