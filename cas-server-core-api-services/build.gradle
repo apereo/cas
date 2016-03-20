@@ -1,6 +1,7 @@
 
 description = 'Apereo CAS Core Services APIs'
 dependencies {
+    provided libraries.spring
     compile project(':cas-server-core-api-authentication')
 }
 

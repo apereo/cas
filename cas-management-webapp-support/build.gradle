@@ -16,4 +16,6 @@ dependencies {
     compile project(':cas-server-core-audit')
     compile project(':cas-server-support-oauth-core')
     compile libraries.javaximpl
+
+    testCompile project(':cas-server-webapp-cookie')
 }

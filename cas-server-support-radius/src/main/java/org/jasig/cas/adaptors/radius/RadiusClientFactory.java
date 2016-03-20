@@ -1,6 +1,7 @@
 package org.jasig.cas.adaptors.radius;
 
 import net.jradius.client.RadiusClient;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -97,4 +98,16 @@ public class RadiusClientFactory {
         return new RadiusClient(
                 this.inetAddress, this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
     }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("accountingPort", accountingPort)
+                .append("authenticationPort", authenticationPort)
+                .append("socketTimeout", socketTimeout)
+                .append("inetAddress", inetAddress)
+                .toString();
+    }
 }
+
