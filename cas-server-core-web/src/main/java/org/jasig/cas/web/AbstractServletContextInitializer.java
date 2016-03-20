@@ -1,5 +1,6 @@
 package org.jasig.cas.web;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
@@ -29,6 +30,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,7 +128,11 @@ public abstract class AbstractServletContextInitializer
         logger.debug("Adding {} and {} to application context", handler, resolver);
         final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
                 applicationContext.getBean("authenticationHandlersResolvers", Map.class);
+
+        final Map<AuthenticationHandler, PrincipalResolver> cloned = new LinkedHashMap<>(authenticationHandlersResolvers);
+        authenticationHandlersResolvers.clear();
         authenticationHandlersResolvers.put(handler, resolver);
+        authenticationHandlersResolvers.putAll(cloned);
     }
 
     /**
@@ -336,4 +342,12 @@ public abstract class AbstractServletContextInitializer
      * @param event the event
      */
     protected void destroyServletContext(final ServletContextEvent event) {}
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append(this.getClass().getSimpleName())
+                .toString();
+    }
 }

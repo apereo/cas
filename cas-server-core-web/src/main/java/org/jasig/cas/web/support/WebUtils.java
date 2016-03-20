@@ -1,6 +1,9 @@
 package org.jasig.cas.web.support;
 
+import org.jasig.cas.authentication.Authentication;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -21,6 +24,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -51,6 +55,16 @@ public final class WebUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
     private static final String UNKNOWN_USER = "audit:unknown";
+
+    /** Flow scope attribute that determines if authn is happening at a public workstation. */
+    private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
+    /** Scope parameter noting the authentication object. **/
+    private static final String PARAMETER_AUTHENTICATION = "authentication";
+    /** Scope parameter noting the authentication result builder. **/
+    private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
+    /** Scope parameter noting the result of the authentication. **/
+    private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
 
     /**
      * Instantiates a new web utils instance.
@@ -277,19 +291,8 @@ public final class WebUtils {
      * @param context the context
      * @return the service ticket from request scope
      */
-    public static String getServiceTicketFromRequestScope(
-        final RequestContext context) {
+    public static String getServiceTicketFromRequestScope(final RequestContext context) {
         return context.getRequestScope().getString("serviceTicketId");
-    }
-
-    /**
-     * Put login ticket into flow scope.
-     *
-     * @param context the context
-     * @param ticket the ticket
-     */
-    public static void putLoginTicket(final RequestContext context, final String ticket) {
-        context.getFlowScope().put("loginTicket", ticket);
     }
 
     /**
@@ -299,29 +302,6 @@ public final class WebUtils {
      */
     public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
         context.getFlowScope().put("unauthorizedRedirectUrl", url);
-    }
-
-    /**
-     * Gets the login ticket from flow scope.
-     *
-     * @param context the context
-     * @return the login ticket from flow scope
-     */
-    public static String getLoginTicketFromFlowScope(final RequestContext context) {
-        // Getting the saved LT destroys it in support of one-time-use
-        // See section 3.5.1 of http://www.jasig.org/cas/protocol
-        final String lt = (String) context.getFlowScope().remove("loginTicket");
-        return lt != null ? lt : "";
-    }
-
-    /**
-     * Gets the login ticket from request.
-     *
-     * @param context the context
-     * @return the login ticket from request
-     */
-    public static String getLoginTicketFromRequest(final RequestContext context) {
-       return context.getRequestParameters().get("lt");
     }
 
     /**
@@ -385,7 +365,12 @@ public final class WebUtils {
         final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
         final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
 
-        final Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
+        Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
+
+        if (credential == null) {
+            final FlowSession session = context.getFlowExecutionContext().getActiveSession();
+            credential = session.getScope().get("credential", Credential.class);
+        }
         if (credential != null && StringUtils.isBlank(credential.getId())) {
             return null;
         }
@@ -415,6 +400,32 @@ public final class WebUtils {
     }
 
     /**
+     * Is authenticating at a public workstation?
+     *
+     * @param ctx the ctx
+     * @return true if the cookie value is present
+     */
+    public static boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
+        if (ctx.getFlowScope().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
+            LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Put public workstation into the flow if request parameter present.
+     *
+     * @param context the context
+     */
+    public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
+        if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
+            context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
+        }
+    }
+
+    /**
      * Put warn cookie if request parameter present.
      *
      * @param warnCookieGenerator the warn cookie generator
@@ -434,6 +445,66 @@ public final class WebUtils {
         }
     }
 
+    /**
+     * Put authentication into conversation scope.
+     *
+     * @param authentication the authentication
+     * @param ctx            the ctx
+     */
+    public static void putAuthentication(final Authentication authentication, final RequestContext ctx) {
+        ctx.getConversationScope().put(PARAMETER_AUTHENTICATION, authentication);
+    }
+
+    /**
+     * Gets authentication from conversation scope.
+     *
+     * @param ctx            the ctx
+     * @return the authentication
+     */
+    public static Authentication getAuthentication(final RequestContext ctx) {
+        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION, Authentication.class);
+    }
+
+    /**
+     * Put authentication result builder.
+     *
+     * @param builder the builder
+     * @param ctx     the ctx
+     */
+    public static void putAuthenticationResultBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
+        ctx.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT_BUILDER, builder);
+    }
+
+    /**
+     * Gets authentication result builder.
+     *
+     * @param ctx the ctx
+     * @return the authentication result builder
+     */
+    public static AuthenticationResultBuilder getAuthenticationResultBuilder(final RequestContext ctx) {
+        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT_BUILDER, AuthenticationResultBuilder.class);
+    }
+
+    /**
+     * Put authentication result.
+     *
+     * @param authenticationResult the authentication result
+     * @param context               the context
+     */
+    public static void putAuthenticationResult(final AuthenticationResult authenticationResult, final RequestContext context) {
+        context.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT, authenticationResult);
+    }
+
+    /**
+     * Gets authentication result builder.
+     *
+     * @param ctx the ctx
+     * @return the authentication context builder
+     */
+    public static AuthenticationResult getAuthenticationResult(final RequestContext ctx) {
+        return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT, AuthenticationResult.class);
+    }
+    
     /**
      * Gets http servlet request user agent.
      *
@@ -463,7 +534,7 @@ public final class WebUtils {
      */
     public static HttpRequestGeoLocation getHttpServletRequestGeoLocation() {
         final int latIndex = 0;
-        final int oongIndex = 1;
+        final int longIndex = 1;
         final int accuIndex = 2;
         final int timeIndex = 3;
 
@@ -474,7 +545,7 @@ public final class WebUtils {
             if (StringUtils.isNotBlank(geoLocationParam)) {
                 final String[] geoLocation = geoLocationParam.split(",");
                 loc.setLatitude(geoLocation[latIndex]);
-                loc.setLongitude(geoLocation[oongIndex]);
+                loc.setLongitude(geoLocation[longIndex]);
                 loc.setAccuracy(geoLocation[accuIndex]);
                 loc.setTimestamp(geoLocation[timeIndex]);
             }

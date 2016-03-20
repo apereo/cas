@@ -81,7 +81,7 @@ public class TicketsResource {
     private ServiceFactory webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSupport")
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
 
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper();

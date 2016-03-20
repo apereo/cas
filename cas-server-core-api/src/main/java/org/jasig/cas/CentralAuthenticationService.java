@@ -55,6 +55,17 @@ public interface CentralAuthenticationService {
 
 
     /**
+     * Updates the ticket instance in the underlying storage mechanism.
+     * The properties of a given ticket, such as its authentication attributes
+     * may have changed during various legs of the authentication flow.
+     *
+     * @param ticket the ticket
+     * @return the updated ticket
+     * @since 4.3.0
+     */
+    Ticket updateTicket(@NotNull final Ticket ticket);
+
+    /**
      * Obtains the given ticket by its id and type
      * and returns the CAS-representative object. Implementations
      * need to check for the validity of the ticket by making sure
@@ -98,7 +109,7 @@ public interface CentralAuthenticationService {
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service                The target service of the ServiceTicket.
-     * @param authenticationResult             The authentication context established if credentials provided
+     * @param authenticationResult   The authentication context established if credentials provided
      * @return Non -null service ticket identifier.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if the ticket could not be created.
@@ -119,7 +130,7 @@ public interface CentralAuthenticationService {
      * </p>
      *
      * @param proxyGrantingTicket Proof of prior authentication.
-     * @param service                The target service of the ServiceTicket.
+     * @param service             The target service of the ServiceTicket.
      * @return Non -null service ticket identifier.
      * @throws AbstractTicketException if the ticket could not be created.
      */
@@ -151,10 +162,11 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
      * to other Services.
      *
-     * @param serviceTicketId The service ticket identifier that will delegate to a {@link org.jasig.cas.ticket.TicketGrantingTicket}.
-     * @param authenticationResult     The current authentication context before this ticket can be granted.
-     * @return Non -null ticket-granting ticket identifier that can grant
-     * {@link org.jasig.cas.ticket.ServiceTicket} that proxy authentication.
+     * @param serviceTicketId The service ticket identifier that will delegate to a
+     * {@link org.jasig.cas.ticket.TicketGrantingTicket}.
+     * @param authenticationResult The current authentication context before this ticket can be granted.
+     * @return Non -null ticket-granting ticket identifier that can grant {@link org.jasig.cas.ticket.ServiceTicket} 
+     * that proxy authentication.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if there was an error creating the ticket
      */

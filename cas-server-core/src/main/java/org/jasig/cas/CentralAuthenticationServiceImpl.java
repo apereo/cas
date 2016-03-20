@@ -164,7 +164,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         return serviceTicket;
     }
 
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+    private Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
                                                                 final TicketGrantingTicket ticketGrantingTicket)
             throws MixedPrincipalException {
         Authentication currentAuthentication = null;
@@ -177,6 +177,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
                             currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
                 }
                 ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
+                updateTicket(ticketGrantingTicket);
             }
         }
         return currentAuthentication;

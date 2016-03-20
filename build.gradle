@@ -33,6 +33,7 @@ ext.libraries = [
         cassecurityfilter: "org.jasig.cas:cas-server-security-filter:$casSecurityFilterVersion",
         commons          : [
                 "commons-io:commons-io:$commonsIoVersion",
+                "commons-codec:commons-codec:$commonsCodecVersion",
                 dependencies.create("commons-jexl:commons-jexl:$commonsJexlVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
                     exclude(group: 'commons-lang', module: 'commons-lang')
@@ -416,6 +417,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework', module: 'spring-context-support')
                     exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(module: 'commons-lang')
                     force = true
                 },
                 "gnu.getopt:java-getopt:1.0.13"
@@ -889,13 +891,17 @@ ext.libraries = [
 
         validationapi    : "javax.validation:validation-api:$javaxValidationVersion",
         xmlapis          : "xml-apis:xml-apis:$xmlapisVersion",
-        yubicoapi        : [
+        yubicoapi        : 
                 dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'commons-codec', module: 'commons-codec')
                     force = true
                 },
-                "commons-codec:commons-codec:$commonsCodecVersion",
+        duojava : [
+                dependencies.create("net.unicon.iam:duo-java:$duoVersion") {
+                    exclude(module: 'slf4j-api')
+                    force = true
+                }
         ]
 ]
 
@@ -964,6 +970,7 @@ subprojects {
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
+        maven { url "https://dl.bintray.com/uniconiam/maven"}
     }
 
     test {
@@ -971,6 +978,7 @@ subprojects {
         maxParallelForks = 1
         useJUnit()
         scanForTestClasses false
+
         ignoreFailures Boolean.getBoolean("ignoreTestFailures")
         include '**/*Tests.*'
         exclude '**/*Abstract*.*'
@@ -1276,6 +1284,13 @@ subprojects {
                         repository {
                             id "couchbase"
                             url "http://files.couchbase.com/maven2/"
+                            releases {
+                                enabled true
+                            }
+                       }
+                       repository {
+                            id "uniconiam"
+                            url "https://dl.bintray.com/uniconiam/maven"
                             releases {
                                 enabled true
                             }

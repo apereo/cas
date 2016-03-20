@@ -1,6 +1,7 @@
 package org.jasig.cas.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.Formatter;
@@ -82,6 +83,20 @@ public final class EncodingUtils {
     public static String urlEncode(final String value) {
         try {
             return URLEncoder.encode(value, "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Url decode a value.
+     *
+     * @param value the value to decode
+     * @return the decoded value
+     */
+    public static String urlDecode(final String value) {
+        try {
+            return URLDecoder.decode(value, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
