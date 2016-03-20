@@ -1,5 +1,6 @@
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
+import net.jradius.exception.TimeoutException;
 import net.jradius.packet.attribute.RadiusAttribute;
 import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
@@ -115,5 +116,32 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
 
     public final void setServers(final List<RadiusServer> servers) {
         this.servers = servers;
+    }
+
+    /**
+     * Can ping boolean.
+     *
+     * @return the boolean
+     */
+    public boolean canPing() {
+        final String uidPsw = getClass().getSimpleName();
+        for (final RadiusServer server : servers) {
+            logger.debug("Attempting to ping RADIUS server {} via simulating an authentication request. If the server responds "
+                    + "successfully, mock authentication will fail correctly.", server);
+            try {
+                server.authenticate(uidPsw, uidPsw);
+
+            } catch (final PreventedException e) {
+                if (e.getCause() instanceof TimeoutException) {
+                    logger.debug("Server {} is not available", server);
+                    continue;
+                }
+                logger.debug("Pinging RADIUS server was successful. Response {}", e.getMessage());
+            }
+            return true;
+        }
+        return false;
+
+
     }
 }
