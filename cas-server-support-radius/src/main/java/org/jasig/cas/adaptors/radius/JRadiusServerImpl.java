@@ -17,6 +17,7 @@ import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,5 +230,21 @@ public final class JRadiusServerImpl implements RadiusServer {
     public void setRetries(final int retries) {
         this.retries = retries;
     }
-   
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("protocol", protocol)
+                .append("radiusClientFactory", radiusClientFactory)
+                .append("retries", retries)
+                .append("nasIpAddress", nasIpAddress)
+                .append("nasIpv6Address", nasIpv6Address)
+                .append("nasPort", nasPort)
+                .append("nasPortId", nasPortId)
+                .append("nasIdentifier", nasIdentifier)
+                .append("nasRealPort", nasRealPort)
+                .append("nasPortType", nasPortType)
+                .toString();
+    }
 }

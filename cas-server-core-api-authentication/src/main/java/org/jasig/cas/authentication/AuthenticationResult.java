@@ -2,6 +2,8 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Service;
 
+import java.io.Serializable;
+
 /**
  * The {@link AuthenticationResult} is an abstraction representing final authentication outcome for any number of processed
  * authentication transactions.
@@ -13,13 +15,14 @@ import org.jasig.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public interface AuthenticationResult {
+public interface AuthenticationResult extends Serializable {
 
     /**
      * Obtains the finalized primary authentication for this result.
      * @return the authentication
      */
     Authentication getAuthentication();
+
 
     /**
      * Gets the service for which this authentication result is relevant.

@@ -1,16 +1,18 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Principal;
-
+import org.jasig.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
@@ -166,6 +168,27 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         return this;
     }
 
+    @Override
+    public AuthenticationBuilder mergeAttribute(final String key, final Object value) {
+        final Object currentValue = this.attributes.get(key);
+        if (currentValue == null) {
+            return addAttribute(key, value);
+        }
+        final Collection collection = CollectionUtils.convertValueToCollection(currentValue);
+        collection.addAll(CollectionUtils.convertValueToCollection(value));
+        return addAttribute(key, collection);
+    }
+
+    @Override
+    public boolean hasAttribute(final String name, final Predicate<Object> predicate) {
+        if (this.attributes.containsKey(name)) {
+            final Object value = this.attributes.get(name);
+            final Collection valueCol = CollectionUtils.convertValueToCollection(value);
+            return valueCol.stream().filter(predicate).count() > 0;
+        }
+        return false;
+    }
+
     /**
      * Adds an authentication metadata attribute key-value pair.
      *
@@ -275,7 +298,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     @Override
     public Authentication build() {
-        return new ImmutableAuthentication(
+        return new DefaultAuthentication(
                 this.authenticationDate,
                 this.credentials,
                 this.principal,

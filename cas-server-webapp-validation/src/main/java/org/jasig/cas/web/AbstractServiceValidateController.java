@@ -1,25 +1,22 @@
 package org.jasig.cas.web;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationContextValidator;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -27,19 +24,29 @@ import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.validation.ValidationResponseType;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -69,6 +76,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private ApplicationContext context;
 
     @NotNull
+    private ValidationSpecification validationSpecification;
+
+    @NotNull
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -84,10 +94,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    /** The validation protocol we want to use. */
-    @NotNull
-    private Class<?> validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
 
     /** The proxy handler we want to use with the controller. */
     @NotNull
@@ -106,6 +112,18 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
+
+    @NotNull
+    @Autowired
+    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
+
+    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    private String authenticationContextAttribute;
+
+    @Autowired
+    @Qualifier("authenticationContextValidator")
+    private AuthenticationContextValidator authenticationContextValidator;
 
     /**
      * Instantiates a new Service validate controller.
@@ -129,11 +147,44 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                logger.error("Error constructing pgtUrl", e);
+                logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
         }
 
         return null;
+    }
+
+
+    /**
+     * Validate authentication context pair.
+     *
+     * @param assertion the assertion
+     * @param request   the request
+     * @return the pair
+     */
+    protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(
+            final Assertion assertion, final HttpServletRequest request) {
+        // find the RegisteredService for this Assertion
+        logger.debug("Locating the primary authentication associated with this service request {}", assertion.getService());
+        final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
+        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(assertion.getService(), service);
+
+        // resolve MFA auth context for this request
+        final Map<String, MultifactorAuthenticationProvider> providers = context.getBeansOfType(MultifactorAuthenticationProvider.class);
+        final Authentication authentication = assertion.getPrimaryAuthentication();
+        final Optional<String> requestedContext = multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
+                service, authentication.getPrincipal());
+
+        // no MFA auth context found
+        if (!requestedContext.isPresent()) {
+            logger.debug("No particular authentication context is required for this request");
+            return new Pair<>(true, Optional.empty());
+        }
+
+        // validate the requested strategy
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
+                this.authenticationContextValidator.validate(authentication, requestedContext.get(), service);
+        return result;
     }
 
     /**
@@ -143,7 +194,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param binder the binder
      */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
-        binder.setRequiredFields("renew");
+        binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
     }
 
     /**
@@ -202,7 +253,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
             if (!validateAssertion(request, serviceTicketId, assertion)) {
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
-                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null, request, service);
+                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                        new Object[] {serviceTicketId}, request, service);
+            }
+
+            final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
+            if (!ctxResult.getFirst()) {
+                throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
             }
 
             String proxyIou = null;
@@ -217,7 +274,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
             onSuccessfulValidation(serviceTicketId, assertion);
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
-            return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
+            return generateSuccessView(assertion, proxyIou, service, ctxResult.getSecond(), proxyGrantingTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
@@ -241,13 +298,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the boolean
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
-        final ValidationSpecification validationSpecification = this.getCommandClass();
+
         final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
         initBinder(request, binder);
         binder.bind(request);
 
-        if (!validationSpecification.isSatisfiedBy(assertion)) {
-            logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+        if (!validationSpecification.isSatisfiedBy(assertion, request)) {
+            logger.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
             return false;
         }
         return true;
@@ -299,14 +356,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * Generate the success view. The result will contain the assertion and the proxy iou.
      *
-     * @param assertion the assertion
-     * @param proxyIou the proxy iou
-     * @param service the validated service
+     * @param assertion           the assertion
+     * @param proxyIou            the proxy iou
+     * @param service             the validated service
+     * @param contextProvider     the context provider
      * @param proxyGrantingTicket the proxy granting ticket
      * @return the model and view, pointed to the view name set by
      */
     private ModelAndView generateSuccessView(final Assertion assertion, final String proxyIou,
                                              final WebApplicationService service,
+                                             final Optional<MultifactorAuthenticationProvider> contextProvider,
                                              final TicketGrantingTicket proxyGrantingTicket) {
 
         final ModelAndView modelAndView = getModelAndView(true, service);
@@ -316,6 +375,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
         if (proxyGrantingTicket != null) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
+        }
+
+        if (contextProvider.isPresent()) {
+            modelAndView.addObject(this.authenticationContextAttribute, contextProvider);
         }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
@@ -336,19 +399,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return Collections.emptyMap();  
     }
-    
-    /**
-     * Gets the command class based on {@link #setValidationSpecificationClass(Class)}.
-     *
-     * @return the command class
-     */
-    private ValidationSpecification getCommandClass() {
-        try {
-            return (ValidationSpecification) this.validationSpecificationClass.newInstance();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
@@ -368,12 +419,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         this.argumentExtractor = argumentExtractor;
     }
 
+    public void setMultifactorTriggerSelectionStrategy(final MultifactorTriggerSelectionStrategy strategy) {
+        this.multifactorTriggerSelectionStrategy = strategy;
+    }
+
     /**
      * @param validationSpecificationClass The authenticationSpecificationClass
      * to set.
      */
-    public void setValidationSpecificationClass(final Class<?> validationSpecificationClass) {
-        this.validationSpecificationClass = validationSpecificationClass;
+    public void setValidationSpecification(final ValidationSpecification validationSpecificationClass) {
+        this.validationSpecification = validationSpecificationClass;
     }
 
     /**

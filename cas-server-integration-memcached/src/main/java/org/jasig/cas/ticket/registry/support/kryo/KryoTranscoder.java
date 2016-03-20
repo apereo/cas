@@ -22,8 +22,8 @@ import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthentication;
 import org.jasig.cas.authentication.DefaultHandlerResult;
-import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -114,7 +114,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(LinkedHashMap.class);
         kryo.register(HashSet.class);
         kryo.register(DefaultHandlerResult.class);
-        kryo.register(ImmutableAuthentication.class);
+        kryo.register(DefaultAuthentication.class);
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
         kryo.register(NeverExpiresExpirationPolicy.class);
         kryo.register(RememberMeDelegatingExpirationPolicy.class);
