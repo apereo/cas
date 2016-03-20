@@ -69,4 +69,5 @@
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 </beans>

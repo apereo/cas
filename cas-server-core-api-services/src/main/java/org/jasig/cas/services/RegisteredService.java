@@ -16,7 +16,9 @@ import java.util.Set;
  */
 public interface RegisteredService extends Cloneable, Serializable {
 
-    /** Initial ID value of newly created (but not persisted) registered service. **/
+    /**
+     * Initial ID value of newly created (but not persisted) registered service.
+     */
     long INITIAL_IDENTIFIER_VALUE = -Long.MAX_VALUE;
 
     /**
@@ -36,6 +38,7 @@ public interface RegisteredService extends Cloneable, Serializable {
     /**
      * The numeric identifier for this service. Implementations
      * are expected to initialize the id with the value of {@link #INITIAL_IDENTIFIER_VALUE}.
+     *
      * @return the numeric identifier for this service.
      */
     long getId();
@@ -65,29 +68,39 @@ public interface RegisteredService extends Cloneable, Serializable {
     /**
      * Gets the relative evaluation order of this service when determining
      * matches.
-     * @return Evaluation order relative to other registered services.
-     * Services with lower values will be evaluated for a match before others.
+     *
+     * @return Evaluation order relative to other registered services. Services with lower values will
+     * be evaluated for a match before others.
      */
     int getEvaluationOrder();
 
     /**
      * Sets the relative evaluation order of this service when determining
      * matches.
+     *
      * @param evaluationOrder the service evaluation order
      */
     void setEvaluationOrder(int evaluationOrder);
 
     /**
      * Get the name of the attribute this service prefers to consume as username.
+     *
      * @return an instance of {@link RegisteredServiceUsernameAttributeProvider}
      */
     RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider();
 
     /**
+     * Gets authentication policy.
+     *
+     * @return the authentication policy
+     */
+    RegisteredServiceMultifactorPolicy getMultifactorPolicy();
+
+    /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.
      * An empty set indicates that there are no requirements on particular authentication handlers; any will suffice.
      *
-     * @return Non-null set of required handler names.
+     * @return Non -null set of required handler names.
      */
     Set<String> getRequiredHandlers();
 
@@ -136,6 +149,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * Gets the logo image associated with this service.
      * The image mostly is served on the user interface
      * to identify this requesting service during authentication.
+     *
      * @return URL of the image
      * @since 4.1
      */
@@ -147,6 +161,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * This is an optional setting. When undefined, the service
      * url as is defined by {@link #getServiceId()} will be used
      * to handle logout invocations.
+     *
      * @return the logout url for this service
      * @since 4.1
      */
@@ -158,6 +173,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * encrypting certain elements and attributes in
      * the CAS validation protocol response, such as
      * the PGT.
+     *
      * @return the public key instance used to authorize the request
      * @since 4.1
      */
@@ -167,6 +183,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * Describes extra metadata about the service; custom fields
      * that could be used by submodules implementing additional
      * behavior on a per-service basis.
+     *
      * @return map of custom metadata.
      * @since 4.2
      */

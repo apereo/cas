@@ -1,6 +1,10 @@
 package org.jasig.cas.validation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Base validation specification for the CAS protocol. This specification checks
@@ -12,6 +16,8 @@ import org.springframework.context.annotation.Scope;
  */
 @Scope(value = "prototype")
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
@@ -31,6 +37,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
         this.renew = renew;
     }
 
+
     /**
      * Method to set the renew requirement.
      *
@@ -39,6 +46,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     public final void setRenew(final boolean renew) {
         this.renew = renew;
     }
+
 
     /**
      * Method to determine if we require renew to be true.
@@ -50,9 +58,8 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     }
 
     @Override
-    public final boolean isSatisfiedBy(final Assertion assertion) {
-        return isSatisfiedByInternal(assertion)
-            && (!this.renew || assertion.isFromNewLogin());
+    public final boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
+        return isSatisfiedByInternal(assertion) && (!this.renew || assertion.isFromNewLogin());
     }
 
     /**

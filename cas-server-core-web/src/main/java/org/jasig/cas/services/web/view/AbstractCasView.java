@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.support.CasAttributeEncoder;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
@@ -15,6 +16,7 @@ import org.jasig.cas.validation.Assertion;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.view.AbstractView;
 
 import javax.annotation.Resource;
@@ -27,6 +29,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,6 +59,9 @@ public abstract class AbstractCasView extends AbstractView {
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    private String authenticationContextAttribute;
 
     /**
      * Gets the assertion from the model.
@@ -203,6 +209,22 @@ public abstract class AbstractCasView extends AbstractView {
 
 
     /**
+     * Gets satisfied multifactor authentication provider.
+     *
+     * @param model the model
+     * @return the satisfied multifactor authentication provider
+     */
+    protected final Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(
+            final Map<String, Object> model) {
+        if (model.containsKey(this.authenticationContextAttribute)) {
+            final Optional<MultifactorAuthenticationProvider> result =
+                    (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
+            return result;
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Is assertion backed by new login?
      *
      * @param model the model
@@ -220,7 +242,7 @@ public abstract class AbstractCasView extends AbstractView {
      */
     private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
         final Set<Map.Entry<String, Object>> entries = attributes.entrySet();
-        return attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+        return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
             final Object value = entry.getValue();
             if (value instanceof Collection || value instanceof Map || value instanceof Object[]
                     || value instanceof Iterator || value instanceof Enumeration) {
