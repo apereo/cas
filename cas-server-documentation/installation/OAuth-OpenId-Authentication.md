@@ -26,7 +26,7 @@ After enabling OAuth support, three new urls will be available:
 It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
 
 * **/oauth2.0/accessToken**  
-It's the url to call to get an access token.
+It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON if set so in the management webapp per OAuth client.
 
 * **/oauth2.0/profile**  
 It's the url to call to get the profile of the authorized user. The response is in JSON format with all attributes of the user.
