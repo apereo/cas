@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.servlet.view.JstlView;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -29,6 +28,11 @@ public class YubiKeyConfiguration {
     @Qualifier("builder")
     private FlowBuilderServices builder;
 
+    /**
+     * Yubikey flow registry flow definition registry.
+     *
+     * @return the flow definition registry
+     */
     @RefreshScope
     @Bean(name = "yubikeyFlowRegistry")
     public FlowDefinitionRegistry yubikeyFlowRegistry() {

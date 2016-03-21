@@ -20,6 +20,9 @@ public class RadiusMultifactorApplicationContextWrapper extends BaseApplicationC
     @Qualifier("radiusTokenAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
+    /**
+     * Initialize root application context.
+     */
     @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);

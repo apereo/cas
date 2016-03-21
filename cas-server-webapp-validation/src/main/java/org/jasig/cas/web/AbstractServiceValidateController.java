@@ -233,50 +233,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         try {
-            TicketGrantingTicket proxyGrantingTicketId = null;
-            final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
-            if (serviceCredential != null) {
-                try {
-                    proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
-                } catch (final AuthenticationException e) {
-                    logger.warn("Failed to authenticate service credential {}", serviceCredential);
-                    return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            new Object[]{serviceCredential.getId()}, request, service);
-                } catch (final InvalidTicketException e) {
-                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
-                    return generateErrorView(e.getCode(), e.getCode(),
-                            new Object[]{serviceTicketId}, request, service);
-                } catch (final AbstractTicketException e) {
-                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
-                    return generateErrorView(e.getCode(), e.getCode(),
-                            new Object[]{serviceCredential.getId()}, request, service);
-                }
-            }
-
-            final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
-            if (!validateAssertion(request, serviceTicketId, assertion)) {
-                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
-                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
-                        new Object[] {serviceTicketId}, request, service);
-            }
-
-            final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
-            if (!ctxResult.getFirst()) {
-                throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
-            }
-
-            final String proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
-            if (StringUtils.isEmpty(proxyIou) && serviceCredential != null) {
-                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                        CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                        new Object[] {serviceCredential.getId()}, request, service);
-            }
-
-            onSuccessfulValidation(serviceTicketId, assertion);
-            logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
-            return generateSuccessView(assertion, proxyIou, service, request, 
-                    ctxResult.getSecond(), proxyGrantingTicketId);
+            return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
@@ -289,6 +246,62 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         } catch (final UnauthorizedServiceException e) {
             return generateErrorView(e.getMessage(), e.getMessage(), null, request, service);
         }
+    }
+
+    /**
+     * Handle ticket validation model and view.
+     *
+     * @param request         the request
+     * @param service         the service
+     * @param serviceTicketId the service ticket id
+     * @return the model and view
+     */
+    protected ModelAndView handleTicketValidation(final HttpServletRequest request, final WebApplicationService service, 
+                                                  final String serviceTicketId) {
+        TicketGrantingTicket proxyGrantingTicketId = null;
+        final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
+        if (serviceCredential != null) {
+            try {
+                proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
+            } catch (final AuthenticationException e) {
+                logger.warn("Failed to authenticate service credential {}", serviceCredential);
+                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                        CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                        new Object[]{serviceCredential.getId()}, request, service);
+            } catch (final InvalidTicketException e) {
+                logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                return generateErrorView(e.getCode(), e.getCode(),
+                        new Object[]{serviceTicketId}, request, service);
+            } catch (final AbstractTicketException e) {
+                logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                return generateErrorView(e.getCode(), e.getCode(),
+                        new Object[]{serviceCredential.getId()}, request, service);
+            }
+        }
+
+        final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
+        if (!validateAssertion(request, serviceTicketId, assertion)) {
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                    CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                    new Object[] {serviceTicketId}, request, service);
+        }
+
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
+        if (!ctxResult.getFirst()) {
+            throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
+        }
+
+        final String proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
+        if (StringUtils.isEmpty(proxyIou) && serviceCredential != null) {
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                    CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                    new Object[] {serviceCredential.getId()}, request, service);
+        }
+
+        onSuccessfulValidation(serviceTicketId, assertion);
+        logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
+        return generateSuccessView(assertion, proxyIou, service, request, 
+                ctxResult.getSecond(), proxyGrantingTicketId);
     }
 
     private String handleProxyIouDelivery(final Credential serviceCredential, 

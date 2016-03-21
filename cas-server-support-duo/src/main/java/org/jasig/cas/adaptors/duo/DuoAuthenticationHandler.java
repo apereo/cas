@@ -29,7 +29,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     /**
      * Creates the duo authentication handler.
      */
-    private DuoAuthenticationHandler() {}
+    public DuoAuthenticationHandler() {}
 
     /**
      * Do an out of band request using the DuoWeb api (encapsulated in DuoAuthenticationService)

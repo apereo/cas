@@ -18,11 +18,9 @@ import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 

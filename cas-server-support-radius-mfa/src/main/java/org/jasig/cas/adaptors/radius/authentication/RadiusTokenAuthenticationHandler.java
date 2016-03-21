@@ -16,8 +16,6 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -74,7 +72,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             final String username = WebUtils.getAuthentication(context).getPrincipal().getId();
 
             final Pair<Boolean, Optional<Map<String, Object>>> result =
-                    RadiusUtils.authenticate(username, password, this.servers, this.failoverOnAuthenticationFailure, this.failoverOnException);
+                    RadiusUtils.authenticate(username, password, this.servers, 
+                            this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getFirst()) {
                 return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getSecond().get()),
                         new ArrayList<>());

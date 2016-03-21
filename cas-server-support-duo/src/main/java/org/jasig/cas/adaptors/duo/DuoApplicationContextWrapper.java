@@ -25,6 +25,9 @@ public class DuoApplicationContextWrapper extends BaseApplicationContextWrapper 
     @Qualifier("duoAuthenticationMetaDataPopulator")
     private AuthenticationMetaDataPopulator populator;
 
+    /**
+     * Initialize servlet application context.
+     */
     @PostConstruct
     protected void initializeServletApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);

@@ -28,6 +28,11 @@ public class DuoConfiguration {
     @Qualifier("builder")
     private FlowBuilderServices builder;
 
+    /**
+     * Duo flow registry flow definition registry.
+     *
+     * @return the flow definition registry
+     */
     @RefreshScope
     @Bean(name = "duoFlowRegistry")
     public FlowDefinitionRegistry duoFlowRegistry() {

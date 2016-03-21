@@ -1,13 +1,11 @@
 package org.jasig.cas.adaptors.radius;
 
 import net.jradius.packet.attribute.RadiusAttribute;
-import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,20 @@ import java.util.Optional;
 public final class RadiusUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(RadiusUtils.class);
+
+    private RadiusUtils() {}
     
+    /**
+     * Authenticate pair.
+     *
+     * @param username                        the username
+     * @param password                        the password
+     * @param servers                         the servers
+     * @param failoverOnAuthenticationFailure the failover on authentication failure
+     * @param failoverOnException             the failover on exception
+     * @return the pair
+     * @throws Exception the exception
+     */
     public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username, final String password,
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
@@ -44,7 +55,7 @@ public final class RadiusUtils {
                     throw new FailedLoginException("Radius authentication failed for user " + username);
                 }
                 LOGGER.debug("failoverOnAuthenticationFailure enabled -- trying next server");
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (!failoverOnException) {
                     throw e;
                 }

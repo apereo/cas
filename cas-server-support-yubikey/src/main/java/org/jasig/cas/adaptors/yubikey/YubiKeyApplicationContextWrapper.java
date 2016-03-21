@@ -24,6 +24,9 @@ public class YubiKeyApplicationContextWrapper extends BaseApplicationContextWrap
     @Qualifier("yubikeyAuthenticationMetaDataPopulator")
     private YubiKeyAuthenticationMetaDataPopulator populator;
 
+    /**
+     * Initialize root application context.
+     */
     @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);

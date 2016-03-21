@@ -118,6 +118,11 @@ public class RadiusMultifactorConfiguration {
     @Qualifier("builder")
     private FlowBuilderServices builder;
 
+    /**
+     * Radius flow registry flow definition registry.
+     *
+     * @return the flow definition registry
+     */
     @RefreshScope
     @Bean(name = "radiusFlowRegistry")
     public FlowDefinitionRegistry radiusFlowRegistry() {
