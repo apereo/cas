@@ -1,6 +1,5 @@
 package org.jasig.cas.adaptors.radius.authentication;
 
-import org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.jasig.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.jasig.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,12 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    @Value("${cas.radius.rank:0}")
+    @Value("${cas.mfa.radius.rank:0}")
     private int rank;
 
     @Autowired
-    @Qualifier("radiusAuthenticationHandler")
-    private RadiusAuthenticationHandler radiusAuthenticationHandler;
+    @Qualifier("radiusTokenAuthenticationHandler")
+    private RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
 
     @Override
     public String getId() {

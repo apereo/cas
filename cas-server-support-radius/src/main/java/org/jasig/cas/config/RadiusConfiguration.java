@@ -96,7 +96,7 @@ public class RadiusConfiguration {
     /**
      * The Socket timeout.
      */
-    @Value("${cas.radius.client.socket.timeout:60}")
+    @Value("${cas.radius.client.socket.timeout:5}")
     private int socketTimeout;
 
     /**

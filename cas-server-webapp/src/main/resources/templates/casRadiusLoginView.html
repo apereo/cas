@@ -1,35 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<div class="box fl-panel" id="login">
-    <form method="post" id="fm1" cssClass="fm-v clearfix"
-               commandName="${commandName}" htmlEscape="true">
-        <form:errors path="*" id="msg" cssClass="errors" element="div" />
-        <div class="row fl-controls-left">
-            <spring:message code="screen.welcome.label.netid" />
-            <c:if test="${not empty sessionScope.openIdLocalId}">
-                <strong>${sessionScope.openIdLocalId}</strong>
-                <input type="hidden" id="username" name="username"
-                       value="${sessionScope.openIdLocalId}" />
-            </c:if>
+<div th:replace="fragments/top"/>
 
-            <c:if test="${empty sessionScope.openIdLocalId}">
-                <strong>
-                    <c:out value="${fn:escapeXml(principal.id)}" />
-                </strong>
+<body id="cas">
+<div id="container">
+    <div th:replace="fragments/logo"/>
 
-                <form:hidden path="username" value="${principal.id}" />
-            </c:if>
+    <div id="content">
+
+        <div class="box fl-panel" id="login">
+
+            <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
+                <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+                    <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+                </div>
+
+                <div class="row fl-controls-left">
+                    <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
+
+                    <input type="password" class="required" id="token" size="25" tabindex="1"
+                           th:field="*{token}"
+                           th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off" />
+                    <input class="btn-submit" name="_eventId_submit" accesskey="l"
+                           th:value="#{screen.welcome.button.login}"  tabindex="4" type="submit" />
+                </div>
+                <div class="row btn-row">
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                </div>
+            </form>
         </div>
-        <div class="row fl-controls-left">
-            <label for="password" class="fl-label"><spring:message code="screen.welcome.label.password" /></label>
-            <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
-            <form:password cssClass="required" cssErrorClass="error" id="password" size="25" tabindex="1" path="password"
-                           accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
-            <input  class="btn-submit" name="_eventId_submit" accesskey="l"
-                    value="<spring:message code="screen.welcome.button.login" />"
-                    tabindex="4" type="submit" />
-        </div>
-        <div class="row btn-row">
-            <input type="hidden" name="execution" value="${flowExecutionKey}"/>
-        </div>
-    </form>
+
+
+    </div>
+    <div th:include="fragments/footer"/>
 </div>
+</body>
+<div th:include="fragments/bottom"/>
+</html>
+
+
+
+

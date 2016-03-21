@@ -1,7 +1,5 @@
 package org.jasig.cas.adaptors.radius;
 
-import org.jasig.cas.authentication.PreventedException;
-
 /**
  * Interface representing a Radius Server.
  *
@@ -29,8 +27,8 @@ public interface RadiusServer {
      *
      * @return {@link RadiusResponse} on success, null otherwise.
      *
-     * @throws PreventedException On indeterminate case where authentication was prevented by a system (e.g. IO) error.
+     * @throws Exception On indeterminate case where authentication was prevented by a system (e.g. IO) error.
      */
-    RadiusResponse authenticate(String username, String password) throws PreventedException;
+    RadiusResponse authenticate(String username, String password) throws Exception;
 
 }

@@ -1,14 +1,6 @@
 description = 'Apereo CAS RADIUS RSA MFA Support'
 dependencies {
-    compile project(':cas-server-support-radius')
     compile project(':cas-server-core-webflow')
     compile project(':cas-server-core-web')
-}
-
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'gnu-getopt') {
-            details.useTarget group: 'gnu.getopt', name: 'java-getopt', version: details.requested.version
-        }
-    }
+    compile project(':cas-server-support-radius-core')
 }

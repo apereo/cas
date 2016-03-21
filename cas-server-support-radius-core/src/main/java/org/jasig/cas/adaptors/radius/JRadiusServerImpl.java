@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -90,7 +91,7 @@ public class JRadiusServerImpl implements RadiusServer {
     }
 
     @Override
-    public RadiusResponse authenticate(final String username, final String password) throws PreventedException {
+    public RadiusResponse authenticate(final String username, final String password) throws Exception {
 
         final AttributeList attributeList = new AttributeList();
         
@@ -140,8 +141,6 @@ public class JRadiusServerImpl implements RadiusServer {
                         acceptedResponse.getIdentifier(),
                         acceptedResponse.getAttributes().getAttributeList());
             }
-        } catch (final Exception e) {
-            throw new PreventedException(e);            
         } finally {
             if (client != null) {
                 client.close();

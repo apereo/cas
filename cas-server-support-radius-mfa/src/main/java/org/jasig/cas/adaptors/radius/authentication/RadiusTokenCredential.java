@@ -1,4 +1,4 @@
-package org.jasig.cas.adaptors.yubikey;
+package org.jasig.cas.adaptors.radius.authentication;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,13 +9,13 @@ import org.jasig.cas.authentication.Credential;
 import java.io.Serializable;
 
 /**
- * This is {@link YubiKeyCredential}.
+ * This is {@link RadiusTokenCredential}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class YubiKeyCredential implements Credential, Serializable {
-    private static final long serialVersionUID = -7570600701132111037L;
+public class RadiusTokenCredential implements Credential, Serializable {
+    private static final long serialVersionUID = -7570675701132111037L;
 
     private String token;
 
@@ -28,13 +28,13 @@ public class YubiKeyCredential implements Credential, Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof YubiKeyCredential)) {
+        if (!(obj instanceof RadiusTokenCredential)) {
             return false;
         }
         if (obj == this) {
             return true;
         }
-        final YubiKeyCredential other = (YubiKeyCredential) obj;
+        final RadiusTokenCredential other = (RadiusTokenCredential) obj;
         final EqualsBuilder builder = new EqualsBuilder();
         builder.append(this.token, other.token);
         return builder.isEquals();
@@ -65,3 +65,4 @@ public class YubiKeyCredential implements Credential, Serializable {
         return StringUtils.isNotBlank(this.token);
     }
 }
+
