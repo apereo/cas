@@ -130,7 +130,11 @@ ext.libraries = [
                     exclude(group: 'xml-apis', module: 'xml-apis')
                     force = true
                 },
-                "com.mchange:c3p0:$c3p0Version"
+                dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
+                    exclude(group: 'xml-apis', module: 'xml-apis')
+                    force = true
+                }
+
         ],
         httpclient       : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {

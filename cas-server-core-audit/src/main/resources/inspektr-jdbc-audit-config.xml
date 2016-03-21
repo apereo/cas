@@ -26,21 +26,14 @@
           p:dataSource-ref="inspektrAuditTrailDataSource" />
 
     <bean id="inspektrAuditTrailDataSource"
-          class="com.mchange.v2.c3p0.ComboPooledDataSource"
-          p:driverClass="${cas.audit.database.driverClass:org.hsqldb.jdbcDriver}"
+          class="com.zaxxer.hikari.HikariDataSource"
+          p:driverClassName="${cas.audit.database.driverClass:org.hsqldb.jdbcDriver}"
           p:jdbcUrl="${cas.audit.database.url:jdbc:hsqldb:hsql://localhost}"
-          p:user="${cas.audit.database.user:sa}"
-          p:password="${cas.audit.database.password:}"
-          p:initialPoolSize="${cas.audit.database.pool.minSize:6}"
-          p:minPoolSize="${cas.audit.database.pool.minSize:6}"
-          p:maxPoolSize="${cas.audit.database.pool.maxSize:18}"
-          p:maxIdleTimeExcessConnections="${cas.audit.database.pool.maxIdleTime:1000}"
-          p:checkoutTimeout="${cas.audit.database.pool.maxWait:2000}"
-          p:acquireIncrement="${cas.audit.database.pool.acquireIncrement:16}"
-          p:acquireRetryAttempts="${cas.audit.database.pool.acquireRetryAttempts:5}"
-          p:acquireRetryDelay="${cas.audit.database.pool.acquireRetryDelay:2000}"
-          p:idleConnectionTestPeriod="${cas.audit.database.pool.idleConnectionTestPeriod:30}"
-          p:preferredTestQuery="${cas.audit.database.pool.connectionHealthQuery:select 1}"/>
+          p:username="${cas.audit.database.user:sa}"
+          p:maximumPoolSize="${cas.audit.database.pool.maxSize:18}"
+          p:idleTimeout="${cas.audit.database.pool.maxIdleTime:1000}"
+          p:loginTimeout="${cas.audit.database.pool.maxWait:2000}"
+          p:validationTimeout="${cas.audit.database.pool.maxWait:2000}" />
 
     <bean id="inspektrAuditTransactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager"

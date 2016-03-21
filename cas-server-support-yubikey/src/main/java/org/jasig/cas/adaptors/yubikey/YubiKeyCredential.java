@@ -19,6 +19,15 @@ public class YubiKeyCredential implements Credential, Serializable {
 
     private String token;
 
+    /**
+     * Instantiates a new Yubi key credential.
+     *
+     * @param token the token
+     */
+    public YubiKeyCredential(final String token) {
+        this.token = token;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

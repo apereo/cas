@@ -45,16 +45,9 @@ Configuration consists of:
 #cas.audit.database.url=
 #cas.audit.database.user=
 #cas.audit.database.password=
-#cas.audit.database.pool.minSize=
-#cas.audit.database.pool.minSize=
 #cas.audit.database.pool.maxSize=
 #cas.audit.database.pool.maxIdleTime=
 #cas.audit.database.pool.maxWait=
-#cas.audit.database.pool.acquireIncrement=
-#cas.audit.database.pool.acquireRetryAttempts=
-#cas.audit.database.pool.acquireRetryDelay=
-#cas.audit.database.pool.idleConnectionTestPeriod=
-#cas.audit.database.pool.connectionHealthQuery=
 ```
 
 

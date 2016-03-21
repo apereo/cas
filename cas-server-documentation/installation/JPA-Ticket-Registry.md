@@ -44,16 +44,10 @@ The following settings are expected:
 # ticketreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
 # ticketreg.database.user=sa
 # ticketreg.database.password=
-# ticketreg.database.pool.minSize=6
 # ticketreg.database.pool.maxSize=18
 # ticketreg.database.pool.maxWait=10000
-# ticketreg.database.pool.maxIdleTime=120
-# ticketreg.database.pool.acquireIncrement=6
-# ticketreg.database.pool.idleConnectionTestPeriod=30
-# ticketreg.database.pool.connectionHealthQuery=select 1
-# ticketreg.database.pool.acquireRetryAttempts=5
-# ticketreg.database.pool.acquireRetryDelay=2000
-# ticketreg.database.pool.connectionHealthQuery=select 1
+# ticketreg.database.pool.maxWait=10000# ticketreg.database.pool.maxIdleTime=120
+# ticketreg.database.jpa.locking.tgt.enabled=true
 ```
 
 

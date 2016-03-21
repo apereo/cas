@@ -80,13 +80,13 @@
         <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="1"
               p:name="Normal"
-              p:serviceId="https://example.com/normal/.+"
+              p:serviceId="https://example\.com/normal/.*"
               p:evaluationOrder="10"/>
 
         <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="2"
               p:name="High"
-              p:serviceId="https://example.com/high/.+"
+              p:serviceId="https://example\.com/high/.*"
               p:evaluationOrder="20">
             <property name="requiredHandlers">
                 <list>

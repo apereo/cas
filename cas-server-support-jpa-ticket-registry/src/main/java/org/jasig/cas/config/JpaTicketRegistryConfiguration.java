@@ -1,6 +1,6 @@
 package org.jasig.cas.config;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -12,6 +12,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
@@ -78,19 +79,7 @@ public class JpaTicketRegistryConfiguration {
      */
     @Value("${svcreg.database.password:}")
     private String password;
-
-    /**
-     * The Initial pool size.
-     */
-    @Value("${svcreg.database.pool.minSize:6}")
-    private int initialPoolSize;
-
-    /**
-     * The Min pool size.
-     */
-    @Value("${svcreg.database.pool.minSize:6}")
-    private int minPoolSize;
-
+    
     /**
      * The Max pool size.
      */
@@ -108,37 +97,7 @@ public class JpaTicketRegistryConfiguration {
      */
     @Value("${svcreg.database.pool.maxWait:2000}")
     private int checkoutTimeout;
-
-    /**
-     * The Acquire increment.
-     */
-    @Value("${svcreg.database.pool.acquireIncrement:16}")
-    private int acquireIncrement;
-
-    /**
-     * The Acquire retry attempts.
-     */
-    @Value("${svcreg.database.pool.acquireRetryAttempts:5}")
-    private int acquireRetryAttempts;
-
-    /**
-     * The Acquire retry delay.
-     */
-    @Value("${svcreg.database.pool.acquireRetryDelay:2000}")
-    private int acquireRetryDelay;
-
-    /**
-     * The Idle connection test period.
-     */
-    @Value("${svcreg.database.pool.idleConnectionTestPeriod:30}")
-    private int idleConnectionTestPeriod;
-
-    /**
-     * The Preferred test query.
-     */
-    @Value("${svcreg.database.pool.connectionHealthQuery:select 1}")
-    private String preferredTestQuery;
-
+    
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.
      *
@@ -158,7 +117,6 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the string [ ]
      */
-    @RefreshScope
     @Bean(name = "ticketPackagesToScan")
     public String[] ticketPackagesToScan() {
         return new String[] {
@@ -212,23 +170,19 @@ public class JpaTicketRegistryConfiguration {
      */
     @RefreshScope
     @Bean(name = "dataSourceTicket")
-    public ComboPooledDataSource dataSourceTicket() {
+    public DataSource dataSourceTicket() {
         try {
-            final ComboPooledDataSource bean = new ComboPooledDataSource();
-            bean.setDriverClass(this.driverClass);
+            final HikariDataSource bean = new HikariDataSource();
+            bean.setDriverClassName(this.driverClass);
             bean.setJdbcUrl(this.jdbcUrl);
-            bean.setUser(this.user);
+            bean.setUsername(this.user);
             bean.setPassword(this.password);
-            bean.setInitialPoolSize(this.initialPoolSize);
-            bean.setMinPoolSize(this.minPoolSize);
-            bean.setMaxPoolSize(this.maxPoolSize);
-            bean.setMaxIdleTimeExcessConnections(this.maxIdleTimeExcessConnections);
-            bean.setCheckoutTimeout(this.checkoutTimeout);
-            bean.setAcquireIncrement(this.acquireIncrement);
-            bean.setAcquireRetryAttempts(this.acquireRetryAttempts);
-            bean.setAcquireRetryDelay(this.acquireRetryDelay);
-            bean.setIdleConnectionTestPeriod(this.idleConnectionTestPeriod);
-            bean.setPreferredTestQuery(this.preferredTestQuery);
+
+            bean.setMaximumPoolSize(this.maxPoolSize);
+            bean.setMinimumIdle(this.maxIdleTimeExcessConnections);
+
+            bean.setLoginTimeout(this.checkoutTimeout);
+            bean.setValidationTimeout(this.checkoutTimeout);
             return bean;
         } catch (final Exception e) {
             throw new RuntimeException(e);

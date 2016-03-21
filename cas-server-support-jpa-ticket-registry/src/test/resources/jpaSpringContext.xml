@@ -26,23 +26,17 @@
 
   <import resource="classpath:jpaTicketRegistryContext.xml" />
 
-  <bean
-      id="dataSourceTicket"
-      class="com.mchange.v2.c3p0.ComboPooledDataSource"
-      p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
-      p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry;hsqldb.tx_level=serializable}"
-      p:user="${database.user:sa}"
-      p:password="${database.password:}"
-      p:initialPoolSize="${database.pool.minSize:6}"
-      p:minPoolSize="${database.pool.minSize:6}"
-      p:maxPoolSize="${database.pool.maxSize:18}"
-      p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime:1000}"
-      p:checkoutTimeout="${database.pool.maxWait:2000}"
-      p:acquireIncrement="${database.pool.acquireIncrement:16}"
-      p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
-      p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
-      p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
-      p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
+  <bean id="dataSourceTicket"
+        class="com.zaxxer.hikari.HikariDataSource"
+        p:driverClassName="${cas.audit.database.driverClass:org.hsqldb.jdbcDriver}"
+        p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry;hsqldb.tx_level=serializable}"
+        p:username="${database.user:sa}"
+        p:password="${database.password:}"
+        p:maximumPoolSize="20"
+        p:idleTimeout="1000"
+        p:loginTimeout="2000"
+        p:validationTimeout="2000" />
+  
 
   <bean id="jpaTicketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry"/>
   <alias name="jpaTicketRegistry" alias="ticketRegistry" />

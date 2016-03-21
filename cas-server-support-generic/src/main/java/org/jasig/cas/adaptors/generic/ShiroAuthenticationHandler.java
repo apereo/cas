@@ -87,6 +87,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
         try {
             final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
             if (shiroResource.exists()) {
+                
                 final String location = shiroResource.getURI().toString();
                 logger.debug("Loading Shiro configuration from {}", location);
 
