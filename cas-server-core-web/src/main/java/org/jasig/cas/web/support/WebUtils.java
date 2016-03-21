@@ -123,12 +123,9 @@ public final class WebUtils {
      */
     public static HttpServletResponse getHttpServletResponse(
             final RequestContext context) {
-        Assert.isInstanceOf(ServletExternalContext.class, context
-                        .getExternalContext(),
-                "Cannot obtain HttpServletResponse from event of type: "
-                        + context.getExternalContext().getClass().getName());
-        return (HttpServletResponse) context.getExternalContext()
-                .getNativeResponse();
+        Assert.isInstanceOf(ServletExternalContext.class, context .getExternalContext(),
+                "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
+        return (HttpServletResponse) context.getExternalContext().getNativeResponse();
     }
 
     /**

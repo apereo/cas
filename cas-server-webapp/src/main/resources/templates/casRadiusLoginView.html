@@ -1,6 +1,6 @@
-<jsp:directive.include file="includes/top.jsp" />
+
 <div class="box fl-panel" id="login">
-    <form:form method="post" id="fm1" cssClass="fm-v clearfix"
+    <form method="post" id="fm1" cssClass="fm-v clearfix"
                commandName="${commandName}" htmlEscape="true">
         <form:errors path="*" id="msg" cssClass="errors" element="div" />
         <div class="row fl-controls-left">
@@ -31,6 +31,5 @@
         <div class="row btn-row">
             <input type="hidden" name="execution" value="${flowExecutionKey}"/>
         </div>
-    </form:form>
+    </form>
 </div>
-<jsp:directive.include file="includes/bottom.jsp" />

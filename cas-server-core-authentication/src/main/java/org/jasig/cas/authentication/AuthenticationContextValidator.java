@@ -29,7 +29,7 @@ import java.util.Optional;
  * @since 4.3
  */
 @Component("authenticationContextValidator")
-public final class AuthenticationContextValidator {
+public class AuthenticationContextValidator {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

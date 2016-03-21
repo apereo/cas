@@ -22,6 +22,7 @@ import java.util.ArrayList;
 @Component("duoAuthenticationHandler")
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
+    @Autowired
     @Qualifier("duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 

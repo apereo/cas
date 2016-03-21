@@ -15,14 +15,14 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.3
  */
-public final class AuthenticationMethod implements Comparable, Serializable {
+public class AuthenticationMethod implements Comparable, Serializable {
     private static final long serialVersionUID = -8960685427442975943L;
 
     @JsonProperty
-    private final Integer rank;
+    private Integer rank;
 
     @JsonProperty
-    private final String name;
+    private String name;
 
     /**
      * Instantiates a new Authentication method.

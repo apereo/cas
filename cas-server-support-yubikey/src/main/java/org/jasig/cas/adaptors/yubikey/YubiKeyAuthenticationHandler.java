@@ -5,15 +5,20 @@ import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoValidationFailure;
 import com.yubico.client.v2.exceptions.YubicoVerificationException;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
@@ -34,7 +39,7 @@ import java.security.GeneralSecurityException;
  * @since 4.1
  */
 @Component("yubikeyAuthenticationHandler")
-public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler
+public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
         implements InitializingBean {
 
     private YubiKeyAccountRegistry registry;
@@ -66,30 +71,22 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * Attempts to authenticate the received credentials using the Yubico cloud validation platform.
-     * In this implementation, the {@link UsernamePasswordCredential#getUsername()}
-     * is mapped to the {@code uid} which will be used by the plugged-in instance of the
-     * {@link YubiKeyAccountRegistry}
-     * and the {@link UsernamePasswordCredential#getPassword()} is the received
-     * one-time password token issued by the YubiKey device.
-     */
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
-            throws GeneralSecurityException, PreventedException {
-
-        final String uid = transformedCredential.getUsername();
-        final String otp = transformedCredential.getPassword();
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+        final YubiKeyCredential yubiKeyCredential = (YubiKeyCredential) credential;
+        
+        final String otp = yubiKeyCredential.getToken();
 
         if (!YubicoClient.isValidOTPFormat(otp)) {
             logger.debug("Invalid OTP format [{}]", otp);
-            throw new FailedLoginException("OTP format is invalid");
+            throw new AccountNotFoundException("OTP format is invalid");
         }
 
+        final RequestContext context = RequestContextHolder.getRequestContext();
+        final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
         final String publicId = YubicoClient.getPublicId(otp);
         if (this.registry != null
-              &&!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
+                &&!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
             logger.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
             throw new AccountNotFoundException("YubiKey id is not recognized in registry");
         }
@@ -99,7 +96,7 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
             final ResponseStatus status = response.getStatus();
             if (status.compareTo(ResponseStatus.OK) == 0) {
                 logger.debug("YubiKey response status {} at {}", status, response.getTimestamp());
-                return createHandlerResult(transformedCredential,
+                return createHandlerResult(yubiKeyCredential,
                         this.principalFactory.createPrincipal(uid), null);
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
@@ -108,7 +105,6 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
     }
-
 
     @Autowired(required=false)
     public void setRegistry(@Qualifier("yubiKeyAccountRegistry")
@@ -122,5 +118,11 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     public YubicoClient getClient() {
         return client;
+    }
+
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return YubiKeyCredential.class.isAssignableFrom(credential.getClass());
     }
 }
