@@ -35,6 +35,9 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
     @Column(length = 255, updatable = true, insertable = true)
     private Boolean generateRefreshToken = Boolean.FALSE;
 
+    @Column(length = 255, updatable = true, insertable = true)
+    private Boolean jsonFormat = Boolean.FALSE;
+
     public String getClientId() {
         return this.clientId;
     }
@@ -67,6 +70,14 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
         this.generateRefreshToken = generateRefreshToken;
     }
 
+    public Boolean isJsonFormat() {
+        return jsonFormat;
+    }
+
+    public void setJsonFormat(final Boolean jsonFormat) {
+        this.jsonFormat = jsonFormat;
+    }
+
     @Override
     public String toString() {
         final ToStringBuilder builder = new ToStringBuilder(this);
@@ -74,6 +85,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
         builder.append("clientId", getClientId());
         builder.append("approvalPrompt", isBypassApprovalPrompt());
         builder.append("generateRefreshToken", isGenerateRefreshToken());
+        builder.append("jsonFormat", isJsonFormat());
         return builder.toString();
     }
 
@@ -85,6 +97,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
         this.setClientSecret(oAuthRegisteredService.getClientSecret());
         this.setBypassApprovalPrompt(oAuthRegisteredService.isBypassApprovalPrompt());
         this.setGenerateRefreshToken(oAuthRegisteredService.isGenerateRefreshToken());
+        this.setJsonFormat(oAuthRegisteredService.isJsonFormat());
     }
 
     @Override
@@ -111,6 +124,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
                 .append(this.clientId, rhs.clientId)
                 .append(this.bypassApprovalPrompt, rhs.bypassApprovalPrompt)
                 .append(this.generateRefreshToken, rhs.generateRefreshToken)
+                .append(this.jsonFormat, rhs.jsonFormat)
                 .isEquals();
     }
 
@@ -122,6 +136,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
                 .append(clientId)
                 .append(bypassApprovalPrompt)
                 .append(generateRefreshToken)
+                .append(jsonFormat)
                 .toHashCode();
     }
 }
