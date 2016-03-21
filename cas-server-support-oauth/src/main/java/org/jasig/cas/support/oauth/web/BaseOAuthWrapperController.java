@@ -1,5 +1,7 @@
 package org.jasig.cas.support.oauth.web;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.BasicIdentifiableCredential;
@@ -63,6 +65,9 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     @Autowired
     @Qualifier("oAuthValidator")
     protected OAuthValidator validator;
+
+    /** The JSON factory. */
+    protected final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
     @NotNull
     @Autowired
