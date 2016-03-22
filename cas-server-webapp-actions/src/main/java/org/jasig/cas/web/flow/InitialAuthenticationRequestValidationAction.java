@@ -12,7 +12,7 @@ import org.springframework.webflow.execution.RequestContext;
  * This is {@link InitialAuthenticationRequestValidationAction}.
  *
  * @author Misagh Moayyed
- * @since 3.4.0
+ * @since 5.0.0
  */
 @Component("initialAuthenticationRequestValidationAction")
 public class InitialAuthenticationRequestValidationAction extends AbstractAction {

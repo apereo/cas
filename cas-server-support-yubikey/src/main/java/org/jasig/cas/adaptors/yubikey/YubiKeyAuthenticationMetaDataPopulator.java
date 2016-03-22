@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * yubikey MFA provider id into the final authentication object.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("yubikeyAuthenticationMetaDataPopulator")
 public class YubiKeyAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {

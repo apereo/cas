@@ -61,7 +61,7 @@ public interface CentralAuthenticationService {
      *
      * @param ticket the ticket
      * @return the updated ticket
-     * @since 4.3.0
+     * @since 5.0.0
      */
     Ticket updateTicket(@NotNull final Ticket ticket);
 

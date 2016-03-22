@@ -13,7 +13,7 @@ import java.util.Set;
  * of resolved events, to select one vs another based on the nature of the event attributes.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("selectiveAuthenticationProviderWebflowEventResolver")
 public class SelectiveAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {

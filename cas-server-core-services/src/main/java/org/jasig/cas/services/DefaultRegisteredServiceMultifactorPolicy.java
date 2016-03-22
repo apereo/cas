@@ -11,7 +11,7 @@ import java.util.Set;
  * This is {@link DefaultRegisteredServiceMultifactorPolicy}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
 

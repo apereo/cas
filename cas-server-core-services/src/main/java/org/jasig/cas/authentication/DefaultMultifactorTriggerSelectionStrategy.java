@@ -24,7 +24,7 @@ import java.util.stream.StreamSupport;
  * parameter, RegisteredService policy, principal attribute.
  *
  * @author Daniel Frett
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("defaultMultifactorTriggerSelectionStrategy")
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {

@@ -13,7 +13,7 @@ import javax.servlet.annotation.WebListener;
  * This is {@link DuoServletContextListener}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @WebListener
 @Component

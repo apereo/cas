@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
  * This is {@link InitializeLoginAction}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("initializeLoginAction")
 public class InitializeLoginAction extends AbstractAction {
