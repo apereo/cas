@@ -1,6 +1,5 @@
 package org.jasig.cas.mgmt.services.web.beans;
 
-
 import java.io.Serializable;
 
 /**
@@ -15,6 +14,7 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
     private String clientId;
     private boolean bypass;
     private boolean refreshToken;
+    private boolean jsonFormat;
 
     public String getClientSecret() {
         return clientSecret;
@@ -46,5 +46,13 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
 
     public void setRefreshToken(final boolean refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public boolean isJsonFormat() {
+        return jsonFormat;
+    }
+
+    public void setJsonFormat(final boolean jsonFormat) {
+        this.jsonFormat = jsonFormat;
     }
 }

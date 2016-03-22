@@ -349,7 +349,7 @@ public class OAuth20AccessTokenControllerTests {
 
         final RegisteredService service = addRegisteredService();
 
-        internalVerifyClientOK(service, false, false);
+        internalVerifyClientOK(service, false, false, false);
     }
 
     @Test
@@ -357,7 +357,7 @@ public class OAuth20AccessTokenControllerTests {
 
         final RegisteredService service = addRegisteredService();
 
-        internalVerifyClientOK(service, true, false);
+        internalVerifyClientOK(service, true, false, false);
     }
 
     @Test
@@ -366,7 +366,7 @@ public class OAuth20AccessTokenControllerTests {
         final OAuthRegisteredService service = addRegisteredService();
         service.setGenerateRefreshToken(true);
 
-        internalVerifyClientOK(service, false, true);
+        internalVerifyClientOK(service, false, true, false);
     }
 
     @Test
@@ -375,10 +375,49 @@ public class OAuth20AccessTokenControllerTests {
         final OAuthRegisteredService service = addRegisteredService();
         service.setGenerateRefreshToken(true);
 
-        internalVerifyClientOK(service, true, true);
+        internalVerifyClientOK(service, true, true, false);
     }
 
-    private void internalVerifyClientOK(final RegisteredService service, final boolean basicAuth, final boolean refreshToken)
+    @Test
+    public void verifyClientAuthJsonByParameter() throws Exception {
+
+        final OAuthRegisteredService service = addRegisteredService();
+        service.setJsonFormat(true);
+
+        internalVerifyClientOK(service, false, false, true);
+    }
+
+    @Test
+    public void verifyClientAuthJsonByHeader() throws Exception {
+
+        final OAuthRegisteredService service = addRegisteredService();
+        service.setJsonFormat(true);
+
+        internalVerifyClientOK(service, true, false, true);
+    }
+
+    @Test
+    public void verifyClientAuthJsonByParameterWithRefreshToken() throws Exception {
+
+        final OAuthRegisteredService service = addRegisteredService();
+        service.setGenerateRefreshToken(true);
+        service.setJsonFormat(true);
+
+        internalVerifyClientOK(service, false, true, true);
+    }
+
+    @Test
+    public void verifyClientAuthJsonByHeaderWithRefreshToken() throws Exception {
+
+        final OAuthRegisteredService service = addRegisteredService();
+        service.setGenerateRefreshToken(true);
+        service.setJsonFormat(true);
+
+        internalVerifyClientOK(service, true, true, true);
+    }
+
+    private void internalVerifyClientOK(final RegisteredService service, final boolean basicAuth, final boolean refreshToken,
+                                        final boolean json)
             throws Exception {
 
         final Principal principal = createPrincipal();
@@ -401,31 +440,50 @@ public class OAuth20AccessTokenControllerTests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket((code.getId())));
-        assertEquals("text/plain", mockResponse.getContentType());
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
-        assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
-        if (refreshToken) {
-            assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
+        final String accessTokenId;
+        if (json) {
+            assertEquals("application/json", mockResponse.getContentType());
+            assertTrue(body.contains('"' + OAuthConstants.ACCESS_TOKEN + "\":\"AT-"));
+            if (refreshToken) {
+                assertTrue(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
+            }
+            assertTrue(body.contains('"' + OAuthConstants.EXPIRES + "\":7"));
+            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
+        } else {
+            assertEquals("text/plain", mockResponse.getContentType());
+            assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + "=AT-"));
+            if (refreshToken) {
+                assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + "=RT-"));
+            }
+            assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
-        assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
 
-        final String accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
-        final int timeLeft = getTimeLeft(body, refreshToken);
+        final int timeLeft = getTimeLeft(body, refreshToken, json);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 
-    private int getTimeLeft(final String body, final boolean refreshToken) {
+    private int getTimeLeft(final String body, final boolean refreshToken, final boolean json) {
         final int timeLeft;
-        if (refreshToken) {
-            timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuthConstants.EXPIRES + '=',
-                    '&' + OAuthConstants.REFRESH_TOKEN));
+        if (json) {
+            if (refreshToken) {
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES + "\":", ","));
+            } else {
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES + "\":", "}"));
+            }
         } else {
-            timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES + '='));
+            if (refreshToken) {
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuthConstants.EXPIRES + '=',
+                        '&' + OAuthConstants.REFRESH_TOKEN));
+            } else {
+                timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES + '='));
+            }
         }
         return timeLeft;
     }
@@ -510,7 +568,7 @@ public class OAuth20AccessTokenControllerTests {
 
         addRegisteredService();
 
-        internalVerifyUserAuth(false);
+        internalVerifyUserAuth(false, false);
     }
 
     @Test
@@ -519,10 +577,29 @@ public class OAuth20AccessTokenControllerTests {
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
 
-        internalVerifyUserAuth(true);
+        internalVerifyUserAuth(true, false);
     }
 
-    private void internalVerifyUserAuth(final boolean refreshToken) throws Exception {
+    @Test
+    public void verifyJsonUserAuth() throws Exception {
+
+        final OAuthRegisteredService registeredService = addRegisteredService();
+        registeredService.setJsonFormat(true);
+
+        internalVerifyUserAuth(false, true);
+    }
+
+    @Test
+    public void verifyJsonUserAuthWithRefreshToken() throws Exception {
+
+        final OAuthRegisteredService registeredService = addRegisteredService();
+        registeredService.setGenerateRefreshToken(true);
+        registeredService.setJsonFormat(true);
+
+        internalVerifyUserAuth(true, true);
+    }
+
+    private void internalVerifyUserAuth(final boolean refreshToken, final boolean json) throws Exception {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
@@ -533,21 +610,32 @@ public class OAuth20AccessTokenControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
-        assertEquals("text/plain", mockResponse.getContentType());
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
-        assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
-        if (refreshToken) {
-            assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
+        final String accessTokenId;
+        if (json) {
+            assertEquals("application/json", mockResponse.getContentType());
+            assertTrue(body.contains('"' + OAuthConstants.ACCESS_TOKEN + "\":\"AT-"));
+            if (refreshToken) {
+                assertTrue(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
+            }
+            assertTrue(body.contains('"' + OAuthConstants.EXPIRES + "\":7"));
+            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
+        } else {
+            assertEquals("text/plain", mockResponse.getContentType());
+            assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
+            if (refreshToken) {
+                assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
+            }
+            assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
-        assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
 
-        final String accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
         assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
 
-        final int timeLeft = getTimeLeft(body, refreshToken);
+        final int timeLeft = getTimeLeft(body, refreshToken, json);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 
@@ -623,7 +711,7 @@ public class OAuth20AccessTokenControllerTests {
 
         final RegisteredService service = addRegisteredService();
 
-        internalVerifyRefreshTokenOk(service);
+        internalVerifyRefreshTokenOk(service, false);
     }
 
     @Test
@@ -632,10 +720,29 @@ public class OAuth20AccessTokenControllerTests {
         final OAuthRegisteredService service = addRegisteredService();
         service.setGenerateRefreshToken(true);
 
-        internalVerifyRefreshTokenOk(service);
+        internalVerifyRefreshTokenOk(service, false);
     }
 
-    private void internalVerifyRefreshTokenOk(final RegisteredService service) throws Exception {
+    @Test
+    public void verifyJsonRefreshTokenOK() throws Exception {
+
+        final OAuthRegisteredService service = addRegisteredService();
+        service.setJsonFormat(true);
+
+        internalVerifyRefreshTokenOk(service, true);
+    }
+
+    @Test
+    public void verifyJsonRefreshTokenOKWithRefreshToken() throws Exception {
+
+        final OAuthRegisteredService service = addRegisteredService();
+        service.setGenerateRefreshToken(true);
+        service.setJsonFormat(true);
+
+        internalVerifyRefreshTokenOk(service, true);
+    }
+
+    private void internalVerifyRefreshTokenOk(final RegisteredService service, final boolean json) throws Exception {
 
         final Principal principal = createPrincipal();
         final RefreshToken refreshToken = addRefreshToken(principal, service);
@@ -650,19 +757,28 @@ public class OAuth20AccessTokenControllerTests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertNotNull(oAuth20AccessTokenController.getTicketRegistry().getTicket((refreshToken.getId())));
-        assertEquals("text/plain", mockResponse.getContentType());
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
-        assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
-        assertFalse(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
-        assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+        final String accessTokenId;
+        if (json) {
+            assertEquals("application/json", mockResponse.getContentType());
+            assertTrue(body.contains('"' + OAuthConstants.ACCESS_TOKEN + "\":\"AT-"));
+            assertFalse(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
+            assertTrue(body.contains('"' + OAuthConstants.EXPIRES + "\":7"));
+            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
+        } else {
+            assertEquals("text/plain", mockResponse.getContentType());
+            assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
+            assertFalse(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
+            assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+            accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
+        }
 
-        final String accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
-        final int timeLeft = getTimeLeft(body, false);
+        final int timeLeft = getTimeLeft(body, false, json);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 

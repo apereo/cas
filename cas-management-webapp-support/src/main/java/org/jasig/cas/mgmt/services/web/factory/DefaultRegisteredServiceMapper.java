@@ -60,6 +60,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             oauthBean.setClientId(oauth.getClientId());
             oauthBean.setClientSecret(oauth.getClientSecret());
             oauthBean.setRefreshToken(oauth.isGenerateRefreshToken());
+            oauthBean.setJsonFormat(oauth.isJsonFormat());
         }
 
         bean.setTheme(svc.getTheme());
@@ -119,6 +120,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((OAuthRegisteredService) regSvc).setClientSecret(oauthBean.getClientSecret());
                 ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
                 ((OAuthRegisteredService) regSvc).setGenerateRefreshToken(oauthBean.isRefreshToken());
+                ((OAuthRegisteredService) regSvc).setJsonFormat(oauthBean.isJsonFormat());
             } else {
                 if (RegexUtils.isValidRegex(data.getServiceId())) {
                     regSvc = new RegexRegisteredService();
