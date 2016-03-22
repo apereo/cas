@@ -8,7 +8,7 @@ import org.springframework.web.servlet.view.JstlView;
  * This is {@link DuoSecurityConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Configuration("duoSecurityConfiguration")
 public class DuoSecurityConfiguration {

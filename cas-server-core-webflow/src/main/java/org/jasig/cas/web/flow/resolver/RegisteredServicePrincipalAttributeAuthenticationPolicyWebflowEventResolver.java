@@ -20,7 +20,7 @@ import java.util.Set;
  * and match it against the pattern provided in the same policy.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
 public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver

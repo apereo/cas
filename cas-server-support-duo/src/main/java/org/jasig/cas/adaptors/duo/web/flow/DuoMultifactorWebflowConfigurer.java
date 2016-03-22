@@ -10,7 +10,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  * This is {@link DuoMultifactorWebflowConfigurer}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("duoMultifactorWebflowConfigurer")
 public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
