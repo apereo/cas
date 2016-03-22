@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  *
  */
+@RefreshScope
 @Component("resourceCrlRevocationChecker")
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  {
 

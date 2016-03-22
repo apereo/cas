@@ -3,6 +3,7 @@ package org.jasig.cas.ticket.registry.support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
@@ -13,7 +14,6 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -23,6 +23,7 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@RefreshScope
 @Component("jpaLockingStrategy")
 public class JpaLockingStrategy implements LockingStrategy {
 
@@ -30,7 +31,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     public static final int DEFAULT_LOCK_TIMEOUT = 3600;
 
     /** Transactional entity manager from Spring context. */
-    @NotNull
+    
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     protected EntityManager entityManager;
 
@@ -42,12 +43,12 @@ public class JpaLockingStrategy implements LockingStrategy {
      * each one of which may be for a different application or usage within
      * a single application.
      */
-    @NotNull
+    
     @Value(("${database.cleaner.appid:cas-ticket-registry-cleaner}"))
     private String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
-    @NotNull
+    
     @Value(("${host.name:cas01.example.org}"))
     private String uniqueId;
 

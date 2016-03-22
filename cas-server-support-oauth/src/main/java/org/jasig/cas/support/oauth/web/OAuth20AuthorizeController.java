@@ -17,13 +17,13 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,10 +34,11 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@RefreshScope
 @Component("authorizeController")
 public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory oAuthCodeFactory;

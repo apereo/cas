@@ -24,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
+@RefreshScope
 @ComponentScan(basePackages = {"org.pac4j.springframework"})
 @Lazy(true)
 public class OAuthConfiguration extends WebMvcConfigurerAdapter {

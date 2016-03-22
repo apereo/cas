@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
+@RefreshScope
 @Component("adfsAuthNHandler")
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 

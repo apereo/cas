@@ -11,13 +11,13 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -30,11 +30,12 @@ import java.util.List;
  * @author Jerome Leleu
  * @since 3.0.0
  */
+@RefreshScope
 @Component("logoutAction")
 public class LogoutAction extends AbstractLogoutAction {
 
     /** The services manager. */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;

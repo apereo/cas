@@ -4,6 +4,7 @@ import org.jasig.cas.services.web.view.AbstractDelegatingCasView;
 import org.jasig.cas.CasViewConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.View;
 
@@ -39,6 +40,7 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
     /**
      * The type Success.
      */
+    @RefreshScope
     @Component("cas2ServiceSuccessView")
     public static class Success extends Cas20ResponseView {
         /**

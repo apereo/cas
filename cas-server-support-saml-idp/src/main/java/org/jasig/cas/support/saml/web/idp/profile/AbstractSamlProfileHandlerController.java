@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.security.SecureRandom;
@@ -78,21 +77,21 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Cas server name.
      */
-    @NotNull
+    
     @Value("${server.name}")
     protected String casServerName;
 
     /**
      * The Cas server prefix.
      */
-    @NotNull
+    
     @Value("${server.prefix}")
     protected String casServerPrefix;
 
     /**
      * The Cas server login url.
      */
-    @NotNull
+    
     @Value("${server.prefix}/login")
     protected String casServerLoginUrl;
 

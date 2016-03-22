@@ -2,6 +2,7 @@ package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("openIdPrincipalResolver")
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 

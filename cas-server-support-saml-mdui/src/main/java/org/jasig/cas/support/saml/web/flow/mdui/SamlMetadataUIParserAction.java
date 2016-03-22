@@ -24,7 +24,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -49,14 +48,14 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
+    
     private String entityIdParameterName;
 
-    @NotNull
+    
     private MetadataResolverAdapter metadataAdapter;
 
     @Autowired
-    @NotNull
+    
     private ServicesManager servicesManager;
 
     @Autowired

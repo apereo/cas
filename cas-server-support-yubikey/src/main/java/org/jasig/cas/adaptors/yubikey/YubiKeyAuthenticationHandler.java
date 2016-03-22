@@ -14,6 +14,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -21,7 +22,6 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
@@ -36,6 +36,7 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("yubikeyAuthenticationHandler")
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
         implements InitializingBean {
@@ -54,8 +55,8 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param secretKey the secret key
      */
     @Autowired
-    public YubiKeyAuthenticationHandler(@NotNull @Value("${cas.mfa.yubikey.client.id:}") final Integer clientId,
-                                        @NotNull @Value("${cas.mfa.yubikey.secret.key:}") final String secretKey) {
+    public YubiKeyAuthenticationHandler(@Value("${cas.mfa.yubikey.client.id:}") final Integer clientId,
+                                         @Value("${cas.mfa.yubikey.secret.key:}") final String secretKey) {
         this.client = YubicoClient.getClient(clientId, secretKey);
     }
 

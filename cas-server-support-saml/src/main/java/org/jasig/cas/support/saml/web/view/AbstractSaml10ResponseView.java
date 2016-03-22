@@ -12,7 +12,6 @@ import org.opensaml.saml.saml1.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZoneOffset;
@@ -35,7 +34,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     private ArgumentExtractor samlArgumentExtractor;
 
-    @NotNull
+    
     private String encoding = DEFAULT_ENCODING;
 
     /** Defaults to 0. */

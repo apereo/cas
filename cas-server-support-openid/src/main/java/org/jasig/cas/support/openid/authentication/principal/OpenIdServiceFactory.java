@@ -5,12 +5,12 @@ import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.openid4java.message.ParameterList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 
 /**
  * The {@link OpenIdServiceFactory} creates {@link OpenIdService} objects.
@@ -18,13 +18,14 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("openIdServiceFactory")
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
 
     /**
      * The prefix url for OpenID (without the trailing slash).
      */
-    @NotNull
+    
     @Value("${server.prefix}/openid")
     private String openIdPrefixUrl;
 

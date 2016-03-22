@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@RefreshScope
 @Component("ldapAuthorizationGenerator")
 public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
@@ -66,19 +67,19 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     private SearchExecutor roleSearchExecutor;
 
     /** Specify the name of LDAP attribute to use as principal identifier. */
-    @NotNull
+    
     @Value("${ldap.authorizationgenerator.user.attr:}")
     private String userAttributeName;
 
     /** Specify the name of LDAP attribute to be used as the basis for the roles. */
-    @NotNull
+    
     @Value("${ldap.authorizationgenerator.role.attr:}")
     private String roleAttributeName;
 
     /** Prefix appended to the uppercased
      * {@link #roleAttributeName} (Spring Security convention).
      **/
-    @NotNull
+    
     @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + "}")
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 

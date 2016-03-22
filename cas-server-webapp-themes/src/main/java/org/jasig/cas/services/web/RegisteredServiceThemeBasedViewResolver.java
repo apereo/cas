@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
@@ -34,6 +35,7 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@RefreshScope
 @Component("registeredServiceViewResolver")
 public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);

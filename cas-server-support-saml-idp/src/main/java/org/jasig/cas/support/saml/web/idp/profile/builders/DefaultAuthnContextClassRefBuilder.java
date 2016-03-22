@@ -11,6 +11,7 @@ import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component
 @Qualifier("defaultAuthnContextClassRefBuilder")
 public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefBuilder {

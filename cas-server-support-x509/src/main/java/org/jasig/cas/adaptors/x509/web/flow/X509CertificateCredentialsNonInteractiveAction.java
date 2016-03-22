@@ -5,6 +5,7 @@ import java.security.cert.X509Certificate;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,6 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("x509Check")
 public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonInteractiveCredentialsAction {
 

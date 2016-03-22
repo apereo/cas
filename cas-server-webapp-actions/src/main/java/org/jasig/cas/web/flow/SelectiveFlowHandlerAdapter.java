@@ -4,7 +4,6 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +29,7 @@ public class SelectiveFlowHandlerAdapter extends FlowHandlerAdapter {
      *
      * @param flowId the flow id
      */
-    public void setSupportedFlowId(@NotNull final String flowId) {
+    public void setSupportedFlowId(final String flowId) {
         this.supportedFlowIds = new HashSet<>();
         this.supportedFlowIds.add(flowId);
     }

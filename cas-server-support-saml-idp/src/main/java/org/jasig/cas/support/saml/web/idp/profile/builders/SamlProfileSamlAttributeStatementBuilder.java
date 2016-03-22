@@ -7,6 +7,7 @@ import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSer
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("samlProfileSamlAttributeStatementBuilder")
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements
         SamlProfileObjectBuilder<AttributeStatement> {

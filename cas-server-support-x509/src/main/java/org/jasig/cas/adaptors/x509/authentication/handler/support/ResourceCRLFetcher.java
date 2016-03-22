@@ -3,11 +3,11 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -25,6 +25,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("resourceCrlFetcher")
 public class ResourceCRLFetcher implements CRLFetcher {
     /**
@@ -64,7 +65,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     @Override
-    public X509CRL fetch(@NotNull final String crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final String crl) throws IOException, CRLException, CertificateException {
         return fetch(new URL(crl));
     }
 
@@ -79,7 +80,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     @Override
-    public X509CRL fetch(@NotNull final Resource crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
         final Set<X509CRL> results = fetch(Collections.singleton(crl));
         if (!results.isEmpty()) {
             return results.iterator().next();
@@ -100,7 +101,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     @Override
-    public X509CRL fetch(@NotNull final URI crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URI crl) throws IOException, CRLException, CertificateException {
         return fetch(crl.toURL());
     }
 
@@ -114,7 +115,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    public X509CRL fetch(@NotNull final URL crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URL crl) throws IOException, CRLException, CertificateException {
         return fetch(new UrlResource((URL) crl));
     }
 }

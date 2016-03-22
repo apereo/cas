@@ -1,6 +1,7 @@
 package org.jasig.cas.web.flow;
 
 import org.springframework.binding.expression.Expression;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.engine.ActionState;
@@ -17,6 +18,7 @@ import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("wsFederationWebflowConfigurer")
 public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 

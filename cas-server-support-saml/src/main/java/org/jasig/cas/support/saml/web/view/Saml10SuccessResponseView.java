@@ -15,7 +15,6 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     private static final int DEFAULT_ISSUE_LENGTH = 30000;
 
     /** The issuer, generally the hostname. */
-    @NotNull
+    
     private String issuer;
 
     /**
@@ -52,7 +51,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     @Min(1000)
     private long issueLength = DEFAULT_ISSUE_LENGTH;
 
-    @NotNull
+    
     private String rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
 
     @Override

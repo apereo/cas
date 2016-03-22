@@ -10,6 +10,7 @@ import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessing
 import org.jasig.cas.util.Pair;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -29,6 +30,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("radiusTokenAuthenticationHandler")
 public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     

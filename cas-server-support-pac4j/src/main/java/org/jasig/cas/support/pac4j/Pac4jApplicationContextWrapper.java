@@ -1,10 +1,11 @@
 package org.jasig.cas.support.pac4j;
 
-import org.jasig.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
+import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import javax.annotation.PostConstruct;
  * @author Jerome Leleu
  * @since 4.2.0
  */
+@RefreshScope
 @Component
 public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrapper {
 
@@ -24,7 +26,7 @@ public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrappe
 
     @Autowired
     @Qualifier("clientAuthenticationMetaDataPopulator")
-    private ClientAuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator;
+    private AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator;
 
     /**
      * Initialize root application context.

@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
@@ -15,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
@@ -26,6 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@RefreshScope
 @Component("frontChannelLogoutAction")
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
     /** Defines the default logout parameter for requests. */
@@ -38,7 +39,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     private String logoutRequestParameter = DEFAULT_LOGOUT_PARAMETER;
 
-    @NotNull
+    
     private LogoutManager logoutManager;
 
     /**

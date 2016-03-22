@@ -1,6 +1,7 @@
 package org.jasig.cas.web.support;
 
 import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@RefreshScope
 @Component("inMemoryIpAddressUsernameThrottle")
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
           extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {

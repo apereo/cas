@@ -24,7 +24,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +63,7 @@ public class CasApplicationContextConfiguration {
     /**
      * The Default argument extractor.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;

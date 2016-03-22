@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,21 +43,21 @@ import java.util.Set;
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** Mapping of LDAP attribute name to principal attribute name. */
-    @NotNull
+    
     protected Map<String, String> principalAttributeMap = Collections.emptyMap();
 
     /** List of additional attributes to be fetched but are not principal attributes. */
-    @NotNull
+    
     protected List<String> additionalAttributes = Collections.emptyList();
 
     /**
      * Performs LDAP authentication given username/password.
      **/
-    @NotNull
+    
     private Authenticator authenticator;
 
     /** Component name. */
-    @NotNull
+    
     private String name = LdapAuthenticationHandler.class.getSimpleName();
 
     /** Name of attribute to be used for resolved principal. */
@@ -75,7 +74,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      *
      * @param  authenticator  Ldaptive authenticator component.
      */
-    public LdapAuthenticationHandler(@NotNull final Authenticator authenticator) {
+    public LdapAuthenticationHandler(final Authenticator authenticator) {
         this.authenticator = authenticator;
     }
 

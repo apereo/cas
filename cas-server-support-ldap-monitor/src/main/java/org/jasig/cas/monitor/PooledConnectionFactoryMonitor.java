@@ -5,6 +5,7 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -15,6 +16,7 @@ import javax.annotation.Nullable;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("pooledLdapConnectionFactoryMonitor")
 public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
 

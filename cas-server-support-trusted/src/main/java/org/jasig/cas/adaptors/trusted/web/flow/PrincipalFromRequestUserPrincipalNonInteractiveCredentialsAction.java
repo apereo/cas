@@ -6,6 +6,7 @@ import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,6 +23,7 @@ import java.security.Principal;
  * @author Scott Battaglia
  * @since 3.0.5
  */
+@RefreshScope
 @Component("principalFromRemoteUserPrincipalAction")
 public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {

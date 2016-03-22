@@ -19,7 +19,6 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -53,7 +52,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     private int startDelay;
 
     @Autowired
-    @NotNull
+    
     private ApplicationContext applicationContext;
 
     @Autowired(required = false)

@@ -23,6 +23,7 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
@@ -39,6 +40,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("samlProfileSamlResponseBuilder")
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;

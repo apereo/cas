@@ -2,8 +2,6 @@ package org.jasig.cas.support.saml;
 
 import org.jasig.cas.authentication.RootCasException;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Represents the root SAML exception.
  * @author Misagh Moayyed
@@ -20,7 +18,7 @@ public class SamlException extends RootCasException {
      *
      * @param code the code
      */
-    public SamlException(@NotNull final String code) {
+    public SamlException(final String code) {
         super(code);
     }
 
@@ -30,7 +28,7 @@ public class SamlException extends RootCasException {
      * @param code the code
      * @param msg  the msg
      */
-    public SamlException(@NotNull final String code, final String msg) {
+    public SamlException(final String code, final String msg) {
         super(code, msg);
     }
 
@@ -40,7 +38,7 @@ public class SamlException extends RootCasException {
      * @param code      the code
      * @param throwable the throwable
      */
-    public SamlException(@NotNull final String code, final Throwable throwable) {
+    public SamlException(final String code, final Throwable throwable) {
         super(code, throwable);
     }
 }

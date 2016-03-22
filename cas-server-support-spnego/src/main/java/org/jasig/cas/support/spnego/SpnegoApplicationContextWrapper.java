@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component
 public class SpnegoApplicationContextWrapper extends BaseApplicationContextWrapper {
     @Autowired

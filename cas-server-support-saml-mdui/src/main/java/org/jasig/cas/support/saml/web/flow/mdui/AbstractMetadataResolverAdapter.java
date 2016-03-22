@@ -17,7 +17,6 @@ import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +38,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Metadata resources along with filters to perform validation. */
-    @NotNull
+    
     protected Map<Resource, MetadataFilterChain> metadataResources;
 
     /** Whether the metadata resolver should require valid metadata. Default is true. */
@@ -47,7 +46,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
     /** The openSAML config bean. **/
     @Autowired
-    @NotNull
+    
     protected OpenSamlConfigBean configBean;
 
     private ChainingMetadataResolver metadataResolver;

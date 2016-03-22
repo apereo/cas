@@ -16,14 +16,13 @@ import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and
@@ -32,15 +31,16 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("generateServiceTicketAction")
 public class GenerateServiceTicketAction extends AbstractAction {
     /** Instance of CentralAuthenticationService. */
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();

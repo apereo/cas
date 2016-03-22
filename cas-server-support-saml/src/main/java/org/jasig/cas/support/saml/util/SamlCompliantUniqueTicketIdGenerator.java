@@ -7,6 +7,7 @@ import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +22,7 @@ import java.security.SecureRandom;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("samlServiceTicketUniqueIdGenerator")
 public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 

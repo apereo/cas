@@ -13,6 +13,7 @@ import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("samlProfileSamlAuthNStatementBuilder")
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder
         implements SamlProfileObjectBuilder<AuthnStatement> {

@@ -3,7 +3,7 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PreDestroy;
-import javax.validation.constraints.NotNull;
+
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
@@ -14,6 +14,7 @@ import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  * @author Daniel Fisher
  * @since 4.1
  */
+@RefreshScope
 @Component("poolingLdaptiveResourceCRLFetcher")
 public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetcher {
 
@@ -41,9 +43,9 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
      * @param connectionPool pooling configuration
      */
     public PoolingLdaptiveResourceCRLFetcher(
-            @NotNull final ConnectionConfig connectionConfig,
-            @NotNull final SearchExecutor searchExecutor,
-            @NotNull final BlockingConnectionPool connectionPool) {
+             final ConnectionConfig connectionConfig,
+             final SearchExecutor searchExecutor,
+             final BlockingConnectionPool connectionPool) {
         super(connectionConfig, searchExecutor);
         this.connectionPool = connectionPool;
     }

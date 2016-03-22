@@ -35,6 +35,7 @@ import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -43,7 +44,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
@@ -63,6 +63,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@RefreshScope
 @Component("serviceValidateController")
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     /** View if Service Ticket Validation Fails. */
@@ -77,45 +78,45 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     private ApplicationContext context;
 
-    @NotNull
+    
     private ValidationSpecification validationSpecification;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     /** Implementation of Service Manager. */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
     
     /** The CORE which we will delegate all requests to. */
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The proxy handler we want to use with the controller. */
-    @NotNull
+    
     private ProxyHandler proxyHandler;
 
     /** The view to redirect to on a successful validation. */
-    @NotNull
+    
     private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
 
     /** The view to redirect to on a validation failure. */
-    @NotNull
+    
     private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
 
     /** Extracts parameters from Request object. */
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;

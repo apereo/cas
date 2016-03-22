@@ -4,9 +4,9 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.Locale;
 
 /**
@@ -17,13 +17,14 @@ import java.util.Locale;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
+@RefreshScope
 @Component("spnegoPrincipalResolver")
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     /** Transformation types. **/
     public enum Transform {NONE, UPPERCASE, LOWERCASE}
 
-    @NotNull
+    
     private Transform transformPrincipalId = Transform.NONE;
 
     @Override

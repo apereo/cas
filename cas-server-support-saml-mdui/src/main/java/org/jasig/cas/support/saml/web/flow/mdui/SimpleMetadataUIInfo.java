@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -197,7 +196,7 @@ public class SimpleMetadataUIInfo implements Serializable {
         return list;
     }
 
-    public void setUIInfo(@NotNull final UIInfo uiInfo) {
+    public void setUIInfo(final UIInfo uiInfo) {
         this.uiInfo = uiInfo;
     }
 }

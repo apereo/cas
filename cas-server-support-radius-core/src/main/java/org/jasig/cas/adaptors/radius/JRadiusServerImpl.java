@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -44,11 +43,11 @@ public class JRadiusServerImpl implements RadiusServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(JRadiusServerImpl.class);
 
     /** RADIUS protocol. */
-    @NotNull
+    
     private RadiusProtocol protocol;
 
     /** Produces RADIUS client instances for authentication. */
-    @NotNull
+    
     private RadiusClientFactory radiusClientFactory;
 
     /** Number of times to retry authentication when no response is received. */

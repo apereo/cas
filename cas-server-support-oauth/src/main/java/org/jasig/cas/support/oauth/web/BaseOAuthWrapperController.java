@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.mvc.AbstractController;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
@@ -44,24 +43,24 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The services manager. */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** The ticket registry. */
-    @NotNull
+    
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /** The access token timeout. */
-    @NotNull
+    
     @Value("${tgt.timeToKillInSeconds:7200}")
     protected long timeout;
 
     /** The OAuth validator. */
-    @NotNull
+    
     @Autowired
     @Qualifier("oAuthValidator")
     protected OAuthValidator validator;
@@ -69,12 +68,12 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     /** The JSON factory. */
     protected final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory accessTokenFactory;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultPrincipalFactory")
     private PrincipalFactory principalFactory;

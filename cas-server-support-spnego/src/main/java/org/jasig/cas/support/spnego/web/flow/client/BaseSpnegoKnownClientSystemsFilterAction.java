@@ -7,13 +7,13 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("baseSpnegoClientAction")
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private static final int DEFAULT_TIMEOUT = 2000;
@@ -144,7 +145,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @param context the context
      * @return the remote ip
      */
-    private String getRemoteIp(@NotNull final RequestContext context) {
+    private String getRemoteIp(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         String userAddress = request.getRemoteAddr();
         logger.debug("Remote Address = {}", userAddress);
@@ -167,7 +168,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * Alternative header to be used for retrieving the remote system IP address.
      * @param alternativeRemoteHostAttribute the alternative remote host attribute
      */
-    public void setAlternativeRemoteHostAttribute(@NotNull final String alternativeRemoteHostAttribute) {
+    public void setAlternativeRemoteHostAttribute(final String alternativeRemoteHostAttribute) {
         this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
     }
 
@@ -175,7 +176,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * Regular expression string to define IPs which should be considered.
      * @param ipsToCheckPattern the ips to check as a regex pattern
      */
-    public void setIpsToCheckPattern(@NotNull final String ipsToCheckPattern) {
+    public void setIpsToCheckPattern(final String ipsToCheckPattern) {
         this.ipsToCheckPattern = Pattern.compile(ipsToCheckPattern);
     }
 

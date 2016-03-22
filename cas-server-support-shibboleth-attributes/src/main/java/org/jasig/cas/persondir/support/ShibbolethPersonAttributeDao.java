@@ -10,6 +10,7 @@ import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.NamedPersonImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  * @author Jj
  * @since 5.0.0
  */
+@RefreshScope
 @Component("shibbolethPersonAttributeDao")
 public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
     @Autowired

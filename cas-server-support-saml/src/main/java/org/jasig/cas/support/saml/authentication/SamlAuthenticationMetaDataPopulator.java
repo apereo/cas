@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@RefreshScope
 @Component("samlAuthenticationMetaDataPopulator")
 public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 

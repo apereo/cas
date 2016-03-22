@@ -13,10 +13,10 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 
 /**
  * Ensures that the OpenId provided matches with the existing
@@ -25,10 +25,11 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("openIdCredentialsAuthenticationHandler")
 public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    @NotNull
+    
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;

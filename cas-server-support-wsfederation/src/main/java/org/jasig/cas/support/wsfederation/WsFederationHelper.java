@@ -33,11 +33,11 @@ import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngin
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.ZoneOffset;
@@ -52,12 +52,13 @@ import java.util.List;
  * @author John Gasper
  * @since 4.2.0
  */
+@RefreshScope
 @Component("wsFederationHelper")
 public class WsFederationHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationHelper.class);
 
     @Autowired
-    @NotNull
+    
     private OpenSamlConfigBean configBean;
 
     /**

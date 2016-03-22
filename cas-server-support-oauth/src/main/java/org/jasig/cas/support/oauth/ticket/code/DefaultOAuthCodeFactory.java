@@ -11,9 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Default OAuth code factory.
@@ -21,19 +20,20 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultOAuthCodeFactory")
 public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("oAuthCodeIdGenerator")
     protected UniqueTicketIdGenerator oAuthCodeIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for OAuth code. */
-    @NotNull
+    
     @Autowired
     @Qualifier("oAuthCodeExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;

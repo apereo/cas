@@ -13,10 +13,9 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Attempts to utilize an existing single sign on session, but only if the
@@ -27,10 +26,11 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("openIdSingleSignOnAction")
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
-    @NotNull
+    
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
     public void setExtractor(final OpenIdUserNameExtractor extractor) {

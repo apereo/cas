@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.ClientCredential;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@RefreshScope
 @Component("clientAuthenticationMetaDataPopulator")
 public class ClientAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
@@ -21,9 +23,6 @@ public class ClientAuthenticationMetaDataPopulator implements AuthenticationMeta
      */
     public static final String CLIENT_NAME = "clientName";
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         final ClientCredential clientCredential = (ClientCredential) credential;

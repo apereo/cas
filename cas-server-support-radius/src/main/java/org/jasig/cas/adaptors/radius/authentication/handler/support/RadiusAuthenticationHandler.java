@@ -8,11 +8,11 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.util.Pair;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -26,11 +26,12 @@ import java.util.Optional;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("radiusAuthenticationHandler")
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
-    @NotNull
+    
     @Size(min=1)
     @Resource(name="radiusServers")
     private List<RadiusServer> servers;

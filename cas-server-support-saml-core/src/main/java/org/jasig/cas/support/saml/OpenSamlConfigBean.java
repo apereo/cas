@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 
 /**
  * Load the OpenSAML config context.
@@ -26,16 +25,16 @@ public class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
 
     @Autowired
-    @NotNull
+    
     private ParserPool parserPool;
 
-    @NotNull
+    
     private XMLObjectBuilderFactory builderFactory;
 
-    @NotNull
+    
     private MarshallerFactory marshallerFactory;
 
-    @NotNull
+    
     private UnmarshallerFactory unmarshallerFactory;
 
 

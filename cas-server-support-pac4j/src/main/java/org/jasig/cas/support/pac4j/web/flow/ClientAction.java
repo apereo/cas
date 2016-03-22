@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
@@ -43,7 +44,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -56,6 +56,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.5.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RefreshScope
 @Component("clientAction")
 public class ClientAction extends AbstractAction {
     /**
@@ -77,12 +78,12 @@ public class ClientAction extends AbstractAction {
     /**
      * The clients used for authentication.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("builtClients")
     private Clients clients;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -90,7 +91,7 @@ public class ClientAction extends AbstractAction {
     /**
      * The service for CAS authentication.
      */
-    @NotNull
+    
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 

@@ -1,7 +1,6 @@
 package org.jasig.cas.adaptors.yubikey;
 
 import org.jasig.cas.authentication.TestUtils;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;

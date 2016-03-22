@@ -4,7 +4,6 @@ import net.jradius.client.RadiusClient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -32,11 +31,11 @@ public class RadiusClientFactory {
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
 
     /** RADIUS server network address. */
-    @NotNull
+    
     private InetAddress inetAddress;
 
     /** The shared secret to send to the RADIUS server. */
-    @NotNull
+    
     private String sharedSecret;
 
     /**

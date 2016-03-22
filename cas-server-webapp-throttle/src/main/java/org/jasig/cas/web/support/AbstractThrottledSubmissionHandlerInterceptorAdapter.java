@@ -14,7 +14,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
@@ -41,7 +40,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Min(0)
     private int failureRangeInSeconds = DEFAULT_FAILURE_RANGE_IN_SECONDS;
 
-    @NotNull
+    
     private String usernameParameter = DEFAULT_USERNAME_PARAMETER;
 
     private double thresholdRate;

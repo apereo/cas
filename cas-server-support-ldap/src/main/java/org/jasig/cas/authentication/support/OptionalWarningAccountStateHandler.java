@@ -6,6 +6,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("optionalWarningAccountStateHandler")
 public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandler {
 

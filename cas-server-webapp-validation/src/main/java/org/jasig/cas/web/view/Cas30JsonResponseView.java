@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("cas3ServiceJsonView")
 public class Cas30JsonResponseView extends Cas30ResponseView {
     /**

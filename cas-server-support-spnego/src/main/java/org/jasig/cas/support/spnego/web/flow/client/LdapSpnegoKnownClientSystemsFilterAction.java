@@ -15,9 +15,8 @@ import org.ldaptive.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Peek into an LDAP server and check for the existence of an attribute
@@ -26,6 +25,7 @@ import javax.validation.constraints.NotNull;
  * @author Sean Baker
  * @since 4.1
  */
+@RefreshScope
 @Component("ldapSpnegoClientAction")
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
     /** Attribute name in LDAP to indicate spnego invocation. **/
@@ -53,8 +53,8 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param connectionFactory the connection factory
      * @param searchRequest the search request
      */
-    public LdapSpnegoKnownClientSystemsFilterAction(@NotNull final ConnectionFactory connectionFactory,
-                                                    @NotNull final SearchRequest searchRequest) {
+    public LdapSpnegoKnownClientSystemsFilterAction(final ConnectionFactory connectionFactory,
+                                                     final SearchRequest searchRequest) {
         this(connectionFactory, searchRequest, DEFAULT_SPNEGO_ATTRIBUTE);
     }
 
@@ -66,9 +66,9 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
     public LdapSpnegoKnownClientSystemsFilterAction(
-            @NotNull final ConnectionFactory connectionFactory,
-            @NotNull final SearchRequest searchRequest,
-            @NotNull final String spnegoAttributeName) {
+             final ConnectionFactory connectionFactory,
+             final SearchRequest searchRequest,
+             final String spnegoAttributeName) {
         this.connectionFactory = connectionFactory;
         this.spnegoAttributeName = spnegoAttributeName;
         this.searchRequest = searchRequest;

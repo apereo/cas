@@ -5,6 +5,7 @@ import org.jasig.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("accessTokenExpirationPolicy")
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -8383186650682727360L;

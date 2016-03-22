@@ -27,11 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("ldapServiceRegistryDao")
 public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
@@ -59,10 +60,10 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
     @Qualifier("ldapServiceRegistryMapper")
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapRegisteredServiceMapper();
 
-    @NotNull
+    
     private String searchFilter;
 
-    @NotNull
+    
     private String loadFilter;
 
     @Nullable
@@ -234,7 +235,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         return searchOperation.execute(request);
     }
 
-    public void setConnectionFactory(@NotNull final ConnectionFactory factory) {
+    public void setConnectionFactory(final ConnectionFactory factory) {
         this.connectionFactory = factory;
     }
 
@@ -242,7 +243,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         this.ldapServiceMapper = ldapServiceMapper;
     }
 
-    public void setSearchRequest(@NotNull final SearchRequest request) {
+    public void setSearchRequest(final SearchRequest request) {
         this.searchRequest = request;
     }
 

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -22,7 +23,6 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -38,24 +38,25 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("initialFlowSetupAction")
 public class InitialFlowSetupAction extends AbstractAction {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/
-    @NotNull
+    
     private ServicesManager servicesManager;
 
     /** CookieGenerator for the Warnings. */
-    @NotNull
+    
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     /** CookieGenerator for the TicketGrantingTickets. */
-    @NotNull
+    
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Extractors for finding the service. */
-    @NotNull
+    
     @Size(min=1)
     private List<ArgumentExtractor> argumentExtractors;
 

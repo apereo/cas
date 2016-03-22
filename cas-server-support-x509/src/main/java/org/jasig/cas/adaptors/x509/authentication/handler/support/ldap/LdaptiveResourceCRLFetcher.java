@@ -15,11 +15,11 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -32,6 +32,7 @@ import java.security.cert.X509CRL;
  * @author Daniel Fisher
  * @since 4.1
  */
+@RefreshScope
 @Component("ldaptiveResourceCRLFetcher")
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
@@ -51,8 +52,8 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      * @param searchExecutor the search executor
      */
     public LdaptiveResourceCRLFetcher(
-            @NotNull final ConnectionConfig connectionConfig,
-            @NotNull final SearchExecutor searchExecutor) {
+             final ConnectionConfig connectionConfig,
+             final SearchExecutor searchExecutor) {
         this.connectionConfig = connectionConfig;
         this.searchExecutor = searchExecutor;
     }
@@ -78,7 +79,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(@NotNull final URI crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URI crl) throws IOException, CRLException, CertificateException {
         if (isLdap(crl)) {
             return fetchCRLFromLdap(crl);
         }
@@ -86,7 +87,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(@NotNull final URL crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final URL crl) throws IOException, CRLException, CertificateException {
         if (isLdap(crl)) {
             return fetchCRLFromLdap(crl);
         }
@@ -94,7 +95,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     @Override
-    public X509CRL fetch(@NotNull final String crl) throws IOException, CRLException, CertificateException {
+    public X509CRL fetch(final String crl) throws IOException, CRLException, CertificateException {
         if (isLdap(crl)) {
             return fetchCRLFromLdap(crl);
         }

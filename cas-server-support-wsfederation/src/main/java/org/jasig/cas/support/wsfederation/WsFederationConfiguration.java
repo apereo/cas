@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("wsFedConfig")
 public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
@@ -52,23 +53,23 @@ public class WsFederationConfiguration implements Serializable {
         BOTH
     }
 
-    @NotNull
+    
     @Value("${cas.wsfed.idp.idattribute:upn}")
     private String identityAttribute;
 
-    @NotNull
+    
     @Value("${cas.wsfed.idp.id:https://adfs.example.org/adfs/services/trust}")
     private String identityProviderIdentifier;
 
-    @NotNull
+    
     @Value("${cas.wsfed.idp.url:https://adfs.example.org/adfs/ls/}")
     private String identityProviderUrl;
 
-    @NotNull
+    
     @Value("#{'${cas.wsfed.idp.signingcerts:classpath:adfs-signing.crt}'.split(',')}")
     private List<Resource> signingCertificateResources;
 
-    @NotNull
+    
     @Value("${cas.wsfed.rp.id:urn:cas:localhost}")
     private String relyingPartyIdentifier;
 

@@ -2,6 +2,7 @@ package org.jasig.cas.adaptors.trusted.authentication.principal;
 
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @author Andrew Petro
  * @since 3.0.0
  */
+@RefreshScope
 @Component("trustedPrincipalResolver")
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 

@@ -4,6 +4,7 @@ import java.security.GeneralSecurityException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
  * @since 3.4.6
  *
  */
+@RefreshScope
 @Component("allowRevocationPolicy")
 public class AllowRevocationPolicy implements RevocationPolicy<Void> {
     private Logger logger = LoggerFactory.getLogger(getClass());

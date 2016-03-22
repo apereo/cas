@@ -3,7 +3,6 @@ package org.jasig.cas.web.report;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.monitor.HealthCheckMonitor;
 import org.jasig.cas.monitor.HealthStatus;
@@ -26,7 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/status")
 public class HealthCheckController {
 
-    @NotNull
+    
     @Autowired
     @Qualifier("healthCheckMonitor")
     private HealthCheckMonitor healthCheckMonitor;

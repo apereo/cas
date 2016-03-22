@@ -33,13 +33,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("chainingMetadataResolverCacheLoader")
 public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -68,7 +69,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     /**
      * The Http client.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("noRedirectHttpClient")
     protected HttpClient httpClient;

@@ -5,6 +5,7 @@ import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService
 import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component
 public class SamlGoogleAppsApplicationContextWrapper extends BaseApplicationContextWrapper {
 

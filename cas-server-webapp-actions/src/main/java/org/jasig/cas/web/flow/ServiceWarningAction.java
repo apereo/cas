@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.client.util.URIBuilder;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -18,6 +19,7 @@ import java.net.URI;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("serviceWarningAction")
 public class ServiceWarningAction extends AbstractAction {
     @Override

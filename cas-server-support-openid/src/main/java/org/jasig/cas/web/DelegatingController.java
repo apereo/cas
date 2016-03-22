@@ -5,7 +5,6 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ public class DelegatingController extends AbstractController {
     private List<AbstractDelegateController> delegates;
 
     /** The view to redirect if no delegate can handle the request. */
-    @NotNull
+    
     private String failureView = DEFAULT_ERROR_VIEW_NAME;
 
     /**
@@ -68,7 +67,7 @@ public class DelegatingController extends AbstractController {
      * @param delegates the delegate controllers to set
      */
 
-    public void setDelegates(@NotNull final List<AbstractDelegateController> delegates) {
+    public void setDelegates(final List<AbstractDelegateController> delegates) {
         this.delegates = delegates;
     }
 

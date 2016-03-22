@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -68,7 +67,7 @@ public class TicketsResource {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -227,7 +226,7 @@ public class TicketsResource {
      */
     private static class DefaultCredentialFactory implements CredentialFactory {
         @Override
-        public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
+        public Credential fromRequestBody(final MultiValueMap<String, String> requestBody) {
             final String username = requestBody.getFirst("username");
             final String password = requestBody.getFirst("password");
             if (username == null || password == null) {

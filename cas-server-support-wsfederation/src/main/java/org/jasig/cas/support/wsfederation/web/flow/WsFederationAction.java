@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -23,7 +24,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
 
 /**
  * This class represents an action in the webflow to retrieve WsFederation information on the callback url which is
@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
  * @author John Gasper
  * @since 4.2.0
  */
+@RefreshScope
 @Component("wsFederationAction")
 public class WsFederationAction extends AbstractAction {
 
@@ -47,22 +48,22 @@ public class WsFederationAction extends AbstractAction {
 
     private Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
 
-    @NotNull
+    
     @Autowired
     @Qualifier("wsFederationHelper")
     private WsFederationHelper wsFederationHelper;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("wsFedConfig")
     private WsFederationConfiguration configuration;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();

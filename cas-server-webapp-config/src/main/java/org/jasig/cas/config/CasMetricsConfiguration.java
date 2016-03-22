@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -46,7 +45,6 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the metric registry
      */
-    @RefreshScope
     @Bean(name = "metrics")
     public MetricRegistry metricRegistry() {
         final MetricRegistry metrics = new MetricRegistry();
@@ -61,7 +59,6 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the servlet registration bean
      */
-    @RefreshScope
     @Bean(name="metricsServlet")
     public ServletRegistrationBean metricsServlet() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
@@ -78,7 +75,6 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the health check registry
      */
-    @RefreshScope
     @Bean(name = "healthCheckMetrics")
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();

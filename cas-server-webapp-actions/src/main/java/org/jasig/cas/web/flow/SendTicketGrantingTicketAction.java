@@ -14,12 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Action that handles the TicketGrantingTicket creation and destruction. If the
@@ -30,6 +29,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("sendTicketGrantingTicketAction")
 public class SendTicketGrantingTicketAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
@@ -37,23 +37,23 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     @Value("${create.sso.renewed.authn:true}")
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Instance of CentralAuthenticationService. */
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();

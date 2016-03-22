@@ -19,10 +19,10 @@ import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessing
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
@@ -33,6 +33,7 @@ import java.security.GeneralSecurityException;
  * @author Arnaud Lesueur
  * @since 3.1
  */
+@RefreshScope
 @Component("ntlmAuthenticationHandler")
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
@@ -133,7 +134,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
      * @param domainController the domain controller
      */
     @Autowired
-    public void setDomainController(@Value("${ntlm.authn.domain.controller:}") @NotNull final String domainController) {
+    public void setDomainController(@Value("${ntlm.authn.domain.controller:}")  final String domainController) {
         if (StringUtils.isBlank(domainController)) {
             this.domainController = DEFAULT_DOMAIN_CONTROLLER;
         } else {

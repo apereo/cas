@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("acceptableUsagePolicyFormAction")
 public class AcceptableUsagePolicyFormAction {
 

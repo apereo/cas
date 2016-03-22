@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import javax.validation.constraints.NotNull;
 
 /**
  * Performs a basic check if an authentication request for a provided service is authorized to proceed
@@ -22,10 +22,11 @@ import javax.validation.constraints.NotNull;
  * @author Dmitriy Kopylenko
  * @since 3.5.1
  **/
+@RefreshScope
 @Component("serviceAuthorizationCheck")
 public class ServiceAuthorizationCheck extends AbstractAction {
 
-    @NotNull
+    
     private ServicesManager servicesManager;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());

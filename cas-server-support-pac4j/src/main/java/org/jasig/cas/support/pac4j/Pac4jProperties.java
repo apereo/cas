@@ -1,6 +1,7 @@
 package org.jasig.cas.support.pac4j;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("pac4jProperties")
 @ConfigurationProperties(
         prefix = "cas.pac4j",
