@@ -1,7 +1,5 @@
 package org.jasig.cas.services.web;
 
-import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegexRegisteredService;
@@ -50,22 +48,6 @@ public class RegisteredServiceThemeBasedViewResolverTests {
         this.registeredServiceThemeBasedViewResolver = new RegisteredServiceThemeBasedViewResolver(this.servicesManager);
         this.registeredServiceThemeBasedViewResolver.setPrefix("/WEB-INF/view/jsp");
         this.registeredServiceThemeBasedViewResolver.setSuffix(".jsp");
-    }
-
-    
-    @Test
-    public void verifyGetServiceWithTheme() throws Exception {
-        final MockRequestContext requestContext = new MockRequestContext();
-        RequestContextHolder.setRequestContext(requestContext);
-
-        final WebApplicationService webApplicationService = new WebApplicationServiceFactory().createService("myServiceId");
-        requestContext.getFlowScope().put("service", webApplicationService);
-
-        final InternalResourceView view = (InternalResourceView) this.registeredServiceThemeBasedViewResolver.loadView("casLoginView", 
-                Locale.getDefault());
-        assertNotNull(view);
-        
-        assertEquals("/WEB-INF/view/jsp/myTheme/ui/casLoginView.jsp", view.getUrl());
     }
     
 
