@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
  * operations for all child event resolvers to handle core webflow changes.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
     /**

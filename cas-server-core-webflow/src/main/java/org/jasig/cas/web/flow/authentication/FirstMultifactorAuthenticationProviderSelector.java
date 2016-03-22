@@ -16,7 +16,7 @@ import java.util.Iterator;
  * that grabs onto the first authentication provider in the collection.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("firstMultifactorAuthenticationProviderSelector")
 public class FirstMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {

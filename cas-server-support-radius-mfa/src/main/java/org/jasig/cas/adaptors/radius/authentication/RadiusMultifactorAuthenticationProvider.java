@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * The authentication provider for yubikey.
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("radiusAuthenticationProvider")
 public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {

@@ -13,7 +13,7 @@ import java.util.Set;
  * This is {@link CollectionUtils}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public final class CollectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionUtils.class);

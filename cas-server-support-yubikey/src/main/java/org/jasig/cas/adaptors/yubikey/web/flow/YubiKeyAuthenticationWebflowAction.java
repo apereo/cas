@@ -12,7 +12,7 @@ import org.springframework.webflow.execution.RequestContext;
  * This is {@link YubiKeyAuthenticationWebflowAction}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("yubikeyAuthenticationWebflowAction")
 public class YubiKeyAuthenticationWebflowAction extends AbstractAction {

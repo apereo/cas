@@ -4,7 +4,7 @@ package org.jasig.cas.web.flow;
  * This is {@link CasWebflowConstants}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface CasWebflowConstants {
     /**

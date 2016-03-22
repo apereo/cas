@@ -8,7 +8,7 @@ import java.util.Set;
  * should handle authentication requests.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
 

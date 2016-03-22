@@ -24,7 +24,7 @@ import java.util.Set;
  * This is {@link RankedAuthenticationProviderWebflowEventResolver}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("rankedAuthenticationProviderWebflowEventResolver")
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
