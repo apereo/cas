@@ -193,6 +193,14 @@
                                     <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthRefreshToken" />"></i>
                                 </label>
                             </div>
+                            <!-- OAuth JSON format -->
+                            <div class="checkbox">
+                                <label for="oauthJsonFormat">
+                                    <input type="checkbox" id="oauthJsonFormat" ng-model="serviceFormCtrl.serviceData.oauth.jsonFormat" />
+                                    <spring:message code="services.form.label.oauthJsonFormat" />
+                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthJsonFormat" />"></i>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
