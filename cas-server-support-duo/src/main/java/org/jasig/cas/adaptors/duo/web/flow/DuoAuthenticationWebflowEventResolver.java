@@ -11,7 +11,7 @@ import java.util.Set;
  * This is {@link DuoAuthenticationWebflowEventResolver }.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("duoAuthenticationWebflowEventResolver")
 public class DuoAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {

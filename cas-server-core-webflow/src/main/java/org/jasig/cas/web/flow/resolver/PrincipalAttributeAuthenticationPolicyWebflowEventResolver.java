@@ -21,7 +21,7 @@ import java.util.Set;
  * the provided pattern and decide the next event in the flow for the given service.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("principalAttributeAuthenticationPolicyWebflowEventResolver")
 public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
