@@ -10,7 +10,7 @@ import java.util.Set;
  * that decides the next event in the authentication web flow.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface CasWebflowEventResolver {
 

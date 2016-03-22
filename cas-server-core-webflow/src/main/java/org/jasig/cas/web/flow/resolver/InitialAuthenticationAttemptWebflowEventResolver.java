@@ -24,7 +24,7 @@ import java.util.Set;
  * embedded resolvers to produce the next event in the authentication flow.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("initialAuthenticationAttemptWebflowEventResolver")
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {

@@ -10,7 +10,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  * This is {@link YubiKeyMultifactorWebflowConfigurer}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("yubikeyMultifactorWebflowConfigurer")
 public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
