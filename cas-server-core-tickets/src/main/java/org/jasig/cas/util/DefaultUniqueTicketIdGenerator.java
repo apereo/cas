@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -126,6 +127,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     /**
      * The type Ticket granting ticket id generator.
      */
+    @RefreshScope
     @Component("ticketGrantingTicketUniqueIdGenerator")
     public static class TicketGrantingTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
         @Autowired
@@ -144,6 +146,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     /**
      * The type Service ticket id generator.
      */
+    @RefreshScope
     @Component("serviceTicketUniqueIdGenerator")
     public static class ServiceTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
         @Autowired
@@ -162,6 +165,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     /**
      * The type Proxy ticket id generator.
      */
+    @RefreshScope
     @Component("proxy20TicketUniqueIdGenerator")
     public static class ProxyTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
         @Autowired

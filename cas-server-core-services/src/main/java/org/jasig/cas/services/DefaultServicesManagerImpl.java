@@ -21,13 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("servicesManager")
 public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
@@ -55,7 +56,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
     /**
      * Instance of ServiceRegistryDao.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;

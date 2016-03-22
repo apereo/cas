@@ -2,7 +2,6 @@ package org.jasig.cas.authentication;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -21,11 +20,11 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     private static final long serialVersionUID = -700605081472810939L;
 
 
-    @NotNull
+    
     @Size(min=1, message = "required.username")
     private String username;
 
-    @NotNull
+    
     @Size(min=1, message = "required.password")
     private String password;
 

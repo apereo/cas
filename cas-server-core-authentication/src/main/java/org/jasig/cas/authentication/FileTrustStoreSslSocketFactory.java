@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@RefreshScope
 @Component("trustStoreSslSocketFactory")
 public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 

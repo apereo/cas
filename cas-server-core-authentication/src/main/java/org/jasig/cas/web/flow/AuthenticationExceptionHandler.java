@@ -12,13 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +38,7 @@ import java.util.Optional;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("authenticationExceptionHandler")
 public class AuthenticationExceptionHandler {
 
@@ -67,7 +68,7 @@ public class AuthenticationExceptionHandler {
     }
 
     /** Ordered list of error classes that this class knows how to handle. */
-    @NotNull
+    
     private List<Class<? extends Exception>> errors = DEFAULT_ERROR_LIST;
 
     /** String appended to exception class name to create a message bundle key for that particular error. */

@@ -2,7 +2,6 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.cas.authentication.Credential;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -20,7 +19,7 @@ import java.util.List;
 public class ChainingPrincipalResolver implements PrincipalResolver {
 
     /** The chain of delegate resolvers that are invoked in order. */
-    @NotNull
+    
     @Size(min = 1)
     private List<PrincipalResolver> chain;
 

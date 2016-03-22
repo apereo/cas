@@ -37,7 +37,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @author Misagh Moayyed
  * @since 3.1
  */
-final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
+public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4949380008568071855L;

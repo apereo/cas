@@ -1,7 +1,5 @@
 package org.jasig.cas.services;
 
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.principal.Service;
 
 /**
@@ -13,11 +11,11 @@ import org.jasig.cas.authentication.principal.Service;
 public class ServiceContext {
 
     /** Service principal. */
-    @NotNull
+    
     private Service service;
 
     /** Registered service corresponding to service principal. */
-    @NotNull
+    
     private RegisteredService registeredService;
 
     /**
@@ -26,7 +24,7 @@ public class ServiceContext {
      * @param service Service principal.
      * @param registeredService Registered service corresponding to given service.
      */
-    public ServiceContext(@NotNull final Service service, @NotNull final RegisteredService registeredService) {
+    public ServiceContext(final Service service,  final RegisteredService registeredService) {
         this.service = service;
         this.registeredService = registeredService;
         if (!registeredService.matches(service)) {

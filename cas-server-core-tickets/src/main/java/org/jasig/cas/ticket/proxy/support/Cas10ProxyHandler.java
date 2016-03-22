@@ -3,6 +3,7 @@ package org.jasig.cas.ticket.proxy.support;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("proxy10Handler")
 public class Cas10ProxyHandler implements ProxyHandler {
 

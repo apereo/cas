@@ -8,6 +8,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.jasig.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +27,7 @@ import java.util.stream.StreamSupport;
  * @author Daniel Frett
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultMultifactorTriggerSelectionStrategy")
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();

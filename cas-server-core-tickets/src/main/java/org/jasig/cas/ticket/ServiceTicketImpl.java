@@ -13,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -73,7 +72,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * Service are null.
      */
     public ServiceTicketImpl(final String id,
-        @NotNull final TicketGrantingTicketImpl ticket, @NotNull final Service service,
+         final TicketGrantingTicketImpl ticket,  final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, policy);
 

@@ -1,7 +1,5 @@
 package org.jasig.cas;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Responsible to define operation that deal with encryption, signing
  * and verification of a value.
@@ -17,12 +15,12 @@ public interface CipherExecutor<T, R> {
      * @param value the value
      * @return the encrypted value or null
      */
-    R encode(@NotNull T value);
+    R encode(T value);
 
     /**
      * Decode the value. Signatures may also be verified.
      * @param value encrypted value
      * @return the decoded value. 
      */
-    R decode(@NotNull T value);
+    R decode(T value);
 }

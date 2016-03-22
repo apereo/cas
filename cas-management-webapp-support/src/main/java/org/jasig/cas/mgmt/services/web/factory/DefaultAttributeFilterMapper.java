@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component(DefaultAttributeFilterMapper.BEAN_NAME)
 public class DefaultAttributeFilterMapper implements AttributeFilterMapper {
     /**

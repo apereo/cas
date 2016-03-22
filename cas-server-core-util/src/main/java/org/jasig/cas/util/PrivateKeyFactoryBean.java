@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
-import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -33,10 +32,10 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    @NotNull
+    
     private Resource location;
 
-    @NotNull
+    
     private String algorithm;
 
     @Override

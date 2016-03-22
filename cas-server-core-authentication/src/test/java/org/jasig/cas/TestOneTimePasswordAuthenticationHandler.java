@@ -11,7 +11,6 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.springframework.util.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ import java.util.Map;
  */
 public class TestOneTimePasswordAuthenticationHandler implements AuthenticationHandler {
 
-    @NotNull
+    
     private Map<String, String> credentialMap;
 
     /** Handler name. */

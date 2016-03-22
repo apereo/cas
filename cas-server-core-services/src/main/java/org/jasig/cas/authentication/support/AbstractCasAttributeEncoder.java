@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +23,7 @@ import java.util.Map;
  */
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
     /** The Services manager. */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;

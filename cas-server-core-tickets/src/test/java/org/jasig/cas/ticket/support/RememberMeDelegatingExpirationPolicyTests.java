@@ -8,7 +8,6 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -23,7 +22,7 @@ import static org.junit.Assert.*;
 public class RememberMeDelegatingExpirationPolicyTests {
 
     /** Factory to create the principal type. **/
-    @NotNull
+    
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
 

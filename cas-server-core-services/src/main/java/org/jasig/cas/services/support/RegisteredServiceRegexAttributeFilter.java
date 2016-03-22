@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
+    
     private Pattern pattern;
 
     /**

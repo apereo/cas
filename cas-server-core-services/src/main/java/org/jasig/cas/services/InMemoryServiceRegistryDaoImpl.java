@@ -3,11 +3,11 @@ package org.jasig.cas.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,12 +18,13 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("inMemoryServiceRegistryDao")
 public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
 
-    @NotNull
+    
     private List<RegisteredService> registeredServices = new ArrayList<>();
 
     @Autowired

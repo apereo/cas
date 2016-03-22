@@ -18,6 +18,7 @@ import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -28,6 +29,7 @@ import java.net.URL;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component(DefaultRegisteredServiceMapper.BEAN_NAME)
 public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
     /**

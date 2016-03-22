@@ -20,7 +20,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -103,7 +102,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public TicketGrantingTicketImpl(final String id,
         final Service proxiedBy,
         final TicketGrantingTicket parentTicketGrantingTicket,
-        @NotNull final Authentication authentication, final ExpirationPolicy policy) {
+         final Authentication authentication, final ExpirationPolicy policy) {
 
         super(id, policy);
 

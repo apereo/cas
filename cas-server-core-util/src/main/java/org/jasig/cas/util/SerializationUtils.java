@@ -2,7 +2,6 @@ package org.jasig.cas.util;
 
 import org.jasig.cas.CipherExecutor;
 
-import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,7 +42,7 @@ public final class SerializationUtils {
      * @param outputStream The stream to receive the object
      * @since 5.0.0
      */
-    public static void serialize(final Serializable object, @NotNull final OutputStream outputStream) {
+    public static void serialize(final Serializable object,  final OutputStream outputStream) {
         ObjectOutputStream out = null;
         try {
             out = new ObjectOutputStream(outputStream);
@@ -68,7 +67,7 @@ public final class SerializationUtils {
      * @return the object
      * @since 5.0.0
      */
-    public static <T> T deserialize(@NotNull final byte[] inBytes) {
+    public static <T> T deserialize(final byte[] inBytes) {
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(inBytes);
         return deserialize(inputStream);
     }
@@ -80,7 +79,7 @@ public final class SerializationUtils {
      * @return the object
      * @since 5.0.0
      */
-    public static <T> T deserialize(@NotNull final InputStream inputStream) {
+    public static <T> T deserialize(final InputStream inputStream) {
         ObjectInputStream in = null;
         try {
             in = new ObjectInputStream(inputStream);

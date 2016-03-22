@@ -2,6 +2,7 @@ package org.jasig.cas.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
@@ -22,6 +23,7 @@ import javax.validation.Validator;
  * @since 3.4
  *
  */
+@RefreshScope
 @Component("validationAnnotationBeanPostProcessor")
 public class CustomBeanValidationPostProcessor extends BeanValidationPostProcessor {
 

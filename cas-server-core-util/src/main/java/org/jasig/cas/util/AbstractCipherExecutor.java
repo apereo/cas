@@ -7,8 +7,6 @@ import org.jose4j.keys.AesKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Abstract cipher to provide common operations around signing objects.
  * @author Misagh Moayyed
@@ -65,7 +63,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the value associated with the signature, which may have to
      * be decoded, or null.
      */
-    protected byte[] verifySignature(@NotNull final byte[] value) {
+    protected byte[] verifySignature(final byte[] value) {
         try {
             final String asString = new String(value);
             final JsonWebSignature jws = new JsonWebSignature();

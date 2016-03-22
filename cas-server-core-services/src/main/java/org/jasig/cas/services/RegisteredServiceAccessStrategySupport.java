@@ -10,7 +10,6 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +78,9 @@ public final class RegisteredServiceAccessStrategySupport {
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    public static void ensurePrincipalAccessIsAllowedForService(@NotNull final Service service,
+    public static void ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                 final RegisteredService registeredService,
-                                                                @NotNull final Authentication authentication)
+                                                                 final Authentication authentication)
             throws UnauthorizedServiceException, PrincipalException {
         ensureServiceAccessIsAllowed(service, registeredService);
         final Principal principal = authentication.getPrincipal();
@@ -106,9 +105,9 @@ public final class RegisteredServiceAccessStrategySupport {
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    public static void ensurePrincipalAccessIsAllowedForService(@NotNull final ServiceTicket serviceTicket,
+    public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
                                                                 final RegisteredService registeredService,
-                                                                @NotNull final TicketGrantingTicket ticketGrantingTicket)
+                                                                 final TicketGrantingTicket ticketGrantingTicket)
             throws UnauthorizedServiceException,  PrincipalException  {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(), registeredService, ticketGrantingTicket.getAuthentication());
     }

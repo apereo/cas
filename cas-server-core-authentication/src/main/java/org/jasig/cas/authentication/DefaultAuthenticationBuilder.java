@@ -4,7 +4,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -162,7 +161,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setAttributes(@NotNull final Map<String, Object> attributes) {
+    public AuthenticationBuilder setAttributes(final Map<String, Object> attributes) {
         this.attributes.clear();
         this.attributes.putAll(attributes);
         return this;

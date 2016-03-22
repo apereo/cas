@@ -4,7 +4,6 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
@@ -16,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
  * @since 3.0.0
  */
 
+@RefreshScope
 @Component("proxyAuthenticationHandler")
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
@@ -39,7 +40,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Instance of Apache Commons HttpClient. */
-    @NotNull
+    
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;

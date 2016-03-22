@@ -16,8 +16,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * @author Scott Battaglia
 
@@ -52,7 +50,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     private TicketRegistrySupport ticketRegistrySupport;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();

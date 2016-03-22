@@ -4,9 +4,9 @@ import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.FormData;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,12 +17,13 @@ import java.util.List;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component("attributeFormDataPopulator")
 public class AttributeFormDataPopulator implements FormDataPopulator {
     /**
      * Instance of AttributeRegistry.
      */
-    @NotNull
+    
     private IPersonAttributeDao personAttributeDao;
 
     /**

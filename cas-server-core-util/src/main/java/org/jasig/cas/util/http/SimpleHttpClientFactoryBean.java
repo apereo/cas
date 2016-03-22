@@ -36,12 +36,12 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -94,7 +94,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private int maxConnectionsPerRoute = MAX_CONNECTIONS_PER_ROUTE;
 
     /** List of HTTP status codes considered valid by the caller. */
-    @NotNull
+    
     @Size(min = 1)
     private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
 
@@ -437,12 +437,14 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * The type Default http client.
      */
+    @RefreshScope
     @Component("httpClient")
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {}
 
     /**
      * The type No redirect http client.
      */
+    @RefreshScope
     @Component("noRedirectHttpClient")
     public static class NoRedirectHttpClient extends SslTrustStoreAwareHttpClient {
         /**
@@ -457,6 +459,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * The type Ssl trust store aware http client.
      */
+    @RefreshScope
     @Component("supportsTrustStoreSslSocketFactoryHttpClient")
     public static class SslTrustStoreAwareHttpClient extends DefaultHttpClient {
         @Override

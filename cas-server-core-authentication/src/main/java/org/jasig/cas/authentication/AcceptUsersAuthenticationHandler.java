@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +90,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * @param users The users to set.
      */
-    public void setUsers(@NotNull final Map<String, String> users) {
+    public void setUsers(final Map<String, String> users) {
         this.users = new HashMap<>(users);
     }
 }

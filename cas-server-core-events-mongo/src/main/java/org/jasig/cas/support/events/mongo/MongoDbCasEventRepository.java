@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 /**
@@ -34,7 +33,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
     @Autowired
     @Qualifier("mongoEventsTemplate")
-    @NotNull
+    
     private MongoOperations mongoTemplate;
 
     /**

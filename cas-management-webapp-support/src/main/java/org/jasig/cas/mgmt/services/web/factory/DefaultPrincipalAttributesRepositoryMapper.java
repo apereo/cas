@@ -11,6 +11,7 @@ import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component(DefaultPrincipalAttributesRepositoryMapper.BEAN_NAME)
 public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttributesRepositoryMapper {
     /**

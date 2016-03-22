@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -26,7 +25,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    @NotNull
+    
     private String usernameAttribute;
 
     /**
@@ -41,7 +40,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
      *
      * @param usernameAttribute the username attribute
      */
-    public PrincipalAttributeRegisteredServiceUsernameProvider(@NotNull final String usernameAttribute) {
+    public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute) {
         this.usernameAttribute = usernameAttribute;
     }
     

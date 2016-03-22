@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("defaultTicketFactory")
 public class DefaultTicketFactory implements TicketFactory {
 

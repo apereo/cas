@@ -3,9 +3,8 @@ package org.jasig.cas.authentication;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
@@ -14,11 +13,12 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("requiredHandlerAuthenticationPolicy")
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
     /** Authentication handler name that is required to satisfy policy. */
-    @NotNull
+    
     private String requiredHandlerName;
 
     /** Flag to try all credentials before policy is satisfied. */

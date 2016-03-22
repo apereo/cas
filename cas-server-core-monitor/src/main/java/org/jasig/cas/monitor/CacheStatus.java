@@ -2,7 +2,6 @@ package org.jasig.cas.monitor;
 
 import com.google.common.collect.ImmutableList;
 
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ public class CacheStatus extends Status {
      * @param description Optional status description.
      * @param statistics One or more sets of cache statistics.
      */
-    public CacheStatus(final StatusCode code, final String description, @NotNull final CacheStatistics... statistics) {
+    public CacheStatus(final StatusCode code, final String description,  final CacheStatistics... statistics) {
         super(code, buildDescription(description, statistics));
         this.statistics = statistics;
     }

@@ -5,6 +5,7 @@ import org.jasig.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
@@ -19,6 +20,7 @@ import java.time.temporal.ChronoUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("throttledUseAndTimeoutExpirationPolicy")
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 

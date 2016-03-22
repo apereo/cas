@@ -25,7 +25,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -471,7 +470,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.publicKey;
     }
 
-    public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
+    public void setPublicKey(final RegisteredServicePublicKey publicKey) {
         this.publicKey = publicKey;
     }
 

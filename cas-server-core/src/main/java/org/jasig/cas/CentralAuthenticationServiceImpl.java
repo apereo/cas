@@ -43,9 +43,9 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.inspektr.audit.annotation.Audit;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +62,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@RefreshScope
 @Component("centralAuthenticationService")
 public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
@@ -108,7 +109,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     @Metered(name="DESTROY_TICKET_GRANTING_TICKET_METER")
     @Counted(name="DESTROY_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
-    public List<LogoutRequest> destroyTicketGrantingTicket(@NotNull final String ticketGrantingTicketId) {
+    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         try {
             logger.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
             final TicketGrantingTicket ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);

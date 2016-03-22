@@ -5,6 +5,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -19,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("defaultTicketRegistry")
 public class DefaultTicketRegistry extends AbstractTicketRegistry {
 

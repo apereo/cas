@@ -17,6 +17,7 @@ import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceDa
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ import java.util.Map;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component(DefaultAttributeReleasePolicyMapper.BEAN_NAME)
 public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePolicyMapper {
     /**

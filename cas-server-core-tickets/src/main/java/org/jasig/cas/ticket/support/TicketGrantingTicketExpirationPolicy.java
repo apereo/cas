@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
+@RefreshScope
 @Component("ticketGrantingTicketExpirationPolicy")
 public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements InitializingBean {
 

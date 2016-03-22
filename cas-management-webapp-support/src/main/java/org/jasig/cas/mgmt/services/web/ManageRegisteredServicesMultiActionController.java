@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,10 +40,10 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     /**
      * Instance of the RegisteredServiceFactory.
      */
-    @NotNull
+    
     private RegisteredServiceFactory registeredServiceFactory;
 
-    @NotNull
+    
     private Service defaultService;
 
     /**

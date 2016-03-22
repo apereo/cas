@@ -11,11 +11,11 @@ import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceDa
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -24,37 +24,38 @@ import java.util.List;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component("registeredServiceFactory")
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
     @Autowired(required = false)
     private ApplicationContext applicationContext;
 
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("accessStrategyMapper")
     private AccessStrategyMapper accessStrategyMapper;
 
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("attributeReleasePolicyMapper")
     private AttributeReleasePolicyMapper attributeReleasePolicyMapper;
 
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("proxyPolicyMapper")
     private ProxyPolicyMapper proxyPolicyMapper;
 
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("registeredServiceMapper")
     private RegisteredServiceMapper registeredServiceMapper;
 
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("usernameAttributeProviderMapper")
     private UsernameAttributeProviderMapper usernameAttributeProviderMapper;
 
-    @NotNull
+    
     @Autowired
     private List<? extends FormDataPopulator> formDataPopulators;
 
@@ -83,7 +84,7 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
         this.usernameAttributeProviderMapper = usernameAttributeProviderMapper;
     }
 
-    public void setFormDataPopulators(@NotNull final List<? extends FormDataPopulator> formDataPopulators) {
+    public void setFormDataPopulators(final List<? extends FormDataPopulator> formDataPopulators) {
         this.formDataPopulators = formDataPopulators;
     }
 

@@ -5,6 +5,7 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
  * @see DefaultLogoutRequest
  * @since 4.0.0
  */
+@RefreshScope
 @Component("logoutBuilder")
 public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 

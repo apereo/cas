@@ -3,10 +3,10 @@ package org.jasig.cas.ticket;
 import org.jasig.cas.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("defaultTicketGrantingTicketFactory")
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
 
@@ -24,12 +25,12 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    @NotNull
+    
     @Resource(name="ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Expiration policy for ticket granting tickets. */
-    @NotNull
+    
     @Resource(name="grantingTicketExpirationPolicy")
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 /**
  * Generates a persistent id as username for anonymous service access.
@@ -40,7 +39,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
      *
      * @param persistentIdGenerator the persistent id generator
      */
-    public AnonymousRegisteredServiceUsernameAttributeProvider(@NotNull final PersistentIdGenerator persistentIdGenerator) {
+    public AnonymousRegisteredServiceUsernameAttributeProvider(final PersistentIdGenerator persistentIdGenerator) {
         this.persistentIdGenerator = persistentIdGenerator;
     }
 

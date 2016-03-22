@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     /**
      * Instance of the RegisteredServiceFactory.
      */
-    @NotNull
+    
     private RegisteredServiceFactory registeredServiceFactory;
 
     /**

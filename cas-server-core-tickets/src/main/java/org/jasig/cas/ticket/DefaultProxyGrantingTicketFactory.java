@@ -5,10 +5,10 @@ import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("defaultProxyGrantingTicketFactory")
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
 
@@ -26,12 +27,12 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * Used to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    @NotNull
+    
     @Resource(name="ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Expiration policy for ticket granting tickets. */
-    @NotNull
+    
     @Resource(name="grantingTicketExpirationPolicy")
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 

@@ -10,6 +10,7 @@ import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceUsernameAttributeProviderEditBean;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
@@ -20,6 +21,7 @@ import java.nio.charset.Charset;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component(DefaultUsernameAttributeProviderMapper.BEAN_NAME)
 public class DefaultUsernameAttributeProviderMapper implements UsernameAttributeProviderMapper {
     /**

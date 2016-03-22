@@ -3,7 +3,6 @@ package org.jasig.cas.authentication;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.services.RegisteredService;
 
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 
 /**
@@ -44,7 +43,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
      * @param callbackUrl Non-null URL that will be contacted to validate the credential.
      * @param service The registered service associated with this callback.
      */
-    public HttpBasedServiceCredential(@NotNull final URL callbackUrl, @NotNull final RegisteredService service) {
+    public HttpBasedServiceCredential(final URL callbackUrl,  final RegisteredService service) {
         this.callbackUrl = callbackUrl;
         this.callbackUrlAsString = callbackUrl.toExternalForm();
         this.service = service;

@@ -1,7 +1,5 @@
 package org.jasig.cas.authentication.handler;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Pass the encode/decode responsibility to a delegated Spring Security
  * password encoder.
@@ -11,7 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 public class SpringSecurityDelegatingPasswordEncoder implements PasswordEncoder {
 
-    @NotNull
+    
     private org.springframework.security.crypto.password.PasswordEncoder delegate;
 
     public void setDelegate(final org.springframework.security.crypto.password.PasswordEncoder delegate) {

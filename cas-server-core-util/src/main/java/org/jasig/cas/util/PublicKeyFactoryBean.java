@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * FactoryBean for creating a public key from a file.
  *
@@ -23,10 +21,10 @@ import javax.validation.constraints.NotNull;
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
+    
     private Resource resource;
 
-    @NotNull
+    
     private String algorithm;
 
     @Override

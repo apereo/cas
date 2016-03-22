@@ -6,6 +6,7 @@ import org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceSupportAccessEditBean;
 import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.Set;
  * @author Daniel Frett
  * @since 4.2
  */
+@RefreshScope
 @Component(DefaultAccessStrategyMapper.BEAN_NAME)
 public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
     /**

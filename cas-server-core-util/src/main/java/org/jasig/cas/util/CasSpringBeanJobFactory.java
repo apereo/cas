@@ -5,22 +5,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Creates quartz job, and autowires them based on the application context.
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("casSpringBeanJobFactory")
 public class CasSpringBeanJobFactory extends SpringBeanJobFactory {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @NotNull
+    
     private ApplicationContext applicationContext;
 
     /**

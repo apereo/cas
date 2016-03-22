@@ -3,6 +3,7 @@ package org.jasig.cas.authentication.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +17,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@RefreshScope
 @Component("convertCasePrincipalNameTransformer")
 public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
     private boolean toUpperCase;

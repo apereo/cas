@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,19 +33,19 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /** An array of AuthenticationAttributesPopulators. */
-    @NotNull
+    
     protected List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<>();
 
     /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
-    @NotNull
+    
     @Resource(name="authenticationHandlersResolvers")
     protected Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
     /**
      * The Authentication handler resolver.
      */
-    @NotNull
+    
     @Resource(name="registeredServiceAuthenticationHandlerResolver")
     protected AuthenticationHandlerResolver authenticationHandlerResolver =
             new RegisteredServiceAuthenticationHandlerResolver();

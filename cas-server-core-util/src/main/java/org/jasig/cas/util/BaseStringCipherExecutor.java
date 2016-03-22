@@ -8,7 +8,6 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 
-import javax.validation.constraints.NotNull;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
@@ -133,7 +132,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
      * @param value the value
      * @return the encoded value
      */
-    private String encryptValue(@NotNull final String value) {
+    private String encryptValue(final String value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setPayload(value);
@@ -154,7 +153,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
      * @param value the value
      * @return the decrypted value
      */
-    private String decryptValue(@NotNull final String value) {
+    private String decryptValue(final String value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setKey(this.secretKeyEncryptionKey);

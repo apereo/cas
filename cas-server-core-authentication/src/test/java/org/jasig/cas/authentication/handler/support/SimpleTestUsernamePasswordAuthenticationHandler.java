@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -23,6 +22,7 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -36,12 +36,13 @@ import org.springframework.util.StringUtils;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@RefreshScope
 @Component("simpleTestUsernamePasswordAuthenticationHandler")
 public class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
-    @NotNull
+    
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of logging for subclasses. */

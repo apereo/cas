@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 4.3
  */
+@RefreshScope
 @Component("authenticationContextValidator")
 public class AuthenticationContextValidator {
 
@@ -97,8 +99,7 @@ public class AuthenticationContextValidator {
             logger.debug("No satisfied multifactor authentication providers are recorded in the current authentication context.");
             return new Pair(false, requestedProvider);
         }
-
-
+        
         if (!satisfiedProviders.isEmpty()) {
             final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providers);
@@ -117,27 +118,25 @@ public class AuthenticationContextValidator {
         logger.debug("No multifactor providers could be located to satisfy the requested context for {}", requestedProvider);
 
         final RegisteredServiceMultifactorPolicy.FailureModes mode = getMultifactorFailureModeForService(service);
-        switch (mode) {
-            case PHANTOM:
-                if (!requestedProvider.get().verify(service)) {
-                    logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
-                                 + "since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
-                                 + "of the present authentication context", service.getServiceId(),
-                            mode, requestedProvider, requestedContext);
-                    return new Pair(true, requestedProvider);
-                }
-                break;
-            case OPEN:
-                if (!requestedProvider.get().verify(service)) {
-                    logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
-                                 + "since provider {} is unavailable at the moment, CAS will consider the authentication satisfied "
-                                 + "without the presence of {}", service.getServiceId(),
-                            mode, requestedProvider, requestedContext);
-                    return new Pair(true, satisfiedProviders.stream().findFirst());
-                }
-                break;
+        if (mode == RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM) {
+            if (!requestedProvider.get().verify(service)) {
+                logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
+                                + "since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
+                                + "of the present authentication context", service.getServiceId(),
+                        mode, requestedProvider, requestedContext);
+                return new Pair(true, requestedProvider);
+            }
         }
-
+        if (mode == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
+            if (!requestedProvider.get().verify(service)) {
+                logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
+                                + "since provider {} is unavailable at the moment, CAS will consider the authentication satisfied "
+                                + "without the presence of {}", service.getServiceId(),
+                        mode, requestedProvider, requestedContext);
+                return new Pair(true, satisfiedProviders.stream().findFirst());
+            }
+        }
+        
         return new Pair(false, requestedProvider);
     }
 

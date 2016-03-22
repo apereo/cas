@@ -2,6 +2,7 @@ package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("timeoutExpirationPolicy")
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 

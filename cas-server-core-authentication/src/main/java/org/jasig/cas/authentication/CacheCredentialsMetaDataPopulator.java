@@ -2,6 +2,7 @@ package org.jasig.cas.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("cacheCredentialsMetaDataPopulator")
 public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
