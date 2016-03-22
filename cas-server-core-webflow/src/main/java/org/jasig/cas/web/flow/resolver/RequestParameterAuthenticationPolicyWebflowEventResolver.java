@@ -21,7 +21,7 @@ import java.util.Set;
  * that attempts to resolve the next event based on the authentication providers of this service.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("requestParameterAuthenticationPolicyWebflowEventResolver")
 public class RequestParameterAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
