@@ -22,7 +22,7 @@ import java.util.Set;
  * that creates the next event responding to requests that are service-ticket requests.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("serviceTicketRequestWebflowEventResolver")
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {

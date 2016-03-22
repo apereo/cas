@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Daniel Frett
- * @since 4.3.0
+ * @since 5.0.0
  */
 public class DefaultMultifactorTriggerSelectionStrategyTest {
     private static final String MFA_INVALID = "mfaInvalid";
