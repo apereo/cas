@@ -17,7 +17,7 @@ import java.net.URL;
 /**
  * The authentication provider for yubikey.
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("yubikeyAuthenticationProvider")
 public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {

@@ -10,7 +10,7 @@ import java.util.Collection;
  * to a registered service.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface MultifactorAuthenticationProviderSelector {
 

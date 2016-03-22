@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * This is {@link DuoMultifactorAuthenticationProvider}.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 5.0.0
  */
 @Component("duoAuthenticationProvider")
 public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {

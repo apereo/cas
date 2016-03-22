@@ -13,7 +13,7 @@ import java.util.Optional;
  * principal.
  *
  * @author Daniel Frett
- * @since 4.3.0
+ * @since 5.0.0
  */
 public interface MultifactorTriggerSelectionStrategy {
     /**
