@@ -38,8 +38,8 @@ The following settings are expected:
 
 {% highlight properties %}
 # ticketreg.database.ddl.auto=create-drop
-# ticketreg.database.hibernate.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
-# ticketreg.database.hibernate.batchSize=10
+# ticketreg.database.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
+# ticketreg.database.batchSize=10
 # ticketreg.database.driverClass=org.hsqldb.jdbcDriver
 # ticketreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
 # ticketreg.database.user=sa
