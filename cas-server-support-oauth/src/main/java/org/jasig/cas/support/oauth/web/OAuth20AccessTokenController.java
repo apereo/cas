@@ -1,5 +1,6 @@
 package org.jasig.cas.support.oauth.web;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -16,6 +17,7 @@ import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -53,6 +55,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         final Service service;
         final Authentication authentication;
         final boolean generateRefreshToken;
+        final boolean jsonFormat;
         // authorization code and refresh token grant types
         if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
 
@@ -63,6 +66,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
             // we generate a refresh token if requested by the service but not from a refresh token
             generateRefreshToken = registeredService.isGenerateRefreshToken() && isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE);
+            jsonFormat = registeredService.isJsonFormat();
 
             final String parameterName;
             if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
@@ -82,6 +86,8 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
             final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
             generateRefreshToken = registeredService.isGenerateRefreshToken();
+            jsonFormat = registeredService.isJsonFormat();
+
             // resource owner password grant type
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
@@ -89,16 +95,36 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             service = createService(registeredService);
             authentication = createAuthentication(profile);
         }
-        final AccessToken accessToken = generateAccessToken(service, authentication);
 
-        String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken.getId(), OAuthConstants.EXPIRES, timeout);
+        final AccessToken accessToken = generateAccessToken(service, authentication);
+        final String accessTokenId = accessToken.getId();
+        String refreshTokenId = null;
         if (generateRefreshToken) {
             final RefreshToken refreshToken = refreshTokenFactory.create(service, authentication);
             ticketRegistry.addTicket(refreshToken);
-            text += "&" + OAuthConstants.REFRESH_TOKEN + "=" + refreshToken.getId();
+            refreshTokenId = refreshToken.getId();
         }
-        logger.debug("OAuth access token response: {}", text);
-        return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
+
+        logger.debug("access token: {} / timeout: {} / refresh token: {}", accessTokenId, timeout, refreshTokenId);
+        if (jsonFormat) {
+            response.setContentType("application/json");
+            try (final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(response.getWriter())) {
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId);
+                jsonGenerator.writeNumberField(OAuthConstants.EXPIRES, timeout);
+                if (CommonHelper.isNotBlank(refreshTokenId)) {
+                    jsonGenerator.writeStringField(OAuthConstants.REFRESH_TOKEN, refreshTokenId);
+                }
+                jsonGenerator.writeEndObject();
+            }
+            return null;
+        } else {
+            String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenId, OAuthConstants.EXPIRES, timeout);
+            if (CommonHelper.isNotBlank(refreshTokenId)) {
+                text += "&" + OAuthConstants.REFRESH_TOKEN + "=" + refreshTokenId;
+            }
+            return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
+        }
     }
 
     /**
