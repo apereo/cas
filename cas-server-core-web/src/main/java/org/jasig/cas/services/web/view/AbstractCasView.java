@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.view.AbstractView;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,12 +47,12 @@ public abstract class AbstractCasView extends AbstractView {
     protected boolean successResponse;
 
     /** The attribute encoder instance. */
-    @NotNull
+    
     @Resource(name="casAttributeEncoder")
     protected CasAttributeEncoder casAttributeEncoder;
 
     /** The Services manager. */
-    @NotNull
+    
     @Resource(name="servicesManager")
     protected ServicesManager servicesManager;
 
@@ -400,7 +399,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param servicesManager the services manager
      * @since 4.1
      */
-    public void setServicesManager(@NotNull final ServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
@@ -410,7 +409,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param casAttributeEncoder the cas attribute encoder
      * @since 4.1
      */
-    public void setCasAttributeEncoder(@NotNull final CasAttributeEncoder casAttributeEncoder) {
+    public void setCasAttributeEncoder(final CasAttributeEncoder casAttributeEncoder) {
         this.casAttributeEncoder = casAttributeEncoder;
     }
 

@@ -13,11 +13,11 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,6 +34,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("couchbaseTicketRegistry")
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
     private static final String END_TOKEN = "\u02ad";
@@ -47,7 +48,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
     });
     private static final String UTIL_DOCUMENT = "statistics";
 
-    @NotNull
+    
     @Autowired
     @Qualifier("ticketRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;

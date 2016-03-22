@@ -3,6 +3,7 @@ package org.jasig.cas.ticket.registry;
 import org.jasig.cas.ticket.Ticket;
 
 import org.infinispan.Cache;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("infinispanTicketRegistry")
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 

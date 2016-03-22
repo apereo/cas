@@ -14,12 +14,12 @@ import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +33,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.2.1
  */
+@RefreshScope
 @Component("jpaTicketRegistry")
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
@@ -43,7 +44,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Value("${ticketreg.database.jpa.locking.tgt.enabled:true}")
     private boolean lockTgt = true;
 
-    @NotNull
+    
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 

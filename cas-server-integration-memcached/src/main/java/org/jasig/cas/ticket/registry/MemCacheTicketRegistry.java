@@ -7,6 +7,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -22,6 +23,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.3
  */
+@RefreshScope
 @Component("memcachedTicketRegistry")
 public class MemCacheTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 

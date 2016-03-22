@@ -32,7 +32,6 @@ import org.junit.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -303,7 +302,7 @@ public class KryoTranscoderTests {
         private Authentication authentication;
 
         /** Factory to create the principal type. **/
-        @NotNull
+        
         private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
         /** Constructor for serialization support. */

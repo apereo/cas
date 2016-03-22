@@ -9,6 +9,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -26,6 +27,7 @@ import java.util.HashSet;
  * @author Andrew Tillinghast
  * @since 3.5
  */
+@RefreshScope
 @Component("ehcacheTicketRegistry")
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 

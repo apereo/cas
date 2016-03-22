@@ -29,7 +29,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 
@@ -197,7 +196,7 @@ public final class WebUtils {
      * @param ticket  the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-            final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
+            final RequestContext context,  final TicketGrantingTicket ticket) {
         final String ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
@@ -209,7 +208,7 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-            final RequestContext context, @NotNull final String ticketValue) {
+            final RequestContext context,  final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }
@@ -222,7 +221,7 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
-                                                      @NotNull final String ticketValue) {
+                                                       final String ticketValue) {
         map.put("ticketGrantingTicketId", ticketValue);
     }
 
@@ -233,7 +232,7 @@ public final class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(
-            @NotNull final RequestContext context) {
+             final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
         final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
 
@@ -329,7 +328,7 @@ public final class WebUtils {
      * @param context the context
      * @return the credential, or null if it cant be found in the context or if it has no id.
      */
-    public static Credential getCredential(@NotNull final RequestContext context) {
+    public static Credential getCredential(final RequestContext context) {
         final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
         final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
 

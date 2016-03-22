@@ -7,12 +7,12 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,6 +33,7 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@RefreshScope
 @Component("fileAuthenticationHandler")
 public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -40,7 +41,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private static final String DEFAULT_SEPARATOR = "::";
 
     /** The separator to use. */
-    @NotNull
+    
     private String separator = DEFAULT_SEPARATOR;
 
     /** The filename to read the list of usernames from. */

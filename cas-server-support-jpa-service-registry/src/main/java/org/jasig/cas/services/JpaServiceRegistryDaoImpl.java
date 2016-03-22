@@ -1,10 +1,10 @@
 package org.jasig.cas.services;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -13,9 +13,10 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("jpaServiceRegistryDao")
 public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
-    @NotNull
+    
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 

@@ -17,14 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
@@ -34,6 +33,7 @@ import javax.validation.constraints.NotNull;
 
  * @since 3.0.0
  */
+@RefreshScope
 @Component
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
 
@@ -45,12 +45,12 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;

@@ -3,6 +3,7 @@ package org.jasig.cas.monitor;
 import net.sf.ehcache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
+@RefreshScope
 @Component("ehcacheMonitor")
 public class EhCacheMonitor extends AbstractCacheMonitor {
 

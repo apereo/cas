@@ -8,13 +8,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
@@ -29,19 +29,20 @@ import java.security.GeneralSecurityException;
  *
  * @since 3.0.0
  */
+@RefreshScope
 @Component("searchModeSearchDatabaseAuthenticationHandler")
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler
         implements InitializingBean {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
 
-    @NotNull
+    
     private String fieldUser;
 
-    @NotNull
+    
     private String fieldPassword;
 
-    @NotNull
+    
     private String tableUsers;
 
     private String sql;

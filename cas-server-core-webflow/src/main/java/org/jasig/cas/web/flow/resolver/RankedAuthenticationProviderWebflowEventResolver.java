@@ -12,6 +12,7 @@ import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -26,6 +27,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("rankedAuthenticationProviderWebflowEventResolver")
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
     

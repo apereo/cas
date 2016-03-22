@@ -3,6 +3,7 @@ package org.jasig.cas.adaptors.generic.remote;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@RefreshScope
 @Component("remoteAddressCheck")
 public class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
     

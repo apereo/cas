@@ -12,6 +12,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Component;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
@@ -41,6 +41,7 @@ import java.util.Map;
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
  * @since 4.1.0
  */
+@RefreshScope
 @Component("queryAndEncodeDatabaseAuthenticationHandler")
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
@@ -51,31 +52,31 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     /**
      * The Algorithm name.
      */
-    @NotNull
+    
     protected String algorithmName;
 
     /**
      * The Sql statement to execute.
      */
-    @NotNull
+    
     protected String sql;
 
     /**
      * The Password field name.
      */
-    @NotNull
+    
     protected String passwordFieldName = DEFAULT_PASSWORD_FIELD;
 
     /**
      * The Salt field name.
      */
-    @NotNull
+    
     protected String saltFieldName = DEFAULT_SALT_FIELD;
 
     /**
      * The Number of iterations field name.
      */
-    @NotNull
+    
     protected String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
 
     /**

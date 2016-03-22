@@ -3,6 +3,7 @@ package org.jasig.cas.config;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.MaxSizeConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
+@RefreshScope
 @Component("hazelcastProperties")
 public class HazelcastProperties {
 

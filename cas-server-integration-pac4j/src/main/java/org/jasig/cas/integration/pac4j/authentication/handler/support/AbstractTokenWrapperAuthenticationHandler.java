@@ -7,7 +7,6 @@ import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.http.credentials.TokenCredentials;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
@@ -23,7 +22,7 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
-    @NotNull
+    
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /**

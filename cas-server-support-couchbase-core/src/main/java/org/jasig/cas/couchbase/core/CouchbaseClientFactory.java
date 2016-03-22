@@ -8,7 +8,6 @@ import com.couchbase.client.java.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +31,7 @@ public class CouchbaseClientFactory {
     private Bucket bucket;
     private List<View> views;
 
-    @NotNull
+    
     private Set<String> nodes;
 
     /* The name of the bucket, will use the default bucket unless otherwise specified. */

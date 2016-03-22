@@ -41,6 +41,7 @@ import org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.jasig.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -68,6 +69,7 @@ import java.util.regex.Pattern;
  * @since 3.0.0
  */
 @SuppressWarnings("rawtypes")
+@RefreshScope
 @Component("kryoTranscoder")
 public class KryoTranscoder implements Transcoder<Object> {
 

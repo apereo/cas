@@ -2,6 +2,7 @@ package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -16,6 +17,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("defaultArgumentExtractor")
 public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 

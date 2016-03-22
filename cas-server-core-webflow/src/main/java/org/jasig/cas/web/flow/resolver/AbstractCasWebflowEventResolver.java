@@ -39,7 +39,6 @@ import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +74,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Authentication system support.
      */
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -91,7 +90,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Services manager.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
@@ -99,7 +98,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Central authentication service.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     protected CentralAuthenticationService centralAuthenticationService;
@@ -107,7 +106,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * Warn cookie generator.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("warnCookieGenerator")
     protected CookieGenerator warnCookieGenerator;

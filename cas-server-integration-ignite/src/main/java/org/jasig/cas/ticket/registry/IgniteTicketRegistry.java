@@ -17,6 +17,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,7 +25,6 @@ import javax.annotation.PreDestroy;
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
@@ -45,11 +45,12 @@ import java.util.concurrent.TimeUnit;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0`
  */
+@RefreshScope
 @Component("igniteTicketRegistry")
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
-    @NotNull
+    
     @Value("${ignite.ticketsCache.name:TicketsCache}")
     private String cacheName;
 
@@ -78,7 +79,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     private String trustStorePassword;
 
     @Autowired
-    @NotNull
+    
     @Qualifier("igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
 

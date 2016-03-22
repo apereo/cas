@@ -15,6 +15,7 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
@@ -66,6 +67,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("casWebflowConfigurer")
 public abstract class AbstractCasWebflowConfigurer {
     private static final String FLOW_ID_LOGIN = "login";

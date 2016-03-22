@@ -13,7 +13,6 @@ import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
@@ -35,13 +34,13 @@ public class UsernamePasswordWrapperAuthenticationHandler
      * PasswordEncoder to be used by subclasses to encode passwords for
      * comparing against a resource.
      */
-    @NotNull
+    
     private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
-    @NotNull
+    
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /**

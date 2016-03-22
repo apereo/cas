@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -37,7 +36,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     @Autowired
     @Qualifier("mongoTemplate")
-    @NotNull
+    
     private MongoOperations mongoTemplate;
 
     /**

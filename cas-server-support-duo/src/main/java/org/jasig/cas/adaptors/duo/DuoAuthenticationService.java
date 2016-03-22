@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -27,28 +27,29 @@ import java.net.URLDecoder;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@RefreshScope
 @Component("duoAuthenticationService")
 public class DuoAuthenticationService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    @NotNull
+    
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.integration.key:}")
     private String duoIntegrationKey;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.secret.key:}")
     private String duoSecretKey;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.application.key:}")
     private String duoApplicationKey;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.api.host:}")
     private String duoApiHost;
 

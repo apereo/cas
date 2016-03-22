@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuth
 import org.jasig.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +43,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("shiroAuthenticationHandler")
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
