@@ -8,8 +8,9 @@ title: CAS - Whitelist Authentication
 Whitelist authentication components fall into two categories: Those that accept a set of credentials stored directly in the configuration and those that accept a set of credentials from a file resource on the server.
 
 These are:
-* `AcceptUsersAuthenticationHandler`
-* `FileAuthenticationHandler`
+
+- `AcceptUsersAuthenticationHandler`
+- `FileAuthenticationHandler`
 
 
 ## Authentication Components
