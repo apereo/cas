@@ -56,7 +56,7 @@ dependencies {
     compile libraries.springboot
     compile libraries.thmyeleaf
     runtime libraries.groovy
-    runtime libraries.spring
+    compile libraries.spring
     runtime libraries.cassecurityfilter
     runtime libraries.metrics
     runtime libraries.hibernate
