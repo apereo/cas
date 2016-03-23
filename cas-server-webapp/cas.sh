@@ -1,1 +1,0 @@
-../gradlew build --parallel -x test -DskipCheckstyle=true -x javadoc -DskipAspectJ=true -DskipFindbugs=true --console rich && java -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n -jar build/libs/cas-server-webapp-4.3.0-SNAPSHOT.war
