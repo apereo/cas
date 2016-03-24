@@ -19,5 +19,6 @@ dependencies {
     testCompile project(':cas-server-webapp-cookie')
     testCompile libraries.tests
     testCompile libraries.javax
+    testCompile libraries.inspektr
 }
 
