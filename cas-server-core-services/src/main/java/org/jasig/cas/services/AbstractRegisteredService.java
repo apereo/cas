@@ -130,7 +130,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private RegisteredServicePublicKey publicKey;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="RegisteredServiceImpl_Properties")
+    @JoinTable(name="RegisteredServiceImpl_Props")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @Override
