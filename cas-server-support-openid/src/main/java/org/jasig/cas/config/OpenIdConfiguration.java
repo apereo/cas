@@ -43,7 +43,6 @@ public class OpenIdConfiguration {
      *
      * @return the delegating controller
      */
-    @RefreshScope
     @Bean(name="openidDelegatingController")
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
@@ -59,7 +58,6 @@ public class OpenIdConfiguration {
      *
      * @return the association controller
      */
-    @RefreshScope
     @Bean(name="smartOpenIdAssociationController")
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController();
@@ -71,7 +69,6 @@ public class OpenIdConfiguration {
      *
      * @return the signature verification controller
      */
-    @RefreshScope
     @Bean(name="openIdValidateController")
     public AbstractDelegateController openIdValidateController() {
         return new OpenIdValidateController();

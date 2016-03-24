@@ -1,9 +1,10 @@
-package org.jasig.cas.support.oauth;
+package org.jasig.cas;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.ReloadableServicesManager;
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
@@ -31,7 +32,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
 @Component
 public class OAuthApplicationContextWrapper extends BaseApplicationContextWrapper {
 
@@ -49,7 +49,7 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
      * Initialize servlet application context.
      */
     @PostConstruct
-    protected void initializeServletApplicationContext() {
+    public void initializeServletApplicationContext() {
         final String oAuthCallbackUrl = casServerUrl + OAuthConstants.BASE_OAUTH20_URL + '/'
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         final ReloadableServicesManager servicesManager = getServicesManager();

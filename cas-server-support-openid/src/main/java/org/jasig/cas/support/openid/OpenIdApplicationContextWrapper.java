@@ -19,7 +19,6 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
 @Component
 public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapper {
 

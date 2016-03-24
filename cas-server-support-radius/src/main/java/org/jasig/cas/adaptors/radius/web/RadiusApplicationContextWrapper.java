@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Component
 public class RadiusApplicationContextWrapper extends BaseApplicationContextWrapper {
     @Autowired

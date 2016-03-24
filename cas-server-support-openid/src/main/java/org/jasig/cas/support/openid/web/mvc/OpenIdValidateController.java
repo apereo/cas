@@ -29,7 +29,6 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
 @Component("openIdValidateController")
 public class OpenIdValidateController extends AbstractServiceValidateController {
 

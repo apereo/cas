@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-@RefreshScope
 @Component
 public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrapper {
 
