@@ -28,7 +28,7 @@ import java.util.Optional;
 public class Cas30ResponseView extends Cas20ResponseView {
 
     @Value("${cas.attrs.protocol.release:true}")
-    private boolean releaseProtocolAttributes;
+    private boolean releaseProtocolAttributes = true;
 
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")

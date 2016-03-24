@@ -1,0 +1,5 @@
+description = 'Apereo CAS Basic Google Authenticator Support'
+dependencies {
+    compile libraries.googleauth
+}
+
