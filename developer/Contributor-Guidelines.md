@@ -73,7 +73,7 @@ Submit a pull request from your topic branch onto the target branch of Jasig CAS
 Be prepared to sync changes with the target branch of the Jasig CAS repository since the target branch may move during review and consideration of the pull request.
 
 
-####Creating Pull Requests
+#### Creating Pull Requests
 A pull request should contain the following:
 
 * One or more commits that follow the [Pro Git commit guidelines](http://git-scm.com/book/ch5-2.html#Commit-Guidelines).
