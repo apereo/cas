@@ -153,6 +153,12 @@ ext.libraries = [
                     force = true
                 }
         ],
+        googleauth   : [
+                dependencies.create("com.warrenstrange:googleauth:${googleAuthVersion}") {
+                    transitive = false
+                    force = true
+                },
+        ],
         shibidp          : [
                 dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
