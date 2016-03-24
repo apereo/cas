@@ -20,7 +20,7 @@ interface with the authentication subsystem accept one or more credentials to au
 
 ### Duo Security
 
-Configure authentication per instructions [here] (DuoSecurity-Authentication.html). 
+Configure authentication per instructions [here](DuoSecurity-Authentication.html). 
 
 | Field                | Description
 |----------------------+---------------------------------+
@@ -29,7 +29,7 @@ Configure authentication per instructions [here] (DuoSecurity-Authentication.htm
 
 ### YubiKey
 
-Configure authentication per instructions [here] (YubiKey-Authentication.html). 
+Configure authentication per instructions [here](YubiKey-Authentication.html). 
 
 | Field                | Description
 |----------------------+---------------------------------+
@@ -38,7 +38,7 @@ Configure authentication per instructions [here] (YubiKey-Authentication.html).
 
 ### RSA/RADIUS
 
-Configure authentication per instructions [here] (RADIUS-Authentication.html). 
+Configure authentication per instructions [here](RADIUS-Authentication.html). 
 
 | Field                | Description
 |----------------------+---------------------------------+
