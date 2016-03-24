@@ -22,7 +22,6 @@ RSA RADIUS support for MFA is enabled by only including the following dependency
   <artifactId>cas-server-support-radius-mfa</artifactId>
   <version>${cas.version}</version>
 </dependency>
-```
 
 ## Configuration
 
