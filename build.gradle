@@ -830,6 +830,9 @@ ext.libraries = [
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
                     force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-actuator:$springBootVersion") {
+                    force = true
                 }
         ],
         springboottomcat      : [
