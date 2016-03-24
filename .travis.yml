@@ -32,7 +32,7 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
 install:
-- ./gradlew clean build -DskipAspectJ=true --parallel -x test -Dorg.gradle.daemon=true -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8
+- ./gradlew clean build -DskipAspectJ=true --parallel -x test
 script:
 - ./gradlew test -DskipAspectJ=true --stacktrace
 after_success:
