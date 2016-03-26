@@ -30,24 +30,6 @@ dependencies {
         exclude(module: 'spring-expression')
         exclude(module: 'spring-webmvc')
     }
-    compile (group: 'wavity-dependency', name: 'wavity-dependency', version: '1.0.0-SNAPSHOT') {
-        transitive = true
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jackson-databind')
-        exclude group: 'org.javassist', module: 'javassist'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
-        exclude group: 'net.sf.ehcache', module: 'ehcache'
-        exclude group: 'org.codehaus.jackson', module: 'jackson-mapper-asl'
-        exclude group: 'org.ehcache', module: 'jcache'
-        exclude group: 'javax.json', module: 'javax.json-api'
-        exclude group: 'javax', module: 'javaee-api'
-        exclude group: 'javax', module: 'javaee-web-api'
-        exclude group: 'javax', module: 'javaee-endorsed-api'
-        exclude group: 'junit', module: 'junit'
-    }
     testCompile project(':cas-server-core-web')
     testCompile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
         exclude(module: 'jboss-logging-annotations')
