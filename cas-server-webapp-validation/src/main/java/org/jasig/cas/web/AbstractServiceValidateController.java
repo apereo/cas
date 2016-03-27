@@ -47,7 +47,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
-
 import java.util.Optional;
 
 /**
@@ -292,11 +291,17 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
 
-        final String proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
-        if (StringUtils.isEmpty(proxyIou) && serviceCredential != null) {
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                    CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                    new Object[] {serviceCredential.getId()}, request, service);
+        String proxyIou = null;
+        if (serviceCredential != null && this.proxyHandler.canHandle(serviceCredential)) {
+            proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
+            if (StringUtils.isEmpty(proxyIou)) {
+                return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                        CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
+                        new Object[]{serviceCredential.getId()}, request, service);
+            }
+        } else {
+            logger.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials",
+                    this.proxyHandler);
         }
 
         onSuccessfulValidation(serviceTicketId, assertion);
@@ -307,11 +312,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private String handleProxyIouDelivery(final Credential serviceCredential, 
                                           final TicketGrantingTicket proxyGrantingTicketId) {
-        if (serviceCredential != null && this.proxyHandler.canHandle(serviceCredential)) {
-            return this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
-        }
-        return null;
+        return this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
     }
+    
     /**
      * Validate assertion.
      *

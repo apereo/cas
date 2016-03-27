@@ -25,7 +25,7 @@
 
 
     <context:property-placeholder properties-ref="casProperties"/>
-    <util:properties id="casProperties"/>
+    <util:properties id="casProperties" location="classpath:cas.properties"/>
 
 
     <util:map id="authenticationHandlersResolvers">
