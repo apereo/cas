@@ -1,4 +1,4 @@
-package org.jasig.cas.adaptors.yubikey.web.flow;
+package org.jasig.cas.adaptors.gauth.web.flow;
 
 import org.jasig.cas.web.flow.AbstractCasWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,24 +8,24 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 
 /**
- * This is {@link YubiKeyMultifactorWebflowConfigurer}.
+ * This is {@link GoogleAuthenticatorMultifactorWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @RefreshScope
-@Component("yubikeyMultifactorWebflowConfigurer")
-public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
+@Component("googleAuthenticatorMultifactorWebflowConfigurer")
+public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     /** Webflow event id. */
-    public static final String MFA_YUBIKEY_EVENT_ID = "mfa-yubikey";
+    public static final String MFA_GAUTH_EVENT_ID = "mfa-gauth";
 
     @Autowired
-    @Qualifier("yubikeyFlowRegistry")
-    private FlowDefinitionRegistry yubikeyFlowRegistry;
+    @Qualifier("googleAuthenticatorFlowRegistry")
+    private FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Override
     protected void doInitialize() throws Exception {
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_YUBIKEY_EVENT_ID, this.yubikeyFlowRegistry);
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_GAUTH_EVENT_ID, this.flowDefinitionRegistry);
     }
 }
