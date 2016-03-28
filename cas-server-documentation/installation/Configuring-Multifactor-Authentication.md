@@ -24,7 +24,6 @@ Configure authentication per instructions [here](DuoSecurity-Authentication.html
 
 | Field                | Description
 |----------------------+---------------------------------+
-| `provider`           | `duoAuthenticationProvider`
 | `id`                 | `mfa-duo`
 
 ### YubiKey
@@ -33,7 +32,6 @@ Configure authentication per instructions [here](YubiKey-Authentication.html).
 
 | Field                | Description
 |----------------------+---------------------------------+
-| `provider`           | `yubikeyAuthenticationProvider`
 | `id`                 | `mfa-yubikey`
 
 ### RSA/RADIUS
@@ -42,8 +40,15 @@ Configure authentication per instructions [here](RADIUS-Authentication.html).
 
 | Field                | Description
 |----------------------+---------------------------------+
-| `provider`           | `radiusAuthenticationProvider`
 | `id`                 | `mfa-radius`
+
+### Google Authenticator
+
+Configure authentication per instructions [here](GoogleAuthenticator-Authentication.html). 
+
+| Field                | Description
+|----------------------+---------------------------------+
+| `id`                 | `mfa-gauth`
 
 ## Triggers
 
