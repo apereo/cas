@@ -3,6 +3,7 @@ package org.jasig.cas;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.VfsResource;
 
 import java.io.File;
 import java.net.URL;
@@ -43,11 +44,19 @@ public final class CasVersion {
             final URL resource = clazz.getResource(clazz.getSimpleName() + ".class");
             if ("file".equals(resource.getProtocol())) {
                 return new DateTime(new File(resource.toURI()).lastModified());
-            } else if ("jar".equals(resource.getProtocol())) {
+            }
+
+            if ("jar".equals(resource.getProtocol())) {
                 final String path = resource.getPath();
                 final File file = new File(path.substring(5, path.indexOf('!')));
                 return new DateTime(file.lastModified());
             }
+
+            if ("vfs".equals(resource.getProtocol())) {
+                final File file = new VfsResource(resource).getFile();
+                return new DateTime(file.lastModified());
+            }
+
             LOGGER.warn("Unhandled url protocol: {} resource: {}", resource.getProtocol(), resource);
             return DateTime.now();
         } catch (final Exception e) {
