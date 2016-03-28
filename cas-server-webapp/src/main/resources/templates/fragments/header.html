@@ -7,8 +7,12 @@
     <link rel="stylesheet" th:href="@{${#themes.code('standard.custom.css.file')}}" />
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
 
-    <script>
-        var trackGeoLocation = ("${trackGeoLocation}" === "true");
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        
+        var trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
+        
+        /*]]>*/
     </script>
 
 </header>
