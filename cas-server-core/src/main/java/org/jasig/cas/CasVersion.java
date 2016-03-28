@@ -59,8 +59,7 @@ public final class CasVersion {
                 return DateTimeUtils.zonedDateTimeOf(file.lastModified());
             }
             
-            LOGGER.warn("Unhandled url protocol: {} for class: {} and resource: {}", resource.getProtocol(),
-                    resource.getProtocol(), resource);
+            LOGGER.warn("Unhandled url protocol: {} resource: {}", resource.getProtocol(), resource);
             return ZonedDateTime.now();
             
         } catch (final Exception e) {
