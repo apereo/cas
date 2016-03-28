@@ -1,6 +1,5 @@
 package org.jasig.cas.adaptors.gauth;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -17,14 +16,20 @@ import java.io.Serializable;
 public class GoogleAuthenticatorTokenCredential implements Credential, Serializable {
     private static final long serialVersionUID = -7570600701132111037L;
 
-    private String token;
+    private Integer token;
+
+    /**
+     * Instantiates a new Google authenticator token credential.
+     */
+    public GoogleAuthenticatorTokenCredential() {
+    }
 
     /**
      * Instantiates a new Yubi key credential.
      *
      * @param token the token
      */
-    public GoogleAuthenticatorTokenCredential(final String token) {
+    public GoogleAuthenticatorTokenCredential(final Integer token) {
         this.token = token;
     }
 
@@ -58,19 +63,19 @@ public class GoogleAuthenticatorTokenCredential implements Credential, Serializa
 
     @Override
     public String getId() {
-        return this.token;
+        return this.token.toString();
     }
 
 
-    public String getToken() {
+    public Integer getToken() {
         return token;
     }
 
-    public void setToken(final String token) {
+    public void setToken(final Integer token) {
         this.token = token;
     }
 
     public boolean isValid() {
-        return StringUtils.isNotBlank(this.token);
+        return this.token != null;
     }
 }

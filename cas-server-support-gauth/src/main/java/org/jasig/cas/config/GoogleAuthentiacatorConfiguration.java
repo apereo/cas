@@ -1,5 +1,6 @@
 package org.jasig.cas.config;
 
+import org.jasig.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -28,6 +29,10 @@ public class GoogleAuthentiacatorConfiguration {
     @Qualifier("builder")
     private FlowBuilderServices builder;
 
+    @Autowired
+    @Qualifier("defaultGoogleAuthenticatorAccountRegistry")
+    private GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry;
+    
     /**
      * Yubikey flow registry flow definition registry.
      *
@@ -40,5 +45,16 @@ public class GoogleAuthentiacatorConfiguration {
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-gauth/*-webflow.xml");
         return builder.build();
+    }
+
+    /**
+     * Google authenticator account registry google authenticator account registry.
+     *
+     * @return the google authenticator account registry
+     */
+    @RefreshScope
+    @Bean(name="googleAuthenticatorAccountRegistry")
+    public GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry() {
+        return this.googleAuthenticatorAccountRegistry;
     }
 }

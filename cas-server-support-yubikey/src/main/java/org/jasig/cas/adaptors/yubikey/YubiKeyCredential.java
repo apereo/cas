@@ -21,6 +21,12 @@ public class YubiKeyCredential implements Credential, Serializable {
 
     /**
      * Instantiates a new Yubi key credential.
+     */
+    public YubiKeyCredential() {
+    }
+
+    /**
+     * Instantiates a new Yubi key credential.
      *
      * @param token the token
      */

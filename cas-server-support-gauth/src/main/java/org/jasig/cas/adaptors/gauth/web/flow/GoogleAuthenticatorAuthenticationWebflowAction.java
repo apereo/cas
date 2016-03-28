@@ -16,7 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @RefreshScope
-@Component("googleAuthenticatoruthenticationWebflowAction")
+@Component("googleAuthenticatorAuthenticationWebflowAction")
 public class GoogleAuthenticatorAuthenticationWebflowAction extends AbstractAction {
     @Autowired
     @Qualifier("googleAuthenticatorAuthenticationWebflowEventResolver")

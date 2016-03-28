@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -20,7 +19,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
 @Component("defaultPrincipalElectionStrategy")
 public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalElectionStrategy.class);

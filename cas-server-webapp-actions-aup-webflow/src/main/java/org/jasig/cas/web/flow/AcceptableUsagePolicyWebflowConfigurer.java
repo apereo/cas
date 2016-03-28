@@ -1,6 +1,5 @@
 package org.jasig.cas.web.flow;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -13,7 +12,6 @@ import org.springframework.webflow.engine.ViewState;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
 @Component("acceptableUsagePolicyWebflowConfigurer")
 public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 

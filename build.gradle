@@ -158,6 +158,9 @@ ext.libraries = [
                     transitive = false
                     force = true
                 },
+                dependencies.create("com.google.zxing:core:${googleZxingVersion}") {
+                    force = true
+                }
         ],
         shibidp          : [
                 dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {

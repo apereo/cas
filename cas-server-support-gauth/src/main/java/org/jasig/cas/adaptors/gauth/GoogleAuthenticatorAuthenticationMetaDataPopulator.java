@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  * @since 5.0.0
  */
 @RefreshScope
-@Component("googleAuthenticatoruthenticationMetaDataPopulator")
+@Component("googleAuthenticatorAuthenticationMetaDataPopulator")
 public class GoogleAuthenticatorAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")

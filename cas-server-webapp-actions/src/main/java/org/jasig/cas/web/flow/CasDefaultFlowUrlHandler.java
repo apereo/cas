@@ -60,7 +60,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
         final String queryString = flowParams.entrySet().stream()
                 .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
-                .reduce((param1, param2) -> param1 + "&" + param2)
+                .reduce((param1, param2) -> param1 + '&' + param2)
                 .orElse("");
 
         builder.append(queryString);
@@ -79,7 +79,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     }
 
     private String encodeSingleParameter(final String key, final String value, final String encoding) {
-        return urlEncode(key, encoding) + "=" + urlEncode(value, encoding);
+        return urlEncode(key, encoding) + '=' + urlEncode(value, encoding);
     }
 
     private String urlEncode(final String value, final String encodingScheme) {
