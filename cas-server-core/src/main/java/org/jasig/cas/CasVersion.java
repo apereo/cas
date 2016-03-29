@@ -1,5 +1,6 @@
 package org.jasig.cas;
 
+import com.google.common.base.Throwables;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +54,14 @@ public final class CasVersion {
             }
 
             if ("vfs".equals(resource.getProtocol())) {
-                final File file = new VfsResource(resource).getFile();
+                final File file = new VfsResource(resource.openConnection().getContent()).getFile();
                 return new DateTime(file.lastModified());
             }
 
             LOGGER.warn("Unhandled url protocol: {} resource: {}", resource.getProtocol(), resource);
             return DateTime.now();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }
