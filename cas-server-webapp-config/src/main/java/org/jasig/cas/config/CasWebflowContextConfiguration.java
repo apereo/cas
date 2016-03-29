@@ -24,9 +24,13 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.config.FlowExecutorBuilder;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
+import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
+import org.springframework.webflow.execution.repository.impl.DefaultFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.snapshot.SerializedFlowExecutionSnapshotFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
@@ -63,14 +67,26 @@ public class CasWebflowContextConfiguration {
     @Value("${webflow.redirect.same.state:false}")
     private boolean redirectSameState;
 
+
+    @Value("${webflow.session.storage:false}")
+    private boolean webflowSessionStorage;
+    
     @Autowired
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
 
     @Autowired
     @Qualifier("authenticationThrottle")
-    @Lazy(true)
     private HandlerInterceptor authenticationThrottle;
+
+    @Value("${webflow.session.lock.timeout:30}")
+    private int webflowSessionLockTimeout;
+
+    @Value("${webflow.session.max.conversations:5}")
+    private int webflowSessionMaxConversations;
+
+    @Value("${webflow.session.compress:false}")
+    private boolean webflowSessionCompress;
 
     /**
      * Expression parser web flow spring el expression parser.
@@ -128,7 +144,7 @@ public class CasWebflowContextConfiguration {
      */
     @RefreshScope
     @Bean(name = "logoutFlowUrlHandler")
-    public CasDefaultFlowUrlHandler logoutFlowUrlHandler() {
+    public FlowUrlHandler logoutFlowUrlHandler() {
         final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
         handler.setFlowExecutionKeyParameter("RelayState");
         return handler;
@@ -324,6 +340,23 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "loginFlowExecutor")
     @Lazy(true)
     public FlowExecutorImpl loginFlowExecutor() {
+        if (this.webflowSessionStorage) {
+            final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
+            conversationManager.setLockTimeoutSeconds(this.webflowSessionLockTimeout);
+            conversationManager.setMaxConversations(this.webflowSessionMaxConversations);
+            
+            final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
+            
+            final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
+                    new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
+            flowExecutionSnapshotFactory.setCompress(this.webflowSessionCompress);
+            
+            final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
+                    flowExecutionSnapshotFactory);
+            executionFactory.setExecutionKeyFactory(repository);
+            return new FlowExecutorImpl(loginFlowRegistry(), executionFactory, repository);
+        }
+
         final ClientFlowExecutionRepository repository = new ClientFlowExecutionRepository();
         repository.setFlowDefinitionLocator(loginFlowRegistry());
         repository.setTranscoder(loginFlowStateTranscoder());
@@ -331,7 +364,6 @@ public class CasWebflowContextConfiguration {
         final FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
         factory.setExecutionKeyFactory(repository);
         repository.setFlowExecutionFactory(factory);
-
         return new FlowExecutorImpl(loginFlowRegistry(), factory, repository);
     }
 }
