@@ -54,7 +54,7 @@ the `/WEB-INF/managementConfigContext.xml` file.
 By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` 
 file that should be available on the runtime classpath. You can change the location of this file, by uncommenting the following key in your `cas-management.properties` file:
 
-```bash
+```properties
 ##
 # User details file location that contains list of users
 # who are allowed access to the management webapp:
@@ -89,7 +89,7 @@ Define a custom set of roles and permissions that would be cross-checked later a
 defined in the configuration.
  
 ```xml
-<bean id="authorizationGenerator" class="org.pac4j.core.authorization.DefaultRolesPermissionsAuthorizationGenerator">
+<bean id="authorizationGenerator" class="org.pac4j.core.authorization.DefaultRolesPermissionsAuthorizationGenerator"
     c:defaultRoles="ROLE_ADMIN,ROLE_CUSTOM" c:defaultPermissions="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
 ```
 
@@ -108,6 +108,9 @@ Support is enabled by including the following dependency in the Maven WAR overla
 Define a custom set of roles and permissions that would be cross-checked later against the value of `adminRoles`.
  
 ```xml
+
+<alias name="ldapAuthorizationGenerator" alias="authorizationGenerator" />
+
 <ldaptive:pooled-connection-factory
     id="ldapAuthorizationGeneratorConnectionFactory"
     ldapUrl="${ldap.url}"
@@ -153,3 +156,15 @@ The following properties are applicable to this configuration:
 # ldap.authorizationgenerator.allow.multiple=false
 ```
 
+You will also need to configure the `ldaptive` namespace at the top of the `managementConfigContext.xml` file:
+
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       ...
+       ...
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+       ...
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
+       ...
+```       
