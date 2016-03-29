@@ -1,5 +1,6 @@
 package org.jasig.cas;
 
+import com.google.common.base.Throwables;
 import org.jasig.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public final class CasVersion {
             } 
             
             if ("vfs".equals(resource.getProtocol())) {
-                final File file = new VfsResource(resource).getFile();
+                final File file = new VfsResource(resource.openConnection().getContent()).getFile();
                 return DateTimeUtils.zonedDateTimeOf(file.lastModified());
             }
             
@@ -63,7 +64,7 @@ public final class CasVersion {
             return ZonedDateTime.now();
             
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }
