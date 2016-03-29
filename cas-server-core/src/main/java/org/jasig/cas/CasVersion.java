@@ -1,6 +1,9 @@
 package org.jasig.cas;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.VfsResource;
 
 import java.io.File;
 import java.net.URL;
@@ -13,6 +16,7 @@ import java.net.URL;
  * @since 3.0.0
  */
 public final class CasVersion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasEnvironmentContextListener.class);
 
     /**
      * Private constructor for CasVersion. You should not be able to instantiate
@@ -40,14 +44,21 @@ public final class CasVersion {
             final URL resource = clazz.getResource(clazz.getSimpleName() + ".class");
             if ("file".equals(resource.getProtocol())) {
                 return new DateTime(new File(resource.toURI()).lastModified());
-            } else if ("jar".equals(resource.getProtocol())) {
+            }
+
+            if ("jar".equals(resource.getProtocol())) {
                 final String path = resource.getPath();
                 final File file = new File(path.substring(5, path.indexOf('!')));
                 return new DateTime(file.lastModified());
             }
-            throw new IllegalArgumentException("Unhandled url protocol: "
-                        + resource.getProtocol() + " for class: "
-                        + clazz.getName() + " resource: " + resource);
+
+            if ("vfs".equals(resource.getProtocol())) {
+                final File file = new VfsResource(resource).getFile();
+                return new DateTime(file.lastModified());
+            }
+
+            LOGGER.warn("Unhandled url protocol: {} resource: {}", resource.getProtocol(), resource);
+            return DateTime.now();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
