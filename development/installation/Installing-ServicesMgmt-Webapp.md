@@ -52,14 +52,7 @@ the `/WEB-INF/managementConfigContext.xml` file.
 
 ### Static List of Users
 By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` 
-file that should be available on the runtime classpath.
-
-```xml
-<sec:user-service id="userDetailsService"
-   properties="${user.details.file.location:classpath:user-details.properties}" />
-```
-
-You can change the location of this file, by uncommenting the following key in your `cas-management.properties` file:
+file that should be available on the runtime classpath. You can change the location of this file, by uncommenting the following key in your `cas-management.properties` file:
 
 ```bash
 ##
