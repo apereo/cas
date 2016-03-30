@@ -31,18 +31,15 @@ By default, the conversational state of Spring Webflow is managed inside the app
 and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store 
 and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication.
 
-Default encryption strategy controlled via the `loginFlowStateTranscoder` component is using the 128-bit AES in CBC ciphering mode with 
-compression turned on. These settings can be controlled via the following settings defined in the `cas.properties` file:
+Default encryption strategy controlled via the `loginFlowStateTranscoder` component.
+These settings can be controlled via the following defined in the `cas.properties` file:
 
 {% highlight properties %}
-# cas.webflow.cipher.alg=AES
-# cas.webflow.cipher.mode=CBC
-# cas.webflow.cipher.padding=PKCS7
-# cas.webflow.keystore=classpath:/etc/keystore.jceks
-# cas.webflow.keystore.type=JCEKS
-# cas.webflow.keystore.password=changeit
-# cas.webflow.keyalias=aes128
-# cas.webflow.keypassword=changeit
+# The encryption secret key. By default, must be a octet string of size 256.
+# webflow.encryption.key=
+
+# The signing secret key. By default, must be a octet string of size 512.
+# webflow.signing.key=
 {% endhighlight %}
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>

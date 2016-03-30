@@ -4,26 +4,29 @@ title: CAS - Configuring SSO Session Cookie
 ---
 
 # SSO Session Cookie
-A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. This cookie maintains login state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials. Services can opt out of single sign-on through the `renew` parameter. See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
+A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. 
+This cookie maintains login state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials. 
+Services can opt out of single sign-on through the `renew` parameter. See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
 
 The cookie value is linked to the active ticket-granting ticket, the remote IP address that initiated the request
 as well as the user agent that submitted the request. The final cookie value is then encrypted and signed
 using `AES_128_CBC_HMAC_SHA_256` and `HMAC_SHA512` respectively.
 
-The secret keys are defined in the `cas.properties` file. While sample data is provided
-for initial deployments, these keys **MUST** be regenerated per your specific environment. Each key
+The secret keys are defined in the `cas.properties` file. These keys **MUST** be regenerated per your specific environment. Each key
 is a JSON Web Token with a defined length per the algorithm used for encryption and signing.
 You may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator)
 to generate your own JSON Web Tokens.
 
 ## Configuration
+
 The generation of the ticket-granting cookie is controlled via:
-{% highlight properties %}
+
+```properties
 # The encryption secret key. By default, must be a octet string of size 256.
-tgc.encryption.key=
+# tgc.encryption.key=
 
 # The signing secret key. By default, must be a octet string of size 512.
-tgc.signing.key=
+# tgc.signing.key=
 
 # Decides whether SSO cookie should be created only under secure connections.
 # tgc.secure=true
@@ -42,7 +45,7 @@ tgc.signing.key=
 
 # The expiration value of the SSO Warning cookie
 # warn.cookie.maxAge=-1
-{% endhighlight %}
+```
 
 The cookie has the following properties:
 
