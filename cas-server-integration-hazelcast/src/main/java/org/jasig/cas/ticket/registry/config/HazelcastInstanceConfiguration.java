@@ -69,13 +69,12 @@ public class HazelcastInstanceConfiguration {
     private Config getConfig(final Resource configLocation) throws IOException {
         final Config config;
         //We have a valid config location for hazelcast xml. Try to parse it and configure Hazelcast instance according to that source
-        if (configLocation.exists()) {
+        if (configLocation.exFists()) {
             final URL configUrl = configLocation.getURL();
             config = new XmlConfigBuilder(configUrl).build();
             if (ResourceUtils.isFileURL(configUrl)) {
                 config.setConfigurationFile(configLocation.getFile());
-            }
-            else {
+            } else {
                 config.setConfigurationUrl(configUrl);
             }
         } else {
