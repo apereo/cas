@@ -145,6 +145,12 @@
             <version>3.12.1.GA</version>
         </dependency>
 
+      <dependency>
+          <groupId>org.apache.shiro</groupId>
+          <artifactId>shiro-core</artifactId>
+          <scope>compile</scope>
+      </dependency>
+      
         <dependency>
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
