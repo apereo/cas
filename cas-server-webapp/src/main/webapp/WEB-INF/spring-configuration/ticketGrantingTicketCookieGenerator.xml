@@ -39,8 +39,8 @@
           p:cookiePath=""/>
 
     <bean id="cookieCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
-          c:secretKeyEncryption="${tgc.encryption.key}"
-          c:secretKeySigning="${tgc.signing.key}"/>
+          c:secretKeyEncryption="${tgc.encryption.key:}"
+          c:secretKeySigning="${tgc.signing.key:}"/>
 
     <bean id="cookieValueManager" class="org.jasig.cas.web.support.DefaultCasCookieValueManager"
           c:cipherExecutor-ref="cookieCipherExecutor"/>
