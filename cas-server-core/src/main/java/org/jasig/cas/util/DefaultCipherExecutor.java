@@ -24,6 +24,8 @@ import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.OctJwkGenerator;
+import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.keys.AesKey;
@@ -44,15 +46,19 @@ import java.util.Map;
  * @since 4.1
  */
 public final class DefaultCipherExecutor implements CipherExecutor {
+    private static final int ENCRYPTION_KEY_SIZE = 256;
+
+    private static final int SIGNING_KEY_SIZE = 512;
+    
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    private String contentEncryptionAlgorithmIdentifier;
 
-    private final String contentEncryptionAlgorithmIdentifier;
+    private String signingAlgorithm;
 
-    private final String signingAlgorithm;
+    private Key secretKeyEncryptionKey;
 
-    private final Key secretKeyEncryptionKey;
-
-    private final Key secretKeySigningKey;
+    private Key secretKeySigningKey;
 
     /**
      * Instantiates a new cipher.
@@ -82,17 +88,38 @@ public final class DefaultCipherExecutor implements CipherExecutor {
                                  final String secretKeySigning,
                                  final String contentEncryptionAlgorithmIdentifier,
                                  final String signingAlgorithm) {
-        this.secretKeyEncryptionKey =  prepareJsonWebTokenKey(secretKeyEncryption);
+        super();
+
+        if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
+            logger.debug("contentEncryptionAlgorithmIdentifier is not defined");
+            return;
+        }
+
+        String secretKeyToUse = secretKeyEncryption;
+        if (StringUtils.isBlank(secretKeyToUse)) {
+            logger.warn("Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key");
+            secretKeyToUse = generateOctetJsonWebKeyOfSize(ENCRYPTION_KEY_SIZE);
+            logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
+                    secretKeyToUse, ENCRYPTION_KEY_SIZE);
+        }
+
+        String signingKeyToUse = secretKeySigning;
+        if (StringUtils.isBlank(signingKeyToUse)) {
+            logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
+            signingKeyToUse = generateOctetJsonWebKeyOfSize(SIGNING_KEY_SIZE);
+            logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
+                    signingKeyToUse, SIGNING_KEY_SIZE);
+        }
+
+
+        this.signingAlgorithm = signingAlgorithm;
+        this.secretKeySigningKey = new AesKey(signingKeyToUse.getBytes());
+
+        this.secretKeyEncryptionKey = prepareJsonWebTokenKey(secretKeyToUse);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
 
         logger.debug("Initialized cipher encryption sequence via [{}]",
-                 contentEncryptionAlgorithmIdentifier);
-
-        this.signingAlgorithm = signingAlgorithm;
-        this.secretKeySigningKey = new AesKey(secretKeySigning.getBytes());
-
-        logger.debug("Initialized cipher signing sequence via [{}]",
-                signingAlgorithm);
+                contentEncryptionAlgorithmIdentifier);
 
     }
 
@@ -208,5 +235,11 @@ public final class DefaultCipherExecutor implements CipherExecutor {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String generateOctetJsonWebKeyOfSize(final int size) {
+        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
+        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        return params.get("k").toString();
     }
 }
