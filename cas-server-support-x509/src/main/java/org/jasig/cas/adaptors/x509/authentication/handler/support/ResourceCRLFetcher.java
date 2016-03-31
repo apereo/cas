@@ -26,7 +26,7 @@ import java.util.Set;
 @Component("resourceCrlFetcher")
 public class ResourceCRLFetcher implements CRLFetcher {
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Creates a new instance using the specified resources for CRL data.

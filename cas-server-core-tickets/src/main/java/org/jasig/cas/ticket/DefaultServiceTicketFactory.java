@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Component("defaultServiceTicketFactory")
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     @NotNull

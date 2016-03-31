@@ -24,7 +24,7 @@ import java.security.GeneralSecurityException;
 @Component("principalBearingCredentialsAuthenticationHandler")
 public final class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {

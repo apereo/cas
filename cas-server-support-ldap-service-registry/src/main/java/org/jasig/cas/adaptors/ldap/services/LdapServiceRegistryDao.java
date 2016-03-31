@@ -46,7 +46,7 @@ import java.util.List;
 @Component("ldapServiceRegistryDao")
 public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Nullable
     @Autowired(required=false)

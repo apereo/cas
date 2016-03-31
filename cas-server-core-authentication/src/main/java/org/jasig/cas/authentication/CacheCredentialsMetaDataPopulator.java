@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component("cacheCredentialsMetaDataPopulator")
 public final class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {

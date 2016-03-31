@@ -41,7 +41,7 @@ import javax.validation.constraints.NotNull;
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
 
     /** The logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Principal factory instance. */
     @Autowired
