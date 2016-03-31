@@ -25,6 +25,7 @@
 
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />

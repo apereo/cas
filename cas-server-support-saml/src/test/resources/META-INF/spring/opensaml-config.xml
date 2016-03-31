@@ -95,6 +95,7 @@
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />

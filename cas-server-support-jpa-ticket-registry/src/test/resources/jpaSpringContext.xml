@@ -51,6 +51,7 @@
 
   <!-- CAS Context Core -->
   <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
   <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
   <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
   <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />

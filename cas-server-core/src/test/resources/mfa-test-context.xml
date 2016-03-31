@@ -124,6 +124,7 @@
         </constructor-arg>
     </bean>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
