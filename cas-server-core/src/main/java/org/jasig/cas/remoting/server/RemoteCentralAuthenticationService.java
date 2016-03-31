@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.remoting.server;
 
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;

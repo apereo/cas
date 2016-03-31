@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -103,7 +103,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
             final Collection<Ticket> ticketsToRemove = this.centralAuthenticationService.getTickets(new Predicate() {
                 @Override
-                public boolean evaluate(final Object o) {
+                public boolean apply(final Object o) {
                     final Ticket ticket = (Ticket) o;
                     return ticket.isExpired();
                 }
