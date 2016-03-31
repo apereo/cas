@@ -31,7 +31,7 @@ import java.io.PrintWriter;
 @Controller("samlMetadataController")
 public class SamlMetadataController {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     @Qualifier("templateSpMetadata")

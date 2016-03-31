@@ -30,7 +30,7 @@ import java.util.Map;
 @Component("openIdValidateController")
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
-    private Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
+    private transient Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
 
     @Autowired
     @Qualifier("serverManager")

@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component("defaultOAuthCodeFactory")
 public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     

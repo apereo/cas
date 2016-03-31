@@ -41,7 +41,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private static final long serialVersionUID = 6350245643948535906L;
 
     /** Logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The expiration time. */
     protected long expiration;

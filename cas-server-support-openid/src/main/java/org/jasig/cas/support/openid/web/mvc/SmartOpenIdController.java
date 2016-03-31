@@ -37,7 +37,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     /** View if association Succeeds. */
     private static final String DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME = "casOpenIdAssociationSuccessView";
 
-    private Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private transient Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     @Autowired
     @Qualifier("serverManager")

@@ -51,7 +51,7 @@ public class GroovyShellService {
 
     private static final String FILE_EXTENSION = "groovy";
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ServerSocket serverSocket;
 

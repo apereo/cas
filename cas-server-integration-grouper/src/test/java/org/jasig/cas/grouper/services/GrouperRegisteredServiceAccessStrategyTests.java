@@ -19,7 +19,7 @@ import java.util.Set;
  * @since 4.2
  */
 public class GrouperRegisteredServiceAccessStrategyTests {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void checkGrouperAttributes() {

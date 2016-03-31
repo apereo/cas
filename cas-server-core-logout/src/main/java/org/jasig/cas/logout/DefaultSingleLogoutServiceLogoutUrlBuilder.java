@@ -18,7 +18,7 @@ import java.net.URL;
 @RefreshScope
 @Component("defaultSingleLogoutServiceLogoutUrlBuilder")
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {

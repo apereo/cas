@@ -26,7 +26,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RefreshScope
 @Component("defaultCasEventListener")
 public class DefaultCasEventListener {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired(required = false)
     @Qualifier("casEventRepository")

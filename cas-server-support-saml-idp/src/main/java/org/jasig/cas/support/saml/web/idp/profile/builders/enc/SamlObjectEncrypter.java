@@ -50,7 +50,7 @@ import java.util.List;
 @RefreshScope
 @Component("samlObjectEncrypter")
 public class SamlObjectEncrypter {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The encryption cert file.

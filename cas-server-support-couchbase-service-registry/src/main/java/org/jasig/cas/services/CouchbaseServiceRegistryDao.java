@@ -51,7 +51,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     private static final String UTIL_DOCUMENT = "utils";
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     
     @Autowired

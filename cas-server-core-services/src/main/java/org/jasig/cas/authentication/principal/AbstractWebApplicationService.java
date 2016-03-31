@@ -23,7 +23,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     private static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     /** Logger instance. **/
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The id of the service. */
     private String id;

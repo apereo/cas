@@ -52,7 +52,7 @@ public class AuthenticationExceptionHandler {
     private static final List<Class<? extends Exception>> DEFAULT_ERROR_LIST =
             new ArrayList<>();
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     static {
         DEFAULT_ERROR_LIST.add(AccountLockedException.class);

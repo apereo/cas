@@ -30,7 +30,7 @@ import java.net.URLDecoder;
 @RefreshScope
 @Component("duoAuthenticationService")
 public class DuoAuthenticationService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     
     @Autowired

@@ -21,7 +21,7 @@ final class GroovyShellThread extends Thread {
 
     private Socket socket;
     private Binding binding;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Instantiates a new Groovy shell thread.

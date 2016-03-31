@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration({"classpath:/META-INF/spring/openid-config.xml"})
 public class AbstractOpenIdTests {
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     @Qualifier("openIdServiceFactory")

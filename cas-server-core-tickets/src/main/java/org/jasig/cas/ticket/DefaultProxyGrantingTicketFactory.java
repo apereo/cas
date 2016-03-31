@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 @Component("defaultProxyGrantingTicketFactory")
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Used to generate ids for {@link TicketGrantingTicket}s

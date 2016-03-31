@@ -33,7 +33,7 @@ import java.util.Optional;
 @Component("authenticationContextValidator")
 public class AuthenticationContextValidator {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;

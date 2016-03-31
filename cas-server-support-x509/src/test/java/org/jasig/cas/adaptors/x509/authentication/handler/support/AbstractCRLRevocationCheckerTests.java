@@ -19,7 +19,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 public abstract class AbstractCRLRevocationCheckerTests {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Certificate to be tested. */
     private X509Certificate[] certificates;

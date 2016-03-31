@@ -21,7 +21,7 @@ import java.security.PublicKey;
 public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String location;
 

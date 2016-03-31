@@ -40,7 +40,7 @@ import java.util.ArrayList;
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The logger. */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The services manager. */
     

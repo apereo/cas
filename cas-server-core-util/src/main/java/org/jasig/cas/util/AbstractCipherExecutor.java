@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
     /** Logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private AesKey signingKey;
 

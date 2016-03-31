@@ -39,7 +39,7 @@ public class JpaLockingStrategyTests {
     private static final int CONCURRENT_SIZE = 13;
 
     /** Logger instance. */
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
 
     private PlatformTransactionManager txManager;
@@ -217,7 +217,7 @@ public class JpaLockingStrategyTests {
     }
 
     private static class TransactionalLockInvocationHandler implements InvocationHandler {
-        private Logger logger = LoggerFactory.getLogger(this.getClass());
+        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
         private JpaLockingStrategy jpaLock;
         private PlatformTransactionManager txManager;
 
@@ -249,7 +249,7 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Locker implements Callable<Boolean> {
-        private Logger logger = LoggerFactory.getLogger(this.getClass());
+        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
         private LockingStrategy lock;
 
         Locker(final LockingStrategy l) {
@@ -268,7 +268,7 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Releaser implements Callable<Boolean> {
-        private Logger logger = LoggerFactory.getLogger(this.getClass());
+        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
         private LockingStrategy lock;
 
         Releaser(final LockingStrategy l) {

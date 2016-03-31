@@ -19,7 +19,7 @@ import org.springframework.core.io.Resource;
  * @since 3.1
  */
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     
     private Resource resource;

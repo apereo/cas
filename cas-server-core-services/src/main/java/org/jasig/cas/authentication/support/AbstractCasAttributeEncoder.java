@@ -29,7 +29,7 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
     protected ServicesManager servicesManager;
 
     /** The Logger. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     @Qualifier("registeredServiceCipherExecutor")

@@ -34,7 +34,7 @@ public final class Converters {
         /**
          * The Logger.
          */
-        protected Logger logger = LoggerFactory.getLogger(this.getClass());
+        protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
         @Override
         public O convert(final I i) {

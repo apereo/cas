@@ -22,7 +22,7 @@ import java.util.Iterator;
 @RefreshScope
 @Component("firstMultifactorAuthenticationProviderSelector")
 public class FirstMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,

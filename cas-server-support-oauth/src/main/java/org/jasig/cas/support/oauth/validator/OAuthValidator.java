@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 public class OAuthValidator {
 
     /** The logger. */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Check if a parameter exists.

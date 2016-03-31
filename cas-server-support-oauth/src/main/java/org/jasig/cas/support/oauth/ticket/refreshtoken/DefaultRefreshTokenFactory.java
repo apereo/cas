@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component("defaultRefreshTokenFactory")
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     

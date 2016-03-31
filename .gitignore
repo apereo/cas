@@ -31,3 +31,4 @@ classes/
 *.bin
 
 **/tomcat/
+out

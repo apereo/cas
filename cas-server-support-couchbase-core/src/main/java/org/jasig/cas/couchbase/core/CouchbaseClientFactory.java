@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2
  */
 public class CouchbaseClientFactory {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private Cluster cluster;
     private Bucket bucket;

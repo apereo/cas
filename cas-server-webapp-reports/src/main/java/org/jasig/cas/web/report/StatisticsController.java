@@ -51,7 +51,7 @@ public class StatisticsController implements ServletContextAware {
 
     private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 

@@ -64,7 +64,7 @@ import java.util.List;
 @RefreshScope
 @Component("samlObjectSigner")
 public class SamlObjectSigner {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Override signature canonicalization algorithm.

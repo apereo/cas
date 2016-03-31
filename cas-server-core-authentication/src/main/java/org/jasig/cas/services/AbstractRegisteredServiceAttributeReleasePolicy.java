@@ -22,7 +22,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     private static final long serialVersionUID = 5325460875620586503L;
 
     /** The logger. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The attribute filter. */
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;

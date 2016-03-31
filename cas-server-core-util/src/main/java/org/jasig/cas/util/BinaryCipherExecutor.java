@@ -28,7 +28,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
 
     private static final int ENCRYPTION_KEY_SIZE = 16;
     
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
@@ -102,8 +102,13 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
     }
 
     private String generateOctetJsonWebKeyOfSize(final int size) {
-        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
-        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
-        return params.get("k").toString();
+        try {
+            final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
+            final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+            return params.get("k").toString();
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
 }

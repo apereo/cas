@@ -63,7 +63,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Logger.
      */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Application context.

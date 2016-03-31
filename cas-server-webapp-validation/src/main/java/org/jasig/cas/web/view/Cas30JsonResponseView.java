@@ -35,7 +35,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     /**
      * Logger instance.
      */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Instantiates a new json response view.

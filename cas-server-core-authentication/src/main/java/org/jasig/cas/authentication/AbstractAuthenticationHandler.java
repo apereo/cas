@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /** Instance of logging for subclasses. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
     @Autowired

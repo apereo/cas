@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     /** Log instance for logging events, errors, warnings, etc. */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** An array of AuthenticationAttributesPopulators. */
     

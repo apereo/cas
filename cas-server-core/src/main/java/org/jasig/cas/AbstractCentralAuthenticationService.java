@@ -54,7 +54,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     private static final long serialVersionUID = -7572316677901391166L;
 
     /** Log instance for logging events, info, warnings, errors, etc. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application event publisher. */
     @Autowired

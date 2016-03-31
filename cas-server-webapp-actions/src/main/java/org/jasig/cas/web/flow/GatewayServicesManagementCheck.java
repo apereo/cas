@@ -25,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Component("gatewayServicesManagementCheck")
 public class GatewayServicesManagementCheck extends AbstractAction {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     
     private ServicesManager servicesManager;

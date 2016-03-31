@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 @Component("defaultTicketGrantingTicketFactory")
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s

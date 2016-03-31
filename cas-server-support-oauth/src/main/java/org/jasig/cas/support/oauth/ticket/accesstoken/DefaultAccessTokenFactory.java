@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component("defaultAccessTokenFactory")
 public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     

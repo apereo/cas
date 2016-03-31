@@ -26,7 +26,7 @@ import java.util.Set;
 @RefreshScope
 @Component("registeredServiceAuthenticationHandlerResolver")
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Services manager.

@@ -21,7 +21,7 @@ import java.util.Map;
 @RefreshScope
 @Component("defaultServiceTicketFactory")
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     

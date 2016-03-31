@@ -41,7 +41,7 @@ import java.util.List;
 @RefreshScope
 @Component("initialFlowSetupAction")
 public class InitialFlowSetupAction extends AbstractAction {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/
     

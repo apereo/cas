@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component("genericSuccessViewAction")
 public class GenericSuccessViewAction {
     /** Log instance for logging events, info, warnings, errors, etc. */
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private CentralAuthenticationService centralAuthenticationService;
 

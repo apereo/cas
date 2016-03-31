@@ -26,7 +26,7 @@ public class AcceptableUsagePolicyFormAction {
     protected static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
 
     /** Logger instance. **/
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 

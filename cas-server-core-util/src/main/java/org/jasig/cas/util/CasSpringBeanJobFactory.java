@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @Component("casSpringBeanJobFactory")
 public class CasSpringBeanJobFactory extends SpringBeanJobFactory {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     
     private ApplicationContext applicationContext;

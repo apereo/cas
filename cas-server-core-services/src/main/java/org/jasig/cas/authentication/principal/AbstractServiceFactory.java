@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 
     /** Logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public <T1 extends Service> T1 createService(final String id, final Class<? extends Service> clazz) {

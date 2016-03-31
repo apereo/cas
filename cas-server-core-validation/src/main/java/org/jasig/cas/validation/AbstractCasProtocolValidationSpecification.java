@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Scope(value = "prototype")
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     /** Denotes whether we should always authenticate or not. */

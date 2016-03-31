@@ -36,7 +36,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     protected EntityManager entityManager;
 
     /** Logger instance. */
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Application identifier that identifies rows in the locking table,

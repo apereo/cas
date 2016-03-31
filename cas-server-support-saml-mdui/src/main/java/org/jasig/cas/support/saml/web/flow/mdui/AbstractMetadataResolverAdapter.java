@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public abstract class AbstractMetadataResolverAdapter implements MetadataResolverAdapter {
     /** Logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Metadata resources along with filters to perform validation. */
     

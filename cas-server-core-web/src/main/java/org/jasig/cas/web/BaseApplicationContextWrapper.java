@@ -30,7 +30,7 @@ import java.util.Map;
 @Component
 public abstract class BaseApplicationContextWrapper implements ApplicationContextAware {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application context. */
     protected ApplicationContext applicationContext;

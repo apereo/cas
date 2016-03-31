@@ -45,7 +45,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
     protected Map<AccountState.Error, LoginException> errorMap;
 
     /** Logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Instantiates a new account state handler, that populates

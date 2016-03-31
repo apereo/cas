@@ -21,7 +21,7 @@ public class PasswordPolicyConfiguration {
     private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
 
     /** Logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Disregard the warning period and warn all users of password expiration. */
     private boolean alwaysDisplayPasswordExpirationWarning;

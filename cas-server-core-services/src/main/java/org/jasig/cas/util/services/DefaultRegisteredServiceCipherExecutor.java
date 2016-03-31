@@ -24,7 +24,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
     private static final String UTF8_ENCODING = "UTF-8";
 
     /** Logger instance. **/
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Encrypt using the given cipher associated with the service,

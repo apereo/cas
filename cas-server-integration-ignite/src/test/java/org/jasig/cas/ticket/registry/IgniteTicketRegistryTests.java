@@ -36,7 +36,7 @@ public class IgniteTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationContext applicationContext;

@@ -32,7 +32,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
     /** Logger object. **/
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Min(0)
     private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;

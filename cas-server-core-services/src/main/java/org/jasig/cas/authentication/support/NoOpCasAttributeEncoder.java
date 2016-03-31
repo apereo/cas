@@ -19,7 +19,7 @@ import java.util.Map;
 @RefreshScope
 @Component("noOpCasAttributeEncoder")
 public class NoOpCasAttributeEncoder implements CasAttributeEncoder {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final Service service) {

@@ -143,7 +143,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
 
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = new Runnable() {
-            private Logger logger = LoggerFactory.getLogger(this.getClass());
+            private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
             @Override
             public void run() {

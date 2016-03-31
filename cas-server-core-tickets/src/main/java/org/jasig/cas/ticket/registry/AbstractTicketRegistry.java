@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState, Job {
 
     /** The Slf4j logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${ticket.registry.cleaner.enabled:true}")
     private boolean cleanerEnabled;

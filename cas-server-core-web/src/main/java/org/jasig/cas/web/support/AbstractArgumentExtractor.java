@@ -20,7 +20,7 @@ import java.util.List;
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /** Logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The factory responsible for creating service objects based on the arguments extracted. */
     @Resource(name="serviceFactoryList")

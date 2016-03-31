@@ -21,7 +21,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private static final long serialVersionUID = 4789727148134156909L;
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${cas.mfa.failure.mode:CLOSED}")
     private String globalFailureMode;

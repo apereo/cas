@@ -26,7 +26,7 @@ import java.util.Map;
 @Component("defaultTicketFactory")
 public class DefaultTicketFactory implements TicketFactory {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Map<String, Object> factoryMap;
 

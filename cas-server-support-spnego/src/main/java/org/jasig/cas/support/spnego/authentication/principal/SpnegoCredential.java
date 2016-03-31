@@ -36,7 +36,7 @@ public class SpnegoCredential implements Credential, Serializable {
             Byte.valueOf((byte) 'M'), CHAR_S_BYTE, CHAR_S_BYTE,
             Byte.valueOf((byte) 'P'), Byte.valueOf((byte) 0)};
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The SPNEGO Init Token.

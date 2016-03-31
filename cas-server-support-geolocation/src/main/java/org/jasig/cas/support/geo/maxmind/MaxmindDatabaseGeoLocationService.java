@@ -25,7 +25,7 @@ import java.net.InetAddress;
  */
 @Service("maxmindDatabaseGeoLocationService")
 public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${geo.maxmind.city.db:}")
     private Resource cityDatabase;

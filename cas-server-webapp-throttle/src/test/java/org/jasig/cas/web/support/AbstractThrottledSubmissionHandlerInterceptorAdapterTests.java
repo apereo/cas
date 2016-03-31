@@ -27,7 +27,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Before
     public void setUp() throws Exception {

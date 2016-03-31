@@ -20,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
 @RefreshScope
 @Component("initializeLoginAction")
 public class InitializeLoginAction extends AbstractAction {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/
     

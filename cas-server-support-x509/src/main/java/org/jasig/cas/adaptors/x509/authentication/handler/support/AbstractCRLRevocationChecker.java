@@ -25,7 +25,7 @@ import java.util.List;
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
     /** Logger instance. **/
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Flag to indicate whether all

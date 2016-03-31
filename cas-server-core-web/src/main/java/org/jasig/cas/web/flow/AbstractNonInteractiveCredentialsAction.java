@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
 
     /** The logger instance. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Principal factory instance. */
     @Autowired

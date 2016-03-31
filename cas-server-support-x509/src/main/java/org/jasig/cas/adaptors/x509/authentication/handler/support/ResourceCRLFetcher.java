@@ -31,7 +31,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     /**
      * Logger instance.
      */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Creates a new instance using the specified resources for CRL data.
