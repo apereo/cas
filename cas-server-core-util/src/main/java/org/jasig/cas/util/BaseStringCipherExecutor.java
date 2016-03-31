@@ -17,7 +17,7 @@ import java.util.Map;
  * This is {@link BaseStringCipherExecutor}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 4.2
  */
 public class BaseStringCipherExecutor extends AbstractCipherExecutor<String, String> {
     private static final int ENCRYPTION_KEY_SIZE = 256;
