@@ -74,8 +74,7 @@ public class HazelcastInstanceConfiguration {
             config = new XmlConfigBuilder(configUrl).build();
             if (ResourceUtils.isFileURL(configUrl)) {
                 config.setConfigurationFile(configLocation.getFile());
-            }
-            else {
+            } else {
                 config.setConfigurationUrl(configUrl);
             }
         } else {
