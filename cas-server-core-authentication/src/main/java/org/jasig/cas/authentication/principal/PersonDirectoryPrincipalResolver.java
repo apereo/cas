@@ -31,7 +31,7 @@ import java.util.Map;
 @Component("personDirectoryPrincipalResolver")
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Repository of principal attributes to be retrieved.

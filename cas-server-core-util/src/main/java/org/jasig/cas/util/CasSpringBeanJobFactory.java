@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
  */
 
 public class CasSpringBeanJobFactory extends SpringBeanJobFactory {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private final ApplicationContext applicationContext;

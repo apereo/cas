@@ -36,7 +36,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     private static final long serialVersionUID = 1245279151345635245L;
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Is the service allowed at all? **/
     private boolean enabled = true;

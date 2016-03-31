@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 public final class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /** Log instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Instance of Apache Commons HttpClient. */
     @NotNull
