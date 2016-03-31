@@ -25,9 +25,9 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2004 - 2016 Apereo</copyright>
     <item>
-      <title>File: 273,
+      <title>File: 274,
              Errors: 0,
-             Warnings: 7,
+             Warnings: 8,
              Infos: 0
       </title>
             <link>http://www.jasig.org/cas/cas-server-core//checkstyle.html</link>
@@ -284,7 +284,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy.java">org/jasig/cas/services/DefaultRegisteredServiceAccessStrategy.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.PolicyBasedAuthenticationManagerTests.java">org/jasig/cas/authentication/PolicyBasedAuthenticationManagerTests.java</a>
                 </td>
                 <td>
                   0
@@ -298,7 +298,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.PolicyBasedAuthenticationManagerTests.java">org/jasig/cas/authentication/PolicyBasedAuthenticationManagerTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy.java">org/jasig/cas/services/DefaultRegisteredServiceAccessStrategy.java</a>
                 </td>
                 <td>
                   0
@@ -718,6 +718,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.BaseStringCipherExecutor.java">org/jasig/cas/util/BaseStringCipherExecutor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.validation.Cas20ProtocolValidationSpecificationTests.java">org/jasig/cas/validation/Cas20ProtocolValidationSpecificationTests.java</a>
                 </td>
                 <td>
@@ -1083,20 +1097,6 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver.java">org/jasig/cas/audit/spi/TicketOrCredentialPrincipalResolver.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.DefaultCipherExecutorTests.java">org/jasig/cas/util/DefaultCipherExecutorTests.java</a>
                 </td>
                 <td>
                   0
@@ -1782,20 +1782,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.DefaultCipherExecutor.java">org/jasig/cas/util/DefaultCipherExecutor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor.java">org/jasig/cas/util/services/DefaultRegisteredServiceCipherExecutor.java</a>
                 </td>
                 <td>
@@ -2133,6 +2119,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.principal.ResponseTests.java">org/jasig/cas/authentication/principal/ResponseTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.AbstractCipherExecutor.java">org/jasig/cas/util/AbstractCipherExecutor.java</a>
                 </td>
                 <td>
                   0
@@ -3014,6 +3014,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.BinaryCipherExecutor.java">org/jasig/cas/util/BinaryCipherExecutor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.logout.DefaultLogoutRequest.java">org/jasig/cas/logout/DefaultLogoutRequest.java</a>
                 </td>
                 <td>
@@ -3588,7 +3602,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.PoolStatus.java">org/jasig/cas/monitor/PoolStatus.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.ImmutableAuthenticationTests.java">org/jasig/cas/authentication/ImmutableAuthenticationTests.java</a>
                 </td>
                 <td>
                   0
@@ -3602,7 +3616,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.ImmutableAuthenticationTests.java">org/jasig/cas/authentication/ImmutableAuthenticationTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.PoolStatus.java">org/jasig/cas/monitor/PoolStatus.java</a>
                 </td>
                 <td>
                   0

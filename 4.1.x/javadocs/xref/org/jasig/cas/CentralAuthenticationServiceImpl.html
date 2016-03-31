@@ -29,10 +29,10 @@
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> com.codahale.metrics.annotation.Counted;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> com.codahale.metrics.annotation.Metered;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> com.codahale.metrics.annotation.Timed;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationBuilder;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.logout.LogoutRequest;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.inspektr.audit.annotation.Audit;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections4.Predicate;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Predicate;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationBuilder;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.logout.LogoutRequest;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.inspektr.audit.annotation.Audit;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Authentication;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.DefaultAuthenticationBuilder;
@@ -555,7 +555,7 @@
 <a class="jxr_linenumber" name="L547" href="#L547">547</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; c = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(<strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets());
 <a class="jxr_linenumber" name="L548" href="#L548">548</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;Ticket&gt; it = c.iterator();
 <a class="jxr_linenumber" name="L549" href="#L549">549</a>         <strong class="jxr_keyword">while</strong> (it.hasNext()) {
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>             <strong class="jxr_keyword">if</strong> (!predicate.evaluate(it.next())) {
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>             <strong class="jxr_keyword">if</strong> (!predicate.apply(it.next())) {
 <a class="jxr_linenumber" name="L551" href="#L551">551</a>                 it.remove();
 <a class="jxr_linenumber" name="L552" href="#L552">552</a>             }
 <a class="jxr_linenumber" name="L553" href="#L553">553</a>         }

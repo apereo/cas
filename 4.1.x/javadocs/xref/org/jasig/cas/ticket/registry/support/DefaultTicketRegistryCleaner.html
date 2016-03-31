@@ -26,7 +26,7 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.ticket.registry.support;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections4.Predicate;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Predicate;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CentralAuthenticationService;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.logout.LogoutManager;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
@@ -111,7 +111,7 @@
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> 
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; ticketsToRemove = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTickets(<strong class="jxr_keyword">new</strong> Predicate() {
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>                 @Override
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> evaluate(<strong class="jxr_keyword">final</strong> Object o) {
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> apply(<strong class="jxr_keyword">final</strong> Object o) {
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/Ticket.html">Ticket</a> ticket = (Ticket) o;
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>                     <strong class="jxr_keyword">return</strong> ticket.isExpired();
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>                 }

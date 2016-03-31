@@ -29,7 +29,7 @@
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> com.fasterxml.jackson.databind.ObjectMapper;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> com.fasterxml.jackson.databind.SerializationFeature;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections4.Predicate;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Predicate;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CentralAuthenticationService;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.Ticket;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketGrantingTicket;
@@ -142,7 +142,7 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>     <strong class="jxr_keyword">private</strong> Collection&lt;Ticket&gt; getNonExpiredTicketGrantingTickets() {
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTickets(<strong class="jxr_keyword">new</strong> Predicate() {
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>             @Override
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> evaluate(<strong class="jxr_keyword">final</strong> Object ticket) {
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> apply(<strong class="jxr_keyword">final</strong> Object ticket) {
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>                 <strong class="jxr_keyword">if</strong> (ticket instanceof TicketGrantingTicket) {
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                     <strong class="jxr_keyword">return</strong> !((TicketGrantingTicket) ticket).isExpired();
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                 }
