@@ -84,6 +84,7 @@
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <util:map id="serviceThemeResolverSupportedBrowsers" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <metrics:metric-registry id="metrics" />
