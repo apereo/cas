@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * from CAS configuration and presents a cipher.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 4.2
  */
 @Component("webflowCipherExecutor")
 public class WebflowCipherExecutor extends BinaryCipherExecutor {
