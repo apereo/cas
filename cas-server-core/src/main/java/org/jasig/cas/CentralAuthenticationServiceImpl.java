@@ -21,10 +21,10 @@ package org.jasig.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.inspektr.audit.annotation.Audit;
-import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
@@ -547,7 +547,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
         final Iterator<Ticket> it = c.iterator();
         while (it.hasNext()) {
-            if (!predicate.evaluate(it.next())) {
+            if (!predicate.apply(it.next())) {
                 it.remove();
             }
         }
