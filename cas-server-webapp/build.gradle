@@ -101,7 +101,7 @@ configurations {
 }
 
 gretty {
-    jvmArgs = ["-DloggerFactory=\"org.apache.logging.slf4j.Log4jLoggerFactory\"", "-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug",
+    jvmArgs = ["-DloggerFactory=org.apache.logging.slf4j.Log4jLoggerFactory", "-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug",
                "-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     scanInterval = 5
     contextPath = '/cas'
