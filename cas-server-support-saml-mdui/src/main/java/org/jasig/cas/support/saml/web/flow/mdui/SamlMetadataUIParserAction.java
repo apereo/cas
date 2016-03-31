@@ -50,7 +50,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private final String entityIdParameterName;

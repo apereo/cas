@@ -22,7 +22,7 @@ import org.springframework.core.io.Resource;
  */
 public class MockWebServer {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Request handler. */
     private final Worker worker;
@@ -89,7 +89,7 @@ public class MockWebServer {
         /** Response buffer size. */
         private static final int BUFFER_SIZE = 2048;
 
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
         /** Run flag. */
         private boolean running;

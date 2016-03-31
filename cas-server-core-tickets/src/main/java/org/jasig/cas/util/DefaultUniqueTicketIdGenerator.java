@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /** The logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The numeric generator to generate the static part of the id. */
     private NumericGenerator numericGenerator;

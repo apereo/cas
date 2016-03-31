@@ -28,7 +28,7 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
     @NotNull
     private final ServicesManager servicesManager;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Initialize the component with an instance of the services manager.

@@ -45,7 +45,7 @@ public abstract class AbstractServletContextInitializer
     WebApplicationInitializer,
     ServletContextListener, ApplicationContextAware {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application context. */
     protected ApplicationContext applicationContext;

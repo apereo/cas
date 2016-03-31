@@ -28,7 +28,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
 
     private static final int ENCRYPTION_KEY_SIZE = 16;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
