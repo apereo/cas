@@ -30,10 +30,11 @@ for each authenticated principal. That global set of attributes is then filtered
 | `SingleRowJdbcPersonAttributeDao`| The implementation that maps from column names in the result of a SQL query to attribute names.
 | `MultiRowJdbcPersonAttributeDao`| Designed to work against a table where there is a mapping of one row to many users. Should be used if the database is structured such that there is a column for attribute names and column(s) for the corresponding values.
 | `XmlPersonAttributeDao`| XML backed person attribute DAO that supports wildcard searching.
-| `LdapPersonAttributeDao`| Queries an LDAP directory to populate person attributes using Spring Framework.
+| `LdapPersonAttributeDao`| Queries an LDAP directory to populate person attributes using Spring Framework's LDAP.
 | `GroovyPersonAttributeDao`| Resolve attributes based on an external groovy script.
 | `TomlLdapPersonAttributeDao`| Resolve person attributes and insert the ldap/context settings from an external Toml file. 
 | `JsonBackedComplexStubPersonAttributeDao`| Resolve person attributes that are specified in an external JSON file.
+| `LdaptivePersonAttributeDao`| Queries an LDAP directory to populate person attributes using the Ldaptive library.
 
 More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
 
@@ -43,7 +44,6 @@ The CAS project provides the following additional implementations:
 
 | Component         					| Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `LdapPersonAttributeDao`| Queries an LDAP directory to populate person attributes using the bundled CAS LDAP libraries.
 | `ShibbolethPersonAttributeDao` | *EXPERIMENTAL* Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes
 
 ### Sample Usage
@@ -148,7 +148,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 You'll also want to make sure that
-the Shibboleth Maven repository is included [https://build.shibboleth.net/nexus/content/repositories/releases].
+[the Shibboleth Maven repository](https://build.shibboleth.net/nexus/content/repositories/releases]) is included.
 
 The module provides a `shibbolethPersonAttributeDao` that uses the property `shibboleth.attributeResolver.resources`
 for configuration.
