@@ -30,7 +30,6 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("coreSamlConfiguration")
-@Lazy(true)
 public class CoreSamlConfiguration {
     
     /**
@@ -43,7 +42,6 @@ public class CoreSamlConfiguration {
      *
      * @return the velocity engine factory bean
      */
-    @RefreshScope
     @Bean(name = "shibboleth.VelocityEngine")
     public VelocityEngineFactoryBean velocityEngineFactoryBean() {
         final VelocityEngineFactoryBean bean = new VelocityEngineFactoryBean();
@@ -69,7 +67,6 @@ public class CoreSamlConfiguration {
      *
      * @return the open saml config bean
      */
-    @RefreshScope
     @Bean(name="shibboleth.OpenSAMLConfig")
     @DependsOn("shibboleth.ParserPool")
     public OpenSamlConfigBean openSamlConfigBean() {
@@ -81,7 +78,6 @@ public class CoreSamlConfiguration {
      *
      * @return the basic parser pool
      */
-    @RefreshScope
     @Bean(name="shibboleth.ParserPool", initMethod = "initialize")
     public BasicParserPool parserPool() {
         final BasicParserPool pool = new BasicParserPool();
@@ -117,7 +113,6 @@ public class CoreSamlConfiguration {
      *
      * @return the xml object builder factory
      */
-    @RefreshScope
     @Bean(name="shibboleth.BuilderFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public XMLObjectBuilderFactory builderFactory() {
@@ -129,7 +124,6 @@ public class CoreSamlConfiguration {
      *
      * @return the marshaller factory
      */
-    @RefreshScope
     @Bean(name="shibboleth.MarshallerFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public MarshallerFactory marshallerFactory() {
@@ -141,7 +135,6 @@ public class CoreSamlConfiguration {
      *
      * @return the unmarshaller factory
      */
-    @RefreshScope
     @Bean(name="shibboleth.MarshallerFactory")
     @DependsOn("shibboleth.OpenSAMLConfig")
     public UnmarshallerFactory unmarshallerFactory() {

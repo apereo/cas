@@ -93,7 +93,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the web flow spring el expression parser
      */
-    @RefreshScope
     @Bean(name = "expressionParser")
     public WebFlowSpringELExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
@@ -107,7 +106,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the conversion service
      */
-    @RefreshScope
     @Bean(name = "logoutConversionService")
     public ConversionService logoutConversionService() {
         return new LogoutConversionService();
@@ -131,7 +129,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the cas default flow url handler
      */
-    @RefreshScope
     @Bean(name = "loginFlowUrlHandler")
     public CasDefaultFlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
@@ -142,7 +139,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the cas default flow url handler
      */
-    @RefreshScope
     @Bean(name = "logoutFlowUrlHandler")
     public FlowUrlHandler logoutFlowUrlHandler() {
         final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
@@ -206,7 +202,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow builder services
      */
-    @RefreshScope
     @Bean(name = "builder")
     public FlowBuilderServices builder() {
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
@@ -221,7 +216,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the encrypted transcoder
      */
-    @RefreshScope
     @Bean(name = "loginFlowStateTranscoder")
     public EncryptedTranscoder loginFlowStateTranscoder() {
         try {
@@ -236,7 +230,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the selective flow handler adapter
      */
-    @RefreshScope
     @Bean(name = "loginHandlerAdapter")
     public SelectiveFlowHandlerAdapter loginHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
@@ -251,7 +244,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the locale change interceptor
      */
-    @RefreshScope
     @Bean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
         return new LocaleChangeInterceptor();
@@ -262,7 +254,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow handler mapping
      */
-    @RefreshScope
     @Bean(name = "logoutFlowHandlerMapping")
     public FlowHandlerMapping logoutFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -278,7 +269,6 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow handler mapping
      */
-    @RefreshScope
     @Bean(name = "loginFlowHandlerMapping")
     public FlowHandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
