@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Flag to indicate whether all

@@ -48,7 +48,7 @@ public final class WsFederationAction extends AbstractAction {
     private static final String WRESULT = "wresult";
     private static final String WSIGNIN = "wsignin1.0";
 
-    private final Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
+    private final transient Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
 
     @NotNull
     @Autowired

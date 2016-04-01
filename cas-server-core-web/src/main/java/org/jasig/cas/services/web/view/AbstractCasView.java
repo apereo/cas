@@ -53,7 +53,7 @@ public abstract class AbstractCasView extends AbstractView {
     protected ServicesManager servicesManager;
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Gets the assertion from the model.

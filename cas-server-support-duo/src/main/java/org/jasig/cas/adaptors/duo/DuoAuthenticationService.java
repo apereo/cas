@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
  */
 @Component("duoAuthenticationService")
 public final class DuoAuthenticationService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String duoIntegrationKey;
     private final String duoSecretKey;

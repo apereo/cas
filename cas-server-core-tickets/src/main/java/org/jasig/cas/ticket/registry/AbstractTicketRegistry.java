@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState {
 
     /** The Slf4j logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * {@inheritDoc}

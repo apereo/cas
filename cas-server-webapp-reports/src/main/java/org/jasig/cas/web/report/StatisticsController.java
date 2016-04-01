@@ -48,7 +48,7 @@ public final class StatisticsController implements ServletContextAware {
 
     private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Date upTimeStartDate = new Date();
 

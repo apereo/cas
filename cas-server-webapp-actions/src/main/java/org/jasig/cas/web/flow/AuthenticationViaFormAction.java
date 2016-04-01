@@ -56,7 +56,7 @@ public class AuthenticationViaFormAction {
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class AbstractDelegateController {
     
     /** The logger. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /**
      * Determine if a AbstractDelegateController subclass can handle the current request.

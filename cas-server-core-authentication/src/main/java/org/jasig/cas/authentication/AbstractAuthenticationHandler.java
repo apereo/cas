@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /** Instance of logging for subclasses. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
     @NotNull
