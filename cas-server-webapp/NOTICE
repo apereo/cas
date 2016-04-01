@@ -20,7 +20,6 @@ This project includes:
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
-  Apache Commons Collections under The Apache Software License, Version 2.0
   Apache Commons Lang under Apache License, Version 2.0
   Apache Commons Logging under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
@@ -30,6 +29,7 @@ This project includes:
   Apache Log4j Core under The Apache Software License, Version 2.0
   Apache Log4j SLF4J Binding under The Apache Software License, Version 2.0
   Apache Log4j Web under The Apache Software License, Version 2.0
+  Apache Shiro :: Core under The Apache Software License, Version 2.0
   Apereo CAS Core under Apache 2
   Apereo CAS Core APIs under Apache 2
   Apereo CAS Generic Support under Apache 2
@@ -42,6 +42,7 @@ This project includes:
   CAS server security filter under Apache 2
   CDI APIs under Apache License, Version 2.0
   ClassMate under The Apache Software License, Version 2.0
+  Commons BeanUtils under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License

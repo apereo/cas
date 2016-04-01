@@ -20,7 +20,6 @@ This project includes:
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
-  Apache Commons Collections under The Apache Software License, Version 2.0
   Apache Commons Lang under Apache License, Version 2.0
   Apache Commons Logging under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
@@ -95,7 +94,6 @@ This project includes:
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
-  commons-beanutils under Apache License, Version 2.0
   commons-beanutils-core under Apache License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   Cryptacular Library under Apache 2 or GNU Lesser General Public License
