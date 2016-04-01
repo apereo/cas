@@ -153,14 +153,14 @@ You'll also want to make sure that
 The module provides a `shibbolethPersonAttributeDao` that uses the property `shibboleth.attributeResolver.resources`
 for configuration.
 
-1. Alias bean
+- Alias bean:
 
 ```xml
 <alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
 ```
 
-1. Modify either `cas.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
-comma seperated list of resources to use for the configuration
+- Modify either `cas.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
+comma seperated list of resources to use for the configuration:
 
 ```shell
 -Dshibboleth.attributeResolver.resources=classpath:attribute-resolver.xml
