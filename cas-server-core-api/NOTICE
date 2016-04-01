@@ -16,7 +16,6 @@ specific language governing permissions and limitations
 under the License.
 
 This project includes:
-  Apache Commons Collections under The Apache Software License, Version 2.0
   Apache Commons Lang under Apache License, Version 2.0
   Apache Commons Logging under The Apache Software License, Version 2.0
   Apache Log4j API under The Apache Software License, Version 2.0
@@ -29,6 +28,7 @@ This project includes:
   Bean Validation API under The Apache Software License, Version 2.0
   Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
   Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
+  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under New BSD License
   Inspektr - Aspects under Apache 2.0 License
   Java Servlet API under CDDL + GPLv2 with classpath exception
