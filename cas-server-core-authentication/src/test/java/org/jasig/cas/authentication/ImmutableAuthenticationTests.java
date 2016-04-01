@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public class ImmutableAuthenticationTests {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void verifyImmutable() {

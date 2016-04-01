@@ -57,7 +57,7 @@ public class JpaTicketRegistryTests {
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private PlatformTransactionManager txManager;
 

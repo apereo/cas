@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Component("defaultProxyTicketFactory")
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     @NotNull
