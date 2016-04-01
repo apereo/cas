@@ -26,7 +26,7 @@ public class GenerateLoginTicketAction {
     private static final String PREFIX = "LT";
 
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private UniqueTicketIdGenerator ticketIdGenerator;

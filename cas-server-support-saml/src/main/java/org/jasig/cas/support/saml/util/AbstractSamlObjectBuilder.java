@@ -75,7 +75,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private  static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Create a new SAML object.

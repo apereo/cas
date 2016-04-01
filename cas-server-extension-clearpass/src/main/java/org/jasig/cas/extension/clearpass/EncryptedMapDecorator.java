@@ -54,7 +54,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private final Map<String, String> decoratedMap;

@@ -26,7 +26,7 @@ import java.security.Principal;
 public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected Credential constructCredentialsFromRequest(

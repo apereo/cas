@@ -33,7 +33,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private static final int DEFAULT_TIMEOUT = 2000;
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Pattern of ip addresses to check. **/
     @Value("${cas.spnego.ip.pattern:127.+}")

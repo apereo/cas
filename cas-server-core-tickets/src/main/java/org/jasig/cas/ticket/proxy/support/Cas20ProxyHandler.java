@@ -38,7 +38,7 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     private static final String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
 
     /** The Commons Logging instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Generate unique ids. */
     @NotNull

@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractCentralAuthenticationServiceTests {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
