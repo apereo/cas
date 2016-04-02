@@ -2,7 +2,6 @@ package org.jasig.cas.support.saml.util;
 
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.util.EncodingUtils;
-
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
@@ -54,6 +53,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
+
 /**
  * An abstract builder to serve as the template handler
  * for SAML1 and SAML2 responses.
@@ -86,7 +86,11 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     @Autowired
     protected OpenSamlConfigBean configBean;
-    
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
+    }
+
     /**
      * Create a new SAML object.
      *
@@ -385,5 +389,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static org.jdom.Element toJdom(final org.w3c.dom.Element e) {
         return  new DOMBuilder().build(e);
     }
+    
 }
 

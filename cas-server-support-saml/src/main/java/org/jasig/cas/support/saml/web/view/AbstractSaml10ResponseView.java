@@ -114,6 +114,14 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         }
     }
 
+    public void setSamlObjectBuilder(final Saml10ObjectBuilder samlObjectBuilder) {
+        this.samlObjectBuilder = samlObjectBuilder;
+    }
+
+    public void setSamlArgumentExtractor(final ArgumentExtractor samlArgumentExtractor) {
+        this.samlArgumentExtractor = samlArgumentExtractor;
+    }
+
     /**
      * Subclasses must implement this method by adding child elements (status, assertion, etc) to
      * the given empty SAML 1 response message.  Impelmenters need not be concerned with error handling.
