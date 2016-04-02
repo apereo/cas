@@ -59,6 +59,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * Authentication succeeded with warnings from authn subsystem that should be displayed to user.
      */
     private static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
+    private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
 
     /**
      * The Logger.
@@ -172,7 +173,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the event
      */
     protected Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap("error", error));
+        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
 
 
@@ -344,7 +345,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             if (attributeValue instanceof String) {
                 logger.debug("Attribute value {} is a single-valued attribute", attributeValue);
                 if (predicate.apply(attributeValue)) {
-                    logger.debug("Attribute value predicate {} has successfully matched the [{}]", predicate, attributeValue);
+                    logger.debug("Attribute value predicate {} has matched the [{}]", predicate, attributeValue);
                     if (provider.verify(service)) {
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
@@ -520,7 +521,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param resolvedEvents the resolved events
      */
     protected void putResolvedEventsAsAttribute(final RequestContext context, final Set<Event> resolvedEvents) {
-        context.getAttributes().put("resolvedAuthenticationEvents", resolvedEvents);
+        context.getAttributes().put(RESOLVED_AUTHENTICATION_EVENTS, resolvedEvents);
     }
 
     /**
@@ -530,7 +531,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the resolved events as attribute
      */
     protected Set<Event> getResolvedEventsAsAttribute(final RequestContext context) {
-        return context.getAttributes().get("resolvedAuthenticationEvents", Set.class);
+        return context.getAttributes().get(RESOLVED_AUTHENTICATION_EVENTS, Set.class);
     }
 
     /**

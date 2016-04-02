@@ -103,7 +103,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
-            throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
         }
         return objectType.cast(builder.buildObject(qName));
     }
@@ -124,22 +124,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         } catch (final IllegalAccessException e) {
             throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
         }
-    }
-
-    /**
-     * Build the saml object based on its QName.
-     *
-     * @param objectType the object
-     * @param qName the QName
-     * @param <T> the object type
-     * @return the saml object
-     */
-    private <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject());
     }
 
     /**

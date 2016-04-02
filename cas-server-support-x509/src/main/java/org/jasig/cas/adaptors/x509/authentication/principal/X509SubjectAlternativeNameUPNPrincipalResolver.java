@@ -59,7 +59,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             }
         } catch (final CertificateParsingException e) {
             logger.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
-            logger.debug("Returning null principal id...");
+            logger.debug("Returning null principal...");
             return null;
         }
         logger.debug("Returning null principal id...");
@@ -84,7 +84,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
                 
                 // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
                 if (prim instanceof ASN1TaggedObject) {
-                    prim = ASN1TaggedObject.getInstance(((ASN1TaggedObject) prim)).getObject();
+                    prim = ASN1TaggedObject.getInstance(prim).getObject();
                 }
 
                 if (prim instanceof ASN1OctetString) {

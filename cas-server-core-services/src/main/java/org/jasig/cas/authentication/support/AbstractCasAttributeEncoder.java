@@ -22,8 +22,8 @@ import java.util.Map;
  * @since 4.1.0
  */
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
-    /** The Services manager. */
     
+    /** The Services manager. */
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
@@ -110,11 +110,13 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
     protected Map<String, String> initialize(final Map<String, Object> attributes) {
         final Map<String, String> cachedAttributesToEncode = new HashMap<>(attributes.size());
 
+        final String messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
+        
         Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
                     collection.iterator().next().toString());
-            logger.debug("Removed [{}] as an authentication attribute and cached it locally.",
+            logger.debug(messageFormat,
                     CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         }
 
@@ -122,7 +124,7 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
                     collection.iterator().next().toString());
-            logger.debug("Removed [{}] as an authentication attribute and cached it locally.",
+            logger.debug(messageFormat,
                     CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         }
         return cachedAttributesToEncode;

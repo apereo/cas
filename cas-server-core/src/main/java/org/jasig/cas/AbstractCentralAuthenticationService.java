@@ -237,13 +237,13 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
                     logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
                             proxyingService.getId(), service.getId());
-                    throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                    throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                             + registeredService.getId());
                 }
             } else {
                 logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
                         service.getId(), registeredService.getId());
-                throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                         + registeredService.getId());
             }
         } else {

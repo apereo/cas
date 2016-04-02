@@ -235,6 +235,7 @@
         -->
         <module name="MultipleStringLiterals">
             <property name="severity" value="error"/>
+            <property name="ignoreStringsRegexp" value="(^&quot;&quot;$|&quot;yes&quot;|&quot;no&quot;)" />
         </module>
         
         <module name="VisibilityModifier">

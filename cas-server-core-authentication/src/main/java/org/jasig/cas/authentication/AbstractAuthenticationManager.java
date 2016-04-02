@@ -29,6 +29,8 @@ import java.util.Map;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
+    private static final String MESSAGE = "At least one authentication handler is required";
+    
     /** Log instance for logging events, errors, warnings, etc. */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -74,7 +76,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param handlers Non-null list of authentication handlers containing at least one entry.
      */
     protected AbstractAuthenticationManager(final List<AuthenticationHandler> handlers) {
-        Assert.notEmpty(handlers, "At least one authentication handler is required");
+        Assert.notEmpty(handlers, MESSAGE);
         this.handlerResolverMap = new LinkedHashMap<>(
                 handlers.size());
         for (final AuthenticationHandler handler : handlers) {
@@ -91,7 +93,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param map Non-null map of authentication handler to principal resolver containing at least one entry.
      */
     protected AbstractAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        Assert.notEmpty(map, "At least one authentication handler is required");
+        Assert.notEmpty(map, MESSAGE);
         this.handlerResolverMap = map;
     }
 

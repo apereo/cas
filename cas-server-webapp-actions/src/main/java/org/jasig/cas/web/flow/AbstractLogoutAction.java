@@ -28,6 +28,9 @@ public abstract class AbstractLogoutAction extends AbstractAction {
     /** The redirect to app event in webflow. */
     public static final String REDIRECT_APP_EVENT = "redirectApp";
 
+    private static final String NO_CACHE = "no-cache";
+    private static final String CACHE_CONTROL = "Cache-Control";
+    
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -58,10 +61,10 @@ public abstract class AbstractLogoutAction extends AbstractAction {
      * @param response the HTTP response.
      */
     protected void preventCaching(final HttpServletResponse response) {
-        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Pragma", NO_CACHE);
         response.setDateHeader("Expires", 1L);
-        response.setHeader("Cache-Control", "no-cache");
-        response.addHeader("Cache-Control", "no-store");
+        response.setHeader(CACHE_CONTROL, NO_CACHE);
+        response.addHeader(CACHE_CONTROL, "no-store");
     }
 
     /**
