@@ -34,7 +34,7 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
 
 
     /** Expired threshold period in seconds. */
-    @Min(0)
+    
     private int threshold = DEFAULT_THRESHOLD;
 
 

@@ -44,11 +44,9 @@ public class InitialFlowSetupAction extends AbstractAction {
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/
-    
     private ServicesManager servicesManager;
 
     /** CookieGenerator for the Warnings. */
-    
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     /** CookieGenerator for the TicketGrantingTickets. */
@@ -56,10 +54,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Extractors for finding the service. */
-    
-    @Size(min=1)
     private List<ArgumentExtractor> argumentExtractors;
-
 
     @Value("${events.track.geolocation:false}")
     private boolean trackGeoLocation;

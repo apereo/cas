@@ -94,14 +94,10 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private int maxConnectionsPerRoute = MAX_CONNECTIONS_PER_ROUTE;
 
     /** List of HTTP status codes considered valid by the caller. */
-    
-    @Size(min = 1)
     private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
 
-    @Min(0)
     private int connectionTimeout = DEFAULT_TIMEOUT;
 
-    @Min(0)
     private int readTimeout = DEFAULT_TIMEOUT;
 
     private RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy();

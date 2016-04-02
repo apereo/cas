@@ -32,7 +32,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
 
     /** Array of RADIUS servers to authenticate against. */
     
-    @Size(min=1)
+    
     @Resource(name="radiusServers")
     private List<RadiusServer> servers;
 

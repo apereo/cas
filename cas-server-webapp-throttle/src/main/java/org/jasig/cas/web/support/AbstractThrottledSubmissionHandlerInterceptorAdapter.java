@@ -34,10 +34,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     /** Logger object. **/
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Min(0)
     private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;
-
-    @Min(0)
+    
     private int failureRangeInSeconds = DEFAULT_FAILURE_RANGE_IN_SECONDS;
 
     

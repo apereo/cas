@@ -19,23 +19,18 @@ public class RadiusClientFactory {
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
 
     /** The port to do accounting on. */
-    @Min(1)
     private int accountingPort = RadiusServer.DEFAULT_PORT_ACCOUNTING;
 
     /** The port to do authentication on. */
-    @Min(1)
     private int authenticationPort = RadiusServer.DEFAULT_PORT_AUTHENTICATION;
 
     /** Socket timeout in seconds. */
-    @Min(0)
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
 
     /** RADIUS server network address. */
-    
     private InetAddress inetAddress;
 
     /** The shared secret to send to the RADIUS server. */
-    
     private String sharedSecret;
 
     /**

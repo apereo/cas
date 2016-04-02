@@ -19,8 +19,6 @@ import java.util.List;
 public class ChainingPrincipalResolver implements PrincipalResolver {
 
     /** The chain of delegate resolvers that are invoked in order. */
-    
-    @Size(min = 1)
     private List<PrincipalResolver> chain;
 
     /**

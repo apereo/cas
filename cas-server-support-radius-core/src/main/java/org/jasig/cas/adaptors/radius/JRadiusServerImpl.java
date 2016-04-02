@@ -51,7 +51,7 @@ public class JRadiusServerImpl implements RadiusServer {
     private RadiusClientFactory radiusClientFactory;
 
     /** Number of times to retry authentication when no response is received. */
-    @Min(0)
+    
     private int retries = DEFAULT_RETRY_COUNT;
 
     private String nasIpAddress;
