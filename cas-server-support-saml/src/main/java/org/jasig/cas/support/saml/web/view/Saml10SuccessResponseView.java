@@ -14,7 +14,6 @@ import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
 
-import javax.validation.constraints.Min;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,11 +47,11 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
      * The amount of time in milliseconds this is valid for.
      * Defaults to {@value}.
      **/
-    @Min(1000)
     private long issueLength = DEFAULT_ISSUE_LENGTH;
 
-    
     private String rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
+    
+    private boolean includeDefaultAttributeNamespace;
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
@@ -76,8 +75,9 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         final Map<String, Object> attributesToSend = prepareSamlAttributes(model, service);
 
         if (!attributesToSend.isEmpty()) {
+            final String namespaceToUse = this.includeDefaultAttributeNamespace ? VALIDATION_SAML_ATTRIBUTE_NAMESPACE : "";
             assertion.getAttributeStatements().add(this.samlObjectBuilder.newAttributeStatement(
-                    subject, attributesToSend, VALIDATION_SAML_ATTRIBUTE_NAMESPACE));
+                    subject, attributesToSend, namespaceToUse));
         }
 
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
@@ -122,5 +122,9 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
     public void setRememberMeAttributeName(final String rememberMeAttributeName) {
         this.rememberMeAttributeName = rememberMeAttributeName;
+    }
+
+    public void setIncludeDefaultAttributeNamespace(final boolean includeDefaultAttributeNamespace) {
+        this.includeDefaultAttributeNamespace = includeDefaultAttributeNamespace;
     }
 }

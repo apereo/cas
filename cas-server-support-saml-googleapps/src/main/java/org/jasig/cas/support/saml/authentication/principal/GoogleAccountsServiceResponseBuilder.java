@@ -18,6 +18,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.Assert;
 
 import java.io.StringWriter;
 import java.security.PrivateKey;
@@ -51,6 +52,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     public GoogleAccountsServiceResponseBuilder(final PrivateKey privateKey,
                                                 final PublicKey publicKey,
                                                 final GoogleSaml20ObjectBuilder samlObjectBuilder) {
+        Assert.notNull(privateKey);
+        Assert.notNull(publicKey);
+        Assert.notNull(samlObjectBuilder);
+        
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.samlObjectBuilder = samlObjectBuilder;

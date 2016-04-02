@@ -2,6 +2,7 @@ package org.jasig.cas.support.saml.web.idp.profile;
 
 import org.jasig.cas.support.saml.SamlIdPConstants;
 import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -74,7 +75,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                     logoutRequest.getIssuer().getValue(), this.samlRegisteredServiceCachingMetadataResolver);
             this.samlObjectSigner.verifySamlProfileRequestIfNeeded(logoutRequest, resolver);
         }
-        SamlIdPUtils.logSamlObject(this.configBean, logoutRequest);
+        SamlUtils.logSamlObject(this.configBean, logoutRequest);
         response.sendRedirect(this.casServerPrefix.concat("/logout"));
     }
 

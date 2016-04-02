@@ -4,16 +4,13 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.cryptacular.util.CertUtil;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -29,16 +26,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.w3c.dom.Element;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,58 +42,6 @@ public final class SamlIdPUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPUtils.class);
 
     private SamlIdPUtils() {
-    }
-
-    /**
-     * Read certificate x 509 certificate.
-     *
-     * @param resource the resource
-     * @return the x 509 certificate
-     */
-    public static X509Certificate readCertificate(final Resource resource) {
-        try (final InputStream in = resource.getInputStream()) {
-            return CertUtil.readCertificate(in);
-        } catch (final Exception e) {
-            throw new RuntimeException("Error reading certificate " + resource, e);
-        }
-    }
-
-    /**
-     * Transform saml object to String.
-     *
-     * @param configBean the config bean
-     * @param samlObject the saml object
-     * @return the string
-     * @throws SamlException the saml exception
-     */
-    public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final SAMLObject samlObject) throws SamlException {
-        final StringWriter writer = new StringWriter();
-        try {
-            final Marshaller marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
-            if (marshaller != null) {
-                final Element element = marshaller.marshall(samlObject);
-                final DOMSource domSource = new DOMSource(element);
-                
-                final StreamResult result = new StreamResult(writer);
-                final TransformerFactory tf = TransformerFactory.newInstance();
-                final Transformer transformer = tf.newTransformer();
-                transformer.transform(domSource, result);
-            }
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
-        }
-        return writer;
-    }
-    
-    /**
-     * Log saml object.
-     *
-     * @param configBean the config bean
-     * @param samlObject the saml object
-     * @throws SamlException the saml exception
-     */
-    public static void logSamlObject(final OpenSamlConfigBean configBean, final SAMLObject samlObject) throws SamlException {
-        LOGGER.debug("Logging [{}]\n{}", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject));
     }
 
     /**

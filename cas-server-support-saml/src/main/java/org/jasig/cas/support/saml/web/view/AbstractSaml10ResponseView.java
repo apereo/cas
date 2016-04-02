@@ -1,14 +1,15 @@
 package org.jasig.cas.support.saml.web.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.web.view.AbstractCasView;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.DefaultArgumentExtractor;
-
-import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,10 +31,11 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     /**
      * The Saml object builder.
      */
-    protected Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
+    @Autowired
+    @Qualifier("saml10ObjectBuilder")
+    protected Saml10ObjectBuilder samlObjectBuilder;
 
     private ArgumentExtractor samlArgumentExtractor;
-
     
     private String encoding = DEFAULT_ENCODING;
 

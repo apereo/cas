@@ -29,9 +29,9 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     @Override
     public AttributeStatement build(final AuthnRequest authnRequest,
-                                          final HttpServletRequest request, final HttpServletResponse response,
-                                          final Assertion assertion, final SamlRegisteredService service,
-                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                                    final HttpServletRequest request, final HttpServletResponse response,
+                                    final Assertion assertion, final SamlRegisteredService service,
+                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildAttributeStatement(assertion, authnRequest);
     }

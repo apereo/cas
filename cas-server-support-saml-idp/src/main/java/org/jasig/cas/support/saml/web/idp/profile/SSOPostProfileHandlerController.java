@@ -2,6 +2,7 @@ package org.jasig.cas.support.saml.web.idp.profile;
 
 import org.jasig.cas.support.saml.SamlIdPConstants;
 import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -93,7 +94,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             this.samlObjectSigner.verifySamlProfileRequestIfNeeded(authnRequest, adaptor.getMetadataResolver());
         }
 
-        SamlIdPUtils.logSamlObject(this.configBean, authnRequest);
+        SamlUtils.logSamlObject(this.configBean, authnRequest);
         issueAuthenticationRequestRedirect(authnRequest, request, response);
     }
 

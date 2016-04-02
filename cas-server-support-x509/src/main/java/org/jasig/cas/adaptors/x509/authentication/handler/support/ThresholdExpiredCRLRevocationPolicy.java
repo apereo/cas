@@ -1,7 +1,6 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Min;
 import java.security.cert.X509CRL;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;

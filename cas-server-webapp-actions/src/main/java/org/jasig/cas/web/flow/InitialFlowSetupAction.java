@@ -23,7 +23,6 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**

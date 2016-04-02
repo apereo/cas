@@ -2,7 +2,6 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.cas.authentication.Credential;
 
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**

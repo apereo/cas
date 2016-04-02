@@ -1,14 +1,13 @@
 package org.jasig.cas.support.saml.web.idp.profile.builders;
 
-import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -44,12 +43,6 @@ import java.time.ZonedDateTime;
 @Component("samlProfileSamlResponseBuilder")
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;
-
-    /**
-     * The Config bean.
-     */
-    @Autowired
-    protected OpenSamlConfigBean configBean;
 
     /**
      * The Saml object encoder.
@@ -120,7 +113,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         final Status status = newStatus(StatusCode.SUCCESS, StatusCode.SUCCESS);
         samlResponse.setStatus(status);
 
-        SamlIdPUtils.logSamlObject(this.configBean, samlResponse);
+        SamlUtils.logSamlObject(this.configBean, samlResponse);
 
         if (service.isSignResponses()) {
             logger.debug("SAML entity id [{}] indicates that SAML responses should be signed",

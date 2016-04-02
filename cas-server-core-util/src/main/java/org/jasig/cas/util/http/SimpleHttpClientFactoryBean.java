@@ -41,8 +41,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.util.Collection;

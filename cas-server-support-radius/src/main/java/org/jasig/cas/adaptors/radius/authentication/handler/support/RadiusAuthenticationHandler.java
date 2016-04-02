@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.Size;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;

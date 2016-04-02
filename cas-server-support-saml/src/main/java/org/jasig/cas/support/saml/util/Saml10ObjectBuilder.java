@@ -2,6 +2,7 @@ package org.jasig.cas.support.saml.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.util.DateTimeUtils;
@@ -25,6 +26,8 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +44,8 @@ import java.util.Map;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
+@RefreshScope
+@Component("saml10ObjectBuilder")
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
@@ -202,13 +207,16 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         attrStatement.setSubject(subject);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                //don't add the attribute, it causes a org.opensaml.MalformedException
                 logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
                 continue;
             }
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
-            attribute.setAttributeNamespace(attributeNamespace);
+            
+            if (StringUtils.isNotBlank(attributeNamespace)) {
+                attribute.setAttributeNamespace(attributeNamespace);
+            }
+            
             if (e.getValue() instanceof Collection<?>) {
                 final Collection<?> c = (Collection<?>) e.getValue();
                 for (final Object value : c) {
@@ -236,6 +244,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                    final HttpServletRequest httpRequest,
                                    final Response samlMessage) throws Exception {
 
+        SamlUtils.logSamlObject(this.configBean, samlMessage);
+        
         final HTTPSOAP11Encoder encoder = new CasHttpSoap11Encoder();
         final MessageContext<SAMLObject> context = new MessageContext();
         context.setMessage(samlMessage);

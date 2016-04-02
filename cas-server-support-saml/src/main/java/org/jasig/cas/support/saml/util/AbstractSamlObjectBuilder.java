@@ -1,5 +1,6 @@
 package org.jasig.cas.support.saml.util;
 
+import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.util.EncodingUtils;
 
 import org.jdom.Document;
@@ -17,6 +18,7 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -72,11 +74,19 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
     private static final int RANDOM_ID_SIZE = 16;
 
-    private  static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
+    private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
+    
+    private static final long serialVersionUID = -6833230731146922780L;
 
     /** Logger instance. **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * The Config bean.
+     */
+    @Autowired
+    protected OpenSamlConfigBean configBean;
+    
     /**
      * Create a new SAML object.
      *

@@ -19,8 +19,8 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPConstants;
-import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -108,8 +108,7 @@ public abstract class AbstractSamlProfileHandlerController {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-
+    
     /**
      * The Saml registered service caching metadata resolver.
      */
@@ -122,8 +121,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     @Autowired
     protected OpenSamlConfigBean configBean;
-
-
+    
     /**
      * The Response builder.
      */
@@ -313,7 +311,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                          final HttpServletResponse response,
                                          final AuthnRequest authnRequest)
             throws SamlException {
-        try (final StringWriter writer = SamlIdPUtils.transformSamlObject(this.configBean, authnRequest)) {
+        try (final StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
             builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, authnRequest.getIssuer().getValue()));
 

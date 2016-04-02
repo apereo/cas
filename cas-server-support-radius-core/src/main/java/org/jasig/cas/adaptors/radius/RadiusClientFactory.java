@@ -3,7 +3,6 @@ package org.jasig.cas.adaptors.radius;
 import net.jradius.client.RadiusClient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.validation.constraints.Min;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;

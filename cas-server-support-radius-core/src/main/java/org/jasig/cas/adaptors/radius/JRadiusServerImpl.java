@@ -21,8 +21,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.Min;
-
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
  * at <a href="http://jradius.sf.net">http://jradius.sf.net</a>.

@@ -21,32 +21,24 @@ import org.springframework.context.annotation.Lazy;
 @Configuration("samlConfiguration")
 @Lazy(true)
 public class SamlConfiguration {
-
-    /**
-     * The Issuer.
-     */
+    
     @Value("${cas.saml.response.issuer:localhost}")
     private String issuer;
-
-    /**
-     * The Skew allowance.
-     */
+    
     @Value("${cas.saml.response.skewAllowance:0}")
     private int skewAllowance;
-
-    /**
-     * The Services manager.
-     */
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    /**
-     * The Cas attribute encoder.
-     */
+
     @Autowired
     @Qualifier("casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
+
+    @Value("${cas.saml.include.namespace:true}")
+    private boolean includeDefaultAttributeNamespace;
 
     /**
      * Cas saml service success view saml 10 success response view.
@@ -61,6 +53,7 @@ public class SamlConfiguration {
         view.setCasAttributeEncoder(this.casAttributeEncoder);
         view.setIssuer(this.issuer);
         view.setSkewAllowance(this.skewAllowance);
+        view.setIncludeDefaultAttributeNamespace(this.includeDefaultAttributeNamespace);
         return view;
     }
 

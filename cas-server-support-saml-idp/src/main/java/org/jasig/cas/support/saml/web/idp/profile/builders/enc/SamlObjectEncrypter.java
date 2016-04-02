@@ -2,7 +2,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
-import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
@@ -253,7 +253,7 @@ public class SamlObjectEncrypter {
      */
     protected X509Certificate getEncryptionCertificate() {
         logger.debug("Locating encryption certificate file from [{}]", this.encryptionCertFile);
-        return SamlIdPUtils.readCertificate(new FileSystemResource(this.encryptionCertFile));
+        return SamlUtils.readCertificate(new FileSystemResource(this.encryptionCertFile));
     }
 
     /**
