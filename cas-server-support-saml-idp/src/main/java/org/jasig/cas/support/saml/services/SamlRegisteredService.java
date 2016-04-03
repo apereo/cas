@@ -101,6 +101,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
             samlRegisteredService.setSignAssertions(this.signAssertions);
             samlRegisteredService.setSignResponses(this.signResponses);
             samlRegisteredService.setRequiredAuthenticationContextClass(this.requiredAuthenticationContextClass);
+            samlRegisteredService.setMetadataMaxValidity(this.metadataMaxValidity);
+            samlRegisteredService.setMetadataSignatureLocation(this.metadataSignatureLocation);
+            samlRegisteredService.setEncryptAssertions(this.encryptAssertions);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
