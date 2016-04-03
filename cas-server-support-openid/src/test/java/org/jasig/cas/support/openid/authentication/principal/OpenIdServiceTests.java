@@ -79,7 +79,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             synchronized (this) {
                 try {
                     this.wait(3000);
-                } catch (final InterruptedException ie) {
+                } catch (final InterruptedException e) {
                     fail("Could not wait long enough to check association expiry date");
                 }
             }

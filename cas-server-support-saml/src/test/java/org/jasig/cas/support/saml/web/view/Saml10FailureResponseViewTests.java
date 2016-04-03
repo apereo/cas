@@ -1,21 +1,15 @@
 package org.jasig.cas.support.saml.web.view;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
-import org.jasig.cas.services.DefaultServicesManagerImpl;
-import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link Saml10FailureResponseView} class

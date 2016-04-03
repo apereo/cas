@@ -327,7 +327,7 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Logger as non-transient"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(private|protected|public)\s+(final\s)*Logger"/>
+            <property name="format" value="(protected|public)\s+(final\s)*Logger"/>
             <property name="message" value="Non-static logger must be declared as transient to avoid serialization issues."/>
         </module>
         <module name="RegexpSinglelineJava">

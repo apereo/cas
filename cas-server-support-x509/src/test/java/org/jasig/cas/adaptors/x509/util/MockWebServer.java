@@ -78,7 +78,7 @@ public class MockWebServer {
     /**
      * Worker class handles request processing.
      */
-    private static final class Worker implements Runnable {
+    private static class Worker implements Runnable {
 
         /** Server always returns HTTP 200 response. */
         private static final String STATUS_LINE = "HTTP/1.1 200 Success\r\n";
@@ -125,7 +125,7 @@ public class MockWebServer {
                 try {
                     writeResponse(this.serverSocket.accept());
                     Thread.sleep(500);
-                } catch (final SocketException se) {
+                } catch (final SocketException e) {
                     logger.debug("Stopping on socket close.");
                     this.running = false;
                 } catch (final Exception e) {

@@ -421,9 +421,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * When supplemental authentications were returned with the chained authentications, the validation specification
      * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
      * chained authentications. Both concepts are orthogonal.
-     *
-     * @throws AbstractTicketException
-     * @throws AuthenticationException
      */
     @Test
     public void authenticateTwiceWithRenew() throws AbstractTicketException, AuthenticationException {
@@ -443,9 +440,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     /**
      * This test checks that the TGT destruction happens properly for a remote registry.
      * It previously failed when the deletion happens before the ticket was marked expired because an update was necessary for that.
-     *
-     * @throws AuthenticationException
-     * @throws AbstractTicketException
      */
     @Test
     public void verifyDestroyRemoteRegistry() throws AbstractTicketException, AuthenticationException {

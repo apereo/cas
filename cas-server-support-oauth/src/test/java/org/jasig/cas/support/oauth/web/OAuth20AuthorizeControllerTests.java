@@ -36,8 +36,8 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:/oauth-context.xml"})
-@DirtiesContext()
+@ContextConfiguration("classpath:/oauth-context.xml")
+@DirtiesContext
 public class OAuth20AuthorizeControllerTests {
 
     private static final String ID = "id";
