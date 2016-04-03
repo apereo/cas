@@ -5,11 +5,11 @@ import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,13 +50,13 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
     /**
      * Initializes a new Generate saml metadata.
      */
-    @Autowired
+    @PostConstruct
     public void initialize() {
-        Assert.notNull(this.metadataLocation, "metadataLocation cannot be null and must be defined");
-        Assert.hasText(this.entityId, "entityID cannot be empty and must be defined");
-        Assert.hasText(this.hostName, "hostName cannot be empty and must be defined");
-        Assert.hasText(this.scope, "scope cannot be empty and must be defined");
-
+        Assert.notNull(this.metadataLocation, "IdP metadataLocation cannot be null and must be defined");
+        Assert.hasText(this.entityId, "IdP entityID cannot be empty and must be defined");
+        Assert.hasText(this.hostName, "IdP hostName cannot be empty and must be defined");
+        Assert.hasText(this.scope, "IdP scope cannot be empty and must be defined");
+        
         if (!metadataLocation.exists()) {
             if (!metadataLocation.mkdir()) {
                 throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
