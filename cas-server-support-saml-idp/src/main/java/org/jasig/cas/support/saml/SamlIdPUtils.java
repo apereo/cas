@@ -139,7 +139,7 @@ public final class SamlIdPUtils {
                     final int acsIndex = authnRequest.getAssertionConsumerServiceIndex();
                     if (acsIndex + 1 > acsEndpoints.size()) {
                         throw new RuntimeException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
-                                + "since the total endpoints available to " + acsIndex + " is " + acsEndpoints.size());
+                                + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
                     }
                     final AssertionConsumerService foundAcs = acsEndpoints.get(acsIndex);
                     acs.setBinding(foundAcs.getBinding());
@@ -156,12 +156,12 @@ public final class SamlIdPUtils {
                 acs.setIsDefault(true);
             }
             
-            LOGGER.debug("Resolve AssertionConsumerService from the request is {}", acs);
+            LOGGER.debug("Resolved AssertionConsumerService from the request is {}", acs);
             if (StringUtils.isBlank(acs.getBinding())) {
                 throw new SamlException("AssertionConsumerService has no protocol binding defined");
             }
             if (StringUtils.isBlank(acs.getLocation()) && StringUtils.isBlank(acs.getResponseLocation())) {
-                throw new SamlException("AssertionConsumerService has no location defined");
+                throw new SamlException("AssertionConsumerService has no location or response location defined");
             }
             return acs;
         } catch (final Exception e) {

@@ -66,11 +66,11 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
 
         if (!assertion.isValid()) {
             throw new SamlException("CAS assertion received is invalid. This normally indicates that the assertion received has expired "
-            + " and is not valid within the time constraints of the authentication event");
+                    + " and is not valid within the time constraints of the authentication event");
         }
         final AssertionConsumerService acs =
-                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, this.servicesManager, 
-                        this.samlRegisteredServiceCachingMetadataResolver);
+                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest,
+                        this.servicesManager, samlRegisteredServiceCachingMetadataResolver);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 

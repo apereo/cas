@@ -73,9 +73,9 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
         final AuthnRequest authnRequest = decodeRequest(request, decoder, AuthnRequest.class);
-        
-        final AssertionConsumerService acs = 
-            SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, this.servicesManager, samlRegisteredServiceCachingMetadataResolver);
+        final AssertionConsumerService acs =
+                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, this.servicesManager, 
+                        samlRegisteredServiceCachingMetadataResolver);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
         
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =

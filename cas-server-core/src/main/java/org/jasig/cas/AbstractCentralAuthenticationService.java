@@ -24,6 +24,7 @@ import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicate;
+import org.jasig.cas.validation.ValidationServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,6 @@ import java.util.Iterator;
  * The intention here is to allow extensions to easily benefit these already-configured components
  * without having to to duplicate them again.
  * @author Misagh Moayyed
- * @see CentralAuthenticationServiceImpl
  * @since 4.2.0
  */
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
@@ -61,36 +61,34 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected ApplicationEventPublisher eventPublisher;
 
     /** {@link TicketRegistry}  for storing and retrieving tickets as needed. */
-    
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /** Implementation of Service Manager. */
-    
     @Resource(name="servicesManager")
     protected ServicesManager servicesManager;
 
     /** The logout manager. **/
-    
     @Resource(name="logoutManager")
     protected LogoutManager logoutManager;
 
     /** The ticket factory. **/
-    
     @Resource(name="defaultTicketFactory")
     protected TicketFactory ticketFactory;
+
+    /** The service selection strategy during validation events. **/
+    @Resource(name="defaultValidationServiceSelectionStrategy")
+    protected ValidationServiceSelectionStrategy validationServiceSelectionStrategy;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    
     @Resource(name="authenticationPolicyFactory")
     protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
     /** Factory to create the principal type. **/
-    
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**

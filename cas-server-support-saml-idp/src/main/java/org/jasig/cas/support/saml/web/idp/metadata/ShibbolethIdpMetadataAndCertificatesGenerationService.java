@@ -58,7 +58,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         Assert.hasText(this.entityId, "IdP entityID cannot be empty and must be defined");
         Assert.hasText(this.hostName, "IdP hostName cannot be empty and must be defined");
         Assert.hasText(this.scope, "IdP scope cannot be empty and must be defined");
-
+        
         if (!metadataLocation.exists()) {
             if (!metadataLocation.mkdir()) {
                 throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
