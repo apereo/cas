@@ -132,8 +132,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             throw new CredentialExpiredException(eae.getMessage());
         } catch (final DisabledAccountException eae) {
             throw new AccountDisabledException(eae.getMessage());
-        } catch (final AuthenticationException ae){
-            throw new FailedLoginException(ae.getMessage());
+        } catch (final AuthenticationException e){
+            throw new FailedLoginException(e.getMessage());
         }
     }
 

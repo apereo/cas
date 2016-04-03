@@ -238,8 +238,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             final String code = e.getCode();
             return generateErrorView(code, code,
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()}, request, service);
-        } catch (final AbstractTicketException te) {
-            return generateErrorView(te.getCode(), te.getCode(),
+        } catch (final AbstractTicketException e) {
+            return generateErrorView(e.getCode(), e.getCode(),
                 new Object[] {serviceTicketId}, request, service);
         } catch (final UnauthorizedProxyingException e) {
             return generateErrorView(e.getMessage(), e.getMessage(), new Object[] {service.getId()}, request, service);

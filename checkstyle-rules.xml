@@ -203,6 +203,32 @@
             <property name="severity" value="error"/>
         </module>
         
+        <module name="AnnotationLocation">
+            <property name="severity" value="error" />
+        </module>
+        
+        <!--
+        <module name="MissingCtor">
+            <property name="severity" value="error" />
+        </module>
+        -->
+
+        <module name="OuterTypeFilename">
+            <property name="severity" value="error" />
+        </module>
+        <module name="OuterTypeNumber">
+            <property name="severity" value="error" />
+        </module>
+        <module name="AnnotationUseStyle">
+            <property name="severity" value="error" />
+        </module>
+        <module name="CatchParameterName">
+            <property name="severity" value="error" />
+        </module>
+        <module name="AnonInnerLength">
+            <property name="max" value="40" />
+            <property name="severity" value="error" />
+        </module>
         <module name="RightCurly">
             <property name="severity" value="error"/>
         </module>
@@ -210,7 +236,9 @@
             <property name="severity" value="error"/>
         </module>
         <module name="EmptyStatement"/>
-        <module name="EqualsHashCode"/>
+        <module name="EqualsHashCode">
+            <property name="severity" value="info"/>
+        </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MissingSwitchDefault">
