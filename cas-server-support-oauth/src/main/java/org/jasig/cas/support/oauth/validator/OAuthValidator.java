@@ -2,7 +2,7 @@ package org.jasig.cas.support.oauth.validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -54,7 +54,7 @@ public class OAuthValidator {
         final OAuthWebApplicationService service = new OAuthWebApplicationService(registeredService);
         logger.debug("Check registered service: {}", registeredService);
         try {
-            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return true;
         } catch (final UnauthorizedServiceException e) {
             return false;

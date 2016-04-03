@@ -57,7 +57,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                         it.remove();
                     }
                 }
-                logger.debug("Authentication handlers used for this transaction are {}", handlerSet);
+                logger.debug("Authentication handlers for this transaction are {}", handlerSet);
                 return handlerSet;
             } else {
                 logger.debug("No specific authentication handlers are required for this transaction");

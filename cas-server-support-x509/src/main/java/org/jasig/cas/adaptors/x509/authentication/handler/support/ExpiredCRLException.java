@@ -49,7 +49,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
         this.id = identifier;
         this.expirationDate = (ZonedDateTime) expirationDate;
         if (leniency < 0) {
-            throw new IllegalArgumentException("Leniency cannot be negative.");
+            throw new IllegalArgumentException("Leniency is negative.");
         }
         this.leniency = leniency;
     }
@@ -67,7 +67,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
         this.id = identifier;
         this.expirationDate = ZonedDateTime.from(expirationDate);
         if (leniency < 0) {
-            throw new IllegalArgumentException("Leniency cannot be negative.");
+            throw new IllegalArgumentException("Leniency must not be negative.");
         }
         this.leniency = leniency;
     }

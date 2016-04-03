@@ -332,7 +332,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         if (principalAttributes.size() < this.requiredAttributes.size()) {
             logger.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
-                        + "which means the principal is not carrying enough data to grant authorization",
+                        + "which indicates the principal is not carrying enough data to grant authorization",
                     principalAttributes);
             return false;
         }

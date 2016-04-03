@@ -30,9 +30,11 @@ import java.net.URLDecoder;
 @RefreshScope
 @Component("duoAuthenticationService")
 public class DuoAuthenticationService {
+    private static final String RESULT_KEY_RESPONSE = "response";
+    private static final String RESULT_KEY_STAT = "stat";
+    
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    
+        
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -123,9 +125,9 @@ public class DuoAuthenticationService {
                 logger.debug("Received Duo ping response {}", response);
                 final ObjectMapper mapper = new ObjectMapper();
                 final JsonNode result = mapper.readTree(response);
-                if (result.has("response") && result.has("stat")
-                        && result.get("response").asText().equalsIgnoreCase("pong")
-                        && result.get("stat").asText().equalsIgnoreCase("OK")) {
+                if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
+                        && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
+                        && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
                     return true;
                 }
                 logger.warn("Could not reach/ping Duo. Response returned is {}", result);

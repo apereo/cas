@@ -74,7 +74,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry implements Di
     @Override
     protected void updateTicket(final Ticket ticketToUpdate) {
         if (this.client == null) {
-            logger.debug("No memcached client is configured.");
+            logger.debug("No memcached client is available in the configuration.");
             return;
         }
 
@@ -82,7 +82,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry implements Di
         logger.debug("Updating ticket {}", ticket);
         try {
             if (!this.client.replace(ticket.getId(),  getTimeout(ticket), ticket).get()) {
-                logger.error("Failed updating {}", ticket);
+                logger.error("Failed to update {}", ticket);
             }
         } catch (final InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
@@ -95,7 +95,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry implements Di
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         if (this.client == null) {
-            logger.debug("No memcached client is configured.");
+            logger.debug("No memcached client is found in the configuration.");
             return;
         }
 
@@ -103,7 +103,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry implements Di
         logger.debug("Adding ticket {}", ticket);
         try {
             if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
-                logger.error("Failed adding {}", ticket);
+                logger.error("Failed to add {}", ticket);
             }
         } catch (final InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async add operation for ticket {}."
@@ -116,7 +116,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry implements Di
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         try {
-            Assert.notNull(this.client, "No memcached client is configured.");
+            Assert.notNull(this.client, "No memcached client is defined.");
             return this.client.delete(ticketId).get();
         } catch (final Exception e) {
             logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);

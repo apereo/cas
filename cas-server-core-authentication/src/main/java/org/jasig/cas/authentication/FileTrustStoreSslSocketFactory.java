@@ -39,6 +39,8 @@ import java.util.List;
 public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileTrustStoreSslSocketFactory.class);
+    
+    private static final String ALG_NAME_PKIX = "PKIX";
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
@@ -88,9 +90,9 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
             }
 
             final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-            final X509KeyManager customKeyManager = getKeyManager("PKIX", casTrustStore, trustStorePasswordCharArray);
+            final X509KeyManager customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
             final X509KeyManager jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
-            final X509TrustManager customTrustManager = getTrustManager("PKIX", casTrustStore);
+            final X509TrustManager customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
             final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
 
             final KeyManager[] keyManagers = {
@@ -229,7 +231,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
             });
 
             if (!trusted) {
-                throw new CertificateException("None of the TrustManagers trust this certificate chain");
+                throw new CertificateException("None of the TrustManagers can trust this certificate chain");
             }
         }
 

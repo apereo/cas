@@ -77,6 +77,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
     
     private static final long serialVersionUID = -6833230731146922780L;
+    private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
     /** Logger instance. **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -175,8 +176,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                 throw new IllegalArgumentException("Cannot obtain marshaller for object " + object.getElementQName());
             }
             final Element element = marshaller.marshall(object);
-            element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", SAMLConstants.SAML20_NS);
-            element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
+            element.setAttributeNS(NAMESPACE_URI, "xmlns", SAMLConstants.SAML20_NS);
+            element.setAttributeNS(NAMESPACE_URI, "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
 
             final TransformerFactory transFactory = TransformerFactory.newInstance();
             final Transformer transformer = transFactory.newTransformer();

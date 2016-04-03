@@ -232,11 +232,12 @@
         <module name="InterfaceIsType">
             <property name="severity" value="info"/>
         </module>
-        -->
         <module name="MultipleStringLiterals">
-            <property name="severity" value="error"/>
-            <property name="ignoreStringsRegexp" value="(^&quot;&quot;$|&quot;yes&quot;|&quot;no&quot;)" />
+            <property name="severity" value="info"/>
+            <property name="ignoreStringsRegexp" 
+                      value="(^&quot;&quot;$)|(^&quot;(no|false|\/|true|//|yes|default|\.|,|=|&amp;|\?|UTF-8|\*|\\|//)&quot;$)" />
         </module>
+         -->
         
         <module name="VisibilityModifier">
             <property name="severity" value="error"/>
@@ -372,6 +373,15 @@
             <property name="message"
                       value="Non-static nested classes are a security compromise. Consider using a static class instead"/>
         </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using PostConstruct annotation"/>
+            <property name="severity" value="error"/>
+            <property name="format" value=".+implements InitializingBean.+"/>
+            <property name="message"
+                      value="Use the @PostConstruct annotation instead of implementing InitializingBean"/>
+        </module>
+
+        
     </module>
 
     <!-- Checker module checks -->

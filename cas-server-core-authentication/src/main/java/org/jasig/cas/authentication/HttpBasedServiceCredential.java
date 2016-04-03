@@ -99,7 +99,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
             return false;
         }
 
-        return (this.service.equals(other.getService()));
+        return this.service.equals(other.getService());
     }
 
 

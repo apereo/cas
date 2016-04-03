@@ -10,7 +10,6 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,8 +37,7 @@ import java.security.GeneralSecurityException;
  */
 @RefreshScope
 @Component("yubikeyAuthenticationHandler")
-public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
-        implements InitializingBean {
+public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private YubiKeyAccountRegistry registry;
 
@@ -60,7 +58,10 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         this.client = YubicoClient.getClient(clientId, secretKey);
     }
 
-    @Override
+
+    /**
+     * After properties set.
+     */
     @PostConstruct
     public void afterPropertiesSet() {
         if (this.registry == null) {

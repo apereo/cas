@@ -21,6 +21,8 @@ import java.util.Map;
  * @since 4.1
  */
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<String, String> {
+    private static final String JSON_WEB_KEY = "k";
+    
     private static final int ENCRYPTION_KEY_SIZE = 256;
 
     private static final int SIGNING_KEY_SIZE = 512;
@@ -117,7 +119,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
         try {
             final Map<String, Object> keys = new HashMap<>(2);
             keys.put("kty", "oct");
-            keys.put("k", secret);
+            keys.put(JSON_WEB_KEY, secret);
             final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
             return jwk.getKey();
         } catch (final Exception e) {
@@ -168,6 +170,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
     private String generateOctetJsonWebKeyOfSize(final int size) {
         final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
         final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
-        return params.get("k").toString();
+        return params.get(JSON_WEB_KEY).toString();
     }
 }

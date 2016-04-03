@@ -39,8 +39,10 @@ import java.util.List;
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
     private static final String END_TOKEN = "\u02ad";
 
+    private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
+    
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
-            "all_tickets",
+            VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
     private static final List<View> ALL_VIEWS = Arrays.asList(new View[] {
@@ -168,7 +170,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
 
     private int runQuery(final String prefix) {
         final ViewResult allKeys = couchbase.bucket().query(
-                ViewQuery.from(UTIL_DOCUMENT, "all_tickets")
+                ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
                         .startKey(prefix)
                         .endKey(prefix + END_TOKEN)
                         .reduce());

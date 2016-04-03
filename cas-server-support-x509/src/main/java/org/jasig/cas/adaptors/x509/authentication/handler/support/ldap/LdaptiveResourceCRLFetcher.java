@@ -36,6 +36,8 @@ import java.security.cert.X509CRL;
 @Component("ldaptiveResourceCRLFetcher")
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
+    private static final String LDAP_PREFIX = "ldap";
+    
     /** Search exec that looks for the attribute. */
     protected SearchExecutor searchExecutor;
 
@@ -59,15 +61,15 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     }
 
     private boolean isLdap(final String r) {
-        return r.toLowerCase().startsWith("ldap");
+        return r.toLowerCase().startsWith(LDAP_PREFIX);
     }
 
     private boolean isLdap(final URI r) {
-        return r.getScheme().equalsIgnoreCase("ldap");
+        return r.getScheme().equalsIgnoreCase(LDAP_PREFIX);
     }
 
     private boolean isLdap(final URL r) {
-        return r.getProtocol().equalsIgnoreCase("ldap");
+        return r.getProtocol().equalsIgnoreCase(LDAP_PREFIX);
     }
 
     @Override

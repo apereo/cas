@@ -112,7 +112,7 @@ public class AuthenticationExceptionHandler {
         }
 
         // we don't recognize this exception
-        logger.trace("Unable to translate handler errors of the authentication exception {}. "
+        logger.trace("Unable to translate errors of the authentication exception {}. "
                 + "Returning {} by default...", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());

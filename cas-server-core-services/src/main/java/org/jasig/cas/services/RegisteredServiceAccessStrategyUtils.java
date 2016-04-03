@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is {@link RegisteredServiceAccessStrategySupport} that encapsulates common
+ * This is {@link RegisteredServiceAccessStrategyUtils} that encapsulates common
  * operations relevant to registered service access strategy and authorizations.
  * This is a support utility class that acts as a façade around common authorization
  * and access strategy presented in CAS.
@@ -24,17 +24,11 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public final class RegisteredServiceAccessStrategySupport {
-
-    /**
-     * The constant LOGGER.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceAccessStrategySupport.class);
-
-    /**
-     * Instantiates a new Registered service access strategy support.
-     */
-    private RegisteredServiceAccessStrategySupport() {
+public final class RegisteredServiceAccessStrategyUtils {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceAccessStrategyUtils.class);
+    
+    private RegisteredServiceAccessStrategyUtils() {
     }
 
     /**

@@ -62,6 +62,8 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -227,12 +229,12 @@ public class TicketsResource {
     private static class DefaultCredentialFactory implements CredentialFactory {
         @Override
         public Credential fromRequestBody(final MultiValueMap<String, String> requestBody) {
-            final String username = requestBody.getFirst("username");
-            final String password = requestBody.getFirst("password");
+            final String username = requestBody.getFirst(USERNAME);
+            final String password = requestBody.getFirst(PASSWORD);
             if (username == null || password == null) {
                 throw new BadRequestException("Invalid payload. 'username' and 'password' form fields are required.");
             }
-            return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+            return new UsernamePasswordCredential(requestBody.getFirst(USERNAME), requestBody.getFirst(PASSWORD));
         }
     }
 

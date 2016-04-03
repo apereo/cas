@@ -44,12 +44,12 @@ public class JpaLockingStrategy implements LockingStrategy {
      * a single application.
      */
     
-    @Value(("${database.cleaner.appid:cas-ticket-registry-cleaner}"))
+    @Value("${database.cleaner.appid:cas-ticket-registry-cleaner}")
     private String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
     
-    @Value(("${host.name:cas01.example.org}"))
+    @Value("${host.name:cas01.example.org}")
     private String uniqueId;
 
     /** Amount of time in seconds lock may be held. */

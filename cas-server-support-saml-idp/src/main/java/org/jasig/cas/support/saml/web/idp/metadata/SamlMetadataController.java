@@ -31,6 +31,8 @@ import java.io.PrintWriter;
 @Controller("samlMetadataController")
 public class SamlMetadataController {
 
+    private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
+    
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -75,13 +77,14 @@ public class SamlMetadataController {
 
         try (final PrintWriter writer = response.getWriter()) {
             if (StringUtils.isBlank(entityID) || StringUtils.isBlank(acsUrl) || StringUtils.isBlank(x509Certificate)) {
-                logger.warn("Missing entityID, ACS url or X509 signing certificate");
-                response.setContentType("text/plain;charset=UTF-8");
+                final String warning = "Missing entityID, ACS url or X509 signing certificate"; 
+                logger.warn(warning);
+                response.setContentType(CONTENT_TYPE);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                writer.write("Missing entityID, ACS url or X509 signing certificate");
+                writer.write(warning);
             } else {
                 final String contents = IOUtils.toString(templateSpMetadata.getInputStream());
-                response.setContentType("text/xml;charset=UTF-8");
+                response.setContentType(CONTENT_TYPE);
                 response.setStatus(HttpServletResponse.SC_OK);
                 writer.write(contents.replace("$entityId", entityID).replace("$acsUrl", acsUrl)
                         .replace("$x509Certificate", x509Certificate)
@@ -103,7 +106,7 @@ public class SamlMetadataController {
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         final File metadataFile = this.metadataAndCertificatesGenerationService.performGenerationSteps();
         final String contents = FileUtils.readFileToString(metadataFile);
-        response.setContentType("text/xml;charset=UTF-8");
+        response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
         final PrintWriter writer = response.getWriter();
         logger.debug("Producing metadata for the response");

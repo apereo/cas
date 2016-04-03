@@ -54,7 +54,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
             if (StringUtils.isBlank(accessToken)) {
                 logger.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
+                jsonGenerator.writeStringField(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
                 jsonGenerator.writeEndObject();
                 return null;
             }
@@ -64,7 +64,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
                 if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
                     logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
                     jsonGenerator.writeStartObject();
-                    jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
+                    jsonGenerator.writeStringField(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
                     jsonGenerator.writeEndObject();
                     return null;
                 }

@@ -35,6 +35,9 @@ public interface OAuthConstants {
     /** The code. */
     String CODE = "code";
 
+    /** The error. */
+    String ERROR = "error";
+
     /** The state. */
     String STATE = "state";
 

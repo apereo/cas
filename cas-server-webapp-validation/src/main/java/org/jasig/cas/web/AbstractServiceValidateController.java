@@ -16,7 +16,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -169,7 +169,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         // find the RegisteredService for this Assertion
         logger.debug("Locating the primary authentication associated with this service request {}", assertion.getService());
         final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
-        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(assertion.getService(), service);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
         // resolve MFA auth context for this request
         final Map<String, MultifactorAuthenticationProvider> providers = context.getBeansOfType(MultifactorAuthenticationProvider.class);
@@ -267,9 +267,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 logger.warn("Failed to authenticate service credential {}", serviceCredential);
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                         CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                        new Object[]{serviceCredential.getId()}, request, service);
+                        new Object[] {serviceCredential.getId()}, request, service);
             } catch (final InvalidTicketException e) {
-                logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+                logger.error("Failed to create proxy granting ticket due to an invalid ticket for {}", serviceCredential, e);
                 return generateErrorView(e.getCode(), e.getCode(),
                         new Object[]{serviceTicketId}, request, service);
             } catch (final AbstractTicketException e) {
@@ -518,12 +518,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Ensure that the service is found and enabled in the service registry.
      * @param registeredService the located entry in the registry
      * @param service authenticating service
-     * @throws UnauthorizedServiceException
+     * @throws UnauthorizedServiceException if service is determined to be unauthorized
      */
     private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
         if (registeredService == null) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not found in service registry.", service.getId());
+            final String msg = String.format("Service [%s] is not found in service registry.", service.getId());
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }

@@ -198,12 +198,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     private void configureSecureTransport() {
+        final String nullKey = "NULL";
+        
         if (StringUtils.isNotBlank(this.keyStoreFilePath) && StringUtils.isNotBlank(this.keyStorePassword)
             && StringUtils.isNotBlank(this.trustStoreFilePath) && StringUtils.isNotBlank(this.trustStorePassword)) {
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(this.keyStoreFilePath);
             sslContextFactory.setKeyStorePassword(this.keyStorePassword.toCharArray());
-            if ("NULL".equals(this.trustStoreFilePath) && "NULL".equals(this.trustStorePassword)){
+            if (nullKey.equals(this.trustStoreFilePath) && nullKey.equals(this.trustStorePassword)){
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
                 sslContextFactory.setTrustStoreFilePath(this.trustStoreFilePath);

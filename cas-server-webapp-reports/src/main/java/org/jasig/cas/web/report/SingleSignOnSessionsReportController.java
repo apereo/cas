@@ -41,6 +41,8 @@ import java.util.Set;
 public class SingleSignOnSessionsReportController {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
+    private static final String STATUS = "status";
+    private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
 
     private enum SsoSessionReportOptions {
         ALL("all"),
@@ -236,12 +238,12 @@ public class SingleSignOnSessionsReportController {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            sessionsMap.put("status", HttpServletResponse.SC_OK);
-            sessionsMap.put("ticketGrantingTicket", ticketGrantingTicket);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
+            sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            sessionsMap.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            sessionsMap.put("ticketGrantingTicket", ticketGrantingTicket);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("message", e.getMessage());
         }
         return sessionsMap;
@@ -273,9 +275,9 @@ public class SingleSignOnSessionsReportController {
         }
 
         if (failedTickets.isEmpty()) {
-            sessionsMap.put("status", HttpServletResponse.SC_OK);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
         } else {
-            sessionsMap.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             sessionsMap.put("failedTicketGrantingTickets", failedTickets);
         }
         return sessionsMap;

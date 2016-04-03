@@ -88,7 +88,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             if (attributeValue instanceof Collection) {
                 logger.trace("Attribute value {} is a collection", attributeValue);
                 final List filteredAttributes = filterAttributes(
-                        ((Collection<String>) attributeValue), attributeName);
+                        (Collection<String>) attributeValue, attributeName);
                 if (filteredAttributes.size() > 0) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }

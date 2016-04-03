@@ -53,6 +53,7 @@ import java.io.OutputStream;
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
+    private static final String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
 
     @Autowired
     @Qualifier("registeredServiceViewResolver")
@@ -302,7 +303,7 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "logoutFlowRegistry")
     public FlowDefinitionRegistry logoutFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath("classpath*:/webflow");
+        builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/logout/*-webflow.xml");
         return builder.build();
     }
@@ -316,7 +317,7 @@ public class CasWebflowContextConfiguration {
     @Bean(name = "loginFlowRegistry")
     public FlowDefinitionRegistry loginFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath("classpath*:/webflow");
+        builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
     }

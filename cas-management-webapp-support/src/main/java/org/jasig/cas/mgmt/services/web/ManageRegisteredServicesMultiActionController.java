@@ -37,12 +37,9 @@ import java.util.stream.Collectors;
 @Controller("manageRegisteredServicesMultiActionController")
 public class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
 
-    /**
-     * Instance of the RegisteredServiceFactory.
-     */
+    private static final String STATUS = "status";
     
     private RegisteredServiceFactory registeredServiceFactory;
-
     
     private Service defaultService;
 
@@ -129,7 +126,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         }
         final Map<String, Object> model = new HashMap<>();
         model.put("serviceName", r.getName());
-        model.put("status", HttpServletResponse.SC_OK);
+        model.put(STATUS, HttpServletResponse.SC_OK);
         JsonViewUtils.render(model, response);
     }
 
@@ -143,7 +140,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
         model.put("defaultServiceUrl", this.defaultService.getId());
-        model.put("status", HttpServletResponse.SC_OK);
+        model.put(STATUS, HttpServletResponse.SC_OK);
         return new ModelAndView("manage", model);
     }
 
@@ -160,7 +157,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
         serviceBeans.addAll(services.stream().map(registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         model.put("services", serviceBeans);
-        model.put("status", HttpServletResponse.SC_OK);
+        model.put(STATUS, HttpServletResponse.SC_OK);
         JsonViewUtils.render(model, response);
     }
 
@@ -186,7 +183,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             this.servicesManager.save(svc);
         }
         final Map<String, Object> model = new HashMap<>();
-        model.put("status", HttpServletResponse.SC_OK);
+        model.put(STATUS, HttpServletResponse.SC_OK);
         JsonViewUtils.render(model, response);
     }
 

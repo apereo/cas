@@ -13,10 +13,12 @@ import java.io.PrintStream;
 import java.net.Socket;
 
 /**
+ * Represents the running thread that spaws off the groovy shell. 
+ * 
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-final class GroovyShellThread extends Thread {
+public class GroovyShellThread extends Thread {
     private static final String OUT_KEY = "out";
 
     private Socket socket;

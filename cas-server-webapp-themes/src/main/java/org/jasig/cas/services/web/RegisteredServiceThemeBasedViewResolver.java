@@ -2,7 +2,7 @@ package org.jasig.cas.services.web;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -114,7 +114,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null) {
-            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             if (StringUtils.hasText(registeredService.getTheme())  && view instanceof AbstractThymeleafView) {
                 LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
                         registeredService.getServiceId(), registeredService.getTheme());

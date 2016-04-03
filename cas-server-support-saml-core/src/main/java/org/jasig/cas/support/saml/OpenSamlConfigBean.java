@@ -70,7 +70,7 @@ public class OpenSamlConfigBean {
     @PostConstruct
     public void init() {
         LOGGER.info("Initializing OpenSaml configuration...");
-        Assert.notNull(this.parserPool, "parserPool cannot be null");
+        Assert.notNull(this.parserPool, "parserPool must not be null");
 
         try {
             InitializationService.initialize();

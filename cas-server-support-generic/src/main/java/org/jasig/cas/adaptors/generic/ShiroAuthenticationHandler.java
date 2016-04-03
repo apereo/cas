@@ -155,7 +155,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
         if (this.requiredPermissions != null) {
             for (final String perm : this.requiredPermissions) {
                 if (!currentUser.isPermitted(perm)) {
-                    throw new FailedLoginException("Required permission " + perm + " does not exist");
+                    throw new FailedLoginException("Required permission " + perm + " cannot be located");
                 }
             }
         }

@@ -19,11 +19,11 @@ import java.security.cert.CertPath;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class Converters {
+public abstract class BaseConverters {
     /**
-     * Instantiates a new Converters.
+     * Instantiates a new BaseConverters.
      */
-    private Converters() {}
+    private BaseConverters() {}
 
     /**
      * The type Null converter.

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.ResourceUtils;
 
 import java.io.Serializable;
 import java.security.PublicKey;
@@ -77,8 +78,8 @@ public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredS
     public PublicKey createInstance() throws Exception {
         try {
             final PublicKeyFactoryBean factory = publicKeyFactoryBeanClass.newInstance();
-            if (this.location.startsWith("classpath:")) {
-                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, "classpath:")));
+            if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
             } else {
                 factory.setLocation(new FileSystemResource(this.location));
             }

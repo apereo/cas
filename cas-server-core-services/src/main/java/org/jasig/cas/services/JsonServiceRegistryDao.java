@@ -300,7 +300,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     void refreshServicesManager() {
         if (this.applicationContext == null) {
             LOGGER.debug("Application context has failed to initialize because it's null. "
-               + "Service definition may not take immediate effect, which suggests a configuration problem");
+               + "Service definition may not be immediately available to CAS, which suggests a configuration problem");
             return;
         }
         final ReloadableServicesManager manager = this.applicationContext.getBean(ReloadableServicesManager.class);

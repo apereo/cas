@@ -36,36 +36,22 @@ import java.util.Map;
 @EnableAspectJAutoProxy
 @Lazy(true)
 public class CasAuditTrailConfiguration {
-    /**
-     * The App code.
-     */
+    private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
+    
     @Value("${cas.audit.appcode:CAS}")
     private String appCode;
 
-    /**
-     * The Principal resolver.
-     */
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
-
-
-    /**
-     * The Ticket resource resolver.
-     */
+    
     @Autowired
     @Qualifier("ticketResourceResolver")
     private AuditResourceResolver ticketResourceResolver;
-
-    /**
-     * The Entry separator.
-     */
+    
     @Value("${cas.audit.singleline.separator:|}")
     private String entrySeparator;
-
-    /**
-     * The Use single line.
-     */
+    
     @Value("${cas.audit.singleline:false}")
     private boolean useSingleLine;
 
@@ -120,7 +106,7 @@ public class CasAuditTrailConfiguration {
     @RefreshScope
     @Bean(name = "authenticationActionResolver")
     public DefaultAuditActionResolver authenticationActionResolver() {
-        return new DefaultAuditActionResolver("_SUCCESS", "_FAILED");
+        return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     /**
@@ -142,7 +128,7 @@ public class CasAuditTrailConfiguration {
     @RefreshScope
     @Bean(name = "ticketValidationActionResolver")
     public DefaultAuditActionResolver ticketValidationActionResolver() {
-        return new DefaultAuditActionResolver("D", "_FAILED");
+        return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     /**

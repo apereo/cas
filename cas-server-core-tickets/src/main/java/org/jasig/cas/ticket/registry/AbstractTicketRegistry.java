@@ -53,6 +53,8 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState, Job {
 
+    private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
+    
     /** The Slf4j logger instance. */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -252,7 +254,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      */
     protected String encodeTicketId(final String ticketId)  {
         if (this.cipherExecutor == null) {
-            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            logger.trace(MESSAGE);
             return ticketId;
         }
         if (StringUtils.isBlank(ticketId)) {
@@ -270,7 +272,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      */
     protected Ticket encodeTicket(final Ticket ticket)  {
         if (this.cipherExecutor == null) {
-            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            logger.trace(MESSAGE);
             return ticket;
         }
 
@@ -298,7 +300,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      */
     protected Ticket decodeTicket(final Ticket result) {
         if (this.cipherExecutor == null) {
-            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            logger.trace(MESSAGE);
             return result;
         }
 
@@ -324,7 +326,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      */
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
         if (this.cipherExecutor == null) {
-            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            logger.trace(MESSAGE);
             return items;
         }
 

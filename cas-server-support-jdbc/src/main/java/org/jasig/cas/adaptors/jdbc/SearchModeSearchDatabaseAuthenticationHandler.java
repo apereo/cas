@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,8 +30,7 @@ import java.security.GeneralSecurityException;
  */
 @RefreshScope
 @Component("searchModeSearchDatabaseAuthenticationHandler")
-public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler
-        implements InitializingBean {
+public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
 
@@ -69,8 +67,10 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
+    /**
+     * After properties set.
+     */
     @PostConstruct
-    @Override
     public void afterPropertiesSet() {
         if (StringUtils.isNotBlank(this.tableUsers) || StringUtils.isNotBlank(this.fieldUser)
                 || StringUtils.isNotBlank(this.fieldPassword)) {

@@ -15,6 +15,8 @@ import org.springframework.webflow.engine.Flow;
 @Component("openidWebflowConfigurer")
 public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
+    private static final String OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
+
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
@@ -24,11 +26,11 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 + "&& externalContext.requestParameterMap['openid.mode'] ne 'associate'";
 
         final DecisionState decisionState = createDecisionState(flow, "selectFirstAction",
-                condition, "openIdSingleSignOnAction",
+                condition, OPEN_ID_SINGLE_SIGN_ON_ACTION,
                 getStartState(flow).getId());
 
-        final ActionState actionState = createActionState(flow, "openIdSingleSignOnAction",
-                createEvaluateAction("openIdSingleSignOnAction"));
+        final ActionState actionState = createActionState(flow, OPEN_ID_SINGLE_SIGN_ON_ACTION,
+                createEvaluateAction(OPEN_ID_SINGLE_SIGN_ON_ACTION));
 
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));

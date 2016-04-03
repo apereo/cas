@@ -4,10 +4,10 @@ import jcifs.Config;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import java.net.URL;
 
 /**
@@ -18,7 +18,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 4.2.0
  */
-public class JcifsConfig implements InitializingBean {
+public class JcifsConfig {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
 
@@ -73,7 +73,12 @@ public class JcifsConfig implements InitializingBean {
         Config.setProperty(JCIFS_PROP_NETBIOS_CACHE_POLICY, "600");
     }
 
-    @Override
+    /**
+     * After properties set.
+     *
+     * @throws Exception the exception
+     */
+    @PostConstruct
     public void afterPropertiesSet() throws Exception {
         final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
         if (propValue != null) {

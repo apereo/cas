@@ -115,7 +115,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @return whether or not the IP can / should be matched against the pattern
      */
     protected boolean ipPatternCanBeChecked(final String remoteIp) {
-        return (this.ipsToCheckPattern != null && StringUtils.isNotBlank(remoteIp));
+        return this.ipsToCheckPattern != null && StringUtils.isNotBlank(remoteIp);
     }
 
     /**

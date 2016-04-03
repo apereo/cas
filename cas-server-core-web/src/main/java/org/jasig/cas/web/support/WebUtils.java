@@ -53,26 +53,18 @@ public final class WebUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
     private static final String UNKNOWN_USER = "audit:unknown";
-
-    /**
-     * Flow scope attribute that determines if authn is happening at a public workstation.
-     */
+    
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
-
-    /**
-     * Scope parameter noting the authentication object.
-     **/
     private static final String PARAMETER_AUTHENTICATION = "authentication";
-
-    /**
-     * Scope parameter noting the authentication result builder.
-     **/
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
-
-    /**
-     * Scope parameter noting the result of the authentication.
-     **/
     private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
+    private static final String PARAMETER_CREDENTIAL = "credential";
+    private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
+    private static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
+    private static final String PARAMETER_REGISTERED_SERVICE = "registeredService";
+    private static final String PARAMETER_SERVICE = "service";
+    private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
+    private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
 
     /**
      * Instantiates a new web utils instance.
@@ -176,7 +168,7 @@ public final class WebUtils {
      * @return the service
      */
     public static WebApplicationService getService(final RequestContext context) {
-        return context != null ? (WebApplicationService) context.getFlowScope().get("service") : null;
+        return context != null ? (WebApplicationService) context.getFlowScope().get(PARAMETER_SERVICE) : null;
     }
 
     /**
@@ -186,7 +178,7 @@ public final class WebUtils {
      * @return the service
      */
     public static RegisteredService getRegisteredService(final RequestContext context) {
-        return context != null ? (RegisteredService) context.getFlowScope().get("registeredService") : null;
+        return context != null ? (RegisteredService) context.getFlowScope().get(PARAMETER_REGISTERED_SERVICE) : null;
     }
 
     /**
@@ -222,7 +214,7 @@ public final class WebUtils {
      */
     public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
                                                        final String ticketValue) {
-        map.put("ticketGrantingTicketId", ticketValue);
+        map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
     }
 
     /**
@@ -233,8 +225,8 @@ public final class WebUtils {
      */
     public static String getTicketGrantingTicketId(
              final RequestContext context) {
-        final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
-        final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
+        final String tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
+        final String tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
 
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
 
@@ -248,7 +240,7 @@ public final class WebUtils {
      */
     public static void putServiceTicketInRequestScope(
             final RequestContext context, final ServiceTicket ticketValue) {
-        context.getRequestScope().put("serviceTicketId", ticketValue.getId());
+        context.getRequestScope().put(PARAMETER_SERVICE_TICKET_ID, ticketValue.getId());
     }
 
     /**
@@ -258,7 +250,7 @@ public final class WebUtils {
      * @return the service ticket from request scope
      */
     public static String getServiceTicketFromRequestScope(final RequestContext context) {
-        return context.getRequestScope().getString("serviceTicketId");
+        return context.getRequestScope().getString(PARAMETER_SERVICE_TICKET_ID);
     }
 
     /**
@@ -268,7 +260,7 @@ public final class WebUtils {
      * @param url     the uri to redirect the flow
      */
     public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
-        context.getFlowScope().put("unauthorizedRedirectUrl", url);
+        context.getFlowScope().put(PARAMETER_UNAUTHORIZED_REDIRECT_URL, url);
     }
 
     /**
@@ -278,7 +270,7 @@ public final class WebUtils {
      * @param requests the requests
      */
     public static void putLogoutRequests(final RequestContext context, final List<LogoutRequest> requests) {
-        context.getFlowScope().put("logoutRequests", requests);
+        context.getFlowScope().put(PARAMETER_LOGOUT_REQUESTS, requests);
     }
 
     /**
@@ -288,7 +280,7 @@ public final class WebUtils {
      * @return the logout requests
      */
     public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
-        return (List<LogoutRequest>) context.getFlowScope().get("logoutRequests");
+        return (List<LogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
     }
 
     /**
@@ -298,7 +290,7 @@ public final class WebUtils {
      * @param service the service
      */
     public static void putService(final RequestContext context, final Service service) {
-        context.getFlowScope().put("service", service);
+        context.getFlowScope().put(PARAMETER_SERVICE, service);
     }
 
     /**
@@ -319,7 +311,7 @@ public final class WebUtils {
      */
     public static void putRegisteredService(final RequestContext context,
                                             final RegisteredService registeredService) {
-        context.getFlowScope().put("registeredService", registeredService);
+        context.getFlowScope().put(PARAMETER_REGISTERED_SERVICE, registeredService);
     }
 
     /**
@@ -329,14 +321,14 @@ public final class WebUtils {
      * @return the credential, or null if it cant be found in the context or if it has no id.
      */
     public static Credential getCredential(final RequestContext context) {
-        final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
-        final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
+        final Credential cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
+        final Credential cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
 
         Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
 
         if (credential == null) {
             final FlowSession session = context.getFlowExecutionContext().getActiveSession();
-            credential = session.getScope().get("credential", Credential.class);
+            credential = session.getScope().get(PARAMETER_CREDENTIAL, Credential.class);
         }
         if (credential != null && StringUtils.isBlank(credential.getId())) {
             return null;
@@ -539,7 +531,7 @@ public final class WebUtils {
      */
     public static void putUnauthorizedRedirectUrl(final RequestContext context,
                                                   final URI unauthorizedRedirectUrl) {
-        context.getFlowScope().put("unauthorizedRedirectUrl", unauthorizedRedirectUrl);
+        context.getFlowScope().put(PARAMETER_UNAUTHORIZED_REDIRECT_URL, unauthorizedRedirectUrl);
     }
 
 }

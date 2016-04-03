@@ -15,7 +15,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
@@ -141,10 +141,10 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
+        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
 
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
-        RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket);
+        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket);
         evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
@@ -199,9 +199,9 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         try {
-            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service,
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, proxyGrantingTicketObject);
-            RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
+            RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
         } catch (final PrincipalException e) {
             throw new UnauthorizedSsoServiceException();
         }
@@ -245,7 +245,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceTicket.getService());
 
-        RegisteredServiceAccessStrategySupport
+        RegisteredServiceAccessStrategyUtils
                 .ensurePrincipalAccessIsAllowedForService(serviceTicket, authenticationResult, registeredService);
 
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
@@ -277,7 +277,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
         final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
@@ -355,7 +355,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         }
 
 

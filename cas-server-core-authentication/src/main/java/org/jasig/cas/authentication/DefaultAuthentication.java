@@ -99,18 +99,12 @@ public class DefaultAuthentication implements Authentication {
             final Map<String, HandlerResult> successes,
             final Map<String, Class<? extends Exception>> failures) {
 
-        Assert.notNull(date, "Date cannot be null");
+        this(date, principal, attributes, successes);
+        
         Assert.notNull(credentials, "Credential cannot be null");
-        Assert.notNull(principal, "Principal cannot be null");
-        Assert.notNull(successes, "Successes cannot be null");
         Assert.notEmpty(credentials, "Credential cannot be empty");
-        Assert.notEmpty(successes, "Successes cannot be empty");
 
-        this.authenticationDate = date;
         this.credentials = credentials;
-        this.principal = principal;
-        this.attributes = attributes.isEmpty() ? null : attributes;
-        this.successes = successes;
         this.failures = failures.isEmpty() ? null : failures;
     }
 

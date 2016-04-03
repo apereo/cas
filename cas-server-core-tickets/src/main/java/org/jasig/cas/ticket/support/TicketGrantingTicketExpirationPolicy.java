@@ -4,12 +4,12 @@ import org.jasig.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RefreshScope
 @Component("ticketGrantingTicketExpirationPolicy")
-public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements InitializingBean {
+public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 7670537200691354820L;
@@ -58,9 +58,12 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     }
 
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        Assert.isTrue((maxTimeToLiveInMilliSeconds >= timeToKillInMilliSeconds),
+    /**
+     * After properties set.
+     */
+    @PostConstruct
+    public void afterPropertiesSet() {
+        Assert.isTrue(maxTimeToLiveInMilliSeconds >= timeToKillInMilliSeconds,
                 "maxTimeToLiveInMilliSeconds must be greater than or equal to timeToKillInMilliSeconds.");
     }
 

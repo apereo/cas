@@ -18,6 +18,7 @@ public class DelegatingController extends AbstractController {
 
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_ERROR_VIEW_NAME = "casServiceFailureView";
+    private static final String INVALID_REQUEST = "INVALID_REQUEST";
 
     private List<AbstractDelegateController> delegates;
 
@@ -43,7 +44,7 @@ public class DelegatingController extends AbstractController {
                 return delegate.handleRequestInternal(request, response);
             }
         }
-        return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
+        return generateErrorView(INVALID_REQUEST, INVALID_REQUEST, null);
     }
 
     /**

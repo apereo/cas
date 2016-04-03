@@ -4,13 +4,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
+public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
 
     private static final int DEFAULT_FAILURE_THRESHOLD = 100;
 
@@ -43,16 +44,22 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private double thresholdRate;
 
 
-    @Override
+    /**
+     * After properties set.
+     *
+     * @throws Exception the exception
+     */
+    @PostConstruct
     public void afterPropertiesSet() throws Exception {
         this.thresholdRate = (double) failureThreshold / (double) failureRangeInSeconds;
+        logger.debug("Calculated threshold rate as {}", thresholdRate);
     }
 
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
         // we only care about post because that's the only instance where we can get anything useful besides IP address.
-        if (!"POST".equals(request.getMethod())) {
+        if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return true;
         }
 
@@ -71,7 +78,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object o, final ModelAndView modelAndView) throws Exception {
-        if (!"POST".equals(request.getMethod())) {
+        if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return;
         }
 

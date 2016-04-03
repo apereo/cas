@@ -58,7 +58,7 @@ public class ServiceAuthorizationCheck extends AbstractAction {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            final String msg = String.format("Service Management: Unauthorized Service Access. "
+            final String msg = String.format("Service Management: missing service. "
                     + "Service [%s] is not found in service registry.", service.getId());
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);

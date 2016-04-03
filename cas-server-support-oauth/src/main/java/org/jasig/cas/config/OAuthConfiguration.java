@@ -1,5 +1,6 @@
 package org.jasig.cas.config;
 
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
@@ -13,7 +14,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -24,14 +24,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
-@RefreshScope
 @ComponentScan(basePackages = {"org.pac4j.springframework"})
-@Lazy(true)
 public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
-    /**
-     * The Oauth client authenticator.
-     */
+    private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
+
     @Autowired
     @Qualifier("oAuthUserAuthenticator")
     private UsernamePasswordAuthenticator oAuthUserAuthenticator;
@@ -40,16 +37,9 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("oAuthClientAuthenticator")
     private UsernamePasswordAuthenticator oAuthClientAuthenticator;
 
-
-    /**
-     * The Cas login url.
-     */
     @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String casLoginUrl;
 
-    /**
-     * The Callback url.
-     */
     @Value("${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize")
     private String callbackUrl;
     
@@ -62,7 +52,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean(name = "oauthSecConfig")
     public Config oauthSecConfig() {
         final CasClient oauthCasClient = new CasClient(this.casLoginUrl);
-        oauthCasClient.setName("CasOAuthClient");
+        oauthCasClient.setName(CAS_OAUTH_CLIENT);
 
         final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(this.oAuthClientAuthenticator);
         basicAuthClient.setName("clientBasicAuth");
@@ -86,7 +76,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean(name = "requiresAuthenticationAuthorizeInterceptor")
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        return new RequiresAuthenticationInterceptor(oauthSecConfig(), "CasOAuthClient");
+        return new RequiresAuthenticationInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
     
     /**
@@ -103,9 +93,9 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(requiresAuthenticationAuthorizeInterceptor())
-                .addPathPatterns("/oauth2.0/authorize*");
+                .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat(OAuthConstants.AUTHORIZE_URL).concat("*"));
 
         registry.addInterceptor(requiresAuthenticationAccessTokenInterceptor())
-                .addPathPatterns("/oauth2.0/accessToken*");
+                .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat(OAuthConstants.ACCESS_TOKEN_URL).concat("*"));
     }
 }

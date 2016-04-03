@@ -60,60 +60,36 @@ import java.util.Properties;
 @Configuration("casManagementWebAppConfiguration")
 @Lazy(true)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
-    
-    /**
-     * The User properties file.
-     */
+
+    private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
+    private static final String AUDIT_ACTION_SUFFIX_SUCCESS = "_SUCCESS";
+
     @Value("${user.details.file.location:classpath:user-details.properties}")
     private Resource userPropertiesFile;
     
-    /**
-     * The Authorization generator.
-     */
     @Autowired
     @Qualifier("authorizationGenerator")
     private AuthorizationGenerator authorizationGenerator;
 
-    /**
-     * The Roles.
-     */
     @Value("${cas-management.securityContext.serviceProperties.adminRoles}")
     private String roles;
 
-    /**
-     * The Login url.
-     */
     @Value("${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}")
     private String loginUrl;
-
-    /**
-     * The Callback url.
-     */
+    
     @Value("${cas-management.securityContext.serviceProperties.service}")
     private String callbackUrl;
 
-    /**
-     * The Principal resolver.
-     */
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
-
-    /**
-     * The Audit resource resolver map.
-     */
+    
     @javax.annotation.Resource(name = "auditResourceResolverMap")
     private Map auditResourceResolverMap;
-
-    /**
-     * The Audit action resolver map.
-     */
+    
     @javax.annotation.Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
-
-    /**
-     * The Base name.
-     */
+    
     @Value("${cas-management.viewResolver.basename:default_views}")
     private String baseName;
 
@@ -242,7 +218,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean(name = "saveServiceActionResolver")
     public DefaultAuditActionResolver saveServiceActionResolver() {
-        return new DefaultAuditActionResolver("_SUCCESS", "_FAILED");
+        return new DefaultAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     /**
@@ -252,7 +228,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean(name = "deleteServiceActionResolver")
     public ObjectCreationAuditActionResolver deleteServiceActionResolver() {
-        return new ObjectCreationAuditActionResolver("_SUCCESS", "_FAILED");
+        return new ObjectCreationAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     /**

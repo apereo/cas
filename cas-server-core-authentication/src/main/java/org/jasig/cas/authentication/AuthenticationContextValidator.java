@@ -120,8 +120,8 @@ public class AuthenticationContextValidator {
         final RegisteredServiceMultifactorPolicy.FailureModes mode = getMultifactorFailureModeForService(service);
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM) {
             if (!requestedProvider.get().verify(service)) {
-                logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
-                                + "since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
+                logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy. "
+                                + "Since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
                                 + "of the present authentication context", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
                 return new Pair(true, requestedProvider);

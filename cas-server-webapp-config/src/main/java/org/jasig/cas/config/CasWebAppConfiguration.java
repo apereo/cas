@@ -101,7 +101,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the map
      */
-    @RefreshScope
     @Bean(name = "serviceThemeResolverSupportedBrowsers")
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
@@ -118,7 +117,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the servlet listener registration bean
      */
-    @RefreshScope
     @Bean(name = "log4jServletContextListener")
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
@@ -133,7 +131,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the simple controller handler adapter
      */
-    @RefreshScope
     @Bean(name = "simpleControllerHandlerAdapter")
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
