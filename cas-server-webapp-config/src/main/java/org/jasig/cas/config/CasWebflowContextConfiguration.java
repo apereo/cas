@@ -16,7 +16,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ViewResolver;
@@ -48,8 +47,8 @@ import java.io.OutputStream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Configuration("casWebflowContextConfiguration")
-@Lazy(true)
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
@@ -329,7 +328,7 @@ public class CasWebflowContextConfiguration {
      */
     @RefreshScope
     @Bean(name = "loginFlowExecutor")
-    @Lazy(true)
+    
     public FlowExecutorImpl loginFlowExecutor() {
         if (this.webflowSessionStorage) {
             final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();

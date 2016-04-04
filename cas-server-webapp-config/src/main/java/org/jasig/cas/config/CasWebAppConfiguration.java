@@ -8,7 +8,6 @@ import org.springframework.boot.context.embedded.ServletListenerRegistrationBean
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
@@ -28,7 +27,6 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casWebAppConfiguration")
-@Lazy(true)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     
     @Autowired

@@ -8,7 +8,6 @@ import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Collections;
@@ -23,7 +22,6 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casFiltersConfiguration")
-@Lazy(true)
 public class CasFiltersConfiguration {
 
     /**

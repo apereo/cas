@@ -9,7 +9,6 @@ import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCusto
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
@@ -22,7 +21,6 @@ import org.springframework.web.servlet.mvc.WebContentInterceptor;
  * @since 5.0.0
  */
 @Configuration("casSecurityContextConfiguration")
-@Lazy(true)
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     
     @Value("${cas.securityContext.adminpages.ip:127\\.0\\.0\\.1}")
