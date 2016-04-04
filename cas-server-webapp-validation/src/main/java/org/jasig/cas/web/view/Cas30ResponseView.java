@@ -4,6 +4,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,10 +14,13 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Renders and prepares CAS3 views. This view is responsible
@@ -115,6 +119,21 @@ public class Cas30ResponseView extends Cas20ResponseView {
         super.putIntoModel(model,
                 CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
                 encodedAttributes);
+
+        final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
+        encodedAttributes.forEach((k, v) -> {
+            final Set<Object> values = CollectionUtils.convertValueToCollection(v);
+            values.forEach(value -> {
+                final StringBuilder builder = new StringBuilder();
+                builder.append("<cas:".concat(k).concat(">"));
+                builder.append(value.toString().trim());
+                builder.append("</cas:".concat(k).concat(">"));
+                formattedAttributes.add(builder.toString());
+            });
+        });
+        super.putIntoModel(model,
+                CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES,
+                formattedAttributes);
     }
 
     /**

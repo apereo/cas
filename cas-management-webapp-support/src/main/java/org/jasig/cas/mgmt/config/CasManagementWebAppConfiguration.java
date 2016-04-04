@@ -24,9 +24,9 @@ import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -58,7 +58,7 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("casManagementWebAppConfiguration")
-@Lazy(true)
+@RefreshScope
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";

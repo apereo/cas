@@ -10,7 +10,6 @@ import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,16 +72,13 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
         final AuthnRequest authnRequest = decodeRequest(request, decoder, AuthnRequest.class);
-        final AssertionConsumerService acs =
-                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, this.servicesManager, 
-                        samlRegisteredServiceCachingMetadataResolver);
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
         
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         registeredService, authnRequest);
-
-
+        
         if (!authnRequest.isSigned()) {
             if (adaptor.isAuthnRequestsSigned()) {
                 logger.error("Metadata for [{}] says authentication requests are signed, yet this authentication request is not",

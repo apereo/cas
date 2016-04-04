@@ -15,15 +15,25 @@ import java.io.Serializable;
  * an implementation of this strategy may be used to detect the query parameters
  * inside the URL to use the real service for user attribute processing and more.
  * Services resolved via this strategy must still be vetted against the service registry.
+ *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface ValidationServiceSelectionStrategy extends Serializable {
+public interface ValidationServiceSelectionStrategy extends Serializable, Comparable<ValidationServiceSelectionStrategy> {
 
     /**
      * Resolves the real service from the provided service, if appropriate.
+     *
      * @param service the provided service by the caller
      * @return the resolved service
      */
     Service resolveServiceFrom(Service service);
+
+    /**
+     * Indicates whether this strategy supports service selection.
+     *
+     * @param service the service
+     * @return true/false
+     */
+    boolean supports(Service service);
 }

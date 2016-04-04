@@ -57,6 +57,7 @@ public class SamlMetadataController {
      */
     @PostConstruct
     public void postConstruct() {
+        this.metadataAndCertificatesGenerationService.performGenerationSteps();
     }
 
     /**

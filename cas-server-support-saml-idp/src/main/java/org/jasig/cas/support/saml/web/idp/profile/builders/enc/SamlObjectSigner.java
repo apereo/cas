@@ -375,7 +375,7 @@ public class SamlObjectSigner {
 
         final CriteriaSet criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
-        criteriaSet.add(new EntityIdCriterion(profileRequest.getIssuer().getValue()));
+        criteriaSet.add(new EntityIdCriterion(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest)));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
 

@@ -20,7 +20,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,9 +31,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Configuration("casAuditTrailConfiguration")
 @EnableAspectJAutoProxy
-@Lazy(true)
 public class CasAuditTrailConfiguration {
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
     

@@ -25,6 +25,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("radiusMfaConfiguration")
+@RefreshScope
 public class RadiusMultifactorConfiguration {
 
     /**

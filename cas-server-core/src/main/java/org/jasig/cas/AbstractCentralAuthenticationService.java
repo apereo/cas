@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -77,8 +78,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected TicketFactory ticketFactory;
 
     /** The service selection strategy during validation events. **/
-    @Resource(name="defaultValidationServiceSelectionStrategy")
-    protected ValidationServiceSelectionStrategy validationServiceSelectionStrategy;
+    @Resource(name="validationServiceSelectionStrategies")
+    protected List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when

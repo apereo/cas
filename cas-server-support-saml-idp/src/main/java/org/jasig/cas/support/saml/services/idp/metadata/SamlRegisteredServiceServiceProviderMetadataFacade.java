@@ -3,6 +3,7 @@ package org.jasig.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.util.DateTimeUtils;
@@ -84,7 +85,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                          final SamlRegisteredService registeredService,
                                                                          final RequestAbstractType request) {
-        return get(resolver, registeredService, request.getIssuer().getValue());
+        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlRequest(request));
     }
     
     private static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,

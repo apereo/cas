@@ -47,6 +47,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -276,9 +277,6 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     @Counted(name="VALIDATE_SERVICE_TICKET_COUNTER", monotonic=true)
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-
         final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
@@ -305,19 +303,32 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
                 }
             }
 
+            final Service selectedService = validationServiceSelectionStrategies.stream()
+                    .sorted()
+                    .filter(s -> s.supports(service))
+                    .findFirst()
+                    .get()
+                    .resolveServiceFrom(service);
+                    
+            
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
+            logger.debug("Located registered service definition {} from {} to handle validation request",
+                    registeredService, selectedService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+
             final TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
             final Authentication authentication = getAuthenticationSatisfiedByPolicy(
-                    root, new ServiceContext(serviceTicket.getService(), registeredService));
+                    root, new ServiceContext(selectedService, registeredService));
             final Principal principal = authentication.getPrincipal();
 
             final RegisteredServiceAttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
             logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
-            
+
             @SuppressWarnings("unchecked")
             final Map<String, Object> attributesToRelease = attributePolicy != null
-                    ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
-            
-            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
+                    ? attributePolicy.getAttributes(principal) : new HashMap<>();
+
+            final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
@@ -325,13 +336,12 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             final Assertion assertion = new ImmutableAssertion(
                     builder.build(),
                     serviceTicket.getGrantingTicket().getChainedAuthentications(),
-                    serviceTicket.getService(),
+                    selectedService,
                     serviceTicket.isFromNewLogin());
 
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
 
             return assertion;
-
         } finally {
             if (serviceTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(serviceTicketId);

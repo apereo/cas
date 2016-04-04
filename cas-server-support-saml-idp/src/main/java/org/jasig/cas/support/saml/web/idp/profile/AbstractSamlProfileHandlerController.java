@@ -19,6 +19,7 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPConstants;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
@@ -196,6 +197,7 @@ public abstract class AbstractSamlProfileHandlerController {
         if (!servicesManager.matchesExistingService(callbackService)) {
             final RegexRegisteredService service = new RegexRegisteredService();
             service.setId(new SecureRandom().nextLong());
+            service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(" Callback Url"));
             service.setServiceId(callbackService.getId());
@@ -313,7 +315,8 @@ public abstract class AbstractSamlProfileHandlerController {
             throws SamlException {
         try (final StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
-            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, authnRequest.getIssuer().getValue()));
+            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, 
+                    SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
 
             final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes("UTF-8"));
             builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest));

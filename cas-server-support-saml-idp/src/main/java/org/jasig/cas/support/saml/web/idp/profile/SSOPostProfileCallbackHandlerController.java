@@ -11,7 +11,6 @@ import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,10 +67,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
             throw new SamlException("CAS assertion received is invalid. This normally indicates that the assertion received has expired "
                     + " and is not valid within the time constraints of the authentication event");
         }
-        final AssertionConsumerService acs =
-                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest,
-                        this.servicesManager, samlRegisteredServiceCachingMetadataResolver);
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 
         logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());

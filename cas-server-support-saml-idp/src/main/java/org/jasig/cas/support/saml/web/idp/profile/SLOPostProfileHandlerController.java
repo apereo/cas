@@ -72,7 +72,8 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             throw new SAMLException("Logout request is not signed but should be.");
         } else if (logoutRequest.isSigned()) {
             final MetadataResolver resolver = SamlIdPUtils.getMetadataResolverForAllSamlServices(this.servicesManager,
-                    logoutRequest.getIssuer().getValue(), this.samlRegisteredServiceCachingMetadataResolver);
+                    SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest),
+                    this.samlRegisteredServiceCachingMetadataResolver);
             this.samlObjectSigner.verifySamlProfileRequestIfNeeded(logoutRequest, resolver);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);

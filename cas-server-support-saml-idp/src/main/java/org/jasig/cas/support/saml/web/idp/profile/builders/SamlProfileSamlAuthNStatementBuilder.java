@@ -2,6 +2,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -86,7 +87,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     protected SubjectLocality buildSubjectLocality(final Assertion assertion, final AuthnRequest authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
-        subjectLocality.setAddress(authnRequest.getIssuer().getValue());
+        subjectLocality.setAddress(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
         return subjectLocality;
     }
 }

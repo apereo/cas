@@ -5,6 +5,7 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -18,7 +19,8 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration
+@RefreshScope
+@Configuration("hazelcastSessionConfiguration")
 @EnableHazelcastHttpSession
 public class HazelcastSessionConfiguration {
     
@@ -46,7 +48,4 @@ public class HazelcastSessionConfiguration {
             throw new RuntimeException(e);
         }
     }
-    
-   
-
 }

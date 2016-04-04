@@ -17,4 +17,14 @@ public class DefaultValidationServiceSelectionStrategy implements ValidationServ
     public Service resolveServiceFrom(final Service service) {
         return service;
     }
+
+    @Override
+    public boolean supports(final Service service) {
+        return true;
+    }
+
+    @Override
+    public int compareTo(final ValidationServiceSelectionStrategy o) {
+        return Integer.MAX_VALUE;
+    }
 }

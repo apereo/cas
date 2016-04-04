@@ -19,6 +19,7 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -122,7 +123,7 @@ public final class SamlIdPUtils {
         try {
             final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
             if (authnRequest.getAssertionConsumerServiceIndex() != null) {
-                final String issuer = authnRequest.getIssuer().getValue();
+                final String issuer = getIssuerFromSamlRequest(authnRequest);
                 final MetadataResolver samlResolver = getMetadataResolverForAllSamlServices(servicesManager, issuer, resolver);
                 final CriteriaSet criteriaSet = new CriteriaSet();
                 criteriaSet.add(new EntityIdCriterion(issuer));
@@ -167,6 +168,16 @@ public final class SamlIdPUtils {
         } catch (final Exception e) {
             throw new RuntimeException(new SamlException(e.getMessage(), e));
         }
+    }
+
+    /**
+     * Gets issuer from saml request.
+     *
+     * @param request the request
+     * @return the issuer from saml request
+     */
+    public static String getIssuerFromSamlRequest(final RequestAbstractType request) {
+        return request.getIssuer().getValue();
     }
 }
 

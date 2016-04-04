@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
  * @since 5.0.0
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
+@RefreshScope
 public class MongoDbServiceRegistryConfiguration {
 
     /**

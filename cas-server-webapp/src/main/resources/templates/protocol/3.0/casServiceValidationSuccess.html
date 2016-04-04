@@ -1,15 +1,13 @@
-<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas' th:inline="text">
+<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
     <cas:authenticationSuccess>
-        <cas:user>[[${principal.id}]]</cas:user>
-        <cas:proxyGrantingTicket th:if="${pgtIou}">[[${pgtIou}]]</cas:proxyGrantingTicket>
+        <cas:user th:text="${principal.id}" />
+        <cas:proxyGrantingTicket th:if="${pgtIou}" th:text="${pgtIou"/>
         <cas:proxies th:if="${not #lists.isEmpty(chainedAuthentications)}">
-            <cas:proxy th:each="proxy : ${chainedAuthentications}">[[${proxy.principal.id}]]</cas:proxy>
+            <cas:proxy th:each="proxy : ${chainedAuthentications}" th:text="${proxy.principal.id}" />
         </cas:proxies>
-        <cas:attributes th:if="${not #maps.isEmpty(attributes)}">
-            <span th:remove="tag" th:each="attr : ${attributes.keySet()}">
-                <span th:remove="tag" th:each="attrvalue : ${attributes.get(attr)}">
-                    &lt;cas:[[${attr}]]&gt;<span th:remove="tag" th:text="${attrvalue}"/>&lt;/cas:[[${attr}]]&gt;
-                </span>
+        <cas:attributes th:if="${not #lists.isEmpty(formattedAttributes)}">
+            <span th:each="attr : ${formattedAttributes}" th:remove="tag">
+                <span th:utext="${attr}" th:remove="tag" />
             </span>
         </cas:attributes>
     </cas:authenticationSuccess>
