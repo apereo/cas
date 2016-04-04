@@ -113,8 +113,8 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
 
     private void initializeResourcesFromContext() {
         try {
-            this.resources = applicationContext.getBean("x509CrlResources", Set.class);
-            logger.debug("Located {} CRL resources from configuration", resources.size());
+            this.resources = this.applicationContext.getBean("x509CrlResources", Set.class);
+            logger.debug("Located {} CRL resources from configuration", this.resources.size());
         } catch (final Exception e) {
             logger.debug("[x509CrlResources] is not defined in the application context");
         }
@@ -162,7 +162,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
     }
 
     private boolean validateConfiguration() {
-        if (resources == null || resources.isEmpty()) {
+        if (this.resources == null || this.resources.isEmpty()) {
             logger.debug("{} is not configured with resources. Skipping configuration...",
                     this.getClass().getSimpleName());
             return false;

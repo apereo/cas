@@ -68,7 +68,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                     attributes,
                     principalId);
         }
-        
+
         logger.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].",
                 service.getId(), principalId, principal.getId());
         return principalId;
@@ -103,7 +103,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(usernameAttribute)
+                .append(this.usernameAttribute)
                 .toHashCode();
     }
 

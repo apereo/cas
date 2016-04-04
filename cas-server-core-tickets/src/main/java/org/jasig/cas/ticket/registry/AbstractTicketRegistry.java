@@ -87,13 +87,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      */
     @SuppressWarnings("unchecked")
     public AbstractTicketRegistry() {
-        ticketDelegators.add(new Pair(ProxyGrantingTicket.class,
+        this.ticketDelegators.add(new Pair(ProxyGrantingTicket.class,
                 AbstractTicketDelegator.getDefaultConstructor(ProxyGrantingTicketDelegator.class)));
-        ticketDelegators.add(new Pair(TicketGrantingTicket.class,
+        this.ticketDelegators.add(new Pair(TicketGrantingTicket.class,
                 AbstractTicketDelegator.getDefaultConstructor(TicketGrantingTicketDelegator.class)));
-        ticketDelegators.add(new Pair(ProxyTicket.class,
+        this.ticketDelegators.add(new Pair(ProxyTicket.class,
                 AbstractTicketDelegator.getDefaultConstructor(ProxyTicketDelegator.class)));
-        ticketDelegators.add(new Pair(ServiceTicket.class,
+        this.ticketDelegators.add(new Pair(ServiceTicket.class,
                 AbstractTicketDelegator.getDefaultConstructor(ServiceTicketDelegator.class)));
     }
 
@@ -125,14 +125,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
     @Override
     public long sessionCount() {
-      logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+        logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Long.MIN_VALUE);
       return Long.MIN_VALUE;
     }
 
     @Override
     public long serviceTicketCount() {
-      logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+        logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Long.MIN_VALUE);
       return Long.MIN_VALUE;
     }
@@ -227,7 +227,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return null;
         }
 
-        for (final Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>> ticketDelegator: ticketDelegators) {
+        for (final Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>> ticketDelegator: this.ticketDelegators) {
             final Class<? extends Ticket> clazz = ticketDelegator.getFirst();
             if (clazz.isAssignableFrom(ticket.getClass())) {
                 final Constructor<? extends AbstractTicketDelegator> constructor = ticketDelegator.getSecond();
@@ -280,7 +280,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             logger.debug("Ticket passed is null and cannot be encoded");
             return null;
         }
-        
+
         logger.info("Encoding [{}]", ticket);
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
@@ -335,7 +335,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
     @Nullable
     public List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> getTicketDelegators() {
-        return ticketDelegators;
+        return this.ticketDelegators;
     }
 
     public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>>
@@ -395,13 +395,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected void scheduleCleanerJob() {
         try {
 
-            if (scheduler == null) {
+            if (this.scheduler == null) {
                 logger.warn("Ticket registry cleaner scheduler is not defined for {}. No cleaner processes will be scheduled.",
                         this.getClass().getName());
                 return;
             }
 
-            if (!cleanerEnabled) {
+            if (!this.cleanerEnabled) {
                 logger.info("Ticket registry cleaner is disabled for {}. No cleaner processes will be scheduled.",
                         this.getClass().getName());
                 return;
@@ -426,7 +426,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                             .repeatForever()).build();
 
             logger.debug("Scheduling {} job", this.getClass().getSimpleName());
-            scheduler.scheduleJob(job, trigger);
+            this.scheduler.scheduleJob(job, trigger);
             logger.info("{} will clean tickets every {} minutes",
                     this.getClass().getSimpleName(),
                     TimeUnit.SECONDS.toMinutes(this.refreshInterval));

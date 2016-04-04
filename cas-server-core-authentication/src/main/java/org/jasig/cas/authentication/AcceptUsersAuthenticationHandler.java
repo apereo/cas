@@ -69,14 +69,14 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
-        if (users == null || users.isEmpty()) {
+        if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }
         final String username = credential.getUsername();
         final String cachedPassword = this.users.get(username);
 
         if (cachedPassword == null) {
-           logger.debug("{} was not found in the map.", username);
+            logger.debug("{} was not found in the map.", username);
            throw new AccountNotFoundException(username + " not found in backing map.");
         }
 

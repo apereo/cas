@@ -135,11 +135,11 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         synchronized (this.lock) {
             if(this.grantedTicketAlready) {
-                throw new InvalidProxyGrantingTicketForServiceTicket(service);
+                throw new InvalidProxyGrantingTicketForServiceTicket(this.service);
             }
             this.grantedTicketAlready = Boolean.TRUE;
         }
-        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, service,
+        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service,
                 this.getGrantingTicket(), authentication, expirationPolicy);
         getGrantingTicket().getProxyGrantingTickets().add(pgt);
         return pgt;

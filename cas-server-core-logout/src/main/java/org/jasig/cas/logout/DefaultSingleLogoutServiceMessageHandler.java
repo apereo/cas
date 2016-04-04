@@ -80,10 +80,10 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     public LogoutRequest handle(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
-            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(singleLogoutService);
             if (serviceSupportsSingleLogout(registeredService)) {
 
-                final URL logoutUrl = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, singleLogoutService);
+                final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, singleLogoutService);
                 final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, singleLogoutService, logoutUrl);
                 final LogoutType type = registeredService.getLogoutType() == null
                         ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
@@ -158,22 +158,22 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     }
 
     public ServicesManager getServicesManager() {
-        return servicesManager;
+        return this.servicesManager;
     }
 
     public HttpClient getHttpClient() {
-        return httpClient;
+        return this.httpClient;
     }
 
     public boolean isAsynchronous() {
-        return asynchronous;
+        return this.asynchronous;
     }
 
     public SingleLogoutServiceLogoutUrlBuilder getSingleLogoutServiceLogoutUrlBuilder() {
-        return singleLogoutServiceLogoutUrlBuilder;
+        return this.singleLogoutServiceLogoutUrlBuilder;
     }
 
     public LogoutMessageCreator getLogoutMessageBuilder() {
-        return logoutMessageBuilder;
+        return this.logoutMessageBuilder;
     }
 }

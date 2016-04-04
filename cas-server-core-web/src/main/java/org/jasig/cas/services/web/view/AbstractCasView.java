@@ -414,11 +414,11 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     public CasAttributeEncoder getCasAttributeEncoder() {
-        return casAttributeEncoder;
+        return this.casAttributeEncoder;
     }
 
     public ServicesManager getServicesManager() {
-        return servicesManager;
+        return this.servicesManager;
     }
 
     /**

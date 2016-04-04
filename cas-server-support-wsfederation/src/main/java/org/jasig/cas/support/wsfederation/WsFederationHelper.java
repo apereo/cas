@@ -124,9 +124,9 @@ public class WsFederationHelper {
     public Assertion parseTokenFromString(final String wresult) {
         try (final InputStream in = new ByteArrayInputStream(wresult.getBytes("UTF-8"))) {
 
-            final Document document = configBean.getParserPool().parse(in);
+            final Document document = this.configBean.getParserPool().parse(in);
             final Element metadataRoot = document.getDocumentElement();
-            final UnmarshallerFactory unmarshallerFactory = configBean.getUnmarshallerFactory();
+            final UnmarshallerFactory unmarshallerFactory = this.configBean.getUnmarshallerFactory();
             final Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(metadataRoot);
             if (unmarshaller == null) {
                 throw new IllegalArgumentException("Unmarshaller for the metadata root element cannot be determined");

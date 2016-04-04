@@ -38,11 +38,11 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     }
 
     public String getStartingDateTime() {
-        return startingDateTime;
+        return this.startingDateTime;
     }
 
     public String getEndingDateTime() {
-        return endingDateTime;
+        return this.endingDateTime;
     }
 
     public void setStartingDateTime(final String startingDateTime) {
@@ -88,8 +88,8 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("startingDateTime", startingDateTime)
-                .append("endingDateTime", endingDateTime)
+                .append("startingDateTime", this.startingDateTime)
+                .append("endingDateTime", this.endingDateTime)
                 .toString();
     }
 

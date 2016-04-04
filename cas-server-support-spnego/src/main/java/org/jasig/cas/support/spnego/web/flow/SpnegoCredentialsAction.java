@@ -122,7 +122,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
             logger.debug("Unable to obtain the output token required.");
         }
 
-        if (spnegoCredentials.getPrincipal() == null && send401OnAuthenticationFailure) {
+        if (spnegoCredentials.getPrincipal() == null && this.send401OnAuthenticationFailure) {
             logger.debug("Setting HTTP Status to 401");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }

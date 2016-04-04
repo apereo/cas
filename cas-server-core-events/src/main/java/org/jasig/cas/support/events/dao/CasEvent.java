@@ -53,11 +53,11 @@ public class CasEvent {
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public Map<String, String> getProperties() {
-        return properties;
+        return this.properties;
     }
 
     /**
@@ -162,7 +162,7 @@ public class CasEvent {
     }
 
     public String getPrincipalId() {
-        return principalId;
+        return this.principalId;
     }
 
     public void setPrincipalId(final String principalId) {
@@ -172,7 +172,7 @@ public class CasEvent {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("type", type)
+                .append("type", this.type)
                 .append("principalId", this.principalId)
                 .toString();
     }

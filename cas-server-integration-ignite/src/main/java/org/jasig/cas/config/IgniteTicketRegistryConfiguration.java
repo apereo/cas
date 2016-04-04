@@ -69,7 +69,7 @@ public class IgniteTicketRegistryConfiguration {
      */
     @RefreshScope
     @Bean(name = "igniteConfiguration")
-    private IgniteConfiguration igniteConfiguration() {
+    public IgniteConfiguration igniteConfiguration() {
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();

@@ -35,7 +35,7 @@ public class CasSpringBeanJobFactory extends SpringBeanJobFactory {
 
     @Override
     protected Object createJobInstance(final TriggerFiredBundle bundle) throws Exception {
-        final AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+        final AutowireCapableBeanFactory beanFactory = this.applicationContext.getAutowireCapableBeanFactory();
         final Object job = super.createJobInstance(bundle);
         logger.debug("Created job {} for bundle {}", job, bundle);
         beanFactory.autowireBean(job);

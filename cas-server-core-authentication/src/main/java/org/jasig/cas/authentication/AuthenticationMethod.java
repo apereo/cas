@@ -63,23 +63,23 @@ public class AuthenticationMethod implements Comparable, Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(name)
+                .append(this.name)
                 .toHashCode();
     }
 
     public Integer getRank() {
-        return rank;
+        return this.rank;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("rank", rank)
-                .append("name", name)
+                .append("rank", this.rank)
+                .append("name", this.name)
                 .toString();
     }
 

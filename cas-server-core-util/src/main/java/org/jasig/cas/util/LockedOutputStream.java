@@ -37,13 +37,13 @@ public class LockedOutputStream extends BufferedOutputStream {
      */
     @Override
     public void close() throws IOException {
-        if (closed) {
+        if (this.closed) {
             return;
         }
         try {
-            lock.release();
+            this.lock.release();
         } finally {
-            closed = true;
+            this.closed = true;
             super.close();
         }
     }

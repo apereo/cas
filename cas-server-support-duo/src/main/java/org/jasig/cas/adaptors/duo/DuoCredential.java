@@ -56,11 +56,11 @@ public class DuoCredential implements Credential, Serializable {
     }
 
     public String getSignedDuoResponse() {
-        return signedDuoResponse;
+        return this.signedDuoResponse;
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
 

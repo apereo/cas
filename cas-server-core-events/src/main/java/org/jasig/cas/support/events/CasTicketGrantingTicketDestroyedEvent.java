@@ -29,14 +29,14 @@ public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
     }
 
     public TicketGrantingTicket getTicketGrantingTicket() {
-        return ticketGrantingTicket;
+        return this.ticketGrantingTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("ticketGrantingTicket", ticketGrantingTicket)
+                .append("ticketGrantingTicket", this.ticketGrantingTicket)
                 .toString();
     }
 }

@@ -71,7 +71,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     }
 
     public boolean isOnlyTrackMostRecentSession() {
-        return onlyTrackMostRecentSession;
+        return this.onlyTrackMostRecentSession;
     }
 
     public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {

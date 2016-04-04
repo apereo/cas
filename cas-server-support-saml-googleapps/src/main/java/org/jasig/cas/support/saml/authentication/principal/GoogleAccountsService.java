@@ -46,10 +46,10 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
 
     public String getRelayState() {
-        return relayState;
+        return this.relayState;
     }
 
     public String getRequestId() {
-        return requestId;
+        return this.requestId;
     }
 }

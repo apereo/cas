@@ -27,14 +27,14 @@ public class CasRegisteredServiceDeletedEvent extends AbstractCasEvent {
     }
 
     public RegisteredService getRegisteredService() {
-        return registeredService;
+        return this.registeredService;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("registeredService", registeredService)
+                .append("registeredService", this.registeredService)
                 .toString();
     }
 }

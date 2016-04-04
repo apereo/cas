@@ -18,11 +18,11 @@ public class SpringSecurityDelegatingPasswordEncoder implements PasswordEncoder 
 
     @Override
     public String encode(final String password) {
-        return delegate.encode(password);
+        return this.delegate.encode(password);
     }
 
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-        return delegate.matches(rawPassword, encodedPassword);
+        return this.delegate.matches(rawPassword, encodedPassword);
     }
 }

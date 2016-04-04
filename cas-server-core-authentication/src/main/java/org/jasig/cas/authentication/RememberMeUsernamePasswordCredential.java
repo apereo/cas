@@ -25,7 +25,7 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(rememberMe)
+                .append(this.rememberMe)
                 .toHashCode();
     }
 

@@ -54,7 +54,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             logger.trace("TGT is blank; proceed with flow normally.");
             return resumeFlow();
         }
-        final Authentication authentication = ticketRegistrySupport.getAuthenticationFrom(tgt);
+        final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(tgt);
         if (authentication == null) {
             logger.trace("TGT has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
@@ -65,7 +65,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
-        final Event event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+        final Event event = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
         if (event == null) {
             logger.trace("Request does not indicate a requirement for authentication policy; proceed with flow normally.");
             return resumeFlow();

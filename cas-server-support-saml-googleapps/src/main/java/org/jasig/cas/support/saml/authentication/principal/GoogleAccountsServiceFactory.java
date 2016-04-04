@@ -85,7 +85,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
-        final String xmlRequest = builder.decodeSamlAuthnRequest(
+        final String xmlRequest = this.builder.decodeSamlAuthnRequest(
                 request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
         if (StringUtils.isBlank(xmlRequest)) {
@@ -93,7 +93,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             return null;
         }
 
-        final Document document = builder.constructDocumentFromXml(xmlRequest);
+        final Document document = this.builder.constructDocumentFromXml(xmlRequest);
 
         if (document == null) {
             return null;

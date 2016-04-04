@@ -33,19 +33,19 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
     }
 
     public ProxyGrantingTicket getProxyGrantingTicket() {
-        return proxyGrantingTicket;
+        return this.proxyGrantingTicket;
     }
 
     public ProxyTicket getProxyTicket() {
-        return proxyTicket;
+        return this.proxyTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("proxyGrantingTicket", proxyGrantingTicket)
-                .append("proxyTicket", proxyTicket)
+                .append("proxyGrantingTicket", this.proxyGrantingTicket)
+                .append("proxyTicket", this.proxyTicket)
                 .toString();
     }
 }

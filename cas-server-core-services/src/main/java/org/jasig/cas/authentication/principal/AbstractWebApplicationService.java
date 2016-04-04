@@ -140,7 +140,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
      */
     @Override
     public boolean isLoggedOutAlready() {
-        return loggedOutAlready;
+        return this.loggedOutAlready;
     }
 
     /**
@@ -154,12 +154,12 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     }
 
     protected ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
-        return responseBuilder;
+        return this.responseBuilder;
     }
 
     @Override
     public ValidationResponseType getFormat() {
-        return format;
+        return this.format;
     }
 
     public void setFormat(final ValidationResponseType format) {

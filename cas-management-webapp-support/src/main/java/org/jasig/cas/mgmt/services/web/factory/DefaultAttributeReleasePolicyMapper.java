@@ -69,25 +69,25 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
     @PostConstruct
     public void initializeDefaults() {
         // use default mappers from spring context
-        if (applicationContext != null) {
-            if (attributeFilterMapper == null) {
-                attributeFilterMapper = applicationContext.getBean(
+        if (this.applicationContext != null) {
+            if (this.attributeFilterMapper == null) {
+                this.attributeFilterMapper = this.applicationContext.getBean(
                         DefaultAttributeFilterMapper.BEAN_NAME,
                         AttributeFilterMapper.class);
             }
-            if (principalAttributesRepositoryMapper == null) {
-                principalAttributesRepositoryMapper = applicationContext.getBean(
+            if (this.principalAttributesRepositoryMapper == null) {
+                this.principalAttributesRepositoryMapper = this.applicationContext.getBean(
                         DefaultPrincipalAttributesRepositoryMapper.BEAN_NAME,
                         PrincipalAttributesRepositoryMapper.class);
             }
         }
 
         // initialize default mappers if any are still missing
-        if (attributeFilterMapper == null) {
-            attributeFilterMapper = new DefaultAttributeFilterMapper();
+        if (this.attributeFilterMapper == null) {
+            this.attributeFilterMapper = new DefaultAttributeFilterMapper();
         }
-        if (principalAttributesRepositoryMapper == null) {
-            principalAttributesRepositoryMapper = new DefaultPrincipalAttributesRepositoryMapper();
+        if (this.principalAttributesRepositoryMapper == null) {
+            this.principalAttributesRepositoryMapper = new DefaultPrincipalAttributesRepositoryMapper();
         }
     }
 
@@ -102,8 +102,8 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
             attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
             attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
 
-            attributeFilterMapper.mapAttributeFilter(attrPolicy.getAttributeFilter(), bean);
-            principalAttributesRepositoryMapper.mapPrincipalRepository(attrPolicy.getPrincipalAttributesRepository(),
+            this.attributeFilterMapper.mapAttributeFilter(attrPolicy.getAttributeFilter(), bean);
+            this.principalAttributesRepositoryMapper.mapPrincipalRepository(attrPolicy.getPrincipalAttributesRepository(),
                     bean);
 
             final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
@@ -184,12 +184,12 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
         policy.setAuthorizedToReleaseCredentialPassword(attrRelease.isReleasePassword());
         policy.setAuthorizedToReleaseProxyGrantingTicket(attrRelease.isReleaseTicket());
 
-        final RegisteredServiceAttributeFilter filter = attributeFilterMapper.toAttributeFilter(data);
+        final RegisteredServiceAttributeFilter filter = this.attributeFilterMapper.toAttributeFilter(data);
         if (filter != null) {
             policy.setAttributeFilter(filter);
         }
 
-        final PrincipalAttributesRepository principalRepository = principalAttributesRepositoryMapper
+        final PrincipalAttributesRepository principalRepository = this.principalAttributesRepositoryMapper
                 .toPrincipalRepository(data);
         if (principalRepository != null) {
             policy.setPrincipalAttributesRepository(principalRepository);

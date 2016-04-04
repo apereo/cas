@@ -119,7 +119,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     }
 
     public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
+        return this.centralAuthenticationService;
     }
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
@@ -159,11 +159,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     }
 
     public PrincipalFactory getPrincipalFactory() {
-        return principalFactory;
+        return this.principalFactory;
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     /**

@@ -65,8 +65,8 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
     @Override
     public void write(final Kryo kryo, final Output output, final GoogleAccountsService service) {
         super.write(kryo, output, service);
-        kryo.writeObject(output, fieldHelper.getFieldValue(service, "requestId"));
-        kryo.writeObject(output, fieldHelper.getFieldValue(service, "relayState"));
+        kryo.writeObject(output, this.fieldHelper.getFieldValue(service, "requestId"));
+        kryo.writeObject(output, this.fieldHelper.getFieldValue(service, "relayState"));
     }
 
     @Override
@@ -82,9 +82,9 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
                     artifactId,
                     relayState,
                     requestId,
-                    privateKey,
-                    publicKey,
-                    alternateUsername);
+                    this.privateKey,
+                    this.publicKey,
+                    this.alternateUsername);
         } catch (final Exception e) {
             throw new IllegalStateException("Error creating SamlService", e);
         }

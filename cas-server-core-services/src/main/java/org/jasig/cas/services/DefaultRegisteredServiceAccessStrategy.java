@@ -144,7 +144,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @return true/false
      */
     public boolean isCaseInsensitive() {
-        return caseInsensitive;
+        return this.caseInsensitive;
     }
 
     /**
@@ -277,7 +277,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         
-        if (this.requireAllAttributes && rejectedCopy.size() < rejectedAttributes.size()) {
+        if (this.requireAllAttributes && rejectedCopy.size() < this.rejectedAttributes.size()) {
             logger.debug("Not all rejected attributes are available to the process");
             return false;
         }
@@ -397,13 +397,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("enabled", enabled)
-                .append("ssoEnabled", ssoEnabled)
-                .append("requireAllAttributes", requireAllAttributes)
-                .append("requiredAttributes", requiredAttributes)
-                .append("unauthorizedRedirectUrl", unauthorizedRedirectUrl)
-                .append("caseInsensitive", caseInsensitive)
-                .append("rejectedAttributes", rejectedAttributes)
+                .append("enabled", this.enabled)
+                .append("ssoEnabled", this.ssoEnabled)
+                .append("requireAllAttributes", this.requireAllAttributes)
+                .append("requiredAttributes", this.requiredAttributes)
+                .append("unauthorizedRedirectUrl", this.unauthorizedRedirectUrl)
+                .append("caseInsensitive", this.caseInsensitive)
+                .append("rejectedAttributes", this.rejectedAttributes)
                 .toString();
     }
 

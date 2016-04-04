@@ -14,7 +14,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyBean implem
     private boolean releaseTicket;
 
     public boolean isReleasePassword() {
-        return releasePassword;
+        return this.releasePassword;
     }
 
     public void setReleasePassword(final boolean releasePassword) {
@@ -22,7 +22,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyBean implem
     }
 
     public boolean isReleaseTicket() {
-        return releaseTicket;
+        return this.releaseTicket;
     }
 
     public void setReleaseTicket(final boolean releaseTicket) {

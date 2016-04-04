@@ -37,6 +37,6 @@ public class AuthenticationViaFormAction extends AbstractAction {
             return serviceTicketEvent;
         }
 
-        return initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+        return this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
     }
 }

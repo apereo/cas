@@ -210,8 +210,8 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("ehcacheTicketsCache", ehcacheTicketsCache)
-                .append("supportRegistryState", supportRegistryState)
+                .append("ehcacheTicketsCache", this.ehcacheTicketsCache)
+                .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
 }

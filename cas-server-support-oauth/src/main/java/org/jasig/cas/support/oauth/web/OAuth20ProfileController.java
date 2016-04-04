@@ -60,7 +60,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
             }
             try {
 
-                final AccessToken accessTokenTicket = ticketRegistry.getTicket(accessToken, AccessToken.class);
+                final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
                 if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
                     logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
                     jsonGenerator.writeStartObject();

@@ -77,7 +77,7 @@ public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredS
     @Override
     public PublicKey createInstance() throws Exception {
         try {
-            final PublicKeyFactoryBean factory = publicKeyFactoryBeanClass.newInstance();
+            final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.newInstance();
             if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
                 factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
             } else {
@@ -87,7 +87,7 @@ public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredS
             factory.setSingleton(false);
             return factory.getObject();
         } catch (final Exception e) {
-           logger.warn(e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -121,8 +121,8 @@ public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredS
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(location)
-                .append(algorithm)
+                .append(this.location)
+                .append(this.algorithm)
                 .toHashCode();
     }
 }

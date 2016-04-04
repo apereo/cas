@@ -86,11 +86,11 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     }
 
     public Resource getLocation() {
-        return location;
+        return this.location;
     }
 
     public String getAlgorithm() {
-        return algorithm;
+        return this.algorithm;
     }
 
 }

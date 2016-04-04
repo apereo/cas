@@ -67,8 +67,8 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      */
     @Override
     public String getNewTicketId(final String prefix) {
-        if (saml2compliant) {
-            return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), sourceIdDigest).base64Encode();
+        if (this.saml2compliant) {
+            return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), this.sourceIdDigest).base64Encode();
         }
         return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle()).base64Encode();
     }

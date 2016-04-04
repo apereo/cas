@@ -62,7 +62,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     protected void handleSloPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        if (singleLogoutCallbacksDisabled) {
+        if (this.singleLogoutCallbacksDisabled) {
             logger.info("Processing SAML IdP SLO requests is disabled");
             return;
         }

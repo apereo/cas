@@ -157,28 +157,28 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
         @Override
         public String chooseClientAlias(final String[] keyType, final Principal[] issuers, final Socket socket) {
-            return keyManagers.stream().map(keyManager -> keyManager.chooseClientAlias(keyType, issuers, socket))
+            return this.keyManagers.stream().map(keyManager -> keyManager.chooseClientAlias(keyType, issuers, socket))
                     .filter(alias -> alias != null).findFirst().orElse(null);
         }
 
 
         @Override
         public String chooseServerAlias(final String keyType, final Principal[] issuers, final Socket socket) {
-            return keyManagers.stream().map(keyManager -> keyManager.chooseServerAlias(keyType, issuers, socket))
+            return this.keyManagers.stream().map(keyManager -> keyManager.chooseServerAlias(keyType, issuers, socket))
                     .filter(alias -> alias != null).findFirst().orElse(null);
         }
 
 
         @Override
         public PrivateKey getPrivateKey(final String alias) {
-            return keyManagers.stream().map(keyManager -> keyManager.getPrivateKey(alias))
+            return this.keyManagers.stream().map(keyManager -> keyManager.getPrivateKey(alias))
                     .filter(privateKey -> privateKey != null).findFirst().orElse(null);
         }
 
 
         @Override
         public X509Certificate[] getCertificateChain(final String alias) {
-            return keyManagers.stream().map(keyManager -> keyManager.getCertificateChain(alias))
+            return this.keyManagers.stream().map(keyManager -> keyManager.getCertificateChain(alias))
                     .filter(chain -> chain != null && chain.length > 0)
                     .findFirst().orElse(null);
         }
@@ -186,14 +186,14 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            keyManagers.stream().forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getClientAliases(keyType, issuers))));
+            this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getClientAliases(keyType, issuers))));
             return (String[]) aliases.toArray();
         }
 
         @Override
         public  String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            keyManagers.stream().forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getServerAliases(keyType, issuers))));
+            this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getServerAliases(keyType, issuers))));
             return (String[]) aliases.toArray();
         }
 
@@ -220,7 +220,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
         @Override
         public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            final boolean trusted = trustManagers.stream().anyMatch(trustManager -> {
+            final boolean trusted = this.trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkClientTrusted(chain, authType);
                     return true;
@@ -238,7 +238,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
 
-            final boolean trusted = trustManagers.stream().anyMatch(trustManager -> {
+            final boolean trusted = this.trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkServerTrusted(chain, authType);
                     return true;
@@ -255,7 +255,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
-            trustManagers.stream().forEach(trustManager -> certificates.addAll(Arrays.asList(trustManager.getAcceptedIssuers())));
+            this.trustManagers.stream().forEach(trustManager -> certificates.addAll(Arrays.asList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[certificates.size()]);
         }
     }

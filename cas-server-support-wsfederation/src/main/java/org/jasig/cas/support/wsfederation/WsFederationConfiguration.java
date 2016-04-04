@@ -114,7 +114,7 @@ public class WsFederationConfiguration implements Serializable {
      * @return the identifier
      */
     public String getIdentityProviderIdentifier() {
-        return identityProviderIdentifier;
+        return this.identityProviderIdentifier;
     }
 
     /**
@@ -200,7 +200,7 @@ public class WsFederationConfiguration implements Serializable {
      * @return the tolerance in milliseconds
      */
     public int getTolerance() {
-        return tolerance;
+        return this.tolerance;
     }
 
     /**
@@ -218,7 +218,7 @@ public class WsFederationConfiguration implements Serializable {
      * @return an attributeMutator
      */
     public WsFederationAttributeMutator getAttributeMutator() {
-        return attributeMutator;
+        return this.attributeMutator;
     }
 
     /**
@@ -231,7 +231,7 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     public WsFedPrincipalResolutionAttributesType getAttributesType() {
-        return attributesType;
+        return this.attributesType;
     }
 
     public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {

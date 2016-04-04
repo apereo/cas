@@ -115,7 +115,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             logger.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
             final TicketGrantingTicket ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
-            final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
+            final List<LogoutRequest> logoutRequests = this.logoutManager.performLogout(ticket);
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
 
             doPublishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket));
@@ -303,7 +303,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
                 }
             }
 
-            final Service selectedService = validationServiceSelectionStrategies.stream()
+            final Service selectedService = this.validationServiceSelectionStrategies.stream()
                     .sorted()
                     .filter(s -> s.supports(service))
                     .findFirst()

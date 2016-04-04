@@ -55,7 +55,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     @Override
     protected boolean isAvailable() {
         try {
-            final String[] endpoints = yubiKeyAuthenticationHandler.getClient().getWsapiUrls();
+            final String[] endpoints = this.yubiKeyAuthenticationHandler.getClient().getWsapiUrls();
             for (final String endpoint : endpoints) {
                 logger.debug("Pinging YubiKey API endpoint at {}", endpoint);
                 final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));

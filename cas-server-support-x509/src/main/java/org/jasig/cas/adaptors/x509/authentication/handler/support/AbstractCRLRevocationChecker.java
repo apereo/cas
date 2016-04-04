@@ -120,11 +120,11 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
 
 
     public RevocationPolicy<Void> getUnavailableCRLPolicy() {
-        return unavailableCRLPolicy;
+        return this.unavailableCRLPolicy;
     }
 
     public RevocationPolicy<X509CRL> getExpiredCRLPolicy() {
-        return expiredCRLPolicy;
+        return this.expiredCRLPolicy;
     }
 
     /**

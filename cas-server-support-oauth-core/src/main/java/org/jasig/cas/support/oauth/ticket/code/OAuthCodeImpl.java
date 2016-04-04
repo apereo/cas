@@ -111,7 +111,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     @Override
     public Authentication getAuthentication() {
-        return authentication;
+        return this.authentication;
     }
 
     @Override

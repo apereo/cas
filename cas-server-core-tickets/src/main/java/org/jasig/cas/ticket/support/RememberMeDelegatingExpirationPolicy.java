@@ -52,11 +52,11 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
 
     @PostConstruct
     private void postConstruct() {
-        if (rememberMeExpirationPolicy != null) {
-            LOGGER.debug("Using remember-me expiration policy of {}", rememberMeExpirationPolicy);
+        if (this.rememberMeExpirationPolicy != null) {
+            LOGGER.debug("Using remember-me expiration policy of {}", this.rememberMeExpirationPolicy);
         }
-        if (sessionExpirationPolicy != null) {
-            LOGGER.debug("Using session expiration policy of {}", sessionExpirationPolicy);
+        if (this.sessionExpirationPolicy != null) {
+            LOGGER.debug("Using session expiration policy of {}", this.sessionExpirationPolicy);
         }
     }
 
@@ -68,11 +68,11 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
                     get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
             if (b == null || b.equals(Boolean.FALSE)) {
-                LOGGER.debug("Ticket is not associated with a remember-me authentication. Invoking {}", sessionExpirationPolicy);
+                LOGGER.debug("Ticket is not associated with a remember-me authentication. Invoking {}", this.sessionExpirationPolicy);
                 return this.sessionExpirationPolicy.isExpired(ticketState);
             }
 
-            LOGGER.debug("Ticket is associated with a remember-me authentication. Invoking {}", rememberMeExpirationPolicy);
+            LOGGER.debug("Ticket is associated with a remember-me authentication. Invoking {}", this.rememberMeExpirationPolicy);
             return this.rememberMeExpirationPolicy.isExpired(ticketState);
         }
         LOGGER.warn("No expiration policy settings are defined");
@@ -82,7 +82,7 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
     @Override
     public Long getTimeToLive() {
         if (this.rememberMeExpirationPolicy != null) {
-            return rememberMeExpirationPolicy.getTimeToLive();
+            return this.rememberMeExpirationPolicy.getTimeToLive();
         }
         return 0L;
     }
@@ -90,7 +90,7 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
     @Override
     public Long getTimeToIdle() {
         if (this.rememberMeExpirationPolicy != null) {
-            return rememberMeExpirationPolicy.getTimeToIdle();
+            return this.rememberMeExpirationPolicy.getTimeToIdle();
         }
         return 0L;
     }

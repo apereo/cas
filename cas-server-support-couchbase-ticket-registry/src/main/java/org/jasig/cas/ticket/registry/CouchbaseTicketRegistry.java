@@ -71,7 +71,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
             final SerializableDocument document =
                     SerializableDocument.create(ticket.getId(), 
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
-            couchbase.bucket().upsert(document);
+            this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed updating {}: {}", ticket, e);
         }
@@ -85,7 +85,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
             final SerializableDocument document =
                     SerializableDocument.create(ticket.getId(), 
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
-            couchbase.bucket().upsert(document);
+            this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed adding {}: {}", ticketToAdd, e);
         }
@@ -99,7 +99,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
                 return null;
             }
 
-            final SerializableDocument document = couchbase.bucket().get(encTicketId, SerializableDocument.class);
+            final SerializableDocument document = this.couchbase.bucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 logger.debug("Got ticket {} from registry.", t);
@@ -120,8 +120,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
     @PostConstruct
     public void initialize() {
         System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
-        couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
-        couchbase.initialize();
+        this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
+        this.couchbase.initialize();
     }
 
 
@@ -131,7 +131,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
     @PreDestroy
     public void destroy() {
         try {
-            couchbase.shutdown();
+            this.couchbase.shutdown();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -161,7 +161,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
     public boolean deleteSingleTicket(final String ticketId) {
         logger.debug("Deleting ticket {}", ticketId);
         try {
-            return couchbase.bucket().remove(ticketId) != null;
+            return this.couchbase.bucket().remove(ticketId) != null;
         } catch (final Exception e) {
             logger.error("Failed deleting {}: {}", ticketId, e);
             return false;
@@ -169,7 +169,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
     }
 
     private int runQuery(final String prefix) {
-        final ViewResult allKeys = couchbase.bucket().query(
+        final ViewResult allKeys = this.couchbase.bucket().query(
                 ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
                         .startKey(prefix)
                         .endKey(prefix + END_TOKEN)

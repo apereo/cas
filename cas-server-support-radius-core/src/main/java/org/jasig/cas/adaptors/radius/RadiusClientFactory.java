@@ -96,10 +96,10 @@ public class RadiusClientFactory {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("accountingPort", accountingPort)
-                .append("authenticationPort", authenticationPort)
-                .append("socketTimeout", socketTimeout)
-                .append("inetAddress", inetAddress)
+                .append("accountingPort", this.accountingPort)
+                .append("authenticationPort", this.authenticationPort)
+                .append("socketTimeout", this.socketTimeout)
+                .append("inetAddress", this.inetAddress)
                 .toString();
     }
 }

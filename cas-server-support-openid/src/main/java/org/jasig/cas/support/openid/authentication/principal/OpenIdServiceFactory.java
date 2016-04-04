@@ -33,7 +33,7 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
     private ApplicationContext applicationContext;
 
     public String getOpenIdPrefixUrl() {
-        return openIdPrefixUrl;
+        return this.openIdPrefixUrl;
     }
 
     public void setOpenIdPrefixUrl(final String openIdPrefixUrl) {

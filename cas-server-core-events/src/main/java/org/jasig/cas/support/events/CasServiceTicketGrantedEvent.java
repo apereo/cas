@@ -33,19 +33,19 @@ public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
     }
 
     public TicketGrantingTicket getTicketGrantingTicket() {
-        return ticketGrantingTicket;
+        return this.ticketGrantingTicket;
     }
 
     public ServiceTicket getServiceTicket() {
-        return serviceTicket;
+        return this.serviceTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("ticketGrantingTicket", ticketGrantingTicket)
-                .append("serviceTicket", serviceTicket)
+                .append("ticketGrantingTicket", this.ticketGrantingTicket)
+                .append("serviceTicket", this.serviceTicket)
                 .toString();
     }
 }

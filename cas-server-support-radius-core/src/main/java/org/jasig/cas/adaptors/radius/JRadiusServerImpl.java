@@ -229,16 +229,16 @@ public class JRadiusServerImpl implements RadiusServer {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("protocol", protocol)
-                .append("radiusClientFactory", radiusClientFactory)
-                .append("retries", retries)
-                .append("nasIpAddress", nasIpAddress)
-                .append("nasIpv6Address", nasIpv6Address)
-                .append("nasPort", nasPort)
-                .append("nasPortId", nasPortId)
-                .append("nasIdentifier", nasIdentifier)
-                .append("nasRealPort", nasRealPort)
-                .append("nasPortType", nasPortType)
+                .append("protocol", this.protocol)
+                .append("radiusClientFactory", this.radiusClientFactory)
+                .append("retries", this.retries)
+                .append("nasIpAddress", this.nasIpAddress)
+                .append("nasIpv6Address", this.nasIpv6Address)
+                .append("nasPort", this.nasPort)
+                .append("nasPortId", this.nasPortId)
+                .append("nasIdentifier", this.nasIdentifier)
+                .append("nasRealPort", this.nasRealPort)
+                .append("nasPortType", this.nasPortType)
                 .toString();
     }
 }

@@ -95,9 +95,9 @@ public class JpaLockingStrategy implements LockingStrategy {
     public boolean acquire() {
         final Lock lock;
         try {
-            lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
+            lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.PESSIMISTIC_WRITE);
         } catch (final PersistenceException e) {
-            logger.debug("{} failed querying for {} lock.", uniqueId, applicationId, e);
+            logger.debug("{} failed querying for {} lock.", this.uniqueId, this.applicationId, e);
             return false;
         }
 
@@ -106,35 +106,35 @@ public class JpaLockingStrategy implements LockingStrategy {
             final ZonedDateTime expDate = ZonedDateTime.from(lock.getExpirationDate());
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
-                logger.debug("{} trying to acquire {} lock.", uniqueId, applicationId);
-                result = acquire(entityManager, lock);
+                logger.debug("{} trying to acquire {} lock.", this.uniqueId, this.applicationId);
+                result = acquire(this.entityManager, lock);
             } else if (ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
                 // Acquire expired lock regardless of who formerly owned it
-                logger.debug("{} trying to acquire expired {} lock.", uniqueId, applicationId);
-                result = acquire(entityManager, lock);
+                logger.debug("{} trying to acquire expired {} lock.", this.uniqueId, this.applicationId);
+                result = acquire(this.entityManager, lock);
             }
         } else {
             // First acquisition attempt for this applicationId
-            logger.debug("Creating {} lock initially held by {}.", applicationId, uniqueId);
-            result = acquire(entityManager, new Lock());
+            logger.debug("Creating {} lock initially held by {}.", this.applicationId, this.uniqueId);
+            result = acquire(this.entityManager, new Lock());
         }
         return result;
     }
 
     @Override
     public void release() {
-        final Lock lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
+        final Lock lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.PESSIMISTIC_WRITE);
 
         if (lock == null) {
             return;
         }
         // Only the current owner can release the lock
         final String owner = lock.getUniqueId();
-        if (uniqueId.equals(owner)) {
+        if (this.uniqueId.equals(owner)) {
             lock.setUniqueId(null);
             lock.setExpirationDate(null);
-            logger.debug("Releasing {} lock held by {}.", applicationId, uniqueId);
-            entityManager.persist(lock);
+            logger.debug("Releasing {} lock held by {}.", this.applicationId, this.uniqueId);
+            this.entityManager.persist(lock);
         } else {
             throw new IllegalStateException("Cannot release lock owned by " + owner);
         }
@@ -147,7 +147,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      * @return  Current lock owner or null if no one presently owns lock.
      */
     public String getOwner() {
-        final Lock lock = entityManager.find(Lock.class, applicationId);
+        final Lock lock = this.entityManager.find(Lock.class, this.applicationId);
         if (lock != null) {
             return lock.getUniqueId();
         }
@@ -156,7 +156,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     @Override
     public String toString() {
-        return uniqueId;
+        return this.uniqueId;
     }
 
     /**
@@ -167,9 +167,9 @@ public class JpaLockingStrategy implements LockingStrategy {
      * @return true, if successful
      */
     private boolean acquire(final EntityManager em, final Lock lock) {
-        lock.setUniqueId(uniqueId);
-        if (lockTimeout > 0) {
-            lock.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(lockTimeout));
+        lock.setUniqueId(this.uniqueId);
+        if (this.lockTimeout > 0) {
+            lock.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.lockTimeout));
         } else {
             lock.setExpirationDate(null);
         }
@@ -178,16 +178,16 @@ public class JpaLockingStrategy implements LockingStrategy {
             if (lock.getApplicationId() != null) {
                 em.merge(lock);
             } else {
-                lock.setApplicationId(applicationId);
+                lock.setApplicationId(this.applicationId);
                 em.persist(lock);
             }
             success = true;
         } catch (final PersistenceException e) {
             success = false;
             if (logger.isDebugEnabled()) {
-                logger.debug("{} could not obtain {} lock.", uniqueId, applicationId, e);
+                logger.debug("{} could not obtain {} lock.", this.uniqueId, this.applicationId, e);
             } else {
-                logger.info("{} could not obtain {} lock.", uniqueId, applicationId);
+                logger.info("{} could not obtain {} lock.", this.uniqueId, this.applicationId);
             }
         }
         return success;
@@ -220,7 +220,7 @@ public class JpaLockingStrategy implements LockingStrategy {
          * @return the applicationId
          */
         public String getApplicationId() {
-            return applicationId;
+            return this.applicationId;
         }
 
         /**
@@ -234,7 +234,7 @@ public class JpaLockingStrategy implements LockingStrategy {
          * @return the uniqueId
          */
         public String getUniqueId() {
-            return uniqueId;
+            return this.uniqueId;
         }
 
         /**

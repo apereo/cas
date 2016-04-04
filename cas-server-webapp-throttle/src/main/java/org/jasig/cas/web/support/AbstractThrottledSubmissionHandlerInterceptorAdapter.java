@@ -51,8 +51,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     @PostConstruct
     public void afterPropertiesSet() throws Exception {
-        this.thresholdRate = (double) failureThreshold / (double) failureRangeInSeconds;
-        logger.debug("Calculated threshold rate as {}", thresholdRate);
+        this.thresholdRate = (double) this.failureThreshold / (double) this.failureRangeInSeconds;
+        logger.debug("Calculated threshold rate as {}", this.thresholdRate);
     }
 
 
@@ -67,7 +67,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             recordThrottle(request);
             request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
             response.sendError(HttpStatus.SC_FORBIDDEN,
-                    "Access Denied for user [" + request.getParameter(usernameParameter)
+                    "Access Denied for user [" + request.getParameter(this.usernameParameter)
                     + "] from IP Address [" + request.getRemoteAddr() + ']');
             return false;
         }

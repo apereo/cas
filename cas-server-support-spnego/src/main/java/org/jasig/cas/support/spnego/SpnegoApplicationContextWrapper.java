@@ -36,8 +36,8 @@ public class SpnegoApplicationContextWrapper extends BaseApplicationContextWrapp
      */
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        addAuthenticationHandlerPrincipalResolver(spnegoHandler, spnegoPrincipalResolver);
-        addAuthenticationMetadataPopulator(successfulHandlerMetaDataPopulator);
+        addAuthenticationHandlerPrincipalResolver(this.spnegoHandler, this.spnegoPrincipalResolver);
+        addAuthenticationMetadataPopulator(this.successfulHandlerMetaDataPopulator);
     }
 
 }

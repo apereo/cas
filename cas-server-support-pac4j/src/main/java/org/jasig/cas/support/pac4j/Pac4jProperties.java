@@ -25,23 +25,23 @@ public class Pac4jProperties {
     private Cas cas = new Cas();
 
     public Cas getCas() {
-        return cas;
+        return this.cas;
     }
 
     public Saml getSaml() {
-        return saml;
+        return this.saml;
     }
 
     public Oidc getOidc() {
-        return oidc;
+        return this.oidc;
     }
 
     public Facebook getFacebook() {
-        return facebook;
+        return this.facebook;
     }
 
     public Twitter getTwitter() {
-        return twitter;
+        return this.twitter;
     }
 
     /**
@@ -54,7 +54,7 @@ public class Pac4jProperties {
         private String fields;
 
         public String getId() {
-            return id;
+            return this.id;
         }
 
         public void setId(final String id) {
@@ -62,7 +62,7 @@ public class Pac4jProperties {
         }
 
         public String getSecret() {
-            return secret;
+            return this.secret;
         }
 
         public void setSecret(final String secret) {
@@ -70,7 +70,7 @@ public class Pac4jProperties {
         }
 
         public String getScope() {
-            return scope;
+            return this.scope;
         }
 
         public void setScope(final String scope) {
@@ -78,7 +78,7 @@ public class Pac4jProperties {
         }
 
         public String getFields() {
-            return fields;
+            return this.fields;
         }
 
         public void setFields(final String fields) {
@@ -94,7 +94,7 @@ public class Pac4jProperties {
         private String secret;
 
         public String getId() {
-            return id;
+            return this.id;
         }
 
         public void setId(final String id) {
@@ -102,7 +102,7 @@ public class Pac4jProperties {
         }
 
         public String getSecret() {
-            return secret;
+            return this.secret;
         }
 
         public void setSecret(final String secret) {
@@ -122,7 +122,7 @@ public class Pac4jProperties {
         private String serviceProviderEntityId;
 
         public String getKeystorePassword() {
-            return keystorePassword;
+            return this.keystorePassword;
         }
 
         public void setKeystorePassword(final String keystorePassword) {
@@ -130,7 +130,7 @@ public class Pac4jProperties {
         }
 
         public String getPrivateKeyPassword() {
-            return privateKeyPassword;
+            return this.privateKeyPassword;
         }
 
         public void setPrivateKeyPassword(final String privateKeyPassword) {
@@ -138,7 +138,7 @@ public class Pac4jProperties {
         }
 
         public String getKeystorePath() {
-            return keystorePath;
+            return this.keystorePath;
         }
 
         public void setKeystorePath(final String keystorePath) {
@@ -146,7 +146,7 @@ public class Pac4jProperties {
         }
 
         public String getIdentityProviderMetadataPath() {
-            return identityProviderMetadataPath;
+            return this.identityProviderMetadataPath;
         }
 
         public void setIdentityProviderMetadataPath(final String identityProviderMetadataPath) {
@@ -154,7 +154,7 @@ public class Pac4jProperties {
         }
 
         public String getMaximumAuthenticationLifetime() {
-            return maximumAuthenticationLifetime;
+            return this.maximumAuthenticationLifetime;
         }
 
         public void setMaximumAuthenticationLifetime(final String maximumAuthenticationLifetime) {
@@ -162,7 +162,7 @@ public class Pac4jProperties {
         }
 
         public String getServiceProviderEntityId() {
-            return serviceProviderEntityId;
+            return this.serviceProviderEntityId;
         }
 
         public void setServiceProviderEntityId(final String serviceProviderEntityId) {
@@ -178,7 +178,7 @@ public class Pac4jProperties {
         private String protocol;
 
         public String getLoginUrl() {
-            return loginUrl;
+            return this.loginUrl;
         }
 
         public void setLoginUrl(final String loginUrl) {
@@ -186,7 +186,7 @@ public class Pac4jProperties {
         }
 
         public String getProtocol() {
-            return protocol;
+            return this.protocol;
         }
 
         public void setProtocol(final String protocol) {
@@ -210,7 +210,7 @@ public class Pac4jProperties {
         private String customParamValue2;
 
         public String getId() {
-            return id;
+            return this.id;
         }
 
         public void setId(final String id) {
@@ -218,7 +218,7 @@ public class Pac4jProperties {
         }
 
         public String getSecret() {
-            return secret;
+            return this.secret;
         }
 
         public void setSecret(final String secret) {
@@ -226,7 +226,7 @@ public class Pac4jProperties {
         }
 
         public String getDiscoveryUri() {
-            return discoveryUri;
+            return this.discoveryUri;
         }
 
         public void setDiscoveryUri(final String discoveryUri) {
@@ -234,7 +234,7 @@ public class Pac4jProperties {
         }
 
         public String getUseNonce() {
-            return useNonce;
+            return this.useNonce;
         }
 
         public void setUseNonce(final String useNonce) {
@@ -242,7 +242,7 @@ public class Pac4jProperties {
         }
 
         public String getPreferredJwsAlgorithm() {
-            return preferredJwsAlgorithm;
+            return this.preferredJwsAlgorithm;
         }
 
         public void setPreferredJwsAlgorithm(final String preferredJwsAlgorithm) {
@@ -250,7 +250,7 @@ public class Pac4jProperties {
         }
 
         public String getMaxClockSkew() {
-            return maxClockSkew;
+            return this.maxClockSkew;
         }
 
         public void setMaxClockSkew(final String maxClockSkew) {
@@ -258,7 +258,7 @@ public class Pac4jProperties {
         }
 
         public String getCustomParamKey1() {
-            return customParamKey1;
+            return this.customParamKey1;
         }
 
         public void setCustomParamKey1(final String customParamKey1) {
@@ -266,7 +266,7 @@ public class Pac4jProperties {
         }
 
         public String getCustomParamValue1() {
-            return customParamValue1;
+            return this.customParamValue1;
         }
 
         public void setCustomParamValue1(final String customParamValue1) {
@@ -274,7 +274,7 @@ public class Pac4jProperties {
         }
 
         public String getCustomParamKey2() {
-            return customParamKey2;
+            return this.customParamKey2;
         }
 
         public void setCustomParamKey2(final String customParamKey2) {
@@ -282,7 +282,7 @@ public class Pac4jProperties {
         }
 
         public String getCustomParamValue2() {
-            return customParamValue2;
+            return this.customParamValue2;
         }
 
         public void setCustomParamValue2(final String customParamValue2) {

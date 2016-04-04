@@ -37,9 +37,9 @@ public class SamlApplicationContextWrapper extends BaseApplicationContextWrapper
      */
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        addServiceFactory(samlServiceFactory);
+        addServiceFactory(this.samlServiceFactory);
         addServiceTicketUniqueIdGenerator(SamlService.class.getCanonicalName(),
                 this.samlServiceTicketUniqueIdGenerator);
-        addAuthenticationMetadataPopulator(samlAuthenticationMetaDataPopulator);
+        addAuthenticationMetadataPopulator(this.samlAuthenticationMetaDataPopulator);
     }
 }

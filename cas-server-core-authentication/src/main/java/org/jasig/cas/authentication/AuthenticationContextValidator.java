@@ -50,7 +50,7 @@ public class AuthenticationContextValidator {
     private ConfigurableApplicationContext applicationContext;
 
     public String getAuthenticationContextAttribute() {
-        return authenticationContextAttribute;
+        return this.authenticationContextAttribute;
     }
 
     public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
@@ -168,7 +168,7 @@ public class AuthenticationContextValidator {
         contexts.stream().forEach(context -> 
             providers.removeIf(provider -> !provider.getId().equals(context))
         );
-        
+
         logger.debug("Found {} providers that may satisfy the context", providers.size());
         return providers;
     }

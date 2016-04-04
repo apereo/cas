@@ -26,7 +26,7 @@ public class NullPrincipal implements Principal {
      * Instantiates a new Null principal.
      */
     protected NullPrincipal() {
-        attributes = Collections.emptyMap();
+        this.attributes = Collections.emptyMap();
     }
 
     /**

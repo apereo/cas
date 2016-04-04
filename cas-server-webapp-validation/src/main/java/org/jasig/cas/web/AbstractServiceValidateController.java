@@ -172,9 +172,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
         // resolve MFA auth context for this request
-        final Map<String, MultifactorAuthenticationProvider> providers = context.getBeansOfType(MultifactorAuthenticationProvider.class);
+        final Map<String, MultifactorAuthenticationProvider> providers = this.context.getBeansOfType(MultifactorAuthenticationProvider.class);
         final Authentication authentication = assertion.getPrimaryAuthentication();
-        final Optional<String> requestedContext = multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
+        final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
                 service, authentication.getPrincipal());
 
         // no MFA auth context found
@@ -325,11 +325,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
 
-        final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
+        final ServletRequestDataBinder binder = new ServletRequestDataBinder(this.validationSpecification, "validationSpecification");
         initBinder(request, binder);
         binder.bind(request);
 
-        if (!validationSpecification.isSatisfiedBy(assertion, request)) {
+        if (!this.validationSpecification.isSatisfiedBy(assertion, request)) {
             logger.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
             return false;
         }
@@ -529,7 +529,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not enabled in service registry.", service.getId());
-            
+
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }

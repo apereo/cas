@@ -39,7 +39,7 @@ public class DelegatingController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
                                                     throws Exception {
-        for (final AbstractDelegateController delegate : delegates) {
+        for (final AbstractDelegateController delegate : this.delegates) {
             if (delegate.canHandle(request, response)) {
                 return delegate.handleRequestInternal(request, response);
             }

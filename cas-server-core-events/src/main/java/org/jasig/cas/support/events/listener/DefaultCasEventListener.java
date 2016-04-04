@@ -39,7 +39,7 @@ public class DefaultCasEventListener {
      */
     @TransactionalEventListener
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
-        if (casEventRepository != null) {
+        if (this.casEventRepository != null) {
 
             final CasEvent dto = new CasEvent();
             dto.setType(event.getClass().getCanonicalName());
@@ -56,7 +56,7 @@ public class DefaultCasEventListener {
             final HttpRequestGeoLocation location = WebUtils.getHttpServletRequestGeoLocation();
             dto.putGeoLocation(location);
 
-            casEventRepository.save(dto);
+            this.casEventRepository.save(dto);
         }
     }
 }

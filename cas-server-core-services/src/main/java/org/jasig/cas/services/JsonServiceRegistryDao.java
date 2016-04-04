@@ -147,8 +147,8 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
 
     private void initializeRegistry(final Path configDirectory, final JsonSerializer<RegisteredService> registeredServiceJsonSerializer) {
         this.serviceRegistryDirectory = configDirectory;
-        Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), serviceRegistryDirectory + " does not exist");
-        Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), serviceRegistryDirectory + " is not a directory");
+        Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
+        Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
         this.registeredServiceJsonSerializer = registeredServiceJsonSerializer;
 
         this.jsonServiceRegistryConfigWatcher = new JsonServiceRegistryConfigWatcher(this);
@@ -187,7 +187,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             if (!result) {
                 LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
             } else {
-                serviceMap.remove(service.getId());
+                this.serviceMap.remove(service.getId());
                 LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
             }
             return result;
@@ -228,7 +228,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return serviceMap.get(id);
+        return this.serviceMap.get(id);
     }
 
     /**
@@ -271,7 +271,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     Path getServiceRegistryDirectory() {
-        return serviceRegistryDirectory;
+        return this.serviceRegistryDirectory;
     }
 
     /**
@@ -285,7 +285,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     protected File makeFile(final RegisteredService service) {
         final String fileName = StringUtils.remove(service.getName() + '-' + service.getId() + '.' + FILE_EXTENSION, " ");
         try {
-            final File svcFile = new File(serviceRegistryDirectory.toFile(), fileName);
+            final File svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
             return svcFile;
         } catch (final IOException e) {

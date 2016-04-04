@@ -24,6 +24,6 @@ public class GoogleAuthenticatorAuthenticationWebflowAction extends AbstractActi
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return casWebflowEventResolver.resolveSingle(requestContext);
+        return this.casWebflowEventResolver.resolveSingle(requestContext);
     }
 }

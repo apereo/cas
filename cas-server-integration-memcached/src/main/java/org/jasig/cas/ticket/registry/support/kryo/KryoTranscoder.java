@@ -105,60 +105,60 @@ public class KryoTranscoder implements Transcoder<Object> {
     @PostConstruct
     public void initialize() {
         // Register types we know about and do not require external configuration
-        kryo.register(ArrayList.class);
-        kryo.register(BasicCredentialMetaData.class);
-        kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
-        kryo.register(ZonedDateTime.class, new ZonedDateTimeTranscoder());
-        kryo.register(HardTimeoutExpirationPolicy.class);
-        kryo.register(HashMap.class);
-        kryo.register(LinkedHashMap.class);
-        kryo.register(HashSet.class);
-        kryo.register(DefaultHandlerResult.class);
-        kryo.register(DefaultAuthentication.class);
-        kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
-        kryo.register(NeverExpiresExpirationPolicy.class);
-        kryo.register(RememberMeDelegatingExpirationPolicy.class);
-        kryo.register(ServiceTicketImpl.class);
-        kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
-        kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
-        kryo.register(TicketGrantingTicketExpirationPolicy.class);
-        kryo.register(TicketGrantingTicketImpl.class);
-        kryo.register(TimeoutExpirationPolicy.class);
-        kryo.register(UsernamePasswordCredential.class);
-        kryo.register(SimplePrincipal.class);
-        kryo.register(URL.class, new URLSerializer());
-        kryo.register(URI.class, new URISerializer());
-        kryo.register(Pattern.class, new RegexSerializer());
-        kryo.register(UUID.class, new UUIDSerializer());
-        kryo.register(EnumMap.class, new EnumMapSerializer());
-        kryo.register(EnumSet.class, new EnumSetSerializer());
+        this.kryo.register(ArrayList.class);
+        this.kryo.register(BasicCredentialMetaData.class);
+        this.kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
+        this.kryo.register(ZonedDateTime.class, new ZonedDateTimeTranscoder());
+        this.kryo.register(HardTimeoutExpirationPolicy.class);
+        this.kryo.register(HashMap.class);
+        this.kryo.register(LinkedHashMap.class);
+        this.kryo.register(HashSet.class);
+        this.kryo.register(DefaultHandlerResult.class);
+        this.kryo.register(DefaultAuthentication.class);
+        this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
+        this.kryo.register(NeverExpiresExpirationPolicy.class);
+        this.kryo.register(RememberMeDelegatingExpirationPolicy.class);
+        this.kryo.register(ServiceTicketImpl.class);
+        this.kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
+        this.kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
+        this.kryo.register(TicketGrantingTicketExpirationPolicy.class);
+        this.kryo.register(TicketGrantingTicketImpl.class);
+        this.kryo.register(TimeoutExpirationPolicy.class);
+        this.kryo.register(UsernamePasswordCredential.class);
+        this.kryo.register(SimplePrincipal.class);
+        this.kryo.register(URL.class, new URLSerializer());
+        this.kryo.register(URI.class, new URISerializer());
+        this.kryo.register(Pattern.class, new RegexSerializer());
+        this.kryo.register(UUID.class, new UUIDSerializer());
+        this.kryo.register(EnumMap.class, new EnumMapSerializer());
+        this.kryo.register(EnumSet.class, new EnumSetSerializer());
 
         // we add these ones for tests only
-        kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
+        this.kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
 
 
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
-        UnmodifiableCollectionsSerializer.registerSerializers(kryo);
-        ImmutableListSerializer.registerSerializers(kryo);
-        ImmutableSetSerializer.registerSerializers(kryo);
-        ImmutableMapSerializer.registerSerializers(kryo);
-        ImmutableMultimapSerializer.registerSerializers(kryo);
+        UnmodifiableCollectionsSerializer.registerSerializers(this.kryo);
+        ImmutableListSerializer.registerSerializers(this.kryo);
+        ImmutableSetSerializer.registerSerializers(this.kryo);
+        ImmutableMapSerializer.registerSerializers(this.kryo);
+        ImmutableMultimapSerializer.registerSerializers(this.kryo);
 
-        kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
-        kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
-        kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
+        this.kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
+        this.kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
+        this.kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
 
         // Register other types
-        if (serializerMap != null) {
-            serializerMap.forEach(kryo::register);
+        if (this.serializerMap != null) {
+            this.serializerMap.forEach(this.kryo::register);
         }
 
         // don't reinit the registered classes after every write or read
-        kryo.setAutoReset(false);
+        this.kryo.setAutoReset(false);
         // don't replace objects by references
-        kryo.setReferences(false);
+        this.kryo.setReferences(false);
         // Catchall for any classes not explicitly registered
-        kryo.setRegistrationRequired(false);
+        this.kryo.setRegistrationRequired(false);
     }
 
     /**
@@ -176,7 +176,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     public CachedData encode(final Object obj) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (final Output output = new Output(byteStream)) {
-            kryo.writeClassAndObject(output, obj);
+            this.kryo.writeClassAndObject(output, obj);
             output.flush();
             final byte[] bytes = byteStream.toByteArray();
             return new CachedData(0, bytes, bytes.length);
@@ -187,7 +187,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     public Object decode(final CachedData d) {
         final byte[] bytes = d.getData();
         try (final Input input = new Input(new ByteArrayInputStream(bytes))) {
-            final Object obj = kryo.readClassAndObject(input);
+            final Object obj = this.kryo.readClassAndObject(input);
             return obj;
         }
     }
@@ -208,6 +208,6 @@ public class KryoTranscoder implements Transcoder<Object> {
      * @return Underlying Kryo instance.
      */
     public Kryo getKryo() {
-        return kryo;
+        return this.kryo;
     }
 }

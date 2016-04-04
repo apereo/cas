@@ -93,7 +93,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         try {
             final CriteriaSet criterions = new CriteriaSet(new EntityIdCriterion(entityId));
             if (this.metadataResolver != null) {
-                return metadataResolver.resolveSingle(criterions);
+                return this.metadataResolver.resolveSingle(criterions);
             }
         } catch (final Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -117,7 +117,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      */
     public void buildMetadataResolverAggregate(final String entityId) {
         try {
-            final Set<Map.Entry<Resource, MetadataFilterChain>> entries = metadataResources.entrySet();
+            final Set<Map.Entry<Resource, MetadataFilterChain>> entries = this.metadataResources.entrySet();
             for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {
                 final Resource resource = entry.getKey();
                 logger.debug("Loading [{}]", resource.getFilename());

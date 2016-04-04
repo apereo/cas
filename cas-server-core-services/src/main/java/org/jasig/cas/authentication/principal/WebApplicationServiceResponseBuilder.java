@@ -32,10 +32,10 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, ticketId);
         }
 
-        if (responseType.equals(Response.ResponseType.POST)) {
+        if (this.responseType.equals(Response.ResponseType.POST)) {
             return buildPost(service, parameters);
         }
-        if (responseType.equals(Response.ResponseType.REDIRECT)) {
+        if (this.responseType.equals(Response.ResponseType.REDIRECT)) {
             return buildRedirect(service, parameters);
         }
 

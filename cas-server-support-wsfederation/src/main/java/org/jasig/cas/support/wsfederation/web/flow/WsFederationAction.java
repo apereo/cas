@@ -95,27 +95,27 @@ public class WsFederationAction extends AbstractAction {
                 }
 
                 // create credentials
-                final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
+                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wresult);
 
                 if (assertion == null) {
                     logger.error("Could not validate assertion via parsing the token from {}", WRESULT);
                     return error();
                 }
 
-                if (!wsFederationHelper.validateSignature(assertion, configuration)) {
+                if (!this.wsFederationHelper.validateSignature(assertion, this.configuration)) {
                     logger.error("WS Requested Security Token is blank or the signature is not valid.");
                     return error();
                 }
 
                 try {
 
-                    final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
-                    if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
-                            configuration.getIdentityProviderIdentifier(),
-                            configuration.getTolerance())) {
+                    final WsFederationCredential credential = this.wsFederationHelper.createCredentialFromToken(assertion);
+                    if (credential != null && credential.isValid(this.configuration.getRelyingPartyIdentifier(),
+                            this.configuration.getIdentityProviderIdentifier(),
+                            this.configuration.getTolerance())) {
 
-                        if (configuration.getAttributeMutator() != null) {
-                            configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
+                        if (this.configuration.getAttributeMutator() != null) {
+                            this.configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                         }
                     } else {
                         logger.warn("SAML assertions are blank or no longer valid.");

@@ -173,7 +173,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
         if (onlyTrackMostRecentSession) {
             final String path = normalizePath(service);
-            final Collection<Service> existingServices = services.values();
+            final Collection<Service> existingServices = this.services.values();
             // loop on existing services
             existingServices.stream()
                     .filter(existingService -> path.equals(normalizePath(existingService)))
@@ -214,7 +214,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     @Override
     public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
-        return proxyGrantingTickets;
+        return this.proxyGrantingTickets;
     }
 
     /**
@@ -222,7 +222,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     @Override
     public void removeAllServices() {
-        services.clear();
+        this.services.clear();
     }
 
     /**

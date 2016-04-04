@@ -46,11 +46,11 @@ public class ShibbolethAttributeResolverConfiguration {
     AttributeResolver attributeResolver() {
         final ApplicationContext tempApplicationContext = SpringSupport.newContext(
                 "shibbolethAttributeResolverContext",
-                attributeResolverResources,
-                Collections.singletonList(placeholderConfigurerSupport),
+                this.attributeResolverResources,
+                Collections.singletonList(this.placeholderConfigurerSupport),
                 Collections.emptyList(),
                 Collections.emptyList(),
-                applicationContext
+                this.applicationContext
         );
 
         return new AttributeResolverImpl(

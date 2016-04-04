@@ -31,6 +31,6 @@ public class DuoApplicationContextWrapper extends BaseApplicationContextWrapper 
     @PostConstruct
     protected void initializeServletApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
-        addAuthenticationMetadataPopulator(populator);
+        addAuthenticationMetadataPopulator(this.populator);
     }
 }

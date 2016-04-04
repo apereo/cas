@@ -67,7 +67,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         final Map<String, String> parameters = new HashMap<>();
         final String samlResponse = constructSamlResponse(service);
-        final String signedResponse = samlObjectBuilder.signSamlResponse(samlResponse,
+        final String signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse,
             this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
@@ -99,28 +99,28 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final String userId = registeredService.getUsernameAttributeProvider()
                     .resolveUsername(service.getPrincipal(), service);
 
-        final org.opensaml.saml.saml2.core.Response response = samlObjectBuilder.newResponse(
-            samlObjectBuilder.generateSecureRandomId(), currentDateTime, service.getId(), service);
-        response.setStatus(samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
+        final org.opensaml.saml.saml2.core.Response response = this.samlObjectBuilder.newResponse(
+                this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, service.getId(), service);
+        response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        final AuthnStatement authnStatement = samlObjectBuilder.newAuthnStatement(
+        final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(
             AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
-        final Assertion assertion = samlObjectBuilder.newAssertion(authnStatement,
+        final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement,
             "https://www.opensaml.org/IDP",
-            notBeforeIssueInstant, samlObjectBuilder.generateSecureRandomId());
+            notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
 
-        final Conditions conditions = samlObjectBuilder.newConditions(notBeforeIssueInstant,
+        final Conditions conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
                 currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
 
-        final Subject subject = samlObjectBuilder.newSubject(NameID.EMAIL, userId,
+        final Subject subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
             service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId());
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
 
         final StringWriter writer = new StringWriter();
-        samlObjectBuilder.marshalSamlXmlObject(response, writer);
+        this.samlObjectBuilder.marshalSamlXmlObject(response, writer);
 
         final String result = writer.toString();
         logger.debug("Generated Google SAML response: {}", result);

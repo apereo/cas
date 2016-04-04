@@ -45,7 +45,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final AuthnRequest authnRequest, final Assertion assertion,
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        final NameID nameID = ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor);
+        final NameID nameID = this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor);
         final Subject subject = newSubject(nameID.getFormat(), nameID.getValue(),
                 authnRequest.getAssertionConsumerServiceURL(),
                 DateTimeUtils.zonedDateTimeOf(assertion.getValidFromDate()),

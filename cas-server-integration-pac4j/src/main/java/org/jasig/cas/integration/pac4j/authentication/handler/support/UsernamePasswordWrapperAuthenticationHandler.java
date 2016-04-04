@@ -80,7 +80,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     }
 
     public PasswordEncoder getPasswordEncoder() {
-        return passwordEncoder;
+        return this.passwordEncoder;
     }
 
     public void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
@@ -88,7 +88,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     }
 
     public PrincipalNameTransformer getPrincipalNameTransformer() {
-        return principalNameTransformer;
+        return this.principalNameTransformer;
     }
 
     public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {

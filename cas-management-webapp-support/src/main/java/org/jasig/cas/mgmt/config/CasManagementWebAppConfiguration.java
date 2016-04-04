@@ -121,7 +121,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean(name = "casClient")
     public CasClient casClient() {
         final CasClient client = new CasClient(this.loginUrl);
-        client.setAuthorizationGenerator(authorizationGenerator);
+        client.setAuthorizationGenerator(this.authorizationGenerator);
         return client;
     }
 
@@ -250,8 +250,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
                 this.principalResolver, ImmutableList.of(auditTrailManager()),
-                auditActionResolverMap,
-                auditResourceResolverMap);
+                this.auditActionResolverMap,
+                this.auditResourceResolverMap);
     }
 
     /**

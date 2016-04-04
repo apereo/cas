@@ -294,7 +294,7 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(overrideSignatureCanonicalizationAlgorithm)) {
+        if (StringUtils.isNotBlank(this.overrideSignatureCanonicalizationAlgorithm)) {
             config.setSignatureCanonicalizationAlgorithm(this.overrideSignatureCanonicalizationAlgorithm);
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());

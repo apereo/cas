@@ -31,7 +31,7 @@ public abstract class AbstractWebApplicationServiceSerializer<T extends Abstract
     @Override
     public void write(final Kryo kryo, final Output output, final T service) {
         kryo.writeObject(output, service.getId());
-        kryo.writeObject(output, fieldHelper.getFieldValue(service, "originalUrl"));
+        kryo.writeObject(output, this.fieldHelper.getFieldValue(service, "originalUrl"));
         kryo.writeObject(output, service.getArtifactId());
     }
 

@@ -148,18 +148,18 @@ public class RegisteredServiceResource {
         }
 
         public RegisteredService getRegisteredService() {
-            if (StringUtils.isBlank(serviceId) || StringUtils.isBlank(name)
-                    || StringUtils.isBlank(description)) {
+            if (StringUtils.isBlank(this.serviceId) || StringUtils.isBlank(this.name)
+                    || StringUtils.isBlank(this.description)) {
                 throw new IllegalArgumentException("Service name/description/id is missing");
             }
 
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setServiceId(serviceId);
-            service.setDescription(description);
-            service.setName(name);
-            service.setEvaluationOrder(evaluationOrder);
+            service.setServiceId(this.serviceId);
+            service.setDescription(this.description);
+            service.setName(this.name);
+            service.setEvaluationOrder(this.evaluationOrder);
             service.setAccessStrategy(
-                    new DefaultRegisteredServiceAccessStrategy(enabled, ssoEnabled));
+                    new DefaultRegisteredServiceAccessStrategy(this.enabled, this.ssoEnabled));
             return service;
         }
 

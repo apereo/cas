@@ -127,7 +127,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     public EntityDescriptor getEntityDescriptor() {
-        return entityDescriptor;
+        return this.entityDescriptor;
     }
 
     public Organization getOrganization() {
@@ -217,7 +217,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     public MetadataResolver getMetadataResolver() {
-        return metadataResolver;
+        return this.metadataResolver;
     }
 
 

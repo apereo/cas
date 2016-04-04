@@ -174,7 +174,7 @@ public class CasWebflowContextConfiguration {
             return new CipherBean() {
                 @Override
                 public byte[] encrypt(final byte[] bytes) {
-                    return webflowCipherExecutor.encode(bytes);
+                    return CasWebflowContextConfiguration.this.webflowCipherExecutor.encode(bytes);
                 }
 
                 @Override
@@ -184,7 +184,7 @@ public class CasWebflowContextConfiguration {
 
                 @Override
                 public byte[] decrypt(final byte[] bytes) {
-                    return webflowCipherExecutor.decode(bytes);
+                    return CasWebflowContextConfiguration.this.webflowCipherExecutor.decode(bytes);
                 }
 
                 @Override

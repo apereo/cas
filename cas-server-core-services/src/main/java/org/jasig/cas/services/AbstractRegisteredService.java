@@ -328,7 +328,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Override
     public LogoutType getLogoutType() {
-        return logoutType;
+        return this.logoutType;
     }
 
     /**
@@ -484,7 +484,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     public RegisteredServiceMultifactorPolicy getMultifactorPolicy() {
-        return multifactorPolicy;
+        return this.multifactorPolicy;
     }
 
     public void setMultifactorPolicy(final RegisteredServiceMultifactorPolicy multifactorPolicy) {

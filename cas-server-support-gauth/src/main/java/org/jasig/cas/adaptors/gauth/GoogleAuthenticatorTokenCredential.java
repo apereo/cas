@@ -68,7 +68,7 @@ public class GoogleAuthenticatorTokenCredential implements Credential, Serializa
 
 
     public Integer getToken() {
-        return token;
+        return this.token;
     }
 
     public void setToken(final Integer token) {

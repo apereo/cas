@@ -50,7 +50,7 @@ public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
     }
 
     public GoogleAuthenticator getGoogleAuthenticator() {
-        return googleAuthenticator;
+        return this.googleAuthenticator;
     }
 
     @Override

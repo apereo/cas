@@ -71,8 +71,8 @@ public class SimpleMetadataUIInfo implements Serializable {
      * @return the descriptions
      */
     public Collection<String> getDescriptions() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getDescriptions());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getDescriptions());
         }
         return new ArrayList<>();
     }
@@ -96,8 +96,8 @@ public class SimpleMetadataUIInfo implements Serializable {
      * @return the display names
      */
     public Collection<String> getDisplayNames() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getDisplayNames());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getDisplayNames());
         }
         return new ArrayList<>();
     }
@@ -118,8 +118,8 @@ public class SimpleMetadataUIInfo implements Serializable {
      * @return the information uR ls
      */
     public Collection<String> getInformationURLs() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getInformationURLs());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getInformationURLs());
         }
         return new ArrayList<>();
     }
@@ -140,8 +140,8 @@ public class SimpleMetadataUIInfo implements Serializable {
      * @return the privacy statement uR ls
      */
     public Collection<String> getPrivacyStatementURLs() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getPrivacyStatementURLs());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getPrivacyStatementURLs());
         }
         return new ArrayList<>();
     }
@@ -171,8 +171,8 @@ public class SimpleMetadataUIInfo implements Serializable {
     public Collection<Logo> getLogoUrls() {
         final List<Logo> list = new ArrayList<>();
 
-        if (uiInfo != null) {
-            list.addAll(uiInfo.getLogos().stream().collect(Collectors.toList()));
+        if (this.uiInfo != null) {
+            list.addAll(this.uiInfo.getLogos().stream().collect(Collectors.toList()));
         }
 
         return list;

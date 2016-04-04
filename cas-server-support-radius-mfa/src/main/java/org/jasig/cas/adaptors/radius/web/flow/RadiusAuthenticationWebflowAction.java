@@ -24,7 +24,7 @@ public class RadiusAuthenticationWebflowAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return radiusAuthenticationWebflowEventResolver.resolveSingle(requestContext);
+        return this.radiusAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }
 

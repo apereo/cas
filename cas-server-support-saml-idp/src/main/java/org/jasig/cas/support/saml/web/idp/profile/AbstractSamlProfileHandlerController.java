@@ -191,10 +191,10 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the service
      */
     protected Service registerCallback(final String callbackUrl) {
-        final Service callbackService = webApplicationServiceFactory.createService(this.casServerPrefix.concat(callbackUrl));
+        final Service callbackService = this.webApplicationServiceFactory.createService(this.casServerPrefix.concat(callbackUrl));
         logger.debug("Initialized callback service [{}]", callbackService);
 
-        if (!servicesManager.matchesExistingService(callbackService)) {
+        if (!this.servicesManager.matchesExistingService(callbackService)) {
             final RegexRegisteredService service = new RegexRegisteredService();
             service.setId(new SecureRandom().nextLong());
             service.setEvaluationOrder(0);
@@ -221,7 +221,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final String requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes("UTF-8"));
         final AuthnRequest authnRequest = (AuthnRequest) 
-                XMLObjectSupport.unmarshallFromInputStream(configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
+                XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
         return authnRequest;
     }
 

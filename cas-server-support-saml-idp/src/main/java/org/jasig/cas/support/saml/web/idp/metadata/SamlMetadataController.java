@@ -78,13 +78,13 @@ public class SamlMetadataController {
 
         try (final PrintWriter writer = response.getWriter()) {
             if (StringUtils.isBlank(entityID) || StringUtils.isBlank(acsUrl) || StringUtils.isBlank(x509Certificate)) {
-                final String warning = "Missing entityID, ACS url or X509 signing certificate"; 
+                final String warning = "Missing entityID, ACS url or X509 signing certificate";
                 logger.warn(warning);
                 response.setContentType(CONTENT_TYPE);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 writer.write(warning);
             } else {
-                final String contents = IOUtils.toString(templateSpMetadata.getInputStream());
+                final String contents = IOUtils.toString(this.templateSpMetadata.getInputStream());
                 response.setContentType(CONTENT_TYPE);
                 response.setStatus(HttpServletResponse.SC_OK);
                 writer.write(contents.replace("$entityId", entityID).replace("$acsUrl", acsUrl)

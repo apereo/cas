@@ -66,7 +66,7 @@ public class ServiceAuthorizationCheck extends AbstractAction {
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("Service Management: Unauthorized Service Access. "
                     + "Service [%s] is not allowed access via the service registry.", service.getId());
-            
+
             logger.warn(msg);
 
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,

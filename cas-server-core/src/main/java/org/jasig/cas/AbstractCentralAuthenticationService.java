@@ -208,7 +208,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
-                serviceContextAuthenticationPolicyFactory.createPolicy(context);
+                this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         if (policy.isSatisfiedBy(ticket.getAuthentication())) {
             return ticket.getAuthentication();
         }
@@ -229,7 +229,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
             logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
-            final RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
+            final RegisteredService proxyingService = this.servicesManager.findServiceBy(proxiedBy);
 
             if (proxyingService != null) {
                 logger.debug("Located proxying service [{}] in the service registry", proxyingService);
@@ -271,5 +271,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public void setLogoutManager(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
+    }
+
+    public void setValidationServiceSelectionStrategies(final List<ValidationServiceSelectionStrategy> list) {
+        this.validationServiceSelectionStrategies = list;
     }
 }

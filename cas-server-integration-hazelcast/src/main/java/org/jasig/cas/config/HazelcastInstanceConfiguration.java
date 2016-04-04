@@ -111,7 +111,7 @@ public class HazelcastInstanceConfiguration {
             config.setMapConfigs(mapConfigs).setNetworkConfig(networkConfig);
         }
         //Add additional default config properties regardless of the configuration source
-        return config.setInstanceName(hazelcastProperties.getInstanceName())
+        return config.setInstanceName(this.hazelcastProperties.getInstanceName())
                 .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, this.hazelcastProperties.getLoggingType())
                 .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, this.hazelcastProperties.getMaxNoHeartbeatSeconds());
     }

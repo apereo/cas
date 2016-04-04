@@ -71,7 +71,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                     final String logoutUrl = logoutRequest.getLogoutUrl().toExternalForm();
                     LOGGER.debug("Using logout url [{}] for front-channel logout requests", logoutUrl);
 
-                    final String logoutMessage = logoutManager.createFrontChannelLogoutMessage(logoutRequest);
+                    final String logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(logoutRequest);
                     LOGGER.debug("Front-channel logout message to send under [{}] is [{}]",
                             this.logoutRequestParameter, logoutMessage);
 
@@ -89,7 +89,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
     }
 
     public LogoutManager getLogoutManager() {
-        return logoutManager;
+        return this.logoutManager;
     }
 
     public void setLogoutRequestParameter(final String logoutRequestParameter) {

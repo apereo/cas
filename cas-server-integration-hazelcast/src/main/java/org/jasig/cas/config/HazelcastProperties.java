@@ -113,58 +113,58 @@ public class HazelcastProperties {
     private int maxIdleSeconds;
 
     public String getMapName() {
-        return mapName;
+        return this.mapName;
     }
 
     public String getLoggingType() {
-        return loggingType;
+        return this.loggingType;
     }
 
     public String getMaxNoHeartbeatSeconds() {
-        return maxNoHeartbeatSeconds;
+        return this.maxNoHeartbeatSeconds;
     }
 
     public String getInstanceName() {
-        return instanceName;
+        return this.instanceName;
     }
 
     public boolean isPortAutoIncrement() {
-        return portAutoIncrement;
+        return this.portAutoIncrement;
     }
 
     public int getPort() {
-        return port;
+        return this.port;
     }
 
     public boolean isMulticastEnabled() {
-        return multicastEnabled;
+        return this.multicastEnabled;
     }
 
     public boolean isTcpipEnabled() {
-        return tcpipEnabled;
+        return this.tcpipEnabled;
     }
 
     public List<String> getMembers() {
-        return members;
+        return this.members;
     }
 
     public int getMaxHeapSizePercentage() {
-        return maxHeapSizePercentage;
+        return this.maxHeapSizePercentage;
     }
 
     public MaxSizeConfig.MaxSizePolicy getMaxSizePolicy() {
-        return maxSizePolicy;
+        return this.maxSizePolicy;
     }
 
     public EvictionPolicy getEvictionPolicy() {
-        return evictionPolicy;
+        return this.evictionPolicy;
     }
 
     public int getEvictionPercentage() {
-        return evictionPercentage;
+        return this.evictionPercentage;
     }
 
     public int getMaxIdleSeconds() {
-        return maxIdleSeconds;
+        return this.maxIdleSeconds;
     }
 }

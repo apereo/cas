@@ -42,9 +42,9 @@ public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapp
      */
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        addAuthenticationHandlerPrincipalResolver(openIdCredentialsAuthenticationHandler, openIdPrincipalResolver);
+        addAuthenticationHandlerPrincipalResolver(this.openIdCredentialsAuthenticationHandler, this.openIdPrincipalResolver);
         addServiceTicketUniqueIdGenerator(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
-        addServiceFactory(openIdServiceFactory);
+        addServiceFactory(this.openIdServiceFactory);
     }
 
 }

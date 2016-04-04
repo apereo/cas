@@ -236,7 +236,7 @@ public class ClientAction extends AbstractAction {
     }
 
     public Clients getClients() {
-        return clients;
+        return this.clients;
     }
 
     public void setClients(final Clients clients) {
@@ -244,7 +244,7 @@ public class ClientAction extends AbstractAction {
     }
 
     public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
+        return this.centralAuthenticationService;
     }
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
@@ -252,6 +252,6 @@ public class ClientAction extends AbstractAction {
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 }

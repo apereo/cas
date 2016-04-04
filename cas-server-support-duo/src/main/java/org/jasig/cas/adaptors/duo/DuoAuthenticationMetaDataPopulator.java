@@ -39,12 +39,12 @@ public class DuoAuthenticationMetaDataPopulator implements AuthenticationMetaDat
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
                 obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
-            builder.mergeAttribute(authenticationContextAttribute, provider.getId());
+            builder.mergeAttribute(this.authenticationContextAttribute, this.provider.getId());
         }
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return authenticationHandler.supports(credential);
+        return this.authenticationHandler.supports(credential);
     }
 }

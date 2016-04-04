@@ -46,7 +46,7 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
 
         if (!this.accountRegistry.contains(uid)) {
-            final GoogleAuthenticatorKey key = googleAuthenticatorInstance.createCredentials();
+            final GoogleAuthenticatorKey key = this.googleAuthenticatorInstance.createCredentials();
             
             final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
                     key.getVerificationCode(), key.getScratchCodes());

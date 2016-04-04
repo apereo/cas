@@ -24,7 +24,7 @@ public class RegisteredServiceEditBean implements Serializable {
     private int status = -1;
 
     public ServiceData getServiceData() {
-        return serviceData;
+        return this.serviceData;
     }
 
     public void setServiceData(final ServiceData serviceData) {
@@ -32,7 +32,7 @@ public class RegisteredServiceEditBean implements Serializable {
     }
 
     public FormData getFormData() {
-        return formData;
+        return this.formData;
     }
 
     public void setFormData(final FormData formData) {
@@ -40,7 +40,7 @@ public class RegisteredServiceEditBean implements Serializable {
     }
 
     public int getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(final int status) {
@@ -55,7 +55,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
         public List<String> getAvailableAttributes() {
-            return availableAttributes;
+            return this.availableAttributes;
         }
 
         public void setAvailableAttributes(final List<String> availableAttributes) {
@@ -68,7 +68,7 @@ public class RegisteredServiceEditBean implements Serializable {
          * @return all the custom components
          */
         public Map<String, Map<String, ?>> getCustomComponent() {
-            return customComponent;
+            return this.customComponent;
         }
 
         /**
@@ -80,7 +80,7 @@ public class RegisteredServiceEditBean implements Serializable {
          * @return current custom component properties
          */
         public Map<String, ?> getCustomComponent(final String componentName) {
-            return customComponent.get(componentName);
+            return this.customComponent.get(componentName);
         }
 
         /**
@@ -122,7 +122,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
-            return attrRelease;
+            return this.attrRelease;
         }
 
         public void setAttrRelease(final RegisteredServiceAttributeReleasePolicyEditBean attrRelease) {
@@ -130,7 +130,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public RegisteredServicePublicKeyEditBean getPublicKey() {
-            return publicKey;
+            return this.publicKey;
         }
 
         public void setPublicKey(final RegisteredServicePublicKeyEditBean publicKey) {
@@ -138,7 +138,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public RegisteredServiceProxyPolicyBean getProxyPolicy() {
-            return proxyPolicy;
+            return this.proxyPolicy;
         }
 
         public void setProxyPolicy(final RegisteredServiceProxyPolicyBean proxyPolicy) {
@@ -146,7 +146,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getTheme() {
-            return theme;
+            return this.theme;
         }
 
         public void setTheme(final String theme) {
@@ -154,7 +154,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public int getEvalOrder() {
-            return evalOrder;
+            return this.evalOrder;
         }
 
         public void setEvalOrder(final int evalOrder) {
@@ -162,7 +162,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public Set<String> getRequiredHandlers() {
-            return requiredHandlers;
+            return this.requiredHandlers;
         }
 
         public void setRequiredHandlers(final Set<String> requiredHandlers) {
@@ -170,7 +170,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getLogoutUrl() {
-            return logoutUrl;
+            return this.logoutUrl;
         }
 
         public void setLogoutUrl(final String logoutUrl) {
@@ -178,7 +178,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public RegisteredServiceOAuthTypeEditBean getOauth() {
-            return oauth;
+            return this.oauth;
         }
 
         public void setOauth(final RegisteredServiceOAuthTypeEditBean oauth) {
@@ -186,7 +186,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getLogoutType() {
-            return logoutType;
+            return this.logoutType;
         }
 
         public void setLogoutType(final String logoutType) {
@@ -194,7 +194,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public RegisteredServiceUsernameAttributeProviderEditBean getUserAttrProvider() {
-            return userAttrProvider;
+            return this.userAttrProvider;
         }
 
         public void setUserAttrProvider(final RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider) {
@@ -202,7 +202,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getType() {
-            return type;
+            return this.type;
         }
 
         public void setType(final String type) {
@@ -210,7 +210,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public RegisteredServiceSupportAccessEditBean getSupportAccess() {
-            return supportAccess;
+            return this.supportAccess;
         }
 
         public void setSupportAccess(final RegisteredServiceSupportAccessEditBean supportAccess) {
@@ -218,7 +218,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getAssignedId() {
-            return assignedId;
+            return this.assignedId;
         }
 
         public void setAssignedId(final String assignedId) {
@@ -226,7 +226,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getServiceId() {
-            return serviceId;
+            return this.serviceId;
         }
 
         public void setServiceId(final String serviceId) {
@@ -234,7 +234,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getName() {
-            return name;
+            return this.name;
         }
 
         public void setName(final String name) {
@@ -242,7 +242,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getDescription() {
-            return description;
+            return this.description;
         }
 
         public void setDescription(final String description) {
@@ -250,7 +250,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         public String getLogoUrl() {
-            return logoUrl;
+            return this.logoUrl;
         }
 
         public void setLogoUrl(final String logoUrl) {
@@ -263,7 +263,7 @@ public class RegisteredServiceEditBean implements Serializable {
          * @return all the custom components
          */
         public Map<String, ? extends Map<String, ?>> getCustomComponent() {
-            return customComponent;
+            return this.customComponent;
         }
 
         /**
@@ -284,7 +284,7 @@ public class RegisteredServiceEditBean implements Serializable {
          * @return current custom component properties
          */
         public Map<String, ?> getCustomComponent(final String componentName) {
-            return customComponent.get(componentName);
+            return this.customComponent.get(componentName);
         }
 
         /**

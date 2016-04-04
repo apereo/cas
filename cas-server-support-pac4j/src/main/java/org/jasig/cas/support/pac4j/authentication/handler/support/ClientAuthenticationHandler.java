@@ -72,7 +72,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     }
 
     public Clients getClients() {
-        return clients;
+        return this.clients;
     }
 
     public void setClients(final Clients clients) {

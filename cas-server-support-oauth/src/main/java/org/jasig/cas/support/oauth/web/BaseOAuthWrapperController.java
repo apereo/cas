@@ -86,8 +86,8 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @return an access token
      */
     protected AccessToken generateAccessToken(final Service service, final Authentication authentication) {
-        final AccessToken accessToken = accessTokenFactory.create(service, authentication);
-        ticketRegistry.addTicket(accessToken);
+        final AccessToken accessToken = this.accessTokenFactory.create(service, authentication);
+        this.ticketRegistry.addTicket(accessToken);
         return accessToken;
     }
 
@@ -108,7 +108,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @return the built authentication
      */
     protected Authentication createAuthentication(final UserProfile profile) {
-        final Principal principal = principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
+        final Principal principal = this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
         final String authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(
                 new BasicIdentifiableCredential(profile.getId()));
@@ -126,7 +126,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     }
 
     public ServicesManager getServicesManager() {
-        return servicesManager;
+        return this.servicesManager;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {
@@ -138,11 +138,11 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     }
 
     public TicketRegistry getTicketRegistry() {
-        return ticketRegistry;
+        return this.ticketRegistry;
     }
 
     public long getTimeout() {
-        return timeout;
+        return this.timeout;
     }
 
     public void setTimeout(final long timeout) {
@@ -150,7 +150,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     }
 
     public AccessTokenFactory getAccessTokenFactory() {
-        return accessTokenFactory;
+        return this.accessTokenFactory;
     }
 
     public void setAccessTokenFactory(final AccessTokenFactory accessTokenFactory) {
@@ -158,7 +158,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     }
 
     public OAuthValidator getValidator() {
-        return validator;
+        return this.validator;
     }
 
     public void setValidator(final OAuthValidator validator) {
@@ -166,7 +166,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     }
 
     public PrincipalFactory getPrincipalFactory() {
-        return principalFactory;
+        return this.principalFactory;
     }
 
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {

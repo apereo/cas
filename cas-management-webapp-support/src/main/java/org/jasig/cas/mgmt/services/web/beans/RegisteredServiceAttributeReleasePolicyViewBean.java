@@ -14,7 +14,7 @@ public class RegisteredServiceAttributeReleasePolicyViewBean extends AbstractReg
     private String attrPolicy;
 
     public String getAttrPolicy() {
-        return attrPolicy;
+        return this.attrPolicy;
     }
 
     public void setAttrPolicy(final String attrPolicy) {
