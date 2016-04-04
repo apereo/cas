@@ -92,10 +92,10 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             if (service.isSignAssertions()) {
-                logger.info("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
+                logger.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
                 this.samlObjectSigner.encode(assertion, service, adaptor, response, request);
             } else {
-                logger.info("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
+                logger.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
             }
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for signing", e);

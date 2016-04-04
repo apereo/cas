@@ -107,7 +107,7 @@ public class CasFiltersConfiguration {
      */
     @RefreshScope
     @Bean(name = "responseHeadersSecurityFilter")
-    public FilterRegistrationBean rsponseHeadersSecurityFilter() {
+    public FilterRegistrationBean responseHeadersSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
         initParams.put("enableCacheControl", BooleanUtils.toStringTrueFalse(this.headerCache));
         initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(this.headerXcontent));

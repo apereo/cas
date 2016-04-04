@@ -16,13 +16,27 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Comment;
+import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Macro;
+import org.thymeleaf.dom.Node;
+import org.thymeleaf.dom.Text;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.AbstractThymeleafView;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.templatemode.ITemplateModeHandler;
+import org.thymeleaf.templatemode.TemplateModeHandler;
+import org.thymeleaf.templateparser.xmlsax.XhtmlAndHtml5NonValidatingSAXTemplateParser;
+import org.thymeleaf.templatewriter.AbstractGeneralTemplateWriter;
+import org.thymeleaf.templatewriter.ITemplateWriter;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -90,8 +104,42 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
 
         final SpringTemplateEngine engine = this.thymeleafViewResolver.getTemplateEngine();
+        final ITemplateWriter writer = new AbstractGeneralTemplateWriter() {
+            @Override
+            protected boolean shouldWriteXmlDeclaration() {
+                return false;
+            }
+
+            @Override
+            protected boolean useXhtmlTagMinimizationRules() {
+                return true;
+            }
+            
+            @Override
+            protected void writeText(final Arguments arguments, final Writer writer, final Text text) throws IOException {
+                final String contentString = text.getContent();
+                if (!contentString.isEmpty() && contentString.trim().length() == 0) {
+                    return;
+                }
+                super.writeText(arguments, writer, text);
+            }
+
+            @Override
+            public void writeNode(final Arguments arguments, final Writer writer, final Node node)
+                    throws IOException {
+                super.writeNode(arguments, writer, node);
+                if ((node instanceof Element) || (node instanceof Comment) || (node instanceof Macro)) {
+                    writer.write("\n");
+                }
+            }
+        };
+                
+        final ITemplateModeHandler handler  = new TemplateModeHandler("HTML5", new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), writer);
+        engine.setTemplateModeHandlers(Collections.singleton(handler));
+
         setTemplateEngine(engine);
         setViewNames(this.thymeleafViewResolver.getViewNames());
+        
     }
 
     @Override
