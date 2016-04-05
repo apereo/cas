@@ -89,6 +89,9 @@
         <module name="PackageName">
             <property name="severity" value="error"/>
         </module>
+        <module name="MissingCtorCheck">
+            <property name="severity" value="error"/>
+        </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
             <property name="ignoreOverridden" value="true" />
