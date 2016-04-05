@@ -7,6 +7,7 @@ import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSer
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,9 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
+    @Value("${cas.samlidp.attribute.friendly.name:true}")
+    private boolean samlAttributeFriendlyName;
+    
     @Override
     public AttributeStatement build(final AuthnRequest authnRequest,
                                     final HttpServletRequest request, final HttpServletResponse response,
@@ -40,6 +44,6 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             throws SamlException {
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
-        return newAttributeStatement(attributes);
+        return newAttributeStatement(attributes, this.samlAttributeFriendlyName);
     }
 }
