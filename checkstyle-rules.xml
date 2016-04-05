@@ -419,12 +419,10 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Using PostConstruct annotation"/>
             <property name="severity" value="error"/>
-            <property name="format" value=".+implements InitializingBean.+"/>
+            <property name="format" value=".+InitializingBean.+"/>
             <property name="message"
                       value="Use the @PostConstruct annotation instead of implementing InitializingBean"/>
         </module>
-
-        
     </module>
 
     <!-- Checker module checks -->

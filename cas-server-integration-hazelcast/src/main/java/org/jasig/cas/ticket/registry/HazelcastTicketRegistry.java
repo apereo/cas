@@ -3,7 +3,6 @@ package org.jasig.cas.ticket.registry;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import org.jasig.cas.ticket.Ticket;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RefreshScope
 @Component("hazelcastTicketRegistry")
-public class HazelcastTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
+public class HazelcastTicketRegistry extends AbstractTicketRegistry {
 
     private IMap<String, Ticket> registry;
     
@@ -107,12 +106,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
         logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
         this.hazelcastInstance.shutdown();
     }
-
-    @Override
-    public void destroy() throws Exception {
-        shutdown();
-    }
-
+    
     public void setRegistry(final IMap<String, Ticket> registry) {
         this.registry = registry;
     }
