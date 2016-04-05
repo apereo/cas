@@ -32,6 +32,15 @@ A Person Directory `IPersonAttributeDao` attribute source is defined and configu
 
 More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
 
+Note that the Person Directory project requires the following configuration in CAS overlays:
+
+```xml
+<dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>4.1</version>
+</dependency>
+```
 
 ### CAS
 The CAS project provides the following additional implementations:
