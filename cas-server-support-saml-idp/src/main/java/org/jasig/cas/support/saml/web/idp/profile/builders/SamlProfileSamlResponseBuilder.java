@@ -1,6 +1,5 @@
 package org.jasig.cas.support.saml.web.idp.profile.builders;
 
-import net.shibboleth.idp.saml.xml.SAMLConstants;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.SamlUtils;
@@ -9,11 +8,9 @@ import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSer
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-import org.openliberty.xmltooling.soapbinding.Consent;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.common.messaging.context.SAMLConsentContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
