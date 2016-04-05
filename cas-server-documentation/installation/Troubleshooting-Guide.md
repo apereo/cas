@@ -114,7 +114,8 @@ It is also worth checking that the certificate your CAS server is using for SSL 
 Java support for wildcard certificates is limited to hosts strictly in the same domain as the wildcard. For example, a certificate with `CN=.vt.edu` matches hosts **`a.vt.edu`** and **`b.vt.edu`**, but *not* **`a.b.vt.edu`**.
 
 
-###unrecognized_name Error
+### `unrecognized_name` Error
+
 {% highlight bash %}
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
 {% endhighlight %}
