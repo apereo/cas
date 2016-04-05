@@ -32,12 +32,16 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
 
     private IMap<String, Ticket> registry;
     
-    private HazelcastInstance hz;
-
+    private HazelcastInstance hazelcastInstance;
 
     /**
-     * @param hz                                  An instance of {@code HazelcastInstance}
-     * @param mapName                             Name of map to use
+     * Instantiates a new Hazelcast ticket registry.
+     */
+    public HazelcastTicketRegistry() {}
+    
+    /**
+     * @param hz An instance of {@code HazelcastInstance}
+     * @param mapName Name of map to use
      */
     @Autowired
     public HazelcastTicketRegistry(
@@ -47,7 +51,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
         final String mapName) {
 
         this.registry = hz.getMap(mapName);
-        this.hz = hz;
+        this.hazelcastInstance = hz;
     }
 
     /**
@@ -56,7 +60,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
     @PostConstruct
     public void init() {
         logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}",
-                this.hz, this.registry.getName());
+                this.hazelcastInstance, this.registry.getName());
     }
 
     @Override
@@ -100,12 +104,20 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
      */
     @PreDestroy
     public void shutdown() {
-        logger.info("Shutting down Hazelcast instance {}", this.hz.getConfig().getInstanceName());
-        this.hz.shutdown();
+        logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
+        this.hazelcastInstance.shutdown();
     }
 
     @Override
     public void destroy() throws Exception {
         shutdown();
+    }
+
+    public void setRegistry(final IMap<String, Ticket> registry) {
+        this.registry = registry;
+    }
+
+    public void setHazelcastInstance(final HazelcastInstance hazelcastInstance) {
+        this.hazelcastInstance = hazelcastInstance;
     }
 }

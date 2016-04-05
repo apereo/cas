@@ -133,6 +133,7 @@ ext.libraries = [
                 },
                 dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
                     exclude(group: 'xml-apis', module: 'xml-apis')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
                     force = true
                 }
 
@@ -1107,7 +1108,6 @@ ext.libraries = [
                 }
         ]
 ]
-
 
 buildscript {
     repositories {
