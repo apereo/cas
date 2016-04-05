@@ -116,13 +116,26 @@ Content-Type: text/xml
 ## Configuration
 SAML configuration in CAS is contained within the `cas.properties` file.
 
-{% highlight properties %}
+```properties
 # Indicates the SAML response issuer
 # cas.saml.response.issuer=localhost
 
 # Indicates the skew allowance which controls the issue instant of the SAML response
 # cas.saml.response.skewAllowance=0
-{% endhighlight %}
+```
+
+You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>shibboleth-releases</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+    </repository>
+    ...
+</repositories>
+```
 
 # SAML 2
 
