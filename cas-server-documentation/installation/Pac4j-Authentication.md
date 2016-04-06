@@ -17,13 +17,13 @@ in a CAS authentication handler and used for authentication.
 ## Dependency
 Support is added by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-integration-pac4j</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 You can use the first implementation for CAS username/password credentials: 
@@ -31,10 +31,10 @@ You can use the first implementation for CAS username/password credentials:
 
 For example, in the `deployerConfigContext.xml` file:
 
-{% highlight xml %}
+```xml
 
 <bean id="primaryAuthenticationHandler" 
     class="org.jasig.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler" />
-{% endhighlight %}
+```
 
 You may use a specific pac4j authenticator using the `setAuthenticator` method, the default one being the `SimpleTestUsernamePasswordAuthenticator`.

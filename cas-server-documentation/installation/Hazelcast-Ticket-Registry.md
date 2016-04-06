@@ -58,9 +58,9 @@ there are two basic steps required:
 
 * Indicate the location of the external native config file by the following property:
 
-{% highlight properties %}
+```properties
 hz.config.location=file:/etc/cas/hazelcast.xml
-{% endhighlight %}
+```
 
 Here's a simple example of `hazelcast.xml` that configures AWS cluster join strategy instead of a default TCP/IP one:
 

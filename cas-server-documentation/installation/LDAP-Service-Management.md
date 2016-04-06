@@ -12,24 +12,24 @@ attribute and are looked up by the `uid` attribute.
 
 Support is enabled by adding the following module into the Maven overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-ldap-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 
 ## Configuration
 
-{% highlight xml %}
+```xml
 ...
 <alias name="ldapServiceRegistryDao" alias="serviceRegistryDao" />
 <alias name="mySearchRequest" alias="ldapServiceRegistrySearchRequest" />
 <alias name="myConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
 ...
-{% endhighlight %}
+```
 
 The default mapper has support for the following optional items:
 

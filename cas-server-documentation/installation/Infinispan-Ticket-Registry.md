@@ -6,13 +6,13 @@ title: CAS - Infinispan Ticket Registry
 # Infinispan Ticket Registry
 Infinispan integration is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-integration-infinispan</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 
 [Infinispan](http://infinispan.org/) is a distributed in-memory key/value data store with optional schema.
@@ -47,23 +47,23 @@ See the [full list of implementations](http://infinispan.org/cache-store-impleme
 ## Distributed Cache
 Enable the registry via:
 
-{% highlight xml %}
+```xml
 <alias name="infinispanTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+```
 
 The above ticket registry expects a `infinispanTicketsCache` element to be available in the Spring context.
 This cache element may be chosen from one of the above implementations and configured.
 Here is an example:
 
-{% highlight xml %}
+```xml
 <bean id="infinispanTicketsCache" factory-bean="cacheManager" factory-method="getCache" />
 <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"
           c:configurationFile="infinispan.xml"/>
-{% endhighlight %}
+```
 
 ...and a sample `infinispan.xml` configuration file:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <infinispan xsi:schemaLocation="urn:infinispan:config:7.2 http://www.infinispan.org/schemas/infinispan-config-7.2.xsd"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:infinispan:config:7.2">
@@ -73,7 +73,7 @@ Here is an example:
        <local-cache name="cas" />
    </cache-container>
 </infinispan>
-{% endhighlight %}
+```
 
 Refer to the [Infinispan](http://infinispan.org/) documentation to learn more about cache configuration, and how
 to manage the eviction policy for various ticket types.

@@ -26,7 +26,7 @@ The service registry component of CAS has the ability to allow for configuration
 The default configuration which need not explicitly be defined, simply returns the resolved
 principal id as the username for this service.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -34,13 +34,13 @@ principal id as the username for this service.
   "id" : 100,
   "description" : "sample"
 }
-{% endhighlight %}
+```
 
 ### `PrincipalAttributeRegisteredServiceUsernameProvider`
 Returns an attribute that is already resolved for the principal as the username for this service. If the attribute
 is not available, the default principal id will be used.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -52,14 +52,14 @@ is not available, the default principal id will be used.
     "usernameAttribute" : "cn"
   }
 }
-{% endhighlight %}
+```
 
 
 ### `AnonymousRegisteredServiceUsernameAttributeProvider`
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
 of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -74,7 +74,7 @@ of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary
     }
   }
 }
-{% endhighlight %}
+```
 
 ## Attribute Release Policy
 The release policy decides how attributes are to be released for a given service. Each policy has
@@ -94,7 +94,7 @@ to [release the proxy-granting ticket id as an attribute](../installation/Config
 #### `ReturnAllAttributeReleasePolicy`
 Return all resolved attributes to the service.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -105,12 +105,12 @@ Return all resolved attributes to the service.
     "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy"
   }
 }
-{% endhighlight %}
+```
 
 #### `ReturnAllowedAttributeReleasePolicy`
 Only return the attributes that are explicitly allowed by the configuration.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -122,7 +122,7 @@ Only return the attributes that are explicitly allowed by the configuration.
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
   }
 }
-{% endhighlight %}
+```
 
 
 #### `ReturnMappedAttributeReleasePolicy`
@@ -133,7 +133,7 @@ For example, the following configuration will recognize the resolved
 attributes `uid`, `eduPersonAffiliation` and `groupMembership` and will then
 release `uid`, `affiliation` and `group` to the web application configured.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -149,7 +149,7 @@ release `uid`, `affiliation` and `group` to the web application configured.
     }
   }
 }
-{% endhighlight %}
+```
 
 
 ### Attribute Filters
@@ -172,7 +172,7 @@ The following configuration for instance considers the initial list of `uid`,
 `groupMembership` and then only allows and releases attributes whose value's length
 is 3 characters. Therefor, out of the above list, only `groupMembership` is released to the application.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -188,7 +188,7 @@ is 3 characters. Therefor, out of the above list, only `groupMembership` is rele
     "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
   }
 }
-{% endhighlight %}
+```
 
 ## Caching/Updating Attributes
 By default, [resolved attributes](Attribute-Resolution.html) are cached to the
@@ -229,7 +229,7 @@ without relying on the <code>Principal</code>.</p></div>
 
 Sample configuration follows:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -248,7 +248,7 @@ Sample configuration follows:
     }
   }
 }
-{% endhighlight %}
+```
 
 
 #### Merging Strategies
@@ -265,7 +265,7 @@ For example:
 3. The resulting merged would have attributes: `{email=eric.dalquist@example.com, phone=[123-456-7890, 111-222-3333, 000-999-8888], office=3233}`
 
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -284,7 +284,7 @@ For example:
     }
   }
 }
-{% endhighlight %}
+```
 
 * `NoncollidingAttributeAdder`
 Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
@@ -295,7 +295,7 @@ For example:
 2. Source has attributes `{phone=[111-222-3333, 000-999-8888], office=3233}`
 3. The resulting merged would have attributes: `{email=eric.dalquist@example.com, phone=123-456-7890, office=3233}`
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -314,7 +314,7 @@ For example:
     }
   }
 }
-{% endhighlight %}
+```
 
 * `ReplacingAttributeAdder`
 Attributes are merged such that attributes from the source always replace principal attributes.
@@ -326,7 +326,7 @@ For example:
 3. The resulting merged would have attributes: `{email=eric.dalquist@example.com, phone=[111-222-3333, 000-999-8888], office=3233}`
 
 
-{% highlight xml %}
+```xml
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -345,7 +345,7 @@ For example:
     }
   }
 }
-{% endhighlight %}
+```
 
 ### Encrypting Attributes
 CAS by default supports the ability to encrypt certain attributes, such as the proxy-granting ticket and the credential conditionally.
@@ -357,7 +357,7 @@ The default implementation of the attribute encoder that will use a per-service 
 to encrypt. It will attempt to query the collection of attributes that resolved to determine
 which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`.
 
-{% highlight xml %}
+```xml
 <bean id="cas3ServiceSuccessView"
     class="Cas30ResponseView"
     c:view-ref="cas3JstlSuccessView"
@@ -372,4 +372,4 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
     class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
     c:servicesManager-ref="servicesManager"
     c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
-{% endhighlight %}
+```
