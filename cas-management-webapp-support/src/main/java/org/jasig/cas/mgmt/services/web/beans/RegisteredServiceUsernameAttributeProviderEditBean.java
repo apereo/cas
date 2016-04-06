@@ -50,7 +50,7 @@ public class RegisteredServiceUsernameAttributeProviderEditBean implements Seria
     private String type = Types.DEFAULT.toString();
 
     public String getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(final String value) {
@@ -58,7 +58,7 @@ public class RegisteredServiceUsernameAttributeProviderEditBean implements Seria
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(final String type) {

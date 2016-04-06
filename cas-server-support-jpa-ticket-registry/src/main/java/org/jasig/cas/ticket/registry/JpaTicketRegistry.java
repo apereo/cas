@@ -50,13 +50,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void updateTicket(final Ticket ticket) {
-        entityManager.merge(ticket);
+        this.entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
 
     @Override
     public void addTicket(final Ticket ticket) {
-        entityManager.persist(ticket);
+        this.entityManager.persist(ticket);
         logger.debug("Added ticket [{}] to registry.", ticket);
     }
 
@@ -69,7 +69,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         try {
             final ZonedDateTime creationDate = ticket.getCreationTime();
             logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
-            entityManager.remove(ticket);
+            this.entityManager.remove(ticket);
             return true;
         } catch (final Exception e) {
             logger.error("Error removing {} from registry.", ticket.getId(), e);
@@ -93,13 +93,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
                     || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
-                return entityManager.find(TicketGrantingTicketImpl.class, ticketId,
-                        lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
+                return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId,
+                        this.lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
             } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)) {
-                return entityManager.find(OAuthCodeImpl.class, ticketId);
+                return this.entityManager.find(OAuthCodeImpl.class, ticketId);
             }
 
-            return entityManager.find(ServiceTicketImpl.class, ticketId);
+            return this.entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
             logger.error("Error getting ticket {} from registry.", ticketId, e);
         }
@@ -108,10 +108,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final List<TicketGrantingTicketImpl> tgts = entityManager
+        final List<TicketGrantingTicketImpl> tgts = this.entityManager
                 .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
                 .getResultList();
-        final List<ServiceTicketImpl> sts = entityManager
+        final List<ServiceTicketImpl> sts = this.entityManager
                 .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
                 .getResultList();
 
@@ -128,13 +128,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long sessionCount() {
-        return countToLong(entityManager.createQuery(
+        return countToLong(this.entityManager.createQuery(
                 "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        return countToLong(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+        return countToLong(this.entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
     }
 
     @Override
@@ -155,7 +155,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, final Class<T> clazz) {
-        return entityManager.createQuery(query, clazz)
+        return this.entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
                 .getResultList();
     }

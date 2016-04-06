@@ -149,7 +149,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
         try (final CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
-            final int idx = Collections.binarySearch(acceptableCodes, responseCode);
+            final int idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {
                 LOGGER.debug("Response code from server matched {}.", responseCode);
                 return true;

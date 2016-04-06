@@ -289,4 +289,7 @@
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <util:list id="validationServiceSelectionStrategies">
+        <bean class="org.jasig.cas.validation.DefaultValidationServiceSelectionStrategy" />
+    </util:list>
 </beans>

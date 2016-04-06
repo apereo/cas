@@ -111,7 +111,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
      */
     private RegisteredService update(final RegisteredService rs) {
         String currentDn = null;
-        if (ldapServiceMapper == null || searchRequest == null) {
+        if (this.ldapServiceMapper == null || this.searchRequest == null) {
             return null;
         }
 
@@ -166,7 +166,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public List<RegisteredService> load() {
         final List<RegisteredService> list = new LinkedList<>();
-        if (ldapServiceMapper == null) {
+        if (this.ldapServiceMapper == null) {
             return list;
         }
 
@@ -187,7 +187,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        if (ldapServiceMapper == null) {
+        if (this.ldapServiceMapper == null) {
             return null;
         }
 

@@ -88,14 +88,14 @@ public class GroovyShellService {
 
         try {
             this.serverSocket = new ServerSocket(this.port);
-            logger.info("Opened server port {} on port {}", serverSocket, this.port);
+            logger.info("Opened server port {} on port {}", this.serverSocket, this.port);
             this.scriptsLocationResource = 
                     ResourceUtils.prepareClasspathResourceIfNeeded(this.scriptsLocationResource, true, FILE_EXTENSION);
             
             while (true) {
                 final Socket clientSocket;
                 try {
-                    clientSocket = serverSocket.accept();
+                    clientSocket = this.serverSocket.accept();
                     logger.info("Received client port request {} ", clientSocket);
                 } catch (final IOException e) {
                     logger.error(e.getMessage(), e);
@@ -103,7 +103,7 @@ public class GroovyShellService {
                 }
 
                 final GroovyShellThread clientThread = new GroovyShellThread(clientSocket, createBinding());
-                threads.add(clientThread);
+                this.threads.add(clientThread);
                 logger.debug("Created groovy shell thread based on client port request {}. Starting...",
                         clientSocket);
                 clientThread.start();
@@ -121,20 +121,20 @@ public class GroovyShellService {
     protected Binding createBinding() {
         final Binding binding = new Binding();
 
-        final String[] beanNames = context.getBeanDefinitionNames();
-        logger.debug("Found [{}] beans in the application context", context.getBeanDefinitionCount());
+        final String[] beanNames = this.context.getBeanDefinitionNames();
+        logger.debug("Found [{}] beans in the application context", this.context.getBeanDefinitionCount());
 
         for (final String name : beanNames) {
             try {
-                binding.setVariable(name, context.getBean(name));
+                binding.setVariable(name, this.context.getBean(name));
                 logger.debug("Added context bean [{}] to groovy bindings", name);
             } catch (final Exception e) {
                 logger.warn("Could not add bean id [{}] to the binding. Reason: [{}]", name, e.getMessage());
             }
         }
 
-        if (bindings != null) {
-            for (final Map.Entry<String, Object> nextBinding : bindings.entrySet()) {
+        if (this.bindings != null) {
+            for (final Map.Entry<String, Object> nextBinding : this.bindings.entrySet()) {
 
                 logger.debug("Added variable [{}] to groovy bindings", nextBinding.getKey());
                 binding.setVariable(nextBinding.getKey(), nextBinding.getValue());
@@ -142,7 +142,7 @@ public class GroovyShellService {
         }
 
         logger.debug("Added application context [{}] to groovy bindings", CONTEXT_KEY);
-        binding.setVariable(CONTEXT_KEY, context);
+        binding.setVariable(CONTEXT_KEY, this.context);
 
         loadCustomGroovyScriptsIntoClasspath(binding);
 
@@ -176,10 +176,10 @@ public class GroovyShellService {
      */
     @PreDestroy
     public void destroy() {
-        logger.info("Closing serverSocket: {}", serverSocket);
+        logger.info("Closing serverSocket: {}", this.serverSocket);
         try {
-            serverSocket.close();
-            for (final GroovyShellThread nextThread : threads) {
+            this.serverSocket.close();
+            for (final GroovyShellThread nextThread : this.threads) {
                 logger.info("Closing thread on port: {}", nextThread.getSocket());
                 nextThread.destroy();
             }

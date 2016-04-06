@@ -44,7 +44,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
 
             final VerifyResponse message = (VerifyResponse)
-                serverManager.verify(new ParameterList(request.getParameterMap()));
+                    this.serverManager.verify(new ParameterList(request.getParameterMap()));
 
             final Map<String, String> parameters = new HashMap<>();
             parameters.putAll(message.getParameterMap());

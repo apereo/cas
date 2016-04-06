@@ -55,12 +55,12 @@ public class FieldHelper {
     private Field getField(final Object target, final String name) {
         Class<?> clazz = target.getClass();
         final String key = new StringBuilder().append(clazz.getName()).append('.').append(name).toString();
-        Field f = fieldCache.get(key);
+        Field f = this.fieldCache.get(key);
         while (f == null) {
             try {
                 f = clazz.getDeclaredField(name);
                 f.setAccessible(true);
-                fieldCache.put(key, f);
+                this.fieldCache.put(key, f);
             } catch (final NoSuchFieldException e) {
                 clazz = clazz.getSuperclass();
                 if (clazz == null) {

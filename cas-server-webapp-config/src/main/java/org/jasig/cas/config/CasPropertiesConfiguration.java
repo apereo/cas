@@ -47,6 +47,6 @@ public class CasPropertiesConfiguration {
         properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
         properties.put("info.cas.java.version", sysProps.get("java.version"));
         final PropertiesPropertySource src = new PropertiesPropertySource(CasVersion.class.getName(), properties);
-        environment.getPropertySources().addFirst(src);
+        this.environment.getPropertySources().addFirst(src);
     }
 }

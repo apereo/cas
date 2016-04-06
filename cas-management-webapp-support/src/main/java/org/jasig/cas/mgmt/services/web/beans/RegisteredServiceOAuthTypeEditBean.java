@@ -17,7 +17,7 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
     private boolean jsonFormat;
 
     public String getClientSecret() {
-        return clientSecret;
+        return this.clientSecret;
     }
 
     public void setClientSecret(final String clientSecret) {
@@ -25,7 +25,7 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
     }
 
     public String getClientId() {
-        return clientId;
+        return this.clientId;
     }
 
     public void setClientId(final String clientId) {
@@ -33,7 +33,7 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
     }
 
     public boolean isBypass() {
-        return bypass;
+        return this.bypass;
     }
 
     public void setBypass(final boolean bypass) {
@@ -41,7 +41,7 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
     }
 
     public boolean isRefreshToken() {
-        return refreshToken;
+        return this.refreshToken;
     }
 
     public void setRefreshToken(final boolean refreshToken) {
@@ -49,7 +49,7 @@ public class RegisteredServiceOAuthTypeEditBean implements Serializable {
     }
 
     public boolean isJsonFormat() {
-        return jsonFormat;
+        return this.jsonFormat;
     }
 
     public void setJsonFormat(final boolean jsonFormat) {

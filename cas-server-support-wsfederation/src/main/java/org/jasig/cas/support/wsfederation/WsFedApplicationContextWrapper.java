@@ -37,9 +37,9 @@ public class WsFedApplicationContextWrapper extends BaseApplicationContextWrappe
     @PostConstruct
     protected void initializeRootApplicationContext() {
         if (!this.useResolver) {
-            addAuthenticationHandler(adfsAuthNHandler);
+            addAuthenticationHandler(this.adfsAuthNHandler);
         } else {
-            addAuthenticationHandlerPrincipalResolver(adfsAuthNHandler, adfsPrincipalResolver);
+            addAuthenticationHandlerPrincipalResolver(this.adfsAuthNHandler, this.adfsPrincipalResolver);
         }
     }
 }

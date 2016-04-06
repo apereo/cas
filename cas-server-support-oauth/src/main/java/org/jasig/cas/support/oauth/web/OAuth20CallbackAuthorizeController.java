@@ -36,12 +36,12 @@ public class OAuth20CallbackAuthorizeController extends AbstractController {
 
     @PostConstruct
     private void postConstruct() {
-        callbackController.setConfig(config);
+        this.callbackController.setConfig(this.config);
     }
 
     @RequestMapping(path= OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return new ModelAndView(callbackController.callback(request, response));
+        return new ModelAndView(this.callbackController.callback(request, response));
     }
 }

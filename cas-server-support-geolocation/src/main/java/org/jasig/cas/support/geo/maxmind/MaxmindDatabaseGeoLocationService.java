@@ -42,12 +42,12 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     @PostConstruct
     public void init() {
         try {
-            if (cityDatabase.exists()) {
-                cityDatabaseReader = new DatabaseReader.Builder(this.cityDatabase.getFile()).withCache(new CHMCache()).build();
+            if (this.cityDatabase.exists()) {
+                this.cityDatabaseReader = new DatabaseReader.Builder(this.cityDatabase.getFile()).withCache(new CHMCache()).build();
             }
 
-            if (countryDatabase.exists()) {
-                countryDatabaseReader = new DatabaseReader.Builder(this.countryDatabase.getFile()).withCache(new CHMCache()).build();
+            if (this.countryDatabase.exists()) {
+                this.countryDatabaseReader = new DatabaseReader.Builder(this.countryDatabase.getFile()).withCache(new CHMCache()).build();
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -58,12 +58,12 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     public GeoLocation locate(final InetAddress address) {
         final GeoLocation location = new GeoLocation();
         try {
-            if (cityDatabaseReader != null) {
-                final CityResponse response = cityDatabaseReader.city(address);
+            if (this.cityDatabaseReader != null) {
+                final CityResponse response = this.cityDatabaseReader.city(address);
                 location.setCity(response.getCity().getName());
             }
-            if (countryDatabaseReader != null) {
-                final CountryResponse response = countryDatabaseReader.country(address);
+            if (this.countryDatabaseReader != null) {
+                final CountryResponse response = this.countryDatabaseReader.country(address);
                 location.setCountry(response.getCountry().getName());
             }
             logger.debug("Geo location for {} is calculated as {}", address, location);

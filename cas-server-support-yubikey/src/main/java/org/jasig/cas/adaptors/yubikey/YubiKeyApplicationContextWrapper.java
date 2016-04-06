@@ -30,6 +30,6 @@ public class YubiKeyApplicationContextWrapper extends BaseApplicationContextWrap
     @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
-        addAuthenticationMetadataPopulator(populator);
+        addAuthenticationMetadataPopulator(this.populator);
     }
 }

@@ -94,59 +94,59 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
     @PostConstruct
     public void initializeDefaults() {
         // use default mappers from spring context
-        if (applicationContext != null) {
-            if (accessStrategyMapper == null) {
-                accessStrategyMapper = applicationContext.getBean(
+        if (this.applicationContext != null) {
+            if (this.accessStrategyMapper == null) {
+                this.accessStrategyMapper = this.applicationContext.getBean(
                         DefaultAccessStrategyMapper.BEAN_NAME,
                         AccessStrategyMapper.class);
             }
-            if (attributeReleasePolicyMapper == null) {
-                attributeReleasePolicyMapper = applicationContext.getBean(
+            if (this.attributeReleasePolicyMapper == null) {
+                this.attributeReleasePolicyMapper = this.applicationContext.getBean(
                         DefaultAttributeReleasePolicyMapper.BEAN_NAME,
                         AttributeReleasePolicyMapper.class);
             }
-            if (proxyPolicyMapper == null) {
-                proxyPolicyMapper = applicationContext.getBean(
+            if (this.proxyPolicyMapper == null) {
+                this.proxyPolicyMapper = this.applicationContext.getBean(
                         DefaultProxyPolicyMapper.BEAN_NAME,
                         ProxyPolicyMapper.class);
             }
-            if (registeredServiceMapper == null) {
-                registeredServiceMapper = applicationContext.getBean(
+            if (this.registeredServiceMapper == null) {
+                this.registeredServiceMapper = this.applicationContext.getBean(
                         DefaultRegisteredServiceMapper.BEAN_NAME,
                         RegisteredServiceMapper.class);
             }
-            if (usernameAttributeProviderMapper == null) {
-                usernameAttributeProviderMapper = applicationContext.getBean(
+            if (this.usernameAttributeProviderMapper == null) {
+                this.usernameAttributeProviderMapper = this.applicationContext.getBean(
                         DefaultUsernameAttributeProviderMapper.BEAN_NAME,
                         UsernameAttributeProviderMapper.class);
             }
         }
 
         // initialize default mappers if any are still missing
-        if (accessStrategyMapper == null) {
-            accessStrategyMapper = new DefaultAccessStrategyMapper();
+        if (this.accessStrategyMapper == null) {
+            this.accessStrategyMapper = new DefaultAccessStrategyMapper();
         }
-        if (attributeReleasePolicyMapper == null) {
+        if (this.attributeReleasePolicyMapper == null) {
             final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper();
-            policyMapper.setApplicationContext(applicationContext);
+            policyMapper.setApplicationContext(this.applicationContext);
             policyMapper.initializeDefaults();
-            attributeReleasePolicyMapper = policyMapper;
+            this.attributeReleasePolicyMapper = policyMapper;
         }
-        if (proxyPolicyMapper == null) {
-            proxyPolicyMapper = new DefaultProxyPolicyMapper();
+        if (this.proxyPolicyMapper == null) {
+            this.proxyPolicyMapper = new DefaultProxyPolicyMapper();
         }
-        if (registeredServiceMapper == null) {
-            registeredServiceMapper = new DefaultRegisteredServiceMapper();
+        if (this.registeredServiceMapper == null) {
+            this.registeredServiceMapper = new DefaultRegisteredServiceMapper();
         }
-        if (usernameAttributeProviderMapper == null) {
-            usernameAttributeProviderMapper = new DefaultUsernameAttributeProviderMapper();
+        if (this.usernameAttributeProviderMapper == null) {
+            this.usernameAttributeProviderMapper = new DefaultUsernameAttributeProviderMapper();
         }
     }
 
     @Override
     public FormData createFormData() {
         final FormData data = new FormData();
-        formDataPopulators.stream().forEach(populator -> populator.populateFormData(data));
+        this.formDataPopulators.stream().forEach(populator -> populator.populateFormData(data));
         return data;
     }
 
@@ -154,11 +154,11 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
     public ServiceData createServiceData(final RegisteredService svc) {
         final ServiceData bean = new ServiceData();
 
-        registeredServiceMapper.mapRegisteredService(svc, bean);
-        accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
-        usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
-        proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
-        attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
+        this.registeredServiceMapper.mapRegisteredService(svc, bean);
+        this.accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
+        this.usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
+        this.proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
+        this.attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
 
         return bean;
     }
@@ -167,39 +167,39 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
     public RegisteredServiceViewBean createServiceViewBean(final RegisteredService svc) {
         final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
 
-        registeredServiceMapper.mapRegisteredService(svc, bean);
-        accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
-        usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
-        proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
-        attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
+        this.registeredServiceMapper.mapRegisteredService(svc, bean);
+        this.accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
+        this.usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
+        this.proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
+        this.attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
 
         return bean;
     }
 
     @Override
     public RegisteredService createRegisteredService(final ServiceData data) {
-        final RegisteredService svc = registeredServiceMapper.toRegisteredService(data);
+        final RegisteredService svc = this.registeredServiceMapper.toRegisteredService(data);
 
         if (svc instanceof AbstractRegisteredService) {
             final AbstractRegisteredService absSvc = (AbstractRegisteredService) svc;
 
-            final RegisteredServiceAccessStrategy accessStrategy = accessStrategyMapper.toAccessStrategy(data);
+            final RegisteredServiceAccessStrategy accessStrategy = this.accessStrategyMapper.toAccessStrategy(data);
             if (accessStrategy != null) {
                 absSvc.setAccessStrategy(accessStrategy);
             }
 
             final RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
-                    usernameAttributeProviderMapper.toUsernameAttributeProvider(data);
+                    this.usernameAttributeProviderMapper.toUsernameAttributeProvider(data);
             if (usernameAttributeProvider != null) {
                 absSvc.setUsernameAttributeProvider(usernameAttributeProvider);
             }
 
-            final RegisteredServiceProxyPolicy proxyPolicy = proxyPolicyMapper.toProxyPolicy(data);
+            final RegisteredServiceProxyPolicy proxyPolicy = this.proxyPolicyMapper.toProxyPolicy(data);
             if (proxyPolicy != null) {
                 absSvc.setProxyPolicy(proxyPolicy);
             }
 
-            final RegisteredServiceAttributeReleasePolicy attrPolicy = attributeReleasePolicyMapper
+            final RegisteredServiceAttributeReleasePolicy attrPolicy = this.attributeReleasePolicyMapper
                     .toAttributeReleasePolicy(data);
             if (attrPolicy != null) {
                 absSvc.setAttributeReleasePolicy(attrPolicy);

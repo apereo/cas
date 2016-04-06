@@ -56,7 +56,7 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     @PreDestroy
     public void destroy() {
         logger.debug("Shutting down connection pools...");
-        for (final PooledConnectionFactory factory : connectionPoolMap.values()) {
+        for (final PooledConnectionFactory factory : this.connectionPoolMap.values()) {
             factory.getConnectionPool().close();
         }
     }
@@ -64,12 +64,12 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     @Override
     protected ConnectionFactory prepareConnectionFactory(final String ldapURL) {
         final PooledConnectionFactory connectionFactory;
-        synchronized (connectionPoolMap) {
-            if (connectionPoolMap.containsKey(ldapURL)) {
-                connectionFactory = connectionPoolMap.get(ldapURL);
+        synchronized (this.connectionPoolMap) {
+            if (this.connectionPoolMap.containsKey(ldapURL)) {
+                connectionFactory = this.connectionPoolMap.get(ldapURL);
             } else {
                 connectionFactory = new PooledConnectionFactory(newConnectionPool(ldapURL));
-                connectionPoolMap.put(ldapURL, connectionFactory);
+                this.connectionPoolMap.put(ldapURL, connectionFactory);
             }
         }
         return connectionFactory;

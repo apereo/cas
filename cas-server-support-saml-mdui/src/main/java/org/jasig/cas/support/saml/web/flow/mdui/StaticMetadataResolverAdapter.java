@@ -76,7 +76,7 @@ public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapt
                         .repeatForever()).build();
 
         try {
-            scheduler.scheduleJob(job, trigger);
+            this.scheduler.scheduleJob(job, trigger);
         } catch (final SchedulerException e) {
             throw new RuntimeException(e);
         }

@@ -131,8 +131,8 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             throws Exception {
         logger.info("Loading metadata dynamically for [{}]", service.getName());
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
-                new FunctionDrivenDynamicHTTPMetadataResolver(httpClient.getWrappedHttpClient());
-        resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(metadataCacheExpirationMinutes, TimeUnit.MINUTES));
+                new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
+        resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES));
         resolver.setRequestURLBuilder(new Function<String, String>() {
             @Nullable
             @Override
@@ -167,7 +167,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
         try (final InputStream in = metadataResource.getInputStream()) {
             logger.debug("Parsing metadata from [{}]", metadataLocation);
-            final Document document = configBean.getParserPool().parse(in);
+            final Document document = this.configBean.getParserPool().parse(in);
 
             final Element metadataRoot = document.getDocumentElement();
             final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
@@ -197,7 +197,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      */
     protected void buildSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                final SamlRegisteredService service) throws Exception {
-        metadataProvider.setParserPool(configBean.getParserPool());
+        metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(this.failFastInitialization);
         metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
         metadataProvider.setId(metadataProvider.getClass().getCanonicalName());

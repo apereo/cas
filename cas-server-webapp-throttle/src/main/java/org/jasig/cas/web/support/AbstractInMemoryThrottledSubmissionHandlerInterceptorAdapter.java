@@ -132,7 +132,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                         .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
-                scheduler.scheduleJob(job, trigger);
+                this.scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
                     TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
@@ -144,7 +144,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     }
 
     private boolean shouldScheduleCleanerJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && this.scheduler != null) {
             logger.debug("Found CAS servlet application context");
             final String[] aliases =
                 this.applicationContext.getAutowireCapableBeanFactory().getAliases("authenticationThrottle");

@@ -68,19 +68,19 @@ public class InitialFlowSetupAction extends AbstractAction {
         final String contextPath = context.getExternalContext().getContextPath();
         final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
-        if (StringUtils.isBlank(warnCookieGenerator.getCookiePath())) {
+        if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
             logger.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
         } else {
-            logger.debug("Warning cookie path is set to {} and path {}", warnCookieGenerator.getCookieDomain(),
-                    warnCookieGenerator.getCookiePath());
+            logger.debug("Warning cookie path is set to {} and path {}", this.warnCookieGenerator.getCookieDomain(),
+                    this.warnCookieGenerator.getCookiePath());
         }
-        if (StringUtils.isBlank(ticketGrantingTicketCookieGenerator.getCookiePath())) {
+        if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
             logger.info("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
         } else {
-            logger.debug("TGC cookie path is set to {} and path {}", ticketGrantingTicketCookieGenerator.getCookieDomain(),
-                    ticketGrantingTicketCookieGenerator.getCookiePath());
+            logger.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
+                    this.ticketGrantingTicketCookieGenerator.getCookiePath());
         }
 
         WebUtils.putTicketGrantingTicketInScopes(context,

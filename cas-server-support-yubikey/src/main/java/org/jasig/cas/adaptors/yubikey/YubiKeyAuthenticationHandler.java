@@ -113,11 +113,11 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     }
 
     public YubiKeyAccountRegistry getRegistry() {
-        return registry;
+        return this.registry;
     }
 
     public YubicoClient getClient() {
-        return client;
+        return this.client;
     }
 
 

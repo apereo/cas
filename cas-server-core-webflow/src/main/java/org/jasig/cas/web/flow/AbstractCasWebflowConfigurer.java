@@ -122,7 +122,7 @@ public abstract class AbstractCasWebflowConfigurer {
     }
 
     protected List<String> getFlowDefinitionIds() {
-        return Arrays.asList(loginFlowDefinitionRegistry.getFlowDefinitionIds());
+        return Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
     }
 
     /**
@@ -132,7 +132,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @return the flow definition ids
      */
     protected List<String> getFlowDefinitionIds(final List<String> excludedFlowIds) {
-        final List<String> flowIds = Arrays.asList(loginFlowDefinitionRegistry.getFlowDefinitionIds());
+        final List<String> flowIds = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
         flowIds.removeAll(excludedFlowIds);
         return flowIds;
     }

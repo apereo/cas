@@ -101,7 +101,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         logger.debug("Generated Oauth access token: {}", accessToken);
 
         String callbackUrl = redirectUri;
-        callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + timeout;
+        callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + this.timeout;
         if (state != null) {
             callbackUrl += "&state=" + EncodingUtils.urlEncode(state);
         }
@@ -110,9 +110,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     private String buildCallbackUrlForAuthorizationCodeResponseType(final String state, final Authentication authentication,
                                                                     final Service service, final String redirectUri) {
-        final OAuthCode code = oAuthCodeFactory.create(service, authentication);
+        final OAuthCode code = this.oAuthCodeFactory.create(service, authentication);
         logger.debug("Generated OAuth code: {}", code);
-        ticketRegistry.addTicket(code);
+        this.ticketRegistry.addTicket(code);
 
         String callbackUrl = redirectUri;
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
@@ -140,9 +140,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      */
     private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
 
-        final boolean checkParameterExist = validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                && validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                && validator.checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
+        final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                && this.validator.checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
 
         final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
@@ -151,8 +151,8 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
         return checkParameterExist
             && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
-            && validator.checkServiceValid(registeredService)
-            && validator.checkCallbackValid(registeredService, redirectUri);
+            && this.validator.checkServiceValid(registeredService)
+            && this.validator.checkCallbackValid(registeredService, redirectUri);
     }
 
     /**
@@ -191,7 +191,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @return the OAuth code factory
      */
     public OAuthCodeFactory getoAuthCodeFactory() {
-        return oAuthCodeFactory;
+        return this.oAuthCodeFactory;
     }
 
     /**

@@ -24,6 +24,6 @@ public class InitialAuthenticationRequestValidationAction extends AbstractAction
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return rankedAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
+        return this.rankedAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
     }
 }

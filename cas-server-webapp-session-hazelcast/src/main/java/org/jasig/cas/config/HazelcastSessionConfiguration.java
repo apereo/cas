@@ -37,8 +37,8 @@ public class HazelcastSessionConfiguration {
     @Bean(name="hazelcastInstance")
     public HazelcastInstance hazelcastInstance() {
         try {
-            final URL configUrl = configLocation.getURL();
-            final Config config = new XmlConfigBuilder(configLocation.getInputStream()).build();
+            final URL configUrl = this.configLocation.getURL();
+            final Config config = new XmlConfigBuilder(this.configLocation.getInputStream()).build();
             config.setConfigurationUrl(configUrl);
             config.setInstanceName(this.getClass().getSimpleName())
                     .setProperty("hazelcast.logging.type", "slf4j")

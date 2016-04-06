@@ -41,7 +41,7 @@ public class RegisteredServiceProxyPolicyBean implements Serializable {
     private String value;
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(final String type) {
@@ -49,7 +49,7 @@ public class RegisteredServiceProxyPolicyBean implements Serializable {
     }
 
     public String getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(final String value) {

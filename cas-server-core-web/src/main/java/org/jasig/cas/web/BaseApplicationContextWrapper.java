@@ -50,7 +50,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
                                                               final PrincipalResolver resolver) {
         logger.debug("Adding {} and {} to application context", handler, resolver);
         final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
-                applicationContext.getBean("authenticationHandlersResolvers", Map.class);
+                this.applicationContext.getBean("authenticationHandlersResolvers", Map.class);
         authenticationHandlersResolvers.put(handler, resolver);
     }
 
@@ -80,7 +80,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
     protected void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator, final int index) {
         logger.debug("Adding {} to application context", populator);
         final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
-                applicationContext.getBean("authenticationMetadataPopulators", List.class);
+                this.applicationContext.getBean("authenticationMetadataPopulators", List.class);
         authenticationMetadataPopulators.add(index, populator);
     }
     
@@ -118,7 +118,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
     protected void addServiceFactory(final ServiceFactory<? extends Service> factory, final int index) {
         logger.debug("Adding [{}] application context", factory);
         final List<ServiceFactory<? extends Service>> list =
-                applicationContext.getBean("serviceFactoryList", List.class);
+                this.applicationContext.getBean("serviceFactoryList", List.class);
         list.add(index, factory);
     }
 
@@ -132,7 +132,7 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
                                                            final UniqueTicketIdGenerator gen) {
         logger.debug("Adding [{}] for {} application context", serviceName, gen);
         final Map<String, UniqueTicketIdGenerator> map =
-                applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
+                this.applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
         map.put(serviceName, gen);
     }
 

@@ -204,23 +204,23 @@ public class TicketsResource {
     }
 
     public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
+        return this.centralAuthenticationService;
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     public CredentialFactory getCredentialFactory() {
-        return credentialFactory;
+        return this.credentialFactory;
     }
 
     public ServiceFactory getWebApplicationServiceFactory() {
-        return webApplicationServiceFactory;
+        return this.webApplicationServiceFactory;
     }
 
     public TicketRegistrySupport getTicketRegistrySupport() {
-        return ticketRegistrySupport;
+        return this.ticketRegistrySupport;
     }
 
     /**

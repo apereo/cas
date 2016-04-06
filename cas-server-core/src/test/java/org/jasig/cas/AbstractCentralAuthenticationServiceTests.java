@@ -56,7 +56,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     public ArgumentExtractor getArgumentExtractor() {
-        return argumentExtractor;
+        return this.argumentExtractor;
     }
 
     public AuthenticationManager getAuthenticationManager() {
@@ -80,10 +80,10 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     public TicketRegistrySupport getTicketRegistrySupport() {
-        return ticketRegistrySupport;
+        return this.ticketRegistrySupport;
     }
 }

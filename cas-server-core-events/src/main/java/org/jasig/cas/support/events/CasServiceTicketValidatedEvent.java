@@ -32,19 +32,19 @@ public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
     }
 
     public Assertion getAssertion() {
-        return assertion;
+        return this.assertion;
     }
 
     public ServiceTicket getServiceTicket() {
-        return serviceTicket;
+        return this.serviceTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("assertion", assertion)
-                .append("serviceTicket", serviceTicket)
+                .append("assertion", this.assertion)
+                .append("serviceTicket", this.serviceTicket)
                 .toString();
     }
 }

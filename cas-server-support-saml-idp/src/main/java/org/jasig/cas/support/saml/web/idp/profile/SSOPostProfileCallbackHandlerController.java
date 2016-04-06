@@ -38,7 +38,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
     @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
-    
+
         logger.info("Received SAML callback profile request [{}]", request.getRequestURI());
         final AuthnRequest authnRequest = retrieveAuthnRequest(request);
         if (authnRequest == null) {
@@ -72,7 +72,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 
         logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
-        responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
+        this.responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
         logger.info("Built the SAML response for [{}]", adaptor.getEntityId());
 
         

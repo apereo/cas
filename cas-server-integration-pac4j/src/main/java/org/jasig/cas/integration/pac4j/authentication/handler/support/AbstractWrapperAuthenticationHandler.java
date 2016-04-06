@@ -53,7 +53,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
         }
 
-        final UserProfile profile = profileCreator.create(credentials);
+        final UserProfile profile = this.profileCreator.create(credentials);
         logger.debug("profile: {}", profile);
 
         return createResult(new ClientCredential(credentials), profile);
@@ -87,7 +87,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     protected abstract Authenticator getAuthenticator(final Credential credential);
 
     public ProfileCreator getProfileCreator() {
-        return profileCreator;
+        return this.profileCreator;
     }
 
     public void setProfileCreator(final ProfileCreator profileCreator) {

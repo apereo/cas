@@ -15,7 +15,7 @@ public class HttpRequestGeoLocation {
     private String timestamp;
 
     public String getLatitude() {
-        return latitude;
+        return this.latitude;
     }
 
     public void setLatitude(final String latitude) {
@@ -23,7 +23,7 @@ public class HttpRequestGeoLocation {
     }
 
     public String getLongitude() {
-        return longitude;
+        return this.longitude;
     }
 
     public void setLongitude(final String longitude) {
@@ -31,7 +31,7 @@ public class HttpRequestGeoLocation {
     }
 
     public String getAccuracy() {
-        return accuracy;
+        return this.accuracy;
     }
 
     public void setAccuracy(final String accuracy) {
@@ -39,7 +39,7 @@ public class HttpRequestGeoLocation {
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
     public void setTimestamp(final String timestamp) {

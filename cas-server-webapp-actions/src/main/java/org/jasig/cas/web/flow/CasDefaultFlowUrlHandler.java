@@ -45,7 +45,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
      */
     @Override
     public String getFlowExecutionKey(final HttpServletRequest request) {
-        return request.getParameter(flowExecutionKeyParameter);
+        return request.getParameter(this.flowExecutionKeyParameter);
     }
 
     @Override

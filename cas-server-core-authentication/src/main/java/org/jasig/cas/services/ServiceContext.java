@@ -38,7 +38,7 @@ public class ServiceContext {
      * @return Non-null service principal.
      */
     public Service getService() {
-        return service;
+        return this.service;
     }
 
     /**
@@ -47,6 +47,6 @@ public class ServiceContext {
      * @return Non-null registered service.
      */
     public RegisteredService getRegisteredService() {
-        return registeredService;
+        return this.registeredService;
     }
 }

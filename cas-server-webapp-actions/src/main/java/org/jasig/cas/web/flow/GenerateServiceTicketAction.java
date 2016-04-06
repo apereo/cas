@@ -64,12 +64,12 @@ public class GenerateServiceTicketAction extends AbstractAction {
              * created, there are no cached copies of the credential, since we do have a TGT available.
              * So we will simply grab the available authentication and produce the final result based on that.
              */
-            final Authentication authentication = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication == null) {
                 throw new InvalidTicketException(
                         new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
             }
-            final AuthenticationResultBuilder authenticationResultBuilder = authenticationSystemSupport
+            final AuthenticationResultBuilder authenticationResultBuilder = this.authenticationSystemSupport
                     .establishAuthenticationContextFromInitial(authentication);
             final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
 

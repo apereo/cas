@@ -61,7 +61,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
         if (!provider.isPresent() && request != null) {
-            provider = Optional.ofNullable(request.getParameter(requestParameter)).filter(validProviderIds::contains);
+            provider = Optional.ofNullable(request.getParameter(this.requestParameter)).filter(validProviderIds::contains);
         }
 
         // check for a RegisteredService configured trigger
@@ -75,8 +75,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null && StringUtils.hasText(principalAttribute)) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(principalAttribute).spliterator(), false)
+        if (!provider.isPresent() && principal != null && StringUtils.hasText(this.principalAttribute)) {
+            provider = StreamSupport.stream(ATTR_NAMES.split(this.principalAttribute).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)

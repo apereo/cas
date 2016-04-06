@@ -73,15 +73,15 @@ public class DuoAuthenticationService {
     }
 
     public String getDuoIntegrationKey() {
-        return duoIntegrationKey;
+        return this.duoIntegrationKey;
     }
 
     public String getDuoSecretKey() {
-        return duoSecretKey;
+        return this.duoSecretKey;
     }
 
     public String getDuoApplicationKey() {
-        return duoApplicationKey;
+        return this.duoApplicationKey;
     }
 
     /**

@@ -64,7 +64,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
                             final BindingResult result) {
         try {
 
-            final RegisteredService svcToUse = registeredServiceFactory.createRegisteredService(service);
+            final RegisteredService svcToUse = this.registeredServiceFactory.createRegisteredService(service);
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
 
@@ -100,9 +100,9 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
                     logger.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
                     throw new IllegalArgumentException("Service id " + id + " cannot be found");
                 }
-                bean.setServiceData(registeredServiceFactory.createServiceData(service));
+                bean.setServiceData(this.registeredServiceFactory.createServiceData(service));
             }
-            bean.setFormData(registeredServiceFactory.createFormData());
+            bean.setFormData(this.registeredServiceFactory.createFormData());
 
             bean.setStatus(HttpServletResponse.SC_OK);
             JsonViewUtils.render(bean, response);

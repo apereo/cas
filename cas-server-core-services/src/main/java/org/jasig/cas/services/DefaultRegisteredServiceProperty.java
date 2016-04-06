@@ -40,7 +40,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         if (this.values == null) {
             this.values = new HashSet<>();
         }
-        return values;
+        return this.values;
     }
 
     @Override

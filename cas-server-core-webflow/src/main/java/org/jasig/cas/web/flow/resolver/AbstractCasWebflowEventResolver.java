@@ -202,14 +202,14 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
         logger.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =
-                authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+                this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
 
         boolean issueTicketGrantingTicket = true;
         final Authentication authentication = authenticationResult.getAuthentication();
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.hasText(ticketGrantingTicket)) {
             logger.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
-            final Authentication authenticationFromTgt = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {
                 logger.debug("Resulting authentication matches the authentication from context");
                 issueTicketGrantingTicket = false;
@@ -395,7 +395,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             logger.debug("Selecting a multifactor authentication provider out of {} for {} and service {}",
                     providers, principal.getId(), service);
             final MultifactorAuthenticationProvider provider =
-                    multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+                    this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
             Set<Event> results = resolveEventViaSinglePrincipalAttribute(principal, attributeValue, service, context, provider, predicate);
             if (results == null || results.isEmpty()) {
@@ -456,7 +456,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
             if (providers != null && !providers.isEmpty()) {
                 final MultifactorAuthenticationProvider provider =
-                        multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+                        this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
                 logger.debug("Selected multifactor authentication provider for this transaction is {}", provider);
 

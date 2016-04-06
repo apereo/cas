@@ -101,7 +101,7 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     }
 
     public GrouperGroupField getGroupField() {
-        return groupField;
+        return this.groupField;
     }
 
     /**

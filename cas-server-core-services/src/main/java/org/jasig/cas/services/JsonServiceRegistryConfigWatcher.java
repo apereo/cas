@@ -59,12 +59,12 @@ class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
 
     @Override
     public void run() {
-        if (running.compareAndSet(false, true)) {
-            while (running.get()) {
+        if (this.running.compareAndSet(false, true)) {
+            while (this.running.get()) {
                 // wait for key to be signaled
                 WatchKey key = null;
                 try {
-                    key = watcher.take();
+                    key = this.watcher.take();
                     handleEvent(key);
                 } catch (final InterruptedException e) {
                     return;

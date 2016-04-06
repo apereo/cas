@@ -35,7 +35,7 @@ public class TokenCredential extends BasicIdentifiableCredential {
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("service", service)
+                .append("service", this.service)
                 .toString();
     }
 }

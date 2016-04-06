@@ -238,18 +238,18 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         configureSecureTransport();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("igniteConfiguration.cacheConfiguration={}", igniteConfiguration.getCacheConfiguration());
-            logger.debug("igniteConfiguration.getDiscoverySpi={}", igniteConfiguration.getDiscoverySpi());
-            logger.debug("igniteConfiguration.getSslContextFactory={}", igniteConfiguration.getSslContextFactory());
+            logger.debug("igniteConfiguration.cacheConfiguration={}", this.igniteConfiguration.getCacheConfiguration());
+            logger.debug("igniteConfiguration.getDiscoverySpi={}", this.igniteConfiguration.getDiscoverySpi());
+            logger.debug("igniteConfiguration.getSslContextFactory={}", this.igniteConfiguration.getSslContextFactory());
         }
 
         if (Ignition.state() == IgniteState.STOPPED) {
-            ignite = Ignition.start(igniteConfiguration);
+            this.ignite = Ignition.start(this.igniteConfiguration);
         } else if (Ignition.state() == IgniteState.STARTED) {
-            ignite = Ignition.ignite();
+            this.ignite = Ignition.ignite();
         }
 
-        ticketIgniteCache = ignite.getOrCreateCache(cacheName);
+        this.ticketIgniteCache = this.ignite.getOrCreateCache(this.cacheName);
         
     }
 
@@ -272,7 +272,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     public String getCacheName() {
-        return cacheName;
+        return this.cacheName;
     }
 
     public void setCacheName(final String cacheName) {
@@ -283,16 +283,16 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("cacheName", cacheName)
-                .append("keyStoreType", keyStoreType)
-                .append("keyStoreFilePath", keyStoreFilePath)
-                .append("keyStorePassword", keyStorePassword)
-                .append("trustStoreType", trustStoreType)
-                .append("protocol", protocol)
-                .append("keyAlgorithm", keyAlgorithm)
-                .append("trustStoreFilePath", trustStoreFilePath)
-                .append("trustStorePassword", trustStorePassword)
-                .append("supportRegistryState", supportRegistryState)
+                .append("cacheName", this.cacheName)
+                .append("keyStoreType", this.keyStoreType)
+                .append("keyStoreFilePath", this.keyStoreFilePath)
+                .append("keyStorePassword", this.keyStorePassword)
+                .append("trustStoreType", this.trustStoreType)
+                .append("protocol", this.protocol)
+                .append("keyAlgorithm", this.keyAlgorithm)
+                .append("trustStoreFilePath", this.trustStoreFilePath)
+                .append("trustStorePassword", this.trustStorePassword)
+                .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
 }

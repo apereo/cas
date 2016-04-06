@@ -42,7 +42,7 @@ public class DefaultLogoutRequest implements LogoutRequest {
 
     @Override
     public LogoutRequestStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     @Override
@@ -52,25 +52,25 @@ public class DefaultLogoutRequest implements LogoutRequest {
 
     @Override
     public String getTicketId() {
-        return ticketId;
+        return this.ticketId;
     }
 
     @Override
     public SingleLogoutService getService() {
-        return service;
+        return this.service;
     }
 
     @Override
     public URL getLogoutUrl() {
-        return logoutUrl;
+        return this.logoutUrl;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("ticketId", ticketId)
-                .append("service", service)
-                .append("status", status)
+                .append("ticketId", this.ticketId)
+                .append("service", this.service)
+                .append("status", this.status)
                 .toString();
     }
 }

@@ -40,8 +40,8 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
     @Override
     public RefreshToken create(final Service service, final Authentication authentication) {
-        final String codeId = refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
-        return new RefreshTokenImpl(codeId, service, authentication, expirationPolicy);
+        final String codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
+        return new RefreshTokenImpl(codeId, service, authentication, this.expirationPolicy);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     }
 
     public UniqueTicketIdGenerator getRefreshTokenIdGenerator() {
-        return refreshTokenIdGenerator;
+        return this.refreshTokenIdGenerator;
     }
 
     public void setRefreshTokenIdGenerator(final UniqueTicketIdGenerator refreshTokenIdGenerator) {
@@ -58,7 +58,7 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     }
 
     public ExpirationPolicy getExpirationPolicy() {
-        return expirationPolicy;
+        return this.expirationPolicy;
     }
 
     public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {

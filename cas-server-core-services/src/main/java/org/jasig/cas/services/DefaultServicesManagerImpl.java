@@ -219,7 +219,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
                         .repeatForever()).build();
 
                 LOGGER.debug("Scheduling {} job", this.getClass().getName());
-                scheduler.scheduleJob(job, trigger);
+                this.scheduler.scheduleJob(job, trigger);
                 LOGGER.info("Services manager will reload service definitions every {} seconds",
                     this.refreshInterval);
             }
@@ -230,7 +230,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
     }
 
     private boolean shouldScheduleLoaderJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && this.scheduler != null) {
             LOGGER.debug("Found CAS servlet application context for service management");
             return true;
         }
@@ -255,7 +255,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
         @Override
         public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
             try {
-                servicesManager.reload();
+                this.servicesManager.reload();
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

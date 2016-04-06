@@ -38,7 +38,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
         final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                 this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-                authentication, ticketGrantingTicketExpirationPolicy);
+                authentication, this.ticketGrantingTicketExpirationPolicy);
         return (T) ticketGrantingTicket;
     }
 

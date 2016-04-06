@@ -55,7 +55,7 @@ public class PasswordPolicyConfiguration {
     }
 
     public int getPasswordWarningNumberOfDays() {
-        return passwordWarningNumberOfDays;
+        return this.passwordWarningNumberOfDays;
     }
 
     @Autowired

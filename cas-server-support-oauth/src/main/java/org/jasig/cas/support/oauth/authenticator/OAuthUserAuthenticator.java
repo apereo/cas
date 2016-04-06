@@ -38,7 +38,7 @@ public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
                 credentials.getPassword());
         try {
 
-            final AuthenticationResult authenticationResult = authenticationSystemSupport
+            final AuthenticationResult authenticationResult = this.authenticationSystemSupport
                     .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
             final Authentication authentication = authenticationResult.getAuthentication();
             final Principal principal = authentication.getPrincipal();
@@ -56,7 +56,7 @@ public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {

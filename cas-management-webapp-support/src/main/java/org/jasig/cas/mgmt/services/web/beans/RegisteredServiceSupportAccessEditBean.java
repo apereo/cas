@@ -23,7 +23,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     private Map<String, Set<String>> requiredAttr = new HashMap<>();
 
     public boolean isCasEnabled() {
-        return casEnabled;
+        return this.casEnabled;
     }
 
     public void setCasEnabled(final boolean casEnabled) {
@@ -31,7 +31,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     }
 
     public boolean isSsoEnabled() {
-        return ssoEnabled;
+        return this.ssoEnabled;
     }
 
     public void setSsoEnabled(final boolean ssoEnabled) {
@@ -39,7 +39,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     }
 
     public boolean isRequireAll() {
-        return requireAll;
+        return this.requireAll;
     }
 
     public void setRequireAll(final boolean requireAll) {
@@ -47,7 +47,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     }
 
     public Map<String, Set<String>> getRequiredAttr() {
-        return requiredAttr;
+        return this.requiredAttr;
     }
 
     public void setRequiredAttr(final Map<String, Set<String>> requiredAttr) {
@@ -55,7 +55,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     }
 
     public String getStartingTime() {
-        return startingTime;
+        return this.startingTime;
     }
 
     public void setStartingTime(final String startingTime) {
@@ -63,7 +63,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     }
 
     public String getEndingTime() {
-        return endingTime;
+        return this.endingTime;
     }
 
     public void setEndingTime(final String endingTime) {

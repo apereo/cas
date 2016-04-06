@@ -36,7 +36,7 @@ public class GoogleAuthenticatorAccount  implements Serializable {
     }
 
     public String getSecretKey() {
-        return secretKey;
+        return this.secretKey;
     }
 
     public void setSecretKey(final String secretKey) {
@@ -44,7 +44,7 @@ public class GoogleAuthenticatorAccount  implements Serializable {
     }
 
     public int getValidationCode() {
-        return validationCode;
+        return this.validationCode;
     }
 
     public void setValidationCode(final int validationCode) {
@@ -52,7 +52,7 @@ public class GoogleAuthenticatorAccount  implements Serializable {
     }
 
     public List<Integer> getScratchCodes() {
-        return scratchCodes;
+        return this.scratchCodes;
     }
 
     public void setScratchCodes(final List<Integer> scratchCodes) {

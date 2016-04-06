@@ -16,7 +16,7 @@ public class RegisteredServiceAttributeReleasePolicyStrategyEditBean
     private Object attributes;
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(final String type) {
@@ -24,7 +24,7 @@ public class RegisteredServiceAttributeReleasePolicyStrategyEditBean
     }
 
     public Object getAttributes() {
-        return attributes;
+        return this.attributes;
     }
 
     public void setAttributes(final Object attributes) {

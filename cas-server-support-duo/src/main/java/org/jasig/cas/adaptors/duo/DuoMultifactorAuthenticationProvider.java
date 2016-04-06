@@ -41,6 +41,6 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     @Override
     protected boolean isAvailable() {
-        return duoAuthenticationService.canPing();
+        return this.duoAuthenticationService.canPing();
     }
 }

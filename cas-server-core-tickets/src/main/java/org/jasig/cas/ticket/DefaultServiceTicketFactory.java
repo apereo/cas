@@ -49,7 +49,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
         final String uniqueTicketIdGenKey = service.getClass().getName();
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = null;
-        if (this.uniqueTicketIdGeneratorsForService != null && !uniqueTicketIdGeneratorsForService.isEmpty()) {
+        if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
             logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
             serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         }
@@ -75,7 +75,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     }
 
     public boolean isOnlyTrackMostRecentSession() {
-        return onlyTrackMostRecentSession;
+        return this.onlyTrackMostRecentSession;
     }
 
     public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {

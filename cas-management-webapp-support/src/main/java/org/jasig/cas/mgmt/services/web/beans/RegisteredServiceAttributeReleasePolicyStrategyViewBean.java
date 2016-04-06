@@ -15,7 +15,7 @@ public class RegisteredServiceAttributeReleasePolicyStrategyViewBean
     private String type;
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(final String type) {

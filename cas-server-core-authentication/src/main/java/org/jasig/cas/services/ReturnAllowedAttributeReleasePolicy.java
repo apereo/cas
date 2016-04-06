@@ -62,7 +62,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
 
         this.allowedAttributes.stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
                 .forEach(attribute -> {
-            logger.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
+                    logger.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
             attributesToRelease.put((String) attribute[0], attribute[1]);
         });
         return attributesToRelease;
@@ -91,7 +91,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     public int hashCode() {
         return new HashCodeBuilder(13, 133)
                 .appendSuper(super.hashCode())
-                .append(allowedAttributes)
+                .append(this.allowedAttributes)
                 .toHashCode();
     }
 
@@ -100,7 +100,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("allowedAttributes", allowedAttributes)
+                .append("allowedAttributes", this.allowedAttributes)
                 .toString();
     }
 }

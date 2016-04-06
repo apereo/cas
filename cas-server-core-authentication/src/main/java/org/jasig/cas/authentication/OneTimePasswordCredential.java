@@ -63,6 +63,6 @@ public class OneTimePasswordCredential extends AbstractCredential {
      */
     @Override
     public String getId() {
-        return id;
+        return this.id;
     }
 }

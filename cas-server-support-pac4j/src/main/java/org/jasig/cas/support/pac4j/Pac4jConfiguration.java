@@ -53,42 +53,42 @@ public class Pac4jConfiguration {
         // turn the properties file into a map of properties
         final Map<String, String> properties = new HashMap<>();
         
-        properties.put(PropertiesConfigFactory.FACEBOOK_ID, pac4jProperties.getFacebook().getId());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, pac4jProperties.getFacebook().getSecret());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, pac4jProperties.getFacebook().getScope());
-        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, pac4jProperties.getFacebook().getFields());
+        properties.put(PropertiesConfigFactory.FACEBOOK_ID, this.pac4jProperties.getFacebook().getId());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, this.pac4jProperties.getFacebook().getSecret());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, this.pac4jProperties.getFacebook().getScope());
+        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, this.pac4jProperties.getFacebook().getFields());
 
-        properties.put(PropertiesConfigFactory.TWITTER_ID, pac4jProperties.getTwitter().getId());
-        properties.put(PropertiesConfigFactory.TWITTER_SECRET, pac4jProperties.getTwitter().getSecret());
+        properties.put(PropertiesConfigFactory.TWITTER_ID, this.pac4jProperties.getTwitter().getId());
+        properties.put(PropertiesConfigFactory.TWITTER_SECRET, this.pac4jProperties.getTwitter().getSecret());
         
-        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, pac4jProperties.getCas().getLoginUrl());
-        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, pac4jProperties.getCas().getProtocol());
+        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, this.pac4jProperties.getCas().getLoginUrl());
+        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, this.pac4jProperties.getCas().getProtocol());
 
         properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH,
-                pac4jProperties.getSaml().getIdentityProviderMetadataPath());
+                this.pac4jProperties.getSaml().getIdentityProviderMetadataPath());
         properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD,
-                pac4jProperties.getSaml().getKeystorePassword());
+                this.pac4jProperties.getSaml().getKeystorePassword());
         properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH,
-                pac4jProperties.getSaml().getKeystorePath());
+                this.pac4jProperties.getSaml().getKeystorePath());
         properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME,
-                pac4jProperties.getSaml().getMaximumAuthenticationLifetime());
+                this.pac4jProperties.getSaml().getMaximumAuthenticationLifetime());
         properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD,
-                pac4jProperties.getSaml().getPrivateKeyPassword());
+                this.pac4jProperties.getSaml().getPrivateKeyPassword());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
-                pac4jProperties.getSaml().getServiceProviderEntityId());
+                this.pac4jProperties.getSaml().getServiceProviderEntityId());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
-                pac4jProperties.getSaml().getServiceProviderEntityId());
+                this.pac4jProperties.getSaml().getServiceProviderEntityId());
         
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, pac4jProperties.getOidc().getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, pac4jProperties.getOidc().getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, pac4jProperties.getOidc().getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, pac4jProperties.getOidc().getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, pac4jProperties.getOidc().getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID, pac4jProperties.getOidc().getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, pac4jProperties.getOidc().getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, pac4jProperties.getOidc().getPreferredJwsAlgorithm());
-        properties.put(PropertiesConfigFactory.OIDC_SECRET, pac4jProperties.getOidc().getSecret());
-        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, pac4jProperties.getOidc().getUseNonce());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, this.pac4jProperties.getOidc().getCustomParamKey1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, this.pac4jProperties.getOidc().getCustomParamKey2());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, this.pac4jProperties.getOidc().getCustomParamValue1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, this.pac4jProperties.getOidc().getCustomParamValue2());
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, this.pac4jProperties.getOidc().getDiscoveryUri());
+        properties.put(PropertiesConfigFactory.OIDC_ID, this.pac4jProperties.getOidc().getId());
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, this.pac4jProperties.getOidc().getMaxClockSkew());
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, this.pac4jProperties.getOidc().getPreferredJwsAlgorithm());
+        properties.put(PropertiesConfigFactory.OIDC_SECRET, this.pac4jProperties.getOidc().getSecret());
+        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, this.pac4jProperties.getOidc().getUseNonce());
         
         // add the new clients found via properties first
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
@@ -96,14 +96,14 @@ public class Pac4jConfiguration {
         allClients.addAll(propertiesConfig.getClients().getClients());
 
         // add all indirect clients from the Spring context
-        if (clients != null && clients.length > 0) {
-            allClients.addAll(Arrays.<Client>asList(clients));
+        if (this.clients != null && this.clients.length > 0) {
+            allClients.addAll(Arrays.<Client>asList(this.clients));
         }
 
         // build a Clients configuration
         if (allClients.isEmpty()) {
             throw new IllegalArgumentException("At least one pac4j client must be defined");
         }
-        return new Clients(serverLoginUrl, allClients);
+        return new Clients(this.serverLoginUrl, allClients);
     }
 }

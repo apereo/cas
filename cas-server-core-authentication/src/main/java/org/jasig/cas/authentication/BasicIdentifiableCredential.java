@@ -59,10 +59,11 @@ public class BasicIdentifiableCredential implements Credential, Serializable {
                 .isEquals();
     }
 
+    @SuppressWarnings("UnqualifiedFieldAccess")
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(this.id)
                 .toHashCode();
     }
 }

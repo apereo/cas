@@ -21,13 +21,13 @@ public class InMemoryGoogleAuthenticatorAccountRegistry implements GoogleAuthent
      * Instantiates a new In memory google authenticator account registry.
      */
     public InMemoryGoogleAuthenticatorAccountRegistry() {
-        accounts = new ConcurrentHashMap<>();
+        this.accounts = new ConcurrentHashMap<>();
     }
 
     @Override
     public String getSecretKey(final String userName) {
         if (contains(userName)) {
-            return accounts.get(userName).getSecretKey();
+            return this.accounts.get(userName).getSecretKey();
         }
         return null;
     }
@@ -45,26 +45,26 @@ public class InMemoryGoogleAuthenticatorAccountRegistry implements GoogleAuthent
         account.setScratchCodes(scratchCodes);
         account.setValidationCode(validationCode);
         account.setSecretKey(secretKey);
-        accounts.put(userName, account);
+        this.accounts.put(userName, account);
     }
 
     @Override
     public boolean contains(final String username) {
-        return accounts.containsKey(username);
+        return this.accounts.containsKey(username);
     }
 
     @Override
     public void remove(final String username) {
-        accounts.remove(username);
+        this.accounts.remove(username);
     }
 
     @Override
     public void clear() {
-        accounts.clear();
+        this.accounts.clear();
     }
 
     @Override
     public GoogleAuthenticatorAccount get(final String username) {
-        return accounts.get(username);
+        return this.accounts.get(username);
     }
 }

@@ -49,19 +49,19 @@ public class OpenSamlConfigBean {
      * @return the parser pool
      */
     public ParserPool getParserPool() {
-        return parserPool;
+        return this.parserPool;
     }
 
     public XMLObjectBuilderFactory getBuilderFactory() {
-        return builderFactory;
+        return this.builderFactory;
     }
 
     public MarshallerFactory getMarshallerFactory() {
-        return marshallerFactory;
+        return this.marshallerFactory;
     }
 
     public UnmarshallerFactory getUnmarshallerFactory() {
-        return unmarshallerFactory;
+        return this.unmarshallerFactory;
     }
 
     /**

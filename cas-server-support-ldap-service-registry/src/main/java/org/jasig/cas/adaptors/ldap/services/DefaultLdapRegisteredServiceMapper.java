@@ -104,7 +104,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     }
 
     public String getServiceDefinitionAttribute() {
-        return serviceDefinitionAttribute;
+        return this.serviceDefinitionAttribute;
     }
 
     public void setServiceDefinitionAttribute(final String serviceDefinitionAttribute) {

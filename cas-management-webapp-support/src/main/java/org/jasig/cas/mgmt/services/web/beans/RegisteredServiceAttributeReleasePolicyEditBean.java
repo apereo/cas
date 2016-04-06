@@ -80,7 +80,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     private String mergingStrategy = AttributeMergerTypes.DEFAULT.value;
 
     public String getAttrFilter() {
-        return attrFilter;
+        return this.attrFilter;
     }
 
     public void setAttrFilter(final String attrFilter) {
@@ -88,7 +88,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     }
 
     public String getCachedTimeUnit() {
-        return cachedTimeUnit;
+        return this.cachedTimeUnit;
     }
 
     public void setCachedTimeUnit(final String cachedTimeUnit) {
@@ -96,7 +96,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     }
 
     public long getCachedExpiration() {
-        return cachedExpiration;
+        return this.cachedExpiration;
     }
 
     public void setCachedExpiration(final long cachedExpiration) {
@@ -104,7 +104,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     }
 
     public RegisteredServiceAttributeReleasePolicyStrategyEditBean getAttrPolicy() {
-        return attrPolicy;
+        return this.attrPolicy;
     }
 
     public void setAttrPolicy(final RegisteredServiceAttributeReleasePolicyStrategyEditBean attrPolicy) {
@@ -112,7 +112,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     }
 
     public String getAttrOption() {
-        return attrOption;
+        return this.attrOption;
     }
 
     public void setAttrOption(final String attrOption) {
@@ -120,7 +120,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     }
 
     public String getMergingStrategy() {
-        return mergingStrategy;
+        return this.mergingStrategy;
     }
 
     public void setMergingStrategy(final String mergingStrategy) {

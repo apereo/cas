@@ -26,7 +26,7 @@ public class RegisteredServiceViewBean implements Serializable {
     private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
     public int getEvalOrder() {
-        return evalOrder;
+        return this.evalOrder;
     }
 
     public void setEvalOrder(final int evalOrder) {
@@ -34,7 +34,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public String getAssignedId() {
-        return assignedId;
+        return this.assignedId;
     }
 
     public void setAssignedId(final String assignedId) {
@@ -42,7 +42,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public boolean isSasCASEnabled() {
-        return sasCASEnabled;
+        return this.sasCASEnabled;
     }
 
     public void setSasCASEnabled(final boolean sasCASEnabled) {
@@ -50,7 +50,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public String getServiceId() {
-        return serviceId;
+        return this.serviceId;
     }
 
     public void setServiceId(final String serviceId) {
@@ -58,7 +58,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(final String name) {
@@ -66,7 +66,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(final String description) {
@@ -74,7 +74,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public String getLogoUrl() {
-        return logoUrl;
+        return this.logoUrl;
     }
 
     public void setLogoUrl(final String logoUrl) {
@@ -82,7 +82,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public RegisteredServiceProxyPolicyBean getProxyPolicy() {
-        return proxyPolicy;
+        return this.proxyPolicy;
     }
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicyBean proxyPolicy) {
@@ -90,7 +90,7 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     public RegisteredServiceAttributeReleasePolicyViewBean getAttrRelease() {
-        return attrRelease;
+        return this.attrRelease;
     }
 
     public void setAttrRelease(final RegisteredServiceAttributeReleasePolicyViewBean attrRelease) {
@@ -103,7 +103,7 @@ public class RegisteredServiceViewBean implements Serializable {
      * @return all the custom components
      */
     public Map<String, Map<String, ?>> getCustomComponent() {
-        return customComponent;
+        return this.customComponent;
     }
 
     /**
@@ -114,7 +114,7 @@ public class RegisteredServiceViewBean implements Serializable {
      * @return current custom component properties
      */
     public Map<String, ?> getCustomComponent(final String componentName) {
-        return customComponent.get(componentName);
+        return this.customComponent.get(componentName);
     }
 
     /**

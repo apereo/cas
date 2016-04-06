@@ -73,7 +73,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
                                 final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
                                 final SamlRegisteredService service,
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        final Assertion assertion = samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+        final Assertion assertion = this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
         final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
         return encode(service, finalResponse, response, adaptor);
     }
@@ -118,7 +118,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         if (service.isSignResponses()) {
             logger.debug("SAML entity id [{}] indicates that SAML responses should be signed",
                     adaptor.getEntityId());
-            samlResponse = samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
+            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
         }
 
         return samlResponse;
@@ -182,7 +182,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         try {
             if (service.isEncryptAssertions()) {
                 logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-                final EncryptedAssertion encryptedAssertion = samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+                final EncryptedAssertion encryptedAssertion = this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
                 return encryptedAssertion;
             }
             logger.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());

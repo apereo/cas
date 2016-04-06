@@ -31,7 +31,7 @@ public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrappe
      */
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        addAuthenticationHandler(clientAuthenticationHandler);
-        addAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator);
+        addAuthenticationHandler(this.clientAuthenticationHandler);
+        addAuthenticationMetadataPopulator(this.clientAuthenticationMetaDataPopulator);
     }
 }

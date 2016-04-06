@@ -31,6 +31,6 @@ public class GoogleAuthenticatorApplicationContextWrapper extends BaseApplicatio
     @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
-        addAuthenticationMetadataPopulator(populator);
+        addAuthenticationMetadataPopulator(this.populator);
     }
 }

@@ -26,18 +26,18 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     @Override
     public void setServiceId(final String id) {
-        serviceId = id;
+        this.serviceId = id;
 
         // reset the servicePattern because we just changed the serviceId
-        servicePattern = null;
+        this.servicePattern = null;
     }
     
     @Override
     public boolean matches(final Service service) {
-        if (servicePattern == null) {
-            servicePattern = createPattern(serviceId);
+        if (this.servicePattern == null) {
+            this.servicePattern = createPattern(this.serviceId);
         }
-        return service != null && servicePattern.matcher(service.getId()).matches();
+        return service != null && this.servicePattern.matcher(service.getId()).matches();
     }
 
     @Override

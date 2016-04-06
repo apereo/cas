@@ -100,8 +100,8 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             logger.debug("Found warning attribute {} with value {}", attribute.getName(), attribute.getStringValue());
             matches = this.warningAttributeValue.equals(attribute.getStringValue());
         }
-        logger.debug("matches={}, displayWarningOnMatch={}", matches, displayWarningOnMatch);
-        if (displayWarningOnMatch == matches) {
+        logger.debug("matches={}, displayWarningOnMatch={}", matches, this.displayWarningOnMatch);
+        if (this.displayWarningOnMatch == matches) {
             super.handleWarning(warning, response, configuration, messages);
         }
     }

@@ -45,7 +45,7 @@ public class DefaultAuthenticationResult implements AuthenticationResult {
 
     @Override
     public Authentication getAuthentication() {
-        return authentication;
+        return this.authentication;
     }
 
     @Override

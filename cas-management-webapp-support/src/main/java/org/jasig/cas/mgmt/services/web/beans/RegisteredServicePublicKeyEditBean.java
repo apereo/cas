@@ -16,7 +16,7 @@ public class RegisteredServicePublicKeyEditBean implements Serializable {
     private String algorithm = "RSA";
 
     public String getLocation() {
-        return location;
+        return this.location;
     }
 
     public void setLocation(final String location) {
@@ -24,7 +24,7 @@ public class RegisteredServicePublicKeyEditBean implements Serializable {
     }
 
     public String getAlgorithm() {
-        return algorithm;
+        return this.algorithm;
     }
 
     public void setAlgorithm(final String algorithm) {

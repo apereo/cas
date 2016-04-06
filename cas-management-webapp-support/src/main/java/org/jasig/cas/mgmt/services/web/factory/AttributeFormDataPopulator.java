@@ -38,7 +38,7 @@ public class AttributeFormDataPopulator implements FormDataPopulator {
 
     @Override
     public void populateFormData(final FormData formData) {
-        final List<String> possibleAttributeNames = new ArrayList<>(personAttributeDao.getPossibleUserAttributeNames());
+        final List<String> possibleAttributeNames = new ArrayList<>(this.personAttributeDao.getPossibleUserAttributeNames());
         Collections.sort(possibleAttributeNames);
         formData.setAvailableAttributes(possibleAttributeNames);
     }

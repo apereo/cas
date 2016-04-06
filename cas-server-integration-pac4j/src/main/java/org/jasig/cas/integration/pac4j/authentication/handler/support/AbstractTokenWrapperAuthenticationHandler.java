@@ -53,7 +53,7 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     }
 
     public PrincipalNameTransformer getPrincipalNameTransformer() {
-        return principalNameTransformer;
+        return this.principalNameTransformer;
     }
 
     public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {

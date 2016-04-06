@@ -115,7 +115,7 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public ZonedDateTime getAuthenticationDate() {
-        return authenticationDate;
+        return this.authenticationDate;
     }
 
     @Override

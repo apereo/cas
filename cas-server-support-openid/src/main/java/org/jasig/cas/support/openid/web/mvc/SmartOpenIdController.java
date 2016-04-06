@@ -70,7 +70,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
         Message response = null;
 
         if (StringUtils.equals(mode, OpenIdProtocolConstants.ASSOCIATE)) {
-            response = serverManager.associationResponse(parameters);
+            response = this.serverManager.associationResponse(parameters);
         }
         final Map<String, String> responseParams = new HashMap<>();
         if (response != null) {
@@ -86,7 +86,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
             throws Exception {
         final Map<String, String> parameters = new HashMap<>();
         parameters.putAll(getAssociationResponse(request));
-        return new ModelAndView(successView, "parameters", parameters);
+        return new ModelAndView(this.successView, "parameters", parameters);
     }
 
     @Override

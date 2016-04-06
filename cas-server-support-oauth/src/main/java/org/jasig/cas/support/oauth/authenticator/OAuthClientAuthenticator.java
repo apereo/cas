@@ -41,11 +41,11 @@ public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
         final String secret = credentials.getPassword();
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, id);
 
-        if (!validator.checkServiceValid(registeredService)) {
+        if (!this.validator.checkServiceValid(registeredService)) {
             throw new CredentialsException("Service invalid for client identifier: " + id);
         }
 
-        if (!validator.checkClientSecret(registeredService, secret)) {
+        if (!this.validator.checkClientSecret(registeredService, secret)) {
             throw new CredentialsException("Bad secret for client identifier: " + id);
         }
 
@@ -55,7 +55,7 @@ public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
     }
 
     public OAuthValidator getValidator() {
-        return validator;
+        return this.validator;
     }
 
     public void setValidator(final OAuthValidator validator) {
@@ -63,7 +63,7 @@ public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
     }
 
     public ServicesManager getServicesManager() {
-        return servicesManager;
+        return this.servicesManager;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {

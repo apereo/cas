@@ -82,11 +82,11 @@ public class UsernamePasswordCredential implements Credential, Serializable {
 
         final UsernamePasswordCredential that = (UsernamePasswordCredential) o;
 
-        if (password != null ? !password.equals(that.password) : that.password != null) {
+        if (this.password != null ? !this.password.equals(that.password) : that.password != null) {
             return false;
         }
 
-        if (username != null ? !username.equals(that.username) : that.username != null) {
+        if (this.username != null ? !this.username.equals(that.username) : that.username != null) {
             return false;
         }
 
@@ -96,8 +96,8 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(username)
-                .append(password)
+                .append(this.username)
+                .append(this.password)
                 .toHashCode();
     }
 

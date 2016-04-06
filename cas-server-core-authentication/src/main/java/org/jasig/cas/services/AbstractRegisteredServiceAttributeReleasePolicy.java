@@ -46,7 +46,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     public PrincipalAttributesRepository getPrincipalAttributesRepository() {
-        return principalAttributesRepository;
+        return this.principalAttributesRepository;
     }
 
     /**
@@ -134,10 +134,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("attributeFilter", registeredServiceAttributeFilter)
-                .append("principalAttributesRepository", principalAttributesRepository)
-                .append("authorizedToReleaseCredentialPassword", authorizedToReleaseCredentialPassword)
-                .append("authorizedToReleaseProxyGrantingTicket", authorizedToReleaseProxyGrantingTicket)
+                .append("attributeFilter", this.registeredServiceAttributeFilter)
+                .append("principalAttributesRepository", this.principalAttributesRepository)
+                .append("authorizedToReleaseCredentialPassword", this.authorizedToReleaseCredentialPassword)
+                .append("authorizedToReleaseProxyGrantingTicket", this.authorizedToReleaseProxyGrantingTicket)
                 .toString();
     }
 }

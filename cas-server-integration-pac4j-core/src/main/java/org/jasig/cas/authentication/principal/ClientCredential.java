@@ -45,7 +45,7 @@ public class ClientCredential implements Credential, Serializable {
      * @return the credentials
      */
     public org.pac4j.core.credentials.Credentials getCredentials() {
-        return credentials;
+        return this.credentials;
     }
 
     /**
@@ -54,7 +54,7 @@ public class ClientCredential implements Credential, Serializable {
      * @return the profile of the authenticated user
      */
     public UserProfile getUserProfile() {
-        return userProfile;
+        return this.userProfile;
     }
 
     /**

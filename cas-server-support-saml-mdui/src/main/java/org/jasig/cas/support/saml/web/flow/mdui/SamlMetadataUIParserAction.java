@@ -93,7 +93,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
-        final WebApplicationService service = serviceFactory.createService(entityId);
+        final WebApplicationService service = this.serviceFactory.createService(entityId);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);

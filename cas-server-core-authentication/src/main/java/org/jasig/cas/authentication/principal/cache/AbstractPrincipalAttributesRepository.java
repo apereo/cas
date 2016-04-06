@@ -123,7 +123,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     }
 
     public MergingStrategy getMergingStrategy() {
-        return mergingStrategy;
+        return this.mergingStrategy;
     }
 
     /**

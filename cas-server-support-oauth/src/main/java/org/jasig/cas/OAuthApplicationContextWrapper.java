@@ -49,10 +49,10 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
      */
     @PostConstruct
     public void initializeServletApplicationContext() {
-        final String oAuthCallbackUrl = casServerUrl + OAuthConstants.BASE_OAUTH20_URL + '/'
+        final String oAuthCallbackUrl = this.casServerUrl + OAuthConstants.BASE_OAUTH20_URL + '/'
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         final ReloadableServicesManager servicesManager = getServicesManager();
-        final Service callbackService = webApplicationServiceFactory.createService(oAuthCallbackUrl);
+        final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
         if (!servicesManager.matchesExistingService(callbackService)) {
             final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
             service.setName("OAuth Callback url");
@@ -63,13 +63,13 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
             servicesManager.reload();
         }
 
-        final List delegators = ticketRegistry.getTicketDelegators();
+        final List delegators = this.ticketRegistry.getTicketDelegators();
         if (delegators != null) {
-            ticketRegistry.getTicketDelegators().add(0, new Pair(RefreshToken.class,
+            this.ticketRegistry.getTicketDelegators().add(0, new Pair(RefreshToken.class,
                     AbstractTicketDelegator.getDefaultConstructor(RefreshTokenDelegator.class)));
-            ticketRegistry.getTicketDelegators().add(1, new Pair(AccessToken.class,
+            this.ticketRegistry.getTicketDelegators().add(1, new Pair(AccessToken.class,
                     AbstractTicketDelegator.getDefaultConstructor(AccessTokenDelegator.class)));
-            ticketRegistry.getTicketDelegators().add(2, new Pair(OAuthCode.class,
+            this.ticketRegistry.getTicketDelegators().add(2, new Pair(OAuthCode.class,
                     AbstractTicketDelegator.getDefaultConstructor(OAuthCodeDelegator.class)));
         } else {
             throw new RuntimeException("Ticket registry delegators cannot be determined");

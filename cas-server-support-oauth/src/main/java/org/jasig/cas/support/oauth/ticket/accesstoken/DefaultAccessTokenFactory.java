@@ -40,8 +40,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     @Override
     public AccessToken create(final Service service, final Authentication authentication) {
-        final String codeId = accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-        return new AccessTokenImpl(codeId, service, authentication, expirationPolicy);
+        final String codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        return new AccessTokenImpl(codeId, service, authentication, this.expirationPolicy);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     public UniqueTicketIdGenerator getAccessTokenIdGenerator() {
-        return accessTokenIdGenerator;
+        return this.accessTokenIdGenerator;
     }
 
     public void setAccessTokenIdGenerator(final UniqueTicketIdGenerator accessTokenIdGenerator) {
@@ -58,7 +58,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     public ExpirationPolicy getExpirationPolicy() {
-        return expirationPolicy;
+        return this.expirationPolicy;
     }
 
     public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {

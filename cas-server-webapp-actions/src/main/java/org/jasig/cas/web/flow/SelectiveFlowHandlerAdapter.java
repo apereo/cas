@@ -37,11 +37,11 @@ public class SelectiveFlowHandlerAdapter extends FlowHandlerAdapter {
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
-        Assert.isTrue(!supportedFlowIds.isEmpty(), "Must specify at least one supported flow ID");
+        Assert.isTrue(!this.supportedFlowIds.isEmpty(), "Must specify at least one supported flow ID");
     }
 
     @Override
     public boolean supports(final Object handler) {
-        return handler instanceof FlowHandler && supportedFlowIds.contains(((FlowHandler) handler).getFlowId());
+        return handler instanceof FlowHandler && this.supportedFlowIds.contains(((FlowHandler) handler).getFlowId());
     }
 }

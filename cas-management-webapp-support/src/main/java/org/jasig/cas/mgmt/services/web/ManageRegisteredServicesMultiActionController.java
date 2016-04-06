@@ -70,9 +70,9 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             throw new IllegalStateException("Services cannot be empty");
         }
 
-        if (!this.servicesManager.matchesExistingService(defaultService)) {
+        if (!this.servicesManager.matchesExistingService(this.defaultService)) {
             final RegexRegisteredService svc = new RegexRegisteredService();
-            svc.setServiceId('^' + defaultService.getId());
+            svc.setServiceId('^' + this.defaultService.getId());
             svc.setName("Services Management Web Application");
             svc.setDescription(svc.getName());
             this.servicesManager.save(svc);
@@ -116,7 +116,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
                                         final HttpServletResponse response) {
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
         if (svc == null || svc.getId() == idAsLong) {
-            throw new IllegalArgumentException("The default service " + defaultService.getId() + " cannot be deleted. "
+            throw new IllegalArgumentException("The default service " + this.defaultService.getId() + " cannot be deleted. "
                                        + "The definition is required for accessing the application.");
         }
 
@@ -155,7 +155,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         final Map<String, Object> model = new HashMap<>();
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
-        serviceBeans.addAll(services.stream().map(registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
+        serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         model.put("services", serviceBeans);
         model.put(STATUS, HttpServletResponse.SC_OK);
         JsonViewUtils.render(model, response);

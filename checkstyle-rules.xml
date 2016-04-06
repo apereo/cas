@@ -119,6 +119,16 @@
         <module name="RedundantImport">
             <property name="severity" value="error"/>
         </module>
+        
+        <!--
+        This check insofar is unable to ignore constants and logger fields.
+        <module name="RequireThis">
+            <property name="severity" value="error"/>
+            <property name="checkMethods" value="false" />
+            <property name="validateOnlyOverlapping" value="false" />
+        </module>
+        -->
+        
         <module name="UnusedImports">
             <property name="severity" value="error"/>
         </module>

@@ -110,7 +110,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         private CasServiceResponseAuthenticationSuccess authenticationSuccess;
 
         public CasServiceResponseAuthenticationFailure getAuthenticationFailure() {
-            return authenticationFailure;
+            return this.authenticationFailure;
         }
 
         public void setAuthenticationFailure(final CasServiceResponseAuthenticationFailure authenticationFailure) {
@@ -118,7 +118,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public CasServiceResponseAuthenticationSuccess getAuthenticationSuccess() {
-            return authenticationSuccess;
+            return this.authenticationSuccess;
         }
 
         public void setAuthenticationSuccess(final CasServiceResponseAuthenticationSuccess authenticationSuccess) {
@@ -133,7 +133,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         private Map attributes;
 
         public String getUser() {
-            return user;
+            return this.user;
         }
 
         public void setUser(final String user) {
@@ -141,7 +141,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public String getProxyGrantingTicket() {
-            return proxyGrantingTicket;
+            return this.proxyGrantingTicket;
         }
 
         public void setProxyGrantingTicket(final String proxyGrantingTicket) {
@@ -149,7 +149,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public List getProxies() {
-            return proxies;
+            return this.proxies;
         }
 
         public void setProxies(final List proxies) {
@@ -157,7 +157,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public Map getAttributes() {
-            return attributes;
+            return this.attributes;
         }
 
         public void setAttributes(final Map attributes) {
@@ -170,7 +170,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         private String description;
 
         public String getCode() {
-            return code;
+            return this.code;
         }
 
         public void setCode(final String code) {
@@ -178,7 +178,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public String getDescription() {
-            return description;
+            return this.description;
         }
 
         public void setDescription(final String description) {

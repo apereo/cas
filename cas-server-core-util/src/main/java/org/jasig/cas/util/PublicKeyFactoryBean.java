@@ -47,12 +47,12 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     }
 
     public Resource getResource() {
-        return resource;
+        return this.resource;
     }
 
 
     public String getAlgorithm() {
-        return algorithm;
+        return this.algorithm;
     }
 
     public void setLocation(final Resource resource) {

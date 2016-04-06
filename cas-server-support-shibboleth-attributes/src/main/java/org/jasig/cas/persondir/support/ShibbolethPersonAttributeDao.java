@@ -37,9 +37,9 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
      */
     @PostConstruct
     public void init() {
-        if (attributeResolver instanceof InitializableComponent && !((InitializableComponent) attributeResolver).isInitialized()) {
+        if (this.attributeResolver instanceof InitializableComponent && !((InitializableComponent) this.attributeResolver).isInitialized()) {
             try {
-                ((InitializableComponent) attributeResolver).initialize();
+                ((InitializableComponent) this.attributeResolver).initialize();
             } catch (final ComponentInitializationException e) {
                 throw new RuntimeException(e);
             }
@@ -52,7 +52,7 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
         attributeResolutionContext.setPrincipal(uid);
 
         try {
-            attributeResolver.resolveAttributes(attributeResolutionContext);
+            this.attributeResolver.resolveAttributes(attributeResolutionContext);
 
             final Map<String, List<Object>> attributes = attributeResolutionContext.getResolvedIdPAttributes()
                     .entrySet()
