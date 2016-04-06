@@ -77,7 +77,7 @@ Registered services present the following metadata:
 ###### `InMemoryServiceRegistryDaoImpl`
 This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
 
-{% highlight xml %}
+```xml
 <bean id="serviceRegistryDao"
       class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
       p:registeredServices-ref="registeredServicesList" />
@@ -90,7 +90,7 @@ This DAO is an in-memory services management seeded from registration beans wire
           p:evaluationOrder="0" />
 </util:list>
 
-{% endhighlight %}
+```
 
 This component is _NOT_ suitable for use with the service management webapp since it does not persist data.
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for

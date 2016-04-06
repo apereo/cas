@@ -27,25 +27,25 @@ be deployed within an internal network this is generally not a problem.
 ## Authentication Components
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-generic-remote-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ### Configuring Authentication
 
-{% highlight xml %}
+```xml
 <alias name="remoteAddressAuthenticationHandler" alias="primaryAuthenticationHandler" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # ip.address.range=192.168.1.0/255.255.255.0
-{% endhighlight %}
+```
 
 You should appropriately evaluate your webflow configuration
 to route the flow to the state `startAuthenticate` where needed.
