@@ -35,13 +35,13 @@ The local trust store should only be used for CAS-related functionality of cours
 can be carried over across CAS and Java upgrades, and certainly managed by the source control system that should
 host all CAS configuration.
 
-{% highlight xml %}
+```xml
 # The http client truststore file, in addition to the default's
 # http.client.truststore.file=classpath:truststore.jks
 #
 # The http client truststore's password
 # http.client.truststore.psw=changeit
-{% endhighlight %}
+```
 
 
 ## Returning PGT in Validation Response
@@ -63,7 +63,7 @@ registered inside the CAS server's service registry. The service that holds the 
 be authorized to receive the PGT
 as an attribute for the given attribute release policy of choice.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
@@ -84,7 +84,7 @@ as an attribute for the given attribute release policy of choice.
     "algorithm" : "RSA"
   }
 }
-{% endhighlight %}
+```
 
 
 #### Decrypt the PGT id
@@ -92,7 +92,7 @@ Once the client application has received the `proxyGrantingTicket` id attribute 
 via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:
 
-{% highlight java %}
+```java
 
 final Map<?, ?> attributes = ...
 final String encodedPgt = (String) attributes.get("proxyGrantingTicket");
@@ -103,4 +103,4 @@ cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
 
-{% endhighlight %}
+```

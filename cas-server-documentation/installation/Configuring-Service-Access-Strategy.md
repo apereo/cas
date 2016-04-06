@@ -46,13 +46,13 @@ allows one to configure a service with the following properties:
 ### `GrouperRegisteredServiceAccessStrategy`
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-integration-grouper</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by Grouper
 are collected as CAS attribtues and examines against the list of required attributes for service access.
@@ -65,12 +65,12 @@ The following properties are available:
 
 You will also need to ensure `grouper.client.properties` is available on the classpath:
 
-{% highlight properties %}
+```properties
 grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
 grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 
-{% endhighlight %}
+```
 
 
 ## Configuration of Access Control
@@ -78,7 +78,7 @@ Some examples of RBAC configuration follow:
 
 * Service is not allowed to use CAS:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -90,12 +90,12 @@ Some examples of RBAC configuration follow:
     "ssoEnabled" : true
   }
 }
-{% endhighlight %}
+```
 
 
 * Service will be challenged to present credentials every time, thereby not using SSO:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -107,13 +107,13 @@ Some examples of RBAC configuration follow:
     "ssoEnabled" : false
   }
 }
-{% endhighlight %}
+```
 
 
 * To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -130,11 +130,11 @@ Some examples of RBAC configuration follow:
     }
   }
 }
-{% endhighlight %}
+```
 
 * To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -150,14 +150,14 @@ Some examples of RBAC configuration follow:
     }
   }
 }
-{% endhighlight %}
+```
 
 
 * To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
 OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
 
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -175,11 +175,11 @@ OR the principal must have a `member` attribute whose value is either of `admins
     }
   }
 }
-{% endhighlight %}
+```
 
 * Service access is only allowed within `startingDateTime` and `endingDateTime`:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
@@ -194,11 +194,11 @@ OR the principal must have a `member` attribute whose value is either of `admins
     "endingDateTime" : "2015-11-10T13:19:54.248-07:00"
   }
 }
-{% endhighlight %}
+```
 
 * Grouper access strategy based on group's display extension:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
@@ -216,4 +216,4 @@ OR the principal must have a `member` attribute whose value is either of `admins
     "groupField" : "DISPLAY_EXTENSION"
   },
 }
-{% endhighlight %}
+```

@@ -16,40 +16,40 @@ These are:
 ## Authentication Components
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-generic</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ### `AcceptUsersAuthenticationHandler`
-{% highlight xml %}
+```xml
 <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 accept.authn.users=casuser::Mellon
-{% endhighlight %}
+```
 
 ### `FileAuthenticationHandler`
 
-{% highlight xml %}
+```xml
 <alias name="fileAuthenticationHandler" alias="primaryAuthenticationHandler" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # file.authn.filename=classpath:people.txt
 # file.authn.separator=::
-{% endhighlight %}
+```
 
 #### Example Password File
-{% highlight bash %}
+```bash
 scott::password
 bob::password2
-{% endhighlight %}
+```
