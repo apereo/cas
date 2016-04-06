@@ -8,9 +8,9 @@ Upon every release of the CAS software, docker images are tagged and pushed
 to the Apereo CAS repository on [Docker Hub](https://hub.docker.com/r/apereo/cas/).
 Images can be pulled down via the following command:
 
-{% highlight xml %}
+```xml
 docker pull apereo/cas:v[A.B.C]
-{% endhighlight %}
+```
 
 ...where `[A.B.C]` represents the image tag that is mapped to the CAS server version.
 

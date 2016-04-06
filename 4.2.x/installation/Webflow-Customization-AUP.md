@@ -14,21 +14,21 @@ and/or acceptance of the policy would be handled via an external storage mechani
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-webapp-actions-aup-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ### Enable Webflow
 
 - In the `login-webflow.xml` file, enable the transition to `acceptableUsagePolicyCheck`
 by uncommenting the following entry:
 
-{% highlight xml %}
+```xml
 <transition on="success" to="acceptableUsagePolicyCheck" />
-{% endhighlight %}
+```
 
 - Customize the policy by modifying `casAcceptableUsagePolicyView.jsp`.

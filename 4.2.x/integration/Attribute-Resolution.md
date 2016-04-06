@@ -55,7 +55,7 @@ The CAS project provides the following additional implementations:
 #### LDAP
 The following snippet assumes that connection information beans are already defined.
 
-{% highlight xml %}
+```xml
 <bean id="ldapPersonAttributeDao"
       class="org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao"
       p:connectionFactory-ref="pooledLdapConnectionFactory"
@@ -73,13 +73,13 @@ The following snippet assumes that connection information beans are already defi
         </map>
     </property>
 </bean>
-{% endhighlight %}
+```
 
 
 #### JDBC
 The following snippet assumes that connection information beans are already defined.
 
-{% highlight xml %}
+```xml
 <bean id="singleRowJdbcPersonAttributeDao"
     class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
     <constructor-arg index="0" ref="dataSource" />
@@ -98,13 +98,13 @@ The following snippet assumes that connection information beans are already defi
         </map>
     </property>
 </bean>
-{% endhighlight %}
+```
 
 
 #### Caching, Merging and Cascading
 Note that this snippet below strictly uses the Person Directory components for resolving attributes.
 
-{% highlight xml %}
+```xml
 <bean id="mergedPersonAttributeDao"
         class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
     <property name="cacheNullResults" value="true" />
@@ -134,4 +134,4 @@ Note that this snippet below strictly uses the Person Directory components for r
         </bean>
     </property>
 </bean>
-{% endhighlight %}
+```

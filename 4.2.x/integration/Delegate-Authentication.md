@@ -20,13 +20,13 @@ But the CAS server can also act as a client using the [pac4j security engine](ht
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-pac4j-webflow</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 
 ## Configuration
@@ -37,7 +37,7 @@ An identity provider is a server which can authenticate users (like Google, Yaho
 
 Clients can be defined via properties for the most common ones (in the `cas.properties` file):
 
-{% highlight properties %}
+```properties
 # cas.pac4j.facebook.id=
 # cas.pac4j.facebook.secret=
 # cas.pac4j.facebook.scope=
@@ -63,11 +63,11 @@ Clients can be defined via properties for the most common ones (in the `cas.prop
 # cas.pac4j.oidc.customParamValue1=
 # cas.pac4j.oidc.customParamKey2=
 # cas.pac4j.oidc.customParamValue2=
-{% endhighlight %}
+```
 
 Or like any bean, in a dedicated `WEB-INF/spring-configuration/pac4jContext.xml` file:
 
-{% highlight xml %}
+```xml
 <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">
   <property name="key" value="fbkey" />
   <property name="secret" value="fbsecret" />
@@ -93,7 +93,7 @@ Or like any bean, in a dedicated `WEB-INF/spring-configuration/pac4jContext.xml`
 </bean>
 
 <bean id="myopenid1" class="org.pac4j.openid.client.MyOpenIdClient" />
-{% endhighlight %}
+```
 
 Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values for the *key* and *secret* properties).
 
@@ -112,9 +112,9 @@ After a successful delegated authentication, a user is created inside the CAS se
 
 This can be defined in the `cas.properties` file:
 
-{% highlight properties %}
+```properties
 cas.pac4j.client.authn.typedidused=true
-{% endhighlight %}
+```
 
 
 ## Demo
@@ -148,7 +148,7 @@ The identifier of the user is always pushed to the CAS client. For user attribut
 
 On CAS server side, to push attributes to the CAS client, it should be configured in the expected service:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
@@ -160,7 +160,7 @@ On CAS server side, to push attributes to the CAS client, it should be configure
     "allowedAttributes" : [ "java.util.ArrayList", [ "name", "first_name", "middle_name" ] ]
   }
 }
-{% endhighlight %}
+```
 
 On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
 
@@ -172,17 +172,17 @@ Though, you can now completely rebuild the original user profile from data retur
 
 After validating the service ticket, an `Assertion` is available in the CAS client from which you can get the identifier and the attributes of the authenticated user using the pac4j library:
 
-{% highlight java %}
+```java
 final AttributePrincipal principal = assertion.getPrincipal();
 final String id = principal.getName();
 final Map<String, Object> attributes = principal.getAttributes();
-{% endhighlight %}
+```
 
 As the identifier stores the kind of profile in its own definition (`*clientName#idAtProvider*`), you can use the `org.pac4j.core.profile.ProfileHelper.buildProfile(id, attributes)` method to recreate the original profile:
 
-{% highlight java %}
+```java
 final FacebookProfile rebuiltProfileOnCasClientSide =
     (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
-{% endhighlight %}
+```
 
 and then use it in your application.

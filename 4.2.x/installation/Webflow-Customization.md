@@ -34,13 +34,13 @@ and keep track of this state on the client in an encrypted form to remove the ne
 Default encryption strategy controlled via the `loginFlowStateTranscoder` component.
 These settings can be controlled via the following defined in the `cas.properties` file:
 
-{% highlight properties %}
+```properties
 # The encryption secret key. By default, must be a octet string of size 256.
 # webflow.encryption.key=
 
 # The signing secret key. By default, must be a octet string of size 512.
 # webflow.signing.key=
-{% endhighlight %}
+```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
 While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and 
@@ -58,10 +58,10 @@ and instead presents a message when users visit CAS directly without specifying 
 
 This behavior is controlled via `cas.properties`:
 
-{% highlight properties %}
+```properties
 # Indicates whether an SSO session can be created if no service is present.
 # create.sso.missing.service=false
-{% endhighlight %}
+```
 
 ## Acceptable Usage Policy
 CAS presents the ability to allow the user to accept the usage policy before moving on to the application. 

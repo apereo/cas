@@ -25,26 +25,26 @@ You may experience `INVAILD_TICKET` related errors when attempting to use a CAS 
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
 
 ### Out of Heap Memory Error
-{% highlight bash %}
+```bash
 java.lang.OutOfMemoryError: GC overhead limit exceeded
         at java.util.Arrays.copyOfRange(Arrays.java:3658)
         at java.lang.StringBuffer.toString(StringBuffer.java:671)
         at 
-{% endhighlight %}
+```
 
 You may encounter this error, when in all likelihood, a cache-based ticket registry such as EhCache is used whose eviction policy is not correctly configured. Objects and tickets are cached inside the registry storage back-end tend to linger around longer than they should or the eviction policy is not doing a good enough job to clean unused tickets that may be marked as expired by CAS. 
 
 To troubleshoot, you can configure the JVM to perform a heap dump prior to exiting, which you should set up immediately so you have some additional information if/when it happens next time. The follow system properties should do the trick:
 
-{% highlight bash %}
+```bash
 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="/path/to/jvm-dump.hprof" 
-{% endhighlight %}
+```
 
 Also ensure that your container is configured to have enough memory available. For Apache Tomcat, the following setting as an environment variable may be configured:
 
-{% highlight bash %}
+```bash
 CATALINA_OPTS=-Xms1000m -Xmx2000m
-{% endhighlight %}
+```
 
 You will want to profile your server with something like [JVisualVM](http://visualvm.java.net/) which should be [bundled with the JDK](https://docs.oracle.com/javase/7/docs/technotes/tools/share/jvisualvm.html).  This will help you see what is actually going on with your memory.
 
@@ -56,7 +56,7 @@ Finally, review the eviction policy of your ticket registry and ensure the value
 
 ### PKIX Path Building Failed
 
-{% highlight bash %}
+```bash
 
 Sep 28, 2009 4:13:26 PM org.jasig.cas.client.validation.AbstractCasProtocolUrlBasedTicketValidator retrieveResponseFromServer
 SEVERE: javax.net.ssl.SSLHandshakeException:
@@ -71,35 +71,35 @@ sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid
       at com.sun.net.ssl.internal.ssl.Handshaker.fatalSE(Unknown Source)
       at com.sun.net.ssl.internal.ssl.ClientHandshaker.serverCertificate(Unknown Source)
 
-{% endhighlight %}
+```
 
 PKIX path building errors are the most common SSL errors. The problem here is that the CAS client does not trust the certificate presented by the CAS server; most often this occurs because of using a *self-signed certificate* on the CAS server. To resolve this error, import the CAS server certificate into the system truststore of the CAS client. If the certificate is issued by your own PKI, it is better to import the root certificate of your PKI into the CAS client truststore. 
 
 By default the Java system truststore is at `$JAVA_HOME/jre/lib/security/cacerts`. The certificate to be imported **MUST** be a DER-encoded file. If the contents of the certificate file are binary, it's likely DER-encoded; if the file begins with the text `---BEGIN CERTIFICATE---`, it is PEM-encoded and needs to be converted to DER encoding. 
 
-{% highlight bash %}
+```bash
 keytool -import -keystore $JAVA_HOME/jre/lib/security/cacerts -file tmp/cert.der -alias certName
-{% endhighlight %}
+```
 
 If you have multiple java editions installed on your machine, make sure that the app / web server is pointing to the correct JDK/JRE version (The one to which the certificate has been exported correctly) One common mistake that occurs while generating self-validated certificates is that the `JAVA_HOME` might be different than that used by the server.
 
 
 ### No subject alternative names
 
-{% highlight bash %}
+```bash
 javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No subject alternative names present
-{% endhighlight %}
+```
 
 This is a hostname/SSL certificate CN mismatch. This commonly happens when a self-signed certificate issued to localhost is placed on a machine that is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu, will not work in most cases where the client making the connection is Java.
 
 
 ### HTTPS hostname wrong
-{% highlight bash %}
+```bash
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
     org.jasig.cas.client.validation.Saml11TicketValidator.retrieveResponseFromServer(Saml11TicketValidator.java:203)
     org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator.validate(AbstractUrlBasedTicketValidator.java:185)
     org.jasig.cas.client.validation.AbstractTicketValidationFilter.doFilter
-{% endhighlight %}
+```
 
 The above error occurs most commonly when the CAS client ticket validator attempts to contact the CAS server and is presented a certificate whose CN does not match the fully-qualified host name of the CAS server. There are a few common root causes of this mismatch:
 
@@ -116,23 +116,23 @@ Java support for wildcard certificates is limited to hosts strictly in the same 
 
 ### `unrecognized_name` Error
 
-{% highlight bash %}
+```bash
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
-{% endhighlight %}
+```
 
 The above error occurs mainly in Oracle JDK 7 CAS Server installations. In JDK7, SNI (Server Name Indication) is enabled by default. When the HTTPD Server does not send the correct Server Name back, the JDK HTTP Connection refuses to connect and the exception stated above is thrown.
 
 You must ensure your HTTPD Server is sending back the correct hostname. E.g. in Apache HTTPD, you must set the ServerAlias in the SSL vhost:
 
-{% highlight bash %}
+```bash
 ServerName your.ssl-server.name
 ServerAlias your.ssl-server.name
-{% endhighlight %}
+```
 
 Alternatively, you can disable the SNI detection in JDK7, by adding this flag to the Java options of your CAS Servers' application server configuration:
-{% highlight bash %}
+```bash
 -Djsse.enableSNIExtension=false
-{% endhighlight %}
+```
 
 
 ### When All Else Fails
@@ -140,7 +140,7 @@ If you have read, understood, and tried all the troubleshooting tips on this pag
 
 Sample `setenv.sh` Tomcat Script follows:
 
-{% highlight bash %}
+```bash
 # Uncomment the next 4 lines for custom SSL keystore
 # used by all deployed applications
 # KEYSTORE="$HOME/path/to/custom.keystore"
@@ -159,17 +159,17 @@ Sample `setenv.sh` Tomcat Script follows:
 # CATALINA_OPTS=$CATALINA_OPTS" -Djavax.net.debug=ssl"
  
 export CATALINA_OPTS
-{% endhighlight %}
+```
 
 ## Review logs
 CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. Specifically you want to make sure `DEBUG` levels are turned on the `org.jasig` package in the log configuration:
 
-{% highlight xml %}
+```xml
 <AsyncLogger  name="org.jasig" level="debug" additivity="false" includeLocation="true">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>
-{% endhighlight %}
+```
 
 When changes are applied, restart the server environment and observe the log files to get a better understanding of CAS behavior. For more info, please [review the this guide](Logging.html) on how to configure logs with CAS.
 
