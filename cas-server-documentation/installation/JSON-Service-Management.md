@@ -9,8 +9,11 @@ JSON files are
 expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant JSON files.
 
-```xml
-<alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+serviceRegistryDao=jsonServiceRegistryDao
 ```
 
 Path to the JSON service definitions directory is controlled via:
