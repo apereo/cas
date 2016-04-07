@@ -21,10 +21,11 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-Enable the registry via:
+Enable the registry in `cas.properties` via:
 
-```xml
-<alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
+```properties
+#CAS components mappings
+ticketRegistry=hazelcastTicketRegistry
 ```
 
 This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry

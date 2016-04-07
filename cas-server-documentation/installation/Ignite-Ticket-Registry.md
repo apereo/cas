@@ -20,10 +20,11 @@ This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 ## Distributed Cache
 Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage subsystem. 
 
-Enable the registry via:
+Enable the registry in `cas.properties` via:
 
-```xml
-<alias name="igniteTicketRegistry" alias="ticketRegistry" />
+```properties
+#CAS components mappings
+ticketRegistry=igniteTicketRegistry
 ```
 
 

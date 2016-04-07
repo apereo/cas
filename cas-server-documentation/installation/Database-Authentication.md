@@ -92,8 +92,16 @@ CAS provides the following components to accommodate different database authenti
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
 configurable database query.
 
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=queryDatabaseAuthenticationHandler
+```
+
+In local `deployerConfigContext.xml`:
+
 ```xml
-<alias name="queryDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="queryDatabaseDataSource" />
 ```
 
@@ -107,8 +115,16 @@ The following settings are applicable:
 Searches for a user record by querying against a username and password; the user is authenticated if at
 least one result is found.
 
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=searchModeSearchDatabaseAuthenticationHandler
+```
+
+In local `deployerConfigContext.xml`:
+
 ```xml
-<alias name="searchModeSearchDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="searchModeDatabaseDataSource" />
 ```
 
@@ -129,8 +145,16 @@ passwords to the appropriate format required by the underlying database. Note au
 ability to establish a connection with username/password credentials. This handler is the easiest to configure
 (usually none required), but least flexible, of the database authentication components.
 
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=bindModeSearchDatabaseAuthenticationHandler
+```
+
+In local `deployerConfigContext.xml`:
+
 ```xml
-<alias name="bindModeSearchDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="bindSearchDatabaseDataSource" />
 ```
 
@@ -147,8 +171,16 @@ If multiple iterations are used, the bytecode Hash of the first iteration is
 rehashed without the salt values.
 The final hash is converted to Hex before comparing it to the database value.
 
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=queryAndEncodeDatabaseAuthenticationHandler
+```
+
+In local `deployerConfigContext.xml`:
+
 ```xml
-<alias name="queryAndEncodeDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
 <alias name="dataSource" alias="queryEncodeDatabaseDataSource" />
 ```
 
