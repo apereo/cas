@@ -81,7 +81,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the audit trail manager
      */
-    @Bean(name = "auditTrailManager")
+    @Bean(name = "slf4jAuditTrailManager")
     public AuditTrailManager auditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(this.useSingleLine);
