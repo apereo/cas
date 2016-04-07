@@ -34,8 +34,11 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-```xml
-<alias name="x509CredentialsAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=x509CredentialsAuthenticationHandler
 ```
 
 The following settings are applicable:
