@@ -191,63 +191,75 @@ header h1 {
   padding-left: 30px;
   width: 90%; }
 
+.login #content {
+  background: transparent; }
+
 #login {
-  width: 320px;
-  float: left;
-  margin-right: 20px; }
-
-#login h2 {
-  font-weight: normal;
-  font-size: 1.4em;
-  margin-bottom: 20px; }
-
-#login .row {
-  padding: 10px 0; }
-
-#login label {
-  display: block;
-  margin-bottom: 2px; }
-
-#login .check label {
-  display: inline; }
-
-#login input[type=text], #login input[type=password] {
-  font-size: 1.4em;
-  padding: 5px; }
-
-#login .btn-submit {
-  background: #70ba61;
-  border: 0;
-  padding: 10px 20px;
-  font-weight: bold;
-  color: white;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px; }
-
-#login .btn-reset {
-  background: #eee;
-  padding: 10px 20px;
-  border: 0;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px; }
-
-#login .btn-submit:hover, #login .btn-reset:hover {
-  cursor: pointer; }
-
-#login .btn-submit:hover {
-  background: #7fd36e; }
-
-#login .btn-reset:hover {
-  background: #d4d4d4; }
+  width: 450px;
+  margin-right: 20px;
+  border: 1px solid #333;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #efefef;
+  border-radius: 3px;
+  overflow: hidden; }
+  #login .login-header {
+    text-align: center;
+    padding: 20px;
+    background-color: #d5d5d5;
+    margin: -30px;
+    margin-bottom: 10px; }
+    #login .login-header h2 {
+      font-size: 2rem;
+      font-weight: 300;
+      color: black;
+      font-family: Lato; }
+    #login .login-header .fa-stack {
+      margin-top: 20px; }
+    #login .login-header .fa-circle {
+      color: #1490b3; }
+  #login form > h2 {
+    display: none; }
+  #login .row {
+    margin: 20px 0; }
+  #login label {
+    display: block;
+    margin-bottom: 2px; }
+  #login .check label {
+    display: inline; }
+  #login input[type=text], #login input[type=password] {
+    font-size: 1.4em;
+    padding: 5px;
+    width: 100%; }
+  #login .btn-row {
+    text-align: right; }
+  #login .btn-submit {
+    background: #70ba61;
+    border: 0;
+    padding: 10px 25px;
+    font-weight: normal;
+    color: white;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    font-size: 1rem; }
+  #login .btn-reset {
+    background: #eee;
+    padding: 10px 20px;
+    border: 0;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    display: none; }
+  #login .btn-submit:hover, #login .btn-reset:hover {
+    cursor: pointer; }
+  #login .btn-submit:hover {
+    background: #7fd36e; }
+  #login .btn-reset:hover {
+    background: #d4d4d4; }
 
 #sidebar {
-  width: auto;
-  height: 100%; }
-
-#sidebar-content {
-  padding-left: 20px; }
+  width: auto; }
 
 #list-providers ul {
   margin-bottom: 3em; }
