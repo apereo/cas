@@ -390,6 +390,9 @@ ext.libraries = [
         ],
         thymeleafdialect : [
                 dependencies.create("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion") {
+                	exclude(group: 'org.javassist', module: 'javassist')
+                	exclude(group: 'org.slf4j', module: 'slf4j-api')
+                	exclude(group: 'org.codehaus.groovy', module: 'groovy')
                     force = true
                 }
         ],
