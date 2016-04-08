@@ -3,6 +3,7 @@ dependencies {
     compile libraries.spring
     compile libraries.hibernate
     compileOnly libraries.thmyeleaf
+    compile libraries.groovy
     compile libraries.thymeleafdialect
     compile project(':cas-server-core-services')
     compile project(':cas-server-core-web')
