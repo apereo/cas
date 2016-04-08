@@ -10,7 +10,10 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
  * @since 5.0.0
  */
 public class CasManagementWebApplicationServletInitializer extends SpringBootServletInitializer {
-    
+
+    public CasManagementWebApplicationServletInitializer() {
+    }
+
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
         return builder.sources(CasManagementWebApplication.class);
