@@ -388,6 +388,11 @@ ext.libraries = [
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
         ],
+        thymeleafdialect : [
+                dependencies.create("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion") {
+                    force = true
+                }
+        ],
         thmyeleaf        : [
                 dependencies.create("org.thymeleaf:thymeleaf-spring4:$thymeleafVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
