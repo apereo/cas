@@ -38,4 +38,9 @@
         </entry>
     </util:map>
 
+    <util:list id="monitorsList">
+        <ref bean="memoryMonitor" />
+        <ref bean="sessionMonitor" />
+    </util:list>
+
 </beans>
