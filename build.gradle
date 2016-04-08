@@ -268,6 +268,8 @@ subprojects {
 			exclude group: 'org.apache.zookeeper'
 			exclude group: 'org.javassist'
 			exclude group: 'com.google.guava'
+			exclude group: 'xml-security', module: 'xmlsec'
+			exclude group: 'org.springframework'
 		}
 
         if (!Boolean.getBoolean("skipAspectJ")) {
