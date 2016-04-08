@@ -42,12 +42,14 @@ username=battags&password=password&additionalParam1=paramvalue
 ### Sample Response
 
 #### Successful Response
+
 ```bash
 201 Created
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
 #### Unsuccessful Response
+
 If incorrect credentials are sent, CAS will respond with a 400 Bad Request error
 (will also respond for missing parameters, etc.). If you send a media type
 it does not understand, it will send the 415 Unsupported Media Type.
