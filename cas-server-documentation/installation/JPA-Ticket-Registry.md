@@ -56,6 +56,14 @@ The following settings are expected:
 # ticketreg.database.pool.connectionHealthQuery=select 1
 ```
 
+Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`
+which may not be appropriate for use in production. Setting the value to
+`validate` may be more desirable, but any of the following options can be used:
+
+* `validate` - validate the schema, but make no changes to the database.
+* `update` - update the schema.
+* `create` - create the schema, destroying previous data.
+* `create-drop` - drop the schema at the end of the session.
 
 ## TicketGrantingTicket Locking
 
