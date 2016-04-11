@@ -44,17 +44,20 @@ The _inspektr_ components, on the other hand, fully support stateless clusters.
 ## Configuration
 
 ### IP Address
-Uses a memory map to prevent successive failed login attempts from the same IP address.
-```xml
-<alias name="inMemoryIpAddressThrottle" alias="authenticationThrottle" />
+Uses a memory map to prevent successive failed login attempts from the same IP address. In `cas.propeties`:
+
+```properties
+#CAS components mappings
+authenticationThrottle=inMemoryIpAddressThrottle
 ```
 
 
 ### IP Address and Username
-Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
+Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address. In `cas.properties`:
 
-```xml
-<alias name="inMemoryIpAddressUsernameThrottle" alias="authenticationThrottle" />
+```properties
+#CAS components mappings
+authenticationThrottle=inMemoryIpAddressUsernameThrottle
 ```
 
 ### Inspektr + JDBC
@@ -63,8 +66,14 @@ username from the same IP address. This component requires that the
 [inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
 `JdbcAuditTrailManager`, which writes audit data to a database.
 
+```properties
+#CAS components mappings
+authenticationThrottle=inspektrIpAddressUsernameThrottle
+```
+
+Import in local `deployerConfigContext.xml`:
+
 ```xml
-<alias name="inspektrIpAddressUsernameThrottle" alias="authenticationThrottle" />
 <import resource="classpath:inspektr-throttle-jdbc-config.xml" />
 ```
 

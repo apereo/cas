@@ -23,12 +23,18 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+serviceRegistryDao=ldapServiceRegistryDao
+```
+
+In local `deployerConfigContext.xml`:
+
 ```xml
-...
-<alias name="ldapServiceRegistryDao" alias="serviceRegistryDao" />
 <alias name="mySearchRequest" alias="ldapServiceRegistrySearchRequest" />
 <alias name="myConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
-...
 ```
 
 The default mapper has support for the following optional items:

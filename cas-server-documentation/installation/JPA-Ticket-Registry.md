@@ -30,8 +30,11 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-```xml
-<alias name="jpaTicketRegistry" alias="ticketRegistry" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+ticketRegistry=jpaTicketRegistry
 ```
 
 The following settings are expected:
