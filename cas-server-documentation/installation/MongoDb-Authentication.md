@@ -6,8 +6,9 @@ title: CAS - MongoDb Authentication
 # MongoDb Authentication
 Verify and authenticate credentials against a [MongoDb](https://www.mongodb.org/) instance.
 
-```xml
-<alias name="mongoAuthenticationHandler" alias="primaryAuthenticationHandler" />
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=mongoAuthenticationHandler
 ```
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
