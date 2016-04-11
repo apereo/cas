@@ -21,7 +21,7 @@ Health: OK
     1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 ```
 
-The list of configured monitors are all defined in `deployerConfigContext.xml` file:
+The list of configured monitors are all defined in `casComponentsMapping.xml` file:
 
 ```xml
 <util:list id="monitorsList">

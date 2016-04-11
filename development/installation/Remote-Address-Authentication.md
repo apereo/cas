@@ -37,8 +37,11 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ### Configuring Authentication
 
-```xml
-<alias name="remoteAddressAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=remoteAddressAuthenticationHandler
 ```
 
 The following settings are applicable:
