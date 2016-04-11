@@ -9,7 +9,7 @@ CAS provides a logging facility that logs important informational events like au
 failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J
 Logging framework as a facade for the [Log4J engine](http://logging.apache.org‎) by default.
 
-The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WEB-INF/classes/log4j2.xml`.
+The log4j configuration file is located in `WEB-INF/classes/log4j2.xml`.
 By default logging is set to `INFO` for all functionality related to `org.jasig.cas` code and `WARN` for
 messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set
 these levels to  `DEBUG`.
@@ -30,9 +30,9 @@ these levels to  `DEBUG`.
 you probably want to run them both as `WARN`.</p></div>
 
 ## Configuration
-It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
+It is often helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath. 
-These may be overridden via the following system property pass to the container
+These may be overridden via the following system property passed to the container:
 
 ```bash
 -Dlog4j.configurationFile=/etc/cas/log4j2.xml
