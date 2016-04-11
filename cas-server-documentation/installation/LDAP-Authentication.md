@@ -358,8 +358,8 @@ Supports both opt-in and opt-out warnings on a per-user basis.
 To enable additional logging, modify the log4j configuration file to add the following:
 
 ```xml
-<Logger name="org.ldaptive" level="debug" additivity="false">
+<AsyncLogger name="org.ldaptive" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</Logger>
+</AsyncLogger>
 ```
