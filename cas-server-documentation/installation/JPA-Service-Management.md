@@ -34,9 +34,11 @@ The following settings are expected:
 
 ## Configuration
 
-The following configuration template may be applied to `deployerConfigContext.xml` to provide for persistent
-registered service storage. The configuration assumes a `dataSource` bean is defined in the context.
+The following configuration assumes a `dataSource` bean is defined in the context.
 
-```xml
-<alias name="jpaServiceRegistryDao" alias="serviceRegistryDao" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+serviceRegistryDao=jpaServiceRegistryDao
 ```

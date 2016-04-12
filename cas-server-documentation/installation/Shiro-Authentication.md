@@ -26,8 +26,11 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-```xml
-<alias name="shiroAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=shiroAuthenticationHandler
 ```
 
 The following settings are applicable:

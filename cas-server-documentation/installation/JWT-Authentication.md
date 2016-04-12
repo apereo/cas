@@ -45,8 +45,11 @@ JWT authentication support is enabled by including the following dependency in t
 
 Then, configure the JWT handler in your overlay configuration:
 
-```xml
-<alias name="tokenAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=tokenAuthenticationHandler
 ```
 
 Configure the appropriate service in your service registry to hold the secret:

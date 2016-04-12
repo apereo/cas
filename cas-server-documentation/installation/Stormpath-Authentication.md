@@ -6,10 +6,6 @@ title: CAS - Stormpath Authentication
 # Stormpath Authentication
 Verify and authenticate credentials against the [Stormpath](https://stormpath.com/) Cloud Identity.
 
-```xml
-<alias name="stormpathAuthenticationHandler" alias="primaryAuthenticationHandler" />
-```
-
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 ```xml
@@ -18,6 +14,13 @@ Support is enabled by including the following dependency in the Maven WAR overla
   <artifactId>cas-server-support-stormpath</artifactId>
   <version>${cas.version}</version>
 </dependency>
+```
+
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=stormpathAuthenticationHandler
 ```
 
 The following settings are applicable:

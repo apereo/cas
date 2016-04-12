@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-./gradlew clean build -DskipAspectJ=true -x javadoc -x test
+./gradlew clean install -DskipAspectJ=true -x javadoc -x test

@@ -18,8 +18,11 @@ Support is enabled by adding the following module into the Maven overlay:
 ## Configuration
 This implementation auto-configures most of the internal details.
 
-```xml
-<alias name="mongoServiceRegistryDao" alias="serviceRegistryDao" />
+Enable the registry in `cas.properties` via:
+
+```properties
+#CAS components mappings
+serviceRegistryDao=mongoServiceRegistryDao
 ```
 
 
