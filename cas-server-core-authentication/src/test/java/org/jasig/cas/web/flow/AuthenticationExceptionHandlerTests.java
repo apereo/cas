@@ -1,6 +1,5 @@
 package org.jasig.cas.web.flow;
 
-import com.google.common.collect.Lists;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
@@ -79,10 +78,10 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void customExceptionsSetterWithNullDefaultValue(){
-        AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
         assertFalse(handler.containsCustomErrors());
 
-        List<Class<? extends Exception>> nullCustomErrors = new ArrayList<>();
+        final List<Class<? extends Exception>> nullCustomErrors = new ArrayList<>();
         nullCustomErrors.add(null);
         handler.setErrors(nullCustomErrors);
         assertFalse(handler.containsCustomErrors());
@@ -90,8 +89,8 @@ public class AuthenticationExceptionHandlerTests {
 
     @Test
     public void customExceptionsSetterWithTwoNewValues() {
-        AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
-        List<Class<? extends Exception>> twoCustomErrors = new ArrayList<>();
+        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final List<Class<? extends Exception>> twoCustomErrors = new ArrayList<>();
         twoCustomErrors.add(GeneralSecurityException.class);
         twoCustomErrors.add(PreventedException.class);
 
