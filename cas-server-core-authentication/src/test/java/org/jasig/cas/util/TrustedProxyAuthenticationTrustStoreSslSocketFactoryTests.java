@@ -37,7 +37,6 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
     }
 
     @Test
-    @Ignore
     public void verifySuccessfulConnectionWithCustomSSLCert() {
         final boolean valid = client.isValidEndPoint("https://www.cacert.org");
         assertTrue(valid);
