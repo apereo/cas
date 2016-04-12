@@ -2,6 +2,7 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -17,15 +18,16 @@ import static org.junit.Assert.*;
  */
 public class FileTrustStoreSslSocketFactoryTests {
 
-    /*@Test
-     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
+    @Test
+    @Ignore
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.cacert.org"));
-    }*/
+    }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
