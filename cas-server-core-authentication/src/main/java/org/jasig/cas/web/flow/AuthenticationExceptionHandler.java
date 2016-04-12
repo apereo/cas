@@ -97,7 +97,7 @@ public class AuthenticationExceptionHandler {
         //The specifics of the default empty value: this results in the list with one null element. So just get rid of null and have
         //an empty list as a result.
         final List<Class<? extends Exception>> nonNullErrors = errors.stream().filter(Objects::nonNull).collect(toList());
-        if(nonNullErrors.size() == 0) {
+        if(nonNullErrors.isEmpty()) {
             //Nothing custom provided, so just leave the default list of exceptions alone.
             return;
         }
