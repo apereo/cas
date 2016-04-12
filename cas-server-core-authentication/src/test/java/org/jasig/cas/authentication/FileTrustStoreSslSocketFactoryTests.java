@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class FileTrustStoreSslSocketFactoryTests {
 
-    @Test
+    /*@Test
      public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
@@ -25,7 +25,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.cacert.org"));
-    }
+    }*/
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
