@@ -82,12 +82,10 @@ the ability to apply an optional filter.
 
 The following settings are shared by all attribute release policies:
 
-| Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
-| `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized
-to [release the credential as an attribute](ClearPass.html).
-| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized
-to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
+| Name                    | Value
+|---------------------------------------+---------------------------------------------------------------+
+| `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
+| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
 
 ### Components
 
