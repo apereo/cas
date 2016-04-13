@@ -8,7 +8,9 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:component-scan base-package="org.pac4j.springframework.web"/>
+    <context:component-scan base-package="org.pac4j.springframework.web">
+        <context:exclude-filter type="regex" expression="org\.pac4j\.springframework\.web\.ApplicationLogoutController" />
+    </context:component-scan>
 
     <mvc:interceptors>
         <mvc:interceptor>
