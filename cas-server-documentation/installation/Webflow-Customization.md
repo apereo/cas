@@ -100,7 +100,7 @@ in most cases that state is the login view. The trick here is that each of those
   the `UNKNOWN` mapping with a generic `Invalid credentials.` message.
 
   Suppose that there is a need for a custom authentication handler that throws a custom `GeneralSecurityException` with a very specific
-  message in this case presented to UI (suppose that the exception type thrown is `com.mycompany.MyAuthenticationException`). To achive
+  message in this case presented to UI (suppose that the exception type thrown is `com.mycompany.MyAuthenticationException`). To achieve
   this customization, one would need to do the following:
 
    1. Define the fully qualified name of the exception class in `cas.properties` (comma-separated class names in case of multiple
