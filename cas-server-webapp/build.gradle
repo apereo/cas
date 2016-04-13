@@ -62,3 +62,12 @@ dependencies {
     runtime libraries.hibernate
     runtime libraries.bouncycastle
 }
+
+task resourcesJar(type: Jar) {
+    classifier 'resources'
+    from project.file('src/main/resources')
+}
+
+artifacts {
+    archives resourcesJar
+}
