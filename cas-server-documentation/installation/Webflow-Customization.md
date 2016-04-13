@@ -75,7 +75,7 @@ This behavior is controlled via `cas.properties`:
 CAS presents the ability to allow the user to accept the usage policy before moving on to the application. 
 See [this guide](Webflow-Customization-AUP.html) for more info.
 
-## Adding customizing authentication exceptions
+## Customizing authentication exceptions
 By default CAS is configured to recognize and handle 10 exceptions that are subclasses of `GeneralSecurityException` or
 `PreventedException` in the web flow during authentication transactions processing. Handling is defined by a component called
 `AuthenticationExceptionHandler` that has a pre-configured map of these default exceptions which is able to deduce from it a next webflow
