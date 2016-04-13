@@ -4,13 +4,13 @@ import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
 import org.jasig.cas.ticket.Ticket;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RefreshScope
 @Component("memcachedTicketRegistry")
-public class MemCacheTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
+public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     /**
      * Memcached client.
@@ -157,11 +157,9 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry implements Di
 
     /**
      * Destroy the client and shut down.
-     *
-     * @throws Exception the exception
      */
-    @Override
-    public void destroy() throws Exception {
+    @PreDestroy
+    public void destroy() {
         if (this.client == null) {
             return;
         }

@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<div th:replace="fragments/top"/>
+<head th:replace="fragments/head">
+    <title>Statistics View</title>
+</head>
 
 <body id="cas">
+
     <div id="container">
         <div th:replace="fragments/logo"/>
-    
+
         <div id="content">
-            
             <script type="text/javascript" th:inline="javascript">
-               
+
                 var memory_graph, completion_graph;
                 function jqueryReady() {
                     head.load(
                             "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
                             "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
                     );
-    
+
                     head.load(
                             "//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
                             "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
@@ -25,44 +27,41 @@
                             function() {
                                 /*<![CDATA[*/
                                     var memoryAvail = /*[[${freeMemory} / ${totalMemory}]]*/ ;
-                                    var memory = new Gauge('#memoryGauge', memoryAvail, {width: 200, height: 200, 
-                                        label: /*[[#{cas.statistics.section.serverstatistics.freememorygauge.label}]]*/, 
+                                    var memory = new Gauge('#memoryGauge', memoryAvail, {width: 200, height: 200,
+                                        label: /*[[#{cas.statistics.section.serverstatistics.freememorygauge.label}]]*/,
                                         textClass: 'runtimeStatistics'});
-                                    
+
                                     var memoryMax = /*[[${totalMemory} / ${maxMemory}]]*/ ;
                                     var maxMemory = new Gauge('#maxMemoryGauge', memoryMax, {width: 200, height: 200,
                                         label: /*[[#{cas.statistics.section.serverstatistics.maxmemorygauge.label}]]*/,
                                         textClass: 'runtimeStatistics'});
-        
+
                                     var server_uptime = upTime(/*[[${startTime}]]*/, 'uptime');
-        
+
                                     $('#loading, .statisticsView').toggle();
                                 /*]]>*/
                             }
-                           
+
                     );
                 };
 
-
-
-                
             </script>
-    
-            <div id="loading" th:text="#{cas.statistics.loading}"/>
+
+            <div id="loading" th:text="#{cas.statistics.loading}"></div>
     
             <div class="statisticsView">
-                <h1 th:text="#{cas.statistics.pagetitle}" />
+                <h1 th:text="#{cas.statistics.pagetitle}"></h1>
     
                 <div class="section">
-                    <h2 th:text="#{cas.statistics.section.ticket.title}" />
+                    <h2 th:text="#{cas.statistics.section.ticket.title}"></h2>
                     <div class="row adminPanels clearfix">
                         <div class="col-lg-3 col-md-6">
                             <div class="panel panel-success">
                                 <div class="panel-heading">
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
-                                            <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.unexpiredtgts.title}" />
-                                            <div class="huge" id="totalUsers" th:text="${unexpiredTgts}"/>
+                                            <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.unexpiredtgts.title}"></div>
+                                            <div class="huge" id="totalUsers" th:text="${unexpiredTgts}"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -86,7 +85,7 @@
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
                                             <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.expiredtgts.title}" />
-                                            <div class="huge" th:text="${expiredTgts}">
+                                            <div class="huge" th:text="${expiredTgts}"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -106,8 +105,8 @@
                         </div>
                     </div>
                 </div>
-    
-                <h3 th:text="#{cas.statistics.section.serverstatistics.title}" />
+
+                <h3 th:text="#{cas.statistics.section.serverstatistics.title}"></h3>
                 <div class="row runtimePanels">
                     <div class="col-md-4">
                         <div class="text-center">
@@ -124,11 +123,11 @@
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-xs-3">
-                                        <i class="fa fa-clock-o fa-5x"/>
+                                        <i class="fa fa-clock-o fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge" th:text="#{cas.statistics.section.serverstatistics.panel.uptime.title}" />
-                                        <div id="uptime"/>
+                                        <div class="huge" th:text="#{cas.statistics.section.serverstatistics.panel.uptime.title}"></div>
+                                        <div id="uptime"></div>
                                     </div>
                                 </div>
                             </div>
@@ -137,11 +136,11 @@
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-xs-3">
-                                        <i class="fa fa-server fa-5x"/>
+                                        <i class="fa fa-server fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge" th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.title}" />
-                                        <div id="serverinfo"/>
+                                        <div class="huge" th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.title}"></div>
+                                        <div id="serverinfo"></div>
                                     </div>
                                 </div>
                             </div>
@@ -198,12 +197,11 @@
                     </div>
                 </div>
             </div>
-    
         </div>
             
-            <div th:include="fragments/footer"/>
-        </div>
+        <div th:replace="fragments/footer"></div>
     </div>
+
+    <div th:replace="fragments/bottom"></div>
 </body>
-<div th:replace="fragments/bottom"/>
 </html>
