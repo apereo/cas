@@ -172,7 +172,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
 
         // resolve MFA auth context for this request
-        final Map<String, MultifactorAuthenticationProvider> providers = this.context.getBeansOfType(MultifactorAuthenticationProvider.class);
+        final Map<String, MultifactorAuthenticationProvider> providers = 
+                this.context.getBeansOfType(MultifactorAuthenticationProvider.class);
         final Authentication authentication = assertion.getPrimaryAuthentication();
         final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
                 service, authentication.getPrincipal());

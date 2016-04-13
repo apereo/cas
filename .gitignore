@@ -32,3 +32,6 @@ classes/
 
 **/tomcat/
 out
+
+gradle*
+gradlew.bat

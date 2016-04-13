@@ -12,6 +12,9 @@ import org.jasig.inspektr.common.spi.PrincipalResolver;
  */
 public class Pac4jAuditablePrincipalResolver  implements PrincipalResolver {
 
+    public Pac4jAuditablePrincipalResolver() {
+    }
+
     @Override
     public String resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         return getFromSecurityContext();

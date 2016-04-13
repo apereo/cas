@@ -16,6 +16,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
@@ -73,7 +74,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
                                 final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
                                 final SamlRegisteredService service,
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        final Assertion assertion = this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+        final Assertion assertion = this.samlProfileSamlAssertionBuilder.build(authnRequest, 
+                request, response, casAssertion, service, adaptor);
         final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
         return encode(service, finalResponse, response, adaptor);
     }
@@ -99,7 +101,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
-
+        samlResponse.setConsent(RequestAbstractType.UNSPECIFIED_CONSENT);
+        
         final SAMLObject finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
 
         if (finalAssertion instanceof EncryptedAssertion) {
@@ -182,7 +185,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         try {
             if (service.isEncryptAssertions()) {
                 logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-                final EncryptedAssertion encryptedAssertion = this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+                final EncryptedAssertion encryptedAssertion = 
+                        this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
                 return encryptedAssertion;
             }
             logger.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
