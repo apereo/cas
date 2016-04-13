@@ -19,7 +19,7 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
 
     private static final long serialVersionUID = 1780193477774123440L;
 
-    private transient AbstractTicketRegistry ticketRegistry;
+    private AbstractTicketRegistry ticketRegistry;
 
     private T ticket;
 

@@ -15,7 +15,6 @@ public class CacheStatus extends Status {
 
     private CacheStatistics[] statistics;
 
-    
     /**
      * Creates a new instance describing cache status.
      *

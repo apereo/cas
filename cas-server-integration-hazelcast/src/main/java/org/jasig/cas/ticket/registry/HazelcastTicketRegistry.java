@@ -3,6 +3,7 @@ package org.jasig.cas.ticket.registry;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import org.jasig.cas.ticket.Ticket;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,20 +28,16 @@ import java.util.concurrent.TimeUnit;
  */
 @RefreshScope
 @Component("hazelcastTicketRegistry")
-public class HazelcastTicketRegistry extends AbstractTicketRegistry {
+public class HazelcastTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
     private IMap<String, Ticket> registry;
     
-    private HazelcastInstance hazelcastInstance;
+    private HazelcastInstance hz;
+
 
     /**
-     * Instantiates a new Hazelcast ticket registry.
-     */
-    public HazelcastTicketRegistry() {}
-    
-    /**
-     * @param hz An instance of {@code HazelcastInstance}
-     * @param mapName Name of map to use
+     * @param hz                                  An instance of {@code HazelcastInstance}
+     * @param mapName                             Name of map to use
      */
     @Autowired
     public HazelcastTicketRegistry(
@@ -50,7 +47,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         final String mapName) {
 
         this.registry = hz.getMap(mapName);
-        this.hazelcastInstance = hz;
+        this.hz = hz;
     }
 
     /**
@@ -59,7 +56,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     @PostConstruct
     public void init() {
         logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}",
-                this.hazelcastInstance, this.registry.getName());
+                this.hz, this.registry.getName());
     }
 
     @Override
@@ -103,15 +100,12 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
      */
     @PreDestroy
     public void shutdown() {
-        logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
-        this.hazelcastInstance.shutdown();
-    }
-    
-    public void setRegistry(final IMap<String, Ticket> registry) {
-        this.registry = registry;
+        logger.info("Shutting down Hazelcast instance {}", this.hz.getConfig().getInstanceName());
+        this.hz.shutdown();
     }
 
-    public void setHazelcastInstance(final HazelcastInstance hazelcastInstance) {
-        this.hazelcastInstance = hazelcastInstance;
+    @Override
+    public void destroy() throws Exception {
+        shutdown();
     }
 }

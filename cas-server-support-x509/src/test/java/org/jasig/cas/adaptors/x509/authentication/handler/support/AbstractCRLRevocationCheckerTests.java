@@ -27,9 +27,6 @@ public abstract class AbstractCRLRevocationCheckerTests {
     /** Expected result of check; null for success. */
     private GeneralSecurityException expected;
 
-    public AbstractCRLRevocationCheckerTests() {
-    }
-
     /**
      * Creates a new test instance with given parameters.
      *

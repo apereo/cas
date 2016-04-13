@@ -58,6 +58,7 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("casManagementWebAppConfiguration")
+@RefreshScope
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";

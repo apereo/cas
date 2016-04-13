@@ -14,7 +14,6 @@
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF" />
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
             <property name="allowThrowsTagsForSubclasses" value="true"/>
@@ -47,11 +46,7 @@
         <module name="DefaultComesLast">
             <property name="severity" value="error"/>
         </module>
-        <!--
-        <module name="MissingCtorCheck">
-            <property name="severity" value="error"/>
-        </module>
-        -->
+
         <module name="AnnotationLocation">
             <property name="severity" value="error"/>
             <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
@@ -419,10 +414,12 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Using PostConstruct annotation"/>
             <property name="severity" value="error"/>
-            <property name="format" value=".+InitializingBean.+"/>
+            <property name="format" value=".+implements InitializingBean.+"/>
             <property name="message"
                       value="Use the @PostConstruct annotation instead of implementing InitializingBean"/>
         </module>
+
+        
     </module>
 
     <!-- Checker module checks -->

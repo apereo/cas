@@ -35,8 +35,8 @@ public class SamlConfiguration {
     @Qualifier("casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
 
-    @Value("${cas.saml.attribute.namespace:http://www.ja-sig.org/products/cas/}")
-    private String defaultAttributeNamespace;
+    @Value("${cas.saml.include.namespace:true}")
+    private boolean includeDefaultAttributeNamespace;
 
     /**
      * Cas saml service success view saml 10 success response view.
@@ -51,7 +51,7 @@ public class SamlConfiguration {
         view.setCasAttributeEncoder(this.casAttributeEncoder);
         view.setIssuer(this.issuer);
         view.setSkewAllowance(this.skewAllowance);
-        view.setDefaultAttributeNamespace(this.defaultAttributeNamespace);
+        view.setIncludeDefaultAttributeNamespace(this.includeDefaultAttributeNamespace);
         return view;
     }
 

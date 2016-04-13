@@ -109,7 +109,6 @@ The following settings are applicable:
 # cas.samlidp.metadata.require.valid=true
 # cas.samlidp.logout.request.force.signed=true
 # cas.samlidp.logout.slo.callbacks.disabled=false
-# cas.samlidp.attribute.friendly.name=true
 ```
 
 
@@ -119,7 +118,7 @@ SAML relying parties and services must be registered within the CAS service regi
 ```json
 {
   "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
+  "serviceId" : "^https:\/\/sp\\.testshib\\.org.+",
   "name" : "SAMLService",
   "id" : 10000003,
   "evaluationOrder" : 10,
@@ -129,8 +128,8 @@ SAML relying parties and services must be registered within the CAS service regi
 
 
 <div class="alert alert-info"><strong>Aggregated Metadata</strong><p>If metadata 
-contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined by their entity id, explicitly via 
-the <code>serviceId</code> field. </p></div>
+contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined explicitly via the 
+<code>serviceId</code> field. </p></div>
 
 The following fields are available for SAML services:
 
@@ -152,7 +151,7 @@ from a Metadata query server, the metadata location must be configured to point 
 ```json
 {
   "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
+  "serviceId" : "^https:\/\/sp\\.testshib\\.org.+",
   "name" : "SAMLService",
   "id" : 10000003,
   "evaluationOrder" : 10,

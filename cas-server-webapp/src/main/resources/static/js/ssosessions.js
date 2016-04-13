@@ -136,14 +136,14 @@ function removeSession( ticketId ) {
 
 
     if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
-        factory.url = '/cas/status/ssosessions/destroySsoSessions';
+        factory.url = '/cas/statistics/ssosessions/destroySsoSessions';
         factory.data = { type: ticketId };
         factory.messages.success = '#{cas.sessions.alert.removal.success.multi.partone}'
             + ticketId + '#{cas.sessions.alert.removal.success.multi.parttwo}';
         factory.messages.error = '#{cas.sessions.alert.removal.error.multi.partone}'
             + ticketId + '#{cas.sessions.alert.removal.error.multi.parttwo}.';
     } else {
-        factory.url = '/cas/status/ssosessions/destroySsoSession';
+        factory.url = '/cas/statistics/ssosessions/destroySsoSession';
         factory.data = { ticketGrantingTicket: factory.ticketId };
         factory.messages.success = '#{cas.sessions.alert.removal.success.single.partone}'
             + ticketId + '#{cas.sessions.alert.removal.success.single.parttwo}';
@@ -181,10 +181,10 @@ function removeSession( ticketId ) {
 var ssoSessions = (function () {
     var urls = {
         destroy: {
-            all: '/cas/status/ssosessions/destroySsoSessions',
-            single: '/cas/status/ssosessions/destroySsoSession'
+            all: '/cas/statistics/ssosessions/destroySsoSessions',
+            single: '/cas/statistics/ssosessions/destroySsoSession'
         },
-        getSessions: '/cas/status/ssosessions/getSsoSessions'
+        getSessions: '/cas/statistics/ssosessions/getSsoSessions'
     };
 
     var createDataTable = function() {
@@ -210,7 +210,7 @@ var ssoSessions = (function () {
             },
             "processing": true,
             "ajax": {
-                "url": '/cas/status/ssosessions/getSsoSessions',
+                "url": '/cas/statistics/ssosessions/getSsoSessions',
                 "dataSrc": "activeSsoSessions"
             },
 

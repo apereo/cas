@@ -20,11 +20,12 @@ flow to account for additional use cases and processes. Note that to customize t
 of understanding of the webflow's internals and injection policies. The intention of this document is not to describe Spring Web Flow, 
 but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
 
-## Webflow Sessions
-
-### Client-side Sessions
+## Termination of Web Flow Sessions
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte 
-stream in the flow execution identifier provided to the client when rendering a view. 
+stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
+
+- Support for conversation management (e.g. flow scope)
+- Encryption of encoded flow state to prevent tampering by malicious clients
 
 By default, the conversational state of Spring Webflow is managed inside the application session, which can time out due to inactivity 
 and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store 
@@ -52,33 +53,6 @@ to appropriate decrypt and encrypt the webflow state and will prevent successful
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
 While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and 
 transcoding of the web session state.</p></div>
-
-### Server-side Sessions
-
-In the event that you wish to use server-side session storage for managing the webflow session, you will need to adjust
-the following properties:
-
-```properties
-# webflow.session.storage=true
-# webflow.session.lock.timeout=30
-# webflow.session.max.conversations=5
-# webflow.session.compress=false
-```
-
-Doing so will likely require you to also enable sticky sessions and/or session replication in a clustered deployment of CAS.
-
-
-## Webflow Autoconfiguration
-
-Most CAS modules, when declared as a dependency, attempt to autoconfigure the CAS webflow to suit their needs.
-This practically means thst the CAS adopter would no longer have to manually massage the CAS webflow configuration,
-and the module automatically takes care of all required changes. While this is the default behavior, it is possible that 
-you may want to manually handle all such changes. For doing so, you will need to disable the CAS autoconfiguration
-of the webflow:
-
-```properties
-# webflow.autoconfigure=true
-```
 
 ## Required Service for Authentication
 By default, CAS will present a generic success page if the initial authentication request does not identify

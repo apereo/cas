@@ -104,40 +104,39 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
 
         final SpringTemplateEngine engine = this.thymeleafViewResolver.getTemplateEngine();
-        if (!engine.isInitialized()) {
-            final ITemplateWriter writer = new AbstractGeneralTemplateWriter() {
-                @Override
-                protected boolean shouldWriteXmlDeclaration() {
-                    return false;
-                }
+        final ITemplateWriter writer = new AbstractGeneralTemplateWriter() {
+            @Override
+            protected boolean shouldWriteXmlDeclaration() {
+                return false;
+            }
 
-                @Override
-                protected boolean useXhtmlTagMinimizationRules() {
-                    return true;
+            @Override
+            protected boolean useXhtmlTagMinimizationRules() {
+                return true;
+            }
+            
+            @Override
+            protected void writeText(final Arguments arguments, final Writer writer, final Text text) throws IOException {
+                final String contentString = text.getContent();
+                if (!contentString.isEmpty() && contentString.trim().length() == 0) {
+                    return;
                 }
+                super.writeText(arguments, writer, text);
+            }
 
-                @Override
-                protected void writeText(final Arguments arguments, final Writer writer, final Text text) throws IOException {
-                    final String contentString = text.getContent();
-                    if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
-                        return;
-                    }
-                    super.writeText(arguments, writer, text);
+            @Override
+            public void writeNode(final Arguments arguments, final Writer writer, final Node node)
+                    throws IOException {
+                super.writeNode(arguments, writer, node);
+                if ((node instanceof Element) || (node instanceof Comment) || (node instanceof Macro)) {
+                    writer.write("\n");
                 }
+            }
+        };
+                
+        final ITemplateModeHandler handler  = new TemplateModeHandler("HTML5", new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), writer);
+        engine.setTemplateModeHandlers(Collections.singleton(handler));
 
-                @Override
-                public void writeNode(final Arguments arguments, final Writer writer, final Node node)
-                        throws IOException {
-                    super.writeNode(arguments, writer, node);
-                    if ((node instanceof Element) || (node instanceof Comment) || (node instanceof Macro)) {
-                        writer.write("\n");
-                    }
-                }
-            };
-
-            final ITemplateModeHandler handler = new TemplateModeHandler("HTML5", new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), writer);
-            engine.setTemplateModeHandlers(Collections.singleton(handler));
-        }
         setTemplateEngine(engine);
         setViewNames(this.thymeleafViewResolver.getViewNames());
         

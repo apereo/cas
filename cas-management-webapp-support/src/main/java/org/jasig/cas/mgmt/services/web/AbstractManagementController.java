@@ -29,9 +29,6 @@ public abstract class AbstractManagementController {
     /** Instance of ServicesManager. */
     protected ReloadableServicesManager servicesManager;
 
-    public AbstractManagementController() {
-    }
-
     /**
      * Instantiates a new manage registered services multi action controller.
      *

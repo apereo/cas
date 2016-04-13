@@ -34,6 +34,9 @@ import java.util.Map;
  * @since 3.1
  */
 public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
+    /** Namespace for custom attributes in the saml validation payload. */
+    private static final String VALIDATION_SAML_ATTRIBUTE_NAMESPACE = "http://www.ja-sig.org/products/cas/";
+
     private static final int DEFAULT_ISSUE_LENGTH = 30000;
 
     /** The issuer, generally the hostname. */
@@ -48,7 +51,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
     private String rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
     
-    private String defaultAttributeNamespace;
+    private boolean includeDefaultAttributeNamespace;
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
@@ -72,8 +75,9 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         final Map<String, Object> attributesToSend = prepareSamlAttributes(model, service);
 
         if (!attributesToSend.isEmpty()) {
+            final String namespaceToUse = this.includeDefaultAttributeNamespace ? VALIDATION_SAML_ATTRIBUTE_NAMESPACE : "";
             assertion.getAttributeStatements().add(this.samlObjectBuilder.newAttributeStatement(
-                    subject, attributesToSend, this.defaultAttributeNamespace));
+                    subject, attributesToSend, namespaceToUse));
         }
 
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
@@ -120,7 +124,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         this.rememberMeAttributeName = rememberMeAttributeName;
     }
 
-    public void setDefaultAttributeNamespace(final String defaultAttributeNamespace) {
-        this.defaultAttributeNamespace = defaultAttributeNamespace;
+    public void setIncludeDefaultAttributeNamespace(final boolean includeDefaultAttributeNamespace) {
+        this.includeDefaultAttributeNamespace = includeDefaultAttributeNamespace;
     }
 }

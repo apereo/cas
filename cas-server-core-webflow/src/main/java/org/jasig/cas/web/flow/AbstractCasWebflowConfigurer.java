@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -92,9 +91,6 @@ public abstract class AbstractCasWebflowConfigurer {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Value("${webflow.autoconfigure:true}")
-    private boolean autoconfigureWebflow;
-    
     /**
      * Initialize.
      */
@@ -102,11 +98,7 @@ public abstract class AbstractCasWebflowConfigurer {
     public void initialize() {
         try {
             logger.debug("Initializing CAS webflow configuration...");
-            if (this.autoconfigureWebflow) {
-                doInitialize();
-            } else {
-                logger.warn("Webflow auto-configuration is disabled. CAS will not modify the webflow via {}", getClass().getName());
-            }
+            doInitialize();
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }

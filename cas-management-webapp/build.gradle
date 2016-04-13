@@ -38,6 +38,5 @@ dependencies {
     runtime libraries.groovy
     compile libraries.spring
     compile libraries.thmyeleaf
-    compile libraries.thymeleafdialect
     compile libraries.thmyeleafboot
 }

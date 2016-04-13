@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:include="fragments/head" th:inline="text">
-    <title>[[#{cas.dashboard.section.dashboard.title}]]</title>
-</head>
+<div th:replace="fragments/top"/>
 
 <body id="cas">
 <div id="container">
@@ -13,58 +11,58 @@
 
         <div class="viewDashboard">
 
-            <div class="app-launcher">
-                <h2 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h2>
-                <ul>
-                    <li><a href="/cas/status">Status</a></li>
-                    <li><a href="/cas/status/autoconfig">Auto Configuration</a></li>
-                    <li><a href="/cas/status/beans">Beans</a></li>
-                    <li><a href="/cas/status/mappings">Endpoint Mappings</a></li>
-                    <li><a href="/cas/status/configprops">Configuration Properties</a></li>
-                    <li><a href="/cas/status/dump">Thread Dump</a></li>
-                    <li><a href="/cas/status/env">Environment</a></li>
-                    <li><a href="/cas/status/health">Health</a></li>
-                    <li><a href="/cas/status/info">Info</a></li>
-                    <li><a href="/cas/status/metrics">Metrics</a></li>
-                    <li><a href="/cas/status/stats">Statistics Panel</a></li>
-                    <li><a href="/cas/status/config">Configuration Panel</a></li>
-                    <li><a href="/cas/status/ssosessions">SSO Sessions</a></li>
-                </ul>
-            </div>
-            <div class="app-launcher server-config">
-                <h2 th:inline="text"><i class="fa fa-cogs"></i>[[#{cas.dashboard.section.configuration.title}]]</h2>
-                <ul class="configserver">
-                    <li><a href="/cas/configserver/cas/default">Default Profile</a></li>
-                    <li><a href="/cas/configserver/cas/native">Native Profile</a></li>
-                </ul>
-            </div>
+            <h1>CAS Dashboard</h1>
 
-            <div class="server-functions">
-                <h2 th:inline="text"><i class="fa fa-server"></i>[[#{cas.dashboard.section.server.functions.title}]]</h2>
-                <ul>
-                    <li>
-                        <form method="post" action="/cas/status/restart">
-                            <button class="btn btn-restart" type="submit" th:inline="text"><i class="fa fa-undo"></i>[[#{cas.dashboard.action.button.reboot}]]</button>
-                        </form>
-                    </li>
-                    <li>
-                        <form method="post" action="/cas/status/refresh">
-                            <button class="btn btn-refresh" type="submit" th:inline="text"><i class="fa fa-refresh"></i>[[#{cas.dashboard.action.button.refresh}]]</button>
-                        </form>
-                    </li>
-                    <li>
-                        <form method="post" action="/cas/status/shutdown">
-                            <button class="btn btn-shutdown" type="submit" th:inline="text"><i class="fa fa-power-off"></i>[[#{cas.dashboard.action.button.shutdown}]]</button>
-                        </form>
+            <ul>
+                <li><a href="/cas/status">Status</a></li>
+                <li><a href="/cas/status/autoconfig">Auto Configuration</a></li>
+                <li><a href="/cas/status/beans">Beans</a></li>
+                <li><a href="/cas/status/mappings">Endpoint Mappings</a></li>
+                <li><a href="/cas/status/configprops">Configuration Properties</a></li>
+                <li><a href="/cas/status/dump">Thread Dump</a></li>
+                <li><a href="/cas/status/env">Environment</a></li>
+                <li><a href="/cas/status/health">Health</a></li>
+                <li><a href="/cas/status/info">Info</a></li>
+                <li><a href="/cas/status/metrics">Metrics</a></li>
+                <li><a href="/cas/status/stats">Statistics Panel</a></li>
+                <li><a href="/cas/status/config">Configuration Panel</a></li>
+                <li><a href="/cas/status/ssosessions">SSO Sessions</a></li>
+            </ul>
 
-                    </li>
-                </ul>
-            </div>
+            <hr/>
+
+            <form method="post" action="/cas/status/restart">
+                <div id="login">
+                    <button class="btn-submit" type="submit">Restart</button>
+                </div>
+                
+                
+            </form>
+
+            <form method="post" action="/cas/status/refresh">
+                <div id="login">
+                    <button class="btn-submit" type="submit">Refresh</button>
+                </div>
+            </form>
+
+            <form method="post" action="/cas/status/shutdown">
+                <div id="login">
+                    <button class="btn-submit" type="submit">Shutdown</button>
+                </div>
+            </form>
+
+            <hr/>
+
+            <ul>
+                <li><a href="/cas/configserver/cas/default">Configuration Server: Default Profile</a></li>
+                <li><a href="/cas/configserver/cas/native">Configuration Server: Native Profile</a></li>
+            </ul>
+
         </div>
 
     </div>
     <div th:include="fragments/footer"/>
 </div>
-<div th:include="fragments/bottom"/>
 </body>
+<div th:include="fragments/bottom"/>
 </html>
