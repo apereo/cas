@@ -130,7 +130,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         }
 
         logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return (this.registry.remove(encTicketId) != null);
+        return this.registry.remove(encTicketId) != null;
     }
 
     /**
@@ -151,7 +151,31 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
             }
         }
     }
+    
+    @Override
+    public int sessionCount() {
+        int count = 0;
+        final Collection<Ticket> collection = getTickets();
+        for (final Ticket ticket : collection) {
+            if (ticket instanceof TicketGrantingTicket) {
+                count++;
+            }
+        }
+        return count;
+    }
 
+    @Override
+    public int serviceTicketCount() {
+        int count = 0;
+        final Collection<Ticket> collection = getTickets();
+        for (final Ticket ticket : collection) {
+            if (ticket instanceof ServiceTicket) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
     @Override
     public Collection<Ticket> getTickets() {
         return decodeTickets(this.registry.values());
