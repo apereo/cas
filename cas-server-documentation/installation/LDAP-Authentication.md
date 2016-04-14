@@ -164,6 +164,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 ## LDAP Anonymous Search
 The following configuration snippet provides a template for LDAP authentication performed with an anonymous search
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
+
 ```xml
 <ldaptive:anonymous-search-authenticator id="authenticator"
        ldapUrl="${ldap.url}"
@@ -187,7 +188,6 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 />
 ```
 
-
 ## LDAP Direct Bind
 The following configuration snippet provides a template for LDAP authentication where no search is required to
 compute the DN needed for a bind operation. There are two requirements for this use case:
@@ -196,8 +196,8 @@ compute the DN needed for a bind operation. There are two requirements for this 
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
-```xml
 
+```xml
 <ldaptive:direct-authenticator id="authenticator"
         format="${ldap.authn.searchFilter}"
         ldapUrl="${ldap.url}"
@@ -215,7 +215,6 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
         useSSL="${ldap.use.ssl:false}"
         useStartTLS="${ldap.useStartTLS}" 
 />
-
 ```
 
 ## LDAP Provider Configuration
