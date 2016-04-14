@@ -74,11 +74,14 @@
                             </label>
                             <div class="col-sm-8">
                                 <div class="input-group">
-                                    <div class="input-group-addon input-group-required" th:title="#{services.form.required}" /><i class="fa fa-exclamation-triangle"></i></div>
-                                <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.serviceData.attrRelease.cachedTimeUnit">
-                                    <option ng-repeat="opt in serviceFormCtrl.selectOptions.timeUnitsList" ng-attr-value="{{ opt.value }}"
-                                            ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.attrRelease.cachedTimeUnit)">{{ opt.name }}</option>
-                                </select>
+                                    <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                    </div>
+                                    <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.serviceData.attrRelease.cachedTimeUnit">
+                                        <option ng-repeat="opt in serviceFormCtrl.selectOptions.timeUnitsList" ng-attr-value="{{ opt.value }}"
+                                                ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.attrRelease.cachedTimeUnit)">{{ opt.name }}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -102,11 +105,14 @@
                         </label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <div class="input-group-addon input-group-required" th:title="#{services.form.required}" /><i class="fa fa-exclamation-triangle"></i></div>
-                            <select class="form-control" id="mergingStrategy" ng-model="serviceFormCtrl.serviceData.attrRelease.mergingStrategy">
-                                <option ng-repeat="opt in serviceFormCtrl.selectOptions.mergeStrategyList" ng-attr-value="{{ opt.value }}"
-                                        ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.attrRelease.mergeStrategy)">{{ opt.name }}</option>
-                            </select>
+                                <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                </div>
+                                <select class="form-control" id="mergingStrategy" ng-model="serviceFormCtrl.serviceData.attrRelease.mergingStrategy">
+                                    <option ng-repeat="opt in serviceFormCtrl.selectOptions.mergeStrategyList" ng-attr-value="{{ opt.value }}"
+                                            ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.attrRelease.mergeStrategy)">{{ opt.name }}</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
