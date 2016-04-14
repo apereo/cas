@@ -4,7 +4,10 @@
         <div class="form-group">
             <label class="col-sm-6" for="logoutType">
                 <span th:remove="tag" th:text="#{services.form.label.logoutType}" />
-                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.logoutType}"></i>
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.logoutType}"></i>
             </label>
             <div class="col-sm-6">
                 <select class="form-control" id="logoutType" ng-model="serviceFormCtrl.serviceData.logoutType">
@@ -19,7 +22,10 @@
         <div class="form-group">
             <label class="col-sm-5" for="evalOrder">
                 <span th:remove="tag" th:text="#{services.form.label.evalOrder}" />
-                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.evalOrder}"></i>
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.evalOrder}"></i>
             </label>
             <div class="col-sm-7">
                 <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceData.evalOrder" />

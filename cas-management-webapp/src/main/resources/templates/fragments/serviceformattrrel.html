@@ -11,7 +11,10 @@
                                ng-model="serviceFormCtrl.serviceData.attrRelease.releasePassword"
                                ng-checked="serviceFormCtrl.serviceData.attrRelease.releasePassword" />
                         <span th:remove="tag" th:text="#{services.form.label.attrRelease.releaseCredPassword}" />
-                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.releaseCredPassword}"></i>
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                           data-toggle="tooltip"
+                           data-placement="top"
+                           th:title="#{services.form.tooltip.attrRelease.releaseCredPassword}"></i>
                     </label>
                 </div>
                 <div class="checkbox">
@@ -20,7 +23,10 @@
                                ng-model="serviceFormCtrl.serviceData.attrRelease.releaseTicket"
                                ng-checked="serviceFormCtrl.serviceData.attrRelease.releaseTicket" />
                         <span th:remove="tag" th:text="#{services.form.label.attrRelease.releaseProxyTicket}" />
-                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.releaseProxyTicket}"></i>
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                           data-toggle="tooltip"
+                           data-placement="top"
+                           th:title="#{services.form.tooltip.attrRelease.releaseProxyTicket}"></i>
                     </label>
                 </div>
             </div>
@@ -29,7 +35,10 @@
             <div class="form-group">
                 <label class="col-sm-4" for="attFilter">
                     <span th:remove="tag" th:text="#{services.form.label.attrRelease.attrFilter}" />
-                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.attrFilter}"></i>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.attrRelease.attrFilter}"></i>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group">
@@ -70,7 +79,10 @@
                         <div class="form-group">
                             <label class="col-sm-4" for="cachedTime">
                                 <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.cached.timeUnit}" />
-                                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit}"></i>
+                                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                                   data-toggle="tooltip"
+                                   data-placement="top"
+                                   th:title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit}"></i>
                             </label>
                             <div class="col-sm-8">
                                 <div class="input-group">
@@ -90,7 +102,10 @@
                     <div class="form-group">
                         <label class="col-sm-4" for="cachedExp">
                             <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.cached.expiration}" />
-                            <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.expiration}"></i>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.expiration}"></i>
                         </label>
                         <div class="col-sm-8">
                             <input type="number" min="0" class="form-control" id="cachedExp" ng-model="serviceFormCtrl.serviceData.attrRelease.cachedExpiration" />
@@ -101,7 +116,10 @@
                     <div class="form-group">
                         <label class="col-sm-4" for="mergingStrategy">
                             <span th:remove="tag" th:text="#{services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy}" />
-                            <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy}"></i>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy}"></i>
                         </label>
                         <div class="col-sm-8">
                             <div class="input-group">
@@ -162,7 +180,10 @@
             <div class="form-group" ng-show="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'allowed' &amp;&amp; !serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
                 <label class="col-sm-3" for="returnAllowed">
                     <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.returnAllowed}" />
-                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.policies.returnAllowed}"></i>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.attrRelease.policies.returnAllowed}"></i>
                 </label>
                 <div class="col-sm-9">
                     <select class="form-control" id="returnedAllowed" ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.allowed">
@@ -180,7 +201,10 @@
                         <th class="col-md-4"><span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.sourceAttribute}" /></th>
                         <th class="col-md-8">
                             <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.casAttribute}" />
-                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.attrRelease.policies.returnMapped}"></i>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.attrRelease.policies.returnMapped}"></i>
                         </th>
                     </tr>
                     </thead>

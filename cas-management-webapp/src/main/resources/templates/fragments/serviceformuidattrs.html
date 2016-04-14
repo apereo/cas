@@ -39,7 +39,10 @@
             <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'anon'">
                 <label class="col-sm-4" for="uapSaltSetting">
                     <span th:remove="tag" th:text="#{services.form.label.uap.saltSetting}" />
-                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.uap.saltSetting}"></i>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.uap.saltSetting}"></i>
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group">
@@ -52,7 +55,10 @@
         <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'attr'">
             <label class="col-sm-4" for="uapUsernameAttribute">
                 <span th:remove="tag" th:text="#{services.form.label.uap.usernameAttribute}" />
-                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.uap.usernameAttribute}"></i>
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.uap.usernameAttribute}"></i>
             </label>
             <div class="col-sm-8">
                 <div class="input-group">
