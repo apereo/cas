@@ -1,25 +1,17 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html layout:decorator="monitoring/layout">
 
-<head th:replace="fragments/head">
-    <title>Statistics View</title>
+<head th:inline="text">
+    <title>[[#{cas.statistics.pagetitle}]]</title>
+    <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
 
 <body id="cas">
-
-    <div id="container">
-        <div th:replace="fragments/logo"/>
-
-        <div id="content">
+    <div layout:fragment="content">
             <script type="text/javascript" th:inline="javascript">
 
                 var memory_graph, completion_graph;
                 function jqueryReady() {
-                    head.load(
-                            "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
-                            "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
-                    );
-
                     head.load(
                             "//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
                             "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
@@ -197,11 +189,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-            
-        <div th:replace="fragments/footer"></div>
     </div>
-
-    <div th:replace="fragments/bottom"></div>
 </body>
 </html>
