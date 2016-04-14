@@ -5,6 +5,5 @@ beans {
     xmlns([metrics:'http://www.ryantenney.com/schema/metrics'])
 
     metrics.'annotation-driven'('metric-registry':'metrics','health-check-registry':'healthCheckMetrics')
-
 }
 

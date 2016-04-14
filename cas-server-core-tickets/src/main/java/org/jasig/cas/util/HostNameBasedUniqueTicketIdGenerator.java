@@ -1,5 +1,11 @@
 package org.jasig.cas.util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -25,9 +31,10 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
      * Instantiates a new Host name based unique ticket id generator.
      *
      * @param maxLength the max length
+     * @param suffix    the suffix
      */
-    public HostNameBasedUniqueTicketIdGenerator(final int maxLength) {
-        super(maxLength, determineTicketSuffixByHostName());
+    public HostNameBasedUniqueTicketIdGenerator(final int maxLength, final String suffix) {
+        super(maxLength, determineTicketSuffixByHostName(suffix));
     }
 
     /**
@@ -43,8 +50,12 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
      * @return the shortened ticket suffix based on the hostname
      * @since 4.1.0
      */
-    private static String determineTicketSuffixByHostName() {
+    private static String determineTicketSuffixByHostName(final String suffix) {
         try {
+            if (StringUtils.isNotBlank(suffix)) {
+                return suffix;
+            }
+            
             final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
             final int index = hostName.indexOf('.');
             if (index > 0) {
@@ -53,6 +64,52 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
             return hostName;
         } catch (final UnknownHostException e) {
             throw new RuntimeException("Host name could not be determined automatically for the ticket suffix.", e);
+        }
+    }
+
+    /**
+     * The type Ticket granting ticket id generator.
+     */
+    @RefreshScope
+    @Component("ticketGrantingTicketUniqueIdGenerator")
+    public static class TicketGrantingTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
+
+        @Autowired
+        public TicketGrantingTicketIdGenerator(@Value("${tgt.ticket.maxlength:50}") 
+                                               final int maxLength, 
+                                               @Value("${host.name:cas01.example.org}") 
+                                               final String suffix) {
+            super(maxLength, suffix);
+        }
+    }
+
+    /**
+     * The type Service ticket id generator.
+     */
+    @RefreshScope
+    @Component("serviceTicketUniqueIdGenerator")
+    public static class ServiceTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
+        @Autowired
+        public ServiceTicketIdGenerator(@Value("${st.ticket.maxlength:20}")
+                                        final int maxLength,
+                                        @Value("${host.name:cas01.example.org}")
+                                        final String suffix) {
+            super(maxLength, suffix);
+        }
+    }
+
+    /**
+     * The type Proxy ticket id generator.
+     */
+    @RefreshScope
+    @Component("proxy20TicketUniqueIdGenerator")
+    public static class ProxyTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
+        @Autowired
+        public ProxyTicketIdGenerator(@Value("${pgt.ticket.maxlength:50}")
+                                      final int maxLength,
+                                      @Value("${host.name:cas01.example.org}")
+                                      final String suffix) {
+            super(maxLength, suffix);
         }
     }
 }

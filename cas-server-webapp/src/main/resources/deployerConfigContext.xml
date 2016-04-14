@@ -2,16 +2,17 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:lang="http://www.springframework.org/schema/lang"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/lang 
+       http://www.springframework.org/schema/lang/spring-lang.xsd
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
-
-
-    <import resource="casComponentsMapping.xml"/>
-
-    <util:map id="authenticationHandlersResolvers" map-class="java.util.LinkedHashMap">
+    
+    <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>
@@ -20,27 +21,9 @@
         <ref bean="successfulHandlerMetaDataPopulator" />
         <ref bean="rememberMeAuthenticationMetaDataPopulator" />
     </util:list>
-
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
-          p:backingMap-ref="attrRepoBackingMap" />
-
-    <util:map id="attrRepoBackingMap">
-        <entry key="uid" value="uid" />
-        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
-        <entry key="groupMembership" value="groupMembership" />
-        <entry>
-            <key><value>memberOf</value></key>
-            <list>
-                <value>faculty</value>
-                <value>mfa-duo</value>
-                <value>org</value>
-            </list>
-        </entry>
-    </util:map>
-
+        
     <util:list id="monitorsList">
         <ref bean="memoryMonitor" />
         <ref bean="sessionMonitor" />
     </util:list>
-
 </beans>

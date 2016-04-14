@@ -37,9 +37,7 @@ public class WebflowCipherExecutor extends BinaryCipherExecutor {
                                  final int signingKeySize,
                                  @Value("${webflow.encryption.key.size:16}")
                                  final int encryptionKeySize){
-        super(secretKeyEncryption, secretKeySigning);
+        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
         setSecretKeyAlgorithm(secretKeyAlg);
-        setSigningKeySize(signingKeySize);
-        setEncryptionKeySize(encryptionKeySize);
     }
 }

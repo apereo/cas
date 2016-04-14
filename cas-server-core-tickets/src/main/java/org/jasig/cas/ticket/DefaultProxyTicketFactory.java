@@ -31,7 +31,6 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     protected UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
-    
     @Resource(name="uniqueIdGeneratorsMap")
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 

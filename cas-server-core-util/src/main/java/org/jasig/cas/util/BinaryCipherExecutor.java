@@ -25,29 +25,25 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
     private static final String UTF8_ENCODING = "UTF-8";
     
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private int signingKeySize;
-
-    private int encryptionKeySize;
-    
+        
     /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
 
     private String encryptionSecretKey;
 
-    
+
     /**
      * Instantiates a new cryptic ticket cipher executor.
      *
      * @param encryptionSecretKey the encryption secret key
-     * @param signingSecretKey the signing key
+     * @param signingSecretKey    the signing key
+     * @param signingKeySize      the signing key size
+     * @param encryptionKeySize   the encryption key size
      */
     public BinaryCipherExecutor(final String encryptionSecretKey,
-                                final String signingSecretKey) {
-        verifyAndSetKeys(encryptionSecretKey, signingSecretKey);
-    }
-
-    private void verifyAndSetKeys(final String encryptionSecretKey, final String signingSecretKey) {
+                                final String signingSecretKey,
+                                final int signingKeySize,
+                                final int encryptionKeySize) {
 
         String signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
@@ -57,7 +53,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
                     signingKeyToUse, signingKeySize);
         }
         setSigningKey(signingKeyToUse);
-        
+
         if (StringUtils.isBlank(encryptionSecretKey)) {
             logger.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
             this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
@@ -67,6 +63,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
             this.encryptionSecretKey = encryptionSecretKey;
         }
     }
+
 
     public void setSecretKeyAlgorithm(final String secretKeyAlgorithm) {
         this.secretKeyAlgorithm = secretKeyAlgorithm;
@@ -110,13 +107,5 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-    }
-
-    public void setSigningKeySize(final int signingKeySize) {
-        this.signingKeySize = signingKeySize;
-    }
-
-    public void setEncryptionKeySize(final int encryptionKeySize) {
-        this.encryptionKeySize = encryptionKeySize;
     }
 }
