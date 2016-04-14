@@ -230,7 +230,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
             final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
                 @Override
                 public boolean apply(@Nullable final Ticket ticket) {
-                    if (ticket.isExpired()) {
+                    if (ticket != null && ticket.isExpired()) {
                         if (ticket instanceof TicketGrantingTicket) {
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                             logoutManager.performLogout((TicketGrantingTicket) ticket);
@@ -255,15 +255,17 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     private boolean shouldScheduleCleanerJob() {
         if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
             if (WebUtils.isCasServletInitializing(this.applicationContext)) {
-                logger.debug("Found CAS servlet application context");
                 final String[] aliases =
                     this.applicationContext.getAutowireCapableBeanFactory().getAliases("defaultTicketRegistry");
 
                 if (aliases.length > 0) {
-                    logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
+                    logger.debug("{} is used as the active current ticket registry", getClass().getSimpleName());
                     return true;
                 }
+                logger.debug("{} is not the current active ticket registry", getClass().getSimpleName());
                 return false;
+            } else {
+                logger.debug("Could not find CAS servlet application context");
             }
         }
 
