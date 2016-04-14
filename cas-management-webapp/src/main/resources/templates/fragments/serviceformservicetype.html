@@ -6,12 +6,14 @@
     </label>
     <div class="col-sm-9">
         <div class="input-group">
-            <div class="input-group-addon input-group-required" th:title="#{services.form.required}" /><i
-                class="fa fa-exclamation-triangle"></i></div>
-        <select class="form-control" id="serviceType" ng-model="serviceFormCtrl.serviceData.type">
-            <option ng-repeat="opt in serviceFormCtrl.selectOptions.serviceTypeList" ng-attr-value="{{ opt.value }}"
-                    ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.type)">{{ opt.name }}</option>
-        </select>
+            <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <select class="form-control" id="serviceType" ng-model="serviceFormCtrl.serviceData.type">
+                <option ng-repeat="opt in serviceFormCtrl.selectOptions.serviceTypeList" ng-attr-value="{{ opt.value }}"
+                        ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.type)">{{ opt.name }}</option>
+            </select>
+        </div>
     </div>
 </div>
     
