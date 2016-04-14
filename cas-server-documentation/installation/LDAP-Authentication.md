@@ -14,19 +14,31 @@ LDAP integration is enabled by including the following dependency in the Maven W
 </dependency>
 ```
 
-`LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
-or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
+## Configuration
+The `LdapAuthenticationHandler` must first be configured to handle the task of credential verification. The following
+configuration needs to be put into the `deployerConfigContext.xml` file:
 
-1. [Active Directory](#active-directory-authentication) - Users authenticate with _sAMAAccountName_.
-2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
-3. [Anonymous Search](#ldap-supporting-anonymous-search) - Anonymous search followed by user simple bind.
-4. [Direct Bind](#ldap-supporting-direct-bind) - Compute user DN from format string and perform simple bind.
-5. [Principal Attributes Retrieval](#ldap-authentication-principal-attributes) - Resolve principal attributes directly as part of LDAP authentication.
+```xml
+<bean id="ldapAuthenticationHandler"
+class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      p:principalIdAttribute="sAMAccountName"
+      c:authenticator-ref="authenticator" />
+```
 
-See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
+The above configuration attempts to authenticate credentials via an `authenticator` to be defined later, and constructs a final CAS authenticated subject based on the `sAMAccountName`. The attribute configuration is an optional setting.
 
-## Ldap Authentication Principal Attributes
-The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html).
+The `ldapAuthenticationHandler` defined above needs to also be added to the list of available active authentication handlers in the same file:
+
+```xml
+<util:map id="authenticationHandlersResolvers">
+   ...
+   <entry key-ref="ldapAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+   ...
+</util:map>
+```
+
+## Attribute Retrieval
+The `LdapAuthenticationHandler` is also capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html).
 
 ```xml
 <bean id="ldapAuthenticationHandler"
@@ -60,6 +72,15 @@ The above configuration defines a map of attributes. Keys are LDAP attribute nam
 </bean>
 ```
 
+If you do decide to let the authentication handler retrieve attributes instead of a separate principal resolver, you will need to ensure the linked resolver is made inactive:
+
+```xml
+<util:map id="authenticationHandlersResolvers">
+   ...
+   <entry key-ref="ldapAuthenticationHandler" value="#{null}" />
+</util:map>
+```
+
 ## Schema Declaration
 LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that the XML configuration file contains the `ldaptive` namespace declarations:
 
@@ -70,6 +91,16 @@ LDAP authentication is declared using a custom schema to reduce configuration no
        http://www.ldaptive.org/schema/spring-ext
        http://www.ldaptive.org/schema/spring-ext.xsd">
 ```
+
+## Directory Authenticator
+`LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
+
+1. [Active Directory](#active-directory-authentication) - Users authenticate with _sAMAccountName_.
+2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
+3. [Anonymous Search](#ldap-supporting-anonymous-search) - Anonymous search followed by user simple bind.
+4. [Direct Bind](#ldap-supporting-direct-bind) - Compute user DN from format string and perform simple bind.
+
+See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
 ## Active Directory Authentication
 The following configuration authenticates users with a custom filter,
@@ -98,11 +129,10 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
         prunePeriod="${ldap.pool.prunePeriod}"
         useSSL="${ldap.use.ssl:false}"
         subtreeSearch="${ldap.subtree.search:true}"
-        useStartTLS="${ldap.useStartTLS}"
-            />
+        useStartTLS="${ldap.useStartTLS}" />
 ```
 
-## LDAP Requiring Authenticated Search
+## LDAP Authenticated Search
 The following configuration snippet provides a template for LDAP authentication performed with manager credentials
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 
@@ -131,7 +161,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 />
 ```
 
-## LDAP Supporting Anonymous Search
+## LDAP Anonymous Search
 The following configuration snippet provides a template for LDAP authentication performed with an anonymous search
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 ```xml
@@ -158,7 +188,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 ```
 
 
-## LDAP Supporting Direct Bind
+## LDAP Direct Bind
 The following configuration snippet provides a template for LDAP authentication where no search is required to
 compute the DN needed for a bind operation. There are two requirements for this use case:
 
@@ -183,7 +213,8 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
         validatePeriod="${ldap.pool.validatePeriod}"
         prunePeriod="${ldap.pool.prunePeriod}"
         useSSL="${ldap.use.ssl:false}"
-        useStartTLS="${ldap.useStartTLS}" />
+        useStartTLS="${ldap.useStartTLS}" 
+/>
 
 ```
 

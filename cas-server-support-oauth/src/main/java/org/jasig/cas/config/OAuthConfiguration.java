@@ -14,6 +14,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -24,7 +25,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
-@ComponentScan(basePackages = {"org.pac4j.springframework"})
+@ComponentScan(basePackages = {"org.pac4j.springframework"}, 
+               excludeFilters = { @ComponentScan.Filter(type = FilterType.REGEX, 
+               pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
 public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
