@@ -196,10 +196,6 @@ to the service upon release time.
 
 ### Components
 
-### `PrincipalAttributesRepository`
-Parent component that describes the relationship between a CAS `Principal`
-and the underlying attribute repository source.
-
 ### Default
 The default relationship between a CAS `Principal` and the underlying attribute
 repository source, such that principal attributes are kept as they are without
@@ -350,7 +346,7 @@ CAS by default supports the ability to encrypt certain attributes, such as the p
 If you wish to take this a step further and encrypt other attributes that you deem sensitive, you can use the following components
 as a baseline to carry out the task at hand:
 
-`DefaultCasAttributeEncoder`
+#### Default
 The default implementation of the attribute encoder that will use a per-service key-pair
 to encrypt. It will attempt to query the collection of attributes that resolved to determine
 which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`.
