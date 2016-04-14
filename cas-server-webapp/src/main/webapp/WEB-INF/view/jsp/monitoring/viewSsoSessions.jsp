@@ -134,10 +134,7 @@ principalAttributes(d.principal_attributes) +
             var factory = {};
             factory.httpHeaders = {};
             factory.messages = {};
-            factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
-
             factory.ticketId = ticketId;
-
 
             if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
                 factory.url = '/cas/statistics/ssosessions/destroySsoSessions';
