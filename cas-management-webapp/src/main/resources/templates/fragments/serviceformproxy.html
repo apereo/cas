@@ -32,7 +32,10 @@
             <div class="form-group" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'regex'">
                 <label class="col-sm-3" for="proxyPolicyRegex">
                     <span th:text="#{services.form.label.proxyPolicy.regex}" />
-                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="#{services.form.tooltip.proxyPolicy.regex}"></i>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.proxyPolicy.regex}"></i>
                 </label>
                 <div class="col-sm-9">
                     <div class="input-group">

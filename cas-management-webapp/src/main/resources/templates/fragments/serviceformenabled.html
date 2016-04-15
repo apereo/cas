@@ -2,10 +2,11 @@
     <div class="col-sm-12">
 
         <div class="form-group">
-            <label class="col-sm-3 important" for="casEnabled" th:text="#{services.form.label.sas.casEnabled}" />
+            <label class="col-sm-3 important" for="casEnabled" th:text="#{services.form.label.sas.casEnabled}">
 
-            <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top"
-               th:title="#{services.form.tooltip.sas.casEnabled}" />
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top"
+                    th:title="#{services.form.tooltip.sas.casEnabled}" />
+            </label>
             <div class="col-sm-1">
                 <div class="checkbox checkbox-inline">
                     <input type="checkbox" id="casEnabled" ng-model="serviceFormCtrl.serviceData.supportAccess.casEnabled" />

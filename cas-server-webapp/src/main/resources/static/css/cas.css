@@ -191,6 +191,9 @@ header h1 {
   padding-left: 30px;
   width: 90%; }
 
+/*
+ * CAS default overrides
+ */
 .login #content {
   background: transparent; }
 
