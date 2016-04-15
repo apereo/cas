@@ -39,6 +39,7 @@ allprojects {
     gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
 }
 
+
 subprojects {
     task allDepInsight(type: DependencyInsightReportTask) << {}
     task allDeps(type: DependencyReportTask) {}
@@ -105,6 +106,7 @@ subprojects {
 
         archives sourcesJar
         archives javadocJar
+        archives resourcesJar
         archives testJar
     }
 
