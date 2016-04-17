@@ -47,6 +47,16 @@ public class HazelcastTicketRegistryTests {
     }
 
     @Test
+    public void retrieveCollectionOfTickets() {
+        this.hzTicketRegistry1.addTicket(newTestTgt());
+        this.hzTicketRegistry1.addTicket(newTestSt());
+        assertEquals(2, hzTicketRegistry2.getTickets().size());
+        assertEquals(1, hzTicketRegistry2.serviceTicketCount());
+        assertEquals(1, hzTicketRegistry2.sessionCount());
+        
+    }
+    
+    @Test
     public void basicOperationsAndClustering() throws Exception {
         this.hzTicketRegistry1.addTicket(newTestTgt());
 
