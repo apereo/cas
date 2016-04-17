@@ -2,6 +2,8 @@ package org.jasig.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.mapreduce.aggregation.Aggregations;
+import com.hazelcast.mapreduce.aggregation.Supplier;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -178,7 +180,8 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     
     @Override
     public Collection<Ticket> getTickets() {
-        return decodeTickets(this.registry.values());
+        final Collection collection = this.registry.aggregate(Supplier.all(), Aggregations.distinctValues());
+        return decodeTickets(collection);
     }
 
     /**
