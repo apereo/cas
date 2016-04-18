@@ -146,38 +146,43 @@ Front-channel method of logout is specifically handled by the following componen
 {% endhighlight %}
 
 
-## Termination of Web Flow Sessions
-CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
+## Web Flow Session Encryption
+CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte 
+stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
 
 - Support for conversation management (e.g. flow scope)
 - Encryption of encoded flow state to prevent tampering by malicious clients
 
-By default, the conversational state of Spring Webflow is managed inside the application session, which can time out due to inactivity and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication. 
+CAS automatically attempts to store 
+and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication.
 
-{% highlight xml %}
-<bean id="loginFlowExecutionRepository" 
-    class="org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
-    c:flowExecutionFactory-ref="loginFlowExecutionFactory"
-    c:flowDefinitionLocator-ref="loginFlowRegistry"
-    c:transcoder-ref="loginFlowStateTranscoder" />
+Default encryption strategy controlled via the `loginFlowStateTranscoder` component.
+These settings can be controlled via the following defined in the `cas.properties` file:
 
-{% endhighlight %}
+```properties
+# The encryption secret key. By default, must be a size 16.
+# webflow.encryption.key=
 
-Default encryption strategy controlled via the `loginFlowStateTranscoder` component is using the 128-bit AES in CBC ciphering mode with compression turned on. These settings can be controlled via the following settings defined in the `cas.properties` file:
-
-{% highlight properties %}
-# cas.webflow.cipher.alg=AES
-# cas.webflow.cipher.mode=CBC
-# cas.webflow.cipher.padding=PKCS7
-# cas.webflow.keystore=classpath:/etc/keystore.jceks
-# cas.webflow.keystore.type=JCEKS
-# cas.webflow.keystore.password=changeit
-# cas.webflow.keyalias=aes128
-# cas.webflow.keypassword=changeit
-{% endhighlight %}
+# The signing secret key. By default, must be a octet string of size 512.
+# webflow.signing.key=
+```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
-While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and transcoding of the web session state.</p></div>
+While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and
+transcoding of the web session state.</p></div>
+
+If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
+
+```bash
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key>
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Generated encryption key ABC of size ... . The generated key MUST be added to CAS settings.>
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Secret key for signing is not defined. CAS will attempt to auto-generate the signing key>
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
+```
+
+You should then grab each generated key for encryption and signing, and put them inside your cas.properties file for each now-enabled setting.
+
+If you wish to manually generate the above keys and not have CAS do that for you, you could [download/clone](https://github.com/mitreid-connect/json-web-key-generator.git) and build this project and invoke its executable to generate keys of appropriate size.
 
 ## Required Service for Authentication Flow
 By default, CAS will present a generic success page if the initial authentication request does not identify
