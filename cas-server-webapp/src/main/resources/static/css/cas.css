@@ -565,13 +565,13 @@ table.principal_attributes > tbody > tr > td {
   display: none; }
 
 .viewDashboard h2 {
-  font-size: 1rem;
+  font-size: 2rem;
   margin-left: 10px;
   border-bottom: solid 1px #efefef;
   padding-bottom: 5px;
   margin-bottom: 10px; }
   .viewDashboard h2 i {
-    font-size: 1.3rem; }
+    font-size: 2.3rem; }
 
 .viewDashboard > div {
   clear: both; }
@@ -597,7 +597,7 @@ table.principal_attributes > tbody > tr > td {
     border: 5px solid #ccc;
     font-family: 'Lato', sans-serif;
     font-weight: 400;
-    font-size: 1.1rem;
+    font-size: 1.7rem;
     text-align: center;
     background-color: #efefef;
     border-radius: 50%;
