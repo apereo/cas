@@ -4,10 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
@@ -123,63 +119,4 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
         this.numericGenerator = new DefaultLongNumericGenerator(1);
     }
-
-    /**
-     * The type Ticket granting ticket id generator.
-     */
-    @RefreshScope
-    @Component("ticketGrantingTicketUniqueIdGenerator")
-    public static class TicketGrantingTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
-        @Autowired
-        @Override
-        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
-            super.setSuffix(suffix);
-        }
-
-        @Autowired
-        @Override
-        public void setMaxLength(@Value("${tgt.ticket.maxlength:50}") final int maxLength) {
-            super.setMaxLength(maxLength);
-        }
-    }
-
-    /**
-     * The type Service ticket id generator.
-     */
-    @RefreshScope
-    @Component("serviceTicketUniqueIdGenerator")
-    public static class ServiceTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
-        @Autowired
-        @Override
-        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
-            super.setSuffix(suffix);
-        }
-
-        @Autowired
-        @Override
-        public void setMaxLength(@Value("${st.ticket.maxlength:20}") final int maxLength) {
-            super.setMaxLength(maxLength);
-        }
-    }
-
-    /**
-     * The type Proxy ticket id generator.
-     */
-    @RefreshScope
-    @Component("proxy20TicketUniqueIdGenerator")
-    public static class ProxyTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
-        @Autowired
-        @Override
-        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
-            super.setSuffix(suffix);
-        }
-
-        @Autowired
-        @Override
-        public void setMaxLength(@Value("${pgt.ticket.maxlength:50}") final int maxLength) {
-            super.setMaxLength(maxLength);
-        }
-    }
-
-
 }

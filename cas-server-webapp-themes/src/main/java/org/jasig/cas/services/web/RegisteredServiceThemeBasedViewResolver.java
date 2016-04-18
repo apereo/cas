@@ -135,7 +135,8 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
                 }
             };
 
-            final ITemplateModeHandler handler = new TemplateModeHandler("HTML5", new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), writer);
+            final ITemplateModeHandler handler = new TemplateModeHandler("HTML5", 
+                    new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), writer);
             engine.setTemplateModeHandlers(Collections.singleton(handler));
         }
         setTemplateEngine(engine);

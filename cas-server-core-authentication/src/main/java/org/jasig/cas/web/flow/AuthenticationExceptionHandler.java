@@ -10,6 +10,7 @@ import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -22,7 +23,11 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
+
 
 /**
  * Performs two important error handling functions on an {@link AuthenticationException} raised from the authentication
@@ -75,16 +80,45 @@ public class AuthenticationExceptionHandler {
     private String messageBundlePrefix = DEFAULT_MESSAGE_BUNDLE_PREFIX;
 
     /**
-     * Sets the list of errors that this class knows how to handle.
+     * Sets the list of custom exceptions that this class knows how to handle.
+     *
+     * This implementation adds the provided list of exceptions to the default list
+     * or just returns if the provided list is empty.
+     *
+     * This implementation relies on Spring's property source configurer, SpEL, and conversion service
+     * infrastructure facilities to convert and inject the collection from cas.properties.
+     *
+     * This method is thread-safe. It should only be called by the Spring container during application context bootstrap
+     * or unit tests.
      *
      * @param errors List of errors in order of descending precedence.
      */
+    @Value("#{'${cas.custom.authentication.exceptions:}'.split(',')}")
     public void setErrors(final List<Class<? extends Exception>> errors) {
-        this.errors = errors;
+        //The specifics of the default empty value: this results in the list with one null element. So just get rid of null and have
+        //an empty list as a result.
+        final List<Class<? extends Exception>> nonNullErrors = errors.stream().filter(Objects::nonNull).collect(toList());
+        if(nonNullErrors.isEmpty()) {
+            //Nothing custom provided, so just leave the default list of exceptions alone.
+            return;
+        }
+        //Add the custom exceptions to the tail end of the default list of exceptions.
+        //Need to do this copy as we have the errors field pointing to DEFAULT_ERROR_LIST statically, so not to mutate it.
+        this.errors = new ArrayList<>(this.errors);
+        this.errors.addAll(nonNullErrors);
     }
 
     public List<Class<? extends Exception>> getErrors() {
         return Collections.unmodifiableList(this.errors);
+    }
+
+    /**
+     * Package-private helper method to aid in testing.
+     *
+     * @return true if any custom errors have been added, false otherwise.
+     */
+    final boolean containsCustomErrors() {
+        return !(DEFAULT_ERROR_LIST.size() == this.errors.size()) && (this.errors.containsAll(DEFAULT_ERROR_LIST));
     }
     
     /**

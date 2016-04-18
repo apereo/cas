@@ -14,10 +14,11 @@ Couchbase integration is enabled by including the following dependency in the Ma
 </dependency>
 ```
 
-Enable the registry via:
+Enable the registry in `cas.properties` via:
 
-```xml
-<alias name="couchbaseServiceRegistryDao" alias="serviceRegistryDao" />
+```properties
+#CAS components mappings
+serviceRegistryDao=couchbaseServiceRegistryDao
 ```
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 

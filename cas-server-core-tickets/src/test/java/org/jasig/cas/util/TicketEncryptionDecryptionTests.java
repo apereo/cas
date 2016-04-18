@@ -18,7 +18,7 @@ public class TicketEncryptionDecryptionTests {
 
     private MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
     private BinaryCipherExecutor cipher = new BinaryCipherExecutor("1234567890123456",
-            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 512, 16);
 
     @Test
     public void checkSerializationOfTgt() {

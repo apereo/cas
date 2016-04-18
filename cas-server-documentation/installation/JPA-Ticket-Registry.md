@@ -30,8 +30,11 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-```xml
-<alias name="jpaTicketRegistry" alias="ticketRegistry" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+ticketRegistry=jpaTicketRegistry
 ```
 
 The following settings are expected:
@@ -50,6 +53,14 @@ The following settings are expected:
 # ticketreg.database.jpa.locking.tgt.enabled=true
 ```
 
+Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`
+which may not be appropriate for use in production. Setting the value to
+`validate` may be more desirable, but any of the following options can be used:
+
+* `validate` - validate the schema, but make no changes to the database.
+* `update` - update the schema.
+* `create` - create the schema, destroying previous data.
+* `create-drop` - drop the schema at the end of the session.
 
 ## TicketGrantingTicket Locking
 

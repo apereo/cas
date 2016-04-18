@@ -45,10 +45,12 @@ There are a variety of cache stores available to choose from, some of which are:
 See the [full list of implementations](http://infinispan.org/cache-store-implementations/).
 
 ## Distributed Cache
-Enable the registry via:
 
-```xml
-<alias name="infinispanTicketRegistry" alias="ticketRegistry" />
+Enable the registry in `cas.properties` via:
+
+```properties
+#CAS components mappings
+ticketRegistry=infinispanTicketRegistry
 ```
 
 The above ticket registry expects a `infinispanTicketsCache` element to be available in the Spring context.

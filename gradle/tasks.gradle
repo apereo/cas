@@ -9,6 +9,11 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
+task resourcesJar(type: Jar) {
+    classifier 'resources'
+    from project.file('src/main/resources')
+}
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir

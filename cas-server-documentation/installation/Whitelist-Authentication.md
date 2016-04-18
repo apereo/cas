@@ -23,9 +23,11 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-### `AcceptUsersAuthenticationHandler`
-```xml
-<alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=acceptUsersAuthenticationHandler
 ```
 
 The following settings are applicable:

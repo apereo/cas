@@ -23,6 +23,8 @@ public class WebflowCipherExecutor extends BinaryCipherExecutor {
      * @param secretKeyEncryption the secret key encryption
      * @param secretKeySigning    the secret key signing
      * @param secretKeyAlg        the secret key alg
+     * @param signingKeySize      the signing key size
+     * @param encryptionKeySize   the encryption key size
      */
     @Autowired
     public WebflowCipherExecutor(@Value("${webflow.encryption.key:}")
@@ -30,8 +32,12 @@ public class WebflowCipherExecutor extends BinaryCipherExecutor {
                                  @Value("${webflow.signing.key:}")
                                  final String secretKeySigning,
                                  @Value("${webflow.secretkey.alg:AES}")
-                                 final String secretKeyAlg){
-        super(secretKeyEncryption, secretKeySigning);
+                                 final String secretKeyAlg,
+                                 @Value("${webflow.signing.key.size:512}")
+                                 final int signingKeySize,
+                                 @Value("${webflow.encryption.key.size:16}")
+                                 final int encryptionKeySize){
+        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
         setSecretKeyAlgorithm(secretKeyAlg);
     }
 }

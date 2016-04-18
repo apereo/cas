@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.junit.Test;
@@ -14,7 +15,9 @@ import org.springframework.binding.message.MessageContext;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -71,6 +74,30 @@ public class AuthenticationExceptionHandlerTests {
         final ArgumentCaptor<DefaultMessageResolver> message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
         verify(ctx, times(1)).addMessage(message.capture());
         assertArrayEquals(new String[]{policy.getCode().get()}, message.getValue().getCodes());
+    }
+
+    @Test
+    public void customExceptionsSetterWithNullDefaultValue(){
+        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        assertFalse(handler.containsCustomErrors());
+
+        final List<Class<? extends Exception>> nullCustomErrors = new ArrayList<>();
+        nullCustomErrors.add(null);
+        handler.setErrors(nullCustomErrors);
+        assertFalse(handler.containsCustomErrors());
+    }
+
+    @Test
+    public void customExceptionsSetterWithTwoNewValues() {
+        final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
+        final List<Class<? extends Exception>> twoCustomErrors = new ArrayList<>();
+        twoCustomErrors.add(GeneralSecurityException.class);
+        twoCustomErrors.add(PreventedException.class);
+
+        handler.setErrors(twoCustomErrors);
+        assertTrue(handler.containsCustomErrors());
+        assertTrue(handler.getErrors().containsAll(twoCustomErrors));
+        assertEquals(12, handler.getErrors().size());
     }
 
     private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {

@@ -64,9 +64,17 @@ The cookie has the following properties:
 
 If you wish to turn off cookie encryption, adjust your configuration to be the following:
 
+In local `deployerConfigContext.xml`:
+
 ```xml
 <bean id="noOpCipherExecutor" class="org.jasig.cas.util.NoOpCipherExecutor" />
-<alias name="noOpCipherExecutor" alias="defaultCookieCipherExecutor" />
+```
+
+In `cas.properties`:
+
+```properties
+#CAS components mappings
+defaultCookieCipherExecutor=noOpCipherExecutor
 ```
 
 ## Cookie Generation for Renewed Authentications

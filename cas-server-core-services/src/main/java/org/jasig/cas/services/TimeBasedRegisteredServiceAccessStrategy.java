@@ -4,8 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategy} is responsible for
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -6180748828025837047L;
-
+    
     private String startingDateTime;
 
     private String endingDateTime;
@@ -30,7 +30,8 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     /**
      * Initiates the time-based access strategy.
-     * @param enabled is service access allowed?
+     *
+     * @param enabled    is service access allowed?
      * @param ssoEnabled is service allowed to take part in SSO?
      */
     public TimeBasedRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
@@ -96,10 +97,11 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     @Override
     public boolean isServiceAccessAllowed() {
-        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-
+        final LocalDateTime now = LocalDateTime.now();
+        
         if (this.startingDateTime != null) {
-            final ZonedDateTime st = ZonedDateTime.parse(this.startingDateTime);
+            final LocalDateTime st = LocalDateTime.parse(this.startingDateTime,
+                    DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
             if (now.isBefore(st)) {
                 logger.warn("Service access not allowed because it starts at {}. Now is {}",
@@ -109,8 +111,10 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
         }
 
         if (this.endingDateTime != null) {
-            final ZonedDateTime et = ZonedDateTime.parse(this.endingDateTime);
-            if  (now.isAfter(et)) {
+            final LocalDateTime et = LocalDateTime.parse(this.endingDateTime,
+                    DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
+            if (now.isAfter(et)) {
                 logger.warn("Service access not allowed because it ended at {}. Now is {}",
                         this.endingDateTime, now);
                 return false;
@@ -119,5 +123,4 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
         return super.isServiceAccessAllowed();
     }
-
 }

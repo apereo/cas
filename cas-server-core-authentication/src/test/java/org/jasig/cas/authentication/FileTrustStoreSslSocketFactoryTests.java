@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
-     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource, "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();

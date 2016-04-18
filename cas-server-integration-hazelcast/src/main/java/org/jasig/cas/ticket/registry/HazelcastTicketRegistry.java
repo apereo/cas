@@ -2,7 +2,9 @@ package org.jasig.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,6 +98,16 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         return decodeTickets(this.registry.values());
+    }
+
+    @Override
+    public long sessionCount() {
+        return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
     }
 
     /**

@@ -21,10 +21,11 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-Enable the registry via:
+Enable the registry in `cas.properties` via:
 
-```xml
-<alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
+```properties
+#CAS components mappings
+ticketRegistry=hazelcastTicketRegistry
 ```
 
 This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry
@@ -126,7 +127,7 @@ Here's a simple example of `hazelcast.xml` that configures AWS cluster join stra
 </hazelcast>
 ```
 
-For more information on the Hazelcast configuration options available, refer to [the Hazelcast documentation](http://docs.hazelcast.org/docs/3.6/manual/html/configuringhazelcast.html)
+For more information on the Hazelcast configuration options available, refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#hazelcast-configuration)
 
 ## Logging
 To enable additional logging for the registry, configure the log4j configuration file to add the following

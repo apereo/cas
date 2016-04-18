@@ -17,56 +17,53 @@ import java.util.Map;
 /**
  * A implementation that is based on algorithms
  * provided by the default platform's JCE. By default AES encryption is
- * used which requires both the secret key and the IV length to be of size 16.
+ * used.
  * @author Misagh Moayyed
  * @since 4.2
  */
 public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final String UTF8_ENCODING = "UTF-8";
-
-    private static final int SIGNING_KEY_SIZE = 512;
-
-    private static final int ENCRYPTION_KEY_SIZE = 16;
     
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+        
     /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
 
     private String encryptionSecretKey;
 
-    
+
     /**
      * Instantiates a new cryptic ticket cipher executor.
      *
      * @param encryptionSecretKey the encryption secret key
-     * @param signingSecretKey the signing key
+     * @param signingSecretKey    the signing key
+     * @param signingKeySize      the signing key size
+     * @param encryptionKeySize   the encryption key size
      */
     public BinaryCipherExecutor(final String encryptionSecretKey,
-                                final String signingSecretKey) {
-        verifyAndSetKeys(encryptionSecretKey, signingSecretKey);
-    }
-
-    private void verifyAndSetKeys(final String encryptionSecretKey, final String signingSecretKey) {
+                                final String signingSecretKey,
+                                final int signingKeySize,
+                                final int encryptionKeySize) {
 
         String signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
             logger.warn("Secret key for signing is not defined. CAS will attempt to auto-generate the signing key");
-            signingKeyToUse = generateOctetJsonWebKeyOfSize(SIGNING_KEY_SIZE);
+            signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
             logger.warn("Generated signing key {} of size {}. The generated key MUST be added to CAS settings.",
-                    signingKeyToUse, SIGNING_KEY_SIZE);
+                    signingKeyToUse, signingKeySize);
         }
         setSigningKey(signingKeyToUse);
-        
+
         if (StringUtils.isBlank(encryptionSecretKey)) {
             logger.warn("No encryption key is defined. CAS will attempt to auto-generate keys");
-            this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(ENCRYPTION_KEY_SIZE);
+            this.encryptionSecretKey = RandomStringUtils.randomAlphabetic(encryptionKeySize);
             logger.warn("Generated encryption key {} of size {}. The generated key MUST be added to CAS settings.",
-                    this.encryptionSecretKey, ENCRYPTION_KEY_SIZE);
+                    this.encryptionSecretKey, encryptionKeySize);
         } else {
             this.encryptionSecretKey = encryptionSecretKey;
         }
     }
+
 
     public void setSecretKeyAlgorithm(final String secretKeyAlgorithm) {
         this.secretKeyAlgorithm = secretKeyAlgorithm;

@@ -4,8 +4,12 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
+import org.jasig.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -183,6 +187,37 @@ public class CasApplicationContextConfiguration {
         return factory;
     }
 
+    /**
+     * Stub attribute repository person attribute dao.
+     *
+     * @param factoryBean the factory bean
+     * @return the person attribute dao
+     */
+    @Bean(name="stubAttributeRepository")
+    public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
+                                                   final FactoryBean<Properties> factoryBean) {
+        try {
+            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
+            dao.setBackingMap(new HashMap(factoryBean.getObject()));
+            return dao;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Cas attributes to resolve factory bean.
+     *
+     * @return the factory bean
+     */
+    @RefreshScope
+    @Bean(name="casAttributesToResolve")
+    public FactoryBean<Properties> casAttributesToResolve() {
+        final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
+        bean.setPrefix("cas.attrs.resolve.");
+        return bean;
+    }
+    
     /**
      * Handler mapping c simple url handler mapping.
      *
