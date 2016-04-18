@@ -1,6 +1,10 @@
 
 head.ready(document, function() {
-    head.load("https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js", loadjQueryUI);
+    if (!window.jQuery) {
+        head.load("https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js", loadjQueryUI);
+    } else {
+        resourceLoadedSuccessfully();
+    }
 });
 
 function loadjQueryUI() {
