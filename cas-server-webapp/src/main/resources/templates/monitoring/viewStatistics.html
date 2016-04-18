@@ -3,7 +3,8 @@
 
 <head th:inline="text">
     <title>[[#{cas.statistics.pagetitle}]]</title>
-    <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <!--<link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />-->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 </head>
 
 <body id="cas">
@@ -13,8 +14,8 @@
                 var memory_graph, completion_graph;
                 function jqueryReady() {
                     head.load(
-                            "//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
-                            "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
+//                            "//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
+//                            "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
                             "/cas/js/statisticsview.js",
                             function() {
                                 /*<![CDATA[*/
