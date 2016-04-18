@@ -56,7 +56,7 @@ WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Generated signing key XYZ of s
 
 You should then grab each generated key for encryption and signing, and put them inside your cas.properties file for each now-enabled setting.
 
-If you wish to manually generate the above keys and not have CAS do that for you, you could [download/clone](https://github.com/mitreid-connect/json-web-key-generator.git) and build this project and invoke its executable to generate keys of appropriate size,
+If you wish to manually generate the above keys and not have CAS do that for you, you could [download/clone](https://github.com/mitreid-connect/json-web-key-generator.git) and build this project and invoke its executable to generate keys of appropriate size.
 
 ## Required Service for Authentication
 By default, CAS will present a generic success page if the initial authentication request does not identify
