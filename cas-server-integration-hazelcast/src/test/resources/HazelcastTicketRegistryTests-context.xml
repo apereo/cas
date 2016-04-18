@@ -111,6 +111,7 @@
         <constructor-arg name="mapName" value="tickets"/>
         <constructor-arg name="ticketGrantingTicketTimeoutInSeconds" value="10"/>
         <constructor-arg name="serviceTicketTimeoutInSeconds" value="10"/>
+        <constructor-arg name="pageSize" value="100"/>
     </bean>
 
     <bean id="hzTicketRegistry2"
@@ -119,6 +120,7 @@
         <constructor-arg name="mapName" value="tickets"/>
         <constructor-arg name="ticketGrantingTicketTimeoutInSeconds" value="10"/>
         <constructor-arg name="serviceTicketTimeoutInSeconds" value="10"/>
+        <constructor-arg name="pageSize" value="100"/>
     </bean>
 
 </beans>
