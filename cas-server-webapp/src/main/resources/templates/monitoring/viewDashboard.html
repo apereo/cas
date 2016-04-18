@@ -3,7 +3,6 @@
 
 <head th:inline="text">
     <title>[[#{cas.dashboard.pagetitle}]]</title>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/Colors.js/1.2.4/colors.min.js"></script>
 </head>
 
 <body id="cas">
@@ -42,22 +41,68 @@
                 <ul>
                     <li>
                         <form method="post" action="/cas/status/restart">
-                            <button class="btn btn-restart" type="submit" th:inline="text"><i class="fa fa-undo"></i>[[#{cas.dashboard.action.button.reboot}]]</button>
+                            <button class="btn btn-restart"
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#myModal"
+                                th:inline="text"
+                                th:attr="data-title=#{cas.dashboard.action.button.reboot.modal.title},data-message=#{cas.dashboard.action.button.reboot.modal.message}"
+                            >
+                                <i class="fa fa-undo"></i>[[#{cas.dashboard.action.button.reboot}]]
+                            </button>
                         </form>
                     </li>
                     <li>
                         <form method="post" action="/cas/status/refresh">
-                            <button class="btn btn-refresh" type="submit" th:inline="text"><i class="fa fa-refresh"></i>[[#{cas.dashboard.action.button.refresh}]]</button>
+                            <button class="btn btn-refresh"
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#myModal"
+                                th:inline="text"
+                                    th:attr="data-title=#{cas.dashboard.action.button.refresh.modal.title},data-message=#{cas.dashboard.action.button.refresh.modal.message}"
+                            >
+                                <i class="fa fa-refresh"></i>[[#{cas.dashboard.action.button.refresh}]]
+                            </button>
                         </form>
                     </li>
                     <li>
                         <form method="post" action="/cas/status/shutdown">
-                            <button class="btn btn-shutdown" type="submit" th:inline="text"><i class="fa fa-power-off"></i>[[#{cas.dashboard.action.button.shutdown}]]</button>
+                            <button type="button" class="btn btn-shutdown"
+                                data-toggle="modal"
+                                data-target="#myModal"
+                                th:inline="text"
+                                th:attr="data-title=#{cas.dashboard.action.button.shutdown.modal.title},data-message=#{cas.dashboard.action.button.shutdown.modal.message}"
+                            >
+                                <i class="fa fa-power-off"></i>
+                                [[#{cas.dashboard.action.button.shutdown}]]
+                            </button>
                         </form>
-
                     </li>
                 </ul>
             </div>
+
+            <div layout:include="fragments/modal :: modal(modalId='myModal', modalHeader='Message', modalButtons='true')" th:remove="tag">
+                <p layout:fragment="modal-content">Message goes here!</p>
+            </div>
+
+            <script>
+                $('#myModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget);
+                    var modal = $(this);
+
+                    modal.find('.modal-title').text( button.data('title') );
+                    modal.find('.modal-body').text( button.data('message') );
+
+                    var form = $(event.relatedTarget).closest('form');
+
+                    modal.find('.modal-footer button.primary').data('form', form);
+                })
+
+                $('#myModal').find('.modal-footer button.btn-primary').on('click', function(){
+                    $(this).data('form').submit();
+                });
+
+            </script>
         </div>
 
     </div>
