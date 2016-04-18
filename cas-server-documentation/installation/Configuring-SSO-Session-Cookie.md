@@ -19,13 +19,10 @@ The cookie has the following properties:
 ## Cookie Value Encryption
 
 The cookie value is linked to the active ticket-granting ticket, the remote IP address that initiated the request 
-as well as the user agent that submitted the request. The final cookie value is then encrypted and signed
-using `AES_128_CBC_HMAC_SHA_256` and `HMAC_SHA512` respectively.
+as well as the user agent that submitted the request. The final cookie value is then encrypted and signed.
 
 The secret keys are defined in the `cas.properties` file. These keys **MUST** be regenerated per your specific environment. Each key
-is a JSON Web Token with a defined length per the algorithm used for encryption and signing. 
-You may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator)
-to generate your own JSON Web Tokens.
+is a JSON Web Token with a defined length per the algorithm used for encryption and signing.
 
 {% highlight properties %}
 # CAS SSO Cookie Generation & Security
@@ -41,6 +38,20 @@ tgc.encryption.key=
 tgc.signing.key=
 
 {% endhighlight %}
+
+
+If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
+
+```bash
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key>
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Generated encryption key ABC of size ... . The generated key MUST be added to CAS settings.>
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Secret key for signing is not defined. CAS will attempt to auto-generate the signing key>
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
+```
+
+You should then grab each generated key for encryption and signing, and put them inside your cas.properties file for each now-enabled setting.
+
+If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
 ## Turning Off Cookie Value Encryption
 if you wish to disable the signing and encryption of the cookie, in the
