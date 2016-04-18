@@ -11,7 +11,7 @@
     <div layout:fragment="content">
             <script type="text/javascript" th:inline="javascript">
 
-                var memory_graph, completion_graph;
+
                 function jqueryReady() {
                     head.load(
 //                            "//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
@@ -19,7 +19,8 @@
                             "/cas/js/statisticsview.js",
                             function() {
                                 /*<![CDATA[*/
-                                    var memoryAvail = /*[[${freeMemory} / ${totalMemory}]]*/ ;
+                                    var memoryAvail = /*[[(${totalMemory} - ${freeMemory}) / ${totalMemory}]]*/ ;
+
                                     var memory = new Gauge('#memoryGauge', memoryAvail, {width: 200, height: 200,
                                         label: /*[[#{cas.statistics.section.serverstatistics.freememorygauge.label}]]*/,
                                         textClass: 'runtimeStatistics'});
