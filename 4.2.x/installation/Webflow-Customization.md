@@ -20,22 +20,21 @@ flow to account for additional use cases and processes. Note that to customize t
 of understanding of the webflow's internals and injection policies. The intention of this document is not to describe Spring Web Flow, 
 but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
 
-## Termination of Web Flow Sessions
+## Web Flow Session Encryption
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte 
 stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
 
 - Support for conversation management (e.g. flow scope)
 - Encryption of encoded flow state to prevent tampering by malicious clients
 
-By default, the conversational state of Spring Webflow is managed inside the application session, which can time out due to inactivity 
-and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store 
+CAS automatically attempts to store 
 and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication.
 
 Default encryption strategy controlled via the `loginFlowStateTranscoder` component.
 These settings can be controlled via the following defined in the `cas.properties` file:
 
 ```properties
-# The encryption secret key. By default, must be a octet string of size 256.
+# The encryption secret key. By default, must be a size 16.
 # webflow.encryption.key=
 
 # The signing secret key. By default, must be a octet string of size 512.
@@ -43,8 +42,21 @@ These settings can be controlled via the following defined in the `cas.propertie
 ```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
-While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and 
+While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and
 transcoding of the web session state.</p></div>
+
+If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
+
+```bash
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key>
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Generated encryption key ABC of size ... . The generated key MUST be added to CAS settings.>
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Secret key for signing is not defined. CAS will attempt to auto-generate the signing key>
+WARN [org.jasig.cas.util.BinaryCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
+```
+
+You should then grab each generated key for encryption and signing, and put them inside your cas.properties file for each now-enabled setting.
+
+If you wish to manually generate the above keys and not have CAS do that for you, you could [download/clone](https://github.com/mitreid-connect/json-web-key-generator.git) and build this project and invoke its executable to generate keys of appropriate size,
 
 ## Required Service for Authentication
 By default, CAS will present a generic success page if the initial authentication request does not identify
@@ -64,5 +76,5 @@ This behavior is controlled via `cas.properties`:
 ```
 
 ## Acceptable Usage Policy
-CAS presents the ability to allow the user to accept the usage policy before moving on to the application. 
+CAS presents the ability to allow the user to accept the usage policy before moving on to the application.
 See [this guide](Webflow-Customization-AUP.html) for more info.
