@@ -3,6 +3,7 @@ package org.jasig.cas.mock;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -80,5 +81,15 @@ public class MockServiceTicket implements ServiceTicket {
     @Override
     public int getCountOfUses() {
         return 0;
+    }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return this.id.compareTo(o.getId());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return compareTo((Ticket) obj) == 0;
     }
 }

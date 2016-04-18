@@ -9,7 +9,7 @@ import java.io.Serializable;
 
  * @since 3.0.0
  */
-public interface Ticket extends Serializable {
+public interface Ticket extends Serializable, Comparable<Ticket> {
 
     /**
      * Method to retrieve the id.
