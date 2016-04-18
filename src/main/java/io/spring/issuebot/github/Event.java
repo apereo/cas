@@ -75,6 +75,11 @@ public class Event {
 		SUBSCRIBED("subscribed"),
 
 		/**
+		 * The actor unsubscribed from receibing notifications for an issue.
+		*/
+		UNSUBSCRIBED("unsubscribed"),
+
+		/**
 		 * The issue was merged by the actor.
 		 */
 		MERGED("merged"),
