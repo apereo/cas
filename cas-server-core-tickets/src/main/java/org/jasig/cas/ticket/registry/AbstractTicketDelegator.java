@@ -91,4 +91,9 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
     public boolean equals(final Object o) {
         return this.ticket.equals(o);
     }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return this.ticket.compareTo(o);
+    }
 }

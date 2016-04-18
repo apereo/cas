@@ -1,6 +1,7 @@
 package org.jasig.cas.mock;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
@@ -8,8 +9,10 @@ import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.TestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -45,17 +48,21 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private final Map<String, Service> services = new HashMap<>();
 
-    public MockTicketGrantingTicket(final String principal) {
+    public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
-        final CredentialMetaData metaData = new BasicCredentialMetaData(
-                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
-        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal))
-                            .addCredential(metaData)
-                            .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                            new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
-                            .build();
+        final CredentialMetaData metaData = new BasicCredentialMetaData(c);
+        authentication = new DefaultAuthenticationBuilder(
+                new DefaultPrincipalFactory().createPrincipal(principal, attributes))
+                .addCredential(metaData)
+                .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
+                        new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
+                .build();
 
         created = new Date();
+    }
+
+    public MockTicketGrantingTicket(final String principal) {
+        this(principal, TestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
     }
 
     @Override
@@ -140,5 +147,15 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Override
     public void markTicketExpired() {
         expired = true;
+    }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return id.compareTo(o.getId());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return compareTo((Ticket) obj) == 0;
     }
 }

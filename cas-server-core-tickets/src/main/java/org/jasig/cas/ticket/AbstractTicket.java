@@ -159,4 +159,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public final String toString() {
         return this.getId();
     }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return getId().compareTo(o.getId());
+    }
 }
