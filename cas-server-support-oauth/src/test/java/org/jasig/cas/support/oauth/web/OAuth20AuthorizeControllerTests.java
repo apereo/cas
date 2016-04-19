@@ -3,6 +3,7 @@ package org.jasig.cas.support.oauth.web;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +45,8 @@ public final class OAuth20AuthorizeControllerTests {
     private static final String ID = "id";
     private static final String FIRST_NAME_ATTRIBUTE = "firstName";
     private static final String FIRST_NAME = "jerome";
+    private static final String LAST_NAME_ATTRIBUTE = "lastName";
+    private static final String LAST_NAME = "LELEU";
 
     private static final String CONTEXT = "/oauth2.0/";
 
@@ -189,6 +193,7 @@ public final class OAuth20AuthorizeControllerTests {
         profile.setId(ID);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
@@ -234,6 +239,7 @@ public final class OAuth20AuthorizeControllerTests {
         profile.setId(ID);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
@@ -280,6 +286,7 @@ public final class OAuth20AuthorizeControllerTests {
         profile.setId(ID);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
@@ -326,6 +333,7 @@ public final class OAuth20AuthorizeControllerTests {
         profile.setId(ID);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
@@ -373,6 +381,7 @@ public final class OAuth20AuthorizeControllerTests {
         profile.setId(ID);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
@@ -419,6 +428,7 @@ public final class OAuth20AuthorizeControllerTests {
         profile.setId(ID);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
@@ -464,6 +474,7 @@ public final class OAuth20AuthorizeControllerTests {
         profile.setId(ID);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
+        attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
@@ -482,6 +493,7 @@ public final class OAuth20AuthorizeControllerTests {
         registeredServiceImpl.setName(name);
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[] { FIRST_NAME_ATTRIBUTE})));
         return registeredServiceImpl;
     }
 
