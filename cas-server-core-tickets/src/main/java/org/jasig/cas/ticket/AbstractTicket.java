@@ -148,4 +148,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public ExpirationPolicy getExpirationPolicy() {
         return this.expirationPolicy;
     }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return getId().compareTo(o.getId());
+    }
 }

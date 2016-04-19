@@ -88,4 +88,9 @@ public final class EncodedTicket implements Ticket {
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append(this.id).build();
     }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return getId().compareTo(o.getId());
+    }
 }
