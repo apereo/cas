@@ -2,7 +2,7 @@ description = 'Apereo CAS Mongo Authentication Support'
 dependencies {
 
     compile project(':cas-server-core-authentication')
-    compile project(':cas-server-integration-pac4j')
+    compile project(':cas-server-support-pac4j-authentication')
     compile libraries.pac4j
     compile libraries.spring
     compile libraries.mongo

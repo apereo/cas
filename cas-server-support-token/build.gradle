@@ -4,7 +4,7 @@ dependencies {
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-authentication')
     compile project(':cas-server-core-services')
-    compile project(':cas-server-integration-pac4j')
+    compile project(':cas-server-support-pac4j-authentication')
     compile libraries.jackson
     compile libraries.pac4j
     compile libraries.spring
