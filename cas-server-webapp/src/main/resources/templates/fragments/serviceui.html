@@ -1,19 +1,19 @@
 <div th:if="${registeredService}">
-    <div id="serviceui" class="serviceinfo" th:if="${mduiContext}">
+    <div id="serviceui" class="alert alert-info" th:if="${mduiContext}">
         <table>
             <tr>
                 <td>
                     <img th:src="${mduiContext.logoUrl}"/>
                 </td>
                 <td id="servicedesc">
-                    <h1 th:text="${mduiContext.displayName}"></h1>
+                    <h2 th:text="${mduiContext.displayName}"></h2>
                     <p th:text="${mduiContext.description}"></p>
                 </td>
             </tr>
         </table>
     </div>
 
-    <div id="serviceui" class="serviceinfo" th:unless="${mduiContext}">
+    <div id="serviceui" class="alert alert-info" th:unless="${mduiContext}">
         <table>
             <tr>
                 <td>
@@ -21,7 +21,7 @@
                     <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
                 </td>
                 <td id="servicedesc">
-                    <h1 th:text="${registeredService.name}"></h1>
+                    <h2 th:text="${registeredService.name}"></h2>
                     <p th:text="${registeredService.description}"></p>
                 </td>
             </tr>
