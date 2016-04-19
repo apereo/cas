@@ -31,6 +31,7 @@
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>characterEncodingFilter</filter-name>
@@ -40,6 +41,7 @@
     <filter>
         <filter-name>CAS Client Info Logging Filter</filter-name>
         <filter-class>org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>CAS Client Info Logging Filter</filter-name>
@@ -49,6 +51,7 @@
     <filter>
         <filter-name>requestParameterSecurityFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>requestParameterSecurityFilter</filter-name>
@@ -58,6 +61,7 @@
     <filter>
         <filter-name>responseHeadersSecurityFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>responseHeadersSecurityFilter</filter-name>
@@ -101,26 +105,31 @@
             <param-value>false</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>
 
     <servlet>
         <servlet-name>metrics-health</servlet-name>
         <servlet-class>com.codahale.metrics.servlets.HealthCheckServlet</servlet-class>
+        <async-supported>true</async-supported>
     </servlet>
 
     <servlet>
         <servlet-name>metrics</servlet-name>
         <servlet-class>com.codahale.metrics.servlets.MetricsServlet</servlet-class>
+        <async-supported>true</async-supported>
     </servlet>
 
     <servlet>
         <servlet-name>metrics-ping</servlet-name>
         <servlet-class>com.codahale.metrics.servlets.PingServlet</servlet-class>
+        <async-supported>true</async-supported>
     </servlet>
 
     <servlet>
         <servlet-name>metrics-threads</servlet-name>
         <servlet-class>com.codahale.metrics.servlets.ThreadDumpServlet</servlet-class>
+        <async-supported>true</async-supported>
     </servlet>
 
     <servlet-mapping>
