@@ -51,14 +51,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * The Algorithm name.
      */
     @NotNull
-    @Value("${cas.jdbc.authn.query.encode.alg:}")
     protected String algorithmName;
 
     /**
      * The Sql statement to execute.
      */
     @NotNull
-    @Value("${cas.jdbc.authn.query.encode.sql:}")
     protected String sql;
 
     /**
@@ -155,6 +153,16 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                     .setSource(encodedPassword)
                                     .build();
         return hashService.computeHash(request).toHex();
+    }
+
+    @Autowired
+    public void setAlgorithmName(@Value("${cas.jdbc.authn.query.encode.alg:}") final String algorithmName) {
+        this.algorithmName = algorithmName;
+    }
+
+    @Autowired
+    public void setSql(@Value("${cas.jdbc.authn.query.encode.sql:}") final String sql) {
+        this.sql = sql;
     }
 
     /**
