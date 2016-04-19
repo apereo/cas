@@ -13,6 +13,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * This is {@link CasWebApplication}.
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.ImportResource;
         "classpath*:/META-INF/spring/*.xml"})
 @Import(AopAutoConfiguration.class)
 @EnableConfigServer
+@EnableAsync
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.
