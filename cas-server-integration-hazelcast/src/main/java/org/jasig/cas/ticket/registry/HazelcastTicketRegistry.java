@@ -2,10 +2,11 @@ package org.jasig.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.query.PagingPredicate;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
@@ -40,12 +43,16 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
 
     private final HazelcastInstance hz;
 
+    private final int pageSize;
 
     /**
-     * @param hz                                  An instance of {@code HazelcastInstance}
-     * @param mapName                             Name of map to use
+     * Instantiates a new Hazelcast ticket registry.
+     *
+     * @param hz                                   An instance of {@code HazelcastInstance}
+     * @param mapName                              Name of map to use
      * @param ticketGrantingTicketTimeoutInSeconds TTL for TGT entries
-     * @param serviceTicketTimeoutInSeconds       TTL for ST entries
+     * @param serviceTicketTimeoutInSeconds        TTL for ST entries
+     * @param pageSize                             the page size
      */
     @Autowired
     public HazelcastTicketRegistry(
@@ -56,12 +63,15 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         @Value("${tgt.maxTimeToLiveInSeconds:28800}")
         final long ticketGrantingTicketTimeoutInSeconds,
         @Value("${st.timeToKillInSeconds:10}")
-        final long serviceTicketTimeoutInSeconds) {
+        final long serviceTicketTimeoutInSeconds,
+        @Value("${hz.page.size:500}")
+        final int pageSize) {
 
         this.registry = hz.getMap(mapName);
         this.ticketGrantingTicketTimeoutInSeconds = ticketGrantingTicketTimeoutInSeconds;
         this.serviceTicketTimeoutInSeconds = serviceTicketTimeoutInSeconds;
         this.hz = hz;
+        this.pageSize = pageSize;
     }
 
     /**
@@ -130,7 +140,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         }
 
         logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return (this.registry.remove(encTicketId) != null);
+        return this.registry.remove(encTicketId) != null;
     }
 
     /**
@@ -151,10 +161,50 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
             }
         }
     }
+    
+    @Override
+    public int sessionCount() {
+        int count = 0;
+        final Collection<Ticket> collection = getTickets();
+        for (final Ticket ticket : collection) {
+            if (ticket instanceof TicketGrantingTicket) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     @Override
+    public int serviceTicketCount() {
+        int count = 0;
+        final Collection<Ticket> collection = getTickets();
+        for (final Ticket ticket : collection) {
+            if (ticket instanceof ServiceTicket) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    @Override
     public Collection<Ticket> getTickets() {
-        return decodeTickets(this.registry.values());
+        final Collection<Ticket> collection = new HashSet<>();
+
+        final Lock lock = this.hz.getLock(getClass().getName());
+        lock.lock();
+        try {
+            final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
+            for (Collection<Ticket> entrySet = this.registry.values(pagingPredicate);
+                 !entrySet.isEmpty();
+                 pagingPredicate.nextPage(), entrySet = this.registry.values(pagingPredicate)) {
+                for (final Ticket entry : entrySet) {
+                    collection.add(decodeTicket(entry));
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+        return collection;
     }
 
     /**
