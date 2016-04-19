@@ -43,7 +43,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
      */
     public Cas30JsonResponseView() {
         super(createDelegatedView());
-        logger.debug("Rendering {}", this.getClass().getSimpleName());
+        logger.debug("Initialized {}", this.getClass().getSimpleName());
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
