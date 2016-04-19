@@ -11,15 +11,10 @@
 
 #login {
   width: 50%;
-  //margin-right: 20px;
-  //border: 1px solid #333;
-  //margin: 0 auto;
   padding: 30px;
   background-color: #efefef;
   border-radius: 4px;
   display: table-cell;
-  //border-top-left-radius: 3px;
-  //border-bottom-left-radius: 3px;
   overflow: hidden;
   vertical-align: top;
 
@@ -50,18 +45,11 @@
   }
 
 
-  //h2 {
-  //  font-weight: normal;
-  //  font-size: 1.4em;
-  //  margin-bottom: 20px;
-  //}
-
   form > h2 {
     display: none;
   }
 
   .row {
-    //padding: 10px 0;
     margin: 20px 0;
   }
 
@@ -123,11 +111,9 @@
 
 #sidebar {
   width: auto;
-  //height: 100%;
 }
 
 #sidebar-content {
-  //padding-left: 20px;
 }
 
 #list-providers ul {
@@ -147,8 +133,6 @@
 #notices {
   display: table-cell;
   padding-left: 30px;
-  //border-top-right-radius: 3px;
-  //border-bottom-right-radius: 3px;
   width: 50%;
   margin-left: 10px;
 
