@@ -9,7 +9,7 @@ Ehcache integration is enabled by including the following dependency in the Mave
 ```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-integration-ehcache</artifactId>
+     <artifactId>cas-server-support-ehcache</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

@@ -45,7 +45,7 @@ The `GrouperRegisteredServiceAccessStrategy` is enabled by including the followi
 ```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-integration-grouper</artifactId>
+  <artifactId>cas-server-support-grouper</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```

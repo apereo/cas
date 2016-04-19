@@ -10,7 +10,7 @@ Support is enabled by adding the following module into the Maven overlay:
 ```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-mongo</artifactId>
+    <artifactId>cas-server-support-mongo-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```

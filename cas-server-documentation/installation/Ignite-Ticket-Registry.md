@@ -9,7 +9,7 @@ Ignite integration is enabled by including the following dependency in the Maven
 ```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-integration-ignite</artifactId>
+     <artifactId>cas-server-support-ignite</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

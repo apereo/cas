@@ -9,7 +9,7 @@ Memcached integration is enabled by including the following dependency in the Ma
 ```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-memcached</artifactId>
+    <artifactId>cas-server-support-memcached</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
