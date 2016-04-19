@@ -51,12 +51,14 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * The Algorithm name.
      */
     @NotNull
+    @Value("${cas.jdbc.authn.query.encode.alg:}")
     protected String algorithmName;
 
     /**
      * The Sql statement to execute.
      */
     @NotNull
+    @Value("${cas.jdbc.authn.query.encode.sql:}")
     protected String sql;
 
     /**
@@ -87,28 +89,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String staticSalt;
 
-    /**
-     * Instantiates a new Query and encode database authentication handler.
-     *
-     * @param datasource The database datasource
-     * @param sql the sql query to execute which must include a parameter placeholder
-     *            for the user id. (i.e. {@code SELECT * FROM table WHERE username = ?}
-     * @param algorithmName the algorithm name (i.e. {@code MessageDigestAlgorithms.SHA_512})
-     */
-    @Autowired(required = false)
-    public QueryAndEncodeDatabaseAuthenticationHandler(@Qualifier("queryEncodeDatabaseDataSource")
-                                                           final DataSource datasource,
-                                                       @Value("${cas.jdbc.authn.query.encode.sql:}")
-                                                       final String sql,
-                                                       @Value("${cas.jdbc.authn.query.encode.alg:}")
-                                                       final String algorithmName) {
-        super();
-        if (datasource != null) {
-            setDataSource(datasource);
-            this.sql = sql;
-            this.algorithmName = algorithmName;
-        }
-    }
 
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
@@ -245,4 +225,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         this.numberOfIterations = numberOfIterations;
     }
 
+    @Autowired(required=false)
+    @Override
+    public void setDataSource(@Qualifier("queryEncodeDatabaseDataSource") final DataSource dataSource) {
+        super.setDataSource(dataSource);
+    }
 }
