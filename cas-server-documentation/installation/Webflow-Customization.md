@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Web Flow Customization
+title: CAS - Webflow Customization
 ---
 
 
@@ -20,7 +20,7 @@ flow to account for additional use cases and processes. Note that to customize t
 of understanding of the webflow's internals and injection policies. The intention of this document is not to describe Spring Web Flow, 
 but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
 
-## Web Flow Session
+## Webflow Session
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte 
 stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
 
