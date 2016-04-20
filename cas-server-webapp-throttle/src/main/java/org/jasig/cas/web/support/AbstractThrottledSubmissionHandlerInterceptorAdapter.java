@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +27,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
-
-    private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
     /** Logger object. **/
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
