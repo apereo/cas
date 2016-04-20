@@ -4,6 +4,8 @@ import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,8 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
 
     private static final long serialVersionUID = -3557247044344135788L;
     private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategy.class);
 
     /**
      * The enum Grouper group field.
@@ -58,30 +62,30 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
             final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(principal);
             results = groupsClient.execute().getResults();
         } catch (final Exception e) {
-            logger.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
+            LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
                     + ", the url endpoint for Grouper WS is correctly configured and the subject " + principal
                     + "  exists in Grouper.", e);
             return false;
         }
 
         if (results == null || results.length == 0) {
-            logger.warn("Subject id [{}] could not be located. Access denied", principal);
+            LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);
             return false;
         }
 
         for (final WsGetGroupsResult groupsResult : results) {
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
-                logger.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
+                LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
                 return false;
             }
 
             for (final WsGroup group : groupsResult.getWsGroups()) {
                 final String groupName = constructGrouperGroupAttribute(group);
-                logger.debug("Found group name [{}] for [{}]", groupName, principal);
+                LOGGER.debug("Found group name [{}] for [{}]", groupName, principal);
                 grouperGroups.add(groupName);
             }
         }
-        logger.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes",
+        LOGGER.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes",
                 grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
 
         allAttributes.put(GROUPER_GROUPS_ATTRIBUTE_NAME, grouperGroups);
