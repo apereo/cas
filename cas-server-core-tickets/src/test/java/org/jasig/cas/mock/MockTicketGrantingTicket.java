@@ -16,6 +16,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import java.time.ZoneOffset;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Mock ticket-granting ticket.
@@ -143,7 +145,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     @Override
     public ExpirationPolicy getExpirationPolicy() {
-        throw new UnsupportedOperationException("getExpirationPolicy() is not supported");
+        return new TicketGrantingTicketExpirationPolicy(100, 100, TimeUnit.MINUTES);
     }
 
     @Override
