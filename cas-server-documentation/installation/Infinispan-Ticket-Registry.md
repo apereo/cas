@@ -9,7 +9,7 @@ Infinispan integration is enabled by including the following dependency in the M
 ```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-integration-infinispan</artifactId>
+     <artifactId>cas-server-support-infinispan</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -46,7 +46,7 @@ See the [full list of implementations](http://infinispan.org/cache-store-impleme
 
 ## Distributed Cache
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

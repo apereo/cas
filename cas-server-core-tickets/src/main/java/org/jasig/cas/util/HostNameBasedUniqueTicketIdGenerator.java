@@ -12,7 +12,7 @@ import java.net.UnknownHostException;
 /**
  * An implementation of {@link org.jasig.cas.ticket.UniqueTicketIdGenerator} that is able auto-configure
  * the suffix based on the underlying host name.
- *
+ * <p>
  * <p>In order to assist with multi-node deployments, in scenarios where CAS configuration
  * and specially {@code application.properties} file is externalized, it would be ideal to simply just have one set
  * of configuration files for all nodes, such that there would for instance be one {@code application.properties} file
@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
  * and diagnostics. To provide a remedy, this ticket generator is able to retrieve the {@code host.name} value directly from
  * the actual node name, rather than relying on the configuration, only if one isn't specified in
  * the {@code application.properties} file. </p>
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
@@ -47,6 +48,8 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
      * <li>If the CAS node name is {@code cas-01} then, the suffix
      * determined would just be {@code cas-01}</li>
      * </ul>
+     *
+     * @param suffix the suffix
      * @return the shortened ticket suffix based on the hostname
      * @since 4.1.0
      */
@@ -55,7 +58,7 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
             if (StringUtils.isNotBlank(suffix)) {
                 return suffix;
             }
-            
+
             final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
             final int index = hostName.indexOf('.');
             if (index > 0) {
@@ -74,10 +77,16 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
     @Component("ticketGrantingTicketUniqueIdGenerator")
     public static class TicketGrantingTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
 
+        /**
+         * Instantiates a new Ticket granting ticket id generator.
+         *
+         * @param maxLength the max length
+         * @param suffix    the suffix
+         */
         @Autowired
-        public TicketGrantingTicketIdGenerator(@Value("${tgt.ticket.maxlength:50}") 
-                                               final int maxLength, 
-                                               @Value("${host.name:cas01.example.org}") 
+        public TicketGrantingTicketIdGenerator(@Value("${tgt.ticket.maxlength:50}")
+                                               final int maxLength,
+                                               @Value("${host.name:cas01.example.org}")
                                                final String suffix) {
             super(maxLength, suffix);
         }
@@ -89,6 +98,13 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
     @RefreshScope
     @Component("serviceTicketUniqueIdGenerator")
     public static class ServiceTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
+
+        /**
+         * Instantiates a new Service ticket id generator.
+         *
+         * @param maxLength the max length
+         * @param suffix    the suffix
+         */
         @Autowired
         public ServiceTicketIdGenerator(@Value("${st.ticket.maxlength:20}")
                                         final int maxLength,
@@ -104,8 +120,36 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
     @RefreshScope
     @Component("proxy20TicketUniqueIdGenerator")
     public static class ProxyTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
+        /**
+         * Instantiates a new Proxy ticket id generator.
+         *
+         * @param maxLength the max length
+         * @param suffix    the suffix
+         */
         @Autowired
         public ProxyTicketIdGenerator(@Value("${pgt.ticket.maxlength:50}")
+                                      final int maxLength,
+                                      @Value("${host.name:cas01.example.org}")
+                                      final String suffix) {
+            super(maxLength, suffix);
+        }
+    }
+
+    /**
+     * The type Login ticket id generator.
+     */
+    @RefreshScope
+    @Component("loginTicketUniqueIdGenerator")
+    public static class LoginTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
+
+        /**
+         * Instantiates a new Login ticket id generator.
+         *
+         * @param maxLength the max length
+         * @param suffix    the suffix
+         */
+        @Autowired
+        public LoginTicketIdGenerator(@Value("${lt.ticket.maxlength:20}")
                                       final int maxLength,
                                       @Value("${host.name:cas01.example.org}")
                                       final String suffix) {

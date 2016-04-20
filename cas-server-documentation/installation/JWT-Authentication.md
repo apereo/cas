@@ -45,7 +45,7 @@ JWT authentication support is enabled by including the following dependency in t
 
 Then, configure the JWT handler in your overlay configuration:
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

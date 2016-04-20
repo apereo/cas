@@ -10,7 +10,7 @@ Support is enabled by adding the following module into the Maven overlay:
 ```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-mongo</artifactId>
+    <artifactId>cas-server-support-mongo-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
@@ -18,7 +18,7 @@ Support is enabled by adding the following module into the Maven overlay:
 ## Configuration
 This implementation auto-configures most of the internal details.
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

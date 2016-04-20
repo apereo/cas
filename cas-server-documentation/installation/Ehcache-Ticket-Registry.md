@@ -9,7 +9,7 @@ Ehcache integration is enabled by including the following dependency in the Mave
 ```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-integration-ehcache</artifactId>
+     <artifactId>cas-server-support-ehcache</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -28,7 +28,7 @@ Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi
 replication for distributed caches composed of two or more nodes. To learn more about RMI
 replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

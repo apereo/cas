@@ -36,7 +36,7 @@ The following settings are expected:
 
 The following configuration assumes a `dataSource` bean is defined in the context.
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

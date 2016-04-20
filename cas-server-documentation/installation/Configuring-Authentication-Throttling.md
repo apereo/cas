@@ -53,7 +53,7 @@ authenticationThrottle=inMemoryIpAddressThrottle
 
 
 ### IP Address and Username
-Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address. In `cas.properties`:
+Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address. In `application.properties`:
 
 ```properties
 #CAS components mappings

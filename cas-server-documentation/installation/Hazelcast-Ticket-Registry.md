@@ -14,14 +14,14 @@ This ticket registry implementation is enabled by simply including the module in
 ```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-hazelcast</artifactId>
+    <artifactId>cas-server-support-hazelcast</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
 
 ## Configuration
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

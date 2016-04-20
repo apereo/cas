@@ -11,7 +11,7 @@ and Spring-managed `@Aspect`-style aspects.
 
 ## Configuration
 CAS server auto-configures all the relevant Inspektr components with Spring `@Configuration` class. All the available configuration
-options that are injected to Inspektr classes are available to deployers via relevant properties in `cas.properties`
+options that are injected to Inspektr classes are available to deployers via relevant properties in `application.properties`
 
 ### File-based Audits
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager` and are routed to
@@ -44,7 +44,7 @@ SERVER IP ADDRESS: 192.168.200.22
 
 ### Database Audits
 If you intend to use a database
-for auditing functionality, adjust the audit manager mapping in `cas.properties` to match the configuration below:
+for auditing functionality, adjust the audit manager mapping in `application.properties` to match the configuration below:
 
 ```properties
 #CAS components mappings

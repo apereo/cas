@@ -13,6 +13,7 @@ validated when an authentication request from the application arrives.
 
 ## Default Strategy
 The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
+### Default
 
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
@@ -30,7 +31,7 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-## Time-based Strategy
+### Time-Based
 The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
@@ -39,13 +40,13 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
-## Grouper Strategy
+### Grouper
 The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the Maven WAR overlay:
 
 ```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-integration-grouper</artifactId>
+  <artifactId>cas-server-support-grouper</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```

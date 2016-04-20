@@ -56,7 +56,7 @@ The following optional monitors are also available:
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-memcached-monitor</artifactId>
+    <artifactId>cas-server-support-memcached-monitor</artifactId>
     <version>${cas.version}</version>
 </dependency>
 
@@ -81,10 +81,9 @@ The following settings are available:
 - Ehcache
 
 ```xml
-
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-ehcache-monitor</artifactId>
+    <artifactId>cas-server-support-ehcache-monitor</artifactId>
     <version>${cas.version}</version>
 </dependency>
 
