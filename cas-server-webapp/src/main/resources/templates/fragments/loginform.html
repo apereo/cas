@@ -1,7 +1,7 @@
 <div class="box" id="login">
     <div class="login-header">
         <h2>Login</h2>
-        <span class="fa-stack fa-3x">
+        <span class="fa-stack fa-2x">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
         </span>
@@ -9,7 +9,7 @@
 
     <form method="post" id="fm1" th:object="${credential}">
 
-        <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
             <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
         </div>
 
@@ -52,7 +52,7 @@
                        autocomplete="off"/>
                 <span id="capslock-on" style="display:none;">
                     <p>
-                        <img th:src="@{images/warning.png}" valign="top"/>
+                        <i class="fa fa-exclamation-circle"></i>
                         <span th:utext="#{screen.capslock.on}"/>
                     </p>
                 </span>
@@ -95,7 +95,7 @@
             <input type="hidden" name="_eventId" value="submit"/>
             <input type="hidden" name="geolocation"/>
 
-            <input class="btn-submit"
+            <input class="btn-submit btn-block"
                    name="submit"
                    accesskey="l"
                    th:value="#{screen.welcome.button.login}"
