@@ -22,7 +22,6 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
