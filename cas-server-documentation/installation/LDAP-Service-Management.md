@@ -23,7 +23,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

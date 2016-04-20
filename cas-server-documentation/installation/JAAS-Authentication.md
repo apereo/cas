@@ -18,7 +18,7 @@ JAAS components are provided in the CAS core module and require no additional de
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file.
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

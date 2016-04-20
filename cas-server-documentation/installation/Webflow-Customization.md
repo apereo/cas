@@ -127,7 +127,7 @@ event when CAS server catches and passes one of these exceptions to it. The even
   message in this case presented to UI (suppose that the exception type thrown is `com.mycompany.MyAuthenticationException`). To achieve
   this customization, one would need to do the following:
 
-   1. Define the fully qualified name of the exception class in `cas.properties` (comma-separated class names in case of multiple
+   1. Define the fully qualified name of the exception class in `application.properties` (comma-separated class names in case of multiple
     mappings):
 
    ```properties

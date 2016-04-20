@@ -22,7 +22,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-### `RejectUsersAuthenticationHandler` in `cas.properties`:
+### `RejectUsersAuthenticationHandler` in `application.properties`:
 ```properties
 #CAS components mappings
 primaryAuthenticationHandler=rejectUsersAuthenticationHandler

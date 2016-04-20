@@ -21,7 +21,7 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

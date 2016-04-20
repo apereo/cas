@@ -16,7 +16,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

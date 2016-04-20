@@ -18,7 +18,7 @@ Support is enabled by adding the following module into the Maven overlay:
 ## Configuration
 This implementation auto-configures most of the internal details.
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

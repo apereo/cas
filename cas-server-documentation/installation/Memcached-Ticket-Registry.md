@@ -27,9 +27,9 @@ where _h(K)_ is the hash of key _K_, _N1 ... Nm_ is the set of cache nodes, and 
 The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
 Note that a change in the set of available cache nodes may produce a different target node on which to store the key.
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

@@ -37,7 +37,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ### Configuring Authentication
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

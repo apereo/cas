@@ -35,7 +35,7 @@ spring.profiles.active=native
 spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
 ```
 
-An example of an external `cas.properties` file hosted by an external location follows:
+An example of an external `application.properties` file hosted by an external location follows:
 
 ```properties
 accept.authn.users: casuser::Mellon

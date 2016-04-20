@@ -70,7 +70,7 @@ In local `deployerConfigContext.xml`:
 <bean id="noOpCipherExecutor" class="org.jasig.cas.util.NoOpCipherExecutor" />
 ```
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings
