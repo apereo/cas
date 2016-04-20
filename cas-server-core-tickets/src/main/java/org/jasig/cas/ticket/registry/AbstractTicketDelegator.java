@@ -118,4 +118,9 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return this.ticket.compareTo(o);
+    }
 }
