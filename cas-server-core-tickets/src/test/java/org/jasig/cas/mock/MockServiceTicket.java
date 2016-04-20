@@ -7,6 +7,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -61,7 +62,7 @@ public class MockServiceTicket implements ServiceTicket {
 
     @Override
     public ExpirationPolicy getExpirationPolicy() {
-        throw new UnsupportedOperationException("getExpirationPolicy() is not supported");
+        return new NeverExpiresExpirationPolicy();
     }
 
     @Override
