@@ -1,25 +1,21 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.mock.MockServiceTicket;
+import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.services.TestUtils;
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DateTimeUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -29,38 +25,58 @@ import static org.junit.Assert.*;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:HazelcastTicketRegistryTests-context.xml")
 public class HazelcastTicketRegistryTests {
 
+    @Autowired
     private HazelcastTicketRegistry hzTicketRegistry1;
 
+    @Autowired
     private HazelcastTicketRegistry hzTicketRegistry2;
 
-    @Before
-    public void init() {
-        final FileSystemXmlApplicationContext context =
-                new FileSystemXmlApplicationContext("classpath:HazelcastTicketRegistryTests-context.xml");
-        this.hzTicketRegistry1 = context.getBean("hzTicketRegistry1", HazelcastTicketRegistry.class);
-        this.hzTicketRegistry2 = context.getBean("hzTicketRegistry2", HazelcastTicketRegistry.class);
+    public void setHzTicketRegistry1(final HazelcastTicketRegistry hzTicketRegistry1) {
+        this.hzTicketRegistry1 = hzTicketRegistry1;
     }
 
-    @After
-    public void shutdown() {
-        this.hzTicketRegistry1.shutdown();
-        this.hzTicketRegistry2.shutdown();
+    public void setHzTicketRegistry2(final HazelcastTicketRegistry hzTicketRegistry2) {
+        this.hzTicketRegistry2 = hzTicketRegistry2;
+    }
+
+    @Test
+    public void retrieveCollectionOfTickets() {
+        Collection<Ticket> col = this.hzTicketRegistry1.getTickets();
+        for (final Ticket ticket : col) {
+            this.hzTicketRegistry1.deleteTicket(ticket.getId());
+        }
+
+        col = hzTicketRegistry2.getTickets();
+        assertEquals(0, col.size());
+
+        final TicketGrantingTicket tgt = newTestTgt();
+        this.hzTicketRegistry1.addTicket(tgt);
+
+        this.hzTicketRegistry1.addTicket(newTestSt(tgt));
+
+        col = hzTicketRegistry2.getTickets();
+        assertEquals(2, col.size());
+        assertEquals(1, hzTicketRegistry2.serviceTicketCount());
+        assertEquals(1, hzTicketRegistry2.sessionCount());
     }
 
     @Test
     public void basicOperationsAndClustering() throws Exception {
-        this.hzTicketRegistry1.addTicket(newTestTgt());
+        final TicketGrantingTicket tgt = newTestTgt();
+        this.hzTicketRegistry1.addTicket(tgt);
 
-        assertNotNull(this.hzTicketRegistry1.getTicket("TGT-TEST"));
-        assertNotNull(this.hzTicketRegistry2.getTicket("TGT-TEST"));
-        assertTrue(this.hzTicketRegistry2.deleteTicket("TGT-TEST"));
-        assertFalse(this.hzTicketRegistry1.deleteTicket("TGT-TEST"));
-        assertNull(this.hzTicketRegistry1.getTicket("TGT-TEST"));
-        assertNull(this.hzTicketRegistry2.getTicket("TGT-TEST"));
+        assertNotNull(this.hzTicketRegistry1.getTicket(tgt.getId()));
+        assertNotNull(this.hzTicketRegistry2.getTicket(tgt.getId()));
+        assertTrue(this.hzTicketRegistry2.deleteTicket(tgt.getId()));
+        assertFalse(this.hzTicketRegistry1.deleteTicket(tgt.getId()));
+        assertNull(this.hzTicketRegistry1.getTicket(tgt.getId()));
+        assertNull(this.hzTicketRegistry2.getTicket(tgt.getId()));
 
-        final ServiceTicket st = newTestSt();
+        final ServiceTicket st = newTestSt(tgt);
         this.hzTicketRegistry2.addTicket(st);
 
         assertNotNull(this.hzTicketRegistry1.getTicket("ST-TEST"));
@@ -90,172 +106,26 @@ public class HazelcastTicketRegistryTests {
         this.hzTicketRegistry1.addTicket(st2);
         this.hzTicketRegistry1.addTicket(st3);
 
-        assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket(tgt.getId(), TicketGrantingTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
 
         this.hzTicketRegistry1.deleteTicket(tgt.getId());
 
-        assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket(tgt.getId(), TicketGrantingTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
     }
 
     private TicketGrantingTicket newTestTgt() {
-        return new MockTgt();
+        return new MockTicketGrantingTicket("casuser");
     }
 
-    private ServiceTicket newTestSt() {
-        return new MockSt();
+    private ServiceTicket newTestSt(final TicketGrantingTicket tgt) {
+        return new MockServiceTicket("ST-TEST", TestUtils.getService(), tgt);
     }
 
-    private static class MockTgt implements TicketGrantingTicket {
 
-        @Override
-        public Service getProxiedBy() {
-            return null;
-        }
-
-        @Override
-        public Authentication getAuthentication() {
-            return null;
-        }
-
-        @Override
-        public List<Authentication> getSupplementalAuthentications() {
-            return null;
-        }
-
-        @Override
-        public ServiceTicket grantServiceTicket(final String id,
-                                                final Service service,
-                                                final ExpirationPolicy expirationPolicy,
-                                                final boolean credentialsProvided,
-                                                final boolean onlyTrackMostRecentSession) {
-            return null;
-        }
-
-        @Override
-        public Map<String, Service> getServices() {
-            return null;
-        }
-
-        @Override
-        public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public void removeAllServices() {
-
-        }
-
-        @Override
-        public void markTicketExpired() {
-
-        }
-
-        @Override
-        public boolean isRoot() {
-            return false;
-        }
-
-        @Override
-        public TicketGrantingTicket getRoot() {
-            return null;
-        }
-
-        @Override
-        public List<Authentication> getChainedAuthentications() {
-            return null;
-        }
-
-        @Override
-        public String getId() {
-            return "TGT-TEST";
-        }
-
-        @Override
-        public boolean isExpired() {
-            return false;
-        }
-
-        @Override
-        public TicketGrantingTicket getGrantingTicket() {
-            return this;
-        }
-
-        @Override
-        public ZonedDateTime getCreationTime() {
-            return DateTimeUtils.zonedDateTimeOf(0);
-        }
-
-        @Override
-        public int getCountOfUses() {
-            return 0;
-        }
-
-        @Override
-        public ExpirationPolicy getExpirationPolicy() {
-            return new NeverExpiresExpirationPolicy();
-        }
-    }
-
-    private static class MockSt implements ServiceTicket {
-        private static final long serialVersionUID = -761672450629794769L;
-
-        @Override
-        public Service getService() {
-            return null;
-        }
-
-        @Override
-        public boolean isFromNewLogin() {
-            return false;
-        }
-
-        @Override
-        public boolean isValidFor(final Service service) {
-            return false;
-        }
-
-        @Override
-        public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
-                                                            final Authentication authentication,
-                                                            final ExpirationPolicy expirationPolicy) {
-            return null;
-        }
-
-        @Override
-        public String getId() {
-            return "ST-TEST";
-        }
-
-        @Override
-        public boolean isExpired() {
-            return false;
-        }
-
-        @Override
-        public TicketGrantingTicket getGrantingTicket() {
-            return null;
-        }
-
-        @Override
-        public ZonedDateTime getCreationTime() {
-            return DateTimeUtils.zonedDateTimeOf(0);
-        }
-
-        @Override
-        public int getCountOfUses() {
-            return 0;
-        }
-
-        @Override
-        public ExpirationPolicy getExpirationPolicy() {
-            return new NeverExpiresExpirationPolicy();
-        }
-    }
 }
