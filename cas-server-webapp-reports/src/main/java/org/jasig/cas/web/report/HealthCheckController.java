@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
-import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -47,7 +46,8 @@ public class HealthCheckController {
      * @throws Exception the exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    protected @ResponseBody WebAsyncTask<HealthStatus> handleRequestInternal(
+    @ResponseBody
+    protected WebAsyncTask<HealthStatus> handleRequestInternal(
             final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
 
