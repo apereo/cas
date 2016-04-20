@@ -180,7 +180,7 @@ would allow the webflow to resume to SPNEGO.
 ...and the LDAP configuration:
 
 ```xml
-<bean id="spnegoCLientActionConnectionFactory" class="..." />
+<bean id="spnegoClientActionConnectionFactory" class="..." />
 
 <bean id="spnegoClientActionSearchRequest" class="org.ldaptive.SearchRequest"
       p:baseDn-ref="baseDn"
