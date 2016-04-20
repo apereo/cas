@@ -3,6 +3,8 @@ package org.jasig.cas.services;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -17,6 +19,8 @@ import java.time.ZonedDateTime;
 public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -6180748828025837047L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedRegisteredServiceAccessStrategy.class);
 
     private String startingDateTime;
 
@@ -102,7 +106,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
             final ZonedDateTime st = ZonedDateTime.parse(this.startingDateTime);
 
             if (now.isBefore(st)) {
-                logger.warn("Service access not allowed because it starts at {}. Now is {}",
+                LOGGER.warn("Service access not allowed because it starts at {}. Now is {}",
                         this.startingDateTime, now);
                 return false;
             }
@@ -111,7 +115,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
         if (this.endingDateTime != null) {
             final ZonedDateTime et = ZonedDateTime.parse(this.endingDateTime);
             if  (now.isAfter(et)) {
-                logger.warn("Service access not allowed because it ended at {}. Now is {}",
+                LOGGER.warn("Service access not allowed because it ended at {}. Now is {}",
                         this.endingDateTime, now);
                 return false;
             }
