@@ -26,14 +26,13 @@ but merely to demonstrate how the framework is used by CAS to carry out various 
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte 
 stream in the flow execution identifier provided to the client when rendering a view. 
 
-By default, the conversational state of Spring Webflow is managed inside the application session, which can time out due to inactivity 
-and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store 
+CAS automatically attempts to store 
 and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication.
 
 Default encryption strategy controlled via the settings defined in the `application.properties` file:
 
 ```properties
-# The encryption secret key. Must be 16 characters long.
+# The encryption secret key. By default, must be a size 16.
 # webflow.encryption.key=
 
 # The signing secret key. By default, must be a octet string of size 512.
@@ -50,7 +49,7 @@ settings in `application.properties`, specially when running a multi-node CAS de
 to appropriate decrypt and encrypt the webflow state and will prevent successful single sign-on.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
-While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and 
+While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and
 transcoding of the web session state.</p></div>
 
 ### Server-side Sessions
@@ -98,7 +97,7 @@ This behavior is controlled via `application.properties`:
 ```
 
 ## Acceptable Usage Policy
-CAS presents the ability to allow the user to accept the usage policy before moving on to the application. 
+CAS presents the ability to allow the user to accept the usage policy before moving on to the application.
 See [this guide](Webflow-Customization-AUP.html) for more info.
 
 ## Customizing authentication exceptions

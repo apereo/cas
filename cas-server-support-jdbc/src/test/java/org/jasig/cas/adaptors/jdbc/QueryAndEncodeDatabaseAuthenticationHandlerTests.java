@@ -82,27 +82,30 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test(expected = AccountNotFoundException.class)
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q =
-                new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
-                        ALG_NAME);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        q.setDataSource(dataSource);
+        q.setAlgorithmName(ALG_NAME);
+        q.setSql(buildSql());
         q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
     @Test(expected = PreventedException.class)
     public void verifyAuthenticationInvalidSql() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q =
-                new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql("makesNoSenseInSql"),
-                        ALG_NAME);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        q.setDataSource(dataSource);
+        q.setAlgorithmName(ALG_NAME);
+        q.setSql(buildSql("makesNoSenseInSql"));
         q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
     @Test(expected = FailedLoginException.class)
     public void verifyAuthenticationMultipleAccounts() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q =
-                new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
-                        ALG_NAME);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        q.setDataSource(dataSource);
+        q.setAlgorithmName(ALG_NAME);
+        q.setSql(buildSql());
         q.authenticateUsernamePasswordInternal(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
@@ -110,9 +113,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q =
-                new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
-                        ALG_NAME);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        q.setDataSource(dataSource);
+        q.setAlgorithmName(ALG_NAME);
+        q.setSql(buildSql());
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
 
@@ -125,9 +129,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q =
-                new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
-                        ALG_NAME);
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        q.setDataSource(dataSource);
+        q.setAlgorithmName(ALG_NAME);
+        q.setSql(buildSql());
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
         q.setPasswordEncoder(new PasswordEncoder() {

@@ -2,6 +2,7 @@ package org.jasig.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.query.PagingPredicate;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
@@ -41,18 +44,24 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     public HazelcastTicketRegistry() {}
     
     /**
-     * @param hz An instance of {@code HazelcastInstance}
-     * @param mapName Name of map to use
+     * Instantiates a new Hazelcast ticket registry.
+     *
+     * @param hz       An instance of {@code HazelcastInstance}
+     * @param mapName  Name of map to use
+     * @param pageSize the page size
      */
     @Autowired
     public HazelcastTicketRegistry(
         @Qualifier("hazelcast")
         final HazelcastInstance hz,
         @Value("${hz.mapname:tickets}")
-        final String mapName) {
+        final String mapName,
+        @Value("${hz.page.size:500}")
+        final int pageSize) {
 
         this.registry = hz.getMap(mapName);
         this.hazelcastInstance = hz;
+        this.pageSize = pageSize;
     }
 
     /**
@@ -97,7 +106,33 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        return decodeTickets(this.registry.values());
+        final Collection<Ticket> collection = new HashSet<>();
+
+        final Lock lock = this.hz.getLock(getClass().getName());
+        lock.lock();
+        try {
+            final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
+            for (Collection<Ticket> entrySet = this.registry.values(pagingPredicate);
+                 !entrySet.isEmpty();
+                 pagingPredicate.nextPage(), entrySet = this.registry.values(pagingPredicate)) {
+                for (final Ticket entry : entrySet) {
+                    collection.add(decodeTicket(entry));
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+        return collection;
+    }
+
+    @Override
+    public long sessionCount() {
+        return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
     }
 
     @Override

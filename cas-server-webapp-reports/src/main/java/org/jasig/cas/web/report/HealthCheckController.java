@@ -1,5 +1,6 @@
 package org.jasig.cas.web.report;
 
+import java.util.concurrent.Callable;
 import org.jasig.cas.monitor.HealthCheckMonitor;
 import org.jasig.cas.monitor.HealthStatus;
 import org.jasig.cas.monitor.Status;
@@ -28,9 +29,9 @@ import java.util.concurrent.Callable;
 @RequestMapping("/status")
 public class HealthCheckController {
 
-
     @Value("${cas.async.request.timeout:5000}")
     private int asyncTimeout;
+
 
     @Autowired
     @Qualifier("healthCheckMonitor")
@@ -45,9 +46,8 @@ public class HealthCheckController {
      * @throws Exception the exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    protected
     @ResponseBody
-    WebAsyncTask<HealthStatus> handleRequestInternal(
+    protected WebAsyncTask<HealthStatus> handleRequestInternal(
             final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
 

@@ -227,6 +227,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         if (this.principalIdAttribute != null) {
             final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
             if (principalAttr == null || principalAttr.size() == 0) {
+                logger.error("The principal id attribute {} is not found. CAS cannot construct the final authenticated principal "
+                        + "if it's unable to locate the attribute that is designated as the principal id. Attributes available are {}",
+                        this.principalIdAttribute, ldapEntry.getAttributes());
                 throw new LoginException(this.principalIdAttribute + " attribute not found for " + username);
             }
 
