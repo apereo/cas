@@ -37,7 +37,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     private static final long serialVersionUID = 1245279151345635245L;
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceAccessStrategy.class);
 
     /** Is the service allowed at all? **/
     private boolean enabled = true;
@@ -200,22 +200,22 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (this.rejectedAttributes.isEmpty() && this.requiredAttributes.isEmpty()) {
-            logger.debug("Skipping access strategy policy, since no attributes rules are defined");
+            LOGGER.debug("Skipping access strategy policy, since no attributes rules are defined");
             return true;
         }
         
         if (!enoughAttributesAvailableToProcess(principal, principalAttributes)) {
-            logger.debug("Access is denied. There are not enough attributes available to satisfy requirements");
+            LOGGER.debug("Access is denied. There are not enough attributes available to satisfy requirements");
             return false;
         }
 
         if (doRejectedAttributesRefusePrincipalAccess(principalAttributes)) {
-            logger.debug("Access is denied. The principal carries attributes that would reject service access");
+            LOGGER.debug("Access is denied. The principal carries attributes that would reject service access");
             return false;
         }
                 
         if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes)) {
-            logger.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
+            LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
 
@@ -224,18 +224,18 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
-        logger.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
+        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
                 this.requiredAttributes, principalAttributes);
         final Sets.SetView<String> difference = Sets.intersection(this.requiredAttributes.keySet(), principalAttributes.keySet());
         final Set<String> copy = difference.immutableCopy();
 
         if (this.requiredAttributes.isEmpty()) {
-            logger.debug("No required attributes are defined");
+            LOGGER.debug("No required attributes are defined");
             return true;
         }
         
         if (this.requireAllAttributes && copy.size() < this.requiredAttributes.size()) {
-            logger.debug("Not all required attributes are available to the principal");
+            LOGGER.debug("Not all required attributes are available to the principal");
             return false;
         }
         
@@ -259,7 +259,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             }
 
             if (!differenceInValues.isEmpty()) {
-                logger.info("Principal is authorized to access the service");
+                LOGGER.info("Principal is authorized to access the service");
                 return true;
             }
             return false;
@@ -267,18 +267,18 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
     
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
-        logger.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.",
+        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.",
                 this.rejectedAttributes, principalAttributes);
         final Sets.SetView<String> rejectedDifference = Sets.intersection(this.rejectedAttributes.keySet(), principalAttributes.keySet());
         final Set<String> rejectedCopy = rejectedDifference.immutableCopy();
 
         if (this.rejectedAttributes.isEmpty()) {
-            logger.debug("No rejected attributes are defined");
+            LOGGER.debug("No rejected attributes are defined");
             return false;
         }
         
         if (this.requireAllAttributes && rejectedCopy.size() < rejectedAttributes.size()) {
-            logger.debug("Not all rejected attributes are available to the process");
+            LOGGER.debug("Not all rejected attributes are available to the process");
             return false;
         }
         
@@ -302,7 +302,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             }
 
             if (!differenceInValues.isEmpty()) {
-                logger.info("Principal is denied access since there are rejected attributes [{}] defined as [{}}",
+                LOGGER.info("Principal is denied access since there are rejected attributes [{}] defined as [{}}",
                         key, differenceInValues);
                 return true;
             }
@@ -319,19 +319,19 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     protected boolean enoughAttributesAvailableToProcess(final String principal, final Map<String, Object> principalAttributes) {
         if (principalAttributes.isEmpty() && !this.requiredAttributes.isEmpty()) {
-            logger.debug("No principal attributes are found to satisfy defined attribute requirements");
+            LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
             return false;
         }
 
         if (principalAttributes.size() < this.rejectedAttributes.size()) {
-            logger.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
+            LOGGER.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
                             + "which means the principal is not carrying enough data to grant authorization",
                     principalAttributes);
             return false;
         }
 
         if (principalAttributes.size() < this.requiredAttributes.size()) {
-            logger.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
+            LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
                         + "which means the principal is not carrying enough data to grant authorization",
                     principalAttributes);
             return false;
@@ -342,7 +342,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     @Override
     public boolean isServiceAccessAllowedForSso() {
         if (!this.ssoEnabled) {
-            logger.trace("Service is not authorized to participate in SSO.");
+            LOGGER.trace("Service is not authorized to participate in SSO.");
         }
         return this.ssoEnabled;
     }
@@ -350,7 +350,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     @Override
     public boolean isServiceAccessAllowed() {
         if (!this.enabled) {
-            logger.trace("Service is not enabled in service registry.");
+            LOGGER.trace("Service is not enabled in service registry.");
         }
 
         return this.enabled;
