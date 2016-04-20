@@ -22,6 +22,7 @@
     <alias name="${authenticationPolicy}" alias="authenticationPolicy" />
     <alias name="${authenticationPolicyFactory}" alias="authenticationPolicyFactory" />
     <alias name="${authenticationThrottle}" alias="authenticationThrottle" />
+    <alias name="${restAuthenticationThrottle}" alias="restAuthenticationThrottle" />
     <alias name="${defaultCookieCipherExecutor}" alias="defaultCookieCipherExecutor" />
     <alias name="${principalFactory}" alias="principalFactory" />
     <alias name="${authenticationTransactionManager}" alias="authenticationTransactionManager" />

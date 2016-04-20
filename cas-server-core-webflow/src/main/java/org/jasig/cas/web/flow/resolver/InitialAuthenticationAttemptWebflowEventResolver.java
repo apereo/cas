@@ -13,10 +13,12 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 
 /**
@@ -94,6 +96,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 logger.debug(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
+            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return ImmutableSet.of(event);
         }
     }

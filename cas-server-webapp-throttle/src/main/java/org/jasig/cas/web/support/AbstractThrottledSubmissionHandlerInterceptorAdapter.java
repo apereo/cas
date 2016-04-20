@@ -82,19 +82,13 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        final RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
+        final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
+                                 && response.getStatus() != HttpStatus.SC_OK;
 
-        if (context == null || context.getCurrentEvent() == null) {
-            return;
+        if (recordEvent) {
+            logger.debug("Recording submission failure for {}", request.getRequestURI());
+            recordSubmissionFailure(request);
         }
-
-        // User successfully authenticated
-        if (SUCCESSFUL_AUTHENTICATION_EVENT.equals(context.getCurrentEvent().getId())) {
-            return;
-        }
-
-        // User submitted invalid credentials, so we update the invalid login count
-        recordSubmissionFailure(request);
     }
 
     @Autowired
