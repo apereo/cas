@@ -1,4 +1,26 @@
 <!DOCTYPE html>
+<html layout:decorator="monitoring/layout">
+
+<head th:inline="text">
+    <title>Login Page</title>
+</head>
+
+<body id="cas" class="login">
+    <div layout:fragment="content">
+        <div th:replace="fragments/loginform" />
+        <div id="notices">
+            <div th:replace="fragments/insecure"/>
+            <div th:replace="fragments/cookies"/>
+            <div th:replace="fragments/serviceui"/>
+            <div th:replace="fragments/cas-resources-list" />
+        </div>
+    </div>
+
+</body>
+</html>
+
+<!--
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <div th:replace="fragments/top"/>
@@ -10,6 +32,7 @@
         <div id="content">
             <div th:replace="fragments/loginform" />
             <div id="notices">
+                <div th:replace="fragments/cas-resources-list" />
                 <div th:replace="fragments/insecure"/>
                 <div th:replace="fragments/cookies"/>
                 <div th:replace="fragments/serviceui"/>
@@ -21,3 +44,4 @@
 </body>
 </html>
 
+-->
