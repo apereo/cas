@@ -9,7 +9,6 @@ import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.lang.IgniteBiPredicate;
 import org.apache.ignite.ssl.SslContextFactory;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -26,8 +25,9 @@ import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * <p>
@@ -141,20 +141,13 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
             logger.debug("No ticket by id [{}] is found in the registry", ticketId);
             return null;
         }
-
-        final Ticket proxiedTicket = decodeTicket(ticket);
-        return getProxiedTicketInstance(proxiedTicket);
+        return decodeTicket(ticket);
     }
 
     @Override
     public Collection<Ticket> getTickets() {
-        final IgniteBiPredicate<String, Ticket> filter = (IgniteBiPredicate<String, Ticket>) (key, t) -> !t.isExpired();
-        final QueryCursor<Cache.Entry<String, Ticket>> cursor = this.ticketIgniteCache.query(new ScanQuery<>(filter));
-        final Collection<Cache.Entry<String, Ticket>> cacheTickets = cursor.getAll();
-        
-        final Collection<Ticket> allTickets = new HashSet<>(cacheTickets.size());
-        cacheTickets.stream().forEach(entry -> allTickets.add(getProxiedTicketInstance(entry.getValue())));
-        return decodeTickets(allTickets);
+        final QueryCursor<Cache.Entry<String, Ticket>> cursor = this.ticketIgniteCache.query(new ScanQuery<>((key, t) -> !t.isExpired()));
+        return decodeTickets(cursor.getAll().stream().map(Cache.Entry::getValue).collect(toList()));
     }
 
     public void setTicketIgniteCache(final IgniteCache<String, Ticket> ticketIgniteCache) {

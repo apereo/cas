@@ -71,9 +71,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
         if (ticketId == null) {
             return null;
         }
-
-        final Ticket ticket = decodeTicket(this.cache.get(encTicketId));
-        return getProxiedTicketInstance(ticket);
+        return decodeTicket(this.cache.get(encTicketId));
     }
 
     @Override

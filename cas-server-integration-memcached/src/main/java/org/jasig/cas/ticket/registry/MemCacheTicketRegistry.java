@@ -133,8 +133,7 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
         try {
             final Ticket t = (Ticket) this.client.get(ticketId);
             if (t != null) {
-                final Ticket result = decodeTicket(t);
-                return getProxiedTicketInstance(result);
+                return decodeTicket(t);
             }
         } catch (final Exception e) {
             logger.error("Failed fetching {} ", ticketId, e);

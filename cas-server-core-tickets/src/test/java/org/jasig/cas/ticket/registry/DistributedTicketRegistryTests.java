@@ -122,7 +122,7 @@ public final class DistributedTicketRegistryTests {
 
         @Override
         public Ticket getTicket(final String ticketId) {
-            return getProxiedTicketInstance(this.tickets.get(ticketId));
+            return this.tickets.get(ticketId);
         }
 
         @Override
