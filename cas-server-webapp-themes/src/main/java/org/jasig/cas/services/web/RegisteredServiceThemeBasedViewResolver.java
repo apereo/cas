@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.template.TemplateLocation;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,15 @@ import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.Arguments;
+import org.thymeleaf.TemplateProcessingParameters;
+import org.thymeleaf.TemplateRepository;
 import org.thymeleaf.dom.Comment;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Macro;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.dom.Text;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.context.SpringWebContext;
 import org.thymeleaf.spring4.view.AbstractThymeleafView;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.ITemplateModeHandler;
@@ -141,7 +145,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         }
         setTemplateEngine(engine);
         setViewNames(this.thymeleafViewResolver.getViewNames());
-        
+
     }
 
     @Override
@@ -171,7 +175,13 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
                 final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
                 final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
-                thymeleafView.setTemplateName(viewUrl);
+
+                final String viewLocationUrl = this.properties.getPrefix().concat(viewUrl).concat(this.properties.getSuffix());
+                final TemplateLocation location = new TemplateLocation(viewLocationUrl);
+                if (location.exists(getApplicationContext())) {
+                    thymeleafView.setTemplateName(viewUrl);
+                }
+
             }
         }
         return view;

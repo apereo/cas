@@ -6,7 +6,7 @@
             <h3 th:utext="#{screen.welcome.label.loginwith}" />
             <form>
                 <ul th:each="entry : ${pac4jUrls}">
-                    <li><a href="${entry.value}" th:text="${entry.key}"/></li>
+                    <li><a href="${entry.value}" th:text="${entry.key}"><i th:class="fa fa-${entry.key}-square"></i> </a></li>
                 </ul>
             </form>
         </div>
