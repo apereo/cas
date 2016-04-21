@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
@@ -18,6 +19,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 4.2.0
  */
+@Component("jcifsConfig");
 public final class JcifsConfig implements InitializingBean {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
