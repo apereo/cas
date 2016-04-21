@@ -48,6 +48,7 @@ Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
 #### Unsuccessful Response
+
 If incorrect credentials are sent, CAS will respond with a 400 Bad Request error
 (will also respond for missing parameters, etc.). If you send a media type
 it does not understand, it will send the 415 Unsupported Media Type.
@@ -68,11 +69,15 @@ service={form encoded parameter for the service url}
 200 OK
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
+
 #### Unsuccessful Response
+
 CAS will send a 400 Bad Request. If an incorrect media type is
 sent, it will send the 415 Unsupported Media Type.
 
 ## Logout
+Destroy the SSO session by removing the issued ticket: 
+
 ```bash
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 ```

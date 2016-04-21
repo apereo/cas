@@ -30,7 +30,7 @@ import java.nio.charset.Charset;
  * @since 3.1
  */
 @RefreshScope
-@Component
+@Component("spnego")
 public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
 
