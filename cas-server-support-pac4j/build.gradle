@@ -9,4 +9,5 @@ dependencies {
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-services')
     testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    runtime libraries.opensaml
 }

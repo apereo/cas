@@ -575,6 +575,10 @@ ext.libraries = [
                     exclude(group: 'com.google.guava', module: 'guava')
                     force = true
                 },
+                dependencies.create("org.opensaml:opensaml-xmlsec-impl:$opensamlVersion") {
+                    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    force = true
+                },
                 dependencies.create("org.opensaml:opensaml-saml-api:$opensamlVersion") {
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     exclude(group: 'joda-time', module: 'joda-time')
