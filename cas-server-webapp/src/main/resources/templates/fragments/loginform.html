@@ -1,7 +1,7 @@
 <div class="box" id="login">
     <div class="login-header">
-        <h2>Login</h2>
-        <span class="fa-stack fa-2x">
+        <h2 th:text="#{cas.login.pagetitle}"></h2>
+        <span class="fa-stack fa-2x hidden-xs">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
         </span>
@@ -59,37 +59,6 @@
                 <p/>
             </div>
         </section>
-
-        <!--
-        <section class="row check">
-        <p>
-
-            <input id="warn"
-                   name="warn"
-                   value="true"
-                   tabindex="3"
-                   th:accesskey="#{screen.welcome.label.warn.accesskey}"
-                   type="checkbox" />
-            <label for="warn" th:utext="#{screen.welcome.label.warn}"/>
-            <br/>
-
-            <input id="publicWorkstation"
-                   name="publicWorkstation"
-                   value="false" tabindex="4"
-                   type="checkbox" />
-            <label for="publicWorkstation" th:utext="#{screen.welcome.label.publicstation}"/>
-            <br/>
-
-            <input type="checkbox"
-                   name="rememberMe"
-                   id="rememberMe"
-                   value="true"
-                   tabindex="5"  />
-            <label for="rememberMe" th:utext="#{screen.rememberme.checkbox.title}"/>
-        </p>
-        </section>
-        -->
-
         <section class="row btn-row">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
