@@ -1,5 +1,5 @@
-<div th:if="${registeredService}">
-    <div id="serviceui" class="alert alert-info" th:if="${mduiContext}">
+<div th:if="${registeredService}" id="serviceui" class="alert alert-info">
+    <div th:if="${mduiContext}">
         <table>
             <tr>
                 <td>
@@ -13,7 +13,7 @@
         </table>
     </div>
 
-    <div id="serviceui" class="alert alert-info" th:unless="${mduiContext}">
+    <div th:unless="${mduiContext}">
         <table>
             <tr>
                 <td>
