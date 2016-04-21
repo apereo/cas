@@ -4,17 +4,12 @@
  */
 .login #content {
   background: transparent;
-  display: table;
-  border-radius: 3px;
-  padding: 20px 0;
 }
 
 #login {
-  width: 50%;
   padding: 30px;
   background-color: #efefef;
   border-radius: 4px;
-  display: table-cell;
   overflow: hidden;
   vertical-align: top;
 
@@ -27,7 +22,6 @@
     margin-bottom: 10px;
 
     h2 {
-      //font-size: 2rem;
       font-weight: 300;
       color: black;
       font-family: Lato;
@@ -35,7 +29,6 @@
     }
 
     .fa-stack {
-      //margin-top: 10px;
     }
 
     .fa-circle {
@@ -134,11 +127,6 @@
 }
 
 #notices {
-  display: table-cell;
-  padding-left: 30px;
-  width: 50%;
-  margin-left: 10px;
-
   h2 {
     font-size: 1.25em;
   }
@@ -152,7 +140,7 @@
   }
 
   #serviceui {
-    h2 {
+    h2, h3, h4 {
       margin-top: 0;
     }
   }
@@ -160,6 +148,7 @@
   .well {
     h3 {
       margin-top: 0;
+      font-size: 1.25em;
     }
 
     ul.list-group {

@@ -92,7 +92,8 @@ input, select {
     -moz-border-radius-bottomright: 0px;
     -moz-border-radius-bottomleft: 0px;
     border-bottom-right-radius: 0px;
-    border-bottom-left-radius: 0px; } }
+    border-bottom-left-radius: 0px;
+    padding: 0; } }
 
 body#cas {
   background: #153e50;
@@ -195,17 +196,12 @@ header h1 {
  * CAS default overrides
  */
 .login #content {
-  background: transparent;
-  display: table;
-  border-radius: 3px;
-  padding: 20px 0; }
+  background: transparent; }
 
 #login {
-  width: 50%;
   padding: 30px;
   background-color: #efefef;
   border-radius: 4px;
-  display: table-cell;
   overflow: hidden;
   vertical-align: top; }
   #login .login-header {
@@ -278,23 +274,24 @@ header h1 {
   display: inline-block;
   margin-right: 2em; }
 
-#notices {
-  display: table-cell;
-  padding-left: 30px;
-  width: 50%;
-  margin-left: 10px; }
-  #notices h2 {
-    font-size: 1.25em; }
-  #notices p {
-    font-size: 10pt; }
-  #notices ul.list-group .fa {
-    margin-right: 7px; }
-  #notices #serviceui h2 {
-    margin-top: 0; }
-  #notices .well h3 {
-    margin-top: 0; }
-  #notices .well ul.list-group {
-    margin-bottom: 0; }
+#notices h2 {
+  font-size: 1.25em; }
+
+#notices p {
+  font-size: 10pt; }
+
+#notices ul.list-group .fa {
+  margin-right: 7px; }
+
+#notices #serviceui h2, #notices #serviceui h3, #notices #serviceui h4 {
+  margin-top: 0; }
+
+#notices .well h3 {
+  margin-top: 0;
+  font-size: 1.25em; }
+
+#notices .well ul.list-group {
+  margin-bottom: 0; }
 
 footer {
   padding: 20px;
@@ -311,7 +308,8 @@ footer a:link, footer a:visited {
   #content {
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
-    border-radius: 0px; } }
+    border-radius: 0px;
+    padding: 0; } }
 
 @media only screen and (max-width: 855px) {
   #logo {
