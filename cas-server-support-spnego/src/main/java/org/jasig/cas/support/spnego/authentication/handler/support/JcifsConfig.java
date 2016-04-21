@@ -77,11 +77,9 @@ public class JcifsConfig {
 
     /**
      * After properties set.
-     *
-     * @throws Exception the exception
      */
     @PostConstruct
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
         if (propValue != null) {
             logger.warn("found login config in system property, may override : {}", propValue);
