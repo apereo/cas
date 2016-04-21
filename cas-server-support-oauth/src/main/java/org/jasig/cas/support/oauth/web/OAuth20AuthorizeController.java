@@ -37,7 +37,6 @@ import java.util.Map;
 @RefreshScope
 @Component("authorizeController")
 public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
-
     
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -181,7 +180,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @param expectedType the expected response type
      * @return whether the response type is the expected one
      */
-    private boolean isResponseType(final String type, final OAuthResponseType expectedType) {
+    private static boolean isResponseType(final String type, final OAuthResponseType expectedType) {
         return expectedType != null && expectedType.name().toLowerCase().equals(type);
     }
 

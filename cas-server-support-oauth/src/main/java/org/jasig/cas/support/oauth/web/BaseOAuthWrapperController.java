@@ -43,13 +43,11 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The services manager. */
-    
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** The ticket registry. */
-    
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
@@ -60,7 +58,6 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected long timeout;
 
     /** The OAuth validator. */
-    
     @Autowired
     @Qualifier("oAuthValidator")
     protected OAuthValidator validator;

@@ -123,7 +123,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         } else {
             String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenId, OAuthConstants.EXPIRES, this.timeout);
             if (CommonHelper.isNotBlank(refreshTokenId)) {
-                text += "&" + OAuthConstants.REFRESH_TOKEN + "=" + refreshTokenId;
+                text += '&' + OAuthConstants.REFRESH_TOKEN + '=' + refreshTokenId;
             }
             return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
         }
