@@ -38,6 +38,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     
     private HazelcastInstance hazelcastInstance;
 
+    private int pageSize;
+
     /**
      * Instantiates a new Hazelcast ticket registry.
      */
@@ -108,7 +110,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> collection = new HashSet<>();
 
-        final Lock lock = this.hz.getLock(getClass().getName());
+        final Lock lock = this.hazelcastInstance.getLock(getClass().getName());
         lock.lock();
         try {
             final PagingPredicate pagingPredicate = new PagingPredicate(this.pageSize);
@@ -124,17 +126,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         }
         return collection;
     }
-
-    @Override
-    public long sessionCount() {
-        return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
-    }
-
+    
     @Override
     public long sessionCount() {
         return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();

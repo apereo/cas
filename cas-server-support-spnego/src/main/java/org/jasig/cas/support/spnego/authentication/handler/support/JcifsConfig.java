@@ -19,7 +19,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 4.2.0
  */
-@Component("jcifsConfig");
+@Component("jcifsConfig")
 public class JcifsConfig {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
