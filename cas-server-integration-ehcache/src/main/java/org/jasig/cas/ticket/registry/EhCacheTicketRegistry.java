@@ -14,8 +14,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -134,12 +133,12 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public Collection<Ticket> getTickets() {
         final Collection<Element> cacheTickets =
                 this.ehcacheTicketsCache.getAll(this.ehcacheTicketsCache.getKeysWithExpiryCheck()).values();
-        return decodeTickets(cacheTickets.stream().map(e -> (Ticket) e.getObjectValue()).collect(toList()));
+        return decodeTickets(cacheTickets.stream().map(e -> (Ticket) e.getObjectValue()).collect(Collectors.toList()));
     }
 
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 

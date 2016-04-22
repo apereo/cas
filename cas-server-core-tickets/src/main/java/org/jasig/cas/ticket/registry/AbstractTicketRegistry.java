@@ -184,14 +184,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return the boolean
      */
     public abstract boolean deleteSingleTicket(final String ticketId);
-
-    /**
-     * Update the received ticket.
-     *
-     * @param ticket the ticket
-     */
-    protected abstract void updateTicket(Ticket ticket);
-
+    
     /**
      * Whether or not a callback to the TGT is required when checking for expiration.
      *
@@ -342,8 +335,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected void scheduleCleanerJob() {
         try {
 
-            if (!cleanerEnabled && isCleanerSupported()) {
-                logger.info("Ticket registry cleaner is disabled or is not supported by {}. No cleaner processes will be scheduled.",
+            if (!this.cleanerEnabled) {
+                logger.info("Ticket registry cleaner is disabled by {}. No cleaner processes will be scheduled.",
+                        this.getClass().getName());
+                return;
+            }
+
+            if (!isCleanerSupported()) {
+                logger.info("Ticket registry cleaner is not supported by {}. No cleaner processes will be scheduled.",
                         this.getClass().getName());
                 return;
             }
@@ -361,7 +360,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                             .repeatForever()).build();
 
             logger.debug("Scheduling {} job", this.getClass().getSimpleName());
-            scheduler.scheduleJob(job, trigger);
+            this.scheduler.scheduleJob(job, trigger);
             logger.info("{} will clean tickets every {} minutes",
                     this.getClass().getSimpleName(),
                     TimeUnit.SECONDS.toMinutes(this.refreshInterval));
@@ -389,6 +388,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return true/false.
      */
     protected boolean isCleanerSupported() {
-        return true;
+        return this.scheduler != null;
     }
 }

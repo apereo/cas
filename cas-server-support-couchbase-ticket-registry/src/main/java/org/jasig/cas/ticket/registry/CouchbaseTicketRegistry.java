@@ -62,7 +62,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     public CouchbaseTicketRegistry() {}
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
             final SerializableDocument document =

@@ -30,7 +30,7 @@ public final class InfinispanTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         this.cache.put(ticket.getId(), ticket);
     }
 

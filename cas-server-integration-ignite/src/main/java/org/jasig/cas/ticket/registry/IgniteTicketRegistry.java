@@ -164,7 +164,7 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
     
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 

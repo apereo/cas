@@ -70,7 +70,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 
