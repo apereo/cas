@@ -5,9 +5,12 @@ import org.joda.time.ReadableInstant;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,6 +23,34 @@ public final class DateTimeUtils {
     private DateTimeUtils() {
     }
 
+    /**
+     * Parse the given value as a local datetime.
+     *
+     * @param value the value
+     * @return the date/time instance
+     */
+    public static LocalDateTime localDateTimeOf(final String value) {
+        try {
+            return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Parse the given value as a zoned datetime.
+     *
+     * @param value the value
+     * @return the date/time instance
+     */
+    public static ZonedDateTime zonedDateTimeOf(final String value) {
+        try {
+            return ZonedDateTime.parse(value);
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+    
     /**
      * Utility for creating a ZonedDateTime object from a ZonedDateTime.
      * @param time ZonedDateTime to be copied

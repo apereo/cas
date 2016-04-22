@@ -3,11 +3,12 @@ package org.jasig.cas.services;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategy} is responsible for
@@ -19,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -6180748828025837047L;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedRegisteredServiceAccessStrategy.class);
 
     private String startingDateTime;
@@ -101,30 +102,75 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     @Override
     public boolean isServiceAccessAllowed() {
-        final LocalDateTime now = LocalDateTime.now();
-        
-        if (this.startingDateTime != null) {
-            final LocalDateTime st = LocalDateTime.parse(this.startingDateTime,
-                    DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-            if (now.isBefore(st)) {
-                LOGGER.warn("Service access not allowed because it starts at {}. Now is {}",
-                        this.startingDateTime, now);
-                return false;
-            }
+        if (!doesStartingTimeAllowServiceAccess()) {
+            return false;
         }
 
-        if (this.endingDateTime != null) {
-            final LocalDateTime et = LocalDateTime.parse(this.endingDateTime,
-                    DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-
-            if (now.isAfter(et)) {
-                LOGGER.warn("Service access not allowed because it ended at {}. Now is {}",
-                        this.endingDateTime, now);
-                return false;
-            }
+        if (!doesEndingTimeAllowServiceAccess()) {
+            return false;
         }
 
         return super.isServiceAccessAllowed();
     }
+
+    /**
+     * Does ending time allow service access boolean.
+     *
+     * @return the boolean
+     */
+    protected boolean doesEndingTimeAllowServiceAccess() {
+        if (this.endingDateTime != null) {
+            final ZonedDateTime et = DateTimeUtils.zonedDateTimeOf(this.endingDateTime);
+
+            if (et != null) {
+                if (ZonedDateTime.now().isAfter(et)) {
+                    LOGGER.warn("Service access not allowed because it ended at {}. Now is {}",
+                            this.endingDateTime, ZonedDateTime.now());
+                    return false;
+                }
+            } else {
+                final LocalDateTime etLocal = DateTimeUtils.localDateTimeOf(this.endingDateTime);
+                if (etLocal != null) {
+                    if (LocalDateTime.now().isAfter(etLocal)) {
+                        LOGGER.warn("Service access not allowed because it ended at {}. Now is {}",
+                                this.endingDateTime, LocalDateTime.now());
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Does starting time allow service access boolean.
+     *
+     * @return the boolean
+     */
+    protected boolean doesStartingTimeAllowServiceAccess() {
+        if (this.startingDateTime != null) {
+            final ZonedDateTime st = DateTimeUtils.zonedDateTimeOf(this.startingDateTime);
+            if (st != null) {
+                if (ZonedDateTime.now().isBefore(st)) {
+                    LOGGER.warn("Service access not allowed because it starts at {}. Zoned now is {}",
+                            this.startingDateTime, ZonedDateTime.now());
+                    return false;
+                }
+            } else {
+                final LocalDateTime stLocal = DateTimeUtils.localDateTimeOf(this.startingDateTime);
+                if (stLocal != null) {
+                    if (LocalDateTime.now().isBefore(stLocal)) {
+                        LOGGER.warn("Service access not allowed because it starts at {}. Local now is {}",
+                                this.startingDateTime, ZonedDateTime.now());
+                        return false;
+                    }
+                }
+            }
+
+        }
+        return true;
+    }
+
+
 }
