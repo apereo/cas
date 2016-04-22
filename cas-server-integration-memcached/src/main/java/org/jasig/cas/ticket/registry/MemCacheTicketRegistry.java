@@ -70,7 +70,7 @@ public final class MemCacheTicketRegistry extends AbstractTicketRegistry impleme
     }
 
     @Override
-    protected void updateTicket(final Ticket ticketToUpdate) {
+    public void updateTicket(final Ticket ticketToUpdate) {
         if (this.client == null) {
             logger.debug("No memcached client is configured.");
             return;
