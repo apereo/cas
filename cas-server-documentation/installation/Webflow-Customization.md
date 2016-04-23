@@ -34,6 +34,15 @@ of the webflow:
 # webflow.autoconfigure=true
 ```
 
+CAS by default is configured to hot reload changes to the Spring webflow configuration.
+The following setting switches on flow development mode. Development mode switches 
+on hot-reloading of flow definition changes, 
+including changes to dependent flow resources such as message bundles.
+
+```properties
+# webflow.refresh=true
+```
+
 ## Required Service for Authentication
 By default, CAS will present a generic success page if the initial authentication request does not identify
 the target application. In some cases, the ability to login to CAS without logging

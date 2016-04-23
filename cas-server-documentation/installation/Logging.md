@@ -69,3 +69,47 @@ this feature from working. You may need to change the `catalina.properties` and 
 You may need to do something similar on other containers if they skip scanning Log4j JAR files.
 
 Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang. 
+
+## Routing Logs to SysLog
+CAS logging framework does have the ability to route messages to an external syslog instance. To configure this,
+you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
+
+```xml
+...
+<Appenders>
+    <Syslog name="SYSLOG" format="RFC5424" host="localhost" port="8514"
+            protocol="TCP" appName="MyApp" includeMDC="true"
+            facility="LOCAL0" enterpriseNumber="18060" newLine="true"
+            messageId="Audit" id="App"/>
+</Appenders>
+
+...
+
+<logger name="org.jasig" additivity="true">
+    <level value="DEBUG" />
+    <appender-ref ref="cas" />
+    <appender-ref ref="SYSLOG" />
+</logger>
+
+```
+
+You can also configure the remote destination output over SSL and specify the related keystore configuration:
+
+```xml
+...
+
+<Appenders>
+    <TLSSyslog name="bsd" host="localhost" port="6514">
+      <SSL>
+        <KeyStore location="log4j2-keystore.jks" password="changeme"/>
+        <TrustStore location="truststore.jks" password="changeme"/>
+      </SSL>
+    </TLSSyslog>
+</Appenders>
+
+...
+
+```
+
+For additional logging functionality, please refer to the Log4j configuration url or view
+the [CAS Logging functionality](Logging.html).

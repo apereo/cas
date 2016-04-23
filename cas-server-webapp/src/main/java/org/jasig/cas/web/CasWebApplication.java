@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -21,13 +23,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootApplication(scanBasePackages = {"org.jasig.cas"},
+@SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
                 DataSourceAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
+@ComponentScan(basePackages = {"org.jasig.cas", "org.pac4j.springframework"},
+               excludeFilters = { @ComponentScan.Filter(type = FilterType.REGEX,
+               pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
 @ImportResource(locations = {"classpath:/spring-configuration/*.xml",
         "classpath:/spring-configuration/*.groovy",
         "classpath:/deployerConfigContext.xml",

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link CasSecurityContextConfiguration} that attempts to create Spring-managed beans
@@ -42,7 +43,7 @@ import java.util.Properties;
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasSecurityContextConfiguration.class);
 
-    @Value("${cas.securityContext.adminpages.ip:}")
+    @Value("${cas.securityContext.adminpages.ip:127\\.0\\.0\\.1}")
     private String regexPattern;
 
     @Value("${cas.securityContext.adminpages.adminRoles:}")
@@ -77,58 +78,92 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @RefreshScope
-    @Bean(name = "requiresAuthenticationStatusStatsInterceptor")
-    public HandlerInterceptorAdapter requiresAuthenticationInterceptor() {
+    @Bean(name = "requiresAuthenticationStatusInterceptor")
+    public RequiresAuthenticationInterceptor requiresAuthenticationStatusInterceptor() {
+        return new RequiresAuthenticationInterceptor(new
+                Config(new IpClient(new IpRegexpAuthenticator(this.regexPattern))), "IpClient");
+    }
 
-        if (StringUtils.isNotBlank(this.regexPattern)) {
-            LOGGER.debug("Securing sensitive endpoints via IP pattern {}", this.regexPattern);
-            return new RequiresAuthenticationInterceptor(
-                    new Config(new IpClient(new IpRegexpAuthenticator(this.regexPattern))), "IpClient");
-        }
-
+    /**
+     * Config config.
+     *
+     * @return the config
+     */
+    @RefreshScope
+    @Bean(name = "config")
+    public Config config() {
         try {
             if (StringUtils.isNotBlank(this.loginUrl) && StringUtils.isNotBlank(this.callbackUrl)
-                && StringUtils.isNotBlank(this.roles)) {
+                    && StringUtils.isNotBlank(this.roles)) {
                 final IndirectClient client = new CasClient(this.loginUrl);
                 final Properties properties = new Properties();
                 properties.load(this.userPropertiesFile.getInputStream());
                 client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
 
                 final Config cfg = new Config(this.callbackUrl, client);
-                cfg.setAuthorizer(new RequireAnyRoleAuthorizer(org.springframework.util.StringUtils.commaDelimitedListToSet(this.roles)));
+                cfg.setAuthorizer(
+                        new RequireAnyRoleAuthorizer(org.springframework.util.StringUtils.commaDelimitedListToSet(this.roles)));
 
-                final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(cfg, "CasClient",
-                        "securityHeaders,csrfToken,RequireAnyRoleAuthorizer") {
-                    @Override
-                    protected void forbidden(final WebContext context, final List<Client> currentClients, final UserProfile profile) {
-                        context.setResponseStatus(HttpStatus.SC_FORBIDDEN);
-                    }
-                };
-                return interceptor;
+                return cfg;
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
+        return new Config();
+    }
 
-        return new HandlerInterceptorAdapter() {
+    /**
+     * Requires authentication status admin endpoints interceptor requires authentication interceptor.
+     *
+     * @return the requires authentication interceptor
+     */
+    @RefreshScope
+    @Bean(name = "requiresAuthenticationStatusAdminEndpointsInterceptor")
+    public RequiresAuthenticationInterceptor requiresAuthenticationStatusAdminEndpointsInterceptor() {
+
+        final Config cfg = config();
+        if (cfg.getClients() == null) {
+            return requiresAuthenticationStatusInterceptor();
+        }
+
+        final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(cfg, "CasClient",
+                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer") {
             @Override
-            public boolean preHandle(final HttpServletRequest request,
-                                     final HttpServletResponse response,
-                                     final Object handler) throws Exception {
-
-                LOGGER.info("Access denied to {}", request.getRequestURI());
-                response.setStatus(HttpStatus.SC_FORBIDDEN);
-                return false;
+            protected void forbidden(final WebContext context, final List<Client> currentClients,
+                                     final UserProfile profile) {
+                context.setResponseStatus(HttpStatus.SC_FORBIDDEN);
             }
         };
+        return interceptor;
     }
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(requiresAuthenticationInterceptor())
-                .addPathPatterns("/status/**");
-
+        registry.addInterceptor(statusInterceptor()).addPathPatterns("/status/**");
         registry.addInterceptor(webContentInterceptor()).addPathPatterns("/*");
+    }
+
+    /**
+     * Status interceptor handler interceptor adapter.
+     *
+     * @return the handler interceptor adapter
+     */
+    @Bean(name = "statusInterceptor")
+    public HandlerInterceptorAdapter statusInterceptor() {
+        return new HandlerInterceptorAdapter() {
+            @Override
+            public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+                                     final Object handler) throws Exception {
+                final String requestPath = request.getRequestURI();
+                final Pattern pattern = Pattern.compile("/status(/)*$");
+
+                if (pattern.matcher(requestPath).find()) {
+                    return requiresAuthenticationStatusInterceptor().preHandle(request, response, handler);
+                }
+                return requiresAuthenticationStatusAdminEndpointsInterceptor().preHandle(request, response, handler);
+
+            }
+        };
     }
 
     /**
@@ -139,8 +174,8 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean(name = "mappingCustomizer")
     public EndpointHandlerMappingCustomizer mappingCustomizer() {
-        return mapping -> mapping.setInterceptors(new Object[]{requiresAuthenticationInterceptor()});
+        return mapping -> mapping.setInterceptors(new Object[]{
+                statusInterceptor()
+        });
     }
-
-
 }

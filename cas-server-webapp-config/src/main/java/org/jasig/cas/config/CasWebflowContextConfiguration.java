@@ -61,6 +61,9 @@ public class CasWebflowContextConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Value("${webflow.refresh:true}")
+    private boolean webflowDevelopment;
+    
     @Value("${webflow.always.pause.redirect:false}")
     private boolean alwaysPauseOnRedirect;
 
@@ -202,12 +205,13 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow builder services
      */
+    @RefreshScope
     @Bean(name = "builder")
     public FlowBuilderServices builder() {
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
-        builder.setDevelopmentMode(true);
+        builder.setDevelopmentMode(this.webflowDevelopment);
         return builder.build();
     }
 

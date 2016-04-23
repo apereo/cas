@@ -5,11 +5,6 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring / Statistics
 The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software.
-Access is granted the following settings in `application.properties` file:
-
-```properties
-# cas.securityContext.adminpages.ip=127\.0\.0\.1
-```
 
 The following endpoints are secured and available:
 
@@ -31,12 +26,37 @@ The following endpoints are secured and available:
 | `/status/dashboard`               | Control panel to CAS server functionality and management.
 | `/status/ssosessions`             | Report of active SSO sessions and authentications.
 
+## Security
+Access is granted the following settings in `application.properties` file:
+
+```properties
+# cas.securityContext.adminpages.ip=127\.0\.0\.1
+```
+
+The `/status` endpoint is always protected by an IP pattern. The other administrative endpoints however can optionally be protected by the CAS server, via the following settings:
+
+```properties
+# cas.securityContext.adminpages.users=classpath:user-details.properties
+# cas.securityContext.adminpages.adminRoles=ROLE_ADMIN
+# cas.securityContext.adminpages.loginUrl=${server.prefix}/login
+# cas.securityContext.adminpages.service=${server.prefix}/callback
+```
+
+The format of the `user-details.properties` file is as such:
+
+```properties
+# username=password,grantedAuthority
+casuser=notused,ROLE_ADMIN
+```
+
+Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
+
 ## Monitors
 
 ```bash
 Health: OK
 
-    1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
+    1. MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 ```
 
 The list of configured monitors are by default the following:
@@ -50,7 +70,7 @@ The list of configured monitors are by default the following:
 
 The following optional monitors are also available:
 
-- Memcached
+### Memcached
 
 ```xml
 
@@ -78,7 +98,7 @@ The following settings are available:
 # cache.monitor.eviction.threshold=0
 ```
 
-- Ehcache
+### Ehcache
 
 ```xml
 <dependency>
@@ -101,7 +121,7 @@ The following settings are available:
 # cache.monitor.eviction.threshold=0
 ```
 
-- JDBC
+### JDBC
 
 ```xml
 
@@ -126,7 +146,7 @@ The following settings are available:
 
 ```
 
-- LDAP
+### LDAP
 
 ```xml
 
@@ -165,7 +185,7 @@ The following settings are available:
 ```
 
 ### Metric Refresh Interval
-The reporting interval can be configured via the `application.properties` file:
+The metrics reporting interval can be configured via the `application.properties` file:
 
 ```properties
 # Define how often should metric data be reported. Default is 30 seconds.
@@ -223,48 +243,4 @@ type=METER, name=org.jasig.cas.CentralAuthenticationServiceImpl.DESTROY_TICKET_G
 
 type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
 ```
-
-## Routing logs to SysLog
-CAS logging framework does have the ability to route messages to an external syslog instance. To configure this,
-you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
-
-```xml
-...
-<Appenders>
-    <Syslog name="SYSLOG" format="RFC5424" host="localhost" port="8514"
-            protocol="TCP" appName="MyApp" includeMDC="true"
-            facility="LOCAL0" enterpriseNumber="18060" newLine="true"
-            messageId="Audit" id="App"/>
-</Appenders>
-
-...
-
-<logger name="org.jasig" additivity="true">
-    <level value="DEBUG" />
-    <appender-ref ref="cas" />
-    <appender-ref ref="SYSLOG" />
-</logger>
-
-```
-
-You can also configure the remote destination output over SSL and specify the related keystore configuration:
-
-```xml
-...
-
-<Appenders>
-    <TLSSyslog name="bsd" host="localhost" port="6514">
-      <SSL>
-        <KeyStore location="log4j2-keystore.jks" password="changeme"/>
-        <TrustStore location="truststore.jks" password="changeme"/>
-      </SSL>
-    </TLSSyslog>
-</Appenders>
-
-...
-
-```
-
-For additional logging functionality, please refer to the Log4j configuration url or view
-the [CAS Logging functionality](Logging.html).
 
