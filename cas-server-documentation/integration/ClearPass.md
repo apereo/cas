@@ -31,8 +31,15 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 
 ## Configuration
 
-### Create Public/Private Keys
+### Setup metadata populator to cache credentials
 
+```xml
+<util:list id="authenticationMetadataPopulators">
+    <ref bean="cacheCredentialsMetaDataPopulator" />
+</util:list>
+```
+
+### Create Public/Private Keys
 
 ```bash
 openssl genrsa -out private.key 1024
@@ -119,7 +126,7 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
     p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
 <bean id="casRegisteredServiceCipherExecutor"
-    class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
+    class="org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor" />
 
 <bean id="casAttributeEncoder"
     class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
