@@ -16,9 +16,7 @@ buildscript {
         mavenLocal()
         mavenCentral()
         jcenter()
-        maven {
-            url "https://maven.eveoh.nl/content/repositories/releases"
-        }
+        maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
 
@@ -67,6 +65,7 @@ subprojects {
         maven { url "http://files.couchbase.com/maven2" }
         maven { url "http://repo.spring.io/milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven"}
+        maven { url "http://sevntu-checkstyle.github.com/sevntu.checkstyle/maven2"}
     }
 
     test {
@@ -187,6 +186,9 @@ subprojects {
             findbugsPlugins libraries.findbugscontrib
             findbugsPlugins libraries.findbugssec
         }
+
+        checkstyle "com.github.sevntu.checkstyle:sevntu-checks:${checkstyleExtVersion}"
+
         testCompile libraries.tests
         runtime libraries.javaximpl
     }
