@@ -29,8 +29,14 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 
 ## Configuration
 
-### Create Public/Private Keys
+### Cache Credential
+Enable the caching and capturing of the credential via the following:
 
+```properties
+# cas.clearpass.cache.credential=true
+```
+
+### Create Keys
 
 ```bash
 openssl genrsa -out private.key 1024
@@ -49,16 +55,9 @@ as an attribute for the given attribute release policy of choice.
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
-  "name" : "test",
-  "id" : 1,
-  "evaluationOrder" : 0,
   "attributeReleasePolicy" : {
     "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
-    },
-    "authorizedToReleaseCredentialPassword" : true,
-    "authorizedToReleaseProxyGrantingTicket" : false
+    "authorizedToReleaseCredentialPassword" : true
   },
   "publicKey" : {
     "@class" : "org.jasig.cas.services.RegisteredServicePublicKeyImpl",

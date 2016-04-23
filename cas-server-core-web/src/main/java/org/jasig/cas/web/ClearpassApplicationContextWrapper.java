@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class ClearpassApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Value("${cas.clearpass.cache.credential:false}")
     private boolean cacheCredential;
