@@ -78,7 +78,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         return this.serviceFactoryList.get(0);
     }
 
-    protected List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
+    protected List<ServiceFactory<? extends WebApplicationService>> getServiceFactoryList() {
         return this.serviceFactoryList;
     }
 

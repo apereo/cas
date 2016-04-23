@@ -52,7 +52,7 @@ public class CouchbaseTicketRegistryConfiguration {
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
         factory.setNodes(StringUtils.commaDelimitedListToSet(this.nodeSet));
         factory.setTimeout(this.timeout);
-        factory.setBucket(this.bucket);
+        factory.setBucketName(this.bucket);
         factory.setPassword(this.password);
         return factory;
     }

@@ -8,32 +8,6 @@
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
-
-        <!-- Extensions -->
-        <module name="com.github.sevntu.checkstyle.checks.coding.NoNullForCollectionReturnCheck">
-            <property name="severity" value="error"/>
-        </module>
-        <module name="com.github.sevntu.checkstyle.checks.coding.SimpleAccessorNameNotationCheck">
-            <property name="severity" value="error"/>
-        </module>
-        <module name="com.github.sevntu.checkstyle.checks.coding.RedundantReturnCheck">
-            <property name="severity" value="error"/>
-        </module>
-        <module name="com.github.sevntu.checkstyle.checks.coding.UselessSuperCtorCallCheck">
-            <property name="severity" value="error"/>
-        </module>
-        <module name="com.github.sevntu.checkstyle.checks.coding.ForbidReturnInFinallyBlock">
-            <property name="severity" value="error"/>
-        </module>
-        <module name="com.github.sevntu.checkstyle.checks.coding.MapIterationInForEachLoopCheck">
-            <property name="severity" value="error"/>
-        </module>
-        <module name="com.github.sevntu.checkstyle.checks.design.StaticMethodCandidate">
-            <property name="severity" value="error"/>
-        </module>
-
-
-
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>

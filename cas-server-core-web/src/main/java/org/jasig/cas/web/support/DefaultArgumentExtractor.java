@@ -25,8 +25,8 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
      * Default extractor.
      */
     public DefaultArgumentExtractor() {
-        super();
     }
+    
     /**
      * Instantiates a new argument extractor.
      *
@@ -47,7 +47,7 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return getServiceFactories().stream().map(factory -> {
+        return getServiceFactoryList().stream().map(factory -> {
             final WebApplicationService service = factory.createService(request);
             if (service != null) {
                 logger.debug("Created {} based on {}", service, factory);
