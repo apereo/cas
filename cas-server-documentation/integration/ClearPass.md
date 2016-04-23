@@ -31,7 +31,7 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 
 ## Configuration
 
-### Setup metadata populator to cache credentials
+### Cache Credentials
 
 ```xml
 <util:list id="authenticationMetadataPopulators">
