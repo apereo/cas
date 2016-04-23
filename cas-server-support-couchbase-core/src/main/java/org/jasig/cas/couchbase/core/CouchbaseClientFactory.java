@@ -134,7 +134,7 @@ public class CouchbaseClientFactory {
         this.nodes = nodes;
     }
 
-    public void setBucket(final String bucket) {
+    public void setBucketName(final String bucket) {
         this.bucketName = bucket;
     }
 

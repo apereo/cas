@@ -73,7 +73,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
      * Instantiates a new Central authentication service impl.
      */
     public CentralAuthenticationServiceImpl() {
-        super();
+        
     }
 
     /**

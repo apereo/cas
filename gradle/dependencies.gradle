@@ -81,6 +81,8 @@ ext.libraries = [
                 dependencies.create("com.maxmind.geoip2:geoip2:$maxmindVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
                     exclude(group: 'commons-codec', module: 'commons-codec')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-core')
                     force = true
                 }
         ],

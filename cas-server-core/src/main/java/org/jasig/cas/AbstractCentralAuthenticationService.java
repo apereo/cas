@@ -59,7 +59,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     /** Application event publisher. */
     @Autowired
-    protected ApplicationEventPublisher eventPublisher;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     /** {@link TicketRegistry}  for storing and retrieving tickets as needed. */
     @Resource(name="ticketRegistry")
@@ -143,7 +143,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected void doPublishEvent(final ApplicationEvent e) {
         logger.debug("Publishing {}", e);
-        this.eventPublisher.publishEvent(e);
+        this.applicationEventPublisher.publishEvent(e);
     }
 
 
@@ -258,7 +258,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
-        this.eventPublisher = applicationEventPublisher;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
