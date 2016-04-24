@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -113,9 +113,8 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry {
             logger.debug("No ticket by id [{}] is found in the registry", ticketId);
             return null;
         }
-        final Ticket proxiedTicket = decodeTicket((Ticket) element.getObjectValue());
-        final Ticket ticket = getProxiedTicketInstance(proxiedTicket);
-        
+        final Ticket ticket = decodeTicket((Ticket) element.getObjectValue());
+
         final CacheConfiguration config = new CacheConfiguration();
         config.setTimeToIdleSeconds(ticket.getExpirationPolicy().getTimeToIdle());
         config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToIdle());
@@ -132,16 +131,14 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Element> cacheTickets = this.ehcacheTicketsCache.getAll(
-                this.ehcacheTicketsCache.getKeysWithExpiryCheck()).values();
-        final Collection<Ticket> allTickets = new HashSet<>(cacheTickets.size());
-        cacheTickets.stream().forEach(ticket -> allTickets.add(getProxiedTicketInstance((Ticket) ticket.getObjectValue())));
-        return decodeTickets(allTickets);
+        final Collection<Element> cacheTickets =
+                this.ehcacheTicketsCache.getAll(this.ehcacheTicketsCache.getKeysWithExpiryCheck()).values();
+        return decodeTickets(cacheTickets.stream().map(e -> (Ticket) e.getObjectValue()).collect(Collectors.toList()));
     }
 
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 

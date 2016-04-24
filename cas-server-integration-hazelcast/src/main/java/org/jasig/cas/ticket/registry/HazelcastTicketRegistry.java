@@ -70,7 +70,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 
@@ -90,8 +90,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        final Ticket ticket = decodeTicket(this.registry.get(encTicketId));
-        return getProxiedTicketInstance(ticket);
+        return decodeTicket(this.registry.get(encTicketId));
     }
     
     @Override
