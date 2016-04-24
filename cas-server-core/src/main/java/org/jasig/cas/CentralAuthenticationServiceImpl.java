@@ -5,8 +5,8 @@ import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.PrincipalException;
@@ -154,6 +154,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication != null);
+        this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
         logger.info("Granted ticket [{}] for service [{}] and principal [{}]",
@@ -215,6 +216,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
         final ProxyTicketFactory factory = this.ticketFactory.get(ProxyTicket.class);
         final ProxyTicket proxyTicket = factory.create(proxyGrantingTicketObject, service);
+
+        this.ticketRegistry.updateTicket(proxyGrantingTicketObject);
         this.ticketRegistry.addTicket(proxyTicket);
 
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",

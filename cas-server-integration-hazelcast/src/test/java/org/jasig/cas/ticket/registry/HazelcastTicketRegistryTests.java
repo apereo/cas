@@ -113,7 +113,8 @@ public class HazelcastTicketRegistryTests {
         this.hzTicketRegistry1.addTicket(st1);
         this.hzTicketRegistry1.addTicket(st2);
         this.hzTicketRegistry1.addTicket(st3);
-
+        this.hzTicketRegistry1.updateTicket(tgt);
+        
         assertNotNull(this.hzTicketRegistry1.getTicket(tgt.getId(), TicketGrantingTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));

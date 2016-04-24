@@ -16,10 +16,8 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
 public final class DistributedTicketRegistryTests {
 
@@ -111,18 +109,19 @@ public final class DistributedTicketRegistryTests {
         }
 
         @Override
-        protected void updateTicket(final Ticket ticket) {
+        public void updateTicket(final Ticket ticket) {
             this.parent.setWasTicketUpdated(true);
         }
 
         @Override
         public void addTicket(final Ticket ticket) {
             this.tickets.put(ticket.getId(), ticket);
+            updateTicket(ticket);
         }
 
         @Override
         public Ticket getTicket(final String ticketId) {
-            return getProxiedTicketInstance(this.tickets.get(ticketId));
+            return this.tickets.get(ticketId);
         }
 
         @Override
