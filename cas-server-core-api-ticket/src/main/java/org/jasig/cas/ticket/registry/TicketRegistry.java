@@ -63,4 +63,12 @@ public interface TicketRegistry {
      * might or might not be valid i.e. expired.
      */
     Collection<Ticket> getTickets();
+
+    /**
+     * Update the received ticket.
+     *
+     * @param ticket the ticket
+     */
+    void updateTicket(Ticket ticket);
+
 }

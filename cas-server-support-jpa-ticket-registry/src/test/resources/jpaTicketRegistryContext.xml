@@ -127,12 +127,7 @@
                       expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
         <aop:pointcut id="ticketRegistryLockingOperations"
                       expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
-        <aop:pointcut id="ticketRegistryServiceTicketDelegatorOperations"
-                      expression="execution(* org.jasig.cas.ticket.registry.ServiceTicketDelegator.*(..))"/>
-        <aop:pointcut id="ticketRegistryTicketGrantingTicketDelegatorOperations"
-                      expression="execution(* org.jasig.cas.ticket.registry.TicketGrantingTicketDelegator.*(..))"/>
-        <aop:pointcut id="ticketRegistryProxyGrantingTicketDelegatorOperations"
-                      expression="execution(* org.jasig.cas.ticket.registry.ProxyGrantingTicketDelegator.*(..))"/>
+
 
         <!--
         <aop:pointcut id="casOperations"
@@ -143,12 +138,6 @@
                      pointcut-ref="ticketRegistryOperations"/>
         <aop:advisor advice-ref="txRegistryLockingAdvice"
                      pointcut-ref="ticketRegistryLockingOperations"/>
-        <aop:advisor advice-ref="txRegistryTicketGrantingTicketDelegatorAdvice"
-                     pointcut-ref="ticketRegistryTicketGrantingTicketDelegatorOperations"/>
-        <aop:advisor advice-ref="txRegistryServiceTicketDelegatorAdvice"
-                     pointcut-ref="ticketRegistryServiceTicketDelegatorOperations"/>
-        <aop:advisor advice-ref="txRegistryProxyGrantingTicketDelegatorAdvice"
-                     pointcut-ref="ticketRegistryProxyGrantingTicketDelegatorOperations"/>
 
         <!--
         <aop:advisor advice-ref="txCentralAuthenticationServiceAdvice"

@@ -9,10 +9,8 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
-import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.util.DateTimeUtils;
 import org.jasig.cas.util.DigestUtils;
-import org.jasig.cas.util.Pair;
 import org.jasig.cas.util.SerializationUtils;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -33,12 +31,9 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import java.lang.reflect.Constructor;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +43,7 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.0.0
  * <p>
- * This is a published and supported CAS Server 3 API.
+ * This is a published and supported CAS Server API.
  * </p>
  */
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState, Job {
@@ -78,21 +73,11 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
 
-    private List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators = new ArrayList<>();
-
     /**
-     * Default constructor which registers the appropriate ticket delegators.
+     * Default constructor.
      */
     @SuppressWarnings("unchecked")
     public AbstractTicketRegistry() {
-        ticketDelegators.add(new Pair(ProxyGrantingTicket.class,
-                AbstractTicketDelegator.getDefaultConstructor(ProxyGrantingTicketDelegator.class)));
-        ticketDelegators.add(new Pair(TicketGrantingTicket.class,
-                AbstractTicketDelegator.getDefaultConstructor(TicketGrantingTicketDelegator.class)));
-        ticketDelegators.add(new Pair(ProxyTicket.class,
-                AbstractTicketDelegator.getDefaultConstructor(ProxyTicketDelegator.class)));
-        ticketDelegators.add(new Pair(ServiceTicket.class,
-                AbstractTicketDelegator.getDefaultConstructor(ServiceTicketDelegator.class)));
     }
 
     /**
@@ -199,46 +184,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return the boolean
      */
     public abstract boolean deleteSingleTicket(final String ticketId);
-
-    /**
-     * Update the received ticket.
-     *
-     * @param ticket the ticket
-     */
-    protected abstract void updateTicket(Ticket ticket);
-
+    
     /**
      * Whether or not a callback to the TGT is required when checking for expiration.
      *
      * @return true, if successful
      */
     protected abstract boolean needsCallback();
-
-    /**
-     * Gets the proxied ticket instance.
-     *
-     * @param ticket the ticket
-     * @return the proxied ticket instance
-     */
-    protected final Ticket getProxiedTicketInstance(final Ticket ticket) {
-        if (ticket == null) {
-            return null;
-        }
-
-        for (final Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>> ticketDelegator: ticketDelegators) {
-            final Class<? extends Ticket> clazz = ticketDelegator.getFirst();
-            if (clazz.isAssignableFrom(ticket.getClass())) {
-                final Constructor<? extends AbstractTicketDelegator> constructor = ticketDelegator.getSecond();
-                try {
-                    return constructor.newInstance(this, ticket, needsCallback());
-                } catch (final Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        throw new IllegalStateException("Cannot wrap ticket of type: " + ticket.getClass() + " with a ticket delegator");
-    }
 
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
@@ -331,16 +283,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
     }
 
-    @Nullable
-    public List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> getTicketDelegators() {
-        return ticketDelegators;
-    }
-
-    public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>>
-                                            ticketDelegators) {
-        this.ticketDelegators = ticketDelegators;
-    }
-
     /**
      * Common code to go over expired tickets and clean them up.
      **/
@@ -393,8 +335,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected void scheduleCleanerJob() {
         try {
 
-            if (!cleanerEnabled && isCleanerSupported()) {
-                logger.info("Ticket registry cleaner is disabled or is not supported by {}. No cleaner processes will be scheduled.",
+            if (!this.cleanerEnabled) {
+                logger.info("Ticket registry cleaner is disabled by {}. No cleaner processes will be scheduled.",
+                        this.getClass().getName());
+                return;
+            }
+
+            if (!isCleanerSupported()) {
+                logger.info("Ticket registry cleaner is not supported by {}. No cleaner processes will be scheduled.",
                         this.getClass().getName());
                 return;
             }
@@ -412,7 +360,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                             .repeatForever()).build();
 
             logger.debug("Scheduling {} job", this.getClass().getSimpleName());
-            scheduler.scheduleJob(job, trigger);
+            this.scheduler.scheduleJob(job, trigger);
             logger.info("{} will clean tickets every {} minutes",
                     this.getClass().getSimpleName(),
                     TimeUnit.SECONDS.toMinutes(this.refreshInterval));
@@ -440,6 +388,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return true/false.
      */
     protected boolean isCleanerSupported() {
-        return true;
+        return this.scheduler != null;
     }
 }
