@@ -43,6 +43,14 @@
         </tx:attributes>
     </tx:advice>
 
+    <tx:advice id="txRegistrySupportAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="getAuthenticationFrom" read-only="false" />
+            <tx:method name="getAuthenticatedPrincipalFrom" read-only="false" />
+            <tx:method name="getPrincipalAttributesFrom" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
+
     <tx:advice id="txRegistryServiceTicketDelegatorAdvice" transaction-manager="ticketTransactionManager">
         <tx:attributes>
             <tx:method name="grantProxyGrantingTicket" read-only="false" />
@@ -73,6 +81,8 @@
     <aop:config>
         <aop:pointcut id="ticketRegistryOperations"
                       expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
+        <aop:pointcut id="ticketRegistrySupportOperations"
+                      expression="execution(* org.jasig.cas.ticket.registry.TicketRegistrySupport.*(..))"/>
         <aop:pointcut id="ticketRegistryLockingOperations"
                       expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
         <aop:pointcut id="ticketRegistryServiceTicketDelegatorOperations"
@@ -83,10 +93,12 @@
                       expression="execution(* org.jasig.cas.ticket.registry.ProxyGrantingTicketDelegator.*(..))"/>
 
         <aop:pointcut id="casOperations"
-                      expression="execution(* org.jasig.cas.CentralAuthenticationServiceImpl.*(..))"/>
+                      expression="execution(* org.jasig.cas.CentralAuthenticationService.*(..))"/>
 
         <aop:advisor advice-ref="txRegistryAdvice"
                      pointcut-ref="ticketRegistryOperations"/>
+        <aop:advisor advice-ref="txRegistrySupportAdvice"
+                     pointcut-ref="ticketRegistrySupportOperations"/>
         <aop:advisor advice-ref="txRegistryLockingAdvice"
                      pointcut-ref="ticketRegistryLockingOperations"/>
         <aop:advisor advice-ref="txRegistryTicketGrantingTicketDelegatorAdvice"
