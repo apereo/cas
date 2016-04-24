@@ -61,7 +61,6 @@ org.jasig.cas.support.oauth.ticket
 org.jasig.cas.support.oauth.ticket.accesstoken
 org.jasig.cas.support.oauth.ticket.code
 org.jasig.cas.support.oauth.ticket.refreshtoken
-org.jasig.cas.support.oauth.ticket.registry
 org.jasig.cas.support.oauth.util
 org.jasig.cas.support.oauth.validator
 org.jasig.cas.support.oauth.web
