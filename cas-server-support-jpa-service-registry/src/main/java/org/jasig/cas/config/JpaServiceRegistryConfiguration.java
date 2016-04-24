@@ -22,80 +22,64 @@ import java.util.Properties;
  */
 @Configuration("jpaServiceRegistryConfiguration")
 public class JpaServiceRegistryConfiguration {
-
-    /**
-     * The Show sql.
-     */
+    
     @Value("${database.show.sql:true}")
     private boolean showSql;
-
-    /**
-     * The Generate ddl.
-     */
+    
     @Value("${database.gen.ddl:true}")
     private boolean generateDdl;
-
-    /**
-     * The Hibernate dialect.
-     */
+    
     @Value("${svcreg.database.dialect:org.hibernate.dialect.HSQLDialect}")
     private String hibernateDialect;
-
-    /**
-     * The Hibernate hbm 2 ddl auto.
-     */
+    
     @Value("${svcreg.database.ddl.auto:create-drop}")
     private String hibernateHbm2DdlAuto;
-
-    /**
-     * The Hibernate batch size.
-     */
+    
     @Value("${svcreg.database.batchSize:1}")
     private String hibernateBatchSize;
-
-
-    /**
-     * The Driver class.
-     */
+    
     @Value("${svcreg.database.driverClass:org.hsqldb.jdbcDriver}")
     private String driverClass;
 
-    /**
-     * The Jdbc url.
-     */
     @Value("${svcreg.database.url:jdbc:hsqldb:mem:cas-service-registry}")
     private String jdbcUrl;
 
-    /**
-     * The User.
-     */
     @Value("${svcreg.database.user:sa}")
     private String user;
-
-    /**
-     * The Password.
-     */
+    
     @Value("${svcreg.database.password:}")
     private String password;
     
-    /**
-     * The Max pool size.
-     */
     @Value("${svcreg.database.pool.maxSize:18}")
     private int maxPoolSize;
-
-    /**
-     * The Max idle time excess connections.
-     */
+    
     @Value("${svcreg.database.pool.maxIdleTime:1000}")
     private int maxIdleTimeExcessConnections;
-
-    /**
-     * The Checkout timeout.
-     */
+    
     @Value("${svcreg.database.pool.maxWait:2000}")
     private int checkoutTimeout;
-     
+
+
+    @Value("${svcreg.database.idle.timeout:5000}")
+    private int idleTimeout;
+
+    @Value("${svcreg.database.leak.threshold:10}")
+    private int leakDetectionThreshold;
+
+    @Value("${svcreg.database.fail.fast:true}")
+    private boolean failFast;
+
+    @Value("${svcreg.database.isolate.internal.queries:false}")
+    private boolean isolateInternalQueries;
+
+    @Value("${svcreg.database.health.query:select 1}")
+    private String healthCheckQuery;
+
+    @Value("${svcreg.database.pool.suspension:false}")
+    private boolean allowPoolSuspension;
+
+    @Value("${svcreg.database.autocommit:false}")
+    private boolean autoCommit;
 
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.
@@ -179,7 +163,13 @@ public class JpaServiceRegistryConfiguration {
 
             bean.setMaximumPoolSize(this.maxPoolSize);
             bean.setMinimumIdle(this.maxIdleTimeExcessConnections);
-
+            bean.setIdleTimeout(this.idleTimeout);
+            bean.setLeakDetectionThreshold(this.leakDetectionThreshold);
+            bean.setInitializationFailFast(this.failFast);
+            bean.setIsolateInternalQueries(this.isolateInternalQueries);
+            bean.setConnectionTestQuery(this.healthCheckQuery);
+            bean.setAllowPoolSuspension(this.allowPoolSuspension);
+            bean.setAutoCommit(this.autoCommit);
             bean.setLoginTimeout(this.checkoutTimeout);
             bean.setValidationTimeout(this.checkoutTimeout);
             return bean;

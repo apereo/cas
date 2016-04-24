@@ -29,6 +29,14 @@ The following settings are expected:
 # svcreg.database.pool.maxSize=18
 # svcreg.database.pool.maxWait=10000
 # svcreg.database.pool.maxIdleTime=120
+# svcreg.database.pool.maxWait=3000
+# svcreg.database.idle.timeout=3000
+# svcreg.database.leak.threshold=10
+# svcreg.database.fail.fast=true
+# svcreg.database.isolate.internal.queries=false
+# svcreg.database.health.query=select 1
+# svcreg.database.pool.suspension=false
+# svcreg.database.autocommit=false
 ```
 
 
