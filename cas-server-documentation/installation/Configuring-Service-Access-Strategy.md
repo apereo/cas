@@ -41,7 +41,7 @@ allows one to configure a service with the following properties:
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
 ### Grouper
-The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the Maven WAR overlay:
+The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

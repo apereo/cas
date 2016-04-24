@@ -4,7 +4,7 @@ title: CAS - Memcached Ticket Registry
 ---
 
 # Memcached Ticket Registry
-Memcached integration is enabled by including the following dependency in the Maven WAR overlay:
+Memcached integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

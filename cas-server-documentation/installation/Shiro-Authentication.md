@@ -9,7 +9,7 @@ CAS support handling the authentication event via [Apache Shiro](http://shiro.ap
 
 
 ## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

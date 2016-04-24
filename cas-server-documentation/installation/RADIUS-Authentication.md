@@ -4,7 +4,7 @@ title: CAS - RADIUS Authentication
 ---
 
 # RADIUS Authentication
-RADIUS support is enabled by only including the following dependency in the Maven WAR overlay:
+RADIUS support is enabled by only including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -14,7 +14,7 @@ RADIUS support is enabled by only including the following dependency in the Mave
 </dependency>
 ```
 
-RSA RADIUS support for MFA is enabled by only including the following dependency in the Maven WAR overlay:
+RSA RADIUS support for MFA is enabled by only including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

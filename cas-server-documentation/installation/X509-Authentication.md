@@ -15,7 +15,7 @@ additional work.
 
 
 ## X.509 Components
-X.509 support is enabled by including the following dependency in the Maven WAR overlay:
+X.509 support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

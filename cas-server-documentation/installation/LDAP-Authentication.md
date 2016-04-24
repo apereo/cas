@@ -4,7 +4,7 @@ title: CAS - LDAP Authentication
 ---
 
 # LDAP Authentication
-LDAP integration is enabled by including the following dependency in the Maven WAR overlay:
+LDAP integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

@@ -4,7 +4,7 @@ title: CAS - Infinispan Ticket Registry
 ---
 
 # Infinispan Ticket Registry
-Infinispan integration is enabled by including the following dependency in the Maven WAR overlay:
+Infinispan integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

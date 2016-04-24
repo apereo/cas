@@ -27,7 +27,7 @@ ticket expires.
 
 
 ## SPNEGO Components
-SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
+SPNEGO support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

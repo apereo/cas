@@ -83,7 +83,7 @@ service providers that do not publish a defined metadata. The following paramete
 | `acsUrl`                          | Required.
 
 ## Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

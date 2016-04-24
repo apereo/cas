@@ -17,7 +17,7 @@ OpenID identifiers are URIs. The default mechanism in CAS support is an uri endi
 (ie. `http://my.cas.server/openid/myusername` where the actual user login id is `myusername`).
 This is not recommended and you should think of a more elaborated way of providing URIs to your users.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

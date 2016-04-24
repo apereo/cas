@@ -139,7 +139,7 @@ about metadata sources that the identity provider uses.
 
 ### Configuration
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

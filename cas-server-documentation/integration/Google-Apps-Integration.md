@@ -6,7 +6,7 @@ title: CAS - Google Apps Integration
 # Overview
 Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an integration point for external authentication services. 
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

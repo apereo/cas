@@ -4,7 +4,7 @@ title: CAS - Ehcache Ticket Registry
 ---
 
 # Ehcache Ticket Registry
-Ehcache integration is enabled by including the following dependency in the Maven WAR overlay:
+Ehcache integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

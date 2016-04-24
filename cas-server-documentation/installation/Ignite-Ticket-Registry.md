@@ -4,7 +4,7 @@ title: CAS - Ignite Ticket Registry
 ---
 
 # Ignite Ticket Registry
-Ignite integration is enabled by including the following dependency in the Maven WAR overlay:
+Ignite integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

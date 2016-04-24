@@ -18,7 +18,7 @@ But the CAS server can also act as a client using the [pac4j security engine](ht
 * A SAML identity provider
 * An OpenID Connect identity provider.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

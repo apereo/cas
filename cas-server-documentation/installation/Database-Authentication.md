@@ -4,7 +4,7 @@ title: CAS - Database Authentication
 ---
 
 # Database Authentication
-Database authentication components are enabled by including the following dependencies in the Maven WAR overlay:
+Database authentication components are enabled by including the following dependencies in the WAR overlay:
 
 ```xml
 <dependency>
