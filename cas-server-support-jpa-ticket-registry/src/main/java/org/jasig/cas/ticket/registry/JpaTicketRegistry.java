@@ -79,7 +79,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        return getProxiedTicketInstance(getRawTicket(ticketId));
+        return getRawTicket(ticketId);
     }
 
     /**

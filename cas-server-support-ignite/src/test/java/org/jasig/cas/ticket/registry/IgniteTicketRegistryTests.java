@@ -7,7 +7,6 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -235,7 +234,8 @@ public class IgniteTicketRegistryTests {
         this.ticketRegistry.addTicket(st1);
         this.ticketRegistry.addTicket(st2);
         this.ticketRegistry.addTicket(st3);
-
+        this.ticketRegistry.updateTicket(tgt);
+        
         assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));

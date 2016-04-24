@@ -85,12 +85,11 @@ public class JcifsConfig {
             logger.warn("found login config in system property, may override : {}", propValue);
         }
 
-        URL url = getClass().getResource(
-            this.loginConf == null ? DEFAULT_LOGIN_CONFIG : this.loginConf);
+        URL url = getClass().getResource(StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf);
         if (url != null) {
             this.loginConf = url.toExternalForm();
         }
-        if (this.loginConf != null) {
+        if (StringUtils.isNotBlank(this.loginConf)) {
             System.setProperty(SYS_PROP_LOGIN_CONF, this.loginConf);
         } else {
             url = getClass().getResource("/jcifs/http/login.conf");
@@ -175,7 +174,7 @@ public class JcifsConfig {
     }
 
     @Autowired
-    public void setLoginConf(@Value("${cas.spnego.login.conf.file:/path/to/login.conf}")
+    public void setLoginConf(@Value("${cas.spnego.login.conf.file:}")
                              final String loginConf) {
         this.loginConf = loginConf;
     }

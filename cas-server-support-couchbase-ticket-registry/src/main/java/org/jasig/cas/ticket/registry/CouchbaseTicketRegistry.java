@@ -65,7 +65,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
     public CouchbaseTicketRegistry() {}
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
             final SerializableDocument document =
@@ -103,7 +103,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements T
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 logger.debug("Got ticket {} from registry.", t);
-                return getProxiedTicketInstance(t);
+                return t;
             }
             logger.debug("Ticket {} not found in registry.", encTicketId);
             return null;

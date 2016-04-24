@@ -6,15 +6,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
-import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
-import org.jasig.cas.support.oauth.ticket.registry.AccessTokenDelegator;
-import org.jasig.cas.support.oauth.ticket.registry.OAuthCodeDelegator;
-import org.jasig.cas.support.oauth.ticket.registry.RefreshTokenDelegator;
-import org.jasig.cas.ticket.registry.AbstractTicketDelegator;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
-import org.jasig.cas.util.Pair;
 import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,16 +55,5 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
             servicesManager.reload();
         }
 
-        final List delegators = this.ticketRegistry.getTicketDelegators();
-        if (delegators != null) {
-            this.ticketRegistry.getTicketDelegators().add(0, new Pair(RefreshToken.class,
-                    AbstractTicketDelegator.getDefaultConstructor(RefreshTokenDelegator.class)));
-            this.ticketRegistry.getTicketDelegators().add(1, new Pair(AccessToken.class,
-                    AbstractTicketDelegator.getDefaultConstructor(AccessTokenDelegator.class)));
-            this.ticketRegistry.getTicketDelegators().add(2, new Pair(OAuthCode.class,
-                    AbstractTicketDelegator.getDefaultConstructor(OAuthCodeDelegator.class)));
-        } else {
-            throw new RuntimeException("Ticket registry delegators cannot be determined");
-        }
     }
 }

@@ -72,7 +72,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    protected void updateTicket(final Ticket ticketToUpdate) {
+    public void updateTicket(final Ticket ticketToUpdate) {
         if (this.client == null) {
             logger.debug("No memcached client is available in the configuration.");
             return;
@@ -135,8 +135,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket t = (Ticket) this.client.get(ticketId);
             if (t != null) {
-                final Ticket result = decodeTicket(t);
-                return getProxiedTicketInstance(result);
+                return decodeTicket(t);
             }
         } catch (final Exception e) {
             logger.error("Failed fetching {} ", ticketId, e);

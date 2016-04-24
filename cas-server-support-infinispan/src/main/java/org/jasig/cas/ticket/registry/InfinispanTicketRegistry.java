@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link InfinispanTicketRegistry}. Infinispan is a distributed in-memory key/value data store with optional schema.
@@ -33,7 +32,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         this.cache.put(ticket.getId(), ticket);
     }
 
@@ -68,7 +67,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
         final Ticket ticket = this.cache.get(encTicketId);
-        return getProxiedTicketInstance(ticket);
+        return ticket;
     }
 
     @Override
@@ -89,7 +88,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
      */
     @Override
     public Collection<Ticket> getTickets() {
-        return decodeTickets(this.cache.values().stream().map(this::getProxiedTicketInstance).collect(Collectors.toList()));
+        return decodeTickets(this.cache.values());
     }
 
     public void setCache(final Cache<String, Ticket> cache) {

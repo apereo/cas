@@ -38,65 +38,78 @@ public class JpaTicketRegistryConfiguration {
     /**
      * The Hibernate dialect.
      */
-    @Value("${svcreg.database.dialect:org.hibernate.dialect.HSQLDialect}")
+    @Value("${ticketreg.database.dialect:org.hibernate.dialect.HSQLDialect}")
     private String hibernateDialect;
 
     /**
      * The Hibernate hbm 2 ddl auto.
      */
-    @Value("${svcreg.database.ddl.auto:create-drop}")
+    @Value("${ticketreg.database.ddl.auto:create-drop}")
     private String hibernateHbm2DdlAuto;
 
     /**
      * The Hibernate batch size.
      */
-    @Value("${svcreg.database.batchSize:1}")
+    @Value("${ticketreg.database.batchSize:1}")
     private String hibernateBatchSize;
 
 
     /**
      * The Driver class.
      */
-    @Value("${svcreg.database.driverClass:org.hsqldb.jdbcDriver}")
+    @Value("${ticketreg.database.driverClass:org.hsqldb.jdbcDriver}")
     private String driverClass;
 
     /**
      * The Jdbc url.
      */
-    @Value("${svcreg.database.url:jdbc:hsqldb:mem:cas-service-registry}")
+    @Value("${ticketreg.database.url:jdbc:hsqldb:mem:cas-service-registry}")
     private String jdbcUrl;
 
     /**
      * The User.
      */
-    @Value("${svcreg.database.user:sa}")
+    @Value("${ticketreg.database.user:sa}")
     private String user;
 
     /**
      * The Password.
      */
-    @Value("${svcreg.database.password:}")
+    @Value("${ticketreg.database.password:}")
     private String password;
     
+    
     /**
+     * The Initial pool size.
+     */
+    @Value("${ticketreg.database.pool.minSize:6}")
+    private int initialPoolSize;
+    
+    /**
+
      * The Max pool size.
      */
-    @Value("${svcreg.database.pool.maxSize:18}")
+    @Value("${ticketreg.database.pool.maxSize:18}")
     private int maxPoolSize;
 
     /**
      * The Max idle time excess connections.
      */
-    @Value("${svcreg.database.pool.maxIdleTime:1000}")
+    @Value("${ticketreg.database.pool.maxIdleTime:1000}")
     private int maxIdleTimeExcessConnections;
 
     /**
      * The Checkout timeout.
      */
-    @Value("${svcreg.database.pool.maxWait:2000}")
+    @Value("${ticketreg.database.pool.maxWait:2000}")
     private int checkoutTimeout;
     
     /**
+    @Value("${ticketreg.database.pool.acquireIncrement:16}")
+    @Value("${ticketreg.database.pool.acquireRetryAttempts:5}")
+    @Value("${ticketreg.database.pool.acquireRetryDelay:2000}")
+    @Value("${ticketreg.database.pool.idleConnectionTestPeriod:30}")
+    @Value("${ticketreg.database.pool.connectionHealthQuery:select 1}")
      * Jpa vendor adapter hibernate jpa vendor adapter.
      *
      * @return the hibernate jpa vendor adapter
@@ -134,7 +147,7 @@ public class JpaTicketRegistryConfiguration {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
         bean.setJpaVendorAdapter(ticketJpaVendorAdapter());
-        bean.setPersistenceUnitName("jpaServiceRegistryContext");
+        bean.setPersistenceUnitName("jpaTicketRegistryContext");
         bean.setPackagesToScan(ticketPackagesToScan());
         bean.setDataSource(dataSourceTicket());
 

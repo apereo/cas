@@ -59,7 +59,7 @@ Health: OK
     1. MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 ```
 
-The list of configured monitors are by default the following:
+The list of configured monitors are all defined as:
 
 ```xml
 <util:list id="monitorsList">

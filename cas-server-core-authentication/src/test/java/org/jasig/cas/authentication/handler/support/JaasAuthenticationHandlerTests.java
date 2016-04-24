@@ -3,12 +3,17 @@ package org.jasig.cas.authentication.handler.support;
 import javax.security.auth.login.LoginException;
 
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.File;
+import java.io.FileWriter;
 
 import static org.junit.Assert.*;
 
@@ -24,15 +29,16 @@ public class JaasAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        String pathPrefix = System.getProperty("user.dir");
-        pathPrefix = !pathPrefix.contains("cas-server-core") ? pathPrefix
-            + "/cas-server-core" : pathPrefix;
-        logger.info("PATH PREFIX: {}", pathPrefix);
-
-        final String pathToConfig = pathPrefix
-            + "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
-        System.setProperty("java.security.auth.login.config", '=' +pathToConfig);
-        this.handler = new JaasAuthenticationHandler();
+        final ClassPathResource resource = new ClassPathResource("jaas.conf");
+        final File fileName = new File(System.getProperty("java.io.tmpdir"), "jaas.conf");
+        try (final FileWriter writer = new FileWriter(fileName)) {
+            IOUtils.copy(resource.getInputStream(), writer);
+            writer.flush();
+        }
+        if (fileName.exists()) {
+            System.setProperty("java.security.auth.login.config", '=' + fileName.getCanonicalPath());
+            this.handler = new JaasAuthenticationHandler();
+        }
     }
 
     @Test(expected = LoginException.class)
