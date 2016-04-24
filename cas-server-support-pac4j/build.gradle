@@ -7,6 +7,7 @@ dependencies {
     compile project(':cas-server-integration-pac4j-core')
     compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
         exclude(group: 'org.apache.commons', module: 'commons-lang3')
+        exclude(group: 'commons-io', module: 'commons-io')
     }
     compile(group: 'org.pac4j', name: 'pac4j-oauth', version: pac4jVersion) {
         exclude(group: 'org.apache.commons', module: 'commons-lang3')
@@ -38,6 +39,7 @@ dependencies {
         exclude(group: 'joda-time', module: 'joda-time')
         exclude(group: 'net.minidev', module: 'json-smart')
         exclude(group: 'org.opensaml', module: 'xmltooling')
+        exclude(group: 'commons-io', module: 'commons-io')
     }
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-services')
