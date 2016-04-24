@@ -1,6 +1,7 @@
 package org.jasig.cas.web;
 
 import com.google.common.collect.ImmutableList;
+import org.jasig.cas.OidcConstants;
 import org.jasig.cas.config.ServerDiscoveryProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,7 @@ public class WellKnownEndpointController {
      *
      * @return the well known discovery configuration
      */
-    @RequestMapping(value = "/oidc/.well-known", method = RequestMethod.GET)
+    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", method = RequestMethod.GET)
     public ServerDiscoveryProperties getWellKnownDiscoveryConfiguration() {
 
         final ServerDiscoveryProperties discoveryProperties =
@@ -45,9 +46,8 @@ public class WellKnownEndpointController {
         discoveryProperties.setSupportedResponseTypes(ImmutableList.of("code", "token"));
         discoveryProperties.setSupportedSubjectTypes(ImmutableList.of("public", "pairwise"));
         discoveryProperties.setSupportedClaimTypes(ImmutableList.of("normal"));
-        
-        //token and implicit are the same type.
-        discoveryProperties.setSupportedGrantTypes(ImmutableList.of("authorization_code", "password", "implicit", "token"));
+
+        discoveryProperties.setSupportedGrantTypes(ImmutableList.of("authorization_code", "password", "implicit"));
         return discoveryProperties;
     }
 
@@ -56,7 +56,7 @@ public class WellKnownEndpointController {
      *
      * @return the well known discovery configuration
      */
-    @RequestMapping(value = "/oidc/.well-known/openid-configuration", method = RequestMethod.GET)
+    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", method = RequestMethod.GET)
     public ServerDiscoveryProperties getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();
     }
