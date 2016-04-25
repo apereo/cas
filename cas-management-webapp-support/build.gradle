@@ -45,6 +45,7 @@ dependencies {
         exclude(group: 'commons-logging', module: 'commons-logging')
     }
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
     compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
     compile group: 'javax.servlet', name: 'jstl', version: javaxJstlVersion
     runtime(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version: inspektrVersion) {
