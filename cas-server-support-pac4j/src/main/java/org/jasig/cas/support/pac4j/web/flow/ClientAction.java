@@ -255,7 +255,10 @@ public class ClientAction extends AbstractAction {
         return this.authenticationSystemSupport;
     }
 
-    private static class ProviderLoginPageConfiguration implements Serializable {
+    /**
+     * The Provider login page configuration.
+     */
+    public static class ProviderLoginPageConfiguration implements Serializable {
         private static final long serialVersionUID = 6216882278086699364L;
         private String name;
         private String redirectUrl;

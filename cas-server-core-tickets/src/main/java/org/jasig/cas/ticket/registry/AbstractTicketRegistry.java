@@ -49,8 +49,10 @@ import java.util.stream.Collectors;
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState, Job {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
-    
-    /** The Slf4j logger instance. */
+
+    /**
+     * The Slf4j logger instance.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${ticket.registry.cleaner.enabled:true}")
@@ -84,10 +86,11 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
     /**
      * {@inheritDoc}
-     * @throws IllegalArgumentException if class is null.
-     * @throws ClassCastException if class does not match requested ticket
-     * class.
+     *
      * @return specified ticket from the registry
+     * @throws IllegalArgumentException if class is null.
+     * @throws ClassCastException       if class does not match requested ticket
+     *                                  class.
      */
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
@@ -101,8 +104,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
         if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new ClassCastException("Ticket [" + ticket.getId()
-                + " is of type " + ticket.getClass()
-                + " when we were expecting " + clazz);
+                    + " is of type " + ticket.getClass()
+                    + " when we were expecting " + clazz);
         }
 
         return (T) ticket;
@@ -110,16 +113,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
     @Override
     public long sessionCount() {
-        logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+        logger.trace("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Long.MIN_VALUE);
-      return Long.MIN_VALUE;
+        return Long.MIN_VALUE;
     }
 
     @Override
     public long serviceTicketCount() {
-        logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+        logger.trace("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Long.MIN_VALUE);
-      return Long.MIN_VALUE;
+        return Long.MIN_VALUE;
     }
 
     @Override
@@ -186,7 +189,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return the boolean
      */
     public abstract boolean deleteSingleTicket(final String ticketId);
-    
+
     /**
      * Whether or not a callback to the TGT is required when checking for expiration.
      *
@@ -204,7 +207,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @param ticketId the ticket id
      * @return the ticket
      */
-    protected String encodeTicketId(final String ticketId)  {
+    protected String encodeTicketId(final String ticketId) {
         if (this.cipherExecutor == null) {
             logger.trace(MESSAGE);
             return ticketId;
@@ -222,7 +225,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @param ticket the ticket
      * @return the ticket
      */
-    protected Ticket encodeTicket(final Ticket ticket)  {
+    protected Ticket encodeTicket(final Ticket ticket) {
         if (this.cipherExecutor == null) {
             logger.trace(MESSAGE);
             return ticket;
@@ -238,7 +241,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(
-                ByteSource.wrap(encodedTicketObject), 
+                ByteSource.wrap(encodedTicketObject),
                 encodedTicketId);
         logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
@@ -266,7 +269,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
         final Ticket ticket = SerializationUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-        logger.info("Decoded {}",  ticket);
+        logger.info("Decoded {}", ticket);
         return ticket;
     }
 
@@ -293,7 +296,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             if (preCleanupTickets()) {
                 logger.debug("Beginning ticket cleanup...");
                 this.getTickets().stream()
-                        .filter(ticket -> ticket.isExpired())
+                        .filter(Ticket::isExpired)
                         .forEach(ticket -> {
                             if (ticket instanceof TicketGrantingTicket) {
                                 logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
@@ -327,7 +330,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return true, if cleanup should proceed. false otherwise.
      */
     protected boolean preCleanupTickets() {
-        return true;
+        return this.scheduler != null;
     }
 
     /**
@@ -338,41 +341,36 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         try {
 
             if (!this.cleanerEnabled) {
-                logger.info("Ticket registry cleaner is disabled by {}. No cleaner processes will be scheduled.",
-                        this.getClass().getName());
+                logger.info("Ticket registry cleaner is disabled for {}. No cleaner processes will be scheduled.",
+                        getClass().getSimpleName());
                 return;
             }
 
             if (!isCleanerSupported()) {
                 logger.info("Ticket registry cleaner is not supported by {}. No cleaner processes will be scheduled.",
-                        this.getClass().getName());
-                return;
-            }
-            
-            if (!isCleanerSupported()) {
-                logger.info("Ticket registry cleaner is not supported by {}. No cleaner processes will be scheduled.",
-                        this.getClass().getName());
+                        getClass().getSimpleName());
                 return;
             }
 
             logger.info("Preparing to schedule job to clean up after tickets...");
-            final JobDetail job = JobBuilder.newJob(this.getClass())
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+            final JobDetail job = JobBuilder.newJob(getClass())
+                    .withIdentity(getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .build();
 
             final Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .withIdentity(getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.startDelay)))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                             .withIntervalInSeconds(this.refreshInterval)
                             .repeatForever()).build();
 
-            logger.debug("Scheduling {} job", this.getClass().getSimpleName());
+            logger.debug("Scheduling {} job", getClass().getSimpleName());
+            scheduler.getContext().put(getClass().getSimpleName(), this);
             this.scheduler.scheduleJob(job, trigger);
             logger.info("{} will clean tickets every {} minutes",
-                    this.getClass().getSimpleName(),
+                    getClass().getSimpleName(),
                     TimeUnit.SECONDS.toMinutes(this.refreshInterval));
-        } catch (final Exception e){
+        } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
         }
 
@@ -382,14 +380,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            cleanupTickets();
+            final AbstractTicketRegistry registry = (AbstractTicketRegistry)
+                    jobExecutionContext.getScheduler().getContext().get(getClass().getSimpleName());
+            registry.cleanupTickets();
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
 
     /**
-     * Indicates whether the registry supports automatic ticket cleanup. 
+     * Indicates whether the registry supports automatic ticket cleanup.
      * Generally, a registry that is able to return a collection of available
      * tickets should be able to support the cleanup process. Default is <code>true</code>.
      *
