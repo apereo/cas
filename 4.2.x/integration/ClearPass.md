@@ -31,8 +31,15 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 
 ## Configuration
 
-### Create Public/Private Keys
+### Cache Credentials
 
+```xml
+<util:list id="authenticationMetadataPopulators">
+    <ref bean="cacheCredentialsMetaDataPopulator" />
+</util:list>
+```
+
+### Create Public/Private Keys
 
 ```bash
 openssl genrsa -out private.key 1024
@@ -88,41 +95,4 @@ cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
 
-```
-
-
-## Components
-
-- `RegisteredServiceCipherExecutor`
-Defines how to encrypt data based on registered service's public key, etc.
-
-- `DefaultRegisteredServiceCipherExecutor`
-A default implementation of the `RegisteredServiceCipherExecutor`
-that will use the service's public key to initialize the cipher to
-encrypt and encode the value. All results are converted to base-64.
-
-- `CasAttributeEncoder`
-Parent component that defines how a CAS attribute
-is to be encoded and signed in the CAS validation response.
-
-- `DefaultCasAttributeEncoder`
-The default implementation of the attribute encoder that will use a per-service key-pair
-to encrypt. It will attempt to query the collection of attributes that resolved to determine
-which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`.
-
-```xml
-<bean id="cas3ServiceSuccessView"
-    class="Cas30ResponseView"
-    c:view-ref="cas3JstlSuccessView"
-    p:successResponse="true"
-    p:servicesManager-ref="servicesManager"
-    p:casAttributeEncoder-ref="casAttributeEncoder"  />
-
-<bean id="casRegisteredServiceCipherExecutor"
-    class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
-
-<bean id="casAttributeEncoder"
-    class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
-    c:servicesManager-ref="servicesManager"
-    c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
 ```
