@@ -74,7 +74,7 @@ public class JpaTicketRegistryConfiguration {
     @Value("${ticketreg.database.isolate.internal.queries:false}")
     private boolean isolateInternalQueries;
 
-    @Value("${ticketreg.database.health.query:select 1}")
+    @Value("${ticketreg.database.health.query:SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS}")
     private String healthCheckQuery;
 
     @Value("${ticketreg.database.pool.suspension:false}")

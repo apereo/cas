@@ -72,7 +72,7 @@ public class JpaServiceRegistryConfiguration {
     @Value("${svcreg.database.isolate.internal.queries:false}")
     private boolean isolateInternalQueries;
 
-    @Value("${svcreg.database.health.query:select 1}")
+    @Value("${svcreg.database.health.query:SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS}")
     private String healthCheckQuery;
 
     @Value("${svcreg.database.pool.suspension:false}")

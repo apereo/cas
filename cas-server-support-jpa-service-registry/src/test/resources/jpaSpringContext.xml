@@ -32,8 +32,7 @@
     <context:annotation-config/>
 
     <import resource="classpath:META-INF/spring/jpa-svc-reg-context.xml"/>
-
-    <bean id="jpaServiceRegistryDao" class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"/>
+    
     <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao"/>
 
     <!-- CAS Context Core -->
