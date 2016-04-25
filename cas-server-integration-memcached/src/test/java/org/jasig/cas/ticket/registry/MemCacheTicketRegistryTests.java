@@ -120,6 +120,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         this.registry.addTicket(st1);
         this.registry.addTicket(st2);
         this.registry.addTicket(st3);
+        this.registry.updateTicket(tgt);
 
         assertNotNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
@@ -133,6 +134,5 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         assertNull(this.registry.getTicket("ST2", ServiceTicket.class));
         assertNull(this.registry.getTicket("ST3", ServiceTicket.class));
     }
-
 
 }
