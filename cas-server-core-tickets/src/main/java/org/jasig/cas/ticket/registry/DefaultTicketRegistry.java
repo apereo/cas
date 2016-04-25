@@ -198,18 +198,19 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
             if (shouldScheduleCleanerJob()) {
                 logger.info("Preparing to schedule job to clean up after tickets...");
 
-                final JobDetail job = JobBuilder.newJob(this.getClass())
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                final JobDetail job = JobBuilder.newJob(getClass())
+                    .withIdentity(getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .build();
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .withIdentity(getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                         .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();
 
-                logger.debug("Scheduling {} job", this.getClass().getSimpleName());
+                logger.debug("Scheduling {} job", getClass().getSimpleName());
+                scheduler.getContext().put(getClass().getSimpleName(), this);
                 scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} minutes",
                     this.getClass().getSimpleName(),
@@ -227,17 +228,20 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
         try {
             logger.info("Beginning ticket cleanup...");
-            final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
+            final TicketRegistry registry = (TicketRegistry) 
+                    jobExecutionContext.getScheduler().getContext().get(getClass().getSimpleName());
+            
+            final Collection<Ticket> ticketsToRemove = Collections2.filter(registry.getTickets(), new Predicate<Ticket>() {
                 @Override
                 public boolean apply(@Nullable final Ticket ticket) {
                     if (ticket != null && ticket.isExpired()) {
                         if (ticket instanceof TicketGrantingTicket) {
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                             logoutManager.performLogout((TicketGrantingTicket) ticket);
-                            deleteTicket(ticket.getId());
+                            registry.deleteTicket(ticket.getId());
                         } else if (ticket instanceof ServiceTicket) {
                             logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                            deleteTicket(ticket.getId());
+                            registry.deleteTicket(ticket.getId());
                         } else {
                             logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
                         }
