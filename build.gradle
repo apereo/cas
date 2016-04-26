@@ -37,6 +37,11 @@ allprojects {
     
     apply plugin: "nebula.lint"
     gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
+
+    signing {
+        required = (publishReleases && sonatypeUsername != null && sonatypePassword != null)
+        sign configurations.archives
+    }
 }
 
 
@@ -109,11 +114,7 @@ subprojects {
         archives resourcesJar
         archives testJar
     }
-
-    signing {
-        required = (publishReleases && sonatypeUsername != null && sonatypePassword != null)
-        sign configurations.archives
-    }
+    
 
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
@@ -405,12 +406,41 @@ subprojects {
     }
 }
 
+task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+    gradleVersion = project.gradleVersion
+}
+
 task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory") {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, 'javadoc')
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
-task wrapper(type: Wrapper, description: "Gradle's wrapper") {
-    gradleVersion = project.gradleVersion
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives new File(buildDir, "libs/cas-server-$version-javadoc.jar")
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            
+            if (publishReleases) {
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword);
+                }
+            }
+
+            if (publishSnapshots) {
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword);
+                }
+            }
+        }
+    }
 }

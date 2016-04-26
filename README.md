@@ -6,6 +6,7 @@
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
 [![Coverage Status](https://coveralls.io/repos/github/Jasig/cas/badge.svg?branch=master)](https://coveralls.io/github/Jasig/cas?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
+[![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.jasig.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.jasig.cas/cas-server)
 
 ## Introduction
 
@@ -24,10 +25,9 @@ The following features are supported by the CAS project:
 * CAS v1, v2 and v3 Protocol
 * SAML v1 and v2 Protocol
 * OAuth Protocol
-* OpenID Protocol
-* OpenID Connect Protocol
-* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT Token, Stormpath, Remote, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
-* Delegated authentication to WS-FED, Facebook, Twitter, SAML v2 IdP, OpenID, OpenID Connect, CAS and more.
+* OpenID & OpenID Connect Protocol
+* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Stormpath, Remote, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
+* Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, Internet2's Grouper and more.
 * HA clustered deployments via Hazelcast, Ehcache, JPA, Memcached, Apache Ignite, Couchbase and more.
 * Application registration backed by JSON, LDAP, JPA, Couchbase, MongoDb and more.
