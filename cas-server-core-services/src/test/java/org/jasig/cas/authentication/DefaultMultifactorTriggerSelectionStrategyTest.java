@@ -52,7 +52,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     private DefaultMultifactorTriggerSelectionStrategy strategy;
 
     @Before
-    public void setup() {
+    public void setUp() {
         strategy = new DefaultMultifactorTriggerSelectionStrategy();
         strategy.setRequestParameter(REQUEST_PARAM);
         strategy.setPrincipalAttribute(P_ATTRS_12);

@@ -15,7 +15,7 @@ public class SpringSecurityDelegatingPasswordEncoderTests {
     private SpringSecurityDelegatingPasswordEncoder passwordEncoder;
 
     @Before
-    public void setup() {
+    public void setUp() {
         passwordEncoder = new SpringSecurityDelegatingPasswordEncoder();
     }
 

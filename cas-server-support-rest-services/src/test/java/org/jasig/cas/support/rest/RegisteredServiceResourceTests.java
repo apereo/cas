@@ -42,7 +42,7 @@ public class RegisteredServiceResourceTests {
     private MockMvc mockMvc;
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.registeredServiceResource)
                 .defaultRequest(get("/")
                 .contextPath("/cas")

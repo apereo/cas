@@ -34,7 +34,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private Principal principal;
 
     @Before
-    public void setup() {
+    public void setUp() {
         attributes = new HashMap<>();
         attributes.put("a1", new ArrayList(Arrays.asList(new Object[]{"v1", "v2", "v3"})));
         attributes.put("mail", new ArrayList(Arrays.asList(new Object[]{"final@example.com"})));

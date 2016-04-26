@@ -51,7 +51,7 @@ public class JpaLockingStrategyTests {
     private DataSource dataSource;
 
     @Before
-    public void setup() {
+    public void setUp() {
         final ClassPathXmlApplicationContext ctx = new
             ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
         this.factory = ctx.getBean("ticketEntityManagerFactory", EntityManagerFactory.class);
