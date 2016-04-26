@@ -45,6 +45,7 @@ The _inspektr_ components, on the other hand, fully support stateless clusters.
 
 ### IP Address
 Uses a memory map to prevent successive failed login attempts from the same IP address.
+
 ```xml
 <alias name="inMemoryIpAddressThrottle" alias="authenticationThrottle" />
 ```
