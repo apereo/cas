@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("igniteConfiguration")
+@Configuration("igniteTicketRegistryConfiguration")
 public class IgniteTicketRegistryConfiguration {
     
     /**
@@ -66,7 +66,7 @@ public class IgniteTicketRegistryConfiguration {
      * @return the ignite configuration
      */
     @Bean(name = "igniteConfiguration")
-    private IgniteConfiguration igniteConfiguration() {
+    public IgniteConfiguration igniteConfiguration() {
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
