@@ -12,7 +12,6 @@ import java.net.UnknownHostException;
 /**
  * An implementation of {@link org.jasig.cas.ticket.UniqueTicketIdGenerator} that is able auto-configure
  * the suffix based on the underlying host name.
- * <p>
  * <p>In order to assist with multi-node deployments, in scenarios where CAS configuration
  * and specially {@code application.properties} file is externalized, it would be ideal to simply just have one set
  * of configuration files for all nodes, such that there would for instance be one {@code application.properties} file
