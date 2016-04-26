@@ -7,6 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/Jasig/cas/badge.svg?branch=master)](https://coveralls.io/github/Jasig/cas?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
 [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.jasig.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.jasig.cas/cas-server)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC)
 
 ## Introduction
 
