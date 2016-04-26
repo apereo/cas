@@ -191,6 +191,7 @@ In `cas-servlet.xml`, uncomment the following:
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
 {% endhighlight %}
 
+### Repositories
 You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
 
 ```xml
