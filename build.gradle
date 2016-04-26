@@ -208,7 +208,7 @@ subprojects {
                 }
 
                 if (publishSnapshots) {
-                    snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+                    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
                         authentication(userName: sonatypeUsername, password: sonatypePassword);
                     }
                 }
