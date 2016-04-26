@@ -1,5 +1,6 @@
 package org.jasig.cas.web.support;
 
+import org.apache.http.HttpStatus;
 import org.jasig.inspektr.common.web.ClientInfo;
 import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.junit.After;
@@ -49,24 +50,25 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         // Ensure that repeated logins BELOW threshold rate are allowed
         // Wait 7% more than threshold period
         int wait = (int) (1000.0 * 1.07 / rate);
-        failLoop(3, wait, 200);
+        failLoop(3, wait, HttpStatus.SC_UNAUTHORIZED);
 
         // Ensure that repeated logins ABOVE threshold rate are throttled
         // Wait 7% less than threshold period
         wait = (int) (1000.0 * 0.93 / rate);
-        failLoop(3, wait, 403);
+        failLoop(3, wait, HttpStatus.SC_FORBIDDEN);
 
         // Ensure that slowing down relieves throttle
         // Wait 7% more than threshold period
         wait = (int) (1000.0 * 1.07 / rate);
         Thread.sleep(wait);
-        failLoop(3, wait, 200);
+        failLoop(3, wait, HttpStatus.SC_UNAUTHORIZED);
     }
 
 
     private void failLoop(final int trials, final int period, final int expected) throws Exception {
         // Seed with something to compare against
-        loginUnsuccessfully("mog", "1.2.3.4").getStatus();
+        loginUnsuccessfully("mog", "1.2.3.4");
+
         for (int i = 0; i < trials; i++) {
             logger.debug("Waiting for {} ms", period);
             Thread.sleep(period);
