@@ -46,7 +46,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
      */
     public Event verify(final RequestContext context, final Credential credential,
                         final MessageContext messageContext) {
-        if (repository.verify(credential)) {
+        if (repository.verify(context, credential)) {
             return success();
         }
         return accept();
@@ -62,7 +62,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
      */
     public boolean submit(final RequestContext context, final Credential credential,
                           final MessageContext messageContext) {
-        return repository.verify(credential);
+        return repository.verify(context, credential);
     }
 
 
