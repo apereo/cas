@@ -6,7 +6,8 @@
   "id" : 175854194241240,
   "description" : "This is a web app for testing the theme change.",
   "proxyPolicy" : {
-    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https://.*"
   },
   "evaluationOrder" : 0,
   "usernameAttributeProvider" : {
@@ -14,7 +15,8 @@
   },
   "logoutType" : "BACK_CHANNEL",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy"
+    "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy",
+    "authorizedToReleaseProxyGrantingTicket" : true
   },
   "accessStrategy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
