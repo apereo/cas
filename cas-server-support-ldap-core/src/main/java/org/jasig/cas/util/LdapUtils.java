@@ -1,5 +1,6 @@
 package org.jasig.cas.util;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.AddOperation;
@@ -32,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Utilities related to LDAP functions.
@@ -224,13 +226,13 @@ public final class LdapUtils {
      */
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
-                                                 final Map<String, Collection<String>> attributes) {
+                                                 final Map<String, Set<String>> attributes) {
         try (final Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
             final List<AttributeModification> mods = new ArrayList<>();
-            for (final Map.Entry<String, Collection<String>> entry : attributes.entrySet()) {
+            for (final Map.Entry<String, Set<String>> entry : attributes.entrySet()) {
                 mods.add(new AttributeModification(AttributeModificationType.REPLACE,
-                        new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[] {}))));
+                        new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{}))));
             }
             final ModifyRequest request = new ModifyRequest(currentDn,
                     mods.toArray(new AttributeModification[]{}));
@@ -253,13 +255,13 @@ public final class LdapUtils {
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
                                                  final LdapEntry entry) {
-        final Map<String, Collection<String>> attributes = new HashMap<>(entry.getAttribute().size());
+        final Map<String, Set<String>> attributes = new HashMap<>(entry.getAttribute().size());
         for (final LdapAttribute ldapAttribute : entry.getAttributes()) {
-            attributes.put(ldapAttribute.getName(), ldapAttribute.getStringValues());
+            attributes.put(ldapAttribute.getName(), ImmutableSet.copyOf(ldapAttribute.getStringValues()));
         }
         return executeModifyOperation(currentDn, connectionFactory, attributes);
     }
-    
+
     /**
      * Execute add operation boolean.
      *
@@ -290,7 +292,7 @@ public final class LdapUtils {
      * @return the boolean
      * @throws LdapException the ldap exception
      */
-    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, 
+    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory,
                                                  final LdapEntry entry) throws LdapException {
 
         try (final Connection connection = createConnection(connectionFactory)) {
