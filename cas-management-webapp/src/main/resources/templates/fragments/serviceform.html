@@ -1,44 +1,44 @@
 <form class="service-editor form-horizontal" autocomplete="off" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl"
       ng-submit="serviceFormCtrl.validateAndSave()">
 
-    <div th:replace="fragments/serviceformsaveformtop" />
+    <div th:replace="fragments/serviceform/saveformtop" />
     
-    <div th:replace="fragments/serviceformalert" />
+    <div th:replace="fragments/serviceform/alert" />
 
     <div class="row col-sm-12">
         <div class="col-sm-6">
 
-            <div th:replace="fragments/serviceformenabled" />
+            <div th:replace="fragments/serviceform/enabled" />
 
-            <div th:replace="fragments/serviceformserviceid"/>
+            <div th:replace="fragments/serviceform/serviceid"/>
 
-            <div th:replace="fragments/serviceformservicename" />
+            <div th:replace="fragments/serviceform/servicename" />
 
-            <div th:replace="fragments/serviceformservicedesc" />
+            <div th:replace="fragments/serviceform/servicedesc" />
 
-            <div th:replace="fragments/serviceformservicetype" />
+            <div th:replace="fragments/serviceform/servicetype" />
 
-            <div th:replace="fragments/serviceformoauthopts" />
+            <div th:replace="fragments/serviceform/oauthopts" />
 
-            <div th:replace="fragments/serviceformthemeid" />
+            <div th:replace="fragments/serviceform/themeid" />
 
-            <div th:replace="fragments/serviceformlogo" />
+            <div th:replace="fragments/serviceform/logo" />
 
-            <div th:replace="fragments/serviceformlogout" />
+            <div th:replace="fragments/serviceform/logout" />
 
-            <div th:replace="fragments/serviceformlogouttypeeval" />
+            <div th:replace="fragments/serviceform/logouttypeeval" />
 
-            <div th:replace="fragments/serviceformreqhandlers" />
+            <div th:replace="fragments/serviceform/reqhandlers" />
 
-            <div th:replace="fragments/serviceformaccessstrategy" />
+            <div th:replace="fragments/serviceform/accessstrategy" />
         </div>
         <div class="col-sm-6">
-            <div th:replace="fragments/serviceformuidattrs" />
+            <div th:replace="fragments/serviceform/uidattrs" />
 
-            <div th:replace="fragments/serviceformattrrel" />
-            <div th:replace="fragments/serviceformpubkey" />
-            <div th:replace="fragments/serviceformproxy" />
+            <div th:replace="fragments/serviceform/attrrel" />
+            <div th:replace="fragments/serviceform/pubkey" />
+            <div th:replace="fragments/serviceform/proxy" />
         </div>
-        <div th:replace="fragments/serviceformsaveform" />
+        <div th:replace="fragments/serviceform/saveform" />
     </div>
 </form>
