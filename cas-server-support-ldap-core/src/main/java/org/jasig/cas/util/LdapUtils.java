@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,13 +224,13 @@ public final class LdapUtils {
      */
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
-                                                 final Map<String, String> attributes) {
+                                                 final Map<String, Collection<String>> attributes) {
         try (final Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
             final List<AttributeModification> mods = new ArrayList<>();
-            for (final Map.Entry<String, String> entry : attributes.entrySet()) {
+            for (final Map.Entry<String, Collection<String>> entry : attributes.entrySet()) {
                 mods.add(new AttributeModification(AttributeModificationType.REPLACE,
-                        new LdapAttribute(entry.getKey(), entry.getValue())));
+                        new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[] {}))));
             }
             final ModifyRequest request = new ModifyRequest(currentDn,
                     mods.toArray(new AttributeModification[]{}));
@@ -252,9 +253,9 @@ public final class LdapUtils {
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
                                                  final LdapEntry entry) {
-        final Map<String, String> attributes = new HashMap<>(entry.getAttribute().size());
+        final Map<String, Collection<String>> attributes = new HashMap<>(entry.getAttribute().size());
         for (final LdapAttribute ldapAttribute : entry.getAttributes()) {
-            attributes.put(ldapAttribute.getName(), ldapAttribute.getStringValue());
+            attributes.put(ldapAttribute.getName(), ldapAttribute.getStringValues());
         }
         return executeModifyOperation(currentDn, connectionFactory, attributes);
     }
