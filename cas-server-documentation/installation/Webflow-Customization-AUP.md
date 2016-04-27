@@ -77,11 +77,6 @@ Then, enable the LDAP connection settings in the same file:
                              ldapUrl="${cas.aup.ldap.url}"
                              useSSL="${cas.aup.ldap.ssl:false}"
                              useStartTLS="${cas.aup.ldap.startTLS:false}" />
-
-<bean id="ldapUsagePolicySearchRequest"
-      class="org.ldaptive.SearchRequest"
-      p:searchScope="${cas.aup.ldap.search.scope:SUBTREE}"
-      p:baseDn="${cas.aup.ldap.basedn}" />
 ```
 
 You will need to make sure, prior to using the `ldaptive` namespace, that it is declared:
@@ -100,7 +95,6 @@ to accommodate other situations.
 The following settings may be used:
 
 ```properties
-# cas.aup.ldap.search.scope=SUBTREE
 # cas.aup.ldap.search.filter=cn={0}
 # cas.aup.ldap.url=
 # cas.aup.ldap.ssl=
