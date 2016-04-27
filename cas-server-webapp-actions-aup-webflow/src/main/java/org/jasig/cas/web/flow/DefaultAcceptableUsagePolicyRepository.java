@@ -22,16 +22,20 @@ public class DefaultAcceptableUsagePolicyRepository implements AcceptableUsagePo
     @Override
     public boolean verify(final RequestContext requestContext, final Credential credential) {
         final String key = credential.getId();
-        if (this.policyMap.containsKey(key)) {
-            return this.policyMap.get(key);
+        synchronized (this.policyMap) {
+            if (this.policyMap.containsKey(key)) {
+                return this.policyMap.get(key);
+            }
         }
         return false;
     }
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
-        this.policyMap.put(credential.getId(), Boolean.TRUE);
-        return this.policyMap.containsKey(credential.getId());
+        synchronized (this.policyMap) {
+            this.policyMap.put(credential.getId(), Boolean.TRUE);
+            return this.policyMap.containsKey(credential.getId());
+        }
     }
 
 }
