@@ -60,9 +60,13 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
      * @param messageContext the message context
      * @return success if policy acceptance is recorded successfully.
      */
-    public boolean submit(final RequestContext context, final Credential credential,
+    public Event submit(final RequestContext context, final Credential credential,
                           final MessageContext messageContext) {
-        return repository.verify(context, credential);
+        if (repository.submit(context, credential)) {
+            return success();
+        }
+
+        return error();
     }
 
 

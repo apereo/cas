@@ -1,5 +1,6 @@
 package org.jasig.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
@@ -53,31 +54,35 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
 
+        String currentDn = null;
         try (final Connection searchConnection = getConnection()) {
             final Response<SearchResult> response = searchForId(searchConnection, credential.getId());
             if (hasResults(response)) {
-                final String currentDn = response.getResult().getEntry().getDn();
-
-                logger.debug("Updating {}", currentDn);
-
-                try (final Connection modifyConnection = getConnection()) {
-                    final ModifyOperation operation = new ModifyOperation(modifyConnection);
-                    final List<AttributeModification> mods = new ArrayList<>();
-
-                    final LdapEntry entry = new LdapEntry(currentDn, new LdapAttribute(this.aupAttributeName,
-                            Boolean.TRUE.toString()));
-                    for (final LdapAttribute attr : entry.getAttributes()) {
-                        mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
-                    }
-                    final ModifyRequest request = new ModifyRequest(currentDn,
-                            mods.toArray(new AttributeModification[]{}));
-                    operation.execute(request);
-                } catch (final LdapException e) {
-                    logger.error(e.getMessage(), e);
-                }
+                currentDn = response.getResult().getEntry().getDn();
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
+        }
+
+        if (StringUtils.isNotBlank(currentDn)) {
+            logger.debug("Updating {}", currentDn);
+
+            try (final Connection modifyConnection = getConnection()) {
+                final ModifyOperation operation = new ModifyOperation(modifyConnection);
+                final List<AttributeModification> mods = new ArrayList<>();
+
+                final LdapEntry entry = new LdapEntry(currentDn, new LdapAttribute(this.aupAttributeName,
+                        Boolean.TRUE.toString()));
+                for (final LdapAttribute attr : entry.getAttributes()) {
+                    mods.add(new AttributeModification(AttributeModificationType.REPLACE, attr));
+                }
+                final ModifyRequest request = new ModifyRequest(currentDn,
+                        mods.toArray(new AttributeModification[]{}));
+                operation.execute(request);
+                return true;
+            } catch (final LdapException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
         return false;
     }

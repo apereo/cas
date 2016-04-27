@@ -7,4 +7,5 @@ dependencies {
     compile(group: 'org.ldaptive', name: 'ldaptive', version: ldaptiveVersion) {
         exclude(group: 'org.slf4j', module: 'slf4j-api')
     }
+    compile group: 'org.ldaptive', name: 'ldaptive-beans', version: ldaptiveVersion
 }

@@ -51,7 +51,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
             }
         }
 
-        logger.debug("Usage policy has not been accepted by {}", principal.getId());
+        logger.warn("Usage policy has not been accepted by {}", principal.getId());
         return false;
     }
 
