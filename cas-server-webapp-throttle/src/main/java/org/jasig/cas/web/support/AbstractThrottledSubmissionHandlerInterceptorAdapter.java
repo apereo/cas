@@ -42,12 +42,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
 
     /**
-     * After properties set.
-     *
-     * @throws Exception the exception
+     * Configure the threshold rate.
      */
     @PostConstruct
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.thresholdRate = (double) this.failureThreshold / (double) this.failureRangeInSeconds;
         logger.debug("Calculated threshold rate as {}", this.thresholdRate);
     }
