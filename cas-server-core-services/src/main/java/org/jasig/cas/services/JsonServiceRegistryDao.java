@@ -37,7 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * expected to be found inside a directory location and this DAO will recursively look through
  * the directory structure to find relevant JSON files. Files are expected to have the
  * {@value #FILE_EXTENSION} extension. An example of the JSON file is included here:
- *
  * <pre>
  {
      "@class" : "org.jasig.cas.services.RegexRegisteredService",
@@ -115,7 +114,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     public JsonServiceRegistryDao(final Path configDirectory, final JsonSerializer<RegisteredService> registeredServiceJsonSerializer) {
         initializeRegistry(configDirectory, registeredServiceJsonSerializer);
     }
-    
+
     /**
      * Instantiates a new Json service registry dao.
      * Sets the path to the directory where JSON service registry entries are
@@ -143,7 +142,6 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), new RegisteredServiceJsonSerializer());
     }
 
-    
 
     private void initializeRegistry(final Path configDirectory, final JsonSerializer<RegisteredService> registeredServiceJsonSerializer) {
         this.serviceRegistryDirectory = configDirectory;
@@ -157,7 +155,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         this.jsonServiceRegistryWatcherThread.start();
         LOGGER.debug("Started service registry watcher thread");
     }
-    
+
     @Override
     public RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
@@ -200,7 +198,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     public synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
         final int[] errorCount = {0};
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[] {FILE_EXTENSION}, true);
+        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{FILE_EXTENSION}, true);
         c.stream().filter(file -> file.length() > 0).forEach(file -> {
             final RegisteredService service = loadRegisteredServiceFromFile(file);
             if (service == null) {
@@ -221,7 +219,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             this.serviceMap = temp;
         } else {
             LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are "
-                   +  "corrected", errorCount[0]);
+                    + "corrected", errorCount[0]);
         }
         return new ArrayList(this.serviceMap.values());
     }
@@ -256,7 +254,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceJsonSerializer.fromJson(in);
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file " + file.getName(), e);
+            LOGGER.error("Error reading configuration file {}", file.getName(), e);
         }
         return null;
     }
@@ -300,7 +298,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     void refreshServicesManager() {
         if (this.applicationContext == null) {
             LOGGER.debug("Application context has failed to initialize because it's null. "
-               + "Service definition may not be immediately available to CAS, which suggests a configuration problem");
+                    + "Service definition may not be immediately available to CAS, which suggests a configuration problem");
             return;
         }
         final ReloadableServicesManager manager = this.applicationContext.getBean(ReloadableServicesManager.class);
@@ -308,7 +306,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             manager.reload();
         } else {
             LOGGER.warn("Services manger could not be obtained from the application context. "
-                + "Service definition may not take immediate effect, which suggests a configuration problem");
+                    + "Service definition may not take immediate effect, which suggests a configuration problem");
         }
     }
 

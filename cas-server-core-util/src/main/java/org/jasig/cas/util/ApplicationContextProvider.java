@@ -1,6 +1,5 @@
 package org.jasig.cas.util;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * holds the application context
  * @since 3.0.0.
  */
-@RefreshScope
 @Component("applicationContextProvider")
 public class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext CONTEXT;
