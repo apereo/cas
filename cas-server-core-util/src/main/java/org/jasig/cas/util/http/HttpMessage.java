@@ -21,6 +21,7 @@ public class HttpMessage {
     
     private URL url;
     private String message;
+    private int responseCode;
     
     /**
      * Whether this message should be sent in an asynchronous fashion.
@@ -76,7 +77,11 @@ public class HttpMessage {
     protected void setContentType(final String type) {
         this.contentType = type;
     }
-    
+
+    public int getResponseCode() {
+        return this.responseCode;
+    }
+
     /**
      * Encodes the message in UTF-8 format in preparation to send.
      * @param message Message to format and encode
@@ -98,6 +103,11 @@ public class HttpMessage {
                 .append("message", this.message)
                 .append("asynchronous", this.asynchronous)
                 .append("contentType", this.contentType)
+                .append("responseCode", this.responseCode)
                 .toString();
+    }
+
+    public void setResponseCode(final int responseCode) {
+        this.responseCode = responseCode;
     }
 }

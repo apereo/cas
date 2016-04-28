@@ -111,6 +111,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                     entity = response.getEntity();
                     final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent()));
                     msg.setContentType(entity.getContentType().getValue());
+                    msg.setResponseCode(responseCode);
                     return msg;
                 }
             }
