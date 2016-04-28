@@ -10,6 +10,7 @@ import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.ssl.SslContextFactory;
+import org.jasig.cas.config.IgniteTicketRegistryConfiguration;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -51,9 +52,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     
-    @Value("${ignite.ticketsCache.name:TicketsCache}")
-    private String cacheName;
-
     @Value("${ignite.keyStoreType:}")
     private String keyStoreType;
 
@@ -79,7 +77,10 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     private String trustStorePassword;
 
     @Autowired
-    
+    @Qualifier("igniteTicketRegistryConfiguration")
+    private IgniteTicketRegistryConfiguration ticketRegistryConfiguration;
+
+    @Autowired
     @Qualifier("igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
 
@@ -242,7 +243,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
             this.ignite = Ignition.ignite();
         }
 
-        this.ticketIgniteCache = this.ignite.getOrCreateCache(this.cacheName);
+        this.ticketIgniteCache = this.ignite.getOrCreateCache(ticketRegistryConfiguration.getCacheName());
         
     }
 
@@ -264,19 +265,11 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         Ignition.stopAll(true);
     }
 
-    public String getCacheName() {
-        return this.cacheName;
-    }
-
-    public void setCacheName(final String cacheName) {
-        this.cacheName = cacheName;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("cacheName", this.cacheName)
+                .append("cacheName", this.ticketRegistryConfiguration.getCacheName())
                 .append("keyStoreType", this.keyStoreType)
                 .append("keyStoreFilePath", this.keyStoreFilePath)
                 .append("keyStorePassword", this.keyStorePassword)

@@ -7,10 +7,11 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.cache.expiry.CreatedExpiryPolicy;
@@ -26,54 +27,97 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 @RefreshScope
-@Configuration("igniteConfiguration")
+@Configuration
+@Component("igniteTicketRegistryConfiguration")
+@ConfigurationProperties(prefix = "ignite.ticketsCache")
 public class IgniteTicketRegistryConfiguration {
-    
+
     /**
      * The Ignite addresses.
      */
-    @Value("${ignite.adresses:localhost:47500}")
-    private String igniteAddresses;
+    private String addresses = "localhost:47500";
     
     /**
      * The cache name.
      */
-    @Value("${ignite.ticketsCache.name:TicketsCache}")
-    private String cacheName;
+    private String cacheName = "TicketsCache";
 
     /**
      * The cache mode.
      */
-    @Value("${ignite.ticketsCache.cacheMode:REPLICATED}")
-    private CacheMode cacheMode;
+    private CacheMode cacheMode = CacheMode.REPLICATED;
 
     /**
      * The atomicity mode.
      */
-    @Value("${ignite.ticketsCache.atomicityMode:TRANSACTIONAL}}")
-    private CacheAtomicityMode atomicityMode;
+    private CacheAtomicityMode atomicityMode = CacheAtomicityMode.TRANSACTIONAL;
 
     /**
      * The write synchronization mode.
      */
-    @Value("${ignite.ticketsCache.writeSynchronizationMode:FULL_SYNC}")
-    private CacheWriteSynchronizationMode writeSynchronizationMode;
+    private CacheWriteSynchronizationMode writeSynchronizationMode = CacheWriteSynchronizationMode.FULL_SYNC;
     
-    @Value("${ignite.ticketsCache.timeout:" + Integer.MAX_VALUE + '}')
-    private long timeout;
-    
+    private long timeout = Integer.MAX_VALUE;
+
+    public CacheAtomicityMode getAtomicityMode() {
+        return atomicityMode;
+    }
+
+    public void setAtomicityMode(final CacheAtomicityMode aMode) {
+        this.atomicityMode = aMode;
+    }
+
+    public CacheMode getCacheMode() {
+        return cacheMode;
+    }
+
+    public void setCacheMode(final CacheMode cMode) {
+        this.cacheMode = cMode;
+    }
+
+    public CacheWriteSynchronizationMode getWriteSynchronizationMode() {
+        return writeSynchronizationMode;
+    }
+
+    public void setWriteSynchronizationMode(final CacheWriteSynchronizationMode wsMode) {
+        this.writeSynchronizationMode = wsMode;
+    }
+
+    public String getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(final String addresses) {
+        this.addresses = addresses;
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    public void setCacheName(final String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(final long timeout) {
+        this.timeout = timeout;
+    }
+
     /**
      * Ignite configuration ignite configuration.
      *
      * @return the ignite configuration
      */
-    @RefreshScope
     @Bean(name = "igniteConfiguration")
     public IgniteConfiguration igniteConfiguration() {
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
-        finder.setAddresses(StringUtils.commaDelimitedListToSet(this.igniteAddresses));
+        finder.setAddresses(StringUtils.commaDelimitedListToSet(this.addresses));
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
 
