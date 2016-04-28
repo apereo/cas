@@ -325,6 +325,25 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
+    public void verifyAccessStrategyWithEndpoint() throws Exception {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("verifyAccessStrategyWithEndpoint");
+        r.setId(62);
+
+        final RemoteEndpointServiceAccessStrategy authz = new RemoteEndpointServiceAccessStrategy();
+
+        authz.setEndpointUrl("http://www.google.com?this=that");
+        authz.setAcceptableResponseCodes("200,405,403");
+        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        r.setAccessStrategy(authz);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
     public void serializePublicKeyForServiceAndVerify() throws Exception {
         final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
                 "classpath:RSA1024Public.key", "RSA");
