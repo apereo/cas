@@ -330,6 +330,17 @@ if (array.length == 3) {
                     {name: 'ADD',           value: 'add'},
                     {name: 'MULTI-VALUED',  value: 'multi-valued'},
                     {name: 'REPLACE',       value: 'replace'}
+                ],
+                selectType: [
+                    {name: 'DEFAULT',       value: 'default'},
+                    {name: 'TIME',          value: 'time'},
+                    {name: 'GROUPER',       value: 'grouper'}
+                ],
+                groupField: [
+                    {name: 'NAME',              value: 'name'},
+                    {name: 'DISPLAY_NAME',      value: 'display_name'},
+                    {name: 'EXTENSION',         value: 'extension'},
+                    {name: 'DISPLAY_EXTENSION', value: 'display_extension'}
                 ]
             };
 
@@ -477,7 +488,11 @@ if (array.length == 3) {
                     supportAccess: {casEnabled: true, ssoEnabled:true},
                     publicKey: {algorithm: 'RSA'},
                     userAttrProvider: {type: 'default'},
-                    proxyPolicy: {type: 'refuse'}
+                    proxyPolicy: {type: 'refuse'},
+                    accessStrategy: {
+                        caseInsensitive: true,
+                        type: serviceForm.selectOptions.selectType[0].value
+                    }
                 });
                 serviceDataTransformation('load');
                 showInstructions();
