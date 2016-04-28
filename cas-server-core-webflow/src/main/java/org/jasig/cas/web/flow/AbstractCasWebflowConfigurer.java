@@ -105,17 +105,6 @@ public abstract class AbstractCasWebflowConfigurer {
     protected static final String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
-     * The transition state 'viewLoginForm'.
-     */
-    protected static final String TRANSITION_ID_VIEW_LOGIN_FORM = "viewLoginForm";
-
-
-    /**
-     * The transition state 'ticketGrantingTicketCheck'.
-     */
-    protected static final String TRANSITION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
-
-    /**
      * The action state 'generateLoginTicket'.
      */
     protected static final String STATE_ID_GENERATE_LOGIN_TICKET = "generateLoginTicket";
