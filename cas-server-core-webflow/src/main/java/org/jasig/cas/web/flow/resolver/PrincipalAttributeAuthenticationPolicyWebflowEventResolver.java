@@ -58,11 +58,9 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(this.attributeName),
                 service, context, providers,
-                input -> {
-                    return providers.stream()
-                            .filter(provider -> provider.getId().equals(input))
-                            .count() > 0;
-                });
+                input -> providers.stream()
+                        .filter(provider -> provider.getId().equals(input))
+                        .count() > 0);
     }
 
 }

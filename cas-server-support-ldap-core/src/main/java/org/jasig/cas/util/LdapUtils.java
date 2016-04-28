@@ -28,11 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Utilities related to LDAP functions.
@@ -228,11 +228,9 @@ public final class LdapUtils {
                                                  final Map<String, Set<String>> attributes) {
         try (final Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
-            final List<AttributeModification> mods = new ArrayList<>();
-            for (final Map.Entry<String, Set<String>> entry : attributes.entrySet()) {
-                mods.add(new AttributeModification(AttributeModificationType.REPLACE,
-                        new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{}))));
-            }
+            final List<AttributeModification> mods = attributes.entrySet()
+                    .stream().map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
+                    new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{})))).collect(Collectors.toList());
             final ModifyRequest request = new ModifyRequest(currentDn,
                     mods.toArray(new AttributeModification[]{}));
             operation.execute(request);

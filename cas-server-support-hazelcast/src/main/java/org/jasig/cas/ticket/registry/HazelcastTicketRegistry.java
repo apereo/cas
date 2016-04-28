@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
 
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
@@ -103,8 +104,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketId) {
         return this.registry.remove(ticketId) != null;
     }
-
-
+    
     @Override
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> collection = new HashSet<>();
@@ -116,9 +116,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
             for (Collection<Ticket> entrySet = this.registry.values(pagingPredicate);
                  !entrySet.isEmpty();
                  pagingPredicate.nextPage(), entrySet = this.registry.values(pagingPredicate)) {
-                for (final Ticket entry : entrySet) {
-                    collection.add(decodeTicket(entry));
-                }
+                collection.addAll(entrySet.stream().map(this::decodeTicket).collect(Collectors.toList()));
             }
         } finally {
             lock.unlock();

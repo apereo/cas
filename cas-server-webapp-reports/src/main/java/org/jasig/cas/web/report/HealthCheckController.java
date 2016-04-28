@@ -75,6 +75,6 @@ public class HealthCheckController {
             return null;
         };
 
-        return new WebAsyncTask<HealthStatus>(this.asyncTimeout, asyncTask);
+        return new WebAsyncTask<>(this.asyncTimeout, asyncTask);
     }
 }
