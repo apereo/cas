@@ -36,21 +36,25 @@ import java.util.Map;
 @EnableAspectJAutoProxy
 public class CasAuditTrailConfiguration {
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
-    
+
     @Value("${cas.audit.appcode:CAS}")
     private String appCode;
 
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
-    
+
     @Autowired
     @Qualifier("ticketResourceResolver")
     private AuditResourceResolver ticketResourceResolver;
-    
+
+    @Autowired
+    @Qualifier("messageBundleAwareResourceResolver")
+    private AuditResourceResolver messageBundleAwareResourceResolver;
+
     @Value("${cas.audit.singleline.separator:|}")
     private String entrySeparator;
-    
+
     @Value("${cas.audit.singleline:false}")
     private boolean useSingleLine;
 
@@ -147,7 +151,7 @@ public class CasAuditTrailConfiguration {
      * @return the map
      */
     @RefreshScope
-    @Bean(name="auditActionResolverMap")
+    @Bean(name = "auditActionResolverMap")
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOLVER", authenticationActionResolver());
@@ -168,12 +172,12 @@ public class CasAuditTrailConfiguration {
      * @return the map
      */
     @RefreshScope
-    @Bean(name="auditResourceResolverMap")
+    @Bean(name = "auditResourceResolverMap")
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
-        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", returnValueResourceResolver());
-        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver);
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver);
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
         map.put("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
