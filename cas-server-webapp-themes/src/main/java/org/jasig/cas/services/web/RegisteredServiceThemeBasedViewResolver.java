@@ -129,4 +129,7 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
         super.setCache(false);
     }
 
+    public void setResourceLoader(final ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 }
