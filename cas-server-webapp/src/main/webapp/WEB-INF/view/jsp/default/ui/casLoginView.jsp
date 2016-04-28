@@ -148,6 +148,7 @@
                             <option value="hr">Croatian</option>
                             <option value="uk">Ukranian</option>
                             <option value="cs">Czech</option>
+                            <option value="sk">Slovak</option>
                             <option value="sl">Slovenian</option>
                             <option value="pl">Polish</option>
                             <option value="ca">Catalan</option>
@@ -178,6 +179,7 @@
                         <li><a href="${loginUrl}hr">Croatian</a></li>
                         <li><a href="${loginUrl}uk">Ukranian</a></li>
                         <li><a href="${loginUrl}cs">Czech</a></li>
+                        <li><a href="${loginUrl}sk">Slovak</a></li>
                         <li><a href="${loginUrl}sl">Slovenian</a></li>
                         <li><a href="${loginUrl}ca">Catalan</a></li>
                         <li><a href="${loginUrl}mk">Macedonian</a></li>
