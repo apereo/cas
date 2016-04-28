@@ -48,7 +48,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired
-    @Qualifier("defaultAuthenticationSupport")
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override

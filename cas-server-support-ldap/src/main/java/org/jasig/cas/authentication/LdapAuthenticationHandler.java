@@ -43,6 +43,8 @@ import java.util.Set;
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
+    private static final String LDAP_ATTRIBUTE_ENTRY_DN = LdapAuthenticationHandler.class.getSimpleName().concat(".dn");
+
     /** Mapping of LDAP attribute name to principal attribute name. */
     @NotNull
     protected Map<String, String> principalAttributeMap = Collections.emptyMap();
@@ -264,6 +266,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
             }
         }
+
+        attributeMap.put(LDAP_ATTRIBUTE_ENTRY_DN, ldapEntry.getDn());
 
         logger.debug("Created LDAP principal for id {} and {} attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
