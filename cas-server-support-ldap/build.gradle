@@ -3,6 +3,7 @@ dependencies {
 
     compile project(':cas-server-core-util')
     compile project(':cas-server-core-authentication')
+    compile project(':cas-server-support-ldap-core')
     compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
     }
     compile(group: 'org.springframework.webflow', name: 'spring-webflow', version: springWebflowVersion) {
