@@ -341,6 +341,12 @@ if (array.length == 3) {
                     {name: 'DISPLAY_NAME',      value: 'display_name'},
                     {name: 'EXTENSION',         value: 'extension'},
                     {name: 'DISPLAY_EXTENSION', value: 'display_extension'}
+                ],
+                failureMode: [
+                    {name: 'OPEN',          value:'open'},
+                    {name: 'CLOSED',        value: 'closed'},
+                    {name: 'PHANTOM',       value: 'phantom'},
+                    {name: 'NONE',          value: 'none'}
                 ]
             };
 
@@ -492,6 +498,9 @@ if (array.length == 3) {
                     accessStrategy: {
                         caseInsensitive: true,
                         type: serviceForm.selectOptions.selectType[0].value
+                    },
+                    multiAuth: {
+                        failureMode: serviceForm.selectOptions.failureMode[0].value
                     }
                 });
                 serviceDataTransformation('load');

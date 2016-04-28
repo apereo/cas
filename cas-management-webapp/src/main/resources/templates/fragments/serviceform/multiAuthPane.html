@@ -2,14 +2,10 @@
 Todo: New pane to configure Multifactor Authentication Policy. Fields are:
 
 
+Todo: Add properties table
 Providers: CSV list
 
-
-services.form.label.multiauth.failuremode=Failure Mode
-services.form.label.multiauth.principalattribute.nametrigger=Principal Attribute Name Trigger
-services.form.label.multiauth.principalattribute.valuetomatch=Principal Attribute Value To Match: text
 -->
-<!-- Todo: Add properties table -->
 <div class="multiauth-container">
     <div class="panel panel-success">
         <div class="panel-heading">
@@ -42,12 +38,22 @@ services.form.label.multiauth.principalattribute.valuetomatch=Principal Attribut
                        th:title="#{services.form.tooltip.multiauth.failuremode}"></i>
                 </label>
                 <div class="col-sm-8">
+<!--
                     <select class="form-control" id="multiAuthFailureMode" ng-model="serviceFormCtrl.serviceData.multiAuth.failureMode">
                         <option value="open" ng-selected="true">OPEN</option>
                         <option value="closed">CLOSED</option>
                         <option value="phantom">PHANTOM</option>
                         <option value="none">NONE</option>
                     </select>
+-->
+
+                    <select class="form-control" id="multiAuthFailureMode" ng-model="serviceFormCtrl.serviceData.multiAuth.failureMode">
+                        <option
+                                ng-repeat="opt in serviceFormCtrl.selectOptions.failureMode"
+                                ng-attr-value="{{ opt.value }}"
+                                ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.multiAuth.failureMode)">{{ opt.name }}</option>
+                    </select>
+
                 </div>
             </div>
 
