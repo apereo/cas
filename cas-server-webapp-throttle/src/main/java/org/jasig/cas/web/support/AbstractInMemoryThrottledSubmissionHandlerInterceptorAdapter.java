@@ -52,7 +52,6 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     private int startDelay;
 
     @Autowired
-    
     private ApplicationContext applicationContext;
 
     @Autowired(required = false)
