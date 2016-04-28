@@ -82,7 +82,8 @@ If you do decide to let the authentication handler retrieve attributes instead o
 ```
 
 ## Schema Declaration
-LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that the XML configuration file contains the `ldaptive` namespace declarations:
+LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that 
+the XML configuration file contains the `ldaptive` namespace declarations:
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"

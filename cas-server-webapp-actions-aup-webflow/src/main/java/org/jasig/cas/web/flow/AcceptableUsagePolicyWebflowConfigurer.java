@@ -37,6 +37,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
                 createEvaluateAction("acceptableUsagePolicyFormAction.submit(flowRequestContext, flowScope.credential, messageContext)"));
         aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
+        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, 
+                CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
     }
 }

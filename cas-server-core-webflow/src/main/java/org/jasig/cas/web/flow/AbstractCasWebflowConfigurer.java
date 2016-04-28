@@ -72,9 +72,8 @@ import java.util.List;
 @Component("casWebflowConfigurer")
 public abstract class AbstractCasWebflowConfigurer {
     private static final String FLOW_ID_LOGIN = "login";
-
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     /**
      * The Login flow definition registry.
      */

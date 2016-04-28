@@ -19,7 +19,6 @@ public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration
     
     private AccountStateHandler accountStateHandler;
 
-
     /**
      * @return  Account state handler component.
      */
