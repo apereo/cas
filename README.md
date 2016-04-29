@@ -4,7 +4,6 @@
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas)][caswebheroku]
 [![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
-[![Coverage Status](https://coveralls.io/repos/github/Jasig/cas/badge.svg?branch=master)](https://coveralls.io/github/Jasig/cas?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
 [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.jasig.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.jasig.cas/cas-server)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC)
@@ -65,7 +64,7 @@ the project. Utilize the [WAR Overlay method](overlay) instead to build and depl
 [casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
 [downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
 [releasenotes]: https://github.com/Jasig/cas/releases
-[casimg]: https://www.apereo.org/sites/default/files/styles/project_logo/public/projects/logos/cas_max_logo_0.png?itok=uD4hQ5-h
+[casimg]: https://cloud.githubusercontent.com/assets/1205228/14918246/aab58e44-0dd7-11e6-8709-fcbcfa16d1cc.png
 [caswebheroku]: http://jasigcas.heroku.com
 [casmgheroku]: http://jasigcasmgmt.heroku.com
 [cassupport]: http://jasig.github.io/cas/Support.html
