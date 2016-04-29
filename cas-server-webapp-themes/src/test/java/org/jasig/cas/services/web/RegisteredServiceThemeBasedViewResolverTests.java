@@ -8,6 +8,8 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -46,6 +48,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
 
         this.registeredServiceThemeBasedViewResolver = new RegisteredServiceThemeBasedViewResolver(this.servicesManager);
         this.registeredServiceThemeBasedViewResolver.setPrefix("/WEB-INF/view/jsp");
+
     }
 
     @Test
@@ -55,6 +58,13 @@ public class RegisteredServiceThemeBasedViewResolverTests {
 
         final WebApplicationService webApplicationService = new WebApplicationServiceFactory().createService("myServiceId");
         requestContext.getFlowScope().put("service", webApplicationService);
+
+        final ResourceLoader loader = mock(ResourceLoader.class);
+        final Resource resource = mock(Resource.class);
+        when(resource.exists()).thenReturn(true);
+        when(loader.getResource(anyString())).thenReturn(resource);
+
+        this.registeredServiceThemeBasedViewResolver.setResourceLoader(loader);
 
         assertEquals("/WEB-INF/view/jsp/myTheme/ui/casLoginView",
                 this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
