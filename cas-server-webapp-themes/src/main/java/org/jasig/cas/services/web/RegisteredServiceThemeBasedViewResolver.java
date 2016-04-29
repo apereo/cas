@@ -7,6 +7,9 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.InternalResourceView;
@@ -40,11 +43,10 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
     private static final String THEME_LOCATION_PATTERN = "%s/%s/ui/";
 
-    /**
-     * The ServiceRegistry to look up the service.
-     */
     private final ServicesManager servicesManager;
 
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     /**
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
@@ -90,7 +92,11 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
             LOGGER.debug("Prefix [{}] set for service [{}] with theme [{}]", themePrefix, service,
                 registeredService.getTheme());
             final String viewUrl = themePrefix + viewName + getSuffix();
-            view.setUrl(viewUrl);
+
+            final Resource resource = this.resourceLoader.getResource(viewUrl);
+            if (resource.exists()) {
+                view.setUrl(viewUrl);
+            }
 
         }
 
@@ -123,4 +129,7 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
         super.setCache(false);
     }
 
+    public void setResourceLoader(final ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 }
