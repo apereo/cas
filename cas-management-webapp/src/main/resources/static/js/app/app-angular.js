@@ -311,7 +311,8 @@ if (array.length == 3) {
                 serviceTypeList: [
                     {name: 'CAS Client',                value: 'cas'},
                     {name: 'OAuth Client',              value: 'oauth'},
-                    {name: 'OAuth Callback Authorize',  value: 'oauth_callback_authz'}
+                    {name: 'OAuth Callback Authorize',  value: 'oauth_callback_authz'},
+                    {name: 'SAML Client',               value: 'saml'}
                 ],
                 logoutTypeList: [
                     {name: 'None',          value: ''},
@@ -330,6 +331,23 @@ if (array.length == 3) {
                     {name: 'ADD',           value: 'add'},
                     {name: 'MULTI-VALUED',  value: 'multi-valued'},
                     {name: 'REPLACE',       value: 'replace'}
+                ],
+                selectType: [
+                    {name: 'DEFAULT',       value: 'default'},
+                    {name: 'TIME',          value: 'time'},
+                    {name: 'GROUPER',       value: 'grouper'}
+                ],
+                groupField: [
+                    {name: 'NAME',              value: 'name'},
+                    {name: 'DISPLAY_NAME',      value: 'display_name'},
+                    {name: 'EXTENSION',         value: 'extension'},
+                    {name: 'DISPLAY_EXTENSION', value: 'display_extension'}
+                ],
+                failureMode: [
+                    {name: 'OPEN',          value:'open'},
+                    {name: 'CLOSED',        value: 'closed'},
+                    {name: 'PHANTOM',       value: 'phantom'},
+                    {name: 'NONE',          value: 'none'}
                 ]
             };
 
@@ -477,7 +495,14 @@ if (array.length == 3) {
                     supportAccess: {casEnabled: true, ssoEnabled:true},
                     publicKey: {algorithm: 'RSA'},
                     userAttrProvider: {type: 'default'},
-                    proxyPolicy: {type: 'refuse'}
+                    proxyPolicy: {type: 'refuse'},
+                    accessStrategy: {
+                        caseInsensitive: true,
+                        type: serviceForm.selectOptions.selectType[0].value
+                    },
+                    multiAuth: {
+                        failureMode: serviceForm.selectOptions.failureMode[0].value
+                    }
                 });
                 serviceDataTransformation('load');
                 showInstructions();
