@@ -276,30 +276,25 @@ Note that support for themes comes with the following components:
 | `RegisteredServiceThemeBasedViewResolver` | If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs an overhaul with additional icons, images, text, etc then this component` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
 
 
-### `ServiceThemeResolver`
+### Dynamic
 Configuration of service-specific themes is backed by the Spring framework and provided by the following component:
 
-Furthermore, deployers may be able to use the functionality provided by the `ThemeChangeInterceptor` of Spring framework to provide theme configuration per each request.
+Furthermore, deployers may be able to use the functionality provided by the `ThemeChangeInterceptor` of 
+Spring framework to provide theme configuration per each request.
 
 #### Configuration
-- Add another theme properties file, which must be placed to the root of `/WEB-INF/classes` folder, name it as `theme_name.properties`. Contents of this file should match the `cas-theme-default.properties` file.
+- Add another theme properties file, which must be placed to the root of `/WEB-INF/classes` folder, name it as `theme_name.properties`. 
+Contents of this file should match the `cas-theme-default.properties` file.
 - Add the location of related styling files, such as CSS and Javascript in the file above.
 - Specify the name of your theme for the service definition under the `theme` property.
 
-### `RegisteredServiceThemeBasedViewResolver`
-`RegisteredServiceThemeBasedViewResolver` is an alternate Spring View Resolver that utilizes a service's
-associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.jsp`, etc). This is specially useful in cases where the set of pages for a theme that are targeted
+### Per Application
+Alternatively, CAS utilizes a service's
+associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.jsp`, etc). 
+This is specially useful in cases where the set of pages for a theme that are targeted
 for a different type of audience are entirely different structurally that simply
-using the `ServiceThemeResolver` is not practical to augment the default views. In such cases, new view pages may be required.
+using the dynamic mode is not practical to augment the default views. In such cases, new view pages may be required.
 
-Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/`
-
-```html
-<bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
-        c:servicesManager-ref="servicesManager"
-        p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp/}"
-        p:order="2001"/>
-```
 
 #### Configuration
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `/WEB-INF/view/jsp/<theme-id>/ui/`).

@@ -35,13 +35,6 @@
           p:suffix=".jsp"
           p:order="2000"/>
 
-    <!--
-    <bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
-            c:servicesManager-ref="servicesManager"
-            p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}"
-            p:order="2001"/>
-    -->
-
     <!-- Locale Resolver -->
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"
           p:defaultLocale="${locale.default:en}"/>
