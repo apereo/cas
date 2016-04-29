@@ -493,7 +493,8 @@ public final class OAuth20AuthorizeControllerTests {
         registeredServiceImpl.setName(name);
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
-        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[] { FIRST_NAME_ATTRIBUTE})));
+        registeredServiceImpl.setAttributeReleasePolicy(
+                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[] {FIRST_NAME_ATTRIBUTE})));
         return registeredServiceImpl;
     }
 
