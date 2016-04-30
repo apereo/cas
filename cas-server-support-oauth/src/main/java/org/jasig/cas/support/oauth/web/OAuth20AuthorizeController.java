@@ -1,6 +1,7 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.PrincipalException;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -47,6 +48,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         if (!verifyAuthorizeRequest(request)) {
+            logger.error("Authorize request verification fails");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -72,13 +74,21 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final UserProfile profile = manager.get(true);
         
         if (profile == null) {
+            logger.error("Unexpected null profile");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         // bypass approval -> redirect to the application with code or access token
         if (bypassApprovalService || bypassApprovalParameter != null) {
-            final Authentication authentication = createAuthentication(profile);
             final Service service = createService(registeredService);
+            final Authentication authentication = createAuthentication(profile, registeredService);
+
+            try {
+                RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+            } catch (final UnauthorizedServiceException | PrincipalException e) {
+                logger.error(e.getMessage(), e);
+                return new ModelAndView(OAuthConstants.ERROR_VIEW);
+            }
 
             final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
             final String callbackUrl;

@@ -3,7 +3,10 @@ package org.jasig.cas.support.oauth.web;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.PrincipalException;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.profile.OAuthClientProfile;
 import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
@@ -50,6 +53,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         response.setContentType("text/plain");
 
         if (!verifyAccessTokenRequest(request, response)) {
+            logger.error("Access token request verification fails");
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST);
         }
 
@@ -79,6 +83,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
             final OAuthToken token = getToken(request, parameterName);
             if (token == null) {
+                logger.error("No token found for authorization_code or refresh_token grant types");
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
             }
             service = token.getService();
@@ -95,7 +100,14 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             final ProfileManager manager = new ProfileManager(context);
             final OAuthUserProfile  profile = (OAuthUserProfile) manager.get(true);
             service = createService(registeredService);
-            authentication = createAuthentication(profile);
+            authentication = createAuthentication(profile, registeredService);
+
+            try {
+                RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+            } catch (final UnauthorizedServiceException | PrincipalException e) {
+                logger.error(e.getMessage(), e);
+                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
+            }
         }
 
         final AccessToken accessToken = generateAccessToken(service, authentication);

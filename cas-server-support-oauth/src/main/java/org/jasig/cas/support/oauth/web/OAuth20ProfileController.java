@@ -71,6 +71,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
                 writeOutProfileResponse(jsonGenerator, accessTokenTicket.getAuthentication().getPrincipal());
             } catch (final Exception e) {
+                logger.error("Cannot JSONify profile", e);
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST + ". " + e.getMessage());
                 jsonGenerator.writeEndObject();
