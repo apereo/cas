@@ -36,7 +36,7 @@ import java.util.List;
  */
 @RefreshScope
 @Component("couchbaseTicketRegistry")
-public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
+public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final String END_TOKEN = "\u02ad";
 
     private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";

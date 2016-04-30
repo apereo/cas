@@ -33,7 +33,8 @@ Access is granted the following settings in `application.properties` file:
 # cas.securityContext.adminpages.ip=127\.0\.0\.1
 ```
 
-The `/status` endpoint is always protected by an IP pattern. The other administrative endpoints however can optionally be protected by the CAS server, via the following settings:
+The `/status` endpoint is always protected by an IP pattern. The other administrative endpoints however can optionally 
+be protected by the CAS server, via the following settings:
 
 ```properties
 # cas.securityContext.adminpages.users=classpath:user-details.properties
@@ -73,13 +74,11 @@ The following optional monitors are also available:
 ### Memcached
 
 ```xml
-
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-memcached-monitor</artifactId>
     <version>${cas.version}</version>
 </dependency>
-
 ...
 
 <util:list id="monitorsList">
@@ -120,6 +119,31 @@ The following settings are available:
 # cache.monitor.warn.free.threshold=10
 # cache.monitor.eviction.threshold=0
 ```
+
+
+### Hazelcast
+
+```xml
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-hazelcast-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+
+...
+
+<util:list id="monitorsList">
+    <ref bean="hazelcastMonitor" />
+</util:list>
+```
+
+The following settings are available:
+
+```properties
+# cache.monitor.warn.free.threshold=10
+# cache.monitor.eviction.threshold=0
+```
+
 
 ### JDBC
 

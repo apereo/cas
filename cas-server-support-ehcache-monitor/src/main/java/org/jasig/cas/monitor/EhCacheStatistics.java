@@ -102,20 +102,20 @@ public class EhCacheStatistics implements CacheStatistics {
             builder.append(name).append(':');
         }
         final int free = getPercentFree();
-        final Formatter formatter = new Formatter(builder);
-        if (this.useBytes) {
-            formatter.format("%.2f", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-            builder.append("MB heap, ");
-            formatter.format("%.2f", this.diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-            builder.append("MB disk, ");
-        } else {
-            builder.append(this.heapSize).append(" items in heap, ");
-            builder.append(this.diskSize).append(" items on disk, ");
+        try (final Formatter formatter = new Formatter(builder)) {
+            if (this.useBytes) {
+                formatter.format("%.2f", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
+                builder.append("MB heap, ");
+                formatter.format("%.2f", this.diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
+                builder.append("MB disk, ");
+            } else {
+                builder.append(this.heapSize).append(" items in heap, ");
+                builder.append(this.diskSize).append(" items on disk, ");
+            }
+            formatter.format("%.2f", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
+            builder.append("MB off-heap, ");
+            builder.append(free).append("% free, ");
+            builder.append(getEvictions()).append(" evictions");
         }
-        formatter.format("%.2f", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-        builder.append("MB off-heap, ");
-        builder.append(free).append("% free, ");
-        builder.append(getEvictions()).append(" evictions");
-        formatter.close();
     }
 }

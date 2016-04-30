@@ -12,7 +12,6 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Monitors the memcached hosts known to an instance of {@link net.spy.memcached.MemcachedClientIF}.
@@ -25,14 +24,15 @@ import java.util.Map;
 public class MemcachedMonitor extends AbstractCacheMonitor {
 
     @Nullable
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("memcachedClient")
     private MemcachedClientIF memcachedClient;
 
     /**
      * Instantiates a new Memcached monitor.
      */
-    public MemcachedMonitor() {}
+    public MemcachedMonitor() {
+    }
 
     /**
      * Creates a new monitor that observes the given memcached client.
@@ -75,25 +75,24 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      */
     @Override
     protected CacheStatistics[] getStatistics() {
-
-
-        final Map<SocketAddress, Map<String, String>> allStats = this.memcachedClient.getStats();
         final List<CacheStatistics> statsList = new ArrayList<>();
-        this.memcachedClient.getStats().forEach((key, statsMap) -> {
-            if (!statsMap.isEmpty()) {
-                final long size = Long.parseLong(statsMap.get("bytes"));
-                final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
-                final long evictions = Long.parseLong(statsMap.get("evictions"));
+        if (this.memcachedClient != null) {
+            this.memcachedClient.getStats().forEach((key, statsMap) -> {
+                if (!statsMap.isEmpty()) {
+                    final long size = Long.parseLong(statsMap.get("bytes"));
+                    final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
+                    final long evictions = Long.parseLong(statsMap.get("evictions"));
 
-                final String name;
-                if (key instanceof InetSocketAddress) {
-                    name = ((InetSocketAddress) key).getHostName();
-                } else {
-                    name = key.toString();
+                    final String name;
+                    if (key instanceof InetSocketAddress) {
+                        name = ((InetSocketAddress) key).getHostName();
+                    } else {
+                        name = key.toString();
+                    }
+                    statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
                 }
-                statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
-            }
-        });
+            });
+        }
         return statsList.toArray(new CacheStatistics[statsList.size()]);
     }
 }

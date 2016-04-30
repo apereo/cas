@@ -35,9 +35,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     @Qualifier("ehcacheTicketsCache")
     private Cache ehcacheTicketsCache;
 
-    /**
-     * @see #setSupportRegistryState(boolean)
-     **/
     private boolean supportRegistryState = true;
 
     /**
@@ -167,8 +164,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public void setSupportRegistryState(final boolean supportRegistryState) {
         this.supportRegistryState = supportRegistryState;
     }
-
-
+    
     /**
      * Init.
      */
