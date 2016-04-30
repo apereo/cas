@@ -68,16 +68,16 @@ which may not be appropriate for use in production. Setting the value to
 * `create` - create the schema, destroying previous data.
 * `create-drop` - drop the schema at the end of the session.
 
-## TicketGrantingTicket Locking
+## TGT Locking
 
-TicketGrantingTickets are almost always updated within the same transaction they are loaded from the database in, but
+TGTs are almost always updated within the same transaction they are loaded from the database in, but
 after some processing delays. Because of this, the JPA Ticket Registry utilizes write locks on all loads of
-TicketGrantingTickets from the database to prevent deadlocks and ensure usage meta-data consistency when a single
-TicketGrantingTicket is used concurrently by multiple requests.
+TGTs from the database to prevent deadlocks and ensure usage meta-data consistency when a single
+TGT is used concurrently by multiple requests.
 
 This reduces performance of the JPA Ticket Registry and may not be desirable or necessary for some deployments depending
-the database in use, it's configured transaction isolation level, and expected concurrency of a single
-TicketGrantingTicket.
+the database in use, its configured transaction isolation level, and expected concurrency of a single
+TGT.
 
 The following setting can disable this locking behavior:
 
