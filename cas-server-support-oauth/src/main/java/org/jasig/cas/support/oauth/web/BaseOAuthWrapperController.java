@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
@@ -106,24 +107,28 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * Create an authentication from a user profile.
      *
      * @param profile the given user profile
+     * @param service the registered service
      * @return the built authentication
      */
-    protected Authentication createAuthentication(final UserProfile profile) {
+    protected Authentication createAuthentication(final UserProfile profile, final RegisteredService service) {
         final Principal principal = principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
+
+        final Map<String, Object> newAttributes = service.getAttributeReleasePolicy().getAttributes(principal);
+        final Principal newPrincipal = principalFactory.createPrincipal(profile.getId(), newAttributes);
+
         final String authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(
                 new BasicIdentifiableCredential(profile.getId()));
-        final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, principal, new ArrayList<>());
+        final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, newPrincipal, new ArrayList<>());
 
         return DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", profile.getPermissions())
                 .addAttribute("roles", profile.getRoles())
                 .addCredential(metadata)
-                .setPrincipal(principal)
+                .setPrincipal(newPrincipal)
                 .setAuthenticationDate(ZonedDateTime.now())
                 .addSuccess(profile.getClass().getCanonicalName(), handlerResult)
                 .build();
-        
     }
 
     public ServicesManager getServicesManager() {
