@@ -157,8 +157,18 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-You'll also want to make sure that
-[the Shibboleth Maven repository](https://build.shibboleth.net/nexus/content/repositories/releases) is included.
+You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>shibboleth-releases</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+    </repository>
+    ...
+</repositories>
+```
 
 The module provides a `shibbolethPersonAttributeDao` that uses the property `shibboleth.attributeResolver.resources`
 for configuration.
