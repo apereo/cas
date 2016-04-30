@@ -158,7 +158,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 You'll also want to make sure that
-[the Shibboleth Maven repository](https://build.shibboleth.net/nexus/content/repositories/releases]) is included.
+[the Shibboleth Maven repository](https://build.shibboleth.net/nexus/content/repositories/releases) is included.
 
 The module provides a `shibbolethPersonAttributeDao` that uses the property `shibboleth.attributeResolver.resources`
 for configuration.
