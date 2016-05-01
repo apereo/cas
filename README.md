@@ -1,4 +1,4 @@
-<p align="center">![][casimg]
+![][casimg]
 # Central Authentication Service (CAS)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas)][caswebheroku]
