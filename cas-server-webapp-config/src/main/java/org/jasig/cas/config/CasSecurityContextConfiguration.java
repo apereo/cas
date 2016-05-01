@@ -3,7 +3,7 @@ package org.jasig.cas.config;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
+import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -101,8 +102,8 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
                 client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
 
                 final Config cfg = new Config(this.callbackUrl, client);
-                cfg.setAuthorizer(
-                        new RequireAnyRoleAuthorizer(org.springframework.util.StringUtils.commaDelimitedListToSet(this.roles)));
+                final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(this.roles);
+                cfg.setAuthorizer(new RequireAnyRoleAuthorizer<>(rolesSet));
 
                 return cfg;
             }

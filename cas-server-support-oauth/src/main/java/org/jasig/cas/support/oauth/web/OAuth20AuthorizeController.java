@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
@@ -71,13 +72,15 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
-        final UserProfile profile = manager.get(true);
+        final Optional<UserProfile> profiled = manager.get(true);
         
-        if (profile == null) {
+        if (!profiled.isPresent()) {
             logger.error("Unexpected null profile");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
+        final UserProfile profile = profiled.get();
+        
         // bypass approval -> redirect to the application with code or access token
         if (bypassApprovalService || bypassApprovalParameter != null) {
             final Service service = createService(registeredService);

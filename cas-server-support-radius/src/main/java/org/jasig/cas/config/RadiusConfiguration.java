@@ -84,13 +84,13 @@ public class RadiusConfiguration {
     /**
      * The Accounting port.
      */
-    @Value("${cas.radius.client.port.acct:" + RadiusServer.DEFAULT_PORT_ACCOUNTING + "}")
+    @Value("${cas.radius.client.port.acct:" + RadiusServer.DEFAULT_PORT_ACCOUNTING + '}')
     private int accountingPort;
 
     /**
      * The Authentication port.
      */
-    @Value("${cas.radius.client.port.authn:" + RadiusServer.DEFAULT_PORT_AUTHENTICATION + "}")
+    @Value("${cas.radius.client.port.authn:" + RadiusServer.DEFAULT_PORT_AUTHENTICATION + '}')
     private int authenticationPort;
 
     /**

@@ -8,11 +8,10 @@ import org.jasig.cas.authentication.principal.ClientCredential;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
+import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.CommonHelper;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.profile.creator.AuthenticatorProfileCreator;
-import org.pac4j.http.profile.creator.ProfileCreator;
-
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 
@@ -48,15 +47,17 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             final Authenticator authenticator = getAuthenticator(credential);
             CommonHelper.assertNotNull("authenticator", authenticator);
             authenticator.validate(credentials);
-        } catch (final CredentialsException e) {
+
+            final UserProfile profile = this.profileCreator.create(credentials);
+            logger.debug("profile: {}", profile);
+
+            return createResult(new ClientCredential(credentials), profile);
+        } catch (final Exception e) {
             logger.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
         }
 
-        final UserProfile profile = this.profileCreator.create(credentials);
-        logger.debug("profile: {}", profile);
-
-        return createResult(new ClientCredential(credentials), profile);
+        
     }
 
     /**

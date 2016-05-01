@@ -5,8 +5,9 @@ import com.mongodb.MongoClientURI;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.credentials.password.NopPasswordEncoder;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.password.NopPasswordEncoder;
 import org.pac4j.mongo.credentials.authenticator.MongoAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * An authentication handler to verify credentials against a MongoDb instance.
+ *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
@@ -43,12 +45,12 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     @Value("${cas.authn.mongo.password.attribute:password}")
     private String passwordAttribute;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("mongoPac4jPasswordEncoder")
-    private org.pac4j.http.credentials.password.PasswordEncoder mongoPasswordEncoder = new NopPasswordEncoder();
+    private org.pac4j.core.credentials.password.PasswordEncoder mongoPasswordEncoder = new NopPasswordEncoder();
 
     @Override
-    protected Authenticator getAuthenticator(final Credential credential) {
+    protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         final MongoClientURI uri = new MongoClientURI(this.mongoHostUri);
         final MongoClient client = new MongoClient(uri);
         LOGGER.info("Connected to MongoDb instance @ {} using database [{}]",
@@ -66,16 +68,16 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     @Autowired(required = false)
     @Override
     public void setPasswordEncoder(@Qualifier("mongoPasswordEncoder")
-                                       final PasswordEncoder passwordEncoder) {
+                                   final PasswordEncoder passwordEncoder) {
         if (passwordEncoder != null) {
             super.setPasswordEncoder(passwordEncoder);
         }
     }
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Override
     public void setPrincipalNameTransformer(@Qualifier("mongoPrincipalNameTransformer")
-                                                final PrincipalNameTransformer principalNameTransformer) {
+                                            final PrincipalNameTransformer principalNameTransformer) {
         if (principalNameTransformer != null) {
             super.setPrincipalNameTransformer(principalNameTransformer);
         }
@@ -105,7 +107,7 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
         this.passwordAttribute = passwordAttribute;
     }
 
-    public void setMongoPasswordEncoder(final org.pac4j.http.credentials.password.PasswordEncoder mongoPasswordEncoder) {
+    public void setMongoPasswordEncoder(final org.pac4j.core.credentials.password.PasswordEncoder mongoPasswordEncoder) {
         this.mongoPasswordEncoder = mongoPasswordEncoder;
     }
 }

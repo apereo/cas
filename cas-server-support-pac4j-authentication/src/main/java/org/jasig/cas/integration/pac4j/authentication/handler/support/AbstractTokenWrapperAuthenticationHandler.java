@@ -4,7 +4,7 @@ import org.jasig.cas.authentication.BasicIdentifiableCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
-import org.pac4j.http.credentials.TokenCredentials;
+import org.pac4j.core.credentials.TokenCredentials;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;

@@ -1,0 +1,9 @@
+description = 'Apereo CAS Digest Authentication Support'
+dependencies {
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-api')
+    compile project(':cas-server-core-webflow')
+    compile project(':cas-server-core-web')
+    compile libraries.pac4j
+}
+

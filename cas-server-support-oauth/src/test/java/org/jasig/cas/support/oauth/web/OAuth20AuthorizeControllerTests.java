@@ -198,7 +198,7 @@ public class OAuth20AuthorizeControllerTests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -244,7 +244,7 @@ public class OAuth20AuthorizeControllerTests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -291,7 +291,7 @@ public class OAuth20AuthorizeControllerTests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -338,7 +338,7 @@ public class OAuth20AuthorizeControllerTests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -346,7 +346,7 @@ public class OAuth20AuthorizeControllerTests {
         final RedirectView redirectView = (RedirectView) view;
         final String redirectUrl = redirectView.getUrl();
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
-        assertTrue(redirectUrl.contains("&" + OAuthConstants.STATE + "=" + STATE));
+        assertTrue(redirectUrl.contains('&' + OAuthConstants.STATE + '=' + STATE));
 
         final String code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
         final AccessToken accessToken = (AccessToken) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
@@ -386,7 +386,7 @@ public class OAuth20AuthorizeControllerTests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -433,7 +433,7 @@ public class OAuth20AuthorizeControllerTests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -479,7 +479,7 @@ public class OAuth20AuthorizeControllerTests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.CONFIRM_VIEW, modelAndView.getViewName());
@@ -494,12 +494,12 @@ public class OAuth20AuthorizeControllerTests {
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setAttributeReleasePolicy(
-                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[] {FIRST_NAME_ATTRIBUTE})));
+                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{FIRST_NAME_ATTRIBUTE})));
         return registeredServiceImpl;
     }
 
     private void clearAllServices() {
-        final Collection<RegisteredService> col  = oAuth20AuthorizeController.getServicesManager().getAllServices();
+        final Collection<RegisteredService> col = oAuth20AuthorizeController.getServicesManager().getAllServices();
 
         for (final RegisteredService r : col) {
             oAuth20AuthorizeController.getServicesManager().delete(r.getId());

@@ -7,9 +7,9 @@ import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.profile.OAuthUserProfile;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.exception.CredentialsException;
-import org.pac4j.http.credentials.UsernamePasswordCredentials;
-import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,7 +26,6 @@ import java.util.Map;
 @RefreshScope
 @Component("oAuthUserAuthenticator")
 public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
-
     
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")

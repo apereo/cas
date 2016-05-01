@@ -5,11 +5,10 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.http.credentials.DigestCredentials;
+import org.pac4j.http.credentials.extractor.DigestAuthExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -17,29 +16,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link BasicAuthenticationAction} that extracts basic authN credentials from the request.
+ * This is {@link DigestAuthenticationAction} that extracts basic authN credentials from the request.
  *
  * @author Misagh Moayyed
- * @since 4.2.0
+ * @since 5.0.0
  */
-@RefreshScope
-@Component("basicAuthenticationAction")
-public class BasicAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
+@Component("digestAuthenticationAction")
+public class DigestAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthenticationAction.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(DigestAuthenticationAction.class);
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
-        final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
+        final DigestAuthExtractor extractor = new DigestAuthExtractor(this.getClass().getSimpleName());
         final WebContext webContext = new J2EContext(request, response);
         try {
-            final UsernamePasswordCredentials credentials = extractor.extract(webContext);
+            final DigestCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
-                LOGGER.debug("Received basic authentication request from credentials {} ", credentials);
-                return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+                LOGGER.debug("Received digest authentication request from credentials {} ", credentials);
+                return new UsernamePasswordCredential(credentials.getUsername(), credentials.getToken());
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);

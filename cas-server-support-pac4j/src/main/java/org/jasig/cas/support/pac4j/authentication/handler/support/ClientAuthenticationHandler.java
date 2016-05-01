@@ -32,11 +32,7 @@ import java.security.GeneralSecurityException;
 @Component("clientAuthenticationHandler")
 @SuppressWarnings("unchecked")
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
-
-    /**
-     * The clients for authentication.
-     */
-    
+        
     @Autowired
     @Qualifier("builtClients")
     private Clients clients;
@@ -56,7 +52,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
         logger.debug("clientName:  {}", clientName);
 
         // get client
-        final Client<Credentials, UserProfile> client = this.clients.findClient(clientName);
+        final Client client = this.clients.findClient(clientName);
         logger.debug("client: {}", client);
 
         // web context
@@ -65,10 +61,13 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
         final WebContext webContext = new J2EContext(request, response);
 
         // get user profile
-        final UserProfile userProfile = client.getUserProfile(credentials, webContext);
-        logger.debug("userProfile: {}", userProfile);
-
-        return createResult(clientCredentials, userProfile);
+        try {
+            final UserProfile userProfile = client.getUserProfile(credentials, webContext);
+            logger.debug("userProfile: {}", userProfile);
+            return createResult(clientCredentials, userProfile);
+        } catch (final Exception e) {
+            throw new PreventedException(e);
+        }
     }
 
     public Clients getClients() {

@@ -1,6 +1,5 @@
 package org.jasig.cas.support.pac4j.web.flow;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
@@ -14,16 +13,13 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
-import org.pac4j.core.client.ClientType;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.RequiresHttpAction;
-import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +48,11 @@ import java.util.Set;
  * locale, method and service are saved into the web session.</p>
  * After authentication, appropriate information are expected on this callback url to finish the authentication
  * process with the provider.
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 @RefreshScope
 @Component("clientAction")
 public class ClientAction extends AbstractAction {
@@ -64,45 +61,29 @@ public class ClientAction extends AbstractAction {
      */
     public static final String PAC4J_URLS = "pac4jUrls";
 
-    /**
-     * Supported protocols.
-     */
-    private static final Set<ClientType> SUPPORTED_PROTOCOLS = ImmutableSet.of(ClientType.CAS_PROTOCOL, ClientType.OAUTH_PROTOCOL,
-            ClientType.OPENID_PROTOCOL, ClientType.SAML_PROTOCOL, ClientType.OPENID_CONNECT_PROTOCOL);
-
-    /**
-     * The logger.
-     */
     private transient Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
-    /**
-     * The clients used for authentication.
-     */
-    
     @Autowired
     @Qualifier("builtClients")
     private Clients clients;
 
-    
-    @Autowired(required=false)
+
+    @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     /**
      * The service for CAS authentication.
      */
-    
+
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
-
-    static {
-        ProfileHelper.setKeepRawData(true);
-    }
 
     /**
      * Build the ClientAction.
      */
-    public ClientAction() {}
+    public ClientAction() {
+    }
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -122,14 +103,8 @@ public class ClientAction extends AbstractAction {
             // get client
             final BaseClient<Credentials, CommonProfile> client =
                     (BaseClient<Credentials, CommonProfile>) this.clients
-                    .findClient(clientName);
+                            .findClient(clientName);
             logger.debug("client: {}", client);
-
-            // Only supported protocols
-            final ClientType clientType = client.getClientType();
-            if (!SUPPORTED_PROTOCOLS.contains(clientType)) {
-                throw new TechnicalException("Only CAS, OAuth, OpenID and SAML protocols are supported: " + client);
-            }
 
             // get credentials
             final Credentials credentials;
@@ -194,17 +169,21 @@ public class ClientAction extends AbstractAction {
         saveRequestParameter(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
-        final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
-        // for all clients, generate redirection urls
-        for (final Client client : this.clients.findAllClients()) {
-            final IndirectClient indirectClient = (IndirectClient) client;
-            // clean Client suffix for default names
-            final String name = client.getName().replace("Client", "");
-            final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
-            logger.debug("{} -> {}", name, redirectionUrl);
-            urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+        try {
+            final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
+            // for all clients, generate redirection urls
+            for (final Client client : this.clients.findAllClients()) {
+                final IndirectClient indirectClient = (IndirectClient) client;
+                // clean Client suffix for default names
+                final String name = StringUtils.remove(client.getName(), "Client");
+                final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
+                logger.debug("{} -> {}", name, redirectionUrl);
+                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+            }
+            context.getFlowScope().put(PAC4J_URLS, urls);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        context.getFlowScope().put(PAC4J_URLS, urls);
     }
 
     /**
@@ -212,10 +191,10 @@ public class ClientAction extends AbstractAction {
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name The name of the parameter
+     * @param name    The name of the parameter
      */
     private void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
-            final String name) {
+                                         final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -225,10 +204,10 @@ public class ClientAction extends AbstractAction {
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name The name of the parameter
+     * @param name    The name of the parameter
      */
     private void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
-            final String name) {
+                                      final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);

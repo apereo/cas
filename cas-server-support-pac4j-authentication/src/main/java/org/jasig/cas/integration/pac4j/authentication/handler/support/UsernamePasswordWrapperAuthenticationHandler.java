@@ -7,11 +7,10 @@ import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
-import org.pac4j.http.credentials.UsernamePasswordCredentials;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
-
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 

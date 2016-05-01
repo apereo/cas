@@ -9,7 +9,8 @@ import org.jasig.cas.integration.pac4j.authentication.handler.support.AbstractTo
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceProperty;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.pac4j.http.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.TokenCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,7 +36,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     }
 
     @Override
-    protected Authenticator getAuthenticator(final Credential credential) {
+    protected Authenticator<TokenCredentials> getAuthenticator(final Credential credential) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
         logger.debug("Locating token secret for service [{}]", tokenCredential.getService());
 

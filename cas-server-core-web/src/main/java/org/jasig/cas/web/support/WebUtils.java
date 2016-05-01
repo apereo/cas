@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Common utilities for the web tier.
@@ -348,9 +349,9 @@ public final class WebUtils {
         if (request != null && response != null) {
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
-            final UserProfile profile = manager.get(true);
-            if (profile != null) {
-                final String id = profile.getId();
+            final Optional<UserProfile> profile = manager.get(true);
+            if (profile.isPresent()) {
+                final String id = profile.get().getId();
                 if (id != null) {
                     return id;
                 }

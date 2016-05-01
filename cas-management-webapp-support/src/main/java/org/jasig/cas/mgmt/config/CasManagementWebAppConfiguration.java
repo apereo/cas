@@ -14,8 +14,8 @@ import org.jasig.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 import org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.core.authorization.AuthorizationGenerator;
-import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
+import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
+import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
@@ -108,7 +108,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean(name = "requireAnyRoleAuthorizer")
     public RequireAnyRoleAuthorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(this.roles));
+        return new RequireAnyRoleAuthorizer<>(StringUtils.commaDelimitedListToSet(this.roles));
     }
 
     /**

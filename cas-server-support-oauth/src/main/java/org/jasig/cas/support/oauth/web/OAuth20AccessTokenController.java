@@ -30,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * This controller returns an access token according to the given OAuth code and client credentials (authorization code grant type)
@@ -67,8 +68,8 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
-            final UserProfile profile = manager.get(true);
-            final String clientId = profile.getId();
+            final Optional<UserProfile> profile = manager.get(true);
+            final String clientId = profile.get().getId();
             final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
             // we generate a refresh token if requested by the service but not from a refresh token
             generateRefreshToken = registeredService.isGenerateRefreshToken() 
@@ -100,9 +101,9 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             // resource owner password grant type
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
-            final OAuthUserProfile  profile = (OAuthUserProfile) manager.get(true);
+            final Optional<OAuthUserProfile>  profile = manager.get(true);
             service = createService(registeredService);
-            authentication = createAuthentication(profile, registeredService);
+            authentication = createAuthentication(profile.get(), registeredService);
 
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, 
@@ -188,11 +189,13 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         // must be authenticated (client or user)
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
-        final UserProfile profile = manager.get(true);
-        if (profile == null) {
+        final Optional<UserProfile> profiled = manager.get(true);
+        if (!profiled.isPresent()) {
             return false;
         }
 
+        final UserProfile profile = profiled.get();
+        
         // authorization code grant type
         if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
 

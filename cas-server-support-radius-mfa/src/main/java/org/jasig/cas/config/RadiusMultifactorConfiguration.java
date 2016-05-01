@@ -91,13 +91,13 @@ public class RadiusMultifactorConfiguration {
     /**
      * The Accounting port.
      */
-    @Value("${cas.mfa.radius.client.port.acct:" + RadiusServer.DEFAULT_PORT_ACCOUNTING + "}")
+    @Value("${cas.mfa.radius.client.port.acct:" + RadiusServer.DEFAULT_PORT_ACCOUNTING + '}')
     private int accountingPort;
 
     /**
      * The Authentication port.
      */
-    @Value("${cas.mfa.radius.client.port.authn:" + RadiusServer.DEFAULT_PORT_AUTHENTICATION + "}")
+    @Value("${cas.mfa.radius.client.port.authn:" + RadiusServer.DEFAULT_PORT_AUTHENTICATION + '}')
     private int authenticationPort;
 
     /**

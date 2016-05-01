@@ -8,7 +8,7 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-import org.pac4j.core.authorization.AuthorizationGenerator;
+import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.exception.AccountNotFoundException;
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
      * {@link #roleAttributeName} (Spring Security convention).
      **/
     
-    @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + "}")
+    @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + '}')
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 
     /** Flag that indicates whether multiple search results are allowed for a given credential. */

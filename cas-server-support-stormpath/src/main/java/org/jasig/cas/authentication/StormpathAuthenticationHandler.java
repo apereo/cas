@@ -3,8 +3,9 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.credentials.password.NopPasswordEncoder;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.password.NopPasswordEncoder;
 import org.pac4j.stormpath.credentials.authenticator.StormpathAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +34,7 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
 
     @Autowired(required=false)
     @Qualifier("stormpathPac4jPasswordEncoder")
-    private org.pac4j.http.credentials.password.PasswordEncoder stormpathPasswordEncoder = new NopPasswordEncoder();
+    private org.pac4j.core.credentials.password.PasswordEncoder stormpathPasswordEncoder = new NopPasswordEncoder();
 
     @Autowired(required = false)
     @Override
@@ -54,7 +55,7 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
     }
 
     @Override
-    protected Authenticator getAuthenticator(final Credential credential) {
+    protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.apiKey, this.secretkey, this.applicationId);
         authenticator.setPasswordEncoder(this.stormpathPasswordEncoder);
         return authenticator;
