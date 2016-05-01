@@ -10,7 +10,7 @@
     <div id="content">
         <div id="msg" class="errors">
             <h2 th:utext="#{screen.service.error.header}"/>
-            <p th:utext="#{${rootCauseException.code}}"/>
+            <p th:if="${rootCauseException}" th:utext="#{${rootCauseException.code}}"/>
         </div>
     </div>
     <div th:include="fragments/footer"/>

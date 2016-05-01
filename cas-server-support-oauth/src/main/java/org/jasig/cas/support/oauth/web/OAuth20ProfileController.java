@@ -11,6 +11,7 @@ import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,7 +28,7 @@ import java.util.Map;
  * @since 3.5.0
  */
 @RefreshScope
-@Component("profileController")
+@Controller("profileController")
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ID = "id";

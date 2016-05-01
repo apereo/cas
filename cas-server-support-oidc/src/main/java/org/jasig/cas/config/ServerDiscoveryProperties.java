@@ -31,31 +31,31 @@ public class ServerDiscoveryProperties {
     }
 
     public String getAuthorizationEndpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.AUTHORIZE_URL);
     }
 
     public String getTokenEndpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL);
     }
 
     public String getUserinfoEndpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL);
     }
 
     public String getJwksEndpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OidcConstants.JWKS_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL);
     }
 
     public String getRegistrationEndpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OidcConstants.REGISTRATION_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL);
     }
 
     public String getIntrospectionEndpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OidcConstants.INTROSPECTION_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
     }
 
     public String getRevocationEndpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OidcConstants.REVOCATION_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL);
     }
     
     public List<String> getSupportedScopes() {

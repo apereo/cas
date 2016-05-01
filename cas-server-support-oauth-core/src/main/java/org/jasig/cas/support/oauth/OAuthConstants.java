@@ -7,10 +7,7 @@ package org.jasig.cas.support.oauth;
  * @since 3.5.0
  */
 public interface OAuthConstants {
-
-    /** OAuth 2 endpoint in CAS. */
-    String ENDPOINT_OAUTH2 = "/oauth2.0/*";
-
+    
     /** Base OAuth 2.0 url. */
     String BASE_OAUTH20_URL = "/oauth2.0";
 
