@@ -46,7 +46,7 @@
     </bean>
 
     <bean id="monitor" class="org.jasig.cas.monitor.EhCacheMonitor"
-          c:ticketGrantingTicketsCache-ref="testCache"/>
+          c:ehcacheTicketsCache-ref="testCache"/>
 
 
 </beans>
