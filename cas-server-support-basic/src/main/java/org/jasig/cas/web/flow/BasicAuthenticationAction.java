@@ -28,7 +28,6 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthenticationAction.class);
 
-
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link DigestAuthenticationAction} that extracts basic authN credentials from the request.
+ * This is {@link DigestAuthenticationAction} that extracts digest authN credentials from the request.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
