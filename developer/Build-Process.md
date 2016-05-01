@@ -49,9 +49,9 @@ cd cas-server
 ./gradlew eclipse
 ```
 
-## Embedded Jetty
+## Embedded Tomcat
 
-The CAS project is pre-configured with an embedded Jetty instance for both the server web application as well as the management web application.
+The CAS project is pre-configured with an embedded Tomcat instance for both the server web application as well as the management web application.
 
 ### Configure SSL
 
@@ -67,7 +67,7 @@ jettySslTrustStorePassword=changeit
 The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You will need to use the `keytool` command of the JDK to create the keystore and the certificate. The following commands may serve as an example:
 
 ```bash
-keytool -genkey -alias cas -keyalg RSA -validity 999 -keystore /etc/cas/jetty/thekeystore
+keytool -genkey -alias cas -keyalg RSA -validity 999 -keystore /etc/cas/thekeystore
 ```
 
 Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need to delete the old one and then follow these instructions again.
@@ -98,17 +98,17 @@ Execute the following command:
 
 ```bash
 CD cas-server-webapp
-gradle build jettyRunWar --parallel -x test -DskipCheckstyle=true -x javadoc -DskipAspectJ=true -DskipFindbugs=true --console rich
+gradle build bootRun --parallel -x test -DskipCheckstyle=true -x javadoc -DskipAspectJ=true -DskipFindbugs=true 
+
 ```
 
 The response will look something like this:
 
 ```bash
-05:52:06 INFO  Initializing Spring FrameworkServlet 'cas'
-05:52:06 INFO  Jetty 9.2.10.v20150310 started and listening on ports 8080, 8443
-05:52:06 INFO  Central Authentication System (CAS) runs at:
-05:52:06 INFO    http://localhost:8080/cas
-05:52:06 INFO    https://localhost:8443/cas
+INFO [org.apache.catalina.core.StandardService] - <Starting service Tomcat>
+INFO [org.apache.catalina.core.StandardEngine] - <Starting Servlet Engine: Apache Tomcat/8.0.32>
+INFO [org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/cas]] - <Initializing Spring embedded WebApplicationContext>
+INFO [org.jasig.cas.web.CasWebApplication] - <Started CasWebApplication in 21.485 seconds (JVM running for 22.895)>
 ```
 
 CAS will be available at `https://mymachine.domain.edu:8443/cas`
