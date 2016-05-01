@@ -1,15 +1,16 @@
 package org.jasig.cas.services.web;
 
 import com.google.common.collect.ImmutableMap;
+import org.jasig.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
-import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
-import org.jasig.cas.services.web.factory.DefaultRegisteredServiceFactory;
-import org.jasig.cas.services.web.factory.DefaultRegisteredServiceMapper;
-import org.jasig.cas.services.web.factory.RegisteredServiceMapper;
+import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.jasig.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.jasig.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.jasig.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.jasig.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +49,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Test
     public void verifyDeleteService() throws Exception {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("serviceId");
@@ -75,7 +76,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Test(expected=IllegalArgumentException.class)
     public void updateEvaluationOrderInvalidServiceId() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
@@ -87,7 +88,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Test
     public void verifyManage() throws Exception{
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName("name");
         r.setDescription("uniqueDescription");
@@ -113,7 +114,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         // override the RegisteredServiceMapper
         this.registeredServiceFactory.setRegisteredServiceMapper(new CustomRegisteredServiceMapper());
 
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName("name");
         r.setDescription("uniqueDescription");
@@ -137,7 +138,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     }
 
     private static class CustomRegisteredServiceMapper implements RegisteredServiceMapper {
-        private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
+        private RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
 
         @Override
         public void mapRegisteredService(final RegisteredService svc, final ServiceData bean) {

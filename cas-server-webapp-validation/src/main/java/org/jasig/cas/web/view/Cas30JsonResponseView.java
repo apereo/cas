@@ -1,11 +1,11 @@
 package org.jasig.cas.web.view;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -29,19 +29,21 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("cas3ServiceJsonView")
 public class Cas30JsonResponseView extends Cas30ResponseView {
     /**
      * Logger instance.
      */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Instantiates a new json response view.
      * Forces pretty printing of the JSON view.
      */
     public Cas30JsonResponseView() {
-        super(createDelegatedView());
+        super();
+        setView(createDelegatedView());
         logger.debug("Initializing {}", this.getClass().getSimpleName());
     }
 
@@ -56,22 +58,27 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
-        super.prepareMergedOutputModel(model, request, response);
-
         final CasServiceResponse casResponse = new CasServiceResponse();
 
-        if (getAssertionFrom(model) != null){
-            final CasServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
-            casResponse.setAuthenticationSuccess(success);
-        } else {
+        try {
+            super.prepareMergedOutputModel(model, request, response);
+            
+            if (getAssertionFrom(model) != null) {
+                final CasServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
+                casResponse.setAuthenticationSuccess(success);
+            } else {
+                final CasServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
+                casResponse.setAuthenticationFailure(failure);
+            }
+        } catch (final Exception e) {
             final CasServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
             casResponse.setAuthenticationFailure(failure);
+        } finally {
+            final Map<String, Object> casModel = new HashMap<>();
+            casModel.put("serviceResponse", casResponse);
+            model.clear();
+            model.putAll(casModel);
         }
-
-        final Map<String, Object> casModel = new HashMap<>();
-        casModel.put("serviceResponse", casResponse);
-        model.clear();
-        model.putAll(casModel);
     }
 
     private CasServiceResponseAuthenticationFailure createAuthenticationFailure(final Map<String, Object> model) {
@@ -103,7 +110,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         private CasServiceResponseAuthenticationSuccess authenticationSuccess;
 
         public CasServiceResponseAuthenticationFailure getAuthenticationFailure() {
-            return authenticationFailure;
+            return this.authenticationFailure;
         }
 
         public void setAuthenticationFailure(final CasServiceResponseAuthenticationFailure authenticationFailure) {
@@ -111,7 +118,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public CasServiceResponseAuthenticationSuccess getAuthenticationSuccess() {
-            return authenticationSuccess;
+            return this.authenticationSuccess;
         }
 
         public void setAuthenticationSuccess(final CasServiceResponseAuthenticationSuccess authenticationSuccess) {
@@ -126,7 +133,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         private Map attributes;
 
         public String getUser() {
-            return user;
+            return this.user;
         }
 
         public void setUser(final String user) {
@@ -134,7 +141,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public String getProxyGrantingTicket() {
-            return proxyGrantingTicket;
+            return this.proxyGrantingTicket;
         }
 
         public void setProxyGrantingTicket(final String proxyGrantingTicket) {
@@ -142,7 +149,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public List getProxies() {
-            return proxies;
+            return this.proxies;
         }
 
         public void setProxies(final List proxies) {
@@ -150,7 +157,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public Map getAttributes() {
-            return attributes;
+            return this.attributes;
         }
 
         public void setAttributes(final Map attributes) {
@@ -163,7 +170,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         private String description;
 
         public String getCode() {
-            return code;
+            return this.code;
         }
 
         public void setCode(final String code) {
@@ -171,7 +178,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         }
 
         public String getDescription() {
-            return description;
+            return this.description;
         }
 
         public void setDescription(final String description) {

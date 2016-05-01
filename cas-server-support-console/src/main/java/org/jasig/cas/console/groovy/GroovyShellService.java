@@ -19,10 +19,12 @@ package org.jasig.cas.console.groovy;
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import org.apache.commons.io.FilenameUtils;
+import org.jasig.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -40,28 +42,29 @@ import java.util.Map;
 
 /**
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 5.0.0
  */
+@RefreshScope
 @Component("groovyShellService")
 public class GroovyShellService {
     private static final String CONTEXT_KEY = "ctx";
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String FILE_EXTENSION = "groovy";
 
-    private Thread serverThread;
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ServerSocket serverSocket;
 
-    private final List<GroovyShellThread> threads = new ArrayList<>();
+    private List<GroovyShellThread> threads = new ArrayList<>();
 
     @Value("${cas.console.scripts.location:classpath:/scripts}")
-    private Resource scriptsLocation;
+    private Resource scriptsLocationResource;
 
     @Value("${cas.console.socket.port:6789}")
     private int port;
 
     private Map<String, Object> bindings;
-
+    
     @Autowired
     private ApplicationContext context;
 
@@ -84,13 +87,15 @@ public class GroovyShellService {
         logger.info("Launching groovy shell service...");
 
         try {
-            this.serverSocket = new ServerSocket(port);
-            logger.info("Opened server port {} on port {}", serverSocket, this.port);
-
+            this.serverSocket = new ServerSocket(this.port);
+            logger.info("Opened server port {} on port {}", this.serverSocket, this.port);
+            this.scriptsLocationResource = 
+                    ResourceUtils.prepareClasspathResourceIfNeeded(this.scriptsLocationResource, true, FILE_EXTENSION);
+            
             while (true) {
                 final Socket clientSocket;
                 try {
-                    clientSocket = serverSocket.accept();
+                    clientSocket = this.serverSocket.accept();
                     logger.info("Received client port request {} ", clientSocket);
                 } catch (final IOException e) {
                     logger.error(e.getMessage(), e);
@@ -98,7 +103,7 @@ public class GroovyShellService {
                 }
 
                 final GroovyShellThread clientThread = new GroovyShellThread(clientSocket, createBinding());
-                threads.add(clientThread);
+                this.threads.add(clientThread);
                 logger.debug("Created groovy shell thread based on client port request {}. Starting...",
                         clientSocket);
                 clientThread.start();
@@ -116,20 +121,20 @@ public class GroovyShellService {
     protected Binding createBinding() {
         final Binding binding = new Binding();
 
-        final String[] beanNames = context.getBeanDefinitionNames();
-        logger.debug("Found [{}] beans in the application context", context.getBeanDefinitionCount());
+        final String[] beanNames = this.context.getBeanDefinitionNames();
+        logger.debug("Found [{}] beans in the application context", this.context.getBeanDefinitionCount());
 
         for (final String name : beanNames) {
             try {
-                binding.setVariable(name, context.getBean(name));
+                binding.setVariable(name, this.context.getBean(name));
                 logger.debug("Added context bean [{}] to groovy bindings", name);
             } catch (final Exception e) {
                 logger.warn("Could not add bean id [{}] to the binding. Reason: [{}]", name, e.getMessage());
             }
         }
 
-        if (bindings != null) {
-            for (final Map.Entry<String, Object> nextBinding : bindings.entrySet()) {
+        if (this.bindings != null) {
+            for (final Map.Entry<String, Object> nextBinding : this.bindings.entrySet()) {
 
                 logger.debug("Added variable [{}] to groovy bindings", nextBinding.getKey());
                 binding.setVariable(nextBinding.getKey(), nextBinding.getValue());
@@ -137,7 +142,7 @@ public class GroovyShellService {
         }
 
         logger.debug("Added application context [{}] to groovy bindings", CONTEXT_KEY);
-        binding.setVariable(CONTEXT_KEY, context);
+        binding.setVariable(CONTEXT_KEY, this.context);
 
         loadCustomGroovyScriptsIntoClasspath(binding);
 
@@ -149,7 +154,8 @@ public class GroovyShellService {
      */
     @PostConstruct
     public void initialize() {
-        this.serverThread = new Thread() {
+
+        final Thread serverThread = new Thread() {
             @Override
             public void run() {
                 try {
@@ -170,10 +176,10 @@ public class GroovyShellService {
      */
     @PreDestroy
     public void destroy() {
-        logger.info("Closing serverSocket: {}", serverSocket);
+        logger.info("Closing serverSocket: {}", this.serverSocket);
         try {
-            serverSocket.close();
-            for (final GroovyShellThread nextThread : threads) {
+            this.serverSocket.close();
+            for (final GroovyShellThread nextThread : this.threads) {
                 logger.info("Closing thread on port: {}", nextThread.getSocket());
                 nextThread.destroy();
             }
@@ -187,11 +193,12 @@ public class GroovyShellService {
     }
 
     private void loadCustomGroovyScriptsIntoClasspath(final Binding binding) {
-        final FilenameFilter filter = (dir, name) -> name.endsWith("groovy");
+        final FilenameFilter filter = (dir, name) -> name.endsWith(FILE_EXTENSION);
 
         final ClassLoader thisClassLoader = this.getClass().getClassLoader();
         try (final GroovyClassLoader loader = new GroovyClassLoader(thisClassLoader)) {
-            final File[] files = this.scriptsLocation.getFile().listFiles(filter);
+            final File[] files = this.scriptsLocationResource.getFile().listFiles(filter);
+
             for (final File file : files) {
                 try {
                     final Class c = loader.parseClass(file);

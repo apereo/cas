@@ -19,14 +19,15 @@ public class HttpMessage {
     /** The default asynchronous callbacks enabled. */
     private static final boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
     
-    private final URL url;
-    private final String message;
+    private URL url;
+    private String message;
+    private int responseCode;
     
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
-    private final boolean asynchronous;
+    private boolean asynchronous;
     
     /**
      * The content type for this message once submitted.
@@ -61,22 +62,26 @@ public class HttpMessage {
         return this.asynchronous;
     }
 
-    public final URL getUrl() {
+    public URL getUrl() {
         return this.url;
     }
     
-    public final String getMessage() {
+    public String getMessage() {
         return this.formatOutputMessageInternal(this.message);
     }
 
-    public final String getContentType() {
+    protected String getContentType() {
         return this.contentType;
     }
     
-    protected final void setContentType(final String type) {
+    protected void setContentType(final String type) {
         this.contentType = type;
     }
-    
+
+    public int getResponseCode() {
+        return this.responseCode;
+    }
+
     /**
      * Encodes the message in UTF-8 format in preparation to send.
      * @param message Message to format and encode
@@ -98,6 +103,11 @@ public class HttpMessage {
                 .append("message", this.message)
                 .append("asynchronous", this.asynchronous)
                 .append("contentType", this.contentType)
+                .append("responseCode", this.responseCode)
                 .toString();
+    }
+
+    public void setResponseCode(final int responseCode) {
+        this.responseCode = responseCode;
     }
 }

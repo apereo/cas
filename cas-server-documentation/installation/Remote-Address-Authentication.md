@@ -25,7 +25,7 @@ be deployed within an internal network this is generally not a problem.
 
 
 ## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -37,7 +37,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ### Configuring Authentication
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

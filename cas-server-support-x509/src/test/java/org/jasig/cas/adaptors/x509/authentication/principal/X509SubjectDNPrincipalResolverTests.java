@@ -10,12 +10,12 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.0.6
+ * @since 3.0.0
  *
  */
 public class X509SubjectDNPrincipalResolverTests extends AbstractX509CertificateTests {
 
-    private final X509SubjectDNPrincipalResolver
+    private X509SubjectDNPrincipalResolver
         resolver = new X509SubjectDNPrincipalResolver();
 
     @Test

@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 public class DefaultPrincipalAttributesRepositoryTests {
-    private final PrincipalFactory factory = new DefaultPrincipalFactory();
+    private PrincipalFactory factory = new DefaultPrincipalFactory();
 
     @Test
     public void checkNoAttributes() {

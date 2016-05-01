@@ -25,5 +25,5 @@ import org.junit.runners.Suite;
         Saml10FailureResponseViewTests.class,
         Saml10SuccessResponseViewTests.class
 })
-public final class AllTestsSuite {
+public class AllTestsSuite {
 }

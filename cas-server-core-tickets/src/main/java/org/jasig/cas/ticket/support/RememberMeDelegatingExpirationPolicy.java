@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -20,8 +21,9 @@ import javax.annotation.PostConstruct;
  * @since 3.2.1
  *
  */
+@RefreshScope
 @Component("rememberMeDelegatingExpirationPolicy")
-public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
+public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -2735975347698196127L;
@@ -50,11 +52,11 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
 
     @PostConstruct
     private void postConstruct() {
-        if (rememberMeExpirationPolicy != null) {
-            LOGGER.debug("Using remember-me expiration policy of {}", rememberMeExpirationPolicy);
+        if (this.rememberMeExpirationPolicy != null) {
+            LOGGER.debug("Using remember-me expiration policy of {}", this.rememberMeExpirationPolicy);
         }
-        if (sessionExpirationPolicy != null) {
-            LOGGER.debug("Using session expiration policy of {}", sessionExpirationPolicy);
+        if (this.sessionExpirationPolicy != null) {
+            LOGGER.debug("Using session expiration policy of {}", this.sessionExpirationPolicy);
         }
     }
 
@@ -66,11 +68,11 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
                     get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
             if (b == null || b.equals(Boolean.FALSE)) {
-                LOGGER.debug("Ticket is not associated with a remember-me authentication. Invoking {}", sessionExpirationPolicy);
+                LOGGER.debug("Ticket is not associated with a remember-me authentication. Invoking {}", this.sessionExpirationPolicy);
                 return this.sessionExpirationPolicy.isExpired(ticketState);
             }
 
-            LOGGER.debug("Ticket is associated with a remember-me authentication. Invoking {}", rememberMeExpirationPolicy);
+            LOGGER.debug("Ticket is associated with a remember-me authentication. Invoking {}", this.rememberMeExpirationPolicy);
             return this.rememberMeExpirationPolicy.isExpired(ticketState);
         }
         LOGGER.warn("No expiration policy settings are defined");
@@ -80,7 +82,7 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     @Override
     public Long getTimeToLive() {
         if (this.rememberMeExpirationPolicy != null) {
-            return rememberMeExpirationPolicy.getTimeToLive();
+            return this.rememberMeExpirationPolicy.getTimeToLive();
         }
         return 0L;
     }
@@ -88,7 +90,7 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     @Override
     public Long getTimeToIdle() {
         if (this.rememberMeExpirationPolicy != null) {
-            return rememberMeExpirationPolicy.getTimeToIdle();
+            return this.rememberMeExpirationPolicy.getTimeToIdle();
         }
         return 0L;
     }

@@ -39,7 +39,6 @@ import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +59,12 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * Authentication succeeded with warnings from authn subsystem that should be displayed to user.
      */
     private static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
+    private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
 
     /**
      * The Logger.
      */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Application context.
@@ -75,7 +75,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Authentication system support.
      */
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -91,7 +91,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Services manager.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
@@ -99,7 +99,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * The Central authentication service.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     protected CentralAuthenticationService centralAuthenticationService;
@@ -107,7 +107,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * Warn cookie generator.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("warnCookieGenerator")
     protected CookieGenerator warnCookieGenerator;
@@ -173,7 +173,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the event
      */
     protected Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap("error", error));
+        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
 
 
@@ -202,14 +202,14 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
         logger.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =
-                authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+                this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
 
         boolean issueTicketGrantingTicket = true;
         final Authentication authentication = authenticationResult.getAuthentication();
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.hasText(ticketGrantingTicket)) {
             logger.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
-            final Authentication authenticationFromTgt = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {
                 logger.debug("Resulting authentication matches the authentication from context");
                 issueTicketGrantingTicket = false;
@@ -345,7 +345,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             if (attributeValue instanceof String) {
                 logger.debug("Attribute value {} is a single-valued attribute", attributeValue);
                 if (predicate.apply(attributeValue)) {
-                    logger.debug("Attribute value predicate {} has successfully matched the [{}]", predicate, attributeValue);
+                    logger.debug("Attribute value predicate {} has matched the [{}]", predicate, attributeValue);
                     if (provider.verify(service)) {
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
@@ -395,7 +395,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             logger.debug("Selecting a multifactor authentication provider out of {} for {} and service {}",
                     providers, principal.getId(), service);
             final MultifactorAuthenticationProvider provider =
-                    multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+                    this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
             Set<Event> results = resolveEventViaSinglePrincipalAttribute(principal, attributeValue, service, context, provider, predicate);
             if (results == null || results.isEmpty()) {
@@ -456,7 +456,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
             if (providers != null && !providers.isEmpty()) {
                 final MultifactorAuthenticationProvider provider =
-                        multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+                        this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
                 logger.debug("Selected multifactor authentication provider for this transaction is {}", provider);
 
@@ -521,7 +521,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param resolvedEvents the resolved events
      */
     protected void putResolvedEventsAsAttribute(final RequestContext context, final Set<Event> resolvedEvents) {
-        context.getAttributes().put("resolvedAuthenticationEvents", resolvedEvents);
+        context.getAttributes().put(RESOLVED_AUTHENTICATION_EVENTS, resolvedEvents);
     }
 
     /**
@@ -531,7 +531,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the resolved events as attribute
      */
     protected Set<Event> getResolvedEventsAsAttribute(final RequestContext context) {
-        return context.getAttributes().get("resolvedAuthenticationEvents", Set.class);
+        return context.getAttributes().get(RESOLVED_AUTHENTICATION_EVENTS, Set.class);
     }
 
     /**

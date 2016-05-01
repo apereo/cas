@@ -17,7 +17,7 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
     private boolean rememberMe;
 
     @Override
-    public final boolean isRememberMe() {
+    public boolean isRememberMe() {
         return this.rememberMe;
     }
 
@@ -25,7 +25,7 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(rememberMe)
+                .append(this.rememberMe)
                 .toHashCode();
     }
 
@@ -48,7 +48,7 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
     }
 
     @Override
-    public final void setRememberMe(final boolean rememberMe) {
+    public void setRememberMe(final boolean rememberMe) {
         this.rememberMe = rememberMe;
     }
 }

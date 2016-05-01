@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
+public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override

@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -63,18 +62,20 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
 
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired(required = false)
-    private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
+    private CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -84,7 +85,7 @@ public class TicketsResource {
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
 
-    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
+    private ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
 
     /**
@@ -97,8 +98,8 @@ public class TicketsResource {
      *
      * @throws JsonProcessingException in case of JSON parsing failure
      */
-    @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+    @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                    final HttpServletRequest request) throws JsonProcessingException {
         try (Formatter fmt = new Formatter()) {
 
@@ -148,8 +149,8 @@ public class TicketsResource {
      *
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
@@ -180,8 +181,8 @@ public class TicketsResource {
      * @return {@link ResponseEntity} representing RESTful response. Signals
      * {@link HttpStatus#OK} when successful.
      */
-    @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
-    public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
+    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }
@@ -203,23 +204,23 @@ public class TicketsResource {
     }
 
     public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
+        return this.centralAuthenticationService;
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     public CredentialFactory getCredentialFactory() {
-        return credentialFactory;
+        return this.credentialFactory;
     }
 
     public ServiceFactory getWebApplicationServiceFactory() {
-        return webApplicationServiceFactory;
+        return this.webApplicationServiceFactory;
     }
 
     public TicketRegistrySupport getTicketRegistrySupport() {
-        return ticketRegistrySupport;
+        return this.ticketRegistrySupport;
     }
 
     /**
@@ -227,13 +228,13 @@ public class TicketsResource {
      */
     private static class DefaultCredentialFactory implements CredentialFactory {
         @Override
-        public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
-            final String username = requestBody.getFirst("username");
-            final String password = requestBody.getFirst("password");
+        public Credential fromRequestBody(final MultiValueMap<String, String> requestBody) {
+            final String username = requestBody.getFirst(USERNAME);
+            final String password = requestBody.getFirst(PASSWORD);
             if (username == null || password == null) {
                 throw new BadRequestException("Invalid payload. 'username' and 'password' form fields are required.");
             }
-            return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+            return new UsernamePasswordCredential(requestBody.getFirst(USERNAME), requestBody.getFirst(PASSWORD));
         }
     }
 

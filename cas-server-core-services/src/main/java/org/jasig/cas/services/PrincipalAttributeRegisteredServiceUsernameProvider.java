@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -24,10 +23,10 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
 
     private static final long serialVersionUID = -3546719400741715137L;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    @NotNull
-    private final String usernameAttribute;
+    
+    private String usernameAttribute;
 
     /**
      * Private constructor to get around serialization issues.
@@ -41,7 +40,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
      *
      * @param usernameAttribute the username attribute
      */
-    public PrincipalAttributeRegisteredServiceUsernameProvider(@NotNull final String usernameAttribute) {
+    public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute) {
         this.usernameAttribute = usernameAttribute;
     }
     
@@ -69,7 +68,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                     attributes,
                     principalId);
         }
-        
+
         logger.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].",
                 service.getId(), principalId, principal.getId());
         return principalId;
@@ -104,7 +103,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(usernameAttribute)
+                .append(this.usernameAttribute)
                 .toHashCode();
     }
 

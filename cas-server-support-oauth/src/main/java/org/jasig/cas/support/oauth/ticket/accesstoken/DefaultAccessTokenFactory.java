@@ -11,9 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Default OAuth access token factory.
@@ -21,27 +20,28 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultAccessTokenFactory")
 public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("accessTokenIdGenerator")
     protected UniqueTicketIdGenerator accessTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for access tokens. */
-    @NotNull
+    
     @Autowired
     @Qualifier("accessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
     public AccessToken create(final Service service, final Authentication authentication) {
-        final String codeId = accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-        return new AccessTokenImpl(codeId, service, authentication, expirationPolicy);
+        final String codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        return new AccessTokenImpl(codeId, service, authentication, this.expirationPolicy);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     public UniqueTicketIdGenerator getAccessTokenIdGenerator() {
-        return accessTokenIdGenerator;
+        return this.accessTokenIdGenerator;
     }
 
     public void setAccessTokenIdGenerator(final UniqueTicketIdGenerator accessTokenIdGenerator) {
@@ -58,7 +58,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     public ExpirationPolicy getExpirationPolicy() {
-        return expirationPolicy;
+        return this.expirationPolicy;
     }
 
     public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {

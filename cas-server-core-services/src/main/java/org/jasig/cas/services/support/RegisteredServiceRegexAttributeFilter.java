@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,12 +24,12 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public final class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
+public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
     private static final long serialVersionUID = 403015306984610128L;
     
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
+    
     private Pattern pattern;
 
     /**
@@ -89,7 +88,7 @@ public final class RegisteredServiceRegexAttributeFilter implements RegisteredSe
             if (attributeValue instanceof Collection) {
                 logger.trace("Attribute value {} is a collection", attributeValue);
                 final List filteredAttributes = filterAttributes(
-                        ((Collection<String>) attributeValue), attributeName);
+                        (Collection<String>) attributeValue, attributeName);
                 if (filteredAttributes.size() > 0) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }

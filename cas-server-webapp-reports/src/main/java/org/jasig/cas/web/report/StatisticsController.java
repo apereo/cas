@@ -36,8 +36,8 @@ import java.util.Queue;
  * @since 3.3.5
  */
 @Controller("statisticsController")
-@RequestMapping("/statistics")
-public final class StatisticsController implements ServletContextAware {
+@RequestMapping("/status/stats")
+public class StatisticsController implements ServletContextAware {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 
@@ -51,9 +51,9 @@ public final class StatisticsController implements ServletContextAware {
 
     private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
+    private ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Value("${host.name:cas01.example.org}")
     private String casTicketSuffix;
@@ -93,8 +93,6 @@ public final class StatisticsController implements ServletContextAware {
         modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
         modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("serverHostName", httpServletRequest.getServerName());
-        modelAndView.addObject("serverIpAddress", httpServletRequest.getLocalAddr());
         modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
 
         int unexpiredTgts = 0;

@@ -1,6 +1,5 @@
 package org.jasig.cas.authentication.principal;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -23,5 +22,5 @@ public interface PrincipalAttributesRepository extends Serializable {
      * @param p the principal whose attributes need to be retrieved.
      * @return the attributes
      */
-    Map<String, Object> getAttributes(@NotNull Principal p);
+    Map<String, Object> getAttributes(Principal p);
 }

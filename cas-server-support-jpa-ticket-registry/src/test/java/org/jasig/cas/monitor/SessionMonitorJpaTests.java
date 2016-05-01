@@ -35,7 +35,7 @@ public class SessionMonitorJpaTests {
     private SessionMonitor monitor;
 
     @Before
-    public void setup() {
+    public void setUp() {
         final ClassPathXmlApplicationContext ctx = new
             ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
         this.jpaRegistry = ctx.getBean("jpaTicketRegistry", TicketRegistry.class);

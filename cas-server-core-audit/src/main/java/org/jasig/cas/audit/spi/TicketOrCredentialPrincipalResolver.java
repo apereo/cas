@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -31,13 +31,14 @@ import java.util.Collection;
  * @since 3.1.2
  *
  */
+@RefreshScope
 @Component("auditablePrincipalResolver")
-public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
+public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
-    @NotNull
+    
     @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 

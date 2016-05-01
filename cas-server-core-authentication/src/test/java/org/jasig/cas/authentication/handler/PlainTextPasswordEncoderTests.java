@@ -8,11 +8,11 @@ import org.junit.Test;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public final class PlainTextPasswordEncoderTests {
+public class PlainTextPasswordEncoderTests {
 
     private static final String CONST_TO_ENCODE = "CAS IS COOL";
 
-    private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
+    private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     @Test
     public void verifyNullValueToTranslate() {

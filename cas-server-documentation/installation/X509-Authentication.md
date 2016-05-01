@@ -15,7 +15,7 @@ additional work.
 
 
 ## X.509 Components
-X.509 support is enabled by including the following dependency in the Maven WAR overlay:
+X.509 support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -34,7 +34,7 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

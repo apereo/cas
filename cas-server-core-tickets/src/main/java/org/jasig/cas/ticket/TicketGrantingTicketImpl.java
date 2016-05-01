@@ -20,7 +20,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -69,7 +68,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /** The services associated to this ticket. */
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = Integer.MAX_VALUE)
-    private final HashMap<String, Service> services = new HashMap<>();
+    private HashMap<String, Service> services = new HashMap<>();
 
     /** The {@link TicketGrantingTicket} this is associated with. */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
@@ -77,11 +76,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     /** The PGTs associated to this ticket. */
     @OneToMany(targetEntity = TicketGrantingTicketImpl.class, mappedBy = "ticketGrantingTicket", fetch = FetchType.EAGER)
-    private final Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
+    private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = Integer.MAX_VALUE)
-    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
+    private ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
     /**
      * Instantiates a new ticket granting ticket impl.
@@ -103,7 +102,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public TicketGrantingTicketImpl(final String id,
         final Service proxiedBy,
         final TicketGrantingTicket parentTicketGrantingTicket,
-        @NotNull final Authentication authentication, final ExpirationPolicy policy) {
+         final Authentication authentication, final ExpirationPolicy policy) {
 
         super(id, policy);
 
@@ -130,12 +129,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     @Override
-    public final TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 
     @Override
-    public final Authentication getAuthentication() {
+    public Authentication getAuthentication() {
         return this.authentication;
     }
 
@@ -147,7 +146,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * configuration, the ticket may be considered expired.
      */
     @Override
-    public final synchronized ServiceTicket grantServiceTicket(final String id,
+    public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided, final boolean onlyTrackMostRecentSession) {
 
@@ -174,7 +173,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
         if (onlyTrackMostRecentSession) {
             final String path = normalizePath(service);
-            final Collection<Service> existingServices = services.values();
+            final Collection<Service> existingServices = this.services.values();
             // loop on existing services
             existingServices.stream()
                     .filter(existingService -> path.equals(normalizePath(existingService)))
@@ -209,21 +208,21 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     @Override
-    public final synchronized Map<String, Service> getServices() {
+    public synchronized Map<String, Service> getServices() {
         return ImmutableMap.copyOf(this.services);
     }
 
     @Override
     public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
-        return proxyGrantingTickets;
+        return this.proxyGrantingTickets;
     }
 
     /**
      * Remove all services of the TGT (at logout).
      */
     @Override
-    public final void removeAllServices() {
-        services.clear();
+    public void removeAllServices() {
+        this.services.clear();
     }
 
     /**
@@ -232,19 +231,19 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return if the TGT has no parent.
      */
     @Override
-    public final boolean isRoot() {
+    public boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
 
 
     @Override
-    public final void markTicketExpired() {
+    public void markTicketExpired() {
         this.expired = Boolean.TRUE;
     }
 
 
     @Override
-    public final TicketGrantingTicket getRoot() {
+    public TicketGrantingTicket getRoot() {
         TicketGrantingTicket current = this;
         TicketGrantingTicket parent = current.getGrantingTicket();
         while (parent != null) {
@@ -260,19 +259,19 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return if the TGT is expired.
      */
     @Override
-    public final boolean isExpiredInternal() {
+    public boolean isExpiredInternal() {
         return this.expired;
     }
 
 
     @Override
-    public final List<Authentication> getSupplementalAuthentications() {
+    public List<Authentication> getSupplementalAuthentications() {
         return this.supplementalAuthentications;
     }
 
 
     @Override
-    public final List<Authentication> getChainedAuthentications() {
+    public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<>();
 
         list.add(getAuthentication());
@@ -286,13 +285,13 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     @Override
-    public final Service getProxiedBy() {
+    public Service getProxiedBy() {
         return this.proxiedBy;
     }
 
 
     @Override
-    public final boolean equals(final Object object) {
+    public boolean equals(final Object object) {
         if (object == null) {
             return false;
         }

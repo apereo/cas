@@ -10,8 +10,6 @@ import org.junit.runners.Suite;
  * @since 4.1.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    PooledConnectionFactoryMonitorTests.class,
-})
+@Suite.SuiteClasses(PooledConnectionFactoryMonitorTests.class)
 public class AllTestsSuite {
 }

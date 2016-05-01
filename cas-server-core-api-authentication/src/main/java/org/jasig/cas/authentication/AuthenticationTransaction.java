@@ -16,12 +16,12 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class AuthenticationTransaction implements Serializable {
+public class AuthenticationTransaction implements Serializable {
 
     private static final long serialVersionUID = 6213904009424725484L;
 
-    private final Collection<Credential> credentials;
-    private final Service service;
+    private Collection<Credential> credentials;
+    private Service service;
 
     /**
      * Instantiates a new Default authentication transaction.
@@ -29,7 +29,7 @@ public final class AuthenticationTransaction implements Serializable {
      * @param service     the service
      * @param credentials the credentials
      */
-    private AuthenticationTransaction(final Service service, final Collection<Credential> credentials) {
+    protected AuthenticationTransaction(final Service service, final Collection<Credential> credentials) {
         this.credentials = credentials;
         this.service = service;
     }

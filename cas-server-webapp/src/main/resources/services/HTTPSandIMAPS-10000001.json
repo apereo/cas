@@ -11,14 +11,8 @@
   "usernameAttributeProvider" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
   },
-  "logoutType" : "BACK_CHANNEL",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
-    },
-    "authorizedToReleaseCredentialPassword" : false,
-    "authorizedToReleaseProxyGrantingTicket" : false
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
   },
   "accessStrategy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",

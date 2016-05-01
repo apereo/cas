@@ -1,10 +1,13 @@
-
 description = 'Apereo CAS Web Application Themes Support'
 dependencies {
-  compile libraries.spring
-  compile libraries.hibernate
-  compile project(':cas-server-core-web')
-  testCompile project(':cas-server-core-services')
-  testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    compile libraries.spring
+    compile libraries.hibernate
+    compileOnly libraries.thmyeleaf
+    compile libraries.groovy
+    compile libraries.thymeleafdialect
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-web')
+    testCompile project(':cas-server-core-services')
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
 }
 

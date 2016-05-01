@@ -21,6 +21,7 @@ import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPConstants;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -40,7 +41,6 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.security.SecureRandom;
@@ -55,7 +55,7 @@ import java.security.SecureRandom;
  * @since 5.0.0
  */
 public abstract class AbstractSamlProfileHandlerController {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Saml object signer.
@@ -78,21 +78,21 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Cas server name.
      */
-    @NotNull
+    
     @Value("${server.name}")
     protected String casServerName;
 
     /**
      * The Cas server prefix.
      */
-    @NotNull
+    
     @Value("${server.prefix}")
     protected String casServerPrefix;
 
     /**
      * The Cas server login url.
      */
-    @NotNull
+    
     @Value("${server.prefix}/login")
     protected String casServerLoginUrl;
 
@@ -109,8 +109,7 @@ public abstract class AbstractSamlProfileHandlerController {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-
+    
     /**
      * The Saml registered service caching metadata resolver.
      */
@@ -123,8 +122,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     @Autowired
     protected OpenSamlConfigBean configBean;
-
-
+    
     /**
      * The Response builder.
      */
@@ -193,12 +191,13 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the service
      */
     protected Service registerCallback(final String callbackUrl) {
-        final Service callbackService = webApplicationServiceFactory.createService(this.casServerPrefix.concat(callbackUrl));
+        final Service callbackService = this.webApplicationServiceFactory.createService(this.casServerPrefix.concat(callbackUrl));
         logger.debug("Initialized callback service [{}]", callbackService);
 
-        if (!servicesManager.matchesExistingService(callbackService)) {
+        if (!this.servicesManager.matchesExistingService(callbackService)) {
             final RegexRegisteredService service = new RegexRegisteredService();
             service.setId(new SecureRandom().nextLong());
+            service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(" Callback Url"));
             service.setServiceId(callbackService.getId());
@@ -222,7 +221,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final String requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes("UTF-8"));
         final AuthnRequest authnRequest = (AuthnRequest) 
-                XMLObjectSupport.unmarshallFromInputStream(configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
+                XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
         return authnRequest;
     }
 
@@ -268,7 +267,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param assertion the assertion
      */
     protected void logCasValidationAssertion(final Assertion assertion) {
-        logger.debug("CAS Assertion Valid: [{}]", assertion.isValid());
+        logger.warn("CAS Assertion Valid: [{}]", assertion.isValid());
         logger.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
         logger.debug("CAS Assertion AuthN Date: [{}]", assertion.getAuthenticationDate());
         logger.debug("CAS Assertion ValidFrom Date: [{}]", assertion.getValidFromDate());
@@ -314,9 +313,10 @@ public abstract class AbstractSamlProfileHandlerController {
                                          final HttpServletResponse response,
                                          final AuthnRequest authnRequest)
             throws SamlException {
-        try (final StringWriter writer = SamlIdPUtils.transformSamlObject(this.configBean, authnRequest)) {
+        try (final StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
-            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, authnRequest.getIssuer().getValue()));
+            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, 
+                    SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
 
             final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes("UTF-8"));
             builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest));

@@ -10,12 +10,22 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
     <context:component-scan base-package="org.jasig.cas"/>
     <context:annotation-config/>
 
 
     <context:property-placeholder properties-ref="casProperties"/>
-    <util:properties id="casProperties"/>
+    <util:properties id="casProperties" location="classpath:cas.properties"/>
 
 
     <util:map id="authenticationHandlersResolvers">
@@ -94,7 +104,7 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="2"/>
             <property name="name" value="EduPerson Test Service"/>
             <property name="serviceId" value="eduPersonTest"/>
@@ -178,7 +188,7 @@
         </bean>
 
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="3"/>
             <property name="name" value="EduPerson Test Invalid Service"/>
             <property name="serviceId" value="eduPersonTestInvalid"/>
@@ -198,14 +208,14 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="333"/>
             <property name="name" value="proxyService"/>
             <property name="serviceId" value="proxyService"/>
             <property name="evaluationOrder" value="8"/>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="4"/>
             <property name="name" value="Test Service anonymous"/>
             <property name="serviceId" value="testAnonymous"/>
@@ -227,7 +237,7 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="334"/>
             <property name="name" value="usernameAttributeProviderService"/>
             <property name="serviceId" value="usernameAttributeProviderService"/>
@@ -255,10 +265,6 @@
             <property name="serviceId" value="^test.*"/>
             <property name="evaluationOrder" value="100"/>
         </bean>
-
-
-
-
     </util:list>
 
 
@@ -268,58 +274,8 @@
         <entry key=".*Safari.*Pre.*" value="safari"/>
         <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
     </util:map>
-
-    <!-- CAS 2.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
-
-    <!-- Proxy Response Protocol Views: /proxy -->
-
-    <!-- Failure Proxy Views -->
-    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
-
-    <!-- Successful Proxy Views -->
-    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
-
-    <!-- CAS 3.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <!-- Successful Validation Views -->
-
-    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
-
-    <!-- Post View -->
-    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
-
+    
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
-
-    <bean id="protocolCas2ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/2.0/}"
-          p:suffix=".jsp"
-          p:order="0"/>
-
-    <bean id="protocolCas3ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/3.0/}"
-          p:suffix=".jsp"
-          p:order="1"/>
 
     <bean id="cachingPrincipalAttributeRepository"
           class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
@@ -333,4 +289,7 @@
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <util:list id="validationServiceSelectionStrategies">
+        <bean class="org.jasig.cas.validation.DefaultValidationServiceSelectionStrategy" />
+    </util:list>
 </beans>

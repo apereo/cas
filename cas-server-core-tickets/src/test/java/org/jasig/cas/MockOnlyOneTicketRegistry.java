@@ -11,7 +11,7 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class MockOnlyOneTicketRegistry implements TicketRegistry {
+public class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     private Ticket ticket;
     

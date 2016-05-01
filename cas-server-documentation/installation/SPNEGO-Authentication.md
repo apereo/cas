@@ -27,7 +27,7 @@ ticket expires.
 
 
 ## SPNEGO Components
-SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
+SPNEGO support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -107,7 +107,7 @@ Provide a JAAS `login.conf` file:
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
     };
 
-You may use the following configuration in `cas.properties`:
+You may use the following configuration in `application.properties`:
 
 ```properties
 # cas.spnego.ldap.attribute=spnegoattribute

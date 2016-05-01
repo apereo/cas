@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,16 +37,19 @@ import java.util.Set;
  * @since 4.1
  */
 @Controller("singleSignOnSessionsReportController")
-public final class SingleSignOnSessionsReportController {
+@RequestMapping(value="/status/ssosessions")
+public class SingleSignOnSessionsReportController {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
+    private static final String STATUS = "status";
+    private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
 
     private enum SsoSessionReportOptions {
         ALL("all"),
         PROXIED("proxied"),
         DIRECT("direct");
 
-        private final String type;
+        private String type;
 
         /**
          * Instantiates a new Sso session report options.
@@ -59,7 +61,7 @@ public final class SingleSignOnSessionsReportController {
         }
 
         public String getType() {
-            return type;
+            return this.type;
         }
 
         @Override
@@ -82,7 +84,7 @@ public final class SingleSignOnSessionsReportController {
         IS_PROXIED("is_proxied"),
         NUMBER_OF_USES("number_of_uses");
 
-        private final String attributeKey;
+        private String attributeKey;
 
         /**
          * Instantiates a new Sso session attribute keys.
@@ -105,7 +107,7 @@ public final class SingleSignOnSessionsReportController {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -236,12 +238,12 @@ public final class SingleSignOnSessionsReportController {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            sessionsMap.put("status", HttpServletResponse.SC_OK);
-            sessionsMap.put("ticketGrantingTicket", ticketGrantingTicket);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
+            sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            sessionsMap.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            sessionsMap.put("ticketGrantingTicket", ticketGrantingTicket);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("message", e.getMessage());
         }
         return sessionsMap;
@@ -273,9 +275,9 @@ public final class SingleSignOnSessionsReportController {
         }
 
         if (failedTickets.isEmpty()) {
-            sessionsMap.put("status", HttpServletResponse.SC_OK);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
         } else {
-            sessionsMap.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             sessionsMap.put("failedTicketGrantingTickets", failedTickets);
         }
         return sessionsMap;
@@ -287,7 +289,7 @@ public final class SingleSignOnSessionsReportController {
      * @return the model and view where json data will be rendered
      * @throws Exception thrown during json processing
      */
-    @RequestMapping(value="/statistics/ssosessions", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
     }

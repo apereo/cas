@@ -4,7 +4,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,16 +25,16 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private Principal principal;
 
     /** Credential metadata. */
-    private final List<CredentialMetaData> credentials = new ArrayList<>();
+    private List<CredentialMetaData> credentials = new ArrayList<>();
 
     /** Authentication metadata attributes. */
-    private final Map<String, Object> attributes = new LinkedHashMap<>();
+    private Map<String, Object> attributes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication successes. */
-    private final Map<String, HandlerResult> successes = new LinkedHashMap<>();
+    private Map<String, HandlerResult> successes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication failures. */
-    private final Map<String, Class<? extends Exception>> failures = new LinkedHashMap<>();
+    private Map<String, Class<? extends Exception>> failures = new LinkedHashMap<>();
 
     /** Authentication date. */
     private ZonedDateTime authenticationDate;
@@ -44,7 +43,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Creates a new instance using the current date for the authentication date.
      */
     public DefaultAuthenticationBuilder() {
-        authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
+        this.authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     /**
@@ -162,7 +161,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setAttributes(@NotNull final Map<String, Object> attributes) {
+    public AuthenticationBuilder setAttributes(final Map<String, Object> attributes) {
         this.attributes.clear();
         this.attributes.putAll(attributes);
         return this;

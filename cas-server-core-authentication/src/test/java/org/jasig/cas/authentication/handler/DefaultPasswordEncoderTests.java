@@ -10,12 +10,12 @@ import org.junit.Test;
 
  * @since 3.0.0
  */
-public final class DefaultPasswordEncoderTests {
+public class DefaultPasswordEncoderTests {
 
     public static final String TEST_STRING_MD5 = "1f3870be274f6c49b3e31a0c6728957f";
     public static final String TEST_STRING = "apple";
 
-    private final PasswordEncoder passwordEncoder = new DefaultPasswordEncoder("MD5");
+    private PasswordEncoder passwordEncoder = new DefaultPasswordEncoder("MD5");
 
     @Test
     public void verifyNullPassword() {

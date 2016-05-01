@@ -8,14 +8,14 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class HttpRequestGeoLocation {
+public class HttpRequestGeoLocation {
     private String latitude;
     private String longitude;
     private String accuracy;
     private String timestamp;
 
     public String getLatitude() {
-        return latitude;
+        return this.latitude;
     }
 
     public void setLatitude(final String latitude) {
@@ -23,7 +23,7 @@ public final class HttpRequestGeoLocation {
     }
 
     public String getLongitude() {
-        return longitude;
+        return this.longitude;
     }
 
     public void setLongitude(final String longitude) {
@@ -31,7 +31,7 @@ public final class HttpRequestGeoLocation {
     }
 
     public String getAccuracy() {
-        return accuracy;
+        return this.accuracy;
     }
 
     public void setAccuracy(final String accuracy) {
@@ -39,7 +39,7 @@ public final class HttpRequestGeoLocation {
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
     public void setTimestamp(final String timestamp) {

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 public class SamlCompliantLogoutMessageCreatorTests {
 
-    private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
+    private LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
 
     @Test
     public void verifyMessageBuilding() throws Exception {

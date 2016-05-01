@@ -26,6 +26,7 @@ public interface MultifactorTriggerSelectionStrategy {
      * @param principal The principal to check for MFA requirements
      * @return the provider id of the MFA provider required for authentication
      */
-    Optional<String> resolve(Collection<MultifactorAuthenticationProvider> providers, HttpServletRequest request, RegisteredService service,
+    Optional<String> resolve(Collection<MultifactorAuthenticationProvider> providers, HttpServletRequest request, 
+                             RegisteredService service,
                              Principal principal);
 }

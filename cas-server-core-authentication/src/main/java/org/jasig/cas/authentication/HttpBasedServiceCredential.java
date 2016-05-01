@@ -3,7 +3,6 @@ package org.jasig.cas.authentication;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.services.RegisteredService;
 
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 
 /**
@@ -21,13 +20,13 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     private static final long serialVersionUID = 1492607216336354503L;
 
     /** The callbackURL to check that identifies the application. */
-    private final URL callbackUrl;
+    private URL callbackUrl;
 
     /** String form of callbackUrl. */
-    private final String callbackUrlAsString;
+    private String callbackUrlAsString;
 
     /** The registered service associated with this callback. **/
-    private final RegisteredService service;
+    private RegisteredService service;
 
     /**
      * Empty constructor used by Kryo for de-serialization.
@@ -44,7 +43,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
      * @param callbackUrl Non-null URL that will be contacted to validate the credential.
      * @param service The registered service associated with this callback.
      */
-    public HttpBasedServiceCredential(@NotNull final URL callbackUrl, @NotNull final RegisteredService service) {
+    public HttpBasedServiceCredential(final URL callbackUrl,  final RegisteredService service) {
         this.callbackUrl = callbackUrl;
         this.callbackUrlAsString = callbackUrl.toExternalForm();
         this.service = service;
@@ -59,7 +58,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     /**
      * @return Returns the callbackUrl.
      */
-    public final URL getCallbackUrl() {
+    public URL getCallbackUrl() {
         return this.callbackUrl;
     }
 
@@ -68,7 +67,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
      *
      * @return the service
      */
-    public final RegisteredService getService() {
+    public RegisteredService getService() {
         return this.service;
     }
 
@@ -100,7 +99,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
             return false;
         }
 
-        return (this.service.equals(other.getService()));
+        return this.service.equals(other.getService());
     }
 
 

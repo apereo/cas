@@ -2,9 +2,9 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.security.cert.X509Certificate;
 
 /**
@@ -23,15 +23,16 @@ import java.security.cert.X509Certificate;
  * @author Jan Van der Velpen
  * @since 3.1
  */
+@RefreshScope
 @Component("x509SerialNumberAndIssuerDNPrincipalResolver")
-public final class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
+public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /** Prefix for Certificate Serial Number. */
-    @NotNull
+    
     private String serialNumberPrefix = "SERIALNUMBER=";
 
     /** Prefix for Value Delimiter. */
-    @NotNull
+    
     private String valueDelimiter = ", ";
 
     /**

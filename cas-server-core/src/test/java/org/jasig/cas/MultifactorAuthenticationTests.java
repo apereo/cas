@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.validation.constraints.NotNull;
-
 import static org.junit.Assert.*;
 
 /**
@@ -39,7 +37,7 @@ public class MultifactorAuthenticationTests {
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();

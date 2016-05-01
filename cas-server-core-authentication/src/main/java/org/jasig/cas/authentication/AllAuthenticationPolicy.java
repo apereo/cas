@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("allAuthenticationPolicy")
 public class AllAuthenticationPolicy implements AuthenticationPolicy {
 

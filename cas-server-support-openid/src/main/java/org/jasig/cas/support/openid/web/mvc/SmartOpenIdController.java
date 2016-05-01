@@ -10,12 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,7 @@ import java.util.Map;
  * @author Frederic Esnault
  * @since 3.5
  */
+@RefreshScope
 @Component("smartOpenIdAssociationController")
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
 
@@ -36,19 +37,19 @@ public class SmartOpenIdController extends AbstractDelegateController implements
     /** View if association Succeeds. */
     private static final String DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME = "casOpenIdAssociationSuccessView";
 
-    private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private transient Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     @Autowired
     @Qualifier("serverManager")
     private ServerManager serverManager;
 
     /** The view to redirect to on a successful validation. */
-    @NotNull
+    
     private String successView = DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME;
 
     /** The view to redirect to on a validation failure. Not used for now,
      *  the succes view may return failed association attemps. No need for another view. */
-    @NotNull
+    
     private String failureView = DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME;
 
     /**
@@ -69,7 +70,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
         Message response = null;
 
         if (StringUtils.equals(mode, OpenIdProtocolConstants.ASSOCIATE)) {
-            response = serverManager.associationResponse(parameters);
+            response = this.serverManager.associationResponse(parameters);
         }
         final Map<String, String> responseParams = new HashMap<>();
         if (response != null) {
@@ -85,7 +86,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
             throws Exception {
         final Map<String, String> parameters = new HashMap<>();
         parameters.putAll(getAssociationResponse(request));
-        return new ModelAndView(successView, "parameters", parameters);
+        return new ModelAndView(this.successView, "parameters", parameters);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
         this.failureView = failureView;
     }
 
-    public void setServerManager(@NotNull final ServerManager serverManager) {
+    public void setServerManager(final ServerManager serverManager) {
         this.serverManager = serverManager;
     }
 }

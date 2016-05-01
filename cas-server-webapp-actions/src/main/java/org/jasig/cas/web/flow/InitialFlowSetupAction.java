@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -22,8 +23,6 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -38,28 +37,27 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("initialFlowSetupAction")
-public final class InitialFlowSetupAction extends AbstractAction {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class InitialFlowSetupAction extends AbstractAction {
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/
-    @NotNull
     private ServicesManager servicesManager;
 
     /** CookieGenerator for the Warnings. */
-    @NotNull
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     /** CookieGenerator for the TicketGrantingTickets. */
-    @NotNull
+    
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Extractors for finding the service. */
-    @NotNull
-    @Size(min=1)
     private List<ArgumentExtractor> argumentExtractors;
 
-
+    @Value("${events.track.geolocation:false}")
+    private boolean trackGeoLocation;
+    
     /** If no authentication request from a service is present, halt and warn the user. */
     private boolean enableFlowOnAbsentServiceRequest = true;
 
@@ -70,19 +68,19 @@ public final class InitialFlowSetupAction extends AbstractAction {
         final String contextPath = context.getExternalContext().getContextPath();
         final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
-        if (StringUtils.isBlank(warnCookieGenerator.getCookiePath())) {
+        if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
             logger.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
         } else {
-            logger.debug("Warning cookie path is set to {} and path {}", warnCookieGenerator.getCookieDomain(),
-                    warnCookieGenerator.getCookiePath());
+            logger.debug("Warning cookie path is set to {} and path {}", this.warnCookieGenerator.getCookieDomain(),
+                    this.warnCookieGenerator.getCookiePath());
         }
-        if (StringUtils.isBlank(ticketGrantingTicketCookieGenerator.getCookiePath())) {
+        if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
             logger.info("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
         } else {
-            logger.debug("TGC cookie path is set to {} and path {}", ticketGrantingTicketCookieGenerator.getCookieDomain(),
-                    ticketGrantingTicketCookieGenerator.getCookiePath());
+            logger.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
+                    this.ticketGrantingTicketCookieGenerator.getCookiePath());
         }
 
         WebUtils.putTicketGrantingTicketInScopes(context,
@@ -91,6 +89,8 @@ public final class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putWarningCookie(context,
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
+        
         final Service service = WebUtils.getService(this.argumentExtractors, context);
 
 

@@ -9,7 +9,7 @@ import org.jasig.cas.services.RegisteredService;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public final class OAuthWebApplicationService extends AbstractWebApplicationService {
+public class OAuthWebApplicationService extends AbstractWebApplicationService {
 
     /**
      * Instantiates a new OAuth web application service impl.

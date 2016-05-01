@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("multiTimeUseOrTimeoutExpirationPolicy")
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
@@ -108,6 +110,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Proxy ticket expiration policy.
      */
+    @RefreshScope
     @Component("proxyTicketExpirationPolicy")
     public static class ProxyTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
@@ -131,6 +134,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Service ticket expiration policy.
      */
+    @RefreshScope
     @Component("serviceTicketExpirationPolicy")
     public static class ServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 

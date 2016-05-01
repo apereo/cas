@@ -92,7 +92,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.ssoEnabled = ssoEnabled;
     }
 
-    public final void setEnabled(final boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -100,7 +100,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Set to enable/authorize this service.
      * @param ssoEnabled true to enable service
      */
-    public final void setSsoEnabled(final boolean ssoEnabled) {
+    public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
 
@@ -117,11 +117,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * Default requires that all attributes be present and match the principal's.
      * @param requireAllAttributes the require all attributes
      */
-    public final void setRequireAllAttributes(final boolean requireAllAttributes) {
+    public void setRequireAllAttributes(final boolean requireAllAttributes) {
         this.requireAllAttributes = requireAllAttributes;
     }
 
-    public final boolean isRequireAllAttributes() {
+    public boolean isRequireAllAttributes() {
         return this.requireAllAttributes;
     }
 
@@ -144,14 +144,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @return true/false
      */
     public boolean isCaseInsensitive() {
-        return caseInsensitive;
+        return this.caseInsensitive;
     }
 
     /**
      * Sets case insensitive.
      *
      * @param caseInsensitive the case insensitive
-     * @since 4.3
+     * @since 5.0.0
      */
     public void setCaseInsensitive(final boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
@@ -165,7 +165,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      *
      * @param requiredAttributes the required attributes
      */
-    public final void setRequiredAttributes(final Map<String, Set<String>> requiredAttributes) {
+    public void setRequiredAttributes(final Map<String, Set<String>> requiredAttributes) {
         this.requiredAttributes = requiredAttributes;
     }
 
@@ -277,7 +277,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         
-        if (this.requireAllAttributes && rejectedCopy.size() < rejectedAttributes.size()) {
+        if (this.requireAllAttributes && rejectedCopy.size() < this.rejectedAttributes.size()) {
             LOGGER.debug("Not all rejected attributes are available to the process");
             return false;
         }
@@ -332,7 +332,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         if (principalAttributes.size() < this.requiredAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
-                        + "which means the principal is not carrying enough data to grant authorization",
+                        + "which indicates the principal is not carrying enough data to grant authorization",
                     principalAttributes);
             return false;
         }
@@ -397,13 +397,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("enabled", enabled)
-                .append("ssoEnabled", ssoEnabled)
-                .append("requireAllAttributes", requireAllAttributes)
-                .append("requiredAttributes", requiredAttributes)
-                .append("unauthorizedRedirectUrl", unauthorizedRedirectUrl)
-                .append("caseInsensitive", caseInsensitive)
-                .append("rejectedAttributes", rejectedAttributes)
+                .append("enabled", this.enabled)
+                .append("ssoEnabled", this.ssoEnabled)
+                .append("requireAllAttributes", this.requireAllAttributes)
+                .append("requiredAttributes", this.requiredAttributes)
+                .append("unauthorizedRedirectUrl", this.unauthorizedRedirectUrl)
+                .append("caseInsensitive", this.caseInsensitive)
+                .append("rejectedAttributes", this.rejectedAttributes)
                 .toString();
     }
 

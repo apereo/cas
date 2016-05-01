@@ -13,7 +13,7 @@ import org.jasig.cas.util.AopUtils;
  * @since 3.1.2
  *
  */
-public final class ServiceResourceResolver implements AuditResourceResolver {
+public class ServiceResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {

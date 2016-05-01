@@ -1,5 +1,6 @@
 package org.jasig.cas.web.flow.resolver;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,6 +16,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("selectiveAuthenticationProviderWebflowEventResolver")
 public class SelectiveAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
     @Override

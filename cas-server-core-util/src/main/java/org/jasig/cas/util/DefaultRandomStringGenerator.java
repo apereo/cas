@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
  * @since 3.0.0
  */
-public final class DefaultRandomStringGenerator implements RandomStringGenerator {
+public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     /** The default maximum length. */
     protected static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
@@ -21,10 +21,10 @@ public final class DefaultRandomStringGenerator implements RandomStringGenerator
         .toCharArray();
 
     /** An instance of secure random to ensure randomness is secure. */
-    private final SecureRandom randomizer = new SecureRandom();
+    private SecureRandom randomizer = new SecureRandom();
 
     /** The maximum length the random string can be. */
-    private final int maximumRandomLength;
+    private int maximumRandomLength;
 
     /**
      * Instantiates a new default random string generator

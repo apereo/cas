@@ -3,6 +3,7 @@ package org.jasig.cas;
 import org.jasig.cas.util.BinaryCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,24 +13,22 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultTicketCipherExecutor")
 public class DefaultTicketCipherExecutor extends BinaryCipherExecutor {
 
-    /**
-     * Instantiates a new Default ticket cipher executor.
-     *
-     * @param encryptionSecretKey the encryption secret key
-     * @param signingSecretKey    the signing secret key
-     * @param secretKeyAlg        the secret key alg
-     */
     @Autowired
     public DefaultTicketCipherExecutor(@Value("${ticket.encryption.secretkey:}")
                                        final String encryptionSecretKey,
                                        @Value("${ticket.signing.secretkey:}")
                                        final String signingSecretKey,
                                        @Value("${ticket.secretkey.alg:AES}")
-                                       final String secretKeyAlg) {
-        super(encryptionSecretKey, signingSecretKey);
+                                       final String secretKeyAlg,
+                                       @Value("${ticket.signing.key.size:512}")
+                                       final int signingKeySize,
+                                       @Value("${ticket.encryption.key.size:16}")
+                                       final int encryptionKeySize) {
+        super(encryptionSecretKey, signingSecretKey, signingKeySize, encryptionKeySize);
         setSecretKeyAlgorithm(secretKeyAlg);
     }
 }

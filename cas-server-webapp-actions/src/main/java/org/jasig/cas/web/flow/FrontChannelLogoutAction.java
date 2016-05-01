@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
@@ -15,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
@@ -26,8 +26,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@RefreshScope
 @Component("frontChannelLogoutAction")
-public final class FrontChannelLogoutAction extends AbstractLogoutAction {
+public class FrontChannelLogoutAction extends AbstractLogoutAction {
     /** Defines the default logout parameter for requests. */
     public static final String DEFAULT_LOGOUT_PARAMETER = "SAMLRequest";
 
@@ -38,8 +39,8 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     private String logoutRequestParameter = DEFAULT_LOGOUT_PARAMETER;
 
-    @NotNull
-    private final LogoutManager logoutManager;
+    
+    private LogoutManager logoutManager;
 
     /**
      * Build from the logout manager.
@@ -70,7 +71,7 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
                     final String logoutUrl = logoutRequest.getLogoutUrl().toExternalForm();
                     LOGGER.debug("Using logout url [{}] for front-channel logout requests", logoutUrl);
 
-                    final String logoutMessage = logoutManager.createFrontChannelLogoutMessage(logoutRequest);
+                    final String logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(logoutRequest);
                     LOGGER.debug("Front-channel logout message to send under [{}] is [{}]",
                             this.logoutRequestParameter, logoutMessage);
 
@@ -88,7 +89,7 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
     }
 
     public LogoutManager getLogoutManager() {
-        return logoutManager;
+        return this.logoutManager;
     }
 
     public void setLogoutRequestParameter(final String logoutRequestParameter) {

@@ -6,6 +6,7 @@ dependencies {
     runtime libraries.hibernate
     compile libraries.groovy
 
+    compile project(':cas-server-core-util')
 }
 
 

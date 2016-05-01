@@ -1,0 +1,4 @@
+<div id="msg" class="errors alert alert-info" th:if="${not #httpServletRequest.secure}">
+    <h2 th:utext="#{screen.nonsecure.title}"></h2>
+    <p th:utext="#{screen.nonsecure.message}"></p>
+</div>

@@ -13,6 +13,15 @@
                            http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
     <context:property-placeholder location="classpath:cas.properties"
                                   ignore-resource-not-found="false"
                                   ignore-unresolvable="false"/>
@@ -184,42 +193,6 @@
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
-    <!-- CAS 2.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
-
-    <!-- Proxy Response Protocol Views: /proxy -->
-
-    <!-- Failure Proxy Views -->
-    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
-
-    <!-- Successful Proxy Views -->
-    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
-
-    <!-- CAS 3.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <!-- Successful Validation Views -->
-
-    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
-
-    <!-- Post View -->
-    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
+    
     <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 </beans>

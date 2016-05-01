@@ -3,6 +3,7 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.validation.ValidationResponseType;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
@@ -16,27 +17,19 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("webApplicationServiceFactory")
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
-        final String targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
-        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        final String serviceAttribute = (String) request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+
         final String method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
         final String format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
 
-        final String serviceToUse;
-        if (StringUtils.isNotBlank(targetService)) {
-            serviceToUse = targetService;
-        } else if (StringUtils.isNotBlank(service)) {
-            serviceToUse = service;
-        } else {
-            serviceToUse = serviceAttribute;
-        }
-
+        final String serviceToUse = getRequestedService(request);
         if (StringUtils.isBlank(serviceToUse)) {
+            logger.debug("No service is specified in the request. Skipping service creation");
             return null;
         }
 
@@ -60,6 +53,36 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return null;
         }
         return webApplicationService;
+    }
+
+    /**
+     * Gets requested service.
+     *
+     * @param request the request
+     * @return the requested service
+     */
+    protected String getRequestedService(final HttpServletRequest request) {
+        final String targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
+        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        final Object serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+        
+        String serviceToUse = null;
+        if (StringUtils.isNotBlank(targetService)) {
+            serviceToUse = targetService;
+        } else if (StringUtils.isNotBlank(service)) {
+            serviceToUse = service;
+        } else if (serviceAttribute != null) {
+            if (serviceAttribute instanceof Service) {
+                serviceToUse = ((Service) serviceAttribute).getId();
+            } else {
+                serviceToUse = serviceAttribute.toString();
+            }
+        }
+
+        if (StringUtils.isBlank(serviceToUse)) {
+            return null;
+        }
+        return serviceToUse;
     }
 
     @Override

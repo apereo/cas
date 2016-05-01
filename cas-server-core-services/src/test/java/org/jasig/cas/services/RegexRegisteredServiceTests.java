@@ -20,11 +20,11 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
 
-    private final RegexRegisteredService service;
+    private RegexRegisteredService service;
 
-    private final String serviceToMatch;
+    private String serviceToMatch;
 
-    private final boolean expected;
+    private boolean expected;
 
     public RegexRegisteredServiceTests(
             final RegexRegisteredService service,

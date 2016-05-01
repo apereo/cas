@@ -13,6 +13,7 @@ import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("tokenAuthenticationHandler")
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
     @Override
@@ -55,7 +57,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
     @Autowired(required=false)
     @Override
-    public final void setPrincipalNameTransformer(@Qualifier("tokenPrincipalNameTransformer")
+    public void setPrincipalNameTransformer(@Qualifier("tokenPrincipalNameTransformer")
                                             final PrincipalNameTransformer principalNameTransformer) {
         if (principalNameTransformer != null) {
             super.setPrincipalNameTransformer(principalNameTransformer);

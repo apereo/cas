@@ -1,8 +1,5 @@
 package org.jasig.cas.support.pac4j.web.flow;
 
-import java.util.LinkedHashMap;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
@@ -17,8 +14,8 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.ClientType;
+import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -31,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
@@ -43,7 +41,9 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -56,8 +56,9 @@ import javax.validation.constraints.NotNull;
  * @since 3.5.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@RefreshScope
 @Component("clientAction")
-public final class ClientAction extends AbstractAction {
+public class ClientAction extends AbstractAction {
     /**
      * All the urls and names of the pac4j clients.
      */
@@ -72,17 +73,17 @@ public final class ClientAction extends AbstractAction {
     /**
      * The logger.
      */
-    private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
+    private transient Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
     /**
      * The clients used for authentication.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("builtClients")
     private Clients clients;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -90,7 +91,7 @@ public final class ClientAction extends AbstractAction {
     /**
      * The service for CAS authentication.
      */
-    @NotNull
+    
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -193,7 +194,7 @@ public final class ClientAction extends AbstractAction {
         saveRequestParameter(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
-        final LinkedHashMap<String, String> urls = new LinkedHashMap<>();
+        final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
             final IndirectClient indirectClient = (IndirectClient) client;
@@ -201,7 +202,7 @@ public final class ClientAction extends AbstractAction {
             final String name = client.getName().replace("Client", "");
             final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
             logger.debug("{} -> {}", name, redirectionUrl);
-            urls.put(name, redirectionUrl);
+            urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
         }
         context.getFlowScope().put(PAC4J_URLS, urls);
     }
@@ -235,7 +236,7 @@ public final class ClientAction extends AbstractAction {
     }
 
     public Clients getClients() {
-        return clients;
+        return this.clients;
     }
 
     public void setClients(final Clients clients) {
@@ -243,7 +244,7 @@ public final class ClientAction extends AbstractAction {
     }
 
     public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
+        return this.centralAuthenticationService;
     }
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
@@ -251,6 +252,41 @@ public final class ClientAction extends AbstractAction {
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
+    }
+
+    /**
+     * The Provider login page configuration.
+     */
+    public static class ProviderLoginPageConfiguration implements Serializable {
+        private static final long serialVersionUID = 6216882278086699364L;
+        private String name;
+        private String redirectUrl;
+        private String type;
+
+        /**
+         * Instantiates a new Provider ui configuration.
+         *
+         * @param name        the name
+         * @param redirectUrl the redirect url
+         * @param type        the type
+         */
+        ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type) {
+            this.name = name;
+            this.redirectUrl = redirectUrl;
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getRedirectUrl() {
+            return redirectUrl;
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 }

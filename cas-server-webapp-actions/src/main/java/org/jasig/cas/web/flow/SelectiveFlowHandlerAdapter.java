@@ -4,8 +4,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -18,25 +17,31 @@ import java.util.Set;
 public class SelectiveFlowHandlerAdapter extends FlowHandlerAdapter {
 
     /** List of supported flow IDs. */
-    @NotNull
+
     private Set<String> supportedFlowIds;
 
     public void setSupportedFlowIds(final Set<String> flowIdSet) {
         this.supportedFlowIds = flowIdSet;
     }
 
+    /**
+     * Sets supported flow id.
+     *
+     * @param flowId the flow id
+     */
     public void setSupportedFlowId(final String flowId) {
-        this.supportedFlowIds = Collections.singleton(flowId);
+        this.supportedFlowIds = new HashSet<>();
+        this.supportedFlowIds.add(flowId);
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
-        Assert.isTrue(!supportedFlowIds.isEmpty(), "Must specify at least one supported flow ID");
+        Assert.isTrue(!this.supportedFlowIds.isEmpty(), "Must specify at least one supported flow ID");
     }
 
     @Override
     public boolean supports(final Object handler) {
-        return handler instanceof FlowHandler && supportedFlowIds.contains(((FlowHandler) handler).getFlowId());
+        return handler instanceof FlowHandler && this.supportedFlowIds.contains(((FlowHandler) handler).getFlowId());
     }
 }

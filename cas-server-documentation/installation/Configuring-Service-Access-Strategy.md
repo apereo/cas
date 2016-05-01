@@ -40,13 +40,26 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
+### Remote Endpoint
+The `RemoteEndpointServiceAccessStrategy` is an extension of the default which additionally,
+allows one to configure a service with the following properties:
+
+| Field                             | Description
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `endpointUrl`                | Endpoint that receives the authorization request from CAS for the authenticated principal. 
+| `acceptableResponseCodes`    | Comma-separated response codes that are considered accepted for service access.
+
+The objective of this policy is to ensure a remote endpoint can make service access decisions by
+receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
+the endpoint returns is then compared against the policy setting and if a match is found, access is granted.
+
 ### Grouper
-The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the Maven WAR overlay:
+The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-integration-grouper</artifactId>
+  <artifactId>cas-server-support-grouper</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
@@ -240,6 +253,21 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
       "memberOf" : [ "java.util.HashSet", [ "admin" ] ]
     },
     "groupField" : "DISPLAY_EXTENSION"
+  }
+}
+```
+
+* Remote endpoint access strategy authorizing service access based on response code:
+
+```json
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.RemoteEndpointServiceAccessStrategy",
+    "endpointUrl" : "https://somewhere.example.org",
+    "acceptableResponseCodes" : "200,202"
   }
 }
 ```

@@ -6,11 +6,11 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Set;
 
@@ -27,6 +27,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("rejectUsersAuthenticationHandler")
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -47,7 +48,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
@@ -63,7 +64,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      *
      * @param users The Collection of usernames we should not authenticate.
      */
-    public final void setUsers(@NotNull final Set<String> users) {
+    public void setUsers(final Set<String> users) {
         this.users = users;
     }
 

@@ -10,6 +10,7 @@ import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@RefreshScope
 @Component("inspektrIpAddressUsernameThrottle")
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
             extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
@@ -111,7 +113,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             final String remoteAddress = clientInfo.getClientIpAddress();
 
             final List<Timestamp> failures = this.jdbcTemplate.query(
-                    sqlQueryAudit,
+                    this.sqlQueryAudit,
                     new Object[]{remoteAddress, userToUse, this.authenticationFailureCode,
                     this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
@@ -164,11 +166,11 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         }
     }
 
-    public final void setApplicationCode(final String applicationCode) {
+    public void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
     }
 
-    public final void setAuthenticationFailureCode(final String authenticationFailureCode) {
+    public void setAuthenticationFailureCode(final String authenticationFailureCode) {
         this.authenticationFailureCode = authenticationFailureCode;
     }
 

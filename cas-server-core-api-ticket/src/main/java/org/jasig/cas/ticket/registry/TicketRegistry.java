@@ -8,7 +8,7 @@ import org.jasig.cas.ticket.Ticket;
  * Interface for a registry that stores tickets. The underlying registry can be
  * backed by anything from a normal HashMap to JGroups for having distributed
  * registries. It is up to specific implementations to determine their clean up
- * strategy. Strategies can include a manual clean up by a RegistryCleaner or a
+ * strategy. Strategies can include a manual clean up by a Registry Cleaner or a
  * more sophisticated strategy such as LRU.
  *
  * @author Scott Battaglia

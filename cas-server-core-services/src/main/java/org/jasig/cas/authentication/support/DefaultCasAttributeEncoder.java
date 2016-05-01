@@ -6,6 +6,7 @@ import org.jasig.cas.services.RegisteredServiceCipherExecutor;
 import org.jasig.cas.services.ServicesManager;
 
 import org.jasig.cas.CasViewConstants;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("casAttributeEncoder")
 public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
 
@@ -61,7 +63,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param cipher the cipher
      * @param registeredService the registered service
      */
-    protected final void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
+    protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
                                                       final Map<String, String> cachedAttributesToEncode,
                                                       final RegisteredServiceCipherExecutor cipher,
                                                       final RegisteredService registeredService) {
@@ -78,7 +80,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param cipher the cipher
      * @param registeredService the registered service
      */
-    protected final void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
+    protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
                                                        final Map<String, String> cachedAttributesToEncode,
                                                        final RegisteredServiceCipherExecutor cipher,
                                                        final RegisteredService registeredService) {
@@ -95,7 +97,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param cipher the cipher
      * @param registeredService the registered service
      */
-    protected final void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
+    protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
                                                            final Map<String, String> cachedAttributesToEncode,
                                                            final String cachedAttributeName,
                                                            final RegisteredServiceCipherExecutor cipher,

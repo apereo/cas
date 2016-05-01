@@ -30,7 +30,7 @@ public class InitialFlowSetupActionTests {
     private static final String CONST_CONTEXT_PATH = "/test";
     private static final String CONST_CONTEXT_PATH_2 = "/test1";
 
-    private final InitialFlowSetupAction action = new InitialFlowSetupAction();
+    private InitialFlowSetupAction action = new InitialFlowSetupAction();
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 

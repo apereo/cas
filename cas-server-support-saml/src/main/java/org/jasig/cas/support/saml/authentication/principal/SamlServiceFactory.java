@@ -3,6 +3,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("samlServiceFactory")
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 

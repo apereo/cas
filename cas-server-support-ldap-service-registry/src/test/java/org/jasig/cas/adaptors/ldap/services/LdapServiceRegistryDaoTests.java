@@ -10,7 +10,6 @@ import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServiceProperty;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -74,7 +73,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Test
     public void verifySavingServices() {
-        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
         assertEquals(2, services.size());
@@ -82,7 +81,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Test
     public void verifyUpdatingServices() {
-        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
 
         final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
@@ -147,7 +146,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Test
     public void verifySavingServiceChangesDn() {
-        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
 
         final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
@@ -161,7 +160,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     @Test
     public void verifyDeletingSingleService() throws Exception {
         final RegisteredService rs = getRegexRegisteredService();
-        final RegisteredService rs2 = getRegisteredService();
+        final RegisteredService rs2 = getRegexRegisteredService();
         this.dao.save(rs2);
         this.dao.save(rs);
         this.dao.load();
@@ -175,39 +174,13 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Test
     public void verifyDeletingServices() throws Exception {
-        this.dao.save(getRegisteredService());
+        this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();
         for (final RegisteredService registeredService : services) {
             this.dao.delete(registeredService);
         }
         assertEquals(0, this.dao.load().size());
-    }
-
-    private static RegisteredService getRegisteredService() {
-        final AbstractRegisteredService rs = new RegisteredServiceImpl();
-        rs.setName("Service Name1");
-        rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
-                new ShibbolethCompatiblePersistentIdGenerator("hello")
-        ));
-        rs.setDescription("Service description");
-        rs.setServiceId("https://?.edu/**");
-        rs.setTheme("the theme name");
-        rs.setEvaluationOrder(123);
-        rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        rs.setRequiredHandlers(new HashSet<>(Arrays.asList("handler8", "handle92")));
-
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap();
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
-
-        final Set<String> values = new HashSet<>();
-        values.add("value1");
-        values.add("value2");
-        property.setValues(values);
-        propertyMap.put("field1", property);
-        rs.setProperties(propertyMap);
-        return rs;
     }
 
     private static RegisteredService getRegexRegisteredService() {

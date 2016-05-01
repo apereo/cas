@@ -10,11 +10,11 @@ import org.jasig.cas.validation.Assertion;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public final class CasServiceTicketValidatedEvent extends AbstractCasEvent {
+public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 
-    private final Assertion assertion;
+    private Assertion assertion;
 
-    private final ServiceTicket serviceTicket;
+    private ServiceTicket serviceTicket;
 
     /**
      * Instantiates a new Cas service ticket validated event.
@@ -32,19 +32,19 @@ public final class CasServiceTicketValidatedEvent extends AbstractCasEvent {
     }
 
     public Assertion getAssertion() {
-        return assertion;
+        return this.assertion;
     }
 
     public ServiceTicket getServiceTicket() {
-        return serviceTicket;
+        return this.serviceTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("assertion", assertion)
-                .append("serviceTicket", serviceTicket)
+                .append("assertion", this.assertion)
+                .append("serviceTicket", this.serviceTicket)
                 .toString();
     }
 }

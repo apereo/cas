@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class NullPrincipal implements Principal {
+public class NullPrincipal implements Principal {
 
     private static final long serialVersionUID = 2309300426720915104L;
 
@@ -20,13 +20,13 @@ public final class NullPrincipal implements Principal {
     /** The singleton instance. **/
     private static NullPrincipal INSTANCE;
 
-    private final Map<String, Object> attributes;
+    private Map<String, Object> attributes;
 
     /**
      * Instantiates a new Null principal.
      */
-    private NullPrincipal() {
-        attributes = Collections.emptyMap();
+    protected NullPrincipal() {
+        this.attributes = Collections.emptyMap();
     }
 
     /**

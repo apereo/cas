@@ -26,8 +26,8 @@ import static org.mockito.Mockito.*;
  */
 public class RegisteredServiceRegexAttributeFilterTests {
 
-    private final RegisteredServiceAttributeFilter filter;
-    private final Map<String, Object> givenAttributesMap;
+    private RegisteredServiceAttributeFilter filter;
+    private Map<String, Object> givenAttributesMap;
 
     @Mock
     private RegisteredService registeredService;

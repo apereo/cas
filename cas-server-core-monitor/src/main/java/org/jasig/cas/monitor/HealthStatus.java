@@ -1,6 +1,6 @@
 package org.jasig.cas.monitor;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class HealthStatus extends Status {
     /** Map of names (e.g. monitor that produced it) to status information. */
-    private final Map<String, Status> details;
+    private Map<String, Status> details;
 
 
     /**
@@ -24,7 +24,7 @@ public class HealthStatus extends Status {
      */
     public HealthStatus(final StatusCode code, final Map<String, Status> detailMap) {
         super(code);
-        this.details = Collections.unmodifiableMap(detailMap);
+        this.details = new HashMap<>(detailMap);
     }
 
 

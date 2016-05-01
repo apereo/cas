@@ -5,6 +5,7 @@ import org.jasig.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("accessTokenExpirationPolicy")
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -8383186650682727360L;
@@ -52,14 +54,14 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         final ZonedDateTime creationTime = ticketState.getCreationTime();
 
         // token has been used, check maxTimeToLive (hard window)
-        ZonedDateTime expirationTime = creationTime.plus(maxTimeToLiveInMilliSeconds, ChronoUnit.MILLIS);
+        ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInMilliSeconds, ChronoUnit.MILLIS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
             return true;
         }
 
         // token is within hard window, check timeToKill (sliding window)
-        expirationTime = creationTime.plus(timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        expirationTime = creationTime.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
         if (ticketState.getLastTimeUsed().isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInMilliseconds");
             return true;

@@ -56,9 +56,9 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:/oauth-context.xml", "classpath:/META-INF/spring/cas-servlet-oauth.xml"})
-@DirtiesContext()
-public final class OAuth20AccessTokenControllerTests {
+@ContextConfiguration("classpath:/oauth-context.xml")
+@DirtiesContext
+public class OAuth20AccessTokenControllerTests {
 
     private static final String CONTEXT = "/oauth2.0/";
 
@@ -439,7 +439,7 @@ public final class OAuth20AccessTokenControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
-        assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket((code.getId())));
+        assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket(code.getId()));
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 

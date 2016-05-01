@@ -3,8 +3,8 @@ package org.jasig.cas.support.pac4j.web.flow;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
@@ -27,7 +27,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.2
  */
 @SuppressWarnings("rawtypes")
-public final class ClientActionTests {
+public class ClientActionTests {
 
     private static final String TGT_NAME = "ticketGrantingTicketId";
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
@@ -89,12 +89,22 @@ public final class ClientActionTests {
         assertEquals(MY_LOCALE, mockSession.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        final Map<String, String> urls = (Map<String, String>) flowScope.get(ClientAction.PAC4J_URLS);
-        assertTrue((urls.get("Facebook"))
+        final Set<ClientAction.ProviderLoginPageConfiguration> urls =
+                (Set<ClientAction.ProviderLoginPageConfiguration>) flowScope.get(ClientAction.PAC4J_URLS);
+        assertFalse(urls.isEmpty());
+
+        assertTrue(urls.stream()
+                .filter(cfg -> cfg.getName().equalsIgnoreCase("facebook"))
+                .findFirst()
+                .get().getRedirectUrl()
                 .startsWith("https://www.facebook.com/v2.2/dialog/oauth?client_id=my_key&redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"
                         + Clients.DEFAULT_CLIENT_NAME_PARAMETER + "%3DFacebookClient&state="));
-        assertEquals(MY_LOGIN_URL + '?' + Clients.DEFAULT_CLIENT_NAME_PARAMETER
-                + "=TwitterClient&needs_client_redirection=true", urls.get("Twitter"));
+
+        assertEquals(urls.stream()
+                .filter(cfg -> cfg.getName().equalsIgnoreCase("twitter"))
+                .findFirst()
+                .get().getRedirectUrl(), MY_LOGIN_URL + '?' + Clients.DEFAULT_CLIENT_NAME_PARAMETER
+                + "=TwitterClient&needs_client_redirection=true");
     }
 
     @Test

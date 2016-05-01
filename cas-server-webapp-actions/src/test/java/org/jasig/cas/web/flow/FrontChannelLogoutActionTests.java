@@ -13,8 +13,8 @@ import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.LogoutType;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.web.support.WebUtils;
@@ -169,7 +169,7 @@ public class FrontChannelLogoutActionTests {
     }
 
     private RegisteredService getRegisteredService() throws MalformedURLException {
-        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+        final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setServiceId("https://www.github.com");
         svc.setLogoutUrl(new URL("https://www.google.com"));
         svc.setName("Service logout test");

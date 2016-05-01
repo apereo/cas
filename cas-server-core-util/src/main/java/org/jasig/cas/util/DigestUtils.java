@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
  * in one spot.
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
- * @since 4.3
+ * @since 5.0.0
  */
 public final class DigestUtils {
     private static String SHA512 = "SHA512";

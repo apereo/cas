@@ -26,10 +26,10 @@ public class JpaServiceRegistryDaoImplTests  {
     private ServiceRegistryDao  dao;
 
     @Before
-    public void setup() {
+    public void setUp() {
         final ClassPathXmlApplicationContext ctx = new
             ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
-        this.dao = ctx.getBean("jpaServiceRegistryDao", ServiceRegistryDao.class);
+        this.dao = ctx.getBean("serviceRegistryDao", ServiceRegistryDao.class);
 
         final List<RegisteredService> services = this.dao.load();
         for (final RegisteredService service : services) {

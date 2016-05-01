@@ -1,48 +1,57 @@
-# Central Authentication Service (CAS) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
-[![](https://heroku-badge.herokuapp.com/?app=jasigcas)](http://jasigcas.heroku.com)
-[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)](http://jasigcasmgmt.heroku.com)
+<p align="center">![][casimg]
+# Central Authentication Service (CAS)
+[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
+[![](https://heroku-badge.herokuapp.com/?app=jasigcas)][caswebheroku]
+[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
+[![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
+[![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
+[![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.jasig.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.jasig.cas/cas-server)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC)
 
 ## Introduction
 
-Welcome to the home of the [Central Authentication Service project](http://www.apereo.org/cas), more commonly referred to as CAS. The Central Authentication Service (CAS) is the standard mechanism by which web applications should authenticate users. 
+Welcome to the home of the [Central Authentication Service project](http://www.apereo.org/cas), more commonly referred to as CAS. 
+CAS provides enterprise single sign-on for the web and attempts to be a comprehensive platform for your authentication and authorization needs. 
 
-CAS provides enterprise single sign-on service:
+CAS provides an extensive list of features for most application requirements and integrations, offers community documentation 
+and implementation support, has an extensive community of adopters and is virtually supported by most programming languages, frameworks and products.
 
-- An open and well-documented protocol
-- An open-source Java server component
-- A library of clients for Java, .Net, PHP, Perl, Apache, uPortal, and others
-- Integrates with uPortal, BlueSocket, TikiWiki, Mule, Liferay, Moodle and others
-- Community documentation and implementation support
-- An extensive community of adopters
+CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
+an open-source Java server component by the same name, hosted here. 
 
-## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png?branch=master)](http://travis-ci.org/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
+## Features
+The following features are supported by the CAS project:
 
-It is recommended to build and deploy CAS locally using the [Maven War Overlay method][overlay]. 
+* CAS v1, v2 and v3 Protocol
+* SAML v1 and v2 Protocol
+* OAuth Protocol
+* OpenID & OpenID Connect Protocol
+* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Stormpath, Remote, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
+* Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID, OpenID Connect, CAS and more.
+* Authorization via ABAC, Time/Date, Internet2's Grouper and more.
+* HA clustered deployments via Hazelcast, Ehcache, JPA, Memcached, Apache Ignite, Couchbase and more.
+* Application registration backed by JSON, LDAP, JPA, Couchbase, MongoDb and more.
+* Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator and more.
+* Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
+* Global and per-application user interface theme and branding.
+
+The foundations of CAS are built upon: Spring Framework, Spring Boot, Spring Cloud, Spring Session and Thymeleaf.
+
+## Documentation [![Gitter](https://badges.gitter.im/Join Chat.svg)][casgitter]
+- [Documentation][wiki]
+- [Release Notes][releasenotes]
+- [Support] [cassupport]
+
+## Deployment [![Build Status](https://api.travis-ci.org/Jasig/cas.png?branch=master)](http://travis-ci.org/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
+
+It is recommended to build and deploy CAS locally using the [WAR Overlay method][overlay]. 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
-rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
+rather utilizes the overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
+**Note: Do NOT clone or download the CAS codebase directly. That is ONLY required if you wish to contribute to the development of 
+the project. Utilize the [WAR Overlay method](overlay) instead to build and deploy your CAS instance.**
 
-- Tagged source releases may be downloaded from [here][downloadcas].
-- CAS artifacts are published to the [Maven Central Repository][casmavencentral].
-- Remember that the [Maven War Overlay method][overlay] is the recommended approach for deployments.
-- A snapshot of the codebase's `master` branch may be downloaded from [here][downloadcasgithub].
-- Snapshot artifacts are also published through the [Sonatype snapashots repository][cassonatype] under the group id **`org.jasig.cas`**.
-- The codebase may also be *cloned* using a Git client via the following command:
-```bash
-git clone git@github.com:Jasig/cas.git
-```
-
-**Note:** If building CAS from the source, running test cases currently requires an active Internet connection.
-
-## Documentation 
-- [Official Documentation][wiki]
-- [Release Notes][releasenotes]
-- [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-## Addons
-- [CAS Addons][casaddons] is an open source collection of useful CAS server extensions.
 
 ## Contributions
 - [How to contribute][contribute]
@@ -55,4 +64,9 @@ git clone git@github.com:Jasig/cas.git
 [casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
 [downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
 [releasenotes]: https://github.com/Jasig/cas/releases
-[casaddons]: https://github.com/unicon-cas-addons
+[casimg]: https://cloud.githubusercontent.com/assets/1205228/14918246/aab58e44-0dd7-11e6-8709-fcbcfa16d1cc.png
+[caswebheroku]: http://jasigcas.heroku.com
+[casmgheroku]: http://jasigcasmgmt.heroku.com
+[cassupport]: http://jasig.github.io/cas/Support.html
+[casgitter]: https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+

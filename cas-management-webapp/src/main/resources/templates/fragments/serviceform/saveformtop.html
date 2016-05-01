@@ -1,0 +1,15 @@
+<div class="services-button-group-top">
+    <button href="javascript://" ng-click="serviceFormCtrl.saveForm()" class="btn btn-primary">
+        <i class="fa fa-floppy-o"></i>
+        <span th:remove="tag" th:text="#{services.form.button.save}" />
+    </button>
+    <a href="javascript://" ng-click="action.homepage()" class="btn btn-default">
+        <i class="fa fa-times"></i>
+        <span th:remove="tag" th:text="#{services.form.button.cancel}" />
+    </a>
+</div>
+<h1>
+    <i class="fa fa-plus-circle"></i>
+    <span ng-if="action.isSelected('edit')" th:text="#{services.form.header.page.editService}"></span>
+    <span ng-if="!action.isSelected('edit')" th:text="#{services.form.header.page.addService}"></span>
+</h1>

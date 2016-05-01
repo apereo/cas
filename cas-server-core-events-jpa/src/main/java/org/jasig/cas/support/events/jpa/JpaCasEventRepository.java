@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 /**
@@ -20,7 +19,7 @@ import java.util.Collection;
 @Transactional
 public class JpaCasEventRepository extends AbstractCasEventRepository {
 
-    @NotNull
+    
     @PersistenceContext(unitName = "eventsEntityManagerFactory")
     private EntityManager entityManager;
 

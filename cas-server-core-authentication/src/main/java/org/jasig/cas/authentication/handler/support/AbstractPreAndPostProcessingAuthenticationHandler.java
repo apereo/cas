@@ -51,7 +51,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * {@inheritDoc}
      **/
     @Override
-    public final HandlerResult authenticate(final Credential credential)
+    public HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (!preAuthenticate(credential)) {
@@ -87,7 +87,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings the warnings
      * @return the constructed handler result
      */
-    protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
+    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal,
                                                       final List<MessageDescriptor> warnings) {
         return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }

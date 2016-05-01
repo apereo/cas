@@ -24,6 +24,7 @@ import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicate;
+import org.jasig.cas.validation.ValidationServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,11 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -46,7 +47,6 @@ import java.util.Iterator;
  * The intention here is to allow extensions to easily benefit these already-configured components
  * without having to to duplicate them again.
  * @author Misagh Moayyed
- * @see CentralAuthenticationServiceImpl
  * @since 4.2.0
  */
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
@@ -55,43 +55,41 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     private static final long serialVersionUID = -7572316677901391166L;
 
     /** Log instance for logging events, info, warnings, errors, etc. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application event publisher. */
     @Autowired
-    protected ApplicationEventPublisher eventPublisher;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     /** {@link TicketRegistry}  for storing and retrieving tickets as needed. */
-    @NotNull
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /** Implementation of Service Manager. */
-    @NotNull
     @Resource(name="servicesManager")
     protected ServicesManager servicesManager;
 
     /** The logout manager. **/
-    @NotNull
     @Resource(name="logoutManager")
     protected LogoutManager logoutManager;
 
     /** The ticket factory. **/
-    @NotNull
     @Resource(name="defaultTicketFactory")
     protected TicketFactory ticketFactory;
+
+    /** The service selection strategy during validation events. **/
+    @Resource(name="validationServiceSelectionStrategies")
+    protected List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    @NotNull
     @Resource(name="authenticationPolicyFactory")
     protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
     /** Factory to create the principal type. **/
-    @NotNull
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
@@ -119,7 +117,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.ticketFactory = ticketFactory;
     }
 
-    public final void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
+    public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
     }
 
@@ -133,7 +131,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param principalFactory the principal factory
      */
     @Autowired
-    public final void setPrincipalFactory(@Qualifier("principalFactory")
+    public void setPrincipalFactory(@Qualifier("principalFactory")
                                     final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
@@ -143,9 +141,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      *
      * @param e the event
      */
-    protected final void doPublishEvent(final ApplicationEvent e) {
+    protected void doPublishEvent(final ApplicationEvent e) {
         logger.debug("Publishing {}", e);
-        this.eventPublisher.publishEvent(e);
+        this.applicationEventPublisher.publishEvent(e);
     }
 
 
@@ -206,11 +204,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @return the authentication satisfied by policy
      * @throws AbstractTicketException the ticket exception
      */
-    protected final Authentication getAuthenticationSatisfiedByPolicy(
+    protected Authentication getAuthenticationSatisfiedByPolicy(
             final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
-                serviceContextAuthenticationPolicyFactory.createPolicy(context);
+                this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         if (policy.isSatisfiedBy(ticket.getAuthentication())) {
             return ticket.getAuthentication();
         }
@@ -226,25 +224,25 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param ticketGrantingTicket the ticket granting ticket
      * @param registeredService the registered service
      */
-    protected final void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket,
+    protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket,
                                                 final RegisteredService registeredService) {
         final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
             logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
-            final RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
+            final RegisteredService proxyingService = this.servicesManager.findServiceBy(proxiedBy);
 
             if (proxyingService != null) {
                 logger.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
                     logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
                             proxyingService.getId(), service.getId());
-                    throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                    throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                             + registeredService.getId());
                 }
             } else {
                 logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
                         service.getId(), registeredService.getId());
-                throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
                         + registeredService.getId());
             }
         } else {
@@ -253,14 +251,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     @Override
-    public Ticket updateTicket(@NotNull final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         this.ticketRegistry.addTicket(ticket);
         return ticket;
     }
 
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
-        this.eventPublisher = applicationEventPublisher;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
@@ -273,5 +271,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public void setLogoutManager(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
+    }
+
+    public void setValidationServiceSelectionStrategies(final List<ValidationServiceSelectionStrategy> list) {
+        this.validationServiceSelectionStrategies = list;
     }
 }

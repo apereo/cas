@@ -7,6 +7,7 @@ import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,6 +24,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("principalAttributeAuthenticationPolicyWebflowEventResolver")
 public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
@@ -56,11 +58,9 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(this.attributeName),
                 service, context, providers,
-                input -> {
-                    return providers.stream()
-                            .filter(provider -> provider.getId().equals(input))
-                            .count() > 0;
-                });
+                input -> providers.stream()
+                        .filter(provider -> provider.getId().equals(input))
+                        .count() > 0);
     }
 
 }

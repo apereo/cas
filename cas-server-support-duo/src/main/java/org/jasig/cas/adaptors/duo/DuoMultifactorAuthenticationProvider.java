@@ -5,6 +5,7 @@ import org.jasig.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("duoAuthenticationProvider")
 public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
@@ -39,6 +41,6 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     @Override
     protected boolean isAvailable() {
-        return duoAuthenticationService.canPing();
+        return this.duoAuthenticationService.canPing();
     }
 }

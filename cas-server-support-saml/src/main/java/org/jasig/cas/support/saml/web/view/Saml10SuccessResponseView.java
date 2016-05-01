@@ -14,8 +14,6 @@ import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,25 +33,22 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
-public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
-    /** Namespace for custom attributes in the saml validation payload. */
-    private static final String VALIDATION_SAML_ATTRIBUTE_NAMESPACE = "http://www.ja-sig.org/products/cas/";
-
+public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     private static final int DEFAULT_ISSUE_LENGTH = 30000;
 
     /** The issuer, generally the hostname. */
-    @NotNull
+    
     private String issuer;
 
     /**
      * The amount of time in milliseconds this is valid for.
      * Defaults to {@value}.
      **/
-    @Min(1000)
     private long issueLength = DEFAULT_ISSUE_LENGTH;
 
-    @NotNull
     private String rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
+    
+    private String defaultAttributeNamespace;
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
@@ -78,7 +73,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
 
         if (!attributesToSend.isEmpty()) {
             assertion.getAttributeStatements().add(this.samlObjectBuilder.newAttributeStatement(
-                    subject, attributesToSend, VALIDATION_SAML_ATTRIBUTE_NAMESPACE));
+                    subject, attributesToSend, this.defaultAttributeNamespace));
         }
 
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
@@ -123,5 +118,9 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
 
     public void setRememberMeAttributeName(final String rememberMeAttributeName) {
         this.rememberMeAttributeName = rememberMeAttributeName;
+    }
+
+    public void setDefaultAttributeNamespace(final String defaultAttributeNamespace) {
+        this.defaultAttributeNamespace = defaultAttributeNamespace;
     }
 }
