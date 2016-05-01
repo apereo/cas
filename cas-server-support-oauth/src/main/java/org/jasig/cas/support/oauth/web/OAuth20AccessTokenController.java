@@ -5,7 +5,7 @@ import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.PrincipalException;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.profile.OAuthClientProfile;
@@ -71,7 +71,9 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             final String clientId = profile.getId();
             final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
             // we generate a refresh token if requested by the service but not from a refresh token
-            generateRefreshToken = registeredService.isGenerateRefreshToken() && isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE);
+            generateRefreshToken = registeredService.isGenerateRefreshToken() 
+                    && isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE);
+            
             jsonFormat = registeredService.isJsonFormat();
 
             final String parameterName;
@@ -103,7 +105,8 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             authentication = createAuthentication(profile, registeredService);
 
             try {
-                RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, 
+                        registeredService, authentication);
             } catch (final UnauthorizedServiceException | PrincipalException e) {
                 logger.error(e.getMessage(), e);
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);

@@ -84,7 +84,8 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
             final Authentication authentication = createAuthentication(profile, registeredService);
 
             try {
-                RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, 
+                        registeredService, authentication);
             } catch (final UnauthorizedServiceException | PrincipalException e) {
                 logger.error(e.getMessage(), e);
                 return new ModelAndView(OAuthConstants.ERROR_VIEW);
