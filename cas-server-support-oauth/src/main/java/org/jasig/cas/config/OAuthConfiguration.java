@@ -15,6 +15,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.regex.Pattern;
 
 /**
  * This this {@link OAuthConfiguration}.
@@ -40,7 +45,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Value("${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize")
     private String callbackUrl;
-    
+
     /**
      * Oauth sec config config.
      *
@@ -76,7 +81,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
-    
+
     /**
      * Requires authentication access token interceptor requires authentication interceptor.
      *
@@ -88,12 +93,33 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
 
+
+    /**
+     * interceptor handler interceptor adapter.
+     *
+     * @return the handler interceptor adapter
+     */
+    @Bean(name = "oauthInterceptor")
+    public HandlerInterceptorAdapter oauthInterceptor() {
+        return new HandlerInterceptorAdapter() {
+            @Override
+            public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+                                     final Object handler) throws Exception {
+                final String requestPath = request.getRequestURI();
+                final Pattern pattern = Pattern.compile('/' + OAuthConstants.ACCESS_TOKEN_URL + "(/)*$");
+
+                if (pattern.matcher(requestPath).find()) {
+                    return requiresAuthenticationAccessTokenInterceptor().preHandle(request, response, handler);
+                }
+                return requiresAuthenticationAuthorizeInterceptor().preHandle(request, response, handler);
+
+            }
+        };
+    }
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(requiresAuthenticationAuthorizeInterceptor())
-                .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat(OAuthConstants.AUTHORIZE_URL).concat("*"));
-
-        registry.addInterceptor(requiresAuthenticationAccessTokenInterceptor())
-                .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat(OAuthConstants.ACCESS_TOKEN_URL).concat("*"));
+        registry.addInterceptor(oauthInterceptor())
+                .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat("*"));
     }
 }

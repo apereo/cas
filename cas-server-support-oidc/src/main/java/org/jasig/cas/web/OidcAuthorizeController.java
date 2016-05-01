@@ -1,6 +1,7 @@
 package org.jasig.cas.web;
 
 import org.jasig.cas.OidcConstants;
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.web.OAuth20AuthorizeController;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("oidcAuthorizeController")
 public class OidcAuthorizeController extends OAuth20AuthorizeController {
     
-    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/authorize", method = RequestMethod.GET)
+    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.AUTHORIZE_URL, method = RequestMethod.GET)
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);

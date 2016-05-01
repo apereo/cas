@@ -139,7 +139,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "oauthConfirmView")
     public View oauthConfirmView() {
-        return new CasProtocolView("protocol/oauth/confirm.jsp", this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView("protocol/oauth/confirm", this.applicationContext, this.springTemplateEngine);
     }
 
 
