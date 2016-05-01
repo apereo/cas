@@ -26,7 +26,6 @@ The following commandline flags are supported by the build:
 | Flag                              | Description
 |-----------------------------------+----------------------------------------------------+
 | `skipCheckstyle`                  | Skip running checkstyle checks.
-| `skipTests`                       | Skip running JUnit tests, but compile them.
 | `skipAspectJ`                     | Skip decorating source files with AspectJ.
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
