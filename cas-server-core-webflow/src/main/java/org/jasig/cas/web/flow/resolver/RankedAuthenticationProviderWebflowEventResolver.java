@@ -12,6 +12,7 @@ import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -26,6 +27,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("rankedAuthenticationProviderWebflowEventResolver")
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
     
@@ -52,7 +54,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             logger.trace("TGT is blank; proceed with flow normally.");
             return resumeFlow();
         }
-        final Authentication authentication = ticketRegistrySupport.getAuthenticationFrom(tgt);
+        final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(tgt);
         if (authentication == null) {
             logger.trace("TGT has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
@@ -63,7 +65,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
-        final Event event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+        final Event event = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
         if (event == null) {
             logger.trace("Request does not indicate a requirement for authentication policy; proceed with flow normally.");
             return resumeFlow();

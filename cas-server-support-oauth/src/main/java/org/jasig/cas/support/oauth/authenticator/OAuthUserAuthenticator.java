@@ -12,9 +12,9 @@ import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -23,10 +23,11 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("oAuthUserAuthenticator")
-public final class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
+public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
 
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -37,7 +38,7 @@ public final class OAuthUserAuthenticator implements UsernamePasswordAuthenticat
                 credentials.getPassword());
         try {
 
-            final AuthenticationResult authenticationResult = authenticationSystemSupport
+            final AuthenticationResult authenticationResult = this.authenticationSystemSupport
                     .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
             final Authentication authentication = authenticationResult.getAuthentication();
             final Principal principal = authentication.getPrincipal();
@@ -55,7 +56,7 @@ public final class OAuthUserAuthenticator implements UsernamePasswordAuthenticat
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {

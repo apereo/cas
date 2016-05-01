@@ -10,8 +10,6 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-        SamlMetadataUIParserActionTests.class,
-})
-public final class AllTestsSuite {
+@Suite.SuiteClasses(SamlMetadataUIParserActionTests.class)
+public class AllTestsSuite {
 }

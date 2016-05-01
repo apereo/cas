@@ -49,7 +49,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
                         final String entityID = basicNameValuePair.getValue();
 
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                                SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+                                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                                         SamlRegisteredService.class.cast(registeredService), entityID);
 
                         final String location = adaptor.getSingleLogoutService().getLocation();

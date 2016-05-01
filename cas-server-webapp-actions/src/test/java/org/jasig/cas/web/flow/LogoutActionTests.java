@@ -6,7 +6,7 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -86,7 +86,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     @Test
     public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
         this.request.addParameter("service", "TestService");
-        final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+        final RegexRegisteredService impl = new RegexRegisteredService();
         impl.setServiceId("TestService");
         impl.setName("TestService");
         this.serviceManager.save(impl);
@@ -108,7 +108,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     @Test
     public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
         this.request.addParameter("service", "TestService");
-        final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+        final RegexRegisteredService impl = new RegexRegisteredService();
         impl.setServiceId("http://FooBar");
         impl.setName("FooBar");
         this.serviceManager.save(impl);

@@ -10,6 +10,9 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
     /** The code description. */
     public static final String CODE = "UNAUTHORIZED_SERVICE_PROXY";
 
+    /** The msg description. */
+    public static final String MESSAGE = "Proxying is not allowed for registered service ";
+    
     /**
      * Comment for {@code serialVersionUID}.
      */

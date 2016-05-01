@@ -16,8 +16,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * @author Scott Battaglia
 
@@ -29,7 +27,7 @@ import javax.validation.constraints.NotNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractCentralAuthenticationServiceTests {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -52,13 +50,13 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     private TicketRegistrySupport ticketRegistrySupport;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     public ArgumentExtractor getArgumentExtractor() {
-        return argumentExtractor;
+        return this.argumentExtractor;
     }
 
     public AuthenticationManager getAuthenticationManager() {
@@ -82,10 +80,10 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     public TicketRegistrySupport getTicketRegistrySupport() {
-        return ticketRegistrySupport;
+        return this.ticketRegistrySupport;
     }
 }

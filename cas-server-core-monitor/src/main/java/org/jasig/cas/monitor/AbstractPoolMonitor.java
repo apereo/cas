@@ -102,7 +102,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
     protected abstract int getActiveCount();
 
     private static class Validator implements Callable<StatusCode> {
-        private final AbstractPoolMonitor monitor;
+        private AbstractPoolMonitor monitor;
 
         /**
          * Instantiates a new Validator.

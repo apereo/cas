@@ -1,5 +1,6 @@
 package org.jasig.cas.validation;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,10 @@ import org.springframework.stereotype.Component;
  * @author Drew Mazurek
  * @since 3.0.0
  */
+@RefreshScope
 @Component("cas10ProtocolValidationSpecification")
 @Scope(value = "prototype")
-public final class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
+public class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
     /**
      * Instantiates a new cas10 protocol validation specification.
@@ -35,6 +37,6 @@ public final class Cas10ProtocolValidationSpecification extends AbstractCasProto
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        return (assertion.getChainedAuthentications().size() == 1);
+        return assertion.getChainedAuthentications().size() == 1;
     }
 }

@@ -15,27 +15,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 
 /**
  * Load the OpenSAML config context.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class OpenSamlConfigBean {
+public class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
 
     @Autowired
-    @NotNull
+    
     private ParserPool parserPool;
 
-    @NotNull
+    
     private XMLObjectBuilderFactory builderFactory;
 
-    @NotNull
+    
     private MarshallerFactory marshallerFactory;
 
-    @NotNull
+    
     private UnmarshallerFactory unmarshallerFactory;
 
 
@@ -50,19 +49,19 @@ public final class OpenSamlConfigBean {
      * @return the parser pool
      */
     public ParserPool getParserPool() {
-        return parserPool;
+        return this.parserPool;
     }
 
     public XMLObjectBuilderFactory getBuilderFactory() {
-        return builderFactory;
+        return this.builderFactory;
     }
 
     public MarshallerFactory getMarshallerFactory() {
-        return marshallerFactory;
+        return this.marshallerFactory;
     }
 
     public UnmarshallerFactory getUnmarshallerFactory() {
-        return unmarshallerFactory;
+        return this.unmarshallerFactory;
     }
 
     /**
@@ -71,7 +70,7 @@ public final class OpenSamlConfigBean {
     @PostConstruct
     public void init() {
         LOGGER.info("Initializing OpenSaml configuration...");
-        Assert.notNull(this.parserPool, "parserPool cannot be null");
+        Assert.notNull(this.parserPool, "parserPool must not be null");
 
         try {
             InitializationService.initialize();

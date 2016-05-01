@@ -24,7 +24,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -47,16 +46,16 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
-    private final String entityIdParameterName;
+    
+    private String entityIdParameterName;
 
-    @NotNull
-    private final MetadataResolverAdapter metadataAdapter;
+    
+    private MetadataResolverAdapter metadataAdapter;
 
     @Autowired
-    @NotNull
+    
     private ServicesManager servicesManager;
 
     @Autowired
@@ -94,7 +93,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
-        final WebApplicationService service = serviceFactory.createService(entityId);
+        final WebApplicationService service = this.serviceFactory.createService(entityId);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
@@ -128,7 +127,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
         final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
-            logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
+            logger.debug("No extensions are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return success();
         }
 

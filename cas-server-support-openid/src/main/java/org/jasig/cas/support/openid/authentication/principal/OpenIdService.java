@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class OpenIdService extends AbstractWebApplicationService {
+public class OpenIdService extends AbstractWebApplicationService {
 
     /** The Constant LOGGER. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
     private static final long serialVersionUID = 5776500133123291301L;
 
-    private final String identity;
+    private String identity;
 
     /**
      * Instantiates a new OpenID service.

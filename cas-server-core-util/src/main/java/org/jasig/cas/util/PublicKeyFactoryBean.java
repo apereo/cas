@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * FactoryBean for creating a public key from a file.
  *
@@ -21,16 +19,16 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
+    
     private Resource resource;
 
-    @NotNull
+    
     private String algorithm;
 
     @Override
-    protected final PublicKey createInstance() throws Exception {
+    protected PublicKey createInstance() throws Exception {
         logger.debug("Creating public key instance from [{}] using [{}]",
                 this.resource.getFilename(), this.algorithm);
 
@@ -49,12 +47,12 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     }
 
     public Resource getResource() {
-        return resource;
+        return this.resource;
     }
 
 
     public String getAlgorithm() {
-        return algorithm;
+        return this.algorithm;
     }
 
     public void setLocation(final Resource resource) {

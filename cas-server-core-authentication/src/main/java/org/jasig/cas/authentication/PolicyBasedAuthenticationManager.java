@@ -2,10 +2,10 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
@@ -47,13 +47,14 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("authenticationManager")
 public class PolicyBasedAuthenticationManager extends AbstractAuthenticationManager {
 
     /**
      * Authentication security policy.
      */
-    @NotNull
+    
     protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy();
 
     /**

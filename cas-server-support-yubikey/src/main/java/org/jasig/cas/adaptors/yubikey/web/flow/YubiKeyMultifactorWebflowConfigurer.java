@@ -15,7 +15,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 @Component("yubikeyMultifactorWebflowConfigurer")
 public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    /** Duo Webflow event id. */
+    /** Webflow event id. */
     public static final String MFA_YUBIKEY_EVENT_ID = "mfa-yubikey";
 
     @Autowired

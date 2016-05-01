@@ -12,14 +12,14 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class SamlService extends AbstractWebApplicationService {
+public class SamlService extends AbstractWebApplicationService {
 
     /**
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
-    private final String requestId;
+    private String requestId;
 
 
     /**

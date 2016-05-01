@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
     
@@ -62,7 +62,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractRegistere
 
         this.allowedAttributes.stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
                 .forEach(attribute -> {
-            logger.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
+                    logger.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
             attributesToRelease.put((String) attribute[0], attribute[1]);
         });
         return attributesToRelease;
@@ -91,7 +91,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractRegistere
     public int hashCode() {
         return new HashCodeBuilder(13, 133)
                 .appendSuper(super.hashCode())
-                .append(allowedAttributes)
+                .append(this.allowedAttributes)
                 .toHashCode();
     }
 
@@ -100,7 +100,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractRegistere
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("allowedAttributes", allowedAttributes)
+                .append("allowedAttributes", this.allowedAttributes)
                 .toString();
     }
 }

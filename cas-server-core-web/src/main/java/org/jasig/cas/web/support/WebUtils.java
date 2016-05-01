@@ -17,9 +17,9 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -27,11 +27,8 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 
@@ -43,33 +40,37 @@ import java.util.List;
  */
 public final class WebUtils {
 
-    /** Default CAS Servlet name. **/
-    public static final String CAS_SERVLET_NAME = "cas";
-
-    /** Request attribute that contains message key describing details of authorization failure.*/
+    /**
+     * Request attribute that contains message key describing details of authorization failure.
+     */
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
 
-    /** Constant representing the request header for user agent. */
+    /**
+     * Constant representing the request header for user agent.
+     */
     public static final String USER_AGENT_HEADER = "user-agent";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
     private static final String UNKNOWN_USER = "audit:unknown";
-
-    /** Flow scope attribute that determines if authn is happening at a public workstation. */
+    
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
-
-    /** Scope parameter noting the authentication object. **/
     private static final String PARAMETER_AUTHENTICATION = "authentication";
-    /** Scope parameter noting the authentication result builder. **/
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
-    /** Scope parameter noting the result of the authentication. **/
     private static final String PARAMETER_AUTHENTICATION_RESULT = "authenticationResult";
+    private static final String PARAMETER_CREDENTIAL = "credential";
+    private static final String PARAMETER_UNAUTHORIZED_REDIRECT_URL = "unauthorizedRedirectUrl";
+    private static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
+    private static final String PARAMETER_REGISTERED_SERVICE = "registeredService";
+    private static final String PARAMETER_SERVICE = "service";
+    private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
+    private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
 
     /**
      * Instantiates a new web utils instance.
      */
-    private WebUtils() {}
+    private WebUtils() {
+    }
 
     /**
      * Gets the http servlet request from the context.
@@ -78,11 +79,11 @@ public final class WebUtils {
      * @return the http servlet request
      */
     public static HttpServletRequest getHttpServletRequest(
-        final RequestContext context) {
+            final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context
-            .getExternalContext(),
-            "Cannot obtain HttpServletRequest from event of type: "
-                + context.getExternalContext().getClass().getName());
+                        .getExternalContext(),
+                "Cannot obtain HttpServletRequest from event of type: "
+                        + context.getExternalContext().getClass().getName());
 
         return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
@@ -101,6 +102,10 @@ public final class WebUtils {
         }
     }
 
+    public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
+        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+    }
+
     /**
      * Gets the http servlet response from the context.
      *
@@ -109,12 +114,9 @@ public final class WebUtils {
      */
     public static HttpServletResponse getHttpServletResponse(
             final RequestContext context) {
-        Assert.isInstanceOf(ServletExternalContext.class, context
-                        .getExternalContext(),
-                "Cannot obtain HttpServletResponse from event of type: "
-                        + context.getExternalContext().getClass().getName());
-        return (HttpServletResponse) context.getExternalContext()
-                .getNativeResponse();
+        Assert.isInstanceOf(ServletExternalContext.class, context .getExternalContext(),
+                "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
+        return (HttpServletResponse) context.getExternalContext().getNativeResponse();
     }
 
     /**
@@ -132,60 +134,15 @@ public final class WebUtils {
     }
 
     /**
-     * Is cas servlet initializing?
-     *
-     * @param sce the sce
-     * @return the boolean
-     */
-    public static boolean isCasServletInitializing(final ServletContext sce) {
-        return sce.getServletRegistrations().containsKey(CAS_SERVLET_NAME);
-    }
-
-    /**
-     * Is cas servlet initializing?
-     *
-     * @param sce the sce
-     * @return the boolean
-     */
-    public static boolean isCasServletInitializing(final ServletContextEvent sce) {
-        return sce.getServletContext().getServletRegistrations().containsKey(CAS_SERVLET_NAME);
-    }
-
-    /**
-     * Is cas servlet initializing?
-     *
-     * @param sce the sce
-     * @return the boolean
-     */
-    public static boolean isCasServletInitializing(final WebApplicationContext sce) {
-        return isCasServletInitializing(sce.getServletContext());
-    }
-
-    /**
-     * Is cas servlet initializing.
-     *
-     * @param sce the sce
-     * @return the boolean
-     */
-    public static boolean isCasServletInitializing(final ApplicationContext sce) {
-        if (sce instanceof WebApplicationContext) {
-            return isCasServletInitializing(((WebApplicationContext) sce).getServletContext());
-        }
-        LOGGER.debug("No CAS servlet is available because the given application context is not of type {}",
-                WebApplicationContext.class);
-        return false;
-    }
-
-    /**
      * Gets the service from the request based on given extractors.
      *
      * @param argumentExtractors the argument extractors
-     * @param request the request
+     * @param request            the request
      * @return the service, or null.
      */
     public static WebApplicationService getService(
-        final List<ArgumentExtractor> argumentExtractors,
-        final HttpServletRequest request) {
+            final List<ArgumentExtractor> argumentExtractors,
+            final HttpServletRequest request) {
         return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
                 .filter(service -> service != null).findFirst().orElse(null);
     }
@@ -194,12 +151,12 @@ public final class WebUtils {
      * Gets the service.
      *
      * @param argumentExtractors the argument extractors
-     * @param context the context
+     * @param context            the context
      * @return the service
      */
     public static WebApplicationService getService(
-        final List<ArgumentExtractor> argumentExtractors,
-        final RequestContext context) {
+            final List<ArgumentExtractor> argumentExtractors,
+            final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         return getService(argumentExtractors, request);
     }
@@ -211,7 +168,7 @@ public final class WebUtils {
      * @return the service
      */
     public static WebApplicationService getService(final RequestContext context) {
-        return context != null ? (WebApplicationService) context.getFlowScope().get("service") : null;
+        return context != null ? (WebApplicationService) context.getFlowScope().get(PARAMETER_SERVICE) : null;
     }
 
     /**
@@ -221,17 +178,17 @@ public final class WebUtils {
      * @return the service
      */
     public static RegisteredService getRegisteredService(final RequestContext context) {
-        return context != null ? (RegisteredService) context.getFlowScope().get("registeredService") : null;
+        return context != null ? (RegisteredService) context.getFlowScope().get(PARAMETER_REGISTERED_SERVICE) : null;
     }
 
     /**
      * Put ticket granting ticket in request and flow scopes.
      *
      * @param context the context
-     * @param ticket the ticket value
+     * @param ticket  the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-        final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
+            final RequestContext context,  final TicketGrantingTicket ticket) {
         final String ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
@@ -239,11 +196,11 @@ public final class WebUtils {
     /**
      * Put ticket granting ticket in request and flow scopes.
      *
-     * @param context the context
+     * @param context     the context
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-            final RequestContext context, @NotNull final String ticketValue) {
+            final RequestContext context,  final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }
@@ -251,12 +208,13 @@ public final class WebUtils {
     /**
      * Put ticket granting ticket into map that is either backed by the flow/request scope.
      * Will override the previous value and blank out the setting if value is null or empty.
-     * @param map the map
+     *
+     * @param map         the map
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
-                                                       @NotNull final String ticketValue) {
-        map.put("ticketGrantingTicketId", ticketValue);
+                                                       final String ticketValue) {
+        map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
     }
 
     /**
@@ -266,9 +224,9 @@ public final class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(
-            @NotNull final RequestContext context) {
-        final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
-        final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
+             final RequestContext context) {
+        final String tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
+        final String tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
 
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
 
@@ -277,12 +235,12 @@ public final class WebUtils {
     /**
      * Put service ticket in request scope.
      *
-     * @param context the context
+     * @param context     the context
      * @param ticketValue the ticket value
      */
     public static void putServiceTicketInRequestScope(
-        final RequestContext context, final ServiceTicket ticketValue) {
-        context.getRequestScope().put("serviceTicketId", ticketValue.getId());
+            final RequestContext context, final ServiceTicket ticketValue) {
+        context.getRequestScope().put(PARAMETER_SERVICE_TICKET_ID, ticketValue.getId());
     }
 
     /**
@@ -292,26 +250,27 @@ public final class WebUtils {
      * @return the service ticket from request scope
      */
     public static String getServiceTicketFromRequestScope(final RequestContext context) {
-        return context.getRequestScope().getString("serviceTicketId");
+        return context.getRequestScope().getString(PARAMETER_SERVICE_TICKET_ID);
     }
 
     /**
      * Adds the unauthorized redirect url to the flow scope.
+     *
      * @param context the request context
-     * @param url the uri to redirect the flow
+     * @param url     the uri to redirect the flow
      */
     public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
-        context.getFlowScope().put("unauthorizedRedirectUrl", url);
+        context.getFlowScope().put(PARAMETER_UNAUTHORIZED_REDIRECT_URL, url);
     }
 
     /**
      * Put logout requests into flow scope.
      *
-     * @param context the context
+     * @param context  the context
      * @param requests the requests
      */
     public static void putLogoutRequests(final RequestContext context, final List<LogoutRequest> requests) {
-        context.getFlowScope().put("logoutRequests", requests);
+        context.getFlowScope().put(PARAMETER_LOGOUT_REQUESTS, requests);
     }
 
     /**
@@ -321,7 +280,7 @@ public final class WebUtils {
      * @return the logout requests
      */
     public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
-        return (List<LogoutRequest>) context.getFlowScope().get("logoutRequests");
+        return (List<LogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
     }
 
     /**
@@ -331,13 +290,13 @@ public final class WebUtils {
      * @param service the service
      */
     public static void putService(final RequestContext context, final Service service) {
-        context.getFlowScope().put("service", service);
+        context.getFlowScope().put(PARAMETER_SERVICE, service);
     }
 
     /**
      * Put warning cookie value into flowscope.
      *
-     * @param context the context
+     * @param context     the context
      * @param cookieValue the cookie value
      */
     public static void putWarningCookie(final RequestContext context, final Boolean cookieValue) {
@@ -347,12 +306,12 @@ public final class WebUtils {
     /**
      * Put registered service into flowscope.
      *
-     * @param context the context
+     * @param context           the context
      * @param registeredService the service
      */
     public static void putRegisteredService(final RequestContext context,
                                             final RegisteredService registeredService) {
-        context.getFlowScope().put("registeredService", registeredService);
+        context.getFlowScope().put(PARAMETER_REGISTERED_SERVICE, registeredService);
     }
 
     /**
@@ -361,21 +320,22 @@ public final class WebUtils {
      * @param context the context
      * @return the credential, or null if it cant be found in the context or if it has no id.
      */
-    public static Credential getCredential(@NotNull final RequestContext context) {
-        final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
-        final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
+    public static Credential getCredential(final RequestContext context) {
+        final Credential cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
+        final Credential cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
 
         Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
 
         if (credential == null) {
             final FlowSession session = context.getFlowExecutionContext().getActiveSession();
-            credential = session.getScope().get("credential", Credential.class);
+            credential = session.getScope().get(PARAMETER_CREDENTIAL, Credential.class);
         }
         if (credential != null && StringUtils.isBlank(credential.getId())) {
             return null;
         }
         return credential;
     }
+
 
     /**
      * Return the username of the authenticated user (based on pac4j security).
@@ -458,7 +418,7 @@ public final class WebUtils {
     /**
      * Gets authentication from conversation scope.
      *
-     * @param ctx            the ctx
+     * @param ctx the ctx
      * @return the authentication
      */
     public static Authentication getAuthentication(final RequestContext ctx) {
@@ -489,7 +449,7 @@ public final class WebUtils {
      * Put authentication result.
      *
      * @param authenticationResult the authentication result
-     * @param context               the context
+     * @param context              the context
      */
     public static void putAuthenticationResult(final AuthenticationResult authenticationResult, final RequestContext context) {
         context.getConversationScope().put(PARAMETER_AUTHENTICATION_RESULT, authenticationResult);
@@ -504,7 +464,7 @@ public final class WebUtils {
     public static AuthenticationResult getAuthenticationResult(final RequestContext ctx) {
         return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT, AuthenticationResult.class);
     }
-    
+
     /**
      * Gets http servlet request user agent.
      *
@@ -554,13 +514,24 @@ public final class WebUtils {
     }
 
     /**
-     * Put unauthorized redirect url into flowscope.
+     * Put geo location tracking into flow scope.
      *
      * @param context the context
+     * @param value   the value
+     */
+    public static void putGeoLocationTrackingIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("trackGeoLocation", value);
+    }
+
+    /**
+     * Put unauthorized redirect url into flowscope.
+     *
+     * @param context                 the context
      * @param unauthorizedRedirectUrl the url to redirect to
      */
     public static void putUnauthorizedRedirectUrl(final RequestContext context,
-                                            final URI unauthorizedRedirectUrl) {
-        context.getFlowScope().put("unauthorizedRedirectUrl", unauthorizedRedirectUrl);
+                                                  final URI unauthorizedRedirectUrl) {
+        context.getFlowScope().put(PARAMETER_UNAUTHORIZED_REDIRECT_URL, unauthorizedRedirectUrl);
     }
+
 }

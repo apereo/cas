@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@RefreshScope
 @Component("rememberMeAuthenticationMetaDataPopulator")
-public final class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeAuthenticationMetaDataPopulator.class);
 

@@ -20,17 +20,19 @@ import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
 @Component("wsFederationWebflowConfigurer")
 public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
+    private static final String WS_FEDERATION_ACTION = "wsFederationAction";
+    private static final String WS_FEDERATION_REDIRECT = "wsFederationRedirect";
+
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-
-
+        
         final Expression expression = createExpression(flow, "flowScope.WsFederationIdentityProviderUrl", String.class);
         final ActionExecutingViewFactory viewFactory = new ActionExecutingViewFactory(
                 new ExternalRedirectAction(expression));
 
-        createEndState(flow, "wsFederationRedirect", viewFactory);
-        final ActionState actionState = createActionState(flow, "wsFederationAction", createEvaluateAction("wsFederationAction"));
+        createEndState(flow, WS_FEDERATION_REDIRECT, viewFactory);
+        final ActionState actionState = createActionState(flow, WS_FEDERATION_ACTION, createEvaluateAction(WS_FEDERATION_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
@@ -40,7 +42,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         for (final Transition transition : initLoginState.getTransitionSet()) {
             if (transition.getId().equals(CasWebflowConstants.TRANSITION_ID_GENERATED)) {
                 final TargetStateResolver targetStateResolver = (TargetStateResolver) fromStringTo(TargetStateResolver.class)
-                        .execute("wsFederationRedirect");
+                        .execute(WS_FEDERATION_REDIRECT);
                 transition.setTargetStateResolver(targetStateResolver);
                 break;
             }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -15,6 +16,7 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
@@ -66,12 +68,12 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("casWebflowConfigurer")
 public abstract class AbstractCasWebflowConfigurer {
     private static final String FLOW_ID_LOGIN = "login";
-
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     /**
      * The Login flow definition registry.
      */
@@ -89,14 +91,21 @@ public abstract class AbstractCasWebflowConfigurer {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Value("${webflow.autoconfigure:true}")
+    private boolean autoconfigureWebflow;
+    
     /**
      * Initialize.
      */
     @PostConstruct
-    public final void initialize() {
+    public void initialize() {
         try {
             logger.debug("Initializing CAS webflow configuration...");
-            doInitialize();
+            if (this.autoconfigureWebflow) {
+                doInitialize();
+            } else {
+                logger.warn("Webflow auto-configuration is disabled. CAS will not modify the webflow via {}", getClass().getName());
+            }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -120,7 +129,7 @@ public abstract class AbstractCasWebflowConfigurer {
     }
 
     protected List<String> getFlowDefinitionIds() {
-        return Arrays.asList(loginFlowDefinitionRegistry.getFlowDefinitionIds());
+        return Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
     }
 
     /**
@@ -130,7 +139,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @return the flow definition ids
      */
     protected List<String> getFlowDefinitionIds(final List<String> excludedFlowIds) {
-        final List<String> flowIds = Arrays.asList(loginFlowDefinitionRegistry.getFlowDefinitionIds());
+        final List<String> flowIds = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
         flowIds.removeAll(excludedFlowIds);
         return flowIds;
     }

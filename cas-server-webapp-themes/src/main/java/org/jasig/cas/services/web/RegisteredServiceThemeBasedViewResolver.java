@@ -1,128 +1,191 @@
 package org.jasig.cas.services.web;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.template.TemplateLocation;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.AbstractCachingViewResolver;
-import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Comment;
+import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Macro;
+import org.thymeleaf.dom.Node;
+import org.thymeleaf.dom.Text;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.view.AbstractThymeleafView;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.templatemode.ITemplateModeHandler;
+import org.thymeleaf.templatemode.TemplateModeHandler;
+import org.thymeleaf.templateparser.xmlsax.XhtmlAndHtml5NonValidatingSAXTemplateParser;
+import org.thymeleaf.templatewriter.AbstractGeneralTemplateWriter;
+import org.thymeleaf.templatewriter.ITemplateWriter;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * {@link RegisteredServiceThemeBasedViewResolver} is an alternate Spring View Resolver that utilizes a service's
  * associated theme to selectively choose which set of UI views will be used to generate
- * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
- * <p>Views associated with a particular theme by default are expected to be found at:
- * {@link #getPrefix()}/{@code themeId/ui}. A starting point may be to
- * clone the default set of view pages into a new directory based on the theme id.</p>
- * <p>Note: There also exists a {@link org.jasig.cas.services.web.ServiceThemeResolver}
- * that attempts to resolve the view name based on the service theme id. The difference
- * however is that {@link org.jasig.cas.services.web.ServiceThemeResolver} only decorates
- * the default view pages with additional tags and coloring, such as CSS and JS. The
- * component presented here on the other hand has the ability to load an entirely new
- * set of pages that are may be totally different from that of the default's. This
- * is specially useful in cases where the set of pages for a theme that are targetted
- * for a different type of audience are entirely different structurally that simply
- * using the {@link org.jasig.cas.services.web.ServiceThemeResolver} is not practical
- * to augment the default views. In such cases, new view pages may be required.</p>
+ * the standard views.
  *
  * @author John Gasper
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class RegisteredServiceThemeBasedViewResolver extends AbstractCachingViewResolver implements Ordered {
+@RefreshScope
+@Component("registeredServiceViewResolver")
+public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
-    private static final String THEME_LOCATION_PATTERN = "%s/%s/ui/";
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    private ThymeleafProperties properties;
+
+    @Autowired
+    @Qualifier("thymeleafViewResolver")
+    private ThymeleafViewResolver thymeleafViewResolver;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Resource(name = "argumentExtractors")
+    private List argumentExtractors;
     
-    private final ServicesManager servicesManager;
-    private String prefix;
-    private String suffix;
-    private int order;
+    /**
+     * Instantiates a new Registered service theme based view resolver.
+     */
+    public RegisteredServiceThemeBasedViewResolver() {
+    }
     
     /**
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
      *
      * @param servicesManager the serviceManager implementation
-     * @see #setCache(boolean)
      */
     public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager) {
         super();
-        super.setCache(false);
-
         this.servicesManager = servicesManager;
     }
-    
+
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init() {
+        setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
+        setCache(this.properties.isCache());
+        if (!isCache()) {
+            setCacheLimit(0);
+        }
+        setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
+        setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
+        setContentType(this.thymeleafViewResolver.getContentType());
+        setExcludedViewNames(this.thymeleafViewResolver.getExcludedViewNames());
+        setOrder(this.thymeleafViewResolver.getOrder());
+        setRedirectContextRelative(this.thymeleafViewResolver.isRedirectContextRelative());
+        setRedirectHttp10Compatible(this.thymeleafViewResolver.isRedirectHttp10Compatible());
+        setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
+
+        final SpringTemplateEngine engine = this.thymeleafViewResolver.getTemplateEngine();
+        if (!engine.isInitialized()) {
+            final ITemplateWriter writer = new AbstractGeneralTemplateWriter() {
+                @Override
+                protected boolean shouldWriteXmlDeclaration() {
+                    return false;
+                }
+
+                @Override
+                protected boolean useXhtmlTagMinimizationRules() {
+                    return true;
+                }
+
+                @Override
+                protected void writeText(final Arguments arguments, final Writer writer, final Text text) throws IOException {
+                    final String contentString = text.getContent();
+                    if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
+                        return;
+                    }
+                    super.writeText(arguments, writer, text);
+                }
+
+                @Override
+                public void writeNode(final Arguments arguments, final Writer writer, final Node node)
+                        throws IOException {
+                    super.writeNode(arguments, writer, node);
+                    if ((node instanceof Element) || (node instanceof Comment) || (node instanceof Macro)) {
+                        writer.write("\n");
+                    }
+                }
+            };
+
+            final ITemplateModeHandler handler = new TemplateModeHandler("HTML5", 
+                    new XhtmlAndHtml5NonValidatingSAXTemplateParser(2), writer);
+            engine.setTemplateModeHandlers(Collections.singleton(handler));
+        }
+        setTemplateEngine(engine);
+        setViewNames(this.thymeleafViewResolver.getViewNames());
+
+    }
+
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
+        final View view = super.loadView(viewName, locale);
+
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
-        final WebApplicationService service = WebUtils.getService(requestContext);
+        final WebApplicationService service;
+
+        if (requestContext != null) {
+            service = WebUtils.getService(this.argumentExtractors, requestContext);
+        } else {
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+            service = WebUtils.getService(this.argumentExtractors, request);
+        }
+
+        if (service == null) {
+            return view;
+        }
+
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService != null) {
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            if (StringUtils.hasText(registeredService.getTheme())  && view instanceof AbstractThymeleafView) {
+                LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
+                        registeredService.getServiceId(), registeredService.getTheme());
 
-        if (service != null && registeredService != null
-                && registeredService.getAccessStrategy().isServiceAccessAllowed()
-                && StringUtils.isNotBlank(registeredService.getTheme())) {
+                final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
+                final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
 
-            final InternalResourceView view = BeanUtils.instantiateClass(InternalResourceView.class);
+                final String viewLocationUrl = this.properties.getPrefix().concat(viewUrl).concat(this.properties.getSuffix());
+                LOGGER.debug("Attempting to locate view at {}", viewLocationUrl);
+                final TemplateLocation location = new TemplateLocation(viewLocationUrl);
+                if (location.exists(getApplicationContext())) {
+                    LOGGER.debug("Found view {}", viewUrl);
+                    thymeleafView.setTemplateName(viewUrl);
+                } else {
+                    LOGGER.debug("View {} does not exist. Fallling back to default view at {}",
+                            viewLocationUrl, thymeleafView.getTemplateName());
+                }
 
-            LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
-                    registeredService.getServiceId(), registeredService.getTheme());
-
-            final String themePrefix = String.format(THEME_LOCATION_PATTERN, getPrefix(), registeredService.getTheme());
-            LOGGER.debug("Prefix [{}] set for service [{}] with theme [{}]", themePrefix, service,
-                    registeredService.getTheme());
-            final String viewUrl = StringUtils.replace(themePrefix + viewName + getSuffix(), "//", "/");
-            final Resource resource = this.resourceLoader.getResource(viewUrl);
-            
-            if (resource.exists()) {
-                view.setUrl(viewUrl);
-                view.setAlwaysInclude(false);
-                view.setExposeContextBeansAsAttributes(false);
-                view.setPreventDispatchLoop(true);
-                LOGGER.debug("View resolved: {}", view.getUrl());
-
-                return view;
             }
         }
-        return null;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(final String suffix) {
-        this.suffix = suffix;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
+        return view;
     }
 }

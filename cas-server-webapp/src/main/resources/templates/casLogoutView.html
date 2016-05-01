@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/top"/>
+
+<body id="cas">
+<div id="container">
+  <div th:replace="fragments/logo"/>
+
+  <div id="content">
+      <div id="msg" class="success">
+          <h2 th:utext="#{screen.logout.header}"/>
+          <p th:utext="#{screen.logout.success}"/>
+          <p th:utext="#{screen.logout.security}" />
+      </div>
+  </div>
+  <div th:include="fragments/footer"/>
+</div>
+<div th:include="fragments/bottom"/>
+</body>
+</html>
+

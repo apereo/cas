@@ -11,6 +11,7 @@ import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
+import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.junit.Before;
@@ -49,6 +50,10 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         this.response = new Saml10SuccessResponseView();
         this.response.setServicesManager(new DefaultServicesManagerImpl(dao));
         this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.response.getServicesManager()));
+        
+        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder();
+        builder.setConfigBean(this.configBean);
+        this.response.setSamlObjectBuilder(builder);
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);
     }

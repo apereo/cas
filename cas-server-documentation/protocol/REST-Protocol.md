@@ -11,11 +11,11 @@ client SSL certificates for application-to-application authentication of request
 by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may
- become a tremendously convenient target for brute force dictionary attacks on CAS server. Enable support
- only soberly and with due consideration of security aspects.</p></div>
+ become a tremendously convenient target for brute force dictionary attacks on CAS server. Consider
+ enabling throttling support to ensure brute force attacks are prevented upon authentication failures.</p></div>
 
 # Components
-Support is enabled by including the following in your `pom.xml` file:
+Support is enabled by including the following to the overlay:
 
 ```xml
 <dependency>
@@ -106,6 +106,8 @@ via the following properties:
 # cas.rest.services.attributevalue=
 ```
 
+### Sample Request 
+
 ```bash
 POST /cas/v1/services/add/{TGT id} HTTP/1.0
 serviceId=svcid&name=svcname&description=svcdesc&evaluationOrder=1234&enabled=true&ssoEnabled=true
@@ -136,4 +138,17 @@ final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
 final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);
 final CasProfile casProfile = client.validateServiceTicket("<SERVICE_URL>", casCreds);
 client.destroyTicketGrantingTicket(context, profile);
+```
+
+## Throttling
+
+To understand how to throttling works in CAS, 
+please review [the available options](../installation/Configuring-Authentication-Throttling.html).
+
+By default, throttling REST requests is turned off. To enable this behavior,
+adjust the following settings: 
+
+```properties
+#CAS components mappings
+restAuthenticationThrottle=inMemoryIpAddressUsernameThrottle
 ```

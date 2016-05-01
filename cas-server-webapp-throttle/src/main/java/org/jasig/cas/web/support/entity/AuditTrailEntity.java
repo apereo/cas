@@ -43,7 +43,7 @@ public class AuditTrailEntity {
     private ZonedDateTime date;
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(final Long id) {
@@ -51,7 +51,7 @@ public class AuditTrailEntity {
     }
 
     public String getUser() {
-        return user;
+        return this.user;
     }
 
     public void setUser(final String user) {
@@ -59,7 +59,7 @@ public class AuditTrailEntity {
     }
 
     public String getClientIp() {
-        return clientIp;
+        return this.clientIp;
     }
 
     public void setClientIp(final String clientIp) {
@@ -67,7 +67,7 @@ public class AuditTrailEntity {
     }
 
     public String getServerIp() {
-        return serverIp;
+        return this.serverIp;
     }
 
     public void setServerIp(final String serverIp) {
@@ -75,7 +75,7 @@ public class AuditTrailEntity {
     }
 
     public String getResource() {
-        return resource;
+        return this.resource;
     }
 
     public void setResource(final String resource) {
@@ -83,7 +83,7 @@ public class AuditTrailEntity {
     }
 
     public String getAction() {
-        return action;
+        return this.action;
     }
 
     public void setAction(final String action) {
@@ -91,7 +91,7 @@ public class AuditTrailEntity {
     }
 
     public String getApplicationCode() {
-        return applicationCode;
+        return this.applicationCode;
     }
 
     public void setApplicationCode(final String applicationCode) {
@@ -99,7 +99,7 @@ public class AuditTrailEntity {
     }
 
     public ZonedDateTime getDate() {
-        return date;
+        return this.date;
     }
 
     public void setDate(final ZonedDateTime date) {

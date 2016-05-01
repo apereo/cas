@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class EncodedTicket implements Ticket {
+public class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
     private String id;

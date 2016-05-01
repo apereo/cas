@@ -20,7 +20,7 @@ import java.net.URL;
  * @since 4.2.0
  */
 @Component("jcifsConfig")
-public final class JcifsConfig {
+public class JcifsConfig {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
 
@@ -62,7 +62,7 @@ public final class JcifsConfig {
      */
     private static final String JCIFS_PROP_SERVICE_PASSWORD = "jcifs.spnego.servicePassword";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String loginConf;
 
@@ -76,7 +76,7 @@ public final class JcifsConfig {
     }
 
     /**
-     * Configure the login.conf setting as a system property.
+     * After properties set.
      */
     @PostConstruct
     public void afterPropertiesSet() {

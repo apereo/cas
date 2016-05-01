@@ -20,7 +20,7 @@ public class DataSourceMonitorTests {
     private DataSource dataSource;
 
     @Before
-    public void setup() {
+    public void setUp() {
         final ClassPathXmlApplicationContext ctx = new
             ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
         this.dataSource = ctx.getBean("dataSource", DataSource.class);

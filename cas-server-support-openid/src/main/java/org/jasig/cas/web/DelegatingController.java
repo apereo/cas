@@ -5,7 +5,6 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -19,11 +18,12 @@ public class DelegatingController extends AbstractController {
 
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_ERROR_VIEW_NAME = "casServiceFailureView";
+    private static final String INVALID_REQUEST = "INVALID_REQUEST";
 
     private List<AbstractDelegateController> delegates;
 
     /** The view to redirect if no delegate can handle the request. */
-    @NotNull
+    
     private String failureView = DEFAULT_ERROR_VIEW_NAME;
 
     /**
@@ -37,14 +37,14 @@ public class DelegatingController extends AbstractController {
      * @throws Exception if an error occurs during request handling
      */
     @Override
-    protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
                                                     throws Exception {
-        for (final AbstractDelegateController delegate : delegates) {
+        for (final AbstractDelegateController delegate : this.delegates) {
             if (delegate.canHandle(request, response)) {
                 return delegate.handleRequestInternal(request, response);
             }
         }
-        return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
+        return generateErrorView(INVALID_REQUEST, INVALID_REQUEST, null);
     }
 
     /**
@@ -68,14 +68,14 @@ public class DelegatingController extends AbstractController {
      * @param delegates the delegate controllers to set
      */
 
-    public void setDelegates(@NotNull final List<AbstractDelegateController> delegates) {
+    public void setDelegates(final List<AbstractDelegateController> delegates) {
         this.delegates = delegates;
     }
 
     /**
      * @param failureView The failureView to set.
      */
-    public final void setFailureView(final String failureView) {
+    public void setFailureView(final String failureView) {
         this.failureView = failureView;
     }
 }

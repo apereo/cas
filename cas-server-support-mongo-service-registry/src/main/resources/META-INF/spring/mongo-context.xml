@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+
+    <mongo:mapping-converter id="mappingConverter">
+        <mongo:custom-converters>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.LoggerConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.ClassConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.CommonsLogConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.PersonAttributesConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.CacheLoaderConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.RunnableConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.ReferenceQueueConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.ThreadLocalConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.CertPathConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="org.jasig.cas.services.convert.BaseConverters.CacheConverter"/>
+            </mongo:converter>
+        </mongo:custom-converters>
+    </mongo:mapping-converter>
+
+</beans>

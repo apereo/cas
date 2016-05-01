@@ -3,7 +3,7 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PreDestroy;
-import javax.validation.constraints.NotNull;
+
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
@@ -14,6 +14,7 @@ import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  * @author Daniel Fisher
  * @since 4.1
  */
+@RefreshScope
 @Component("poolingLdaptiveResourceCRLFetcher")
 public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetcher {
 
@@ -28,7 +30,7 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     protected BlockingConnectionPool connectionPool;
 
     /** Map of connection pools. */
-    private final Map<String, PooledConnectionFactory> connectionPoolMap = new HashMap<>();
+    private Map<String, PooledConnectionFactory> connectionPoolMap = new HashMap<>();
 
     /** Serialization support. */
     protected PoolingLdaptiveResourceCRLFetcher() {}
@@ -41,9 +43,9 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
      * @param connectionPool pooling configuration
      */
     public PoolingLdaptiveResourceCRLFetcher(
-            @NotNull final ConnectionConfig connectionConfig,
-            @NotNull final SearchExecutor searchExecutor,
-            @NotNull final BlockingConnectionPool connectionPool) {
+             final ConnectionConfig connectionConfig,
+             final SearchExecutor searchExecutor,
+             final BlockingConnectionPool connectionPool) {
         super(connectionConfig, searchExecutor);
         this.connectionPool = connectionPool;
     }
@@ -54,7 +56,7 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     @PreDestroy
     public void destroy() {
         logger.debug("Shutting down connection pools...");
-        for (final PooledConnectionFactory factory : connectionPoolMap.values()) {
+        for (final PooledConnectionFactory factory : this.connectionPoolMap.values()) {
             factory.getConnectionPool().close();
         }
     }
@@ -62,12 +64,12 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     @Override
     protected ConnectionFactory prepareConnectionFactory(final String ldapURL) {
         final PooledConnectionFactory connectionFactory;
-        synchronized (connectionPoolMap) {
-            if (connectionPoolMap.containsKey(ldapURL)) {
-                connectionFactory = connectionPoolMap.get(ldapURL);
+        synchronized (this.connectionPoolMap) {
+            if (this.connectionPoolMap.containsKey(ldapURL)) {
+                connectionFactory = this.connectionPoolMap.get(ldapURL);
             } else {
                 connectionFactory = new PooledConnectionFactory(newConnectionPool(ldapURL));
-                connectionPoolMap.put(ldapURL, connectionFactory);
+                this.connectionPoolMap.put(ldapURL, connectionFactory);
             }
         }
         return connectionFactory;

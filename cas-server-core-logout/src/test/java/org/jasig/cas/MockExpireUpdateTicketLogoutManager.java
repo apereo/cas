@@ -12,9 +12,9 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class MockExpireUpdateTicketLogoutManager implements LogoutManager {
+public class MockExpireUpdateTicketLogoutManager implements LogoutManager {
 
-    private final MockOnlyOneTicketRegistry registry;
+    private MockOnlyOneTicketRegistry registry;
     
     public MockExpireUpdateTicketLogoutManager(final MockOnlyOneTicketRegistry ticketRegistry) {
         this.registry = ticketRegistry;

@@ -1,0 +1,12 @@
+<div class="form-group">
+    <label class="col-sm-3" for="logoUrl">
+        <span th:remove="tag" th:text="#{services.form.label.logoUrl}" />
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+           data-toggle="tooltip"
+           data-placement="top"
+           th:title="#{services.form.tooltip.logoUrl}"></i>
+    </label>
+    <div class="col-sm-9">
+        <input type="text" class="form-control" id="logoUrl" ng-model="serviceFormCtrl.serviceData.logoUrl"/>
+    </div>
+</div>

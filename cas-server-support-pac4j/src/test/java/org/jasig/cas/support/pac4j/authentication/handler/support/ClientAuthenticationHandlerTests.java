@@ -28,7 +28,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  * @since 4.1.0
  *
  */
-public final class ClientAuthenticationHandlerTests {
+public class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
     private static final String ID = "123456789";

@@ -2,7 +2,6 @@ package org.jasig.cas.util;
 
 import org.jasig.cas.CipherExecutor;
 
-import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.io.Serializable;
  * in one spot.
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
- * @since 4.3
+ * @since 5.0.0
  */
 public final class SerializationUtils {
 
@@ -29,7 +28,7 @@ public final class SerializationUtils {
      * Serialize an object.
      * @param object The object to be serialized
      * @return the +byte[]+ containing the object
-     * @since 4.3
+     * @since 5.0.0
      */
     public static byte[] serialize(final Serializable object) {
         final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -41,9 +40,9 @@ public final class SerializationUtils {
      * Serialize an object.
      * @param object The object to be serialized
      * @param outputStream The stream to receive the object
-     * @since 4.3
+     * @since 5.0.0
      */
-    public static void serialize(final Serializable object, @NotNull final OutputStream outputStream) {
+    public static void serialize(final Serializable object,  final OutputStream outputStream) {
         ObjectOutputStream out = null;
         try {
             out = new ObjectOutputStream(outputStream);
@@ -66,9 +65,9 @@ public final class SerializationUtils {
      * @param <T>  the type parameter
      * @param inBytes The bytes to be deserialized
      * @return the object
-     * @since 4.3
+     * @since 5.0.0
      */
-    public static <T> T deserialize(@NotNull final byte[] inBytes) {
+    public static <T> T deserialize(final byte[] inBytes) {
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(inBytes);
         return deserialize(inputStream);
     }
@@ -78,9 +77,9 @@ public final class SerializationUtils {
      * @param <T>  the type parameter
      * @param inputStream The stream to be deserialized
      * @return the object
-     * @since 4.3
+     * @since 5.0.0
      */
-    public static <T> T deserialize(@NotNull final InputStream inputStream) {
+    public static <T> T deserialize(final InputStream inputStream) {
         ObjectInputStream in = null;
         try {
             in = new ObjectInputStream(inputStream);

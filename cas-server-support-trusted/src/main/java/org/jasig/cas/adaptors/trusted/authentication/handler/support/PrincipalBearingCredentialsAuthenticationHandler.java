@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.security.GeneralSecurityException;
@@ -21,10 +22,11 @@ import java.security.GeneralSecurityException;
  * @author Andrew Petro
  * @since 3.0.0
  */
+@RefreshScope
 @Component("principalBearingCredentialsAuthenticationHandler")
-public final class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
+public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {

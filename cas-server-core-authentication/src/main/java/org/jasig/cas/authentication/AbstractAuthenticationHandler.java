@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Base class for all authentication handlers that support configurable naming.
  *
@@ -19,16 +17,14 @@ import javax.validation.constraints.NotNull;
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /** Instance of logging for subclasses. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
-    @NotNull
     @Autowired
     @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** The services manager instance, as the entry point to the registry. **/
-    @NotNull
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;

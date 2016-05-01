@@ -15,7 +15,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         GoogleAppsSamlAuthenticationRequestTests.class,
         GoogleAccountsServiceTests.class,
-        GoogleAccountsServiceFactoryTests.class,
+        GoogleAccountsServiceFactoryTests.class
 })
-public final class AllTestsSuite {
+public class AllTestsSuite {
 }

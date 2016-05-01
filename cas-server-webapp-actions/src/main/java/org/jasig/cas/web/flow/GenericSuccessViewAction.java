@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,12 +17,13 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@RefreshScope
 @Component("genericSuccessViewAction")
-public final class GenericSuccessViewAction {
+public class GenericSuccessViewAction {
     /** Log instance for logging events, info, warnings, errors, etc. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Instantiates a new Generic success view action.

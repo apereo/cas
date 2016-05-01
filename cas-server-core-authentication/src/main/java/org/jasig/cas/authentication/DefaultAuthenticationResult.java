@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class DefaultAuthenticationResult implements AuthenticationResult {
+public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResult.class);
     private static final long serialVersionUID = 8454900425245262824L;
 
-    private final Authentication authentication;
+    private Authentication authentication;
 
-    private final Service service;
+    private Service service;
 
     /**
      * Instantiates a new Default authentication result.
@@ -45,7 +45,7 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
 
     @Override
     public Authentication getAuthentication() {
-        return authentication;
+        return this.authentication;
     }
 
     @Override

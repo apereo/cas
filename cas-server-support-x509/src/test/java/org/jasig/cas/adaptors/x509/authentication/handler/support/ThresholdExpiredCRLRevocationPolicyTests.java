@@ -28,13 +28,13 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /** Policy instance under test. */
-    private final ThresholdExpiredCRLRevocationPolicy policy;
+    private ThresholdExpiredCRLRevocationPolicy policy;
 
     /** CRL to test. */
-    private final X509CRL crl;
+    private X509CRL crl;
 
     /** Expected result of check; null for success */
-    private final GeneralSecurityException expected;
+    private GeneralSecurityException expected;
 
 
     /**

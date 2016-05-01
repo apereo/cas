@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 
 /**
@@ -21,18 +21,19 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultSingleLogoutServiceMessageHandler")
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceMessageHandler.class);
 
     /** The services manager. */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     /** An HTTP client. */
-    @NotNull
+    
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -44,7 +45,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     @Value("${slo.callbacks.asynchronous:true}")
     private boolean asynchronous = true;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("logoutBuilder")
     private LogoutMessageCreator logoutMessageBuilder;
@@ -79,10 +80,10 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     public LogoutRequest handle(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
-            final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(singleLogoutService);
             if (serviceSupportsSingleLogout(registeredService)) {
 
-                final URL logoutUrl = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, singleLogoutService);
+                final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, singleLogoutService);
                 final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, singleLogoutService, logoutUrl);
                 final LogoutType type = registeredService.getLogoutType() == null
                         ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
@@ -157,22 +158,22 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     }
 
     public ServicesManager getServicesManager() {
-        return servicesManager;
+        return this.servicesManager;
     }
 
     public HttpClient getHttpClient() {
-        return httpClient;
+        return this.httpClient;
     }
 
     public boolean isAsynchronous() {
-        return asynchronous;
+        return this.asynchronous;
     }
 
     public SingleLogoutServiceLogoutUrlBuilder getSingleLogoutServiceLogoutUrlBuilder() {
-        return singleLogoutServiceLogoutUrlBuilder;
+        return this.singleLogoutServiceLogoutUrlBuilder;
     }
 
     public LogoutMessageCreator getLogoutMessageBuilder() {
-        return logoutMessageBuilder;
+        return this.logoutMessageBuilder;
     }
 }

@@ -23,11 +23,11 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
+public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
     private static final long serialVersionUID = 6180465589526463843L;
 
-    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
+    private Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
     private PrincipalElectionStrategy principalElectionStrategy;
 
@@ -154,8 +154,7 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
         return this.principalElectionStrategy.nominate(ImmutableSet.copyOf(authentications), principalAttributes);
     }
-
-
+    
     public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {
         this.principalElectionStrategy = principalElectionStrategy;
     }

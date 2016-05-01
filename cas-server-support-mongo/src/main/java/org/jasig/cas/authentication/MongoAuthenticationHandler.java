@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
  * @since 4.2.0
  */
 @Repository("mongoAuthenticationHandler")
-public final class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
+public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoAuthenticationHandler.class);
 

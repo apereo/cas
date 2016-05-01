@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Scope(value = "prototype")
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     /** Denotes whether we should always authenticate or not. */
@@ -43,7 +43,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
      *
      * @param renew The renew value we want.
      */
-    public final void setRenew(final boolean renew) {
+    public void setRenew(final boolean renew) {
         this.renew = renew;
     }
 
@@ -53,12 +53,12 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
      *
      * @return true if renew is required, false otherwise.
      */
-    public final boolean isRenew() {
+    public boolean isRenew() {
         return this.renew;
     }
 
     @Override
-    public final boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
+    public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         return isSatisfiedByInternal(assertion) && (!this.renew || assertion.isFromNewLogin());
     }
 

@@ -2,7 +2,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
-import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 
@@ -46,9 +47,10 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("samlObjectEncrypter")
 public class SamlObjectEncrypter {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The encryption cert file.
@@ -104,7 +106,7 @@ public class SamlObjectEncrypter {
      * @return the t
      * @throws SamlException the saml exception
      */
-    public final EncryptedAssertion encode(final Assertion samlObject,
+    public EncryptedAssertion encode(final Assertion samlObject,
                                            final SamlRegisteredService service,
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final HttpServletResponse response,
@@ -251,7 +253,7 @@ public class SamlObjectEncrypter {
      */
     protected X509Certificate getEncryptionCertificate() {
         logger.debug("Locating encryption certificate file from [{}]", this.encryptionCertFile);
-        return SamlIdPUtils.readCertificate(new FileSystemResource(this.encryptionCertFile));
+        return SamlUtils.readCertificate(new FileSystemResource(this.encryptionCertFile));
     }
 
     /**

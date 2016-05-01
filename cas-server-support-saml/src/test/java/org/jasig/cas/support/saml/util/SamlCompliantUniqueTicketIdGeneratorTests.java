@@ -10,7 +10,7 @@ import org.junit.Test;
  * @author Scott Battaglia
  * @since 3.4.3
  */
-public final class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
+public class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifySaml1Compliant() {

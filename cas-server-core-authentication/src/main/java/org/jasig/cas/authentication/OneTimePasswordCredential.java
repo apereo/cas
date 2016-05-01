@@ -18,7 +18,7 @@ public class OneTimePasswordCredential extends AbstractCredential {
     private static final long serialVersionUID = 1892587671827699709L;
 
     /** One-time password. */
-    private final String password;
+    private String password;
 
     /** Optional unique identifier. */
     private String id;
@@ -63,6 +63,6 @@ public class OneTimePasswordCredential extends AbstractCredential {
      */
     @Override
     public String getId() {
-        return id;
+        return this.id;
     }
 }

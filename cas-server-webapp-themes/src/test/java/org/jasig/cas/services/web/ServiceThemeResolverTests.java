@@ -2,7 +2,7 @@ package org.jasig.cas.services.web;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class ServiceThemeResolverTests {
 
     @Test
     public void verifyGetServiceThemeDoesNotExist() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setTheme("myTheme");
         r.setId(1000);
         r.setName("Test Service");

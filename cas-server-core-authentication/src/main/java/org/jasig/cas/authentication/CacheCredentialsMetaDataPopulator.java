@@ -2,6 +2,7 @@ package org.jasig.cas.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,10 +13,11 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("cacheCredentialsMetaDataPopulator")
-public final class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
+public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {

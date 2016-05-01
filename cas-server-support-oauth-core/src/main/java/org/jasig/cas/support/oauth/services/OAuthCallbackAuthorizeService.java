@@ -18,7 +18,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("oauthcba")
-public final class OAuthCallbackAuthorizeService extends RegexRegisteredService {
+public class OAuthCallbackAuthorizeService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 1365893114273585648L;
 

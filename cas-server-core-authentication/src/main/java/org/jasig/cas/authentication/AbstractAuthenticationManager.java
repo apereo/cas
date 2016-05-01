@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,23 +29,25 @@ import java.util.Map;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
+    private static final String MESSAGE = "At least one authentication handler is required";
+    
     /** Log instance for logging events, errors, warnings, etc. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** An array of AuthenticationAttributesPopulators. */
-    @NotNull
+    
     protected List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<>();
 
     /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
-    @NotNull
+    
     @Resource(name="authenticationHandlersResolvers")
     protected Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
     /**
      * The Authentication handler resolver.
      */
-    @NotNull
+    
     @Resource(name="registeredServiceAuthenticationHandlerResolver")
     protected AuthenticationHandlerResolver authenticationHandlerResolver =
             new RegisteredServiceAuthenticationHandlerResolver();
@@ -75,7 +76,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param handlers Non-null list of authentication handlers containing at least one entry.
      */
     protected AbstractAuthenticationManager(final List<AuthenticationHandler> handlers) {
-        Assert.notEmpty(handlers, "At least one authentication handler is required");
+        Assert.notEmpty(handlers, MESSAGE);
         this.handlerResolverMap = new LinkedHashMap<>(
                 handlers.size());
         for (final AuthenticationHandler handler : handlers) {
@@ -92,7 +93,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param map Non-null map of authentication handler to principal resolver containing at least one entry.
      */
     protected AbstractAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        Assert.notEmpty(map, "At least one authentication handler is required");
+        Assert.notEmpty(map, MESSAGE);
         this.handlerResolverMap = map;
     }
 
@@ -223,7 +224,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param populators Non-null list of metadata populators.
      */
     @Resource(name="authenticationMetadataPopulators")
-    public final void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
+    public void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
         this.authenticationMetaDataPopulators = populators;
     }
 

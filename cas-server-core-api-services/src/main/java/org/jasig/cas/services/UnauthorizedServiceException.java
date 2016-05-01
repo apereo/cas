@@ -54,7 +54,7 @@ public class UnauthorizedServiceException extends RuntimeException {
      * The error code associated with this exception.
      * @return the error code.
      */
-    public final String getCode() {
+    public String getCode() {
         return this.code;
     }
 }

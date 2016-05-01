@@ -26,12 +26,12 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     /**
      * The Pretty printer.
      */
-    private final PrettyPrinter prettyPrinter;
+    private PrettyPrinter prettyPrinter;
 
     /**
      * The Object mapper.
      */
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     /**
      * Instantiates a new Registered service json serializer.

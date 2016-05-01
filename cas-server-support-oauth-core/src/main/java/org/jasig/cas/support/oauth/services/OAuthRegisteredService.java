@@ -19,7 +19,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("oauth")
-public final class OAuthRegisteredService extends RegexRegisteredService {
+public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 
@@ -55,7 +55,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
     }
 
     public Boolean isBypassApprovalPrompt() {
-        return bypassApprovalPrompt;
+        return this.bypassApprovalPrompt;
     }
 
     public void setBypassApprovalPrompt(final Boolean bypassApprovalPrompt) {
@@ -63,7 +63,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
     }
 
     public Boolean isGenerateRefreshToken() {
-        return generateRefreshToken;
+        return this.generateRefreshToken;
     }
 
     public void setGenerateRefreshToken(final Boolean generateRefreshToken) {
@@ -71,7 +71,7 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
     }
 
     public Boolean isJsonFormat() {
-        return jsonFormat;
+        return this.jsonFormat;
     }
 
     public void setJsonFormat(final Boolean jsonFormat) {
@@ -132,11 +132,11 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(clientSecret)
-                .append(clientId)
-                .append(bypassApprovalPrompt)
-                .append(generateRefreshToken)
-                .append(jsonFormat)
+                .append(this.clientSecret)
+                .append(this.clientId)
+                .append(this.bypassApprovalPrompt)
+                .append(this.generateRefreshToken)
+                .append(this.jsonFormat)
                 .toHashCode();
     }
 }

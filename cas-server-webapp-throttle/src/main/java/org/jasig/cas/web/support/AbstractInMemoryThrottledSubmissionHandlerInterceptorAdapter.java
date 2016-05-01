@@ -19,7 +19,6 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -53,23 +52,22 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     private int startDelay;
 
     @Autowired
-    @NotNull
     private ApplicationContext applicationContext;
 
     @Autowired(required = false)
     @Qualifier("scheduler")
     private Scheduler scheduler;
 
-    private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
 
     @Override
-    protected final boolean exceedsThreshold(final HttpServletRequest request) {
+    protected boolean exceedsThreshold(final HttpServletRequest request) {
         final ZonedDateTime last = this.ipMap.get(constructKey(request));
         return last != null && (submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate());
     }
 
     @Override
-    protected final void recordSubmissionFailure(final HttpServletRequest request) {
+    protected void recordSubmissionFailure(final HttpServletRequest request) {
         this.ipMap.put(constructKey(request), ZonedDateTime.now(ZoneOffset.UTC));
     }
 
@@ -84,7 +82,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     /**
      * This class relies on an external configuration to clean it up. It ignores the threshold data in the parent class.
      */
-    public final void decrementCounts() {
+    public void decrementCounts() {
         final Set<Entry<String, ZonedDateTime>> keys = this.ipMap.entrySet();
         logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
@@ -133,7 +131,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                         .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
-                scheduler.scheduleJob(job, trigger);
+                this.scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
                     TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
@@ -145,14 +143,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     }
 
     private boolean shouldScheduleCleanerJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
-            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
-                logger.debug("Found CAS servlet application context");
-                final String[] aliases =
-                    this.applicationContext.getAutowireCapableBeanFactory().getAliases("authenticationThrottle");
-                logger.debug("{} is used as the active authentication throttle", this.getClass().getSimpleName());
-                return aliases.length > 0 && aliases[0].equals(getName());
-            }
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && this.scheduler != null) {
+            logger.debug("Found CAS servlet application context");
+            final String[] aliases =
+                this.applicationContext.getAutowireCapableBeanFactory().getAliases("authenticationThrottle");
+            logger.debug("{} is used as the active authentication throttle", this.getClass().getSimpleName());
+            return aliases.length > 0 && aliases[0].equals(getName());
         }
 
         return false;

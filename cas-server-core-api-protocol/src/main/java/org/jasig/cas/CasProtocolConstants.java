@@ -25,6 +25,9 @@ public interface CasProtocolConstants {
     /** Represents the collection of attributes in the view. */
     String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES = "attributes";
 
+    /** Represents the pre-rendered collection of attributes in the view. */
+    String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES = "formattedAttributes";
+
     /** Represents the authentication date object in the view. */
     String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE = "authenticationDate";
 

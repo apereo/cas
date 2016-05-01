@@ -16,7 +16,7 @@ public class GeoLocation {
     private String country;
 
     public String getCity() {
-        return city;
+        return this.city;
     }
 
     public void setCity(final String city) {
@@ -24,7 +24,7 @@ public class GeoLocation {
     }
 
     public String getCountry() {
-        return country;
+        return this.country;
     }
 
     public void setCountry(final String country) {
@@ -53,16 +53,16 @@ public class GeoLocation {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(city)
-                .append(country)
+                .append(this.city)
+                .append(this.country)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("city", city)
-                .append("country", country)
+                .append("city", this.city)
+                .append("country", this.country)
                 .toString();
     }
 }

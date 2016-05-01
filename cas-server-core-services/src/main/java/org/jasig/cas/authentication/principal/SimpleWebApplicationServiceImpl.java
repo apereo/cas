@@ -6,7 +6,7 @@ package org.jasig.cas.authentication.principal;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
+public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 8334068957483758042L;
 

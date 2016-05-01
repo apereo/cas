@@ -11,12 +11,12 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public final class CasServiceTicketGrantedEvent extends AbstractCasEvent {
+public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
-    private final ServiceTicket serviceTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
+    private ServiceTicket serviceTicket;
 
     /**
      * Instantiates a new Cas service ticket granted event.
@@ -33,19 +33,19 @@ public final class CasServiceTicketGrantedEvent extends AbstractCasEvent {
     }
 
     public TicketGrantingTicket getTicketGrantingTicket() {
-        return ticketGrantingTicket;
+        return this.ticketGrantingTicket;
     }
 
     public ServiceTicket getServiceTicket() {
-        return serviceTicket;
+        return this.serviceTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("ticketGrantingTicket", ticketGrantingTicket)
-                .append("serviceTicket", serviceTicket)
+                .append("ticketGrantingTicket", this.ticketGrantingTicket)
+                .append("serviceTicket", this.serviceTicket)
                 .toString();
     }
 }

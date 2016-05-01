@@ -17,14 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
@@ -34,23 +33,24 @@ import javax.validation.constraints.NotNull;
 
  * @since 3.0.0
  */
+@RefreshScope
 @Component
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
 
     /** The logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Principal factory instance. */
     @Autowired
     @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -66,12 +66,12 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @param context the context
      * @return true, if  renew present
      */
-    protected final boolean isRenewPresent(final RequestContext context) {
+    protected boolean isRenewPresent(final RequestContext context) {
         return StringUtils.hasText(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW));
     }
 
     @Override
-    protected final Event doExecute(final RequestContext context) {
+    protected Event doExecute(final RequestContext context) {
         final Credential credential = constructCredentialsFromRequest(context);
 
         if (credential == null) {
@@ -119,10 +119,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     }
 
     public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
+        return this.centralAuthenticationService;
     }
 
-    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -159,11 +159,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     }
 
     public PrincipalFactory getPrincipalFactory() {
-        return principalFactory;
+        return this.principalFactory;
     }
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
+        return this.authenticationSystemSupport;
     }
 
     /**

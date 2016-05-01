@@ -12,6 +12,7 @@ import org.opensaml.saml.saml2.core.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("samlProfileSamlAssertionBuilder")
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
@@ -57,18 +59,20 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
 
     @Override
-    public final Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                            final org.jasig.cas.client.validation.Assertion casAssertion, final SamlRegisteredService service,
                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         final List<Statement> statements = new ArrayList<>();
-        statements.add(samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
-        statements.add(samlProfileSamlAttributeStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
+        statements.add(this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
+        statements.add(this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, 
+                request, response, casAssertion, service, adaptor));
 
         final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
         final Assertion assertion = newAssertion(statements, this.entityId, ZonedDateTime.now(ZoneOffset.UTC), id);
-        assertion.setSubject(samlProfileSamlSubjectBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
-        assertion.setConditions(samlProfileSamlConditionsBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
+        assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
+        assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest, 
+                request, response, casAssertion, service, adaptor));
 
         signAssertion(assertion, request, response, service, adaptor);
         return assertion;
@@ -90,10 +94,10 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             if (service.isSignAssertions()) {
-                logger.info("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
+                logger.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
                 this.samlObjectSigner.encode(assertion, service, adaptor, response, request);
             } else {
-                logger.info("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
+                logger.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
             }
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for signing", e);

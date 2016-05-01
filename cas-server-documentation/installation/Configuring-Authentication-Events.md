@@ -82,14 +82,7 @@ Configuration consists of:
 # events.jpa.database.url=jdbc:hsqldb:mem:cas-events
 # events.jpa.database.user=sa
 # events.jpa.database.password=
-# events.jpa.database.pool.minSize=6
-# events.jpa.database.pool.minSize=6
 # events.jpa.database.pool.maxSize=18
 # events.jpa.database.pool.maxIdleTime=1000
 # events.jpa.database.pool.maxWait=2000
-# events.jpa.database.pool.acquireIncrement=16
-# events.jpa.database.pool.acquireRetryAttempts=5
-# events.jpa.database.pool.acquireRetryDelay=2000
-# events.jpa.database.pool.idleConnectionTestPeriod=30
-# events.jpa.database.pool.connectionHealthQuery=select 1
 ```

@@ -3,10 +3,10 @@ package org.jasig.cas.ticket;
 import org.jasig.cas.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -15,21 +15,22 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("defaultTicketGrantingTicketFactory")
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    @NotNull
+    
     @Resource(name="ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Expiration policy for ticket granting tickets. */
-    @NotNull
+    
     @Resource(name="grantingTicketExpirationPolicy")
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
@@ -37,7 +38,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
         final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                 this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-                authentication, ticketGrantingTicketExpirationPolicy);
+                authentication, this.ticketGrantingTicketExpirationPolicy);
         return (T) ticketGrantingTicket;
     }
 

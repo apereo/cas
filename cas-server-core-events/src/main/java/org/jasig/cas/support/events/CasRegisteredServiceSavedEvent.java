@@ -13,7 +13,7 @@ import org.jasig.cas.services.RegisteredService;
 public class CasRegisteredServiceSavedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 291168299766263298L;
-    private final RegisteredService registeredService;
+    private RegisteredService registeredService;
 
     /**
      * Instantiates a new cas sso event.
@@ -27,14 +27,14 @@ public class CasRegisteredServiceSavedEvent extends AbstractCasEvent {
     }
 
     public RegisteredService getRegisteredService() {
-        return registeredService;
+        return this.registeredService;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("registeredService", registeredService)
+                .append("registeredService", this.registeredService)
                 .toString();
     }
 }

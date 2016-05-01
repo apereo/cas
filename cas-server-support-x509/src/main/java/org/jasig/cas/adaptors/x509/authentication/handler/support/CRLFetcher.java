@@ -2,7 +2,6 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import org.springframework.core.io.Resource;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,7 +27,7 @@ public interface CRLFetcher {
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    Set<X509CRL> fetch(@NotNull @Size(min=1) Set<Resource> crls) throws IOException, CRLException, CertificateException;
+    Set<X509CRL> fetch(@Size(min=1) Set<Resource> crls) throws IOException, CRLException, CertificateException;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -40,7 +39,7 @@ public interface CRLFetcher {
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    X509CRL fetch(@NotNull String crl) throws MalformedURLException, IOException, CRLException, CertificateException;
+    X509CRL fetch(String crl) throws MalformedURLException, IOException, CRLException, CertificateException;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -51,7 +50,7 @@ public interface CRLFetcher {
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    X509CRL fetch(@NotNull URI crl) throws IOException, CRLException, CertificateException;
+    X509CRL fetch(URI crl) throws IOException, CRLException, CertificateException;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -62,7 +61,7 @@ public interface CRLFetcher {
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    X509CRL fetch(@NotNull URL crl) throws IOException, CRLException, CertificateException;
+    X509CRL fetch(URL crl) throws IOException, CRLException, CertificateException;
 
     /**
      * Fetches a single of crl from the specified resource
@@ -73,5 +72,5 @@ public interface CRLFetcher {
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    X509CRL fetch(@NotNull Resource crl) throws IOException, CRLException, CertificateException;
+    X509CRL fetch(Resource crl) throws IOException, CRLException, CertificateException;
 }

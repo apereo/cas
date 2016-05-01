@@ -27,7 +27,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration
+@Configuration("coreSamlConfiguration")
 public class CoreSamlConfiguration {
     
     /**

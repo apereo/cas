@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -22,9 +23,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultCasEventListener")
 public class DefaultCasEventListener {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired(required = false)
     @Qualifier("casEventRepository")
@@ -37,7 +39,7 @@ public class DefaultCasEventListener {
      */
     @TransactionalEventListener
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
-        if (casEventRepository != null) {
+        if (this.casEventRepository != null) {
 
             final CasEvent dto = new CasEvent();
             dto.setType(event.getClass().getCanonicalName());
@@ -54,7 +56,7 @@ public class DefaultCasEventListener {
             final HttpRequestGeoLocation location = WebUtils.getHttpServletRequestGeoLocation();
             dto.putGeoLocation(location);
 
-            casEventRepository.save(dto);
+            this.casEventRepository.save(dto);
         }
     }
 }

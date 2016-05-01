@@ -8,6 +8,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.util.CompressionUtils;
 
 import org.junit.Before;
@@ -34,6 +35,14 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private GoogleAccountsServiceFactory factory;
 
     private GoogleAccountsService googleAccountsService;
+
+    @Autowired
+    private ApplicationContextProvider applicationContextProvider;
+
+    @Before
+    public void init() {
+        this.applicationContextProvider.setApplicationContext(this.applicationContext);
+    }
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();

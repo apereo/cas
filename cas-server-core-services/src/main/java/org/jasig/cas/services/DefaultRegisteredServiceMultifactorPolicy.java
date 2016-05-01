@@ -30,7 +30,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     @Override
     public Set<String> getMultifactorAuthenticationProviders() {
-        return multifactorAuthenticationProviders;
+        return this.multifactorAuthenticationProviders;
     }
 
     public void setMultifactorAuthenticationProviders(final Set<String> multifactorAuthenticationProviders) {
@@ -39,7 +39,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     @Override
     public FailureModes getFailureMode() {
-        return failureMode;
+        return this.failureMode;
     }
 
     public void setFailureMode(final FailureModes failureMode) {
@@ -48,7 +48,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     @Override
     public String getPrincipalAttributeNameTrigger() {
-        return principalAttributeNameTrigger;
+        return this.principalAttributeNameTrigger;
     }
 
     public void setPrincipalAttributeNameTrigger(final String principalAttributeNameTrigger) {
@@ -57,7 +57,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     @Override
     public String getPrincipalAttributeValueToMatch() {
-        return principalAttributeValueToMatch;
+        return this.principalAttributeValueToMatch;
     }
 
     public void setPrincipalAttributeValueToMatch(final String principalAttributeValueToMatch) {
@@ -88,10 +88,10 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(multifactorAuthenticationProviders)
-                .append(failureMode)
-                .append(principalAttributeNameTrigger)
-                .append(principalAttributeValueToMatch)
+                .append(this.multifactorAuthenticationProviders)
+                .append(this.failureMode)
+                .append(this.principalAttributeNameTrigger)
+                .append(this.principalAttributeValueToMatch)
                 .toHashCode();
     }
 
@@ -99,10 +99,10 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("multifactorAuthenticationProviders", multifactorAuthenticationProviders)
-                .append("failureMode", failureMode)
-                .append("principalAttributeNameTrigger", principalAttributeNameTrigger)
-                .append("principalAttributeValueToMatch", principalAttributeValueToMatch)
+                .append("multifactorAuthenticationProviders", this.multifactorAuthenticationProviders)
+                .append("failureMode", this.failureMode)
+                .append("principalAttributeNameTrigger", this.principalAttributeNameTrigger)
+                .append("principalAttributeValueToMatch", this.principalAttributeValueToMatch)
                 .toString();
     }
 }

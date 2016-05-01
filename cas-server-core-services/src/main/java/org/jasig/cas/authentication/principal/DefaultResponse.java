@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @author Arnaud Lesueur
  * @since 3.1
  */
-public final class DefaultResponse implements Response {
+public class DefaultResponse implements Response {
     /** Log instance. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(DefaultResponse.class);
 
@@ -26,11 +26,11 @@ public final class DefaultResponse implements Response {
     private static final int CONST_REDIRECT_RESPONSE_BUFFER = 100;
     private static final long serialVersionUID = -8251042088720603062L;
 
-    private final ResponseType responseType;
+    private ResponseType responseType;
 
-    private final String url;
+    private String url;
 
-    private final Map<String, String> attributes;
+    private Map<String, String> attributes;
 
     /**
      * Instantiates a new response.

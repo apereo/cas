@@ -36,16 +36,16 @@ import static org.junit.Assert.*;
 public class X509CredentialsAuthenticationHandlerTests {
 
     /** Subject of test. */
-    private final X509CredentialsAuthenticationHandler handler;
+    private X509CredentialsAuthenticationHandler handler;
 
     /** Test authentication credential. */
-    private final Credential credential;
+    private Credential credential;
 
     /** Expected result of supports test. */
-    private final boolean expectedSupports;
+    private boolean expectedSupports;
 
     /** Expected authentication result. */
-    private final Object expectedResult;
+    private Object expectedResult;
 
 
     /**

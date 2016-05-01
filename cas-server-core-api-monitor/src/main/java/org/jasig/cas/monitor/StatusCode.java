@@ -24,7 +24,7 @@ public enum StatusCode {
     UNKNOWN(100);
 
     /** Status code numerical value. */
-    private final int value;
+    private int value;
 
 
     /**

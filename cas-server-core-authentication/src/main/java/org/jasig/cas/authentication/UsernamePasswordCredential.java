@@ -2,7 +2,6 @@ package org.jasig.cas.authentication;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -21,11 +20,11 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     private static final long serialVersionUID = -700605081472810939L;
 
 
-    @NotNull
+    
     @Size(min=1, message = "required.username")
     private String username;
 
-    @NotNull
+    
     @Size(min=1, message = "required.password")
     private String password;
 
@@ -43,21 +42,21 @@ public class UsernamePasswordCredential implements Credential, Serializable {
         this.password = password;
     }
 
-    public final String getPassword() {
+    public String getPassword() {
         return this.password;
     }
 
 
-    public final void setPassword(final String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
 
-    public final String getUsername() {
+    public String getUsername() {
         return this.username;
     }
 
-    public final void setUsername(final String userName) {
+    public void setUsername(final String userName) {
         this.username = userName;
     }
 
@@ -83,11 +82,11 @@ public class UsernamePasswordCredential implements Credential, Serializable {
 
         final UsernamePasswordCredential that = (UsernamePasswordCredential) o;
 
-        if (password != null ? !password.equals(that.password) : that.password != null) {
+        if (this.password != null ? !this.password.equals(that.password) : that.password != null) {
             return false;
         }
 
-        if (username != null ? !username.equals(that.username) : that.username != null) {
+        if (this.username != null ? !this.username.equals(that.username) : that.username != null) {
             return false;
         }
 
@@ -97,8 +96,8 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(username)
-                .append(password)
+                .append(this.username)
+                .append(this.password)
                 .toHashCode();
     }
 

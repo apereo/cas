@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.*;
@@ -78,6 +79,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         context.setCurrentEvent(new Event("", "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         getThrottle().preHandle(request, response, null);
 

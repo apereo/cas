@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import javax.validation.constraints.NotNull;
 
 /**
  * Performs a basic check if an authentication request for a provided service is authorized to proceed
@@ -22,13 +22,14 @@ import javax.validation.constraints.NotNull;
  * @author Dmitriy Kopylenko
  * @since 3.5.1
  **/
+@RefreshScope
 @Component("serviceAuthorizationCheck")
-public final class ServiceAuthorizationCheck extends AbstractAction {
+public class ServiceAuthorizationCheck extends AbstractAction {
 
-    @NotNull
-    private final ServicesManager servicesManager;
+    
+    private ServicesManager servicesManager;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Initialize the component with an instance of the services manager.
@@ -57,7 +58,7 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            final String msg = String.format("Service Management: Unauthorized Service Access. "
+            final String msg = String.format("Service Management: missing service. "
                     + "Service [%s] is not found in service registry.", service.getId());
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
@@ -65,7 +66,7 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("Service Management: Unauthorized Service Access. "
                     + "Service [%s] is not allowed access via the service registry.", service.getId());
-            
+
             logger.warn(msg);
 
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,

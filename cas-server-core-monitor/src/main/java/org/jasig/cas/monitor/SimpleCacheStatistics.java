@@ -13,11 +13,11 @@ public class SimpleCacheStatistics implements CacheStatistics {
     private static final double BYTES_PER_MB = 1048510.0;
     private static final int PERCENTAGE_VALUE = 100;
 
-    private final long size;
+    private long size;
 
-    private final long capacity;
+    private long capacity;
 
-    private final long evictions;
+    private long evictions;
 
     private String name;
 

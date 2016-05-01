@@ -29,8 +29,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     private static final long serialVersionUID = -4581238964007702423L;
 
-    private final ParameterList parameterList;
-    private final String openIdPrefixUrl;
+    private ParameterList parameterList;
+    private String openIdPrefixUrl;
 
     /**
      * Instantiates a new Open id service response builder.
@@ -88,8 +88,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 logger.warn("Association does not exist or is not valid");
                 successFullAuthentication = false;
             }
-        } catch (final AbstractTicketException te) {
-            logger.error("Could not validate ticket : {}", te.getMessage(), te);
+        } catch (final AbstractTicketException e) {
+            logger.error("Could not validate ticket : {}", e.getMessage(), e);
             successFullAuthentication = false;
         }
 
@@ -162,8 +162,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                     return serverManager.getSharedAssociations().load(assocHandle);
                 }
             }
-        } catch (final MessageException me) {
-            logger.error("Message exception : {}", me.getMessage(), me);
+        } catch (final MessageException e) {
+            logger.error("Message exception : {}", e.getMessage(), e);
         }
         return null;
     }

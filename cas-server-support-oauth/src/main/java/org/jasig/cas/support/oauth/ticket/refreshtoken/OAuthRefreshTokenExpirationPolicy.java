@@ -3,6 +3,7 @@ package org.jasig.cas.support.oauth.ticket.refreshtoken;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
@@ -15,6 +16,7 @@ import java.time.temporal.ChronoUnit;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("refreshTokenExpirationPolicy")
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 

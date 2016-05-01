@@ -41,13 +41,13 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private static final long serialVersionUID = 6350245643948535906L;
 
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The expiration time. */
-    protected final long expiration;
+    protected long expiration;
 
     /** Expiration time unit. */
-    protected final TimeUnit timeUnit;
+    protected TimeUnit timeUnit;
 
     /**
      * The merging strategy that deals with existing principal attributes
@@ -118,12 +118,12 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * are ignored and the source is always consulted.
      * @param mergingStrategy the strategy to use for conflicts
      */
-    public final void setMergingStrategy(final MergingStrategy mergingStrategy) {
+    public void setMergingStrategy(final MergingStrategy mergingStrategy) {
         this.mergingStrategy = mergingStrategy;
     }
 
-    public final MergingStrategy getMergingStrategy() {
-        return mergingStrategy;
+    public MergingStrategy getMergingStrategy() {
+        return this.mergingStrategy;
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param attributes person attributes
      * @return principal attributes
      */
-    protected final Map<String, Object> convertPersonAttributesToPrincipalAttributes(
+    protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(
             final Map<String, List<Object>> attributes) {
         return attributes.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
@@ -166,7 +166,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param id the person id to locate in the attribute repository
      * @return the map of attributes
      */
-    protected final Map<String, List<Object>> retrievePersonAttributesToPrincipalAttributes(final String id) {
+    protected Map<String, List<Object>> retrievePersonAttributesToPrincipalAttributes(final String id) {
 
         final IPersonAttributes attrs = getAttributeRepository().getPerson(id);
 
@@ -184,7 +184,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     }
 
     @Override
-    public final Map<String, Object> getAttributes(final Principal p) {
+    public Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
             logger.debug("Found [{}] cached attributes for principal [{}] that are {}", cachedAttributes.size(), p.getId(),

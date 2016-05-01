@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,13 +14,14 @@ import org.springframework.stereotype.Component;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("defaultPasswordPolicyConfiguration")
 public class PasswordPolicyConfiguration {
 
     private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
 
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Disregard the warning period and warn all users of password expiration. */
     private boolean alwaysDisplayPasswordExpirationWarning;
@@ -53,7 +55,7 @@ public class PasswordPolicyConfiguration {
     }
 
     public int getPasswordWarningNumberOfDays() {
-        return passwordWarningNumberOfDays;
+        return this.passwordWarningNumberOfDays;
     }
 
     @Autowired

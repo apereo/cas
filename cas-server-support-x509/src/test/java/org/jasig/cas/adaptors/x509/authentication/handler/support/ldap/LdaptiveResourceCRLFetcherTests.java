@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/x509-ldap-context.xml"})
+@ContextConfiguration("/x509-ldap-context.xml")
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
 
 

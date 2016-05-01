@@ -7,7 +7,6 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
 
 /**
  * An OAuth refresh token implementation.
@@ -37,7 +36,7 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
      * @param expirationPolicy the expiration policy.
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public RefreshTokenImpl(final String id, @NotNull final Service service, @NotNull final Authentication authentication,
+    public RefreshTokenImpl(final String id,  final Service service,  final Authentication authentication,
                             final ExpirationPolicy expirationPolicy) {
         super(id, service, authentication, expirationPolicy);
     }

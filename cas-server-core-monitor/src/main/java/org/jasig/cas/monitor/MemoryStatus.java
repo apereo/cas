@@ -11,10 +11,10 @@ public class MemoryStatus extends Status {
     private static final double BYTES_PER_MB = 1048510.0;
 
     /** JVM free memory. */
-    private final long freeMemory;
+    private long freeMemory;
 
     /** JVM total memory. */
-    private final long totalMemory;
+    private long totalMemory;
 
 
     /**

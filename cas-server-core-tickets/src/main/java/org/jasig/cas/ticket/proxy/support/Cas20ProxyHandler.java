@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 
 /**
@@ -27,8 +27,9 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("proxy20Handler")
-public final class Cas20ProxyHandler implements ProxyHandler {
+public class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
     /** The proxy granting ticket identifier parameter. */
@@ -38,16 +39,16 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     private static final String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
 
     /** The Commons Logging instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Generate unique ids. */
-    @NotNull
+    
     @Autowired
     @Qualifier("proxy20TicketUniqueIdGenerator")
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     /** Instance of Apache Commons HttpClient. */
-    @NotNull
+    
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;

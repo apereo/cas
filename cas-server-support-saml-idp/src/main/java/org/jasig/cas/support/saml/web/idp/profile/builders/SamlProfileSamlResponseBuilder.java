@@ -1,14 +1,13 @@
 package org.jasig.cas.support.saml.web.idp.profile.builders;
 
-import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -17,12 +16,14 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
@@ -39,15 +40,10 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("samlProfileSamlResponseBuilder")
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;
-
-    /**
-     * The Config bean.
-     */
-    @Autowired
-    protected OpenSamlConfigBean configBean;
 
     /**
      * The Saml object encoder.
@@ -74,11 +70,12 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     private SamlObjectEncrypter samlObjectEncrypter;
 
     @Override
-    public final Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
+    public Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
                                 final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
                                 final SamlRegisteredService service,
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        final Assertion assertion = samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+        final Assertion assertion = this.samlProfileSamlAssertionBuilder.build(authnRequest, 
+                request, response, casAssertion, service, adaptor);
         final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
         return encode(service, finalResponse, response, adaptor);
     }
@@ -104,7 +101,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
-
+        samlResponse.setConsent(RequestAbstractType.UNSPECIFIED_CONSENT);
+        
         final SAMLObject finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
 
         if (finalAssertion instanceof EncryptedAssertion) {
@@ -118,12 +116,12 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         final Status status = newStatus(StatusCode.SUCCESS, StatusCode.SUCCESS);
         samlResponse.setStatus(status);
 
-        SamlIdPUtils.logSamlObject(this.configBean, samlResponse);
+        SamlUtils.logSamlObject(this.configBean, samlResponse);
 
         if (service.isSignResponses()) {
             logger.debug("SAML entity id [{}] indicates that SAML responses should be signed",
                     adaptor.getEntityId());
-            samlResponse = samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
+            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
         }
 
         return samlResponse;
@@ -187,7 +185,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         try {
             if (service.isEncryptAssertions()) {
                 logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-                final EncryptedAssertion encryptedAssertion = samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+                final EncryptedAssertion encryptedAssertion = 
+                        this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
                 return encryptedAssertion;
             }
             logger.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());

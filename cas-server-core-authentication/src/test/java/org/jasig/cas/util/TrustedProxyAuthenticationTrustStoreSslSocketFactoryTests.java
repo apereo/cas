@@ -23,7 +23,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
     @Before
     public void prepareHttpClient() throws Exception {
         final FileTrustStoreSslSocketFactory sslFactory = new FileTrustStoreSslSocketFactory(
-                TRUST_STORE.getFile(), TRUST_STORE_PSW);
+                TRUST_STORE, TRUST_STORE_PSW);
 
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory);

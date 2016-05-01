@@ -10,21 +10,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class DefaultLogoutRequest implements LogoutRequest {
+public class DefaultLogoutRequest implements LogoutRequest {
 
     /** Generated serialVersionUID. */
     private static final long serialVersionUID = -6411421298859045022L;
 
     /** The service ticket id. */
-    private final String ticketId;
+    private String ticketId;
 
     /** The service. */
-    private final SingleLogoutService service;
+    private SingleLogoutService service;
 
     /** The status of the logout request. */
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
 
-    private final URL logoutUrl;
+    private URL logoutUrl;
 
     /**
      * Build a logout request from ticket identifier and service.
@@ -42,7 +42,7 @@ public final class DefaultLogoutRequest implements LogoutRequest {
 
     @Override
     public LogoutRequestStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     @Override
@@ -52,25 +52,25 @@ public final class DefaultLogoutRequest implements LogoutRequest {
 
     @Override
     public String getTicketId() {
-        return ticketId;
+        return this.ticketId;
     }
 
     @Override
     public SingleLogoutService getService() {
-        return service;
+        return this.service;
     }
 
     @Override
     public URL getLogoutUrl() {
-        return logoutUrl;
+        return this.logoutUrl;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("ticketId", ticketId)
-                .append("service", service)
-                .append("status", status)
+                .append("ticketId", this.ticketId)
+                .append("service", this.service)
+                .append("status", this.status)
                 .toString();
     }
 }

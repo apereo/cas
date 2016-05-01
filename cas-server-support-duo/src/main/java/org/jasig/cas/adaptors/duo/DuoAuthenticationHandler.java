@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessing
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
@@ -19,8 +20,9 @@ import java.util.ArrayList;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@RefreshScope
 @Component("duoAuthenticationHandler")
-public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     @Autowired
     @Qualifier("duoAuthenticationService")
@@ -29,7 +31,7 @@ public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessing
     /**
      * Creates the duo authentication handler.
      */
-    private DuoAuthenticationHandler() {}
+    public DuoAuthenticationHandler() {}
 
     /**
      * Do an out of band request using the DuoWeb api (encapsulated in DuoAuthenticationService)

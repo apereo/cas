@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class NoOpCookieValueManager implements CookieValueManager {
+public class NoOpCookieValueManager implements CookieValueManager {
 
     @Override
     public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
