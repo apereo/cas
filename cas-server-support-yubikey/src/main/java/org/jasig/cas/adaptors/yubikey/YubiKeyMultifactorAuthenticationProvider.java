@@ -9,9 +9,9 @@ import org.jasig.cas.util.http.HttpMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 
 /**
@@ -19,6 +19,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("yubikeyAuthenticationProvider")
 public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
@@ -34,7 +35,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     /**
      * The Http client.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -54,7 +55,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     @Override
     protected boolean isAvailable() {
         try {
-            final String[] endpoints = yubiKeyAuthenticationHandler.getClient().getWsapiUrls();
+            final String[] endpoints = this.yubiKeyAuthenticationHandler.getClient().getWsapiUrls();
             for (final String endpoint : endpoints) {
                 logger.debug("Pinging YubiKey API endpoint at {}", endpoint);
                 final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));

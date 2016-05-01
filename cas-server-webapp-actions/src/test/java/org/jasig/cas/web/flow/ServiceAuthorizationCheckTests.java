@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -27,19 +27,19 @@ public class ServiceAuthorizationCheckTests {
 
     private ServiceAuthorizationCheck serviceAuthorizationCheck;
 
-    private final WebApplicationService authorizedService = mock(WebApplicationService.class);
+    private WebApplicationService authorizedService = mock(WebApplicationService.class);
 
-    private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
+    private WebApplicationService unauthorizedService = mock(WebApplicationService.class);
 
-    private final WebApplicationService undefinedService = mock(WebApplicationService.class);
+    private WebApplicationService undefinedService = mock(WebApplicationService.class);
 
-    private final ServicesManager servicesManager = mock(ServicesManager.class);
+    private ServicesManager servicesManager = mock(ServicesManager.class);
 
 
     @Before
     public void setUpMocks() {
-        final RegisteredServiceImpl authorizedRegisteredService = new RegisteredServiceImpl();
-        final RegisteredServiceImpl unauthorizedRegisteredService = new RegisteredServiceImpl();
+        final RegexRegisteredService authorizedRegisteredService = new RegexRegisteredService();
+        final RegexRegisteredService unauthorizedRegisteredService = new RegexRegisteredService();
         unauthorizedRegisteredService.setAccessStrategy(
                 new DefaultRegisteredServiceAccessStrategy(false, false));
 

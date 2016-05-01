@@ -1,7 +1,8 @@
 description = 'Apereo CAS SAML Server and Validation Support'
 dependencies {
     compile project(':cas-server-support-saml-core')
-
+    compile libraries.springcloud
+    
     testCompile project(':cas-server-core-util')
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-logout')

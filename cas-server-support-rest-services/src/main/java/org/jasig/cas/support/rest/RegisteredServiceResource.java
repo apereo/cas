@@ -58,8 +58,9 @@ public class RegisteredServiceResource {
      * @param serviceDataHolder the service to register and save in rest form
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder,
+    @RequestMapping(value = "/v1/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType
+            .APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
 
@@ -147,18 +148,18 @@ public class RegisteredServiceResource {
         }
 
         public RegisteredService getRegisteredService() {
-            if (StringUtils.isBlank(serviceId) || StringUtils.isBlank(name)
-                    || StringUtils.isBlank(description)) {
+            if (StringUtils.isBlank(this.serviceId) || StringUtils.isBlank(this.name)
+                    || StringUtils.isBlank(this.description)) {
                 throw new IllegalArgumentException("Service name/description/id is missing");
             }
 
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setServiceId(serviceId);
-            service.setDescription(description);
-            service.setName(name);
-            service.setEvaluationOrder(evaluationOrder);
+            service.setServiceId(this.serviceId);
+            service.setDescription(this.description);
+            service.setName(this.name);
+            service.setEvaluationOrder(this.evaluationOrder);
             service.setAccessStrategy(
-                    new DefaultRegisteredServiceAccessStrategy(enabled, ssoEnabled));
+                    new DefaultRegisteredServiceAccessStrategy(this.enabled, this.ssoEnabled));
             return service;
         }
 

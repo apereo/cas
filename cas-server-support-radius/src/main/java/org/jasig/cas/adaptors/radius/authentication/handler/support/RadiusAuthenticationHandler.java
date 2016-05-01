@@ -1,25 +1,23 @@
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
-import net.jradius.exception.TimeoutException;
-import net.jradius.packet.attribute.RadiusAttribute;
-import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
+import org.jasig.cas.adaptors.radius.RadiusUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.util.Pair;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
@@ -27,12 +25,13 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("radiusAuthenticationHandler")
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
-    @NotNull
-    @Size(min=1)
+    
+    
     @Resource(name="radiusServers")
     private List<RadiusServer> servers;
 
@@ -59,37 +58,24 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
-        final String password = getPasswordEncoder().encode(credential.getPassword());
-        final String username = credential.getUsername();
-        
-        for (final RadiusServer radiusServer : this.servers) {
-            logger.debug("Attempting to authenticate {} at {}", username, radiusServer);
-            try {
-                final RadiusResponse response = radiusServer.authenticate(username, password);
-                if (response != null) {
-                    final Map<String, Object> attributes = new HashMap<>();
-                    for (final RadiusAttribute attribute : response.getAttributes()) {
-                        attributes.put(attribute.getAttributeName(), attribute.getValue().toString());
-                    }
-                    return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes),
-                            new ArrayList<>());
-                }
-                                
-                if (!this.failoverOnAuthenticationFailure) {
-                    throw new FailedLoginException("Radius authentication failed for user " + username);
-                }
-                logger.debug("failoverOnAuthenticationFailure enabled -- trying next server");
-            } catch (final PreventedException e) {
-                if (!this.failoverOnException) {
-                    throw e;
-                }
-                logger.warn("failoverOnException enabled -- trying next server.", e);
+        try {
+            final String password = getPasswordEncoder().encode(credential.getPassword());
+            final String username = credential.getUsername();
+
+            final Pair<Boolean, Optional<Map<String, Object>>> result =
+                    RadiusUtils.authenticate(username, password, this.servers, 
+                            this.failoverOnAuthenticationFailure, this.failoverOnException);
+            if (result.getFirst()) {
+                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getSecond().get()),
+                        new ArrayList<>());
             }
+            throw new FailedLoginException("Radius authentication failed for user " + username);
+        } catch (final Exception e) {
+            throw new FailedLoginException("Radius authentication failed " + e.getMessage());
         }
-        throw new FailedLoginException("Radius authentication failed for user " + username);
     }
 
     /**
@@ -99,7 +85,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      * @param failoverOnAuthenticationFailure boolean on whether to failover or
      * not.
      */
-    public final void setFailoverOnAuthenticationFailure(
+    public void setFailoverOnAuthenticationFailure(
             final boolean failoverOnAuthenticationFailure) {
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
     }
@@ -110,38 +96,12 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      *
      * @param failoverOnException boolean on whether to failover or not.
      */
-    public final void setFailoverOnException(final boolean failoverOnException) {
+    public void setFailoverOnException(final boolean failoverOnException) {
         this.failoverOnException = failoverOnException;
     }
 
-    public final void setServers(final List<RadiusServer> servers) {
+    public void setServers(final List<RadiusServer> servers) {
         this.servers = servers;
     }
-
-    /**
-     * Can ping boolean.
-     *
-     * @return the boolean
-     */
-    public boolean canPing() {
-        final String uidPsw = getClass().getSimpleName();
-        for (final RadiusServer server : servers) {
-            logger.debug("Attempting to ping RADIUS server {} via simulating an authentication request. If the server responds "
-                    + "successfully, mock authentication will fail correctly.", server);
-            try {
-                server.authenticate(uidPsw, uidPsw);
-
-            } catch (final PreventedException e) {
-                if (e.getCause() instanceof TimeoutException) {
-                    logger.debug("Server {} is not available", server);
-                    continue;
-                }
-                logger.debug("Pinging RADIUS server was successful. Response {}", e.getMessage());
-            }
-            return true;
-        }
-        return false;
-
-
-    }
+    
 }

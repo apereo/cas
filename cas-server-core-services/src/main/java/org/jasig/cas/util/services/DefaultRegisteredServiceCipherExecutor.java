@@ -6,6 +6,7 @@ import org.jasig.cas.util.EncodingUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -17,12 +18,13 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("registeredServiceCipherExecutor")
 public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
     private static final String UTF8_ENCODING = "UTF-8";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Encrypt using the given cipher associated with the service,
@@ -33,7 +35,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * @return the encoded piece of data in base64
      */
     @Override
-    public final String encode(final String data, final RegisteredService service) {
+    public String encode(final String data, final RegisteredService service) {
         try {
             final PublicKey publicKey = createRegisteredServicePublicKey(service);
             final byte[] result = encodeInternal(data, publicKey, service);

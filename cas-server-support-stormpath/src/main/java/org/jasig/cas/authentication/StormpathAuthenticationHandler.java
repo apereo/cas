@@ -9,6 +9,7 @@ import org.pac4j.stormpath.credentials.authenticator.StormpathAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("stormpathAuthenticationHandler")
 public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
     @Value("${cas.authn.stormpath.api.key:}")

@@ -4,19 +4,23 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Renders and prepares CAS3 views. This view is responsible
@@ -27,17 +31,18 @@ import java.util.Optional;
  */
 public class Cas30ResponseView extends Cas20ResponseView {
 
+    @Value("${cas.attrs.protocol.release:true}")
+    private boolean releaseProtocolAttributes = true;
+
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
 
     /**
      * Instantiates a new Abstract cas response view.
-     *
-     * @param view the view
      */
-    protected Cas30ResponseView(final View view) {
-        super(view);
+    protected Cas30ResponseView() {
+        super();
     }
 
     @Override
@@ -50,7 +55,10 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.putAll(getCasPrincipalAttributes(model, registeredService));
-        attributes.putAll(getCasProtocolAuthenticationAttributes(model, registeredService));
+        
+        if (this.releaseProtocolAttributes) {
+            attributes.putAll(getCasProtocolAuthenticationAttributes(model, registeredService));
+        }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
@@ -105,26 +113,47 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @param registeredService the registered service
      */
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
-                                                     final Map<String, Object> attributes, final RegisteredService registeredService) {
+                                                     final Map<String, Object> attributes, 
+                                                     final RegisteredService registeredService) {
+        final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
         super.putIntoModel(model,
                 CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
-                this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model)));
+                encodedAttributes);
+
+        final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
+        encodedAttributes.forEach((k, v) -> {
+            final Set<Object> values = CollectionUtils.convertValueToCollection(v);
+            values.forEach(value -> {
+                final StringBuilder builder = new StringBuilder();
+                builder.append("<cas:".concat(k).concat(">"));
+                builder.append(value.toString().trim());
+                builder.append("</cas:".concat(k).concat(">"));
+                formattedAttributes.add(builder.toString());
+            });
+        });
+        super.putIntoModel(model,
+                CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES,
+                formattedAttributes);
     }
 
     /**
      * The type Success.
      */
+    @RefreshScope
     @Component("cas3ServiceSuccessView")
     public static class Success extends Cas30ResponseView {
         /**
          * Instantiates a new Success.
-         * @param view the view
          */
-        @Autowired
-        public Success(@Qualifier("cas3JstlSuccessView")
-                       final AbstractUrlBasedView view) {
-            super(view);
-            super.setSuccessResponse(true);
+        public Success() {
+            super();
         }
+
+        @Autowired(required=false)
+        @Override
+        public void setView(@Qualifier("cas3SuccessView") final View view) {
+            super.setView(view);
+        }
+        
     }
 }

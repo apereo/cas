@@ -9,6 +9,7 @@ dependencies {
     compile libraries.httpclient
     compile libraries.spring
     compile libraries.hibernate
+    compile libraries.springcloud
     testCompile project(':cas-server-core-web')
-    provided libraries.springsecurity
+    compile libraries.springsecurity
 }

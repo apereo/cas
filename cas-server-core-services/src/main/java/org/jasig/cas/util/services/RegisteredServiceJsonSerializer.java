@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class RegisteredServiceJsonSerializer extends AbstractJacksonBackedJsonSerializer<RegisteredService> {
+public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedJsonSerializer<RegisteredService> {
     private static final long serialVersionUID = 7645698151115635245L;
 
     /**

@@ -21,8 +21,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.validation.constraints.NotNull;
-
 import static org.junit.Assert.*;
 
 /**
@@ -198,7 +196,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
      * @param c the credential
      */
     private static void putCredentialInRequestScope(
-            final RequestContext context, @NotNull final Credential c) {
+            final RequestContext context,  final Credential c) {
         context.getRequestScope().put("credential", c);
     }
 }

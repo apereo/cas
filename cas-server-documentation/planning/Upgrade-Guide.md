@@ -47,7 +47,7 @@ have you shed many of those improvements locally.
 Your changes typically are:
 
 * Authentication scheme and strategy (i.e. LDAP, JDBC, etc)
-* Settings controlling CAS behavior in `cas.properties` file
+* Settings controlling CAS behavior in `application.properties` file
 * User Interface changes may include CSS and JavaScript
 * Attribute resolution and release policy
 * Services registered and authorized to use CAS

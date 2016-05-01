@@ -9,7 +9,7 @@ package org.jasig.cas.services;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public final class UnauthorizedServiceForPrincipalException extends UnauthorizedServiceException {
+public class UnauthorizedServiceForPrincipalException extends UnauthorizedServiceException {
 
     private static final long serialVersionUID = 8909291297815558561L;
 

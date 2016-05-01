@@ -1,18 +1,18 @@
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
  *
  * @since 3.0.0
  */
+@RefreshScope
 @Component("acceptUsersAuthenticationHandler")
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -65,30 +66,31 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
-        if (users == null || users.isEmpty()) {
+        if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }
         final String username = credential.getUsername();
         final String cachedPassword = this.users.get(username);
 
         if (cachedPassword == null) {
-           logger.debug("{} was not found in the map.", username);
+            logger.debug("{} was not found in the map.", username);
            throw new AccountNotFoundException(username + " not found in backing map.");
         }
 
         if (!this.getPasswordEncoder().matches(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+        final List<MessageDescriptor> list = new ArrayList<>();
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
     }
 
     /**
      * @param users The users to set.
      */
-    public final void setUsers(@NotNull final Map<String, String> users) {
-        this.users = Collections.unmodifiableMap(users);
+    public void setUsers(final Map<String, String> users) {
+        this.users = new HashMap<>(users);
     }
 }

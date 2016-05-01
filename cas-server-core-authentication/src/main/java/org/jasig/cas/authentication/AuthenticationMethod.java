@@ -15,14 +15,14 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.3
  */
-public final class AuthenticationMethod implements Comparable, Serializable {
+public class AuthenticationMethod implements Comparable, Serializable {
     private static final long serialVersionUID = -8960685427442975943L;
 
     @JsonProperty
-    private final Integer rank;
+    private Integer rank;
 
     @JsonProperty
-    private final String name;
+    private String name;
 
     /**
      * Instantiates a new Authentication method.
@@ -63,23 +63,23 @@ public final class AuthenticationMethod implements Comparable, Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(name)
+                .append(this.name)
                 .toHashCode();
     }
 
     public Integer getRank() {
-        return rank;
+        return this.rank;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("rank", rank)
-                .append("name", name)
+                .append("rank", this.rank)
+                .append("name", this.name)
                 .toString();
     }
 

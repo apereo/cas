@@ -39,7 +39,7 @@ public class JpaLockingStrategyTests {
     private static final int CONCURRENT_SIZE = 13;
 
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
 
     private PlatformTransactionManager txManager;
@@ -51,7 +51,7 @@ public class JpaLockingStrategyTests {
     private DataSource dataSource;
 
     @Before
-    public void setup() {
+    public void setUp() {
         final ClassPathXmlApplicationContext ctx = new
             ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
         this.factory = ctx.getBean("ticketEntityManagerFactory", EntityManagerFactory.class);
@@ -217,9 +217,9 @@ public class JpaLockingStrategyTests {
     }
 
     private static class TransactionalLockInvocationHandler implements InvocationHandler {
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
-        private final JpaLockingStrategy jpaLock;
-        private final PlatformTransactionManager txManager;
+        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+        private JpaLockingStrategy jpaLock;
+        private PlatformTransactionManager txManager;
 
         TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
                                       final PlatformTransactionManager txManager) {
@@ -249,8 +249,8 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Locker implements Callable<Boolean> {
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
-        private final LockingStrategy lock;
+        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+        private LockingStrategy lock;
 
         Locker(final LockingStrategy l) {
             lock = l;
@@ -268,8 +268,8 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Releaser implements Callable<Boolean> {
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
-        private final LockingStrategy lock;
+        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+        private LockingStrategy lock;
 
         Releaser(final LockingStrategy l) {
             lock = l;

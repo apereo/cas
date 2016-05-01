@@ -18,10 +18,12 @@ import java.util.Set;
 public final class CollectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionUtils.class);
 
-    private CollectionUtils() {}
+    private CollectionUtils() {
+    }
 
     /**
      * Convert the object given into a {@link Collection} instead.
+     *
      * @param obj the object to convert into a collection
      * @return The collection instance containing the object provided
      */
@@ -32,15 +34,15 @@ public final class CollectionUtils {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
-            LOGGER.debug("Converting multi-valued attribute [{}] for the authentication result", obj);
+            LOGGER.debug("Converting multi-valued attribute [{}]", obj);
         } else if (obj instanceof Map) {
             throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
         } else if (obj.getClass().isArray()) {
             c.addAll(Arrays.asList((Object[]) obj));
-            LOGGER.debug("Converting array attribute [{}] for the authentication result", obj);
+            LOGGER.debug("Converting array attribute [{}]", obj);
         } else {
             c.add(obj);
-            LOGGER.debug("Converting attribute [{}] for the authentication result", obj);
+            LOGGER.debug("Converting attribute [{}]", obj);
         }
         return c;
     }

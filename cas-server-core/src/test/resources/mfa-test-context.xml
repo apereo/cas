@@ -9,6 +9,16 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
     <context:component-scan base-package="org.jasig.cas"/>
     <context:annotation-config/>
 
@@ -77,16 +87,16 @@
 
 
     <util:list id="inMemoryRegisteredServices">
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl"
+        <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="1"
               p:name="Normal"
-              p:serviceId="https://example.com/normal/**"
+              p:serviceId="https://example\.com/normal/.*"
               p:evaluationOrder="10"/>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl"
+        <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="2"
               p:name="High"
-              p:serviceId="https://example.com/high/**"
+              p:serviceId="https://example\.com/high/.*"
               p:evaluationOrder="20">
             <property name="requiredHandlers">
                 <list>
@@ -125,7 +135,8 @@
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
-
+    <util:list id="validationServiceSelectionStrategies">
+        <bean class="org.jasig.cas.validation.DefaultValidationServiceSelectionStrategy" />
+    </util:list>
 </beans>

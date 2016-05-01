@@ -1,5 +1,6 @@
 package org.jasig.cas.validation;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("cas20WithoutProxyProtocolValidationSpecification")
 @Scope(value = "prototype")
 public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProtocolValidationSpecification {
@@ -35,6 +37,6 @@ public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProt
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        return (assertion.getChainedAuthentications().size() == 1);
+        return assertion.getChainedAuthentications().size() == 1;
     }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
  * @since 3.0.0
  */
-public final class DefaultLongNumericGenerator implements LongNumericGenerator {
+public class DefaultLongNumericGenerator implements LongNumericGenerator {
 
     /** The maximum length the string can be. */
     private static final int MAX_STRING_LENGTH = Long.toString(Long.MAX_VALUE)
@@ -19,7 +19,7 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
     /** The minimum length the String can be. */
     private static final int MIN_STRING_LENGTH = 1;
 
-    private final AtomicLong count;
+    private AtomicLong count;
 
     /**
      * Instantiates a new default long numeric generator.

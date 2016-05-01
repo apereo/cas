@@ -14,7 +14,6 @@ import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.validation.Assertion;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if ticket cannot be created
      */
-    TicketGrantingTicket createTicketGrantingTicket(@NotNull AuthenticationResult authenticationResult)
+    TicketGrantingTicket createTicketGrantingTicket(AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException;
 
 
@@ -63,7 +62,7 @@ public interface CentralAuthenticationService {
      * @return the updated ticket
      * @since 5.0.0
      */
-    Ticket updateTicket(@NotNull final Ticket ticket);
+    Ticket updateTicket(final Ticket ticket);
 
     /**
      * Obtains the given ticket by its id and type
@@ -79,7 +78,7 @@ public interface CentralAuthenticationService {
      * @throws InvalidTicketException the invalid ticket exception
      * @since 4.1.0
      */
-    <T extends Ticket> T getTicket(@NotNull String ticketId, @NotNull Class<T> clazz)
+    <T extends Ticket> T getTicket(String ticketId,  Class<T> clazz)
             throws InvalidTicketException;
 
     /**
@@ -94,7 +93,7 @@ public interface CentralAuthenticationService {
      * @return the tickets
      * @since 4.1.0
      */
-    Collection<Ticket> getTickets(@NotNull Predicate<Ticket> predicate);
+    Collection<Ticket> getTickets(Predicate<Ticket> predicate);
 
     /**
      * Grant a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service
@@ -115,7 +114,7 @@ public interface CentralAuthenticationService {
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
-        @NotNull String ticketGrantingTicketId, @NotNull Service service, AuthenticationResult authenticationResult)
+         String ticketGrantingTicketId,  Service service, AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException;
 
     /**
@@ -135,7 +134,7 @@ public interface CentralAuthenticationService {
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ProxyTicket grantProxyTicket(
-            @NotNull String proxyGrantingTicket, @NotNull Service service)
+             String proxyGrantingTicket,  Service service)
             throws AbstractTicketException;
 
     /**
@@ -146,7 +145,7 @@ public interface CentralAuthenticationService {
      * @return Non -null ticket validation assertion.
      * @throws AbstractTicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(@NotNull String serviceTicketId, @NotNull Service service) throws AbstractTicketException;
+    Assertion validateServiceTicket(String serviceTicketId,  Service service) throws AbstractTicketException;
 
     /**
      * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
@@ -156,7 +155,7 @@ public interface CentralAuthenticationService {
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the logout requests.
      */
-    List<LogoutRequest> destroyTicketGrantingTicket(@NotNull String ticketGrantingTicketId);
+    List<LogoutRequest> destroyTicketGrantingTicket(String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
@@ -170,6 +169,6 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if there was an error creating the ticket
      */
-    ProxyGrantingTicket createProxyGrantingTicket(@NotNull String serviceTicketId, @NotNull AuthenticationResult authenticationResult)
+    ProxyGrantingTicket createProxyGrantingTicket(String serviceTicketId,  AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException;
 }

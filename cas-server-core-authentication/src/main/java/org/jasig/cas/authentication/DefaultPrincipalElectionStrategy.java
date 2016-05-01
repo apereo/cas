@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 4.2.0
  */
 @Component("defaultPrincipalElectionStrategy")
-public final class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
+public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalElectionStrategy.class);
     private static final long serialVersionUID = 6704726217030836315L;
 

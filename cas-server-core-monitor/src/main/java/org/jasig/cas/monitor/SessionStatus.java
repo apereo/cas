@@ -8,10 +8,10 @@ package org.jasig.cas.monitor;
  */
 public class SessionStatus extends Status {
     /** Total number of SSO sessions maintained by CAS. */
-    private final long sessionCount;
+    private long sessionCount;
 
     /** Total number of service tickets in CAS ticket registry. */
-    private final long serviceTicketCount;
+    private long serviceTicketCount;
 
     /**
      * Creates a new status object with the given code.

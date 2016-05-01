@@ -1,5 +1,6 @@
 package org.jasig.cas.web.support;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("neverThrottle")
 public class NeverThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
     @Override

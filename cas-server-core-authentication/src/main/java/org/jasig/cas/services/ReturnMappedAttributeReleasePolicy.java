@@ -95,7 +95,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(allowedAttributes)
+                .append(this.allowedAttributes)
                 .toHashCode();
     }
 
@@ -103,7 +103,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("allowedAttributes", allowedAttributes)
+                .append("allowedAttributes", this.allowedAttributes)
                 .toString();
     }
 }

@@ -3,6 +3,7 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,8 +13,9 @@ import org.springframework.stereotype.Component;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
+@RefreshScope
 @Component("defaultAuthenticationSystemSupport")
-public final class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
+public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationTransactionManager")

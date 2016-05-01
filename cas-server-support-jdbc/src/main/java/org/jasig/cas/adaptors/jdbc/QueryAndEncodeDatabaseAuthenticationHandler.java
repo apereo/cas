@@ -12,6 +12,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Component;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
@@ -41,6 +41,7 @@ import java.util.Map;
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
  * @since 4.1.0
  */
+@RefreshScope
 @Component("queryAndEncodeDatabaseAuthenticationHandler")
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
@@ -51,31 +52,31 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     /**
      * The Algorithm name.
      */
-    @NotNull
+    
     protected String algorithmName;
 
     /**
      * The Sql statement to execute.
      */
-    @NotNull
+    
     protected String sql;
 
     /**
      * The Password field name.
      */
-    @NotNull
+    
     protected String passwordFieldName = DEFAULT_PASSWORD_FIELD;
 
     /**
      * The Salt field name.
      */
-    @NotNull
+    
     protected String saltFieldName = DEFAULT_SALT_FIELD;
 
     /**
      * The Number of iterations field name.
      */
-    @NotNull
+    
     protected String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
 
     /**
@@ -90,7 +91,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || StringUtils.isBlank(this.algorithmName) || getJdbcTemplate() == null) {
@@ -184,7 +185,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @param staticSalt the static salt
      */
     @Autowired
-    public final void setStaticSalt(@Value("${cas.jdbc.authn.query.encode.salt.static:}")
+    public void setStaticSalt(@Value("${cas.jdbc.authn.query.encode.salt.static:}")
                                     final String staticSalt) {
         this.staticSalt = staticSalt;
     }
@@ -195,7 +196,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @param passwordFieldName the password field name
      */
     @Autowired
-    public final void setPasswordFieldName(@Value("${cas.jdbc.authn.query.encode.password:" + DEFAULT_PASSWORD_FIELD + '}')
+    public void setPasswordFieldName(@Value("${cas.jdbc.authn.query.encode.password:" + DEFAULT_PASSWORD_FIELD + '}')
                                                final String passwordFieldName) {
         this.passwordFieldName = passwordFieldName;
     }
@@ -206,7 +207,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @param saltFieldName the password field name
      */
     @Autowired
-    public final void setSaltFieldName(@Value("${cas.jdbc.authn.query.encode.salt:" + DEFAULT_SALT_FIELD + '}')
+    public void setSaltFieldName(@Value("${cas.jdbc.authn.query.encode.salt:" + DEFAULT_SALT_FIELD + '}')
                                        final String saltFieldName) {
         this.saltFieldName = saltFieldName;
     }
@@ -217,7 +218,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @param numberOfIterationsFieldName the password field name
      */
     @Autowired
-    public final void setNumberOfIterationsFieldName(@Value("${cas.jdbc.authn.query.encode.iterations.field:"
+    public void setNumberOfIterationsFieldName(@Value("${cas.jdbc.authn.query.encode.iterations.field:"
                                                             + DEFAULT_NUM_ITERATIONS_FIELD + '}')
                                                          final String numberOfIterationsFieldName) {
         this.numberOfIterationsFieldName = numberOfIterationsFieldName;
@@ -229,7 +230,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @param numberOfIterations the number of iterations
      */
     @Autowired
-    public final void setNumberOfIterations(@Value("${cas.jdbc.authn.query.encode.iterations:0}")
+    public void setNumberOfIterations(@Value("${cas.jdbc.authn.query.encode.iterations:0}")
                                                 final long numberOfIterations) {
         this.numberOfIterations = numberOfIterations;
     }

@@ -11,7 +11,6 @@ import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,7 +38,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
     @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
-    
+
         logger.info("Received SAML callback profile request [{}]", request.getRequestURI());
         final AuthnRequest authnRequest = retrieveAuthnRequest(request);
         if (authnRequest == null) {
@@ -63,20 +62,20 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         final Assertion assertion = validator.validate(ticket, serviceUrl);
         Thread.sleep(1);
         logCasValidationAssertion(assertion);
+
         if (!assertion.isValid()) {
             throw new SamlException("CAS assertion received is invalid. This normally indicates that the assertion received has expired "
                     + " and is not valid within the time constraints of the authentication event");
         }
-        final AssertionConsumerService acs =
-                SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest,
-                        this.servicesManager, samlRegisteredServiceCachingMetadataResolver);
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(acs.getLocation());
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 
         logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
-        responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
+        this.responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
         logger.info("Built the SAML response for [{}]", adaptor.getEntityId());
 
         
     }
+
 }

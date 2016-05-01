@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -25,8 +25,9 @@ import java.nio.charset.Charset;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("shibbolethCompatiblePersistentIdGenerator")
-public final class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
+public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
 
@@ -38,7 +39,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
     @JsonProperty
-    private final String salt;
+    private String salt;
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
@@ -56,7 +57,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      * @param salt the the salt
      */
     @Autowired
-    public ShibbolethCompatiblePersistentIdGenerator(@NotNull @Value("${shib.id.gen.salt:casrox}") final String salt) {
+    public ShibbolethCompatiblePersistentIdGenerator(@Value("${shib.id.gen.salt:casrox}") final String salt) {
         this.salt = salt;
     }
 

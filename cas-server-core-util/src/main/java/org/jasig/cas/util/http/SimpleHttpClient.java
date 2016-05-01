@@ -37,7 +37,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @author Misagh Moayyed
  * @since 3.1
  */
-final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
+public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4949380008568071855L;
@@ -45,13 +45,13 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
     /** the acceptable codes supported by this client. */
-    private final List<Integer> acceptableCodes;
+    private List<Integer> acceptableCodes;
 
     /** the HTTP client for this client. */
-    private final CloseableHttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     /** the request executor service for this client. */
-    private final FutureRequestExecutionService requestExecutorService;
+    private FutureRequestExecutionService requestExecutorService;
 
     /**
      * Instantiates a new Simple HTTP client, based on the provided inputs.
@@ -107,18 +107,19 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
 
             for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
-                    LOGGER.debug("Response code from server matched {}.", responseCode);
+                    LOGGER.debug("Response code received from server matched {}.", responseCode);
                     entity = response.getEntity();
                     final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent()));
                     msg.setContentType(entity.getContentType().getValue());
+                    msg.setResponseCode(responseCode);
                     return msg;
                 }
             }
-            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was {}",
+            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned {}",
                     responseCode);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
-                LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
+                LOGGER.error("There was an error contacting the endpoint: {}; The error:\n{}", url.toExternalForm(),
                         value);
             }
         } catch (final Exception e) {
@@ -149,7 +150,7 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
         try (final CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
-            final int idx = Collections.binarySearch(acceptableCodes, responseCode);
+            final int idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {
                 LOGGER.debug("Response code from server matched {}.", responseCode);
                 return true;

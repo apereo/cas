@@ -13,11 +13,11 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,12 +34,15 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("couchbaseTicketRegistry")
-public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
+public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final String END_TOKEN = "\u02ad";
 
+    private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
+    
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
-            "all_tickets",
+            VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
     private static final List<View> ALL_VIEWS = Arrays.asList(new View[] {
@@ -47,7 +50,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     });
     private static final String UTIL_DOCUMENT = "statistics";
 
-    @NotNull
+    
     @Autowired
     @Qualifier("ticketRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
@@ -68,7 +71,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
             final SerializableDocument document =
                     SerializableDocument.create(ticket.getId(), 
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
-            couchbase.bucket().upsert(document);
+            this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed updating {}: {}", ticket, e);
         }
@@ -82,7 +85,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
             final SerializableDocument document =
                     SerializableDocument.create(ticket.getId(), 
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
-            couchbase.bucket().upsert(document);
+            this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed adding {}: {}", ticketToAdd, e);
         }
@@ -96,7 +99,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
                 return null;
             }
 
-            final SerializableDocument document = couchbase.bucket().get(encTicketId, SerializableDocument.class);
+            final SerializableDocument document = this.couchbase.bucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 logger.debug("Got ticket {} from registry.", t);
@@ -117,8 +120,8 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     @PostConstruct
     public void initialize() {
         System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
-        couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
-        couchbase.initialize();
+        this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
+        this.couchbase.initialize();
     }
 
 
@@ -128,7 +131,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     @PreDestroy
     public void destroy() {
         try {
-            couchbase.shutdown();
+            this.couchbase.shutdown();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -158,7 +161,7 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     public boolean deleteSingleTicket(final String ticketId) {
         logger.debug("Deleting ticket {}", ticketId);
         try {
-            return couchbase.bucket().remove(ticketId) != null;
+            return this.couchbase.bucket().remove(ticketId) != null;
         } catch (final Exception e) {
             logger.error("Failed deleting {}: {}", ticketId, e);
             return false;
@@ -166,8 +169,8 @@ public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implem
     }
 
     private int runQuery(final String prefix) {
-        final ViewResult allKeys = couchbase.bucket().query(
-                ViewQuery.from(UTIL_DOCUMENT, "all_tickets")
+        final ViewResult allKeys = this.couchbase.bucket().query(
+                ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
                         .startKey(prefix)
                         .endKey(prefix + END_TOKEN)
                         .reduce());

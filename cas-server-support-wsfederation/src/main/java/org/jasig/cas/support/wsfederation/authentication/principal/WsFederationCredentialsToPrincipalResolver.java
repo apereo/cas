@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -21,10 +22,11 @@ import org.jasig.cas.support.wsfederation.WsFederationConfiguration.WsFedPrincip
  * @author John Gasper
  * @since 4.2.0
  */
+@RefreshScope
 @Component("adfsPrincipalResolver")
-public final class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
+public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private final Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
+    private transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
 
     @Autowired
     @Qualifier("wsFedConfig")

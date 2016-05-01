@@ -11,7 +11,7 @@ import org.junit.Test;
  * @since 3.2.1
  *
  */
-public final class RememberMePasswordCredentialTests {
+public class RememberMePasswordCredentialTests {
 
     @Test
     public void verifyGettersAndSetters() {

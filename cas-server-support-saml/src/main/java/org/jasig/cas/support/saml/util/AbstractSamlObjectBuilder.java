@@ -1,7 +1,7 @@
 package org.jasig.cas.support.saml.util;
 
+import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.util.EncodingUtils;
-
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
@@ -17,6 +17,7 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -52,6 +53,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
+
 /**
  * An abstract builder to serve as the template handler
  * for SAML1 and SAML2 responses.
@@ -72,10 +74,23 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
     private static final int RANDOM_ID_SIZE = 16;
 
-    private  static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
+    private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
+    
+    private static final long serialVersionUID = -6833230731146922780L;
+    private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
     /** Logger instance. **/
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The Config bean.
+     */
+    @Autowired
+    protected OpenSamlConfigBean configBean;
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
+    }
 
     /**
      * Create a new SAML object.
@@ -84,12 +99,12 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param objectType the object type
      * @return the t
      */
-    public final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
+    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         final QName qName = getSamlObjectQName(objectType);
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
-            throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
         }
         return objectType.cast(builder.buildObject(qName));
     }
@@ -113,29 +128,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     }
 
     /**
-     * Build the saml object based on its QName.
-     *
-     * @param objectType the object
-     * @param qName the QName
-     * @param <T> the object type
-     * @return the saml object
-     */
-    private <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject());
-    }
-
-    /**
      * New attribute value.
      *
      * @param value the value
      * @param elementName the element name
      * @return the xS string
      */
-    protected final XSString newAttributeValue(final Object value, final QName elementName) {
+    protected XSString newAttributeValue(final Object value, final QName elementName) {
         final XSStringBuilder attrValueBuilder = new XSStringBuilder();
         final XSString stringValue = attrValueBuilder.buildObject(elementName, XSString.TYPE_NAME);
         if (value instanceof String) {
@@ -177,8 +176,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                 throw new IllegalArgumentException("Cannot obtain marshaller for object " + object.getElementQName());
             }
             final Element element = marshaller.marshall(object);
-            element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", SAMLConstants.SAML20_NS);
-            element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
+            element.setAttributeNS(NAMESPACE_URI, "xmlns", SAMLConstants.SAML20_NS);
+            element.setAttributeNS(NAMESPACE_URI, "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
 
             final TransformerFactory transFactory = TransformerFactory.newInstance();
             final Transformer transformer = transFactory.newTransformer();
@@ -199,7 +198,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param publicKey the public key
      * @return the response
      */
-    public final String signSamlResponse(final String samlResponse,
+    public String signSamlResponse(final String samlResponse,
                                          final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXml(samlResponse);
 
@@ -375,5 +374,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static org.jdom.Element toJdom(final org.w3c.dom.Element e) {
         return  new DOMBuilder().build(e);
     }
+    
 }
 

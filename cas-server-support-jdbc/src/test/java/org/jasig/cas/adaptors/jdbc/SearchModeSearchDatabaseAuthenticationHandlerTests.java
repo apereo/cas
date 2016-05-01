@@ -33,7 +33,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     private DataSource dataSource;
 
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
 
 
         final ClassPathXmlApplicationContext ctx = new

@@ -18,8 +18,8 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public class SmartOpenIdControllerTest extends AbstractOpenIdTests {
-    private final MockHttpServletRequest request = new MockHttpServletRequest();
-    private final HttpServletResponse response = new MockHttpServletResponse();
+    private MockHttpServletRequest request = new MockHttpServletRequest();
+    private HttpServletResponse response = new MockHttpServletResponse();
 
     @Autowired
     private ServerManager manager;

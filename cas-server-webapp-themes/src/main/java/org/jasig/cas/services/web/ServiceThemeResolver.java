@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
@@ -35,8 +36,9 @@ import java.util.regex.Pattern;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("serviceThemeResolver")
-public final class ServiceThemeResolver extends AbstractThemeResolver {
+public class ServiceThemeResolver extends AbstractThemeResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
 

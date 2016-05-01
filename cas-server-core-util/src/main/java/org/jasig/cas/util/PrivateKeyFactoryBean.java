@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
-import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -26,17 +25,17 @@ import java.security.spec.PKCS8EncodedKeySpec;
  * @since 3.1
  *
  */
-public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
+public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PrivateKeyFactoryBean.class);
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    @NotNull
+    
     private Resource location;
 
-    @NotNull
+    
     private String algorithm;
 
     @Override
@@ -87,11 +86,11 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey>
     }
 
     public Resource getLocation() {
-        return location;
+        return this.location;
     }
 
     public String getAlgorithm() {
-        return algorithm;
+        return this.algorithm;
     }
 
 }

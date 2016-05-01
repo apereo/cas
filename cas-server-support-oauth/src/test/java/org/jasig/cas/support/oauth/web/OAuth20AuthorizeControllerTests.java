@@ -38,9 +38,9 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:/oauth-context.xml", "classpath:/META-INF/spring/cas-servlet-oauth.xml"})
-@DirtiesContext()
-public final class OAuth20AuthorizeControllerTests {
+@ContextConfiguration("classpath:/oauth-context.xml")
+@DirtiesContext
+public class OAuth20AuthorizeControllerTests {
 
     private static final String ID = "id";
     private static final String FIRST_NAME_ATTRIBUTE = "firstName";

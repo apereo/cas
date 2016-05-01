@@ -9,6 +9,7 @@ import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.extractor.BasicAuthExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("basicAuthenticationAction")
 public class BasicAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
 

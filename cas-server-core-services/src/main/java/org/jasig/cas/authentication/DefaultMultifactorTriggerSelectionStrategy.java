@@ -8,6 +8,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.jasig.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +27,7 @@ import java.util.stream.StreamSupport;
  * @author Daniel Frett
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultMultifactorTriggerSelectionStrategy")
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
@@ -59,7 +61,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
         if (!provider.isPresent() && request != null) {
-            provider = Optional.ofNullable(request.getParameter(requestParameter)).filter(validProviderIds::contains);
+            provider = Optional.ofNullable(request.getParameter(this.requestParameter)).filter(validProviderIds::contains);
         }
 
         // check for a RegisteredService configured trigger
@@ -73,8 +75,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null && StringUtils.hasText(principalAttribute)) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(principalAttribute).spliterator(), false)
+        if (!provider.isPresent() && principal != null && StringUtils.hasText(this.principalAttribute)) {
+            provider = StreamSupport.stream(ATTR_NAMES.split(this.principalAttribute).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)

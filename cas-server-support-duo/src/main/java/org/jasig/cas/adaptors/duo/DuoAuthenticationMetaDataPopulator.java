@@ -9,6 +9,7 @@ import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("duoAuthenticationMetaDataPopulator")
 public class DuoAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
@@ -37,12 +39,12 @@ public class DuoAuthenticationMetaDataPopulator implements AuthenticationMetaDat
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
                 obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
-            builder.mergeAttribute(authenticationContextAttribute, provider.getId());
+            builder.mergeAttribute(this.authenticationContextAttribute, this.provider.getId());
         }
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return authenticationHandler.supports(credential);
+        return this.authenticationHandler.supports(credential);
     }
 }

@@ -28,8 +28,11 @@ public abstract class AbstractLogoutAction extends AbstractAction {
     /** The redirect to app event in webflow. */
     public static final String REDIRECT_APP_EVENT = "redirectApp";
 
+    private static final String NO_CACHE = "no-cache";
+    private static final String CACHE_CONTROL = "Cache-Control";
+    
     @Override
-    protected final Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
@@ -57,11 +60,11 @@ public abstract class AbstractLogoutAction extends AbstractAction {
      *
      * @param response the HTTP response.
      */
-    protected final void preventCaching(final HttpServletResponse response) {
-        response.setHeader("Pragma", "no-cache");
+    protected void preventCaching(final HttpServletResponse response) {
+        response.setHeader("Pragma", NO_CACHE);
         response.setDateHeader("Expires", 1L);
-        response.setHeader("Cache-Control", "no-cache");
-        response.addHeader("Cache-Control", "no-store");
+        response.setHeader(CACHE_CONTROL, NO_CACHE);
+        response.addHeader(CACHE_CONTROL, "no-store");
     }
 
     /**
@@ -70,7 +73,7 @@ public abstract class AbstractLogoutAction extends AbstractAction {
      * @param context the context
      * @param index the index
      */
-    protected final void putLogoutIndex(final RequestContext context, final int index) {
+    protected void putLogoutIndex(final RequestContext context, final int index) {
         context.getFlowScope().put(LOGOUT_INDEX, index);
     }
 
@@ -80,7 +83,7 @@ public abstract class AbstractLogoutAction extends AbstractAction {
      * @param context the context
      * @return the logout index
      */
-    protected final int getLogoutIndex(final RequestContext context) {
+    protected int getLogoutIndex(final RequestContext context) {
         final Object value = context.getFlowScope().get(LOGOUT_INDEX);
         return value == null ? 0 : (Integer) value;
     }

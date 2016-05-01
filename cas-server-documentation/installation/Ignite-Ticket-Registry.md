@@ -4,12 +4,12 @@ title: CAS - Ignite Ticket Registry
 ---
 
 # Ignite Ticket Registry
-Ignite integration is enabled by including the following dependency in the Maven WAR overlay:
+Ignite integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-integration-ignite</artifactId>
+     <artifactId>cas-server-support-ignite</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -20,7 +20,7 @@ This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 ## Distributed Cache
 Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage subsystem. 
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

@@ -12,6 +12,7 @@ import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
@@ -28,8 +29,9 @@ import java.util.regex.Pattern;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@RefreshScope
 @Component("spnegoHandler")
-public final class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     @Autowired
     @Qualifier("spnegoAuthentication")

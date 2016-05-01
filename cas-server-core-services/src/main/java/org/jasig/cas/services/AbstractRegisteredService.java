@@ -25,7 +25,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +43,7 @@ import java.util.Set;
 @Inheritance
 @DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
                      columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
-@Table(name = "RegisteredServiceImpl")
+@Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
 
@@ -52,7 +51,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     /** The logger instance. */
     @Transient
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The unique identifier for this service. */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
@@ -179,7 +178,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * @since 4.1
      */
     @PostLoad
-    public final void postLoad() {
+    public void postLoad() {
         if (this.proxyPolicy == null) {
             this.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
         }
@@ -328,8 +327,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public final LogoutType getLogoutType() {
-        return logoutType;
+    public LogoutType getLogoutType() {
+        return this.logoutType;
     }
 
     /**
@@ -337,12 +336,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param logoutType the logout type of the service.
      */
-    public final void setLogoutType(final LogoutType logoutType) {
+    public void setLogoutType(final LogoutType logoutType) {
         this.logoutType = logoutType;
     }
 
     @Override
-    public final AbstractRegisteredService clone() {
+    public AbstractRegisteredService clone() {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
         return clone;
@@ -448,12 +447,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param policy the new attribute filtering policy
      */
-    public final void setAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy) {
+    public void setAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy) {
         this.attributeReleasePolicy = policy;
     }
 
     @Override
-    public final RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy() {
+    public RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy() {
         return this.attributeReleasePolicy;
     }
 
@@ -471,7 +470,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         return this.publicKey;
     }
 
-    public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
+    public void setPublicKey(final RegisteredServicePublicKey publicKey) {
         this.publicKey = publicKey;
     }
 
@@ -485,7 +484,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     public RegisteredServiceMultifactorPolicy getMultifactorPolicy() {
-        return multifactorPolicy;
+        return this.multifactorPolicy;
     }
 
     public void setMultifactorPolicy(final RegisteredServiceMultifactorPolicy multifactorPolicy) {

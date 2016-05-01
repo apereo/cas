@@ -16,7 +16,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * An OAuth code implementation.
@@ -58,7 +57,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * @param expirationPolicy the expiration policy.
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public OAuthCodeImpl(final String id, @NotNull final Service service, @NotNull final Authentication authentication,
+    public OAuthCodeImpl(final String id,  final Service service,  final Authentication authentication,
                          final ExpirationPolicy expirationPolicy) {
         super(id, expirationPolicy);
 
@@ -112,7 +111,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     @Override
     public Authentication getAuthentication() {
-        return authentication;
+        return this.authentication;
     }
 
     @Override

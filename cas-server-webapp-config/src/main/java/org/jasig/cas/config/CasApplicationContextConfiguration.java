@@ -4,20 +4,29 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
+import org.jasig.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
+import org.springframework.web.servlet.view.RedirectView;
 
-import javax.validation.constraints.NotNull;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +41,6 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("casApplicationContextConfiguration")
-@Lazy(true)
 public class CasApplicationContextConfiguration {
 
     /**
@@ -57,7 +65,7 @@ public class CasApplicationContextConfiguration {
     /**
      * The Default argument extractor.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
@@ -86,6 +94,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the default advisor auto proxy creator
      */
+    @RefreshScope
     @Bean(name = "advisorAutoProxyCreator")
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
@@ -96,6 +105,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the list
      */
+    @RefreshScope
     @Bean(name = "serviceFactoryList")
     public List serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
@@ -108,6 +118,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the list
      */
+    @RefreshScope
     @Bean(name = "argumentExtractors")
     public List argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
@@ -120,6 +131,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the map
      */
+    @RefreshScope
     @Bean(name = "uniqueIdGeneratorsMap")
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
@@ -132,16 +144,36 @@ public class CasApplicationContextConfiguration {
      *
      * @return the url filename view controller
      */
+    @RefreshScope
     @Bean(name = "passThroughController")
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
     }
 
     /**
+     * Root controller controller.
+     *
+     * @return the controller
+     */
+    @RefreshScope
+    @Bean(name="rootController")
+    protected Controller rootController() {
+        return new ParameterizableViewController() {
+            @Override
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) 
+                    throws Exception {
+                final String queryString = request.getQueryString();
+                final String url = request.getContextPath() + "/login" + (queryString != null ? '?' + queryString : "");
+                return new ModelAndView(new RedirectView(response.encodeURL(url)));
+            }
+        };
+    }
+    /**
      * Scheduler scheduler factory bean.
      *
      * @return the scheduler factory bean
      */
+    @RefreshScope
     @Bean(name = "scheduler")
     public SchedulerFactoryBean scheduler() {
         final SchedulerFactoryBean factory = new SchedulerFactoryBean();
@@ -156,6 +188,37 @@ public class CasApplicationContextConfiguration {
     }
 
     /**
+     * Stub attribute repository person attribute dao.
+     *
+     * @param factoryBean the factory bean
+     * @return the person attribute dao
+     */
+    @Bean(name="stubAttributeRepository")
+    public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
+                                                   final FactoryBean<Properties> factoryBean) {
+        try {
+            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
+            dao.setBackingMap(new HashMap(factoryBean.getObject()));
+            return dao;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Cas attributes to resolve factory bean.
+     *
+     * @return the factory bean
+     */
+    @RefreshScope
+    @Bean(name="casAttributesToResolve")
+    public FactoryBean<Properties> casAttributesToResolve() {
+        final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
+        bean.setPrefix("cas.attrs.resolve.");
+        return bean;
+    }
+    
+    /**
      * Handler mapping c simple url handler mapping.
      *
      * @return the simple url handler mapping
@@ -167,8 +230,8 @@ public class CasApplicationContextConfiguration {
         bean.setAlwaysUseFullPath(true);
 
         final Properties properties = new Properties();
-        properties.put("/authorizationFailure.html", passThroughController());
         bean.setMappings(properties);
+        bean.setRootHandler(rootController());
         return bean;
     }
 }

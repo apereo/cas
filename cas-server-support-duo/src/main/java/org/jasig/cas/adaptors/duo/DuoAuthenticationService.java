@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -27,31 +27,31 @@ import java.net.URLDecoder;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@RefreshScope
 @Component("duoAuthenticationService")
-public final class DuoAuthenticationService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * The Http client.
-     */
-    @NotNull
+public class DuoAuthenticationService {
+    private static final String RESULT_KEY_RESPONSE = "response";
+    private static final String RESULT_KEY_STAT = "stat";
+    
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+        
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.integration.key:}")
     private String duoIntegrationKey;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.secret.key:}")
     private String duoSecretKey;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.application.key:}")
     private String duoApplicationKey;
 
-    @NotNull
+    
     @Value("${cas.mfa.duo.api.host:}")
     private String duoApiHost;
 
@@ -73,15 +73,15 @@ public final class DuoAuthenticationService {
     }
 
     public String getDuoIntegrationKey() {
-        return duoIntegrationKey;
+        return this.duoIntegrationKey;
     }
 
     public String getDuoSecretKey() {
-        return duoSecretKey;
+        return this.duoSecretKey;
     }
 
     public String getDuoApplicationKey() {
-        return duoApplicationKey;
+        return this.duoApplicationKey;
     }
 
     /**
@@ -125,9 +125,9 @@ public final class DuoAuthenticationService {
                 logger.debug("Received Duo ping response {}", response);
                 final ObjectMapper mapper = new ObjectMapper();
                 final JsonNode result = mapper.readTree(response);
-                if (result.has("response") && result.has("stat")
-                        && result.get("response").asText().equalsIgnoreCase("pong")
-                        && result.get("stat").asText().equalsIgnoreCase("OK")) {
+                if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
+                        && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
+                        && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
                     return true;
                 }
                 logger.warn("Could not reach/ping Duo. Response returned is {}", result);

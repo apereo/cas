@@ -59,18 +59,7 @@ public interface CasWebflowConstants {
      * The transition state 'sendTicketGrantingTicket'.
      */
     String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
-
-    /**
-     * The transition state 'viewLoginForm'.
-     */
-    String TRANSITION_ID_VIEW_LOGIN_FORM = "viewLoginForm";
-
-
-    /**
-     * The transition state 'ticketGrantingTicketCheck'.
-     */
-    String TRANSITION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
-
+        
     /**
      * The action state 'initializeLoginForm'.
      */

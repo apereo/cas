@@ -2,6 +2,7 @@ package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -16,15 +17,16 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("defaultArgumentExtractor")
-public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
+public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     /**
      * Default extractor.
      */
     public DefaultArgumentExtractor() {
-        super();
     }
+    
     /**
      * Instantiates a new argument extractor.
      *
@@ -45,7 +47,7 @@ public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return getServiceFactories().stream().map(factory -> {
+        return getServiceFactoryList().stream().map(factory -> {
             final WebApplicationService service = factory.createService(request);
             if (service != null) {
                 logger.debug("Created {} based on {}", service, factory);

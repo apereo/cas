@@ -2,7 +2,7 @@ description = 'Apereo CAS Stormpath Authentication Support'
 dependencies {
 
     compile project(':cas-server-core-authentication')
-    compile project(':cas-server-integration-pac4j')
+    compile project(':cas-server-support-pac4j-authentication')
     compile libraries.spring
     compile libraries.pac4j
     compile libraries.hibernate

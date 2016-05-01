@@ -13,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -50,7 +49,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
-    private final transient Object lock = new Object();
+    private transient Object lock = new Object();
 
     /**
      * Instantiates a new service ticket impl.
@@ -73,7 +72,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * Service are null.
      */
     public ServiceTicketImpl(final String id,
-        @NotNull final TicketGrantingTicketImpl ticket, @NotNull final Service service,
+         final TicketGrantingTicketImpl ticket,  final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, policy);
 
@@ -136,18 +135,18 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         synchronized (this.lock) {
             if(this.grantedTicketAlready) {
-                throw new InvalidProxyGrantingTicketForServiceTicket(service);
+                throw new InvalidProxyGrantingTicketForServiceTicket(this.service);
             }
             this.grantedTicketAlready = Boolean.TRUE;
         }
-        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, service,
+        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service,
                 this.getGrantingTicket(), authentication, expirationPolicy);
         getGrantingTicket().getProxyGrantingTickets().add(pgt);
         return pgt;
     }
 
     @Override
-    public final TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 

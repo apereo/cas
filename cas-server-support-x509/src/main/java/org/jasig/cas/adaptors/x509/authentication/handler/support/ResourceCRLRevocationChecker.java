@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  *
  */
+@RefreshScope
 @Component("resourceCrlRevocationChecker")
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  {
 
@@ -42,7 +44,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
     public static final int DEFAULT_REFRESH_INTERVAL = 3600;
 
     /** Executor responsible for refreshing CRL data. */
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /** CRL refresh interval in seconds. */
     private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
@@ -56,7 +58,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
     private CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
-    private final Map<X500Principal, X509CRL> crlIssuerMap =
+    private Map<X500Principal, X509CRL> crlIssuerMap =
             Collections.synchronizedMap(new HashMap<>());
 
     /** Resource CRLs. **/
@@ -111,8 +113,8 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
 
     private void initializeResourcesFromContext() {
         try {
-            this.resources = applicationContext.getBean("x509CrlResources", Set.class);
-            logger.debug("Located {} CRL resources from configuration", resources.size());
+            this.resources = this.applicationContext.getBean("x509CrlResources", Set.class);
+            logger.debug("Located {} CRL resources from configuration", this.resources.size());
         } catch (final Exception e) {
             logger.debug("[x509CrlResources] is not defined in the application context");
         }
@@ -141,7 +143,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
 
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = new Runnable() {
-            private final Logger logger = LoggerFactory.getLogger(this.getClass());
+            private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
             @Override
             public void run() {
@@ -160,7 +162,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
     }
 
     private boolean validateConfiguration() {
-        if (resources == null || resources.isEmpty()) {
+        if (this.resources == null || this.resources.isEmpty()) {
             logger.debug("{} is not configured with resources. Skipping configuration...",
                     this.getClass().getSimpleName());
             return false;

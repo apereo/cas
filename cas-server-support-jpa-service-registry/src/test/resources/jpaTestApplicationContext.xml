@@ -15,6 +15,16 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+  <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+    <property name="scopes">
+      <map>
+        <entry key="refresh">
+          <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+        </entry>
+      </map>
+    </property>
+  </bean>
+  
   <context:property-placeholder properties-ref="casProperties"/>
   <util:properties id="casProperties"/>
 

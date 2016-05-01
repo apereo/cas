@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.4
  */
-public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
+public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     /**
      * Default flow execution key parameter name, {@value}.
@@ -45,7 +45,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
      */
     @Override
     public String getFlowExecutionKey(final HttpServletRequest request) {
-        return request.getParameter(flowExecutionKeyParameter);
+        return request.getParameter(this.flowExecutionKeyParameter);
     }
 
     @Override
@@ -60,7 +60,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
         final String queryString = flowParams.entrySet().stream()
                 .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
-                .reduce((param1, param2) -> param1 + "&" + param2)
+                .reduce((param1, param2) -> param1 + '&' + param2)
                 .orElse("");
 
         builder.append(queryString);
@@ -79,7 +79,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     }
 
     private String encodeSingleParameter(final String key, final String value, final String encoding) {
-        return urlEncode(key, encoding) + "=" + urlEncode(value, encoding);
+        return urlEncode(key, encoding) + '=' + urlEncode(value, encoding);
     }
 
     private String urlEncode(final String value, final String encodingScheme) {

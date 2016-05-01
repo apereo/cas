@@ -14,7 +14,7 @@ import org.jasig.cas.util.AopUtils;
  * @author Scott Battaglia
  * @since 3.4.6
  */
-public final class ServiceManagementResourceResolver implements AuditResourceResolver {
+public class ServiceManagementResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint target, final Object returnValue) {

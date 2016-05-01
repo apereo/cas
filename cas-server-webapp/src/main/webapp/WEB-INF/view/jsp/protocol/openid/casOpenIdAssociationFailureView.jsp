@@ -1,1 +1,0 @@
---%><%= "openid.mode:cancel\n" %>

@@ -4,7 +4,9 @@ import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.util.CompressionUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,6 +24,14 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     private GoogleAccountsServiceFactory factory;
 
+    @Autowired
+    private ApplicationContextProvider applicationContextProvider;
+    
+    @Before
+    public void init() {
+        this.applicationContextProvider.setApplicationContext(this.applicationContext);
+    }
+    
     @Test
     public void verifyNoService() {
         assertNull(factory.createService(new MockHttpServletRequest()));

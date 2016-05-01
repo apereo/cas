@@ -7,7 +7,6 @@ import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
 
 /**
  * An OAuth access token implementation.
@@ -37,7 +36,7 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
      * @param expirationPolicy the expiration policy.
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public AccessTokenImpl(final String id, @NotNull final Service service, @NotNull final Authentication authentication,
+    public AccessTokenImpl(final String id,  final Service service,  final Authentication authentication,
                            final ExpirationPolicy expirationPolicy) {
         super(id, service, authentication, expirationPolicy);
     }

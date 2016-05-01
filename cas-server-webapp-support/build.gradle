@@ -1,7 +1,0 @@
-
-description = 'Apereo CAS Web Application Support'
-dependencies {
-    compile libraries.spring
-	compile libraries.hibernate
-  	compile project(':cas-server-core-web')
-}

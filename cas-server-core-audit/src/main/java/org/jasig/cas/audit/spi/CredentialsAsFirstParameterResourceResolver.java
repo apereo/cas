@@ -16,7 +16,9 @@ import org.jasig.cas.util.AopUtils;
  * @since 3.1.2
  *
  */
-public final class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
+public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
+
+    private static final String SUPPLIED_CREDENTIALS = "Supplied credentials: ";
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
@@ -39,8 +41,8 @@ public final class CredentialsAsFirstParameterResourceResolver implements AuditR
         final Object object = args[0];
         if (object instanceof AuthenticationTransaction) {
             final AuthenticationTransaction transaction = AuthenticationTransaction.class.cast(object);
-            return new String[] {"Supplied credentials: " + transaction.getCredentials()};
+            return new String[] {SUPPLIED_CREDENTIALS + transaction.getCredentials()};
         }
-        return new String[] {"Supplied credentials: " + Arrays.asList((Object[]) object)};
+        return new String[] {SUPPLIED_CREDENTIALS + Arrays.asList((Object[]) object)};
     }
 }

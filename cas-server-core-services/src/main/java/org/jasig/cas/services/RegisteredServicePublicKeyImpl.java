@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.ResourceUtils;
 
 import java.io.Serializable;
 import java.security.PublicKey;
@@ -18,10 +19,10 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
+public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String location;
 
@@ -76,9 +77,9 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
     @Override
     public PublicKey createInstance() throws Exception {
         try {
-            final PublicKeyFactoryBean factory = publicKeyFactoryBeanClass.newInstance();
-            if (this.location.startsWith("classpath:")) {
-                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, "classpath:")));
+            final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.newInstance();
+            if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
             } else {
                 factory.setLocation(new FileSystemResource(this.location));
             }
@@ -86,7 +87,7 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
             factory.setSingleton(false);
             return factory.getObject();
         } catch (final Exception e) {
-           logger.warn(e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -120,8 +121,8 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(location)
-                .append(algorithm)
+                .append(this.location)
+                .append(this.algorithm)
                 .toHashCode();
     }
 }

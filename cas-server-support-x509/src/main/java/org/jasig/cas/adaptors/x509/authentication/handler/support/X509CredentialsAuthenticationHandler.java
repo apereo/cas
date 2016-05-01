@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 
 /**
  * Authentication Handler that accepts X509 Certificates, determines their
@@ -40,6 +40,7 @@ import javax.validation.constraints.NotNull;
  * @author Jan Van der Velpen
  * @since 3.0.4
  */
+@RefreshScope
 @Component("x509CredentialsAuthenticationHandler")
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
@@ -64,10 +65,10 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
     /** Instance of Logging. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The compiled pattern supplied by the deployer. */
-    @NotNull
+    
     private Pattern regExTrustedIssuerDnPattern;
 
     /**
@@ -92,11 +93,11 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     private boolean requireKeyUsage = DEFAULT_REQUIRE_KEYUSAGE;
 
     /** The compiled pattern for trusted DN's supplied by the deployer. */
-    @NotNull
+    
     private Pattern regExSubjectDnPattern = DEFAULT_SUBJECT_DN_PATTERN;
 
     /** Certificate revocation checker component. */
-    @NotNull
+    
     private RevocationChecker revocationChecker = new NoOpRevocationChecker();
 
 
@@ -124,7 +125,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     @Override
-    protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
         final X509CertificateCredential x509Credential = (X509CertificateCredential) credential;
         final X509Certificate[] certificates = x509Credential.getCertificates();

@@ -10,7 +10,7 @@ is available to use YubiKey devices as a primary authentication source that CAS 
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
 [YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the 
-following dependencies in the Maven WAR overlay:
+following dependencies in the WAR overlay:
 
 ```xml
 <dependency>

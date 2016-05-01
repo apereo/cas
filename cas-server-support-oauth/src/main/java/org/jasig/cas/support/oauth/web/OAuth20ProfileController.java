@@ -9,7 +9,9 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 
 import org.pac4j.core.context.HttpConstants;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,13 +26,15 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@RefreshScope
 @Component("profileController")
-public final class OAuth20ProfileController extends BaseOAuthWrapperController {
+public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ID = "id";
 
     private static final String ATTRIBUTES = "attributes";
-
+    
+    @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
@@ -50,17 +54,17 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
             if (StringUtils.isBlank(accessToken)) {
                 logger.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
+                jsonGenerator.writeStringField(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
                 jsonGenerator.writeEndObject();
                 return null;
             }
             try {
 
-                final AccessToken accessTokenTicket = ticketRegistry.getTicket(accessToken, AccessToken.class);
+                final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
                 if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
                     logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
                     jsonGenerator.writeStartObject();
-                    jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
+                    jsonGenerator.writeStringField(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
                     jsonGenerator.writeEndObject();
                     return null;
                 }

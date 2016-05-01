@@ -22,8 +22,8 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/META-INF/spring/*-config.xml"})
-@WebAppConfiguration()
+@ContextConfiguration("/META-INF/spring/*-config.xml")
+@WebAppConfiguration
 public abstract class AbstractOpenSamlTests {
 
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

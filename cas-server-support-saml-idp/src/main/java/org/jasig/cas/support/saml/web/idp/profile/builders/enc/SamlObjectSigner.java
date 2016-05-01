@@ -4,6 +4,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 
@@ -58,11 +60,12 @@ import java.util.List;
  * This is {@link SamlObjectSigner}.
  *
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 5.0.0
  */
+@RefreshScope
 @Component("samlObjectSigner")
 public class SamlObjectSigner {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Override signature canonicalization algorithm.
@@ -132,7 +135,7 @@ public class SamlObjectSigner {
      * @return the t
      * @throws SamlException the saml exception
      */
-    public final <T extends SAMLObject> T encode(final T samlObject,
+    public <T extends SAMLObject> T encode(final T samlObject,
                                                  final SamlRegisteredService service,
                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                  final HttpServletResponse response,
@@ -291,7 +294,7 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(overrideSignatureCanonicalizationAlgorithm)) {
+        if (StringUtils.isNotBlank(this.overrideSignatureCanonicalizationAlgorithm)) {
             config.setSignatureCanonicalizationAlgorithm(this.overrideSignatureCanonicalizationAlgorithm);
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
@@ -318,7 +321,7 @@ public class SamlObjectSigner {
      */
     protected X509Certificate getSigningCertificate() {
         logger.debug("Locating signature signing certificate file from [{}]", this.signingCertFile);
-        return SamlIdPUtils.readCertificate(new FileSystemResource(this.signingCertFile));
+        return SamlUtils.readCertificate(new FileSystemResource(this.signingCertFile));
     }
 
     /**
@@ -372,7 +375,7 @@ public class SamlObjectSigner {
 
         final CriteriaSet criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
-        criteriaSet.add(new EntityIdCriterion(profileRequest.getIssuer().getValue()));
+        criteriaSet.add(new EntityIdCriterion(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest)));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
 

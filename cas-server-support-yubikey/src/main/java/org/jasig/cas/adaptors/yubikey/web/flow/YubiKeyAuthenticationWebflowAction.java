@@ -3,6 +3,7 @@ package org.jasig.cas.adaptors.yubikey.web.flow;
 import org.jasig.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -14,6 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("yubikeyAuthenticationWebflowAction")
 public class YubiKeyAuthenticationWebflowAction extends AbstractAction {
     @Autowired
@@ -22,6 +24,6 @@ public class YubiKeyAuthenticationWebflowAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext);
+        return this.yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }

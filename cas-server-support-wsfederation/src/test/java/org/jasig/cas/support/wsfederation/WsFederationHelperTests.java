@@ -91,7 +91,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     public void verifyValidateSignatureBadKey() throws Exception {
         final List<Credential> signingWallet = new ArrayList<>();
         final WsFederationConfiguration cfg = new WsFederationConfiguration();
-        cfg.setSigningCertificateFiles(ctx.getResource("classpath:bad-signing.crt"));
+        cfg.setSigningCertificateResources(ctx.getResource("classpath:bad-signing.crt"));
 
         signingWallet.addAll(cfg.getSigningCertificates());
         final String wresult = testTokens.get("goodToken");

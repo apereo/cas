@@ -3,6 +3,7 @@ package org.jasig.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.util.DateTimeUtils;
@@ -46,9 +47,9 @@ import java.util.stream.Collectors;
 public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
 
-    private final SPSSODescriptor ssoDescriptor;
-    private final EntityDescriptor entityDescriptor;
-    private final MetadataResolver metadataResolver;
+    private SPSSODescriptor ssoDescriptor;
+    private EntityDescriptor entityDescriptor;
+    private MetadataResolver metadataResolver;
 
     private SamlRegisteredServiceServiceProviderMetadataFacade(final SPSSODescriptor ssoDescriptor,
                                                                final EntityDescriptor entityDescriptor,
@@ -84,7 +85,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                          final SamlRegisteredService registeredService,
                                                                          final RequestAbstractType request) {
-        return get(resolver, registeredService, request.getIssuer().getValue());
+        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlRequest(request));
     }
     
     private static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
@@ -126,7 +127,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     public EntityDescriptor getEntityDescriptor() {
-        return entityDescriptor;
+        return this.entityDescriptor;
     }
 
     public Organization getOrganization() {
@@ -216,7 +217,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     public MetadataResolver getMetadataResolver() {
-        return metadataResolver;
+        return this.metadataResolver;
     }
 
 

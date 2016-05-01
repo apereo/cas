@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  * The {@link SamlRegisteredServiceTests} handles test cases for {@link SamlRegisteredService}.
  *
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 5.0.0
  */
 public class SamlRegisteredServiceTests {
 
@@ -37,7 +37,7 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE.getFile());
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE);
         dao.save(service);
         dao.load();
     }

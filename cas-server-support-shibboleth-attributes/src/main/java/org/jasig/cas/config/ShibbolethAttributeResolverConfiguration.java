@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,8 +27,8 @@ import java.util.List;
  * @author Jj
  * @since 5.0.0
  */
-
-@Configuration
+@Configuration("shibbolethAttributeResolverConfiguration")
+@RefreshScope
 @ComponentScan("org.jasig.cas.persondir.support")
 public class ShibbolethAttributeResolverConfiguration {
     @Autowired(required = false)
@@ -39,16 +40,17 @@ public class ShibbolethAttributeResolverConfiguration {
     @Autowired(required = false)
     private PlaceholderConfigurerSupport placeholderConfigurerSupport = new PropertyPlaceholderConfigurer();
 
-    @Bean
+    @RefreshScope
+    @Bean(name="attributeResolver")
     @Scope("singleton")
     AttributeResolver attributeResolver() {
         final ApplicationContext tempApplicationContext = SpringSupport.newContext(
                 "shibbolethAttributeResolverContext",
-                attributeResolverResources,
-                Collections.singletonList(placeholderConfigurerSupport),
+                this.attributeResolverResources,
+                Collections.singletonList(this.placeholderConfigurerSupport),
                 Collections.emptyList(),
                 Collections.emptyList(),
-                applicationContext
+                this.applicationContext
         );
 
         return new AttributeResolverImpl(

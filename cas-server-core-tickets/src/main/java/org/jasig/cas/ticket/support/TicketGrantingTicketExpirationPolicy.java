@@ -4,11 +4,12 @@ import org.jasig.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -21,8 +22,9 @@ import java.util.concurrent.TimeUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
+@RefreshScope
 @Component("ticketGrantingTicketExpirationPolicy")
-public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements InitializingBean {
+public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 7670537200691354820L;
@@ -56,9 +58,12 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
     }
 
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        Assert.isTrue((maxTimeToLiveInMilliSeconds >= timeToKillInMilliSeconds),
+    /**
+     * After properties set.
+     */
+    @PostConstruct
+    public void afterPropertiesSet() {
+        Assert.isTrue(this.maxTimeToLiveInMilliSeconds >= this.timeToKillInMilliSeconds,
                 "maxTimeToLiveInMilliSeconds must be greater than or equal to timeToKillInMilliSeconds.");
     }
 
@@ -68,14 +73,14 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
         final ZonedDateTime creationTime = ticketState.getCreationTime();
 
         // Ticket has been used, check maxTimeToLive (hard window)
-        ZonedDateTime expirationTime = creationTime.plus(maxTimeToLiveInMilliSeconds, ChronoUnit.MILLIS);
+        ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInMilliSeconds, ChronoUnit.MILLIS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
             return true;
         }
 
         // Ticket is within hard window, check timeToKill (sliding window)
-        expirationTime = creationTime.plus(timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        expirationTime = creationTime.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
         if (ticketState.getLastTimeUsed().isAfter(expirationTime)) {
             LOGGER.debug("Ticket is expired because the time since last use is greater than timeToKillInMilliseconds");
             return true;

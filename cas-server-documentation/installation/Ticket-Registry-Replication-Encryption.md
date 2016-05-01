@@ -24,7 +24,7 @@ may be the following, placed into the configuration:
 <alias name="defaultTicketCipherExecutor" alias="ticketCipherExecutor" />
 ```
 
-The settings, algorithms and secret keys used for the cipher may be controlled via `cas.properties`:
+The settings, algorithms and secret keys used for the cipher may be controlled via `application.properties`:
 
 ```properties
 # Secret key to use when encrypting tickets in a distributed ticket registry.

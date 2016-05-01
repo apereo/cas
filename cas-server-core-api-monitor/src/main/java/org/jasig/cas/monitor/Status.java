@@ -24,10 +24,10 @@ public class Status {
     public static final Status ERROR = new Status(StatusCode.ERROR);
 
     /** Status code. */
-    private final StatusCode code;
+    private StatusCode code;
 
     /** Human-readable status description. */
-    private final String description;
+    private String description;
 
 
     /**

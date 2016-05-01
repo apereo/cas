@@ -3,7 +3,6 @@ package org.jasig.cas.support.saml.authentication.principal;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
@@ -13,6 +12,7 @@ import org.jdom.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
@@ -20,29 +20,26 @@ import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
 /**
  * Builds {@link GoogleAccountsService} objects.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("googleAccountsServiceFactory")
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
 
-    private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
+    @Autowired
+    @Qualifier("googleSaml20ObjectBuilder")
+    private GoogleSaml20ObjectBuilder builder;
 
     private PublicKey publicKey;
 
     private PrivateKey privateKey;
-
-
-    @NotNull
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
 
     @Value("${cas.saml.googleapps.publickey.file:}")
     private String publicKeyLocation;
@@ -59,10 +56,12 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
     /**
      * Instantiates a new Google accounts service factory.
      */
-    public GoogleAccountsServiceFactory() {}
+    public GoogleAccountsServiceFactory() {
+    }
 
     /**
      * Init public and private keys.
+     *
      * @throws RuntimeException if key creation encountered an error.
      */
     @PostConstruct
@@ -86,7 +85,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
-        final String xmlRequest = BUILDER.decodeSamlAuthnRequest(
+        final String xmlRequest = this.builder.decodeSamlAuthnRequest(
                 request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
         if (StringUtils.isBlank(xmlRequest)) {
@@ -94,7 +93,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             return null;
         }
 
-        final Document document = BUILDER.constructDocumentFromXml(xmlRequest);
+        final Document document = this.builder.constructDocumentFromXml(xmlRequest);
 
         if (document == null) {
             return null;
@@ -104,19 +103,20 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final String assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
         final String requestId = root.getAttributeValue("ID");
 
-        final GoogleAccountsServiceResponseBuilder builder =
-            new GoogleAccountsServiceResponseBuilder(this.privateKey, this.publicKey, BUILDER);
-        builder.setSkewAllowance(this.skewAllowance);
-        return new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, builder);
+        final GoogleAccountsServiceResponseBuilder responseBuilder =
+                new GoogleAccountsServiceResponseBuilder(this.privateKey, this.publicKey, this.builder);
+        responseBuilder.setSkewAllowance(this.skewAllowance);
+        return new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, responseBuilder);
     }
 
     @Override
     public GoogleAccountsService createService(final String id) {
-        throw new NotImplementedException("This operation is not supported. ");
+        throw new NotImplementedException("This operation is not supported.");
     }
 
     /**
      * Create the private key.
+     *
      * @throws Exception if key creation ran into an error
      */
     protected void createGoogleAppsPrivateKey() throws Exception {
@@ -150,6 +150,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
     /**
      * Create the public key.
+     *
      * @throws Exception if key creation ran into an error
      */
     protected void createGoogleAppsPublicKey() throws Exception {
@@ -161,7 +162,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             bean.setLocation(new ClassPathResource(
-                   StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
             bean.setLocation(new FileSystemResource(
                     StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));

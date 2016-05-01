@@ -2,13 +2,14 @@ package org.jasig.cas.support.oauth.validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
+import org.jasig.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,11 +20,12 @@ import javax.servlet.http.HttpServletRequest;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("oAuthValidator")
 public class OAuthValidator {
 
     /** The logger. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Check if a parameter exists.
@@ -52,7 +54,7 @@ public class OAuthValidator {
         final OAuthWebApplicationService service = new OAuthWebApplicationService(registeredService);
         logger.debug("Check registered service: {}", registeredService);
         try {
-            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return true;
         } catch (final UnauthorizedServiceException e) {
             return false;

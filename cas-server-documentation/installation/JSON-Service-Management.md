@@ -9,7 +9,7 @@ JSON files are
 expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant JSON files.
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

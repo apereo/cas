@@ -1,5 +1,6 @@
 package org.jasig.cas.web.support;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
@@ -24,6 +25,7 @@ extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
         final MockRequestContext context = new MockRequestContext();
         context.setCurrentEvent(new Event("", "error"));
         request.setAttribute("flowRequestContext", context);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         getThrottle().preHandle(request, response, null);
         getThrottle().postHandle(request, response, null, null);
         return response;

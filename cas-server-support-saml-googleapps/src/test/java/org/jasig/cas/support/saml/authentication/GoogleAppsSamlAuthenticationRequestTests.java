@@ -3,8 +3,11 @@ package org.jasig.cas.support.saml.authentication;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.util.CompressionUtils;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
@@ -15,6 +18,14 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
+
+    @Autowired
+    private ApplicationContextProvider applicationContextProvider;
+
+    @Before
+    public void init() {
+        this.applicationContextProvider.setApplicationContext(this.applicationContext);
+    }
 
     @Test
     public void ensureInflation() throws Exception {

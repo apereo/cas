@@ -4,17 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
@@ -29,25 +28,25 @@ import java.security.GeneralSecurityException;
  *
  * @since 3.0.0
  */
+@RefreshScope
 @Component("searchModeSearchDatabaseAuthenticationHandler")
-public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler
-        implements InitializingBean {
+public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
 
-    @NotNull
+    
     private String fieldUser;
 
-    @NotNull
+    
     private String fieldPassword;
 
-    @NotNull
+    
     private String tableUsers;
 
     private String sql;
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
@@ -68,8 +67,10 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
+    /**
+     * After properties set.
+     */
     @PostConstruct
-    @Override
     public void afterPropertiesSet() {
         if (StringUtils.isNotBlank(this.tableUsers) || StringUtils.isNotBlank(this.fieldUser)
                 || StringUtils.isNotBlank(this.fieldPassword)) {
@@ -82,7 +83,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
      * @param fieldPassword The fieldPassword to set.
      */
     @Autowired
-    public final void setFieldPassword(@Value("${cas.jdbc.authn.search.password:}") final String fieldPassword) {
+    public void setFieldPassword(@Value("${cas.jdbc.authn.search.password:}") final String fieldPassword) {
         this.fieldPassword = fieldPassword;
     }
 
@@ -90,7 +91,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
      * @param fieldUser The fieldUser to set.
      */
     @Autowired
-    public final void setFieldUser(@Value("${cas.jdbc.authn.search.user:}") final String fieldUser) {
+    public void setFieldUser(@Value("${cas.jdbc.authn.search.user:}") final String fieldUser) {
         this.fieldUser = fieldUser;
     }
 
@@ -98,7 +99,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
      * @param tableUsers The tableUsers to set.
      */
     @Autowired
-    public final void setTableUsers(@Value("${cas.jdbc.authn.search.table:}") final String tableUsers) {
+    public void setTableUsers(@Value("${cas.jdbc.authn.search.table:}") final String tableUsers) {
         this.tableUsers = tableUsers;
     }
 

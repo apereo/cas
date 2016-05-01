@@ -2,9 +2,9 @@ package org.jasig.cas.support.spnego.web.flow.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 
 /**
@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@RefreshScope
 @Component("hostnameSpnegoClientAction")
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
 
@@ -33,7 +34,7 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
      *                              The pattern to match the retrieved hostname against.
      */
     @Autowired
-    public HostNameSpnegoKnownClientSystemsFilterAction(@NotNull
+    public HostNameSpnegoKnownClientSystemsFilterAction(
                                                         @Value("${cas.spnego.hostname.pattern:something.+}")
                                                         final String hostNamePatternString) {
         super();

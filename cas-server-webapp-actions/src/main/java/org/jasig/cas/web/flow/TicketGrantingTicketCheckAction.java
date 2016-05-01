@@ -6,13 +6,12 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
@@ -26,6 +25,7 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("ticketGrantingTicketCheckAction")
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
@@ -47,8 +47,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
     /**
      * The Central authentication service.
      */
-    @NotNull
-    private final CentralAuthenticationService centralAuthenticationService;
+    
+    private CentralAuthenticationService centralAuthenticationService;
 
 
     /**

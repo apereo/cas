@@ -1,6 +1,7 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,8 +11,9 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("alwaysExpiresExpirationPolicy")
-public final class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
+public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serializable Unique ID. */
     private static final long serialVersionUID = 3836547698242303540L;

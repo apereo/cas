@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +43,7 @@ import static java.util.stream.Collectors.toList;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("authenticationExceptionHandler")
 public class AuthenticationExceptionHandler {
 
@@ -56,7 +57,7 @@ public class AuthenticationExceptionHandler {
     private static final List<Class<? extends Exception>> DEFAULT_ERROR_LIST =
             new ArrayList<>();
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     static {
         DEFAULT_ERROR_LIST.add(AccountLockedException.class);
@@ -72,7 +73,7 @@ public class AuthenticationExceptionHandler {
     }
 
     /** Ordered list of error classes that this class knows how to handle. */
-    @NotNull
+    
     private List<Class<? extends Exception>> errors = DEFAULT_ERROR_LIST;
 
     /** String appended to exception class name to create a message bundle key for that particular error. */
@@ -107,7 +108,7 @@ public class AuthenticationExceptionHandler {
         this.errors.addAll(nonNullErrors);
     }
 
-    public final List<Class<? extends Exception>> getErrors() {
+    public List<Class<? extends Exception>> getErrors() {
         return Collections.unmodifiableList(this.errors);
     }
 
@@ -145,7 +146,7 @@ public class AuthenticationExceptionHandler {
         }
 
         // we don't recognize this exception
-        logger.trace("Unable to translate handler errors of the authentication exception {}. "
+        logger.trace("Unable to translate errors of the authentication exception {}. "
                 + "Returning {} by default...", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
