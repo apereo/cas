@@ -50,7 +50,7 @@ rather utilizes the overlay mechanism to combine CAS original artifacts and loca
 customizations to further ease future upgrades and maintenance.
 
 **Note: Do NOT clone or download the CAS codebase directly. That is ONLY required if you wish to contribute to the development of 
-the project. Utilize the [WAR Overlay method](overlay) instead to build and deploy your CAS instance.**
+the project. Utilize the [WAR Overlay method][overlay] instead to build and deploy your CAS instance.**
 
 
 ## Contributions
@@ -64,7 +64,7 @@ the project. Utilize the [WAR Overlay method](overlay) instead to build and depl
 [casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
 [downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
 [releasenotes]: https://github.com/Jasig/cas/releases
-[casimg]: https://cloud.githubusercontent.com/assets/1205228/14918246/aab58e44-0dd7-11e6-8709-fcbcfa16d1cc.png
+[casimg]: https://cloud.githubusercontent.com/assets/1205228/14939607/7cd35c3c-0f02-11e6-9564-80d8dfc0a064.png
 [caswebheroku]: http://jasigcas.heroku.com
 [casmgheroku]: http://jasigcasmgmt.heroku.com
 [cassupport]: http://jasig.github.io/cas/Support.html
