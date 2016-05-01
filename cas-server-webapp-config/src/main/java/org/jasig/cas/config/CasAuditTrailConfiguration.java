@@ -1,20 +1,28 @@
 package org.jasig.cas.config;
 
 import com.google.common.collect.ImmutableList;
+import org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
+import org.jasig.cas.audit.spi.ServiceResourceResolver;
 import org.jasig.inspektr.audit.AuditTrailManagementAspect;
 import org.jasig.inspektr.audit.AuditTrailManager;
+import org.jasig.inspektr.audit.spi.AuditActionResolver;
+import org.jasig.inspektr.audit.spi.AuditResourceResolver;
 import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
+import org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,43 +31,30 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Configuration("casAuditTrailConfiguration")
-@Lazy(true)
+@EnableAspectJAutoProxy
 public class CasAuditTrailConfiguration {
-    /**
-     * The App code.
-     */
+    private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
+
     @Value("${cas.audit.appcode:CAS}")
     private String appCode;
 
-    /**
-     * The Principal resolver.
-     */
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
-    
-    /**
-     * The Audit resource resolver map.
-     */
-    @Resource(name = "auditResourceResolverMap")
-    private Map auditResourceResolverMap;
 
-    /**
-     * The Audit action resolver map.
-     */
-    @Resource(name = "auditActionResolverMap")
-    private Map auditActionResolverMap;
+    @Autowired
+    @Qualifier("ticketResourceResolver")
+    private AuditResourceResolver ticketResourceResolver;
 
-    /**
-     * The Entry separator.
-     */
+    @Autowired
+    @Qualifier("messageBundleAwareResourceResolver")
+    private AuditResourceResolver messageBundleAwareResourceResolver;
+
     @Value("${cas.audit.singleline.separator:|}")
     private String entrySeparator;
 
-    /**
-     * The Use single line.
-     */
     @Value("${cas.audit.singleline:false}")
     private boolean useSingleLine;
 
@@ -71,8 +66,8 @@ public class CasAuditTrailConfiguration {
     @Bean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect(this.appCode,
-                this.principalResolver, ImmutableList.of(auditTrailManager()), auditActionResolverMap,
-                auditResourceResolverMap);
+                this.principalResolver, ImmutableList.of(auditTrailManager()), auditActionResolverMap(),
+                auditResourceResolverMap());
 
     }
 
@@ -89,14 +84,31 @@ public class CasAuditTrailConfiguration {
         return mgmr;
     }
 
+
+    /**
+     * Cas client info logging filter client info thread local filter.
+     *
+     * @return the client info thread local filter
+     */
+    @RefreshScope
+    @Bean(name = "casClientInfoLoggingFilter")
+    public FilterRegistrationBean casClientInfoLoggingFilter() {
+        final FilterRegistrationBean bean = new FilterRegistrationBean();
+        bean.setFilter(new ClientInfoThreadLocalFilter());
+        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setName("CAS Client Info Logging Filter");
+        return bean;
+    }
+
     /**
      * Authentication action resolver default audit action resolver.
      *
      * @return the default audit action resolver
      */
+    @RefreshScope
     @Bean(name = "authenticationActionResolver")
     public DefaultAuditActionResolver authenticationActionResolver() {
-        return new DefaultAuditActionResolver("_SUCCESS", "_FAILED");
+        return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     /**
@@ -104,6 +116,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
+    @RefreshScope
     @Bean(name = "ticketCreationActionResolver")
     public DefaultAuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
@@ -114,9 +127,10 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
+    @RefreshScope
     @Bean(name = "ticketValidationActionResolver")
     public DefaultAuditActionResolver ticketValidationActionResolver() {
-        return new DefaultAuditActionResolver("D", "_FAILED");
+        return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     /**
@@ -124,9 +138,53 @@ public class CasAuditTrailConfiguration {
      *
      * @return the return value as string resource resolver
      */
+    @RefreshScope
     @Bean(name = "returnValueResourceResolver")
     public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
+    }
+
+
+    /**
+     * Audit action resolver map map.
+     *
+     * @return the map
+     */
+    @RefreshScope
+    @Bean(name = "auditActionResolverMap")
+    public Map auditActionResolverMap() {
+        final Map<String, AuditActionResolver> map = new HashMap<>();
+        map.put("AUTHENTICATION_RESOLVER", authenticationActionResolver());
+        map.put("SAVE_SERVICE_ACTION_RESOLVER", authenticationActionResolver());
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", new DefaultAuditActionResolver());
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", new DefaultAuditActionResolver());
+        map.put("GRANT_SERVICE_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("GRANT_PROXY_TICKET_RESOLVER", ticketCreationActionResolver());
+        map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
+        return map;
+    }
+
+    /**
+     * Audit resource resolver map map.
+     *
+     * @return the map
+     */
+    @RefreshScope
+    @Bean(name = "auditResourceResolverMap")
+    public Map auditResourceResolverMap() {
+        final Map<String, AuditResourceResolver> map = new HashMap<>();
+        map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver);
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver);
+        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
+        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
+        map.put("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
+        map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
+        map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver);
+        map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
+        return map;
     }
 }
 

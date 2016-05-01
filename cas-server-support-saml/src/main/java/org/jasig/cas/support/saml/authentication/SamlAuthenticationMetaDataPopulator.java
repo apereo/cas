@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@RefreshScope
 @Component("samlAuthenticationMetaDataPopulator")
 public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
@@ -39,7 +41,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     /** The Constant AUTHN_METHOD_UNSPECIFIED. */
     public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
 
-    private final Map<String, String> authenticationMethods = new HashMap<>();
+    private Map<String, String> authenticationMethods = new HashMap<>();
 
     /**
      * Instantiates a new SAML authentication meta data populator.
@@ -62,7 +64,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     }
 
     @Override
-    public final void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
 
         final String credentialsClass = credential.getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);

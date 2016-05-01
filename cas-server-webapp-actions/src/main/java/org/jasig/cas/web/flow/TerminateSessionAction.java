@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
@@ -14,6 +13,7 @@ import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -25,31 +25,32 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("terminateSessionAction")
-public final class TerminateSessionAction {
+public class TerminateSessionAction {
 
     /** Webflow event helper component. */
-    private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
+    private EventFactorySupport eventFactorySupport = new EventFactorySupport();
 
     /** The CORE to which we delegate for all CAS functionality. */
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** CookieGenerator for TGT Cookie. */
-    @NotNull
+    
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** CookieGenerator for Warn Cookie. */
-    @NotNull
+    
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();

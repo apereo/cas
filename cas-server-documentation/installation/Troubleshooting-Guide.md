@@ -7,13 +7,6 @@ title: CAS - Troubleshooting Guide
 
 ## Authentication
 
-### Login Form Clearing Credentials
-You may encounter an issue where upon submission of credentials on the login form, the screen clears the input data and asks the user again to repopulate the form. The CAS Server log may also indicate the received login ticket is invalid and therefore unable to accept the authentication request.
-
-The CAS server itself initiates a web session upon authentication requests that by default is configured to last for 5 minutes. The state of the session is managed at server-side and thus, once the session expires any authentication activity on the client side such as submission of the login form is disregarded until a new session a regenerated. Another possible cause may be related to a clustered CAS environment where CAS nodes are protected by a load balancer whose "timeout" is configured less than the default session expiration timeout of CAS. Thus, once the authentication form is submitted and the request is routed to the load balancer, it is seen as a new request and is redirected back to a CAS node for authentication. 
-
-To remedy the problem, the  suggestion is to configure the default CAS session timeout to be an appropriate value that matches the time a given user is expected to stay on the login screen. Similarly, the same change may be applied to the load balancer to treat authentication requests within a longer time span. In `web.xml`, adjust the `session-timeout` attribute to extend the session expiration time. 
-
 ### Application Not Authorized
 You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match for the requested application url.
 

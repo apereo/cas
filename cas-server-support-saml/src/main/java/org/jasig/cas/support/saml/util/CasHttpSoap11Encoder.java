@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  * @since 4.2.0
  */
-public final class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
+public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
     private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasHttpSoap11Encoder.class);

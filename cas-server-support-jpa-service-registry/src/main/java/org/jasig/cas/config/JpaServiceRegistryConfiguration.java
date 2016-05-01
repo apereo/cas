@@ -1,8 +1,9 @@
 package org.jasig.cas.config;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -10,6 +11,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
@@ -20,127 +22,71 @@ import java.util.Properties;
  */
 @Configuration("jpaServiceRegistryConfiguration")
 public class JpaServiceRegistryConfiguration {
-
-    /**
-     * The Show sql.
-     */
+    
     @Value("${database.show.sql:true}")
     private boolean showSql;
-
-    /**
-     * The Generate ddl.
-     */
+    
     @Value("${database.gen.ddl:true}")
     private boolean generateDdl;
-
-    /**
-     * The Hibernate dialect.
-     */
+    
     @Value("${svcreg.database.dialect:org.hibernate.dialect.HSQLDialect}")
     private String hibernateDialect;
-
-    /**
-     * The Hibernate hbm 2 ddl auto.
-     */
+    
     @Value("${svcreg.database.ddl.auto:create-drop}")
     private String hibernateHbm2DdlAuto;
-
-    /**
-     * The Hibernate batch size.
-     */
+    
     @Value("${svcreg.database.batchSize:1}")
     private String hibernateBatchSize;
-
-
-    /**
-     * The Driver class.
-     */
+    
     @Value("${svcreg.database.driverClass:org.hsqldb.jdbcDriver}")
     private String driverClass;
 
-    /**
-     * The Jdbc url.
-     */
     @Value("${svcreg.database.url:jdbc:hsqldb:mem:cas-service-registry}")
     private String jdbcUrl;
 
-    /**
-     * The User.
-     */
     @Value("${svcreg.database.user:sa}")
     private String user;
-
-    /**
-     * The Password.
-     */
+    
     @Value("${svcreg.database.password:}")
     private String password;
-
-    /**
-     * The Initial pool size.
-     */
-    @Value("${svcreg.database.pool.minSize:6}")
-    private int initialPoolSize;
-
-    /**
-     * The Min pool size.
-     */
-    @Value("${svcreg.database.pool.minSize:6}")
-    private int minPoolSize;
-
-    /**
-     * The Max pool size.
-     */
+    
     @Value("${svcreg.database.pool.maxSize:18}")
     private int maxPoolSize;
-
-    /**
-     * The Max idle time excess connections.
-     */
+    
     @Value("${svcreg.database.pool.maxIdleTime:1000}")
     private int maxIdleTimeExcessConnections;
-
-    /**
-     * The Checkout timeout.
-     */
+    
     @Value("${svcreg.database.pool.maxWait:2000}")
     private int checkoutTimeout;
 
-    /**
-     * The Acquire increment.
-     */
-    @Value("${svcreg.database.pool.acquireIncrement:16}")
-    private int acquireIncrement;
 
-    /**
-     * The Acquire retry attempts.
-     */
-    @Value("${svcreg.database.pool.acquireRetryAttempts:5}")
-    private int acquireRetryAttempts;
+    @Value("${svcreg.database.idle.timeout:5000}")
+    private int idleTimeout;
 
-    /**
-     * The Acquire retry delay.
-     */
-    @Value("${svcreg.database.pool.acquireRetryDelay:2000}")
-    private int acquireRetryDelay;
+    @Value("${svcreg.database.leak.threshold:10}")
+    private int leakDetectionThreshold;
 
-    /**
-     * The Idle connection test period.
-     */
-    @Value("${svcreg.database.pool.idleConnectionTestPeriod:30}")
-    private int idleConnectionTestPeriod;
+    @Value("${svcreg.database.fail.fast:true}")
+    private boolean failFast;
 
-    /**
-     * The Preferred test query.
-     */
-    @Value("${svcreg.database.pool.connectionHealthQuery:select 1}")
-    private String preferredTestQuery;
+    @Value("${svcreg.database.isolate.internal.queries:false}")
+    private boolean isolateInternalQueries;
+
+    @Value("${svcreg.database.health.query:SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS}")
+    private String healthCheckQuery;
+
+    @Value("${svcreg.database.pool.suspension:false}")
+    private boolean allowPoolSuspension;
+
+    @Value("${svcreg.database.autocommit:false}")
+    private boolean autoCommit;
 
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.
      *
      * @return the hibernate jpa vendor adapter
      */
+    @RefreshScope
     @Bean(name = "jpaServiceVendorAdapter")
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
@@ -150,7 +96,7 @@ public class JpaServiceRegistryConfiguration {
     }
 
     /**
-     * Jpa packages to scan string [].
+     * Jpa packages to scan.
      *
      * @return the string [ ]
      */
@@ -168,6 +114,7 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
+    @RefreshScope
     @Bean(name = "serviceEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
@@ -204,24 +151,27 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the combo pooled data source
      */
+    @RefreshScope
     @Bean(name = "dataSourceService")
-    public ComboPooledDataSource dataSourceService() {
+    public DataSource dataSourceService() {
         try {
-            final ComboPooledDataSource bean = new ComboPooledDataSource();
-            bean.setDriverClass(this.driverClass);
+            final HikariDataSource bean = new HikariDataSource();
+            bean.setDriverClassName(this.driverClass);
             bean.setJdbcUrl(this.jdbcUrl);
-            bean.setUser(this.user);
+            bean.setUsername(this.user);
             bean.setPassword(this.password);
-            bean.setInitialPoolSize(this.initialPoolSize);
-            bean.setMinPoolSize(this.minPoolSize);
-            bean.setMaxPoolSize(this.maxPoolSize);
-            bean.setMaxIdleTimeExcessConnections(this.maxIdleTimeExcessConnections);
-            bean.setCheckoutTimeout(this.checkoutTimeout);
-            bean.setAcquireIncrement(this.acquireIncrement);
-            bean.setAcquireRetryAttempts(this.acquireRetryAttempts);
-            bean.setAcquireRetryDelay(this.acquireRetryDelay);
-            bean.setIdleConnectionTestPeriod(this.idleConnectionTestPeriod);
-            bean.setPreferredTestQuery(this.preferredTestQuery);
+
+            bean.setMaximumPoolSize(this.maxPoolSize);
+            bean.setMinimumIdle(this.maxIdleTimeExcessConnections);
+            bean.setIdleTimeout(this.idleTimeout);
+            bean.setLeakDetectionThreshold(this.leakDetectionThreshold);
+            bean.setInitializationFailFast(this.failFast);
+            bean.setIsolateInternalQueries(this.isolateInternalQueries);
+            bean.setConnectionTestQuery(this.healthCheckQuery);
+            bean.setAllowPoolSuspension(this.allowPoolSuspension);
+            bean.setAutoCommit(this.autoCommit);
+            bean.setLoginTimeout(this.checkoutTimeout);
+            bean.setValidationTimeout(this.checkoutTimeout);
             return bean;
         } catch (final Exception e) {
             throw new RuntimeException(e);

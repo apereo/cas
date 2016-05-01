@@ -6,6 +6,7 @@ dependencies {
     compile libraries.shibidp
     compile libraries.spring
     compile libraries.shibattributes
+    compile libraries.springcloud
 
     compile project(':cas-server-support-saml-core')
     

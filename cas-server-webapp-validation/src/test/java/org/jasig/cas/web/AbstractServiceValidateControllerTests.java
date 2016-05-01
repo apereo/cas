@@ -347,11 +347,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         assertEquals(modelAndView.getViewName(), AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME);
     }
 
-    protected final ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
+    protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
         final AuthenticationResult ctx = org.jasig.cas.authentication.TestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
-        final TicketGrantingTicket tId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(ctx);
+        final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -360,8 +359,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("pgtUrl", "https://www.github.com");
 
 
-        return this.serviceValidateController
-                .handleRequestInternal(request, new MockHttpServletResponse());
+        return this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
     }
 
 }

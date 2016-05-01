@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,14 +23,14 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class SimpleMetadataUIInfo implements Serializable {
+public class SimpleMetadataUIInfo implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleMetadataUIInfo.class);
 
     private static final long serialVersionUID = -1434801982864628179L;
 
     private transient UIInfo uiInfo;
 
-    private final transient RegisteredService registeredService;
+    private transient RegisteredService registeredService;
 
     /**
      * Instantiates a new Simple metadata uI info.
@@ -72,8 +71,8 @@ public final class SimpleMetadataUIInfo implements Serializable {
      * @return the descriptions
      */
     public Collection<String> getDescriptions() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getDescriptions());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getDescriptions());
         }
         return new ArrayList<>();
     }
@@ -97,8 +96,8 @@ public final class SimpleMetadataUIInfo implements Serializable {
      * @return the display names
      */
     public Collection<String> getDisplayNames() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getDisplayNames());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getDisplayNames());
         }
         return new ArrayList<>();
     }
@@ -119,8 +118,8 @@ public final class SimpleMetadataUIInfo implements Serializable {
      * @return the information uR ls
      */
     public Collection<String> getInformationURLs() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getInformationURLs());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getInformationURLs());
         }
         return new ArrayList<>();
     }
@@ -141,8 +140,8 @@ public final class SimpleMetadataUIInfo implements Serializable {
      * @return the privacy statement uR ls
      */
     public Collection<String> getPrivacyStatementURLs() {
-        if (uiInfo != null) {
-            return getStringValues(uiInfo.getPrivacyStatementURLs());
+        if (this.uiInfo != null) {
+            return getStringValues(this.uiInfo.getPrivacyStatementURLs());
         }
         return new ArrayList<>();
     }
@@ -172,8 +171,8 @@ public final class SimpleMetadataUIInfo implements Serializable {
     public Collection<Logo> getLogoUrls() {
         final List<Logo> list = new ArrayList<>();
 
-        if (uiInfo != null) {
-            list.addAll(uiInfo.getLogos().stream().collect(Collectors.toList()));
+        if (this.uiInfo != null) {
+            list.addAll(this.uiInfo.getLogos().stream().collect(Collectors.toList()));
         }
 
         return list;
@@ -197,7 +196,7 @@ public final class SimpleMetadataUIInfo implements Serializable {
         return list;
     }
 
-    public void setUIInfo(@NotNull final UIInfo uiInfo) {
+    public void setUIInfo(final UIInfo uiInfo) {
         this.uiInfo = uiInfo;
     }
 }

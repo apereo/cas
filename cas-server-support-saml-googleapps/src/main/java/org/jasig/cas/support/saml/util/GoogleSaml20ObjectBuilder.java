@@ -4,6 +4,8 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -16,11 +18,13 @@ import java.lang.reflect.Field;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1.0
  */
+@RefreshScope
+@Component("googleSaml20ObjectBuilder")
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     private static final long serialVersionUID = 2979638064754730668L;
 
     @Override
-    public final QName getSamlObjectQName(final Class objectType) throws RuntimeException {
+    public QName getSamlObjectQName(final Class objectType) throws RuntimeException {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
             final String name = f.get(null).toString();

@@ -22,10 +22,10 @@ import org.springframework.core.io.Resource;
  */
 public class MockWebServer {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Request handler. */
-    private final Worker worker;
+    private Worker worker;
 
     /** Controls the worker thread. */
     private Thread workerThread;
@@ -78,7 +78,7 @@ public class MockWebServer {
     /**
      * Worker class handles request processing.
      */
-    private static final class Worker implements Runnable {
+    private static class Worker implements Runnable {
 
         /** Server always returns HTTP 200 response. */
         private static final String STATUS_LINE = "HTTP/1.1 200 Success\r\n";
@@ -89,19 +89,19 @@ public class MockWebServer {
         /** Response buffer size. */
         private static final int BUFFER_SIZE = 2048;
 
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
         /** Run flag. */
         private boolean running;
 
         /** Server socket. */
-        private final ServerSocket serverSocket;
+        private ServerSocket serverSocket;
 
         /** Resource to serve. */
-        private final Resource resource;
+        private Resource resource;
 
         /** MIME content type of resource to serve. */
-        private final String contentType;
+        private String contentType;
 
 
         /**
@@ -125,7 +125,7 @@ public class MockWebServer {
                 try {
                     writeResponse(this.serverSocket.accept());
                     Thread.sleep(500);
-                } catch (final SocketException se) {
+                } catch (final SocketException e) {
                     logger.debug("Stopping on socket close.");
                     this.running = false;
                 } catch (final Exception e) {

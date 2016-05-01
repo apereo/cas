@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,21 +29,22 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@RefreshScope
 @Component("personDirectoryPrincipalResolver")
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Repository of principal attributes to be retrieved.
      */
-    @NotNull
+    
     protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
 
     /**
      * Factory to create the principal type.
      **/
-    @NotNull
+    
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
@@ -58,7 +59,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected String principalAttributeName;
 
     @Autowired
-    public final void setAttributeRepository(@Qualifier("attributeRepository")
+    public void setAttributeRepository(@Qualifier("attributeRepository")
                                              final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
     }

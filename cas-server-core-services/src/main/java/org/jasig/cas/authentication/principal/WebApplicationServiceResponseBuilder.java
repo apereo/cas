@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -851233878780818494L;
-    private final Response.ResponseType responseType;
+    private Response.ResponseType responseType;
 
     /**
      * Instantiates a new Web application service response builder.
@@ -32,10 +32,10 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, ticketId);
         }
 
-        if (responseType.equals(Response.ResponseType.POST)) {
+        if (this.responseType.equals(Response.ResponseType.POST)) {
             return buildPost(service, parameters);
         }
-        if (responseType.equals(Response.ResponseType.REDIRECT)) {
+        if (this.responseType.equals(Response.ResponseType.REDIRECT)) {
             return buildRedirect(service, parameters);
         }
 

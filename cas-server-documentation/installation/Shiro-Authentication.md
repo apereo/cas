@@ -9,7 +9,7 @@ CAS support handling the authentication event via [Apache Shiro](http://shiro.ap
 
 
 ## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -26,7 +26,7 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

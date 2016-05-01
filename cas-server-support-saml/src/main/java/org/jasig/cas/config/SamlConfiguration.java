@@ -7,6 +7,7 @@ import org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,38 +19,31 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlConfiguration")
 public class SamlConfiguration {
-
-    /**
-     * The Issuer.
-     */
+    
     @Value("${cas.saml.response.issuer:localhost}")
     private String issuer;
-
-    /**
-     * The Skew allowance.
-     */
+    
     @Value("${cas.saml.response.skewAllowance:0}")
     private int skewAllowance;
-
-    /**
-     * The Services manager.
-     */
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    /**
-     * The Cas attribute encoder.
-     */
+
     @Autowired
     @Qualifier("casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
+
+    @Value("${cas.saml.attribute.namespace:http://www.ja-sig.org/products/cas/}")
+    private String defaultAttributeNamespace;
 
     /**
      * Cas saml service success view saml 10 success response view.
      *
      * @return the saml 10 success response view
      */
+    @RefreshScope
     @Bean(name="casSamlServiceSuccessView")
     public Saml10SuccessResponseView casSamlServiceSuccessView() {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
@@ -57,6 +51,7 @@ public class SamlConfiguration {
         view.setCasAttributeEncoder(this.casAttributeEncoder);
         view.setIssuer(this.issuer);
         view.setSkewAllowance(this.skewAllowance);
+        view.setDefaultAttributeNamespace(this.defaultAttributeNamespace);
         return view;
     }
 
@@ -65,6 +60,7 @@ public class SamlConfiguration {
      *
      * @return the saml 10 failure response view
      */
+    @RefreshScope
     @Bean(name="casSamlServiceFailureView")
     public Saml10FailureResponseView casSamlServiceFailureView() {
         final Saml10FailureResponseView view = new Saml10FailureResponseView();

@@ -7,6 +7,7 @@ import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,8 +29,9 @@ import java.nio.charset.Charset;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
+@RefreshScope
 @Component("spnego")
-public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
+public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
 
     @Value("${cas.spnego.ntlm.allowed:true}")
@@ -120,7 +122,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             logger.debug("Unable to obtain the output token required.");
         }
 
-        if (spnegoCredentials.getPrincipal() == null && send401OnAuthenticationFailure) {
+        if (spnegoCredentials.getPrincipal() == null && this.send401OnAuthenticationFailure) {
             logger.debug("Setting HTTP Status to 401");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }

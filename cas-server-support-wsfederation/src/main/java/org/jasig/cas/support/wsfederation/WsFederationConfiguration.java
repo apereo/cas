@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
@@ -27,11 +27,12 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RefreshScope
 @Component("wsFedConfig")
-public final class WsFederationConfiguration implements Serializable {
+public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Describes how the WS-FED principal resolution machinery
@@ -52,23 +53,23 @@ public final class WsFederationConfiguration implements Serializable {
         BOTH
     }
 
-    @NotNull
+    
     @Value("${cas.wsfed.idp.idattribute:upn}")
     private String identityAttribute;
 
-    @NotNull
+    
     @Value("${cas.wsfed.idp.id:https://adfs.example.org/adfs/services/trust}")
     private String identityProviderIdentifier;
 
-    @NotNull
+    
     @Value("${cas.wsfed.idp.url:https://adfs.example.org/adfs/ls/}")
     private String identityProviderUrl;
 
-    @NotNull
+    
     @Value("#{'${cas.wsfed.idp.signingcerts:classpath:adfs-signing.crt}'.split(',')}")
-    private List<Resource> signingCertificateFiles;
+    private List<Resource> signingCertificateResources;
 
-    @NotNull
+    
     @Value("${cas.wsfed.rp.id:urn:cas:localhost}")
     private String relyingPartyIdentifier;
 
@@ -86,7 +87,7 @@ public final class WsFederationConfiguration implements Serializable {
 
     @PostConstruct
     private void initCertificates() {
-        createSigningWallet(this.signingCertificateFiles);
+        createSigningWallet(this.signingCertificateResources);
     }
 
     /**
@@ -113,7 +114,7 @@ public final class WsFederationConfiguration implements Serializable {
      * @return the identifier
      */
     public String getIdentityProviderIdentifier() {
-        return identityProviderIdentifier;
+        return this.identityProviderIdentifier;
     }
 
     /**
@@ -175,18 +176,18 @@ public final class WsFederationConfiguration implements Serializable {
      *
      * @return the list of files
      */
-    public List<Resource> getSigningCertificateFiles() {
-        return this.signingCertificateFiles;
+    public List<Resource> getSigningCertificateResources() {
+        return this.signingCertificateResources;
     }
 
     /**
      * sets the signing certs.
      *
-     * @param signingCertificateFiles a list of certificate files to read in.
+     * @param signingCertificateResources a list of certificate files to read in.
      */
-    public void setSigningCertificateFiles(final Resource... signingCertificateFiles) {
-        this.signingCertificateFiles = Arrays.asList(signingCertificateFiles);
-        createSigningWallet(this.signingCertificateFiles);
+    public void setSigningCertificateResources(final Resource... signingCertificateResources) {
+        this.signingCertificateResources = Arrays.asList(signingCertificateResources);
+        createSigningWallet(this.signingCertificateResources);
     }
 
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
@@ -199,7 +200,7 @@ public final class WsFederationConfiguration implements Serializable {
      * @return the tolerance in milliseconds
      */
     public int getTolerance() {
-        return tolerance;
+        return this.tolerance;
     }
 
     /**
@@ -217,7 +218,7 @@ public final class WsFederationConfiguration implements Serializable {
      * @return an attributeMutator
      */
     public WsFederationAttributeMutator getAttributeMutator() {
-        return attributeMutator;
+        return this.attributeMutator;
     }
 
     /**
@@ -230,7 +231,7 @@ public final class WsFederationConfiguration implements Serializable {
     }
 
     public WsFedPrincipalResolutionAttributesType getAttributesType() {
-        return attributesType;
+        return this.attributesType;
     }
 
     public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {

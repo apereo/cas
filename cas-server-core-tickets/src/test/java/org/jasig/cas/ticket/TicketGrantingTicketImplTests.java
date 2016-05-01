@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  */
 public class TicketGrantingTicketImplTests {
 
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     @Test
     public void verifyEquals() {

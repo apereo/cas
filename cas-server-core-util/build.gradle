@@ -4,6 +4,7 @@ dependencies {
     compile project(':cas-server-core-api-authentication')
     compile project(':cas-server-core-api-util')
     compile libraries.spring
+    compile libraries.springcloud
     compile libraries.shiro
     compile libraries.quartz
     compile libraries.jackson

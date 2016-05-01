@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication.handler;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,8 +10,9 @@ import org.springframework.stereotype.Component;
 
  * @since 3.3.6
  */
+@RefreshScope
 @Component("noOpPrincipalNameTransformer")
-public final class NoOpPrincipalNameTransformer implements PrincipalNameTransformer {
+public class NoOpPrincipalNameTransformer implements PrincipalNameTransformer {
 
     @Override
     public String transform(final String formUserId) {

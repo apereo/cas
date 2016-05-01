@@ -18,10 +18,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 4.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:/META-INF/spring/openid-config.xml"})
+@ContextConfiguration("classpath:/META-INF/spring/openid-config.xml")
 public class AbstractOpenIdTests {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     @Qualifier("openIdServiceFactory")

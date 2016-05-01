@@ -4,7 +4,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.regex.Pattern;
 
@@ -14,11 +13,11 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
+public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
     private static final long serialVersionUID = -211069319543047324L;
     
-    private final Pattern pattern;
+    private Pattern pattern;
 
     /**
      * Instantiates a new Regex matching registered service proxy policy.
@@ -34,7 +33,7 @@ public final class RegexMatchingRegisteredServiceProxyPolicy implements Register
      * The matching by default is done in a case insensitive manner.
      * @param pgtUrlPattern the pgt url pattern
      */
-    public RegexMatchingRegisteredServiceProxyPolicy(@NotNull final String pgtUrlPattern) {
+    public RegexMatchingRegisteredServiceProxyPolicy(final String pgtUrlPattern) {
         this.pattern = Pattern.compile(pgtUrlPattern, Pattern.CASE_INSENSITIVE);
     }
 

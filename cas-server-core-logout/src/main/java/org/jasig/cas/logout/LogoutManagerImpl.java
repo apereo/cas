@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,8 +23,9 @@ import java.util.List;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@RefreshScope
 @Component("logoutManager")
-public final class LogoutManagerImpl implements LogoutManager {
+public class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
@@ -33,12 +34,12 @@ public final class LogoutManagerImpl implements LogoutManager {
     @Value("${slo.callbacks.disabled:false}")
     private boolean singleLogoutCallbacksDisabled;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("logoutBuilder")
     private LogoutMessageCreator logoutMessageBuilder;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("defaultSingleLogoutServiceMessageHandler")
     private SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
@@ -129,14 +130,14 @@ public final class LogoutManagerImpl implements LogoutManager {
     }
 
     public boolean isSingleLogoutCallbacksDisabled() {
-        return singleLogoutCallbacksDisabled;
+        return this.singleLogoutCallbacksDisabled;
     }
 
     public LogoutMessageCreator getLogoutMessageBuilder() {
-        return logoutMessageBuilder;
+        return this.logoutMessageBuilder;
     }
 
     public SingleLogoutServiceMessageHandler getSingleLogoutServiceMessageHandler() {
-        return singleLogoutServiceMessageHandler;
+        return this.singleLogoutServiceMessageHandler;
     }
 }

@@ -17,7 +17,6 @@ import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,23 +35,23 @@ import java.util.Set;
  */
 public abstract class AbstractMetadataResolverAdapter implements MetadataResolverAdapter {
     /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Metadata resources along with filters to perform validation. */
-    @NotNull
-    protected final Map<Resource, MetadataFilterChain> metadataResources;
+    
+    protected Map<Resource, MetadataFilterChain> metadataResources;
 
     /** Whether the metadata resolver should require valid metadata. Default is true. */
     protected boolean requireValidMetadata = true;
 
     /** The openSAML config bean. **/
     @Autowired
-    @NotNull
+    
     protected OpenSamlConfigBean configBean;
 
     private ChainingMetadataResolver metadataResolver;
 
-    private final Object lock = new Object();
+    private Object lock = new Object();
 
     /**
      * Instantiates a new abstract metadata resolver adapter.
@@ -94,7 +93,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         try {
             final CriteriaSet criterions = new CriteriaSet(new EntityIdCriterion(entityId));
             if (this.metadataResolver != null) {
-                return metadataResolver.resolveSingle(criterions);
+                return this.metadataResolver.resolveSingle(criterions);
             }
         } catch (final Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -107,7 +106,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * Build metadata resolver aggregate.
      *
      */
-    protected final void buildMetadataResolverAggregate() {
+    protected void buildMetadataResolverAggregate() {
         buildMetadataResolverAggregate(null);
     }
 
@@ -116,9 +115,9 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * and attempts to resolve the metadata.
      * @param entityId the entity id
      */
-    public final void buildMetadataResolverAggregate(final String entityId) {
+    public void buildMetadataResolverAggregate(final String entityId) {
         try {
-            final Set<Map.Entry<Resource, MetadataFilterChain>> entries = metadataResources.entrySet();
+            final Set<Map.Entry<Resource, MetadataFilterChain>> entries = this.metadataResources.entrySet();
             for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {
                 final Resource resource = entry.getKey();
                 logger.debug("Loading [{}]", resource.getFilename());

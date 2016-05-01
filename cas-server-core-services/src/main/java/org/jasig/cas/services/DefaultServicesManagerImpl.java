@@ -21,13 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -47,15 +47,16 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("servicesManager")
-public final class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
+public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
     /**
      * Instance of ServiceRegistryDao.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
@@ -186,6 +187,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * Load services that are provided by the DAO.
      */
     public void load() {
+        LOGGER.debug("Loading services from {}", this.serviceRegistryDao);
         this.services = this.serviceRegistryDao.load().stream()
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service {}", r.getServiceId());
@@ -217,7 +219,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
                         .repeatForever()).build();
 
                 LOGGER.debug("Scheduling {} job", this.getClass().getName());
-                scheduler.scheduleJob(job, trigger);
+                this.scheduler.scheduleJob(job, trigger);
                 LOGGER.info("Services manager will reload service definitions every {} seconds",
                     this.refreshInterval);
             }
@@ -228,7 +230,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     private boolean shouldScheduleLoaderJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && this.scheduler != null) {
             LOGGER.debug("Found CAS servlet application context for service management");
             return true;
         }
@@ -253,7 +255,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         @Override
         public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
             try {
-                servicesManager.reload();
+                this.servicesManager.reload();
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

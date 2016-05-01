@@ -20,7 +20,7 @@ For a fully working example, see [https://github.com/UniconLabs/cas-gradle-sampl
 
         <alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
 
-1. Modify either `cas.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
+1. Modify either `application.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
 comma seperated list of resources to use for the configuration
 
         -Dshibboleth.attributeResolver.resources=classpath:attribute-resolver.xml

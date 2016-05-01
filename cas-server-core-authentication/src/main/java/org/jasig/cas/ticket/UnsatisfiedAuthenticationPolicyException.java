@@ -38,6 +38,6 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
      * @return Non-null unsatisfied policy cause.
      */
     public ContextualAuthenticationPolicy<?> getPolicy() {
-        return policy;
+        return this.policy;
     }
 }

@@ -15,6 +15,7 @@ import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ByteArrayResource;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
@@ -26,8 +27,6 @@ import org.cryptacular.x509.ExtensionReader;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Performs CRL-based revocation checking by consulting resources defined in
@@ -42,6 +41,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.4.6
  *
  */
+@RefreshScope
 @Component("crlDistributionPointRevocationChecker")
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
@@ -65,7 +65,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      *
      * @param crlCache Cache for CRL data.
      */
-    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache) {
+    public CRLDistributionPointRevocationChecker(final Cache crlCache) {
         this(crlCache, new ResourceCRLFetcher());
     }
 
@@ -75,7 +75,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param crlCache Cache for CRL data.
      * @param throwOnFetchFailure the throw on fetch failure
      */
-    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache,
+    public CRLDistributionPointRevocationChecker(final Cache crlCache,
                                                  final boolean throwOnFetchFailure) {
         this(crlCache, new ResourceCRLFetcher());
         setThrowOnFetchFailure(throwOnFetchFailure);
@@ -87,9 +87,9 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param crlCache the crl cache
      * @param fetcher the fetcher
      */
-    public CRLDistributionPointRevocationChecker(@NotNull
+    public CRLDistributionPointRevocationChecker(
                                                  final Cache crlCache,
-                                                 @NotNull
+                                                 
                                                  final CRLFetcher fetcher) {
         this.crlCache = crlCache;
         this.fetcher = fetcher;

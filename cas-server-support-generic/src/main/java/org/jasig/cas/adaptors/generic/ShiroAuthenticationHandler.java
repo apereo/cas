@@ -21,8 +21,10 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +43,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("shiroAuthenticationHandler")
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -84,8 +87,10 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Autowired
     public void setShiroConfiguration(@Value("${shiro.authn.config.file:classpath:shiro.ini}") final Resource resource) {
         try {
-            if (resource.exists()) {
-                final String location = resource.getURI().toString();
+            final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
+            if (shiroResource.exists()) {
+                
+                final String location = shiroResource.getURI().toString();
                 logger.debug("Loading Shiro configuration from {}", location);
 
                 final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
@@ -100,7 +105,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
         try {
             final RememberMeUsernamePasswordCredential credential =
@@ -127,8 +132,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             throw new CredentialExpiredException(eae.getMessage());
         } catch (final DisabledAccountException eae) {
             throw new AccountDisabledException(eae.getMessage());
-        } catch (final AuthenticationException ae){
-            throw new FailedLoginException(ae.getMessage());
+        } catch (final AuthenticationException e){
+            throw new FailedLoginException(e.getMessage());
         }
     }
 
@@ -150,7 +155,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
         if (this.requiredPermissions != null) {
             for (final String perm : this.requiredPermissions) {
                 if (!currentUser.isPermitted(perm)) {
-                    throw new FailedLoginException("Required permission " + perm + " does not exist");
+                    throw new FailedLoginException("Required permission " + perm + " cannot be located");
                 }
             }
         }

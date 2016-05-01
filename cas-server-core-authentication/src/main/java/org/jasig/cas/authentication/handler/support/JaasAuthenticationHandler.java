@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.principal.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -17,7 +18,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Set;
@@ -61,6 +61,7 @@ import java.util.Set;
  * @see javax.security.auth.callback.NameCallback
  * @since 3.0.0
  */
+@RefreshScope
 @Component("jaasAuthenticationHandler")
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -78,7 +79,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private static final String SYS_PROP_KERB5_KDC = "java.security.krb5.kdc";
     
     /** The realm that contains the login module information. */
-    @NotNull
+    
     private String realm = DEFAULT_REALM;
 
     /** System property value to overwrite the realm in krb5 config. */
@@ -97,11 +98,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
         if (this.kerberosKdcSystemProperty != null) {
-            logger.debug("Setting kerberos system property {} to {}", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
+            logger.debug("Configured kerberos system property {} to {}", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
         }
         if (this.kerberosRealmSystemProperty != null) {
@@ -152,7 +153,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @since 4.1.0
      */
     @Autowired
-    public final void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
+    public void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
                                                          final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
     }
@@ -174,7 +175,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @since 4.1.0
      */
     @Autowired
-    public final void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
+    public void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
                                                        final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }
@@ -185,13 +186,13 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * accepted in the callback array. This code based loosely on example given
      * in Sun's javadoc for CallbackHandler interface.
      */
-    protected static final class UsernamePasswordCallbackHandler implements CallbackHandler {
+    protected static class UsernamePasswordCallbackHandler implements CallbackHandler {
 
         /** The username of the principal we are trying to authenticate. */
-        private final String userName;
+        private String userName;
 
         /** The password of the principal we are trying to authenticate. */
-        private final String password;
+        private String password;
 
         /**
          * Constructor accepts name and password to be used for authentication.

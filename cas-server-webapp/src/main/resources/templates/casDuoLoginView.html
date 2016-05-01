@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<div th:replace="fragments/top"/>
+
+<body id="cas">
+<div id="container">
+    <div th:replace="fragments/logo"/>
+
+    <div id="content">
+        
+        <script th:src="@{/js/duo/Duo-Web-v2.min.js}"></script>
+        <form method="post" id="duo_form" class="fm-v clearfix" th:object="${credential}">
+            <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+            </div>
+            
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="submit"/>
+            
+            <div class="box fl-panel" id="login">
+                <iframe id="duo_iframe"
+                        width="620"
+                        height="330"
+                        frameborder="0"
+                        th:attr="data-host=${apiHost},data-sig-request=${sigRequest}"
+                        data-post-argument="signedDuoResponse">
+                </iframe>
+            </div>
+        </form>
+    </div>
+    <div th:include="fragments/footer"/>
+</div>
+<div th:include="fragments/bottom"/>
+</body>
+</html>
+
+

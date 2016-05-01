@@ -1,8 +1,6 @@
 package org.jasig.cas.authentication;
 
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides
  * unified logic around retrieval and configuration of exception codes that may be
@@ -28,7 +26,7 @@ public abstract class RootCasException extends RuntimeException {
      *
      * @param code the code to describe what type of exception this is.
      */
-    public RootCasException(@NotNull final String code) {
+    public RootCasException(final String code) {
         this.code = code;
     }
 
@@ -39,7 +37,7 @@ public abstract class RootCasException extends RuntimeException {
      * @param code the code to describe what type of exception this is.
      * @param msg  The error message associated with this exception for additional logging purposes.
      */
-    public RootCasException(@NotNull final String code, final String msg) {
+    public RootCasException(final String code, final String msg) {
         super(msg);
         this.code = code;
     }
@@ -51,7 +49,7 @@ public abstract class RootCasException extends RuntimeException {
      * @param code      the code to describe what type of exception this is.
      * @param throwable the original exception we are chaining.
      */
-    public RootCasException(@NotNull final String code, final Throwable throwable) {
+    public RootCasException(final String code, final Throwable throwable) {
         super(throwable);
         this.code = code;
     }
@@ -61,7 +59,7 @@ public abstract class RootCasException extends RuntimeException {
      * calls {@code getCode()} on the cause of the chained exception rather than the returning
      * the code itself.
      */
-    public final String getCode() {
+    public String getCode() {
         final Throwable cause = this.getCause();
         if (cause instanceof RootCasException) {
             return ((RootCasException) cause).getCode();

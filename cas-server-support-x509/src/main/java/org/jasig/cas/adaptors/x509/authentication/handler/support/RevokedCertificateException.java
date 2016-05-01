@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
  * @since 3.4.6
  *
  */
-public final class RevokedCertificateException extends GeneralSecurityException {
+public class RevokedCertificateException extends GeneralSecurityException {
 
     /** OID for reasonCode CRL extension. */
     public static final String CRL_REASON_OID = "2.5.29.21";

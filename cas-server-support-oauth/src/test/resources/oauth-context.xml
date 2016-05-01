@@ -14,12 +14,16 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <description>
-        This file is loaded by the Spring configuration automatically, and serves as a placeholder
-        for various view definitions and beans. This helps with construction of views that require
-        references to other beans and whose changes can be configured externally.
-    </description>
-
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
     <context:property-placeholder location="classpath:cas.properties"
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="false"/>

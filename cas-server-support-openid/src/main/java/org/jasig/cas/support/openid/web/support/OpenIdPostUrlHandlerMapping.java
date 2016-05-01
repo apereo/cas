@@ -4,6 +4,7 @@ import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -17,8 +18,9 @@ import java.util.Properties;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("openIdPostUrlHandlerMapping")
-public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
+public class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
     @Autowired
     @Qualifier("openidDelegatingController")

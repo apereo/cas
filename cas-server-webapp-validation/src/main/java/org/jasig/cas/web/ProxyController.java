@@ -9,6 +9,7 @@ import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 /**
  * The ProxyController is involved with returning a Proxy Ticket (in CAS 2
@@ -36,6 +36,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("proxyController")
 @Controller
 public class ProxyController {
@@ -50,7 +51,7 @@ public class ProxyController {
     private static final String MODEL_SERVICE_TICKET = "ticket";
 
     /** CORE to delegate all non-web tier functionality to. */
-    @NotNull
+    
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired

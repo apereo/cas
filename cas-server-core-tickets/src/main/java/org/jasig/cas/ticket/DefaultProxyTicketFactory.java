@@ -8,10 +8,10 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -21,16 +21,16 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("defaultProxyTicketFactory")
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    @NotNull
-    protected final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    
+    protected UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
-    @NotNull
     @Resource(name="uniqueIdGeneratorsMap")
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
@@ -39,7 +39,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     protected boolean onlyTrackMostRecentSession = true;
 
     /** ExpirationPolicy for Service Tickets. */
-    @NotNull
+    
     @Resource(name="proxyTicketExpirationPolicy")
     protected ExpirationPolicy proxyTicketExpirationPolicy;
 
@@ -69,11 +69,11 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         return (T) this;
     }
 
-    public final boolean isOnlyTrackMostRecentSession() {
-        return onlyTrackMostRecentSession;
+    public boolean isOnlyTrackMostRecentSession() {
+        return this.onlyTrackMostRecentSession;
     }
 
-    public final void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
+    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
         this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 

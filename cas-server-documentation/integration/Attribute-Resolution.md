@@ -179,7 +179,7 @@ for configuration.
 <alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
 ```
 
-- Modify either `cas.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
+- Modify either `application.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
 comma seperated list of resources to use for the configuration:
 
 ```shell

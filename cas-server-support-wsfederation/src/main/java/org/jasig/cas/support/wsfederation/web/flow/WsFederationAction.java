@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -23,7 +24,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotNull;
 
 /**
  * This class represents an action in the webflow to retrieve WsFederation information on the callback url which is
@@ -32,8 +32,9 @@ import javax.validation.constraints.NotNull;
  * @author John Gasper
  * @since 4.2.0
  */
+@RefreshScope
 @Component("wsFederationAction")
-public final class WsFederationAction extends AbstractAction {
+public class WsFederationAction extends AbstractAction {
 
     private static final String LOCALE = "locale";
     private static final String METHOD = "method";
@@ -45,24 +46,24 @@ public final class WsFederationAction extends AbstractAction {
     private static final String WRESULT = "wresult";
     private static final String WSIGNIN = "wsignin1.0";
 
-    private final Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
+    private transient Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
 
-    @NotNull
+    
     @Autowired
     @Qualifier("wsFederationHelper")
     private WsFederationHelper wsFederationHelper;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("wsFedConfig")
     private WsFederationConfiguration configuration;
 
-    @NotNull
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @NotNull
+    
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -94,27 +95,27 @@ public final class WsFederationAction extends AbstractAction {
                 }
 
                 // create credentials
-                final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
+                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wresult);
 
                 if (assertion == null) {
                     logger.error("Could not validate assertion via parsing the token from {}", WRESULT);
                     return error();
                 }
 
-                if (!wsFederationHelper.validateSignature(assertion, configuration)) {
+                if (!this.wsFederationHelper.validateSignature(assertion, this.configuration)) {
                     logger.error("WS Requested Security Token is blank or the signature is not valid.");
                     return error();
                 }
 
                 try {
 
-                    final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
-                    if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
-                            configuration.getIdentityProviderIdentifier(),
-                            configuration.getTolerance())) {
+                    final WsFederationCredential credential = this.wsFederationHelper.createCredentialFromToken(assertion);
+                    if (credential != null && credential.isValid(this.configuration.getRelyingPartyIdentifier(),
+                            this.configuration.getIdentityProviderIdentifier(),
+                            this.configuration.getTolerance())) {
 
-                        if (configuration.getAttributeMutator() != null) {
-                            configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
+                        if (this.configuration.getAttributeMutator() != null) {
+                            this.configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                         }
                     } else {
                         logger.warn("SAML assertions are blank or no longer valid.");

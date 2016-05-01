@@ -4,7 +4,7 @@ dependencies {
     compile project(':cas-server-core-services')
     compile project(':cas-server-core-util')
     compile project(':cas-server-support-couchbase-core')
-
+    compileOnly libraries.springcloud
     compile libraries.spring
     compile libraries.hibernate
     testCompile project(':cas-server-core-services')

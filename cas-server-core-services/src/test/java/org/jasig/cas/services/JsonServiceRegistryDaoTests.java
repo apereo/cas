@@ -32,10 +32,10 @@ public class JsonServiceRegistryDaoTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistryDao dao;
+    private ServiceRegistryDao dao;
 
     public JsonServiceRegistryDaoTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());
+        this.dao = new JsonServiceRegistryDao(RESOURCE);
     }
 
     @BeforeClass
@@ -45,7 +45,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -82,7 +82,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void execSaveMethodWithDefaultUsernameAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultUsernameAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -94,7 +94,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void ensureSaveMethodWithDefaultPrincipalAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultPrincipalAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -105,7 +105,7 @@ public class JsonServiceRegistryDaoTests {
     }
     @Test
     public void verifySaveMethodWithDefaultAnonymousAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultAnonymousAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -126,7 +126,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAttributeReleasePolicy() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicy");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -144,7 +144,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveMethodWithExistingServiceNoAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -160,7 +160,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAttributeReleasePolicyMappingRules() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyMappingRules");
         r.setServiceId("testId");
 
@@ -185,7 +185,7 @@ public class JsonServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAttributeReleasePolicyAllowedAttrRules() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRules");
         r.setServiceId("testId");
 
@@ -316,6 +316,25 @@ public class JsonServiceRegistryDaoTests {
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
 
+        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        r.setAccessStrategy(authz);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifyAccessStrategyWithEndpoint() throws Exception {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("verifyAccessStrategyWithEndpoint");
+        r.setId(62);
+
+        final RemoteEndpointServiceAccessStrategy authz = new RemoteEndpointServiceAccessStrategy();
+
+        authz.setEndpointUrl("http://www.google.com?this=that");
+        authz.setAcceptableResponseCodes("200,405,403");
         authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         r.setAccessStrategy(authz);
 

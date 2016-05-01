@@ -11,9 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Default OAuth refresh token factory.
@@ -21,27 +20,28 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultRefreshTokenFactory")
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("refreshTokenIdGenerator")
     protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for refresh tokens. */
-    @NotNull
+    
     @Autowired
     @Qualifier("refreshTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
     public RefreshToken create(final Service service, final Authentication authentication) {
-        final String codeId = refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
-        return new RefreshTokenImpl(codeId, service, authentication, expirationPolicy);
+        final String codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
+        return new RefreshTokenImpl(codeId, service, authentication, this.expirationPolicy);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     }
 
     public UniqueTicketIdGenerator getRefreshTokenIdGenerator() {
-        return refreshTokenIdGenerator;
+        return this.refreshTokenIdGenerator;
     }
 
     public void setRefreshTokenIdGenerator(final UniqueTicketIdGenerator refreshTokenIdGenerator) {
@@ -58,7 +58,7 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     }
 
     public ExpirationPolicy getExpirationPolicy() {
-        return expirationPolicy;
+        return this.expirationPolicy;
     }
 
     public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {

@@ -33,7 +33,7 @@ Once the token is generated, you may pass it to the `/login` endpoint of CAS as 
 ```
 
 ## Configuration
-JWT authentication support is enabled by including the following dependency in the Maven WAR overlay:
+JWT authentication support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -45,7 +45,7 @@ JWT authentication support is enabled by including the following dependency in t
 
 Then, configure the JWT handler in your overlay configuration:
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

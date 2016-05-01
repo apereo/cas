@@ -11,11 +11,11 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public final class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
+public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 584961303690286494L;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
 
     /**
      * Instantiates a new Cas sso session destroyed event.
@@ -29,14 +29,14 @@ public final class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEven
     }
 
     public TicketGrantingTicket getTicketGrantingTicket() {
-        return ticketGrantingTicket;
+        return this.ticketGrantingTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("ticketGrantingTicket", ticketGrantingTicket)
+                .append("ticketGrantingTicket", this.ticketGrantingTicket)
                 .toString();
     }
 }

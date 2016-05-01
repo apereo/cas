@@ -33,13 +33,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -55,9 +55,10 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("chainingMetadataResolverCacheLoader")
 public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Config bean.
@@ -68,7 +69,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     /**
      * The Http client.
      */
-    @NotNull
+    
     @Autowired
     @Qualifier("noRedirectHttpClient")
     protected HttpClient httpClient;
@@ -76,7 +77,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
     private long metadataCacheExpirationMinutes;
 
-    private final transient Object lock = new Object();
+    private transient Object lock = new Object();
 
     @Value("${cas.samlidp.metadata.failfast.init:true}")
     private boolean failFastInitialization = true;
@@ -92,7 +93,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     }
 
     @Override
-    public final ChainingMetadataResolver load(final SamlRegisteredService service) throws Exception {
+    public ChainingMetadataResolver load(final SamlRegisteredService service) throws Exception {
         try {
             final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
 
@@ -130,8 +131,8 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             throws Exception {
         logger.info("Loading metadata dynamically for [{}]", service.getName());
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
-                new FunctionDrivenDynamicHTTPMetadataResolver(httpClient.getWrappedHttpClient());
-        resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(metadataCacheExpirationMinutes, TimeUnit.MINUTES));
+                new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
+        resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES));
         resolver.setRequestURLBuilder(new Function<String, String>() {
             @Nullable
             @Override
@@ -166,7 +167,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
         try (final InputStream in = metadataResource.getInputStream()) {
             logger.debug("Parsing metadata from [{}]", metadataLocation);
-            final Document document = configBean.getParserPool().parse(in);
+            final Document document = this.configBean.getParserPool().parse(in);
 
             final Element metadataRoot = document.getDocumentElement();
             final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
@@ -196,7 +197,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      */
     protected void buildSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                final SamlRegisteredService service) throws Exception {
-        metadataProvider.setParserPool(configBean.getParserPool());
+        metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(this.failFastInitialization);
         metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
         metadataProvider.setId(metadataProvider.getClass().getCanonicalName());

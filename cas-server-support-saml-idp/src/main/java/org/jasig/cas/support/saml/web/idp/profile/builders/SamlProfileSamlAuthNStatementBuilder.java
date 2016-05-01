@@ -2,6 +2,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -13,6 +14,7 @@ import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("samlProfileSamlAuthNStatementBuilder")
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder
         implements SamlProfileObjectBuilder<AuthnStatement> {
@@ -39,7 +42,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     private AuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     @Override
-    public final AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                                       final Assertion assertion, final SamlRegisteredService service,
                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
@@ -84,7 +87,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     protected SubjectLocality buildSubjectLocality(final Assertion assertion, final AuthnRequest authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
-        subjectLocality.setAddress(authnRequest.getIssuer().getValue());
+        subjectLocality.setAddress(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
         return subjectLocality;
     }
 }

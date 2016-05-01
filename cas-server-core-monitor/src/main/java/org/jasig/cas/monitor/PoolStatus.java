@@ -14,10 +14,10 @@ public class PoolStatus extends Status {
     public static final int UNKNOWN_COUNT = -1;
 
     /** Number of idle pool resources. */
-    private final int idleCount;
+    private int idleCount;
 
     /** Number of active pool resources. */
-    private final int activeCount;
+    private int activeCount;
 
 
     /**

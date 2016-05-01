@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/ldap-context.xml"})
+@ContextConfiguration("/ldap-context.xml")
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
 
     @Autowired

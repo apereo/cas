@@ -1,12 +1,18 @@
 package org.jasig.cas.adaptors.yubikey;
 
-import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.web.support.WebUtils;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link YubiKeyAuthenticationHandler}.
@@ -19,6 +25,14 @@ public class YubiKeyAuthenticationHandlerTests {
     private static final String SECRET_KEY = "iBIehjui12aK8x82oe5qzGeb0As=";
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
+    @Before
+    public void before() {
+        final RequestContext ctx = mock(RequestContext.class);
+        when(ctx.getConversationScope()).thenReturn(new LocalAttributeMap<>());
+        WebUtils.putAuthentication(TestUtils.getAuthentication(), ctx);
+        RequestContextHolder.setRequestContext(ctx);
+    }
+    
     @Test
     public void checkDefaultAccountRegistry() {
         final YubiKeyAuthenticationHandler handler =
@@ -30,14 +44,14 @@ public class YubiKeyAuthenticationHandlerTests {
     public void checkReplayedAuthn() throws Exception {
         final YubiKeyAuthenticationHandler handler =
                 new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
-        handler.authenticate(new UsernamePasswordCredential("casuser", OTP));
+        handler.authenticate(new YubiKeyCredential(OTP));
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test(expected = AccountNotFoundException.class)
     public void checkBadConfigAuthn() throws Exception {
         final YubiKeyAuthenticationHandler handler =
                 new YubiKeyAuthenticationHandler(123456, "123456");
-        handler.authenticate(new UsernamePasswordCredential("casuser", OTP));
+        handler.authenticate(new YubiKeyCredential("casuser"));
     }
 
     @Test(expected = AccountNotFoundException.class)
@@ -46,7 +60,7 @@ public class YubiKeyAuthenticationHandlerTests {
                 new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
         handler.setRegistry((uid, yubikeyPublicId) -> false);
 
-        handler.authenticate(new UsernamePasswordCredential("casuser", OTP));
+        handler.authenticate(new YubiKeyCredential(OTP));
     }
 }
 

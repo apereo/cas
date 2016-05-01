@@ -13,7 +13,7 @@ These are:
 
 
 ## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings

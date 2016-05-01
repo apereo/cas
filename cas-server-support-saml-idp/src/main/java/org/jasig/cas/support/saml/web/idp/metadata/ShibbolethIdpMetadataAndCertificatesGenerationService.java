@@ -6,6 +6,7 @@ import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGener
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -23,10 +24,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RefreshScope
 @Component("shibbolethIdpMetadataAndCertificatesGenerationService")
 public class ShibbolethIdpMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private File metadataFile;
     private File signingCertFile;
@@ -57,43 +59,43 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         Assert.hasText(this.hostName, "IdP hostName cannot be empty and must be defined");
         Assert.hasText(this.scope, "IdP scope cannot be empty and must be defined");
         
-        if (!metadataLocation.exists()) {
-            if (!metadataLocation.mkdir()) {
+        if (!this.metadataLocation.exists()) {
+            if (!this.metadataLocation.mkdir()) {
                 throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
             }
         }
         logger.info("Metadata directory location is at [{}] with entityID [{}]", this.metadataLocation, this.entityId);
 
-        this.metadataFile = new File(metadataLocation, "idp-metadata.xml");
-        this.signingCertFile = new File(metadataLocation, "idp-signing.crt");
-        this.signingKeyFile = new File(metadataLocation, "idp-signing.key");
+        this.metadataFile = new File(this.metadataLocation, "idp-metadata.xml");
+        this.signingCertFile = new File(this.metadataLocation, "idp-signing.crt");
+        this.signingKeyFile = new File(this.metadataLocation, "idp-signing.key");
 
-        this.encryptionCertFile = new File(metadataLocation, "idp-encryption.crt");
-        this.encryptionCertKeyFile = new File(metadataLocation, "idp-encryption.key");
+        this.encryptionCertFile = new File(this.metadataLocation, "idp-encryption.crt");
+        this.encryptionCertKeyFile = new File(this.metadataLocation, "idp-encryption.key");
     }
 
     public File getMetadataFile() {
-        return metadataFile;
+        return this.metadataFile;
     }
 
     public String getEntityId() {
-        return entityId;
+        return this.entityId;
     }
 
     public String getScope() {
-        return scope;
+        return this.scope;
     }
 
     public String getHostName() {
-        return hostName;
+        return this.hostName;
     }
 
     public File getSigningCertFile() {
-        return signingCertFile;
+        return this.signingCertFile;
     }
 
     public File getEncryptionCertFile() {
-        return encryptionCertFile;
+        return this.encryptionCertFile;
     }
 
     public boolean isMetadataMissing() {
@@ -117,9 +119,9 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
                 buildMetadataGeneratorParameters();
             }
 
-            logger.info("Metadata is available at [{}]", metadataFile);
+            logger.info("Metadata is available at [{}]", this.metadataFile);
 
-            return metadataFile;
+            return this.metadataFile;
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);

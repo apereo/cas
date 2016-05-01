@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public final class SimpleTestUsernamePasswordHandlerTests {
+public class SimpleTestUsernamePasswordHandlerTests {
 
     private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
 

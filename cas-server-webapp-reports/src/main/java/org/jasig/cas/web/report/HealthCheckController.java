@@ -1,11 +1,6 @@
 package org.jasig.cas.web.report;
 
-import java.util.Map;
 import java.util.concurrent.Callable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.monitor.HealthCheckMonitor;
 import org.jasig.cas.monitor.HealthStatus;
 import org.jasig.cas.monitor.Status;
@@ -17,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 
 /**
@@ -32,7 +31,7 @@ public class HealthCheckController {
     @Value("${cas.async.request.timeout:5000}")
     private int asyncTimeout;
 
-    @NotNull
+
     @Autowired
     @Qualifier("healthCheckMonitor")
     private HealthCheckMonitor healthCheckMonitor;
@@ -40,7 +39,7 @@ public class HealthCheckController {
     /**
      * Handle request.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
      * @return the model and view
      * @throws Exception the exception
@@ -76,6 +75,6 @@ public class HealthCheckController {
             return null;
         };
 
-        return new WebAsyncTask<HealthStatus>(this.asyncTimeout, asyncTask);
+        return new WebAsyncTask<>(this.asyncTimeout, asyncTask);
     }
 }

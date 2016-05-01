@@ -95,7 +95,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     }
 
     @Override
-    public final String getNewTicketId(final String prefix) {
+    public String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
         final StringBuilder buffer = new StringBuilder(prefix.length() + 2
                 + (StringUtils.isNotBlank(this.suffix) ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()

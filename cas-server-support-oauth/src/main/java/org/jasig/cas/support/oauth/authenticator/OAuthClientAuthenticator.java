@@ -10,9 +10,8 @@ import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Authenticator for client credentials authentication.
@@ -20,17 +19,18 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("oAuthClientAuthenticator")
-public final class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
+public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
 
     /** The OAuth validator. */
-    @NotNull
+    
     @Autowired
     @Qualifier("oAuthValidator")
     private OAuthValidator validator;
 
     /** The services manager. */
-    @NotNull
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -41,11 +41,11 @@ public final class OAuthClientAuthenticator implements UsernamePasswordAuthentic
         final String secret = credentials.getPassword();
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, id);
 
-        if (!validator.checkServiceValid(registeredService)) {
+        if (!this.validator.checkServiceValid(registeredService)) {
             throw new CredentialsException("Service invalid for client identifier: " + id);
         }
 
-        if (!validator.checkClientSecret(registeredService, secret)) {
+        if (!this.validator.checkClientSecret(registeredService, secret)) {
             throw new CredentialsException("Bad secret for client identifier: " + id);
         }
 
@@ -55,7 +55,7 @@ public final class OAuthClientAuthenticator implements UsernamePasswordAuthentic
     }
 
     public OAuthValidator getValidator() {
-        return validator;
+        return this.validator;
     }
 
     public void setValidator(final OAuthValidator validator) {
@@ -63,7 +63,7 @@ public final class OAuthClientAuthenticator implements UsernamePasswordAuthentic
     }
 
     public ServicesManager getServicesManager() {
-        return servicesManager;
+        return this.servicesManager;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {

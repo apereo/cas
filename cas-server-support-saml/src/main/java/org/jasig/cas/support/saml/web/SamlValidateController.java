@@ -6,6 +6,7 @@ import org.jasig.cas.web.AbstractServiceValidateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("samlValidateController")
 @Controller
 public class SamlValidateController extends AbstractServiceValidateController {

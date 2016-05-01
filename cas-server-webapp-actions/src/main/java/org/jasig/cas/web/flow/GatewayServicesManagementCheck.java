@@ -9,12 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Performs an authorization check for the gateway request if there is no Ticket Granting Ticket.
@@ -22,13 +21,14 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.4.5
  */
+@RefreshScope
 @Component("gatewayServicesManagementCheck")
 public class GatewayServicesManagementCheck extends AbstractAction {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    @NotNull
-    private final ServicesManager servicesManager;
+    
+    private ServicesManager servicesManager;
 
     /**
      * Initialize the component with an instance of the services manager.

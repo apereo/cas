@@ -7,10 +7,6 @@ package org.jasig.cas.support.openid;
  * @since 4.1.0
  */
 public final class OpenIdProtocolConstants {
-
-    /** OAuth 2 endpoint in CAS. */
-    public static final String ENDPOINT_OPENID = "/openid/*";
-
     /**
      * The application callback url.
      */

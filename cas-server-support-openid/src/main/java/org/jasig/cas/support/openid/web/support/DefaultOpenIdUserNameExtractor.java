@@ -1,6 +1,7 @@
 package org.jasig.cas.support.openid.web.support;
 
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.1
  */
+@RefreshScope
 @Component("defaultOpenIdUserNameExtractor")
-public final class DefaultOpenIdUserNameExtractor implements OpenIdUserNameExtractor {
+public class DefaultOpenIdUserNameExtractor implements OpenIdUserNameExtractor {
 
     @Override
     public String extractLocalUsernameFromUri(final String uri) {

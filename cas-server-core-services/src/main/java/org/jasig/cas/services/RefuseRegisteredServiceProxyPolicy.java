@@ -9,7 +9,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
+public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
     private static final long serialVersionUID = -5718445151129901484L;
 

@@ -11,9 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Default OAuth code factory.
@@ -21,27 +20,28 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@RefreshScope
 @Component("defaultOAuthCodeFactory")
 public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    @NotNull
+    
     @Autowired(required = false)
     @Qualifier("oAuthCodeIdGenerator")
     protected UniqueTicketIdGenerator oAuthCodeIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for OAuth code. */
-    @NotNull
+    
     @Autowired
     @Qualifier("oAuthCodeExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
     public OAuthCode create(final Service service, final Authentication authentication) {
-        final String codeId = oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
-        return new OAuthCodeImpl(codeId, service, authentication, expirationPolicy);
+        final String codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
+        return new OAuthCodeImpl(codeId, service, authentication, this.expirationPolicy);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
      * @return the OAuth code identifier generator.
      */
     public UniqueTicketIdGenerator getoAuthCodeIdGenerator() {
-        return oAuthCodeIdGenerator;
+        return this.oAuthCodeIdGenerator;
     }
 
     /**
@@ -68,7 +68,7 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     }
 
     public ExpirationPolicy getExpirationPolicy() {
-        return expirationPolicy;
+        return this.expirationPolicy;
     }
 
     public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {

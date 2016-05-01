@@ -11,12 +11,12 @@ import org.jasig.cas.ticket.proxy.ProxyTicket;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class CasProxyTicketGrantedEvent extends AbstractCasEvent {
+public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
 
-    private final ProxyGrantingTicket proxyGrantingTicket;
-    private final ProxyTicket proxyTicket;
+    private ProxyGrantingTicket proxyGrantingTicket;
+    private ProxyTicket proxyTicket;
 
     /**
      * Instantiates a new Cas proxy ticket granted event.
@@ -33,19 +33,19 @@ public final class CasProxyTicketGrantedEvent extends AbstractCasEvent {
     }
 
     public ProxyGrantingTicket getProxyGrantingTicket() {
-        return proxyGrantingTicket;
+        return this.proxyGrantingTicket;
     }
 
     public ProxyTicket getProxyTicket() {
-        return proxyTicket;
+        return this.proxyTicket;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("proxyGrantingTicket", proxyGrantingTicket)
-                .append("proxyTicket", proxyTicket)
+                .append("proxyGrantingTicket", this.proxyGrantingTicket)
+                .append("proxyTicket", this.proxyTicket)
                 .toString();
     }
 }

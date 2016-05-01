@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class DistributedTicketRegistryTests {
+public class DistributedTicketRegistryTests {
 
     private TestDistributedTicketRegistry ticketRegistry;
 
@@ -101,8 +101,8 @@ public final class DistributedTicketRegistryTests {
     }
 
     private static class TestDistributedTicketRegistry extends AbstractTicketRegistry {
-        private final DistributedTicketRegistryTests parent;
-        private final Map<String, Ticket> tickets = new HashMap<>();
+        private DistributedTicketRegistryTests parent;
+        private Map<String, Ticket> tickets = new HashMap<>();
 
         TestDistributedTicketRegistry(final DistributedTicketRegistryTests parent) {
             this.parent = parent;

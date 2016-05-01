@@ -1,9 +1,10 @@
 description = 'Apereo CAS RADIUS RSA MFA Support'
 dependencies {
-    compile project(':cas-server-support-radius')
     compile project(':cas-server-core-webflow')
     compile project(':cas-server-core-web')
+    compile project(':cas-server-support-radius-core')
 }
+
 
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->

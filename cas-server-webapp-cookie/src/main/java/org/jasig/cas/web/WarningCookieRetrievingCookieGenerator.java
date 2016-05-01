@@ -3,6 +3,7 @@ package org.jasig.cas.web;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RefreshScope
 @Component("warnCookieGenerator")
 public class WarningCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
 

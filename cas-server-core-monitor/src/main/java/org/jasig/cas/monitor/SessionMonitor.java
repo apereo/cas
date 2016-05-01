@@ -2,10 +2,10 @@ package org.jasig.cas.monitor;
 
 import org.jasig.cas.ticket.registry.TicketRegistryState;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * Monitors the status of a {@link org.jasig.cas.ticket.registry.TicketRegistry}
@@ -15,10 +15,11 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@RefreshScope
 @Component("sessionMonitor")
 public class SessionMonitor implements Monitor<SessionStatus> {
     /** Ticket registry instance that exposes state info. */
-    @NotNull
+    
     @Resource(name="ticketRegistry")
     private TicketRegistryState registryState;
 

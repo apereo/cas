@@ -15,10 +15,10 @@ import org.junit.Test;
  */
 public class ServiceTicketImplTests {
 
-    private final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
+    private TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
             org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     @Test(expected = Exception.class)
     public void verifyNoService() {

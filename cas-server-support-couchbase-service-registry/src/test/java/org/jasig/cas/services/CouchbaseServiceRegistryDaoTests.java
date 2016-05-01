@@ -38,7 +38,7 @@ public class CouchbaseServiceRegistryDaoTests {
     private ServiceRegistryDao serviceRegistryDao;
 
     @Before
-    public void setup() {
+    public void setUp() {
         final List<RegisteredService> services = this.serviceRegistryDao.load();
         for (final RegisteredService service : services) {
             this.serviceRegistryDao.delete(service);

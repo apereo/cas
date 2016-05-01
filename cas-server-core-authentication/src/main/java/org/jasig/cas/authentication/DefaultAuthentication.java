@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,28 +21,28 @@ import java.util.Map;
  *
  * @since 3.0.0
  */
-public final class DefaultAuthentication implements Authentication {
+public class DefaultAuthentication implements Authentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3206127526058061391L;
 
     /** Authentication date stamp. */
-    private final ZonedDateTime authenticationDate;
+    private ZonedDateTime authenticationDate;
 
     /** List of metadata about credentials presented at authentication. */
-    private final List<CredentialMetaData> credentials;
+    private List<CredentialMetaData> credentials;
 
     /** Authenticated principal. */
-    private final Principal principal;
+    private Principal principal;
 
     /** Authentication metadata attributes. */
-    private final Map<String, Object> attributes;
+    private Map<String, Object> attributes;
 
     /** Map of handler name to handler authentication success event. */
-    private final Map<String, HandlerResult> successes;
+    private Map<String, HandlerResult> successes;
 
     /** Map of handler name to handler authentication failure cause. */
-    private final Map<String, Class<? extends Exception>> failures;
+    private Map<String, Class<? extends Exception>> failures;
 
     /** No-arg constructor for serialization support. */
     private DefaultAuthentication() {
@@ -98,18 +99,12 @@ public final class DefaultAuthentication implements Authentication {
             final Map<String, HandlerResult> successes,
             final Map<String, Class<? extends Exception>> failures) {
 
-        Assert.notNull(date, "Date cannot be null");
+        this(date, principal, attributes, successes);
+        
         Assert.notNull(credentials, "Credential cannot be null");
-        Assert.notNull(principal, "Principal cannot be null");
-        Assert.notNull(successes, "Successes cannot be null");
         Assert.notEmpty(credentials, "Credential cannot be empty");
-        Assert.notEmpty(successes, "Successes cannot be empty");
 
-        this.authenticationDate = date;
         this.credentials = credentials;
-        this.principal = principal;
-        this.attributes = attributes.isEmpty() ? null : attributes;
-        this.successes = successes;
         this.failures = failures.isEmpty() ? null : failures;
     }
 
@@ -120,7 +115,7 @@ public final class DefaultAuthentication implements Authentication {
 
     @Override
     public ZonedDateTime getAuthenticationDate() {
-        return authenticationDate;
+        return this.authenticationDate;
     }
 
     @Override
@@ -135,7 +130,7 @@ public final class DefaultAuthentication implements Authentication {
 
     @Override
     public Map<String, HandlerResult> getSuccesses() {
-        return Collections.unmodifiableMap(this.successes);
+        return new HashMap<>(this.successes);
     }
 
     @Override
@@ -185,7 +180,7 @@ public final class DefaultAuthentication implements Authentication {
      */
     private static <K, V> Map<K, V> wrap(final Map<K, V> source) {
         if (source != null) {
-            return Collections.unmodifiableMap(source);
+            return new HashMap<>(source);
         }
         return Collections.emptyMap();
     }

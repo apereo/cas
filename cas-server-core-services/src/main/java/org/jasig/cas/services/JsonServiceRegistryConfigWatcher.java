@@ -30,13 +30,13 @@ import static java.nio.file.StandardWatchEventKinds.*;
 class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryConfigWatcher.class);
 
-    private final AtomicBoolean running = new AtomicBoolean(false);
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
-    private final Lock readLock = this.lock.readLock();
+    private AtomicBoolean running = new AtomicBoolean(false);
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Lock readLock = this.lock.readLock();
 
-    private final WatchService watcher;
+    private WatchService watcher;
 
-    private final JsonServiceRegistryDao serviceRegistryDao;
+    private JsonServiceRegistryDao serviceRegistryDao;
 
     /**
      * Instantiates a new Json service registry config watcher.
@@ -59,12 +59,12 @@ class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
 
     @Override
     public void run() {
-        if (running.compareAndSet(false, true)) {
-            while (running.get()) {
+        if (this.running.compareAndSet(false, true)) {
+            while (this.running.get()) {
                 // wait for key to be signaled
                 WatchKey key = null;
                 try {
-                    key = watcher.take();
+                    key = this.watcher.take();
                     handleEvent(key);
                 } catch (final InterruptedException e) {
                     return;
@@ -74,7 +74,7 @@ class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
                         further watch events. If the key is no longer valid, the directory
                         is inaccessible so exit the loop.
                      */
-                    final boolean valid = (key != null && key.reset());
+                    final boolean valid = key != null && key.reset();
                     if (!valid) {
                         LOGGER.warn("Directory key is no longer valid. Quitting watcher service");
                         break;

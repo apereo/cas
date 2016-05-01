@@ -7,6 +7,7 @@ import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,8 +22,9 @@ import java.security.SecureRandom;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RefreshScope
 @Component("samlServiceTicketUniqueIdGenerator")
-public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
+public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /** Assertion handles are randomly-generated 20-byte identifiers. */
     private static final int ASSERTION_HANDLE_SIZE = 20;
@@ -31,14 +33,14 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     private static final byte[] ENDPOINT_ID = {0, 1};
 
     /** SAML defines the source id as the server name. */
-    private final byte[] sourceIdDigest;
+    private byte[] sourceIdDigest;
 
     /** Flag to indicate SAML2 compliance. Default is SAML1.1. */
     @Value("${cas.saml.ticketid.saml2:false}")
     private boolean saml2compliant;
 
     /** Random generator to construct the AssertionHandle. */
-    private final SecureRandom random;
+    private SecureRandom random;
 
     /**
      * Instantiates a new SAML compliant unique ticket id generator.
@@ -65,8 +67,8 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
      */
     @Override
     public String getNewTicketId(final String prefix) {
-        if (saml2compliant) {
-            return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), sourceIdDigest).base64Encode();
+        if (this.saml2compliant) {
+            return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), this.sourceIdDigest).base64Encode();
         }
         return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle()).base64Encode();
     }

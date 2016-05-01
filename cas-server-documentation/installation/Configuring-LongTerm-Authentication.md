@@ -61,4 +61,4 @@ Two sections of `login-webflow.xml` require changes:
 2. Uncomment the binding property for `rememberMe`.
 
 ### User Interface Customization
-Uncomment the `rememberMe` checkbox control in `casLoginView.jsp`.
+Uncomment the `rememberMe` checkbox control in `loginform.html`.

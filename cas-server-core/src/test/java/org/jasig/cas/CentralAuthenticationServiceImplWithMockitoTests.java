@@ -36,6 +36,7 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.validation.Assertion;
 
 import com.google.common.base.Predicates;
+import org.jasig.cas.validation.DefaultValidationServiceSelectionStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -47,6 +48,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +80,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private TicketRegistry ticketRegMock;
 
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
-        private final String id;
+        private String id;
 
         VerifyServiceByIdMatcher(final String id) {
             this.id = id;
@@ -139,6 +141,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock,
                 factory, smMock, mock(LogoutManager.class));
+        this.cas.setValidationServiceSelectionStrategies(Collections.singletonList(new DefaultValidationServiceSelectionStrategy()));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
     }

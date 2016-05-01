@@ -30,7 +30,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-In `cas.properties`:
+In `application.properties`:
 
 ```properties
 #CAS components mappings
@@ -47,16 +47,18 @@ The following settings are expected:
 # ticketreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
 # ticketreg.database.user=sa
 # ticketreg.database.password=
-# ticketreg.database.pool.minSize=6
-# ticketreg.database.pool.maxSize=18
-# ticketreg.database.pool.maxWait=10000
-# ticketreg.database.pool.maxIdleTime=120
-# ticketreg.database.pool.acquireIncrement=6
-# ticketreg.database.pool.idleConnectionTestPeriod=30
-# ticketreg.database.pool.connectionHealthQuery=select 1
-# ticketreg.database.pool.acquireRetryAttempts=5
-# ticketreg.database.pool.acquireRetryDelay=2000
-# ticketreg.database.pool.connectionHealthQuery=select 1
+# ticketreg.database.pool.minSize=5
+# ticketreg.database.pool.maxSize=20
+# ticketreg.database.pool.maxIdleTime=10000
+# ticketreg.database.pool.maxWait=3000
+# ticketreg.database.idle.timeout=3000
+# ticketreg.database.leak.threshold=10
+# ticketreg.database.fail.fast=true
+# ticketreg.database.isolate.internal.queries=false
+# ticketreg.database.health.query=select 1
+# ticketreg.database.pool.suspension=false
+# ticketreg.database.autocommit=false
+# ticketreg.database.jpa.locking.tgt.enabled=true
 ```
 
 Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  */
 public class ChainingPrincipalResolverTest {
 
-    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Test
     public void examineSupports() throws Exception {
@@ -43,7 +43,7 @@ public class ChainingPrincipalResolverTest {
 
         final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
         when(resolver1.supports(eq(credential))).thenReturn(true);
-        when(resolver1.resolve((eq(credential)))).thenReturn(principalFactory.createPrincipal("output"));
+        when(resolver1.resolve(eq(credential))).thenReturn(principalFactory.createPrincipal("output"));
 
         final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(false);

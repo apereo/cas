@@ -1,11 +1,5 @@
 package org.jasig.cas.support.openid.web.mvc;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
@@ -23,6 +17,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * An Openid controller that delegates to its own views on service validates.
  * @author Misagh Moayyed
@@ -31,7 +30,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Component("openIdValidateController")
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
-    private final Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
+    private static final String VIEW_MODEL_KEY_PARAMETERS = "parameters";
+    private transient Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
 
     @Autowired
     @Qualifier("serverManager")
@@ -44,17 +44,17 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
 
             final VerifyResponse message = (VerifyResponse)
-                serverManager.verify(new ParameterList(request.getParameterMap()));
+                    this.serverManager.verify(new ParameterList(request.getParameterMap()));
 
             final Map<String, String> parameters = new HashMap<>();
             parameters.putAll(message.getParameterMap());
 
             if(message.isSignatureVerified()) {
                 logger.debug("Signature verification request successful.");
-                return new ModelAndView(getSuccessView(), "parameters", parameters);
+                return new ModelAndView(getSuccessView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
             } else {
                 logger.debug("Signature verification request unsuccessful.");
-                return new ModelAndView(getFailureView(), "parameters", parameters);
+                return new ModelAndView(getFailureView(), VIEW_MODEL_KEY_PARAMETERS, parameters);
             }
         } else {
             // we should probably fail here(?),

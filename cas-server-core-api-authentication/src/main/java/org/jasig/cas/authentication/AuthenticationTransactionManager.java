@@ -1,7 +1,5 @@
 package org.jasig.cas.authentication;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * The {@link AuthenticationTransactionManager} deals exclusively with authentication concepts
  * e.g. Credentials, Principals, producing valid Authentication objects. It is invoked repeatedly with distinct credential type(s)
@@ -20,8 +18,8 @@ public interface AuthenticationTransactionManager {
      * @return the transaction manager
      * @throws AuthenticationException the authentication exception
      */
-    AuthenticationTransactionManager handle(@NotNull AuthenticationTransaction authenticationTransaction,
-                                            @NotNull AuthenticationResultBuilder authenticationResultBuilder)
+    AuthenticationTransactionManager handle(AuthenticationTransaction authenticationTransaction,
+                                             AuthenticationResultBuilder authenticationResultBuilder)
                                             throws AuthenticationException;
 
     /**
@@ -29,5 +27,5 @@ public interface AuthenticationTransactionManager {
      *
      * @param authenticationManager the authentication manager
      */
-    void setAuthenticationManager(@NotNull AuthenticationManager authenticationManager);
+    void setAuthenticationManager(AuthenticationManager authenticationManager);
 }

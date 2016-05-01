@@ -1,27 +1,22 @@
 package org.jasig.cas.adaptors.ldap.services;
 
 import org.jasig.cas.services.AbstractRegisteredService;
-import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.LdapUtils;
-import org.jasig.cas.util.RegexUtils;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
-import javax.validation.constraints.NotNull;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Default implementation of {@link LdapRegisteredServiceMapper} that is able
@@ -31,23 +26,24 @@ import java.util.Collections;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@RefreshScope
 @Component("ldapServiceRegistryMapper")
-public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
+public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
 
-    @NotNull
+    
     private JsonSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
 
-    @NotNull
+    
     @Value("${ldap.svc.reg.map.objclass:casRegisteredService}")
     private String objectClass = "casRegisteredService";
 
-    @NotNull
+    
     @Value("${ldap.svc.reg.map.attr.id:uid}")
     private String idAttribute = "uid";
 
-    @NotNull
+    
     @Value("${ldap.svc.reg.map.attr.svc:description}")
     private String serviceDefinitionAttribute = "description";
 
@@ -108,7 +104,7 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
     }
 
     public String getServiceDefinitionAttribute() {
-        return serviceDefinitionAttribute;
+        return this.serviceDefinitionAttribute;
     }
 
     public void setServiceDefinitionAttribute(final String serviceDefinitionAttribute) {
@@ -123,37 +119,5 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
     public String getDnForRegisteredService(final String parentDn, final RegisteredService svc) {
         return String.format("%s=%s,%s", this.idAttribute, svc.getId(), parentDn);
     }
-
-    /**
-     * Gets the attribute values if more than one, otherwise an empty list.
-     *
-     * @param entry the entry
-     * @param attrName the attr name
-     * @return the collection of attribute values
-     */
-    private Collection<String> getMultiValuedAttributeValues(@NotNull final LdapEntry entry, @NotNull final String attrName) {
-        final LdapAttribute attrs = entry.getAttribute(attrName);
-        if (attrs != null) {
-            return attrs.getStringValues();
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Gets the registered service by id that would either match an ant or regex pattern.
-     *
-     * @param id the id
-     * @return the registered service
-     */
-    private AbstractRegisteredService getRegisteredService(@NotNull final String id) {
-        if (RegexUtils.isValidRegex(id)) {
-            return new RegexRegisteredService();
-        }
-
-        if (new AntPathMatcher().isPattern(id)) {
-            return new RegisteredServiceImpl();
-        }
-        return null;
-    }
-
+    
 }

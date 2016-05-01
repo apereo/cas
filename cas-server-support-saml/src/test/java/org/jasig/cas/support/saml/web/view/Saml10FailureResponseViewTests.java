@@ -1,13 +1,15 @@
 package org.jasig.cas.support.saml.web.view;
 
-import static org.junit.Assert.*;
-
-import java.util.Collections;
-
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
+import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link Saml10FailureResponseView} class
@@ -19,8 +21,16 @@ import org.springframework.mock.web.MockHttpServletResponse;
  */
 public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
-    private final Saml10FailureResponseView view = new Saml10FailureResponseView();
-
+    private Saml10FailureResponseView view;
+    
+    @Before
+    public void setUp() throws Exception {
+        view =  new Saml10FailureResponseView();
+        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder();
+        builder.setConfigBean(this.configBean);
+        this.view.setSamlObjectBuilder(builder);
+    }
+    
     @Test
     public void verifyResponse() throws Exception {
         final MockHttpServletRequest request =  new MockHttpServletRequest();

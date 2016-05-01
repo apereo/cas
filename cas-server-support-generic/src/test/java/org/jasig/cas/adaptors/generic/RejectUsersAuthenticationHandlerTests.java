@@ -19,9 +19,9 @@ import static org.junit.Assert.*;
  */
 public class RejectUsersAuthenticationHandlerTests {
 
-    private final Set<String> users;
+    private Set<String> users;
 
-    private final RejectUsersAuthenticationHandler authenticationHandler;
+    private RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
         this.users = new HashSet<>();

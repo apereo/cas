@@ -12,6 +12,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
 })
-public final class AllTestsSuite {
+public class AllTestsSuite {
 }
 

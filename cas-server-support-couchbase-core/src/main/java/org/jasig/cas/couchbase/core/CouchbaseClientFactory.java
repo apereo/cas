@@ -8,7 +8,6 @@ import com.couchbase.client.java.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,13 +25,13 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2
  */
 public class CouchbaseClientFactory {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private Cluster cluster;
     private Bucket bucket;
     private List<View> views;
 
-    @NotNull
+    
     private Set<String> nodes;
 
     /* The name of the bucket, will use the default bucket unless otherwise specified. */
@@ -57,16 +56,16 @@ public class CouchbaseClientFactory {
      */
     public void initialize() {
         try {
-            logger.debug("Trying to connect to couchbase bucket {}", bucketName);
+            logger.debug("Trying to connect to couchbase bucket {}", this.bucketName);
 
-            cluster = CouchbaseCluster.create(new ArrayList<>(nodes));
+            this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
 
-            bucket = cluster.openBucket(bucketName, password, timeout, TimeUnit.SECONDS);
+            this.bucket = this.cluster.openBucket(this.bucketName, this.password, this.timeout, TimeUnit.SECONDS);
 
-            logger.info("Connected to Couchbase bucket {}.", bucketName);
+            logger.info("Connected to Couchbase bucket {}.", this.bucketName);
 
-            if (views != null) {
-                doEnsureIndexes(designDocument, views);
+            if (this.views != null) {
+                doEnsureIndexes(this.designDocument, this.views);
             }
         } catch (final Exception e) {
             throw new RuntimeException("Failed to connect to Couchbase bucket", e);
@@ -79,8 +78,8 @@ public class CouchbaseClientFactory {
      */
     public void shutdown() {
         try {
-            if (cluster != null) {
-                cluster.disconnect();
+            if (this.cluster != null) {
+                this.cluster.disconnect();
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -93,10 +92,10 @@ public class CouchbaseClientFactory {
      * @return the bucket.
      */
     public Bucket bucket() {
-        if (bucket != null) {
-            return bucket;
+        if (this.bucket != null) {
+            return this.bucket;
         }
-        throw new RuntimeException("Connection to bucket " + bucketName + " not initialized yet.");
+        throw new RuntimeException("Connection to bucket " + this.bucketName + " not initialized yet.");
     }
 
 
@@ -119,11 +118,11 @@ public class CouchbaseClientFactory {
      * @param views the views to ensure exists in the database.
      */
     private void doEnsureIndexes(final String documentName, final List<View> views) {
-        logger.debug("Ensure that indexes exist in bucket {}.", bucket.name());
+        logger.debug("Ensure that indexes exist in bucket {}.", this.bucket.name());
         final DesignDocument newDocument = DesignDocument.create(documentName, views);
-        if (!newDocument.equals(bucket.bucketManager().getDesignDocument(documentName))) {
-            logger.warn("Missing indexes in bucket {} for document {}, creating new.", bucket.name(), documentName);
-            bucket.bucketManager().upsertDesignDocument(newDocument);
+        if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(documentName))) {
+            logger.warn("Missing indexes in bucket {} for document {}, creating new.", this.bucket.name(), documentName);
+            this.bucket.bucketManager().upsertDesignDocument(newDocument);
         }
     }
 
@@ -135,7 +134,7 @@ public class CouchbaseClientFactory {
         this.nodes = nodes;
     }
 
-    public void setBucket(final String bucket) {
+    public void setBucketName(final String bucket) {
         this.bucketName = bucket;
     }
 

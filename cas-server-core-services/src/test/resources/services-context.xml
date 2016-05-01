@@ -10,6 +10,15 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
     <context:component-scan base-package="org.jasig.cas"/>
     <context:annotation-config/>
 
@@ -81,14 +90,14 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="1"/>
             <property name="name" value="Test Default Service"/>
             <property name="serviceId" value="testDefault"/>
             <property name="evaluationOrder" value="2"/>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="2"/>
             <property name="name" value="EduPerson Test Service"/>
             <property name="serviceId" value="eduPersonTest"/>
@@ -103,7 +112,7 @@
 
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="3"/>
             <property name="name" value="EduPerson Test Invalid Service"/>
             <property name="serviceId" value="eduPersonTestInvalid"/>
@@ -123,7 +132,7 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="333"/>
             <property name="name" value="proxyService"/>
             <property name="serviceId" value="proxyService"/>
@@ -134,7 +143,7 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="4"/>
             <property name="name" value="Test Service anonymous"/>
             <property name="serviceId" value="testAnonymous"/>
@@ -156,7 +165,7 @@
         </bean>
 
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="335"/>
             <property name="name" value="usernameAttributeProviderService"/>
             <property name="serviceId" value="usernameAttributeProviderService"/>
@@ -238,7 +247,15 @@
         </bean>
 
     </util:list>
+    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <util:map id="uniqueIdGeneratorsMap">
+        <entry
+                key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                value-ref="serviceTicketUniqueIdGenerator"/>
+    </util:map>
+
 </beans>

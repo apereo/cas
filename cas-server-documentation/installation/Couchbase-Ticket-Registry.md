@@ -4,7 +4,7 @@ title: CAS - Couchbase Ticket Registry
 ---
 
 # Couchbase Ticket Registry
-Couchbase integration is enabled by including the following dependency in the Maven WAR overlay:
+Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -14,7 +14,7 @@ Couchbase integration is enabled by including the following dependency in the Ma
 </dependency>
 ```
 
-Enable the registry in `cas.properties` via:
+Enable the registry in `application.properties` via:
 
 ```properties
 #CAS components mappings

@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.authorization.generator;
 
 import org.ldaptive.ConnectionFactory;
@@ -34,11 +16,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
@@ -56,6 +38,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@RefreshScope
 @Component("ldapAuthorizationGenerator")
 public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
@@ -63,7 +46,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
 
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Source of LDAP connections. */
     @Nullable
@@ -84,19 +67,19 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     private SearchExecutor roleSearchExecutor;
 
     /** Specify the name of LDAP attribute to use as principal identifier. */
-    @NotNull
+    
     @Value("${ldap.authorizationgenerator.user.attr:}")
     private String userAttributeName;
 
     /** Specify the name of LDAP attribute to be used as the basis for the roles. */
-    @NotNull
+    
     @Value("${ldap.authorizationgenerator.role.attr:}")
     private String roleAttributeName;
 
     /** Prefix appended to the uppercased
      * {@link #roleAttributeName} (Spring Security convention).
      **/
-    @NotNull
+    
     @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + "}")
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 
