@@ -6,6 +6,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
@@ -216,22 +217,37 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * Gets the authentication satisfied by policy.
      *
-     * @param ticket  the ticket
-     * @param context the context
+     * @param authenticationResult the authentication result
+     * @param context              the context
      * @return the authentication satisfied by policy
      * @throws AbstractTicketException the ticket exception
      */
     protected Authentication getAuthenticationSatisfiedByPolicy(
-            final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
+            final AuthenticationResult authenticationResult, 
+            final ServiceContext context) throws AbstractTicketException {
+
+        return getAuthenticationSatisfiedByPolicy(authenticationResult.getAuthentication(), context);
+    }
+
+    /**
+     * Gets the authentication satisfied by policy.
+     *
+     * @param authentication the authentication
+     * @param context        the context
+     * @return the authentication satisfied by policy
+     * @throws AbstractTicketException the ticket exception
+     */
+    protected Authentication getAuthenticationSatisfiedByPolicy(
+            final Authentication authentication, 
+            final ServiceContext context) throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
                 this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
-        if (policy.isSatisfiedBy(ticket.getAuthentication())) {
-            return ticket.getAuthentication();
+        if (policy.isSatisfiedBy(authentication)) {
+            return authentication;
         }
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
-
 
     /**
      * Evaluate proxied service if needed.

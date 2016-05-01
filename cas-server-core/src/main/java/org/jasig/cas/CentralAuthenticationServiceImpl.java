@@ -150,7 +150,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
-        getAuthenticationSatisfiedByPolicy(ticketGrantingTicket.getRoot(), new ServiceContext(service, registeredService));
+        getAuthenticationSatisfiedByPolicy(authenticationResult, new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
@@ -210,7 +210,8 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
-        getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot(), new ServiceContext(service, registeredService));
+        getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot().getAuthentication(), 
+                new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = proxyGrantingTicketObject.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
@@ -310,8 +311,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
                     .findFirst()
                     .get()
                     .resolveServiceFrom(service);
-
-
+            
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
             logger.debug("Located registered service definition {} from {} to handle validation request",
                     registeredService, selectedService);
@@ -319,7 +319,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
             final TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
             final Authentication authentication = getAuthenticationSatisfiedByPolicy(
-                    root, new ServiceContext(selectedService, registeredService));
+                    root.getAuthentication(), new ServiceContext(selectedService, registeredService));
             final Principal principal = authentication.getPrincipal();
 
             final RegisteredServiceAttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
