@@ -106,12 +106,17 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
             public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                                      final Object handler) throws Exception {
                 final String requestPath = request.getRequestURI();
-                final Pattern pattern = Pattern.compile('/' + OAuthConstants.ACCESS_TOKEN_URL + "(/)*$");
+                Pattern pattern = Pattern.compile('/' + OAuthConstants.ACCESS_TOKEN_URL + "(/)*$");
 
                 if (pattern.matcher(requestPath).find()) {
                     return requiresAuthenticationAccessTokenInterceptor().preHandle(request, response, handler);
                 }
-                return requiresAuthenticationAuthorizeInterceptor().preHandle(request, response, handler);
+
+                pattern = Pattern.compile('/' + OAuthConstants.AUTHORIZE_URL + "(/)*$");
+                if (pattern.matcher(requestPath).find()) {
+                    return requiresAuthenticationAuthorizeInterceptor().preHandle(request, response, handler);
+                }
+                return true;
 
             }
         };
