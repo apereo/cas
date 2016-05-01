@@ -55,15 +55,6 @@ The CAS project is pre-configured with an embedded Tomcat instance for both the 
 
 ### Configure SSL
 
-Edit `$USER_HOME/.gradle/gradle.properties` to include the following:
-
-```properties
-jettySslKeyStorePath=/etc/cas/jetty/thekeystore
-jettySslKeyStorePassword=changeit
-jettySslTrustStorePath=/etc/cas/jetty/thekeystore
-jettySslTrustStorePassword=changeit
-```
-
 The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You will need to use the `keytool` command of the JDK to create the keystore and the certificate. The following commands may serve as an example:
 
 ```bash
@@ -115,3 +106,22 @@ CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
 The Jetty instance is pre-configured to listen to debugger requests on port `5000`. Create a remote debugger configuration in your IDE that connects to this port and you will be able to step into the code.
+
+### Dependency Updates
+CAS integrates with [VersionEye](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) to report back the version of dependencies used and those that may be outdated.
+
+In order to get a full report on dependencies, adjust the following:
+
+Specify the your VersionEye API key in the `~/.gradle/gradle.properties` file:
+
+```properties
+versioneye.api_key=1234567890abcdef
+```
+
+Then run the following command at the root:
+
+```bash
+gradle versionEyeUpdate
+```
+
+Browse the report at the above link to see which dependencies might need attention. 
