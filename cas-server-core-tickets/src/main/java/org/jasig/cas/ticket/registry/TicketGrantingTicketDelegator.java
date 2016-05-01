@@ -41,7 +41,8 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
     public Service getProxiedBy() {
         return getTicket().getProxiedBy();
     }
-
+    
+    @Deprecated
     @Override
     public List<Authentication> getSupplementalAuthentications() {
         return getTicket().getSupplementalAuthentications();
