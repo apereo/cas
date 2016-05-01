@@ -24,7 +24,6 @@ Configure authentication per instructions [here](DuoSecurity-Authentication.html
 
 | Field                | Description
 |----------------------+---------------------------------+
-| `provider`           | `duoAuthenticationProvider`
 | `id`                 | `mfa-duo`
 
 ### YubiKey
@@ -33,7 +32,6 @@ Configure authentication per instructions [here](YubiKey-Authentication.html).
 
 | Field                | Description
 |----------------------+---------------------------------+
-| `provider`           | `yubikeyAuthenticationProvider`
 | `id`                 | `mfa-yubikey`
 
 ### RSA/RADIUS
@@ -42,8 +40,15 @@ Configure authentication per instructions [here](RADIUS-Authentication.html).
 
 | Field                | Description
 |----------------------+---------------------------------+
-| `provider`           | `radiusAuthenticationProvider`
 | `id`                 | `mfa-radius`
+
+### Google Authenticator
+
+Configure authentication per instructions [here](GoogleAuthenticator-Authentication.html). 
+
+| Field                | Description
+|----------------------+---------------------------------+
+| `id`                 | `mfa-gauth`
 
 ## Triggers
 
@@ -142,12 +147,12 @@ that is higher than what the incoming request requires, no step-up authenticatio
 route the authentication flow to the required authentication level and upon success, will adjust the SSO session with the new higher 
 authentication level now satisfied. 
 
-Ranking of authentication methods is done per provider via specific properties for each in `cas.properties`. Note that
+Ranking of authentication methods is done per provider via specific properties for each in `application.properties`. Note that
 the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps 
 and override others with a lower value. 
 
 ## Settings
-The following general MFA settings are available for configuration in `cas.properties`:
+The following general MFA settings are available for configuration in `application.properties`:
 
 ```properties
 # cas.mfa.principal.attributes=memberOf,groupName,authnClass

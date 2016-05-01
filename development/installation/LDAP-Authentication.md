@@ -4,7 +4,7 @@ title: CAS - LDAP Authentication
 ---
 
 # LDAP Authentication
-LDAP integration is enabled by including the following dependency in the Maven WAR overlay:
+LDAP integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -82,7 +82,8 @@ If you do decide to let the authentication handler retrieve attributes instead o
 ```
 
 ## Schema Declaration
-LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that the XML configuration file contains the `ldaptive` namespace declarations:
+LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that 
+the XML configuration file contains the `ldaptive` namespace declarations:
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -238,8 +239,7 @@ Note that additional dependencies must be available to CAS at runtime depending 
 ## LDAP Properties Starter
 The following LDAP configuration properties provide a reasonable starting point for configuring the LDAP
 authentication handler. The `ldap.url` property must be changed at a minumum. LDAP properties may be added to the
-`cas.properties` configuration file; alternatively they may be isolated in an `ldap.properties` file and loaded
-into the Spring application context by modifying the `propertyFileConfigurer.xml` configuration file.
+`application.properties` configuration file.
 
 ```properties
 #========================================

@@ -5,12 +5,12 @@ title: CAS - OAuth Authentication
 
 # OAuth/OpenID Authentication
 
-<div class="alert alert-info"><strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
-
-To get a better understanding of the OAuth/OpenID protocol support in CAS, [see this page](../protocol/OAuth-Protocol.html).
+<div class="alert alert-info"><strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable 
+OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with 
+other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
 ## Configuration
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -26,7 +26,8 @@ After enabling OAuth support, three new urls will be available:
 It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
 
 * **/oauth2.0/accessToken**  
-It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON if set so in the management webapp per OAuth client.
+It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON 
+if set so in the management webapp per OAuth client.
 
 * **/oauth2.0/profile**  
 It's the url to call to get the profile of the authorized user. The response is in JSON format with all attributes of the user.
@@ -40,26 +41,36 @@ With the access token, you'll be able to query the `/profile` endpoint and get t
 `/cas/oauth2.0/profile?access_token=ACCESS_TOKEN` returns the user profile.
 
 
-### The authorization code grant type is made for UI interactions: the user will enter his own credentials
+### Authorization Code
+
+The authorization code grant type is made for UI interactions: the user will enter his own credentials.
 
 1) `/cas/oauth2.0/authorize?response_type=code&client_id=ID&redirect_uri=CALLBACK` returns the code as a parameter of the CALLBACK url
-
 2) `/cas/oauth2.0/accessToken?grant_type=authorization_code&client_id=ID&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK` returns the access token
 
+### Implicit
 
-### The implicit grant type is also made for UI interactions, but for Javascript applications
+The implicit grant type is also made for UI interactions, but for Javascript applications.
 
-1) `/cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the CALLBACK url
-
-
-### The resource owner password credentials grant type allows the OAuth client to directly send the user's credentials to the OAuth server
-
-1) `/cas/oauth2.0/accessToken?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token (based on the username/password credentials of a user)
+- `/cas/oauth2.0/authorize?response_type=token&client_id=ID&redirect_uri=CALLBACK` returns the access token as an anchor parameter of the
+ CALLBACK url
 
 
-### The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token), when this previous access token is expired
+### Resource Owner
 
-1) `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access token
+The resource owner password credentials grant type allows the OAuth client to directly send the user's credentials to the OAuth server.
+
+- `/cas/oauth2.0/accessToken?grant_type=password&client_id=ID&username=USERNAME&password=PASSWORD` returns the access token (based on the
+ username/password credentials of a user)
+
+
+### Refresh Token
+
+The refresh token grant type retrieves a new access token from a refresh token (emitted for a previous access token), 
+when this previous access token is expired
+
+- `/cas/oauth2.0/accessToken?grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH_TOKEN` returns the access 
+token
 
 To get refresh tokens, the OAuth client must be configured to return refresh tokens (`generateRefreshToken` property).
 
