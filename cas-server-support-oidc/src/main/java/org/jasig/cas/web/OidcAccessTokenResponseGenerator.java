@@ -34,7 +34,7 @@ import java.util.UUID;
 @RefreshScope
 @Component("oidcAccessTokenResponseGenerator")
 public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGenerator {
-    
+
     @Value("${cas.oidc.issuer:http://localhost:8080/cas/oidc}")
     private String issuer;
 
@@ -53,7 +53,7 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
                                         final OAuthRegisteredService registeredService) throws Exception {
 
         super.generateJsonInternal(jsonGenerator, accessTokenId, refreshTokenId, timeout, service, registeredService);
-        
+
         final JwtClaims claims = produceIdTokenClaims(accessTokenId, timeout, service);
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
         final JsonWebKeySet jwks = buildJsonWebKeySet(oidcRegisteredService);
@@ -81,10 +81,7 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
 
         final Principal principal = accessTokenId.getAuthentication().getPrincipal();
         final Sets.SetView<String> setView = Sets.intersection(OidcConstants.CLAIMS, principal.getAttributes().keySet());
-
-        setView.immutableCopy().stream().forEach(k -> {
-            claims.setClaim(k, principal.getAttributes().get(k));
-        });
+        setView.immutableCopy().stream().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
         return claims;
     }
 
@@ -97,25 +94,30 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
      * @return the string
      * @throws JoseException the jose exception
      */
-    protected String signIdTokenClaim(final OidcRegisteredService svc, 
+    protected String signIdTokenClaim(final OidcRegisteredService svc,
                                       final JsonWebKeySet jwks,
                                       final JwtClaims claims) throws JoseException {
         final JsonWebSignature jws = new JsonWebSignature();
-        jws.setPayload(claims.toJson());
+
+        final String jsonClaims = claims.toJson();
+        jws.setPayload(jsonClaims);
+        logger.debug("Generated claims are {}", jsonClaims);
+
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
 
-        
-        if (!jwks.getJsonWebKeys().isEmpty()) {
+        if (svc.isSignIdToken() && !jwks.getJsonWebKeys().isEmpty()) {
             final RsaJsonWebKey jsonWebKey = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
             jws.setKey(jsonWebKey.getPrivateKey());
-            
+
             if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
                 jws.setKeyIdHeaderValue(UUID.randomUUID().toString());
             } else {
                 jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
             }
+            logger.debug("Signing id token with key id header value {}", jws.getKeyIdHeaderValue());
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
         }
+        logger.debug("Signing id token with algorithm {}", jws.getAlgorithmHeaderValue());
         return jws.getCompactSerialization();
     }
 
@@ -130,13 +132,15 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
         JsonWebKeySet jsonWebKeySet = null;
         try {
             if (StringUtils.isNotBlank(service.getJwks())) {
+                logger.debug("Loading JWKS from {}", service.getJwks());
                 final Resource resource = this.resourceLoader.getResource(service.getJwks());
                 jsonWebKeySet = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), "UTF-8"));
             }
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);          
+            logger.debug(e.getMessage(), e);
         } finally {
             if (jsonWebKeySet == null) {
+                logger.debug("Loading default JWKS from {}", this.jwksFile);
                 final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), "UTF-8");
                 jsonWebKeySet = new JsonWebKeySet(jsonJwks);
             }
