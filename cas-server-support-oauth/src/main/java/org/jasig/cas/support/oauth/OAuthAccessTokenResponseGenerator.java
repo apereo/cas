@@ -9,7 +9,11 @@ import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
 import org.jasig.cas.support.oauth.util.OAuthUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,11 +27,19 @@ import javax.servlet.http.HttpServletResponse;
 @RefreshScope
 @Component("oauthAccessTokenResponseGenerator")
 public class OAuthAccessTokenResponseGenerator implements AccessTokenResponseGenerator {
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     /**
      * The JSON factory.
      */
     protected final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
+    /**
+     * The Resource loader.
+     */
+    @Autowired
+    protected ResourceLoader resourceLoader;
+    
     @Override
     public void generate(final HttpServletResponse response,
                          final OAuthRegisteredService registeredService,
