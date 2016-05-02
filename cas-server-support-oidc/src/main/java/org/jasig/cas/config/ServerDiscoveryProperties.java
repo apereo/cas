@@ -3,7 +3,7 @@ package org.jasig.cas.config;
 import org.jasig.cas.OidcConstants;
 import org.jasig.cas.support.oauth.OAuthConstants;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link ServerDiscoveryProperties}.
@@ -13,12 +13,12 @@ import java.util.List;
  */
 public class ServerDiscoveryProperties {
     private String issuer;
-    private List<String> supportedScopes;
-    private List<String> supportedResponseTypes;
-    private List<String> supportedSubjectTypes;
-    private List<String> supportedClaimTypes;
-    private List<String> supportedClaims;
-    private List<String> supportedGrantTypes;
+    private Set<String> supportedScopes;
+    private Set<String> supportedResponseTypes;
+    private Set<String> supportedSubjectTypes;
+    private Set<String> supportedClaimTypes;
+    private Set<String> supportedClaims;
+    private Set<String> supportedGrantTypes;
     private String serverPrefix;
 
     public ServerDiscoveryProperties(final String serverPrefix, final String issuer) {
@@ -58,51 +58,51 @@ public class ServerDiscoveryProperties {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL);
     }
     
-    public List<String> getSupportedScopes() {
+    public Set<String> getSupportedScopes() {
         return supportedScopes;
     }
 
-    public List<String> getSupportedResponseTypes() {
+    public Set<String> getSupportedResponseTypes() {
         return supportedResponseTypes;
     }
 
-    public List<String> getSupportedSubjectTypes() {
+    public Set<String> getSupportedSubjectTypes() {
         return supportedSubjectTypes;
     }
 
-    public List<String> getSupportedClaimTypes() {
+    public Set<String> getSupportedClaimTypes() {
         return supportedClaimTypes;
     }
 
-    public List<String> getSupportedClaims() {
+    public Set<String> getSupportedClaims() {
         return supportedClaims;
     }
     
-    public void setSupportedScopes(final List<String> supportedScopes) {
+    public void setSupportedScopes(final Set<String> supportedScopes) {
         this.supportedScopes = supportedScopes;
     }
 
-    public void setSupportedResponseTypes(final List<String> supportedResponseTypes) {
+    public void setSupportedResponseTypes(final Set<String> supportedResponseTypes) {
         this.supportedResponseTypes = supportedResponseTypes;
     }
 
-    public void setSupportedSubjectTypes(final List<String> supportedSubjectResponseTypes) {
+    public void setSupportedSubjectTypes(final Set<String> supportedSubjectResponseTypes) {
         this.supportedSubjectTypes = supportedSubjectResponseTypes;
     }
 
-    public void setSupportedClaimTypes(final List<String> supportedClaimTypes) {
+    public void setSupportedClaimTypes(final Set<String> supportedClaimTypes) {
         this.supportedClaimTypes = supportedClaimTypes;
     }
 
-    public void setSupportedClaims(final List<String> supportedClaims) {
+    public void setSupportedClaims(final Set<String> supportedClaims) {
         this.supportedClaims = supportedClaims;
     }
 
-    public List<String> getSupportedGrantTypes() {
+    public Set<String> getSupportedGrantTypes() {
         return supportedGrantTypes;
     }
 
-    public void setSupportedGrantTypes(final List<String> supportedGrantTypes) {
+    public void setSupportedGrantTypes(final Set<String> supportedGrantTypes) {
         this.supportedGrantTypes = supportedGrantTypes;
     }
 }

@@ -1,6 +1,6 @@
 package org.jasig.cas.web;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.OidcConstants;
 import org.jasig.cas.config.ServerDiscoveryProperties;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,20 +34,14 @@ public class WellKnownEndpointController {
         final ServerDiscoveryProperties discoveryProperties =
                 new ServerDiscoveryProperties(this.serverPrefix, this.issuer);
 
-        discoveryProperties.setSupportedClaims(
-                ImmutableList.of("sub", "name", "preferred_username",
-                        "family_name", "given_name", "middle_name", "given_name", "profile",
-                        "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
-                        "birthdate", "email", "email_verified", "phone_number",
-                        "phone_number_verified", "address"));
-        discoveryProperties.setSupportedScopes(
-                ImmutableList.of("openid", "profile", "email", "address", "phone", "offline_access"));
+        discoveryProperties.setSupportedClaims(OidcConstants.CLAIMS);
+        discoveryProperties.setSupportedScopes(OidcConstants.SCOPES);
 
-        discoveryProperties.setSupportedResponseTypes(ImmutableList.of("code", "token"));
-        discoveryProperties.setSupportedSubjectTypes(ImmutableList.of("public", "pairwise"));
-        discoveryProperties.setSupportedClaimTypes(ImmutableList.of("normal"));
+        discoveryProperties.setSupportedResponseTypes(ImmutableSet.of("code", "token"));
+        discoveryProperties.setSupportedSubjectTypes(ImmutableSet.of("public", "pairwise"));
+        discoveryProperties.setSupportedClaimTypes(ImmutableSet.of("normal"));
 
-        discoveryProperties.setSupportedGrantTypes(ImmutableList.of("authorization_code", "password", "implicit"));
+        discoveryProperties.setSupportedGrantTypes(ImmutableSet.of("authorization_code", "password", "implicit"));
         return discoveryProperties;
     }
 

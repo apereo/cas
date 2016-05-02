@@ -1,7 +1,5 @@
 package org.jasig.cas.support.oauth.web;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.BasicIdentifiableCredential;
@@ -40,38 +38,44 @@ import java.util.Map;
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
-    /** The logger. */
+    /**
+     * The logger.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The services manager. */
+    /**
+     * The services manager.
+     */
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
-    /** The ticket registry. */
+    /**
+     * The ticket registry.
+     */
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    /** The access token timeout. */
-    
+    /**
+     * The access token timeout.
+     */
+
     @Value("${tgt.timeToKillInSeconds:7200}")
     protected long timeout;
 
-    /** The OAuth validator. */
+    /**
+     * The OAuth validator.
+     */
     @Autowired
     @Qualifier("oAuthValidator")
     protected OAuthValidator validator;
-
-    /** The JSON factory. */
-    protected final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
-
     
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory accessTokenFactory;
 
-    
+
     @Autowired
     @Qualifier("defaultPrincipalFactory")
     private PrincipalFactory principalFactory;
@@ -79,7 +83,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     /**
      * Generate an access token from a service and authentication.
      *
-     * @param service the service
+     * @param service        the service
      * @param authentication the authentication
      * @return an access token
      */

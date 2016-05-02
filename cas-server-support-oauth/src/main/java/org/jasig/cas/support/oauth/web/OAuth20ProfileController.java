@@ -1,16 +1,14 @@
 package org.jasig.cas.support.oauth.web;
 
-import org.jasig.cas.support.oauth.OAuthConstants;
-
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,8 +32,10 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
     private static final String ID = "id";
 
     private static final String ATTRIBUTES = "attributes";
-    
-    @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL)
+
+    private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
+
+    @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
@@ -88,9 +88,9 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
         jsonGenerator.writeStringField(ID, principal.getId());
         jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
         final Map<String, Object> attributes = principal.getAttributes();
-        for (final String key : attributes.keySet()) {
+        for (final Map.Entry<String, Object> stringObjectEntry : attributes.entrySet()) {
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeObjectField(key, attributes.get(key));
+            jsonGenerator.writeObjectField(stringObjectEntry.getKey(), stringObjectEntry.getValue());
             jsonGenerator.writeEndObject();
         }
         jsonGenerator.writeEndArray();

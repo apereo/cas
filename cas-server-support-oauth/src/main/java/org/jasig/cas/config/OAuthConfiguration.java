@@ -1,5 +1,7 @@
 package org.jasig.cas.config;
 
+import org.jasig.cas.support.oauth.AccessTokenResponseGenerator;
+import org.jasig.cas.support.oauth.OAuthAccessTokenResponseGenerator;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -46,6 +48,17 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Value("${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize")
     private String callbackUrl;
 
+    /**
+     * Access token response generator access token response generator.
+     *
+     * @return the access token response generator
+     */
+    @RefreshScope
+    @Bean(name = "accessTokenResponseGenerator")
+    public AccessTokenResponseGenerator accessTokenResponseGenerator() {
+        return new OAuthAccessTokenResponseGenerator();
+    }
+    
     /**
      * Oauth sec config config.
      *
