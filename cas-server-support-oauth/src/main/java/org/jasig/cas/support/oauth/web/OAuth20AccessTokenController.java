@@ -27,6 +27,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     @Qualifier("defaultRefreshTokenFactory")
     private RefreshTokenFactory refreshTokenFactory;
 
-    @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL)
+    @RequestMapping(path=OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL, method = RequestMethod.POST)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType("text/plain");
