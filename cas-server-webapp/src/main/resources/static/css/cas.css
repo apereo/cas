@@ -99,6 +99,25 @@ body#cas {
   background: #153e50;
   /* Old browsers */ }
 
+#cas .btn-submit {
+  background: #70ba61;
+  border: 0;
+  padding: 10px 25px;
+  font-weight: normal;
+  color: white;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  font-size: 1.25em; }
+
+#cas .btn-reset {
+  background: #eee;
+  padding: 10px 20px;
+  border: 0;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px; }
+
 a:link, a:visited {
   color: #257bb2; }
 
@@ -231,7 +250,7 @@ header h1 {
     padding: 5px;
     width: 100%; }
   #login .btn-row {
-    text-align: right; }
+    text-align: center; }
   #login .btn-submit {
     background: #70ba61;
     border: 0;
@@ -256,6 +275,10 @@ header h1 {
     background: #7fd36e; }
   #login .btn-reset:hover {
     background: #d4d4d4; }
+  #login #fm1 > h2 {
+    display: block; }
+  #login #fm1 .btn-reset {
+    display: inline-block; }
 
 #capslock-on {
   color: firebrick; }
@@ -587,6 +610,9 @@ table.principal_attributes > tbody > tr > td {
 
 #view-configuration {
   display: none; }
+
+.confirmView .btn-row, .loginMessageView .btn-row {
+  text-align: center; }
 
 .viewDashboard h2 {
   font-size: 2rem;

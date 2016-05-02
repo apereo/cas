@@ -62,7 +62,7 @@
   }
 
   .btn-row {
-    text-align: right;
+    text-align: center;
   }
 
   .btn-submit {
@@ -99,6 +99,19 @@
   .btn-reset:hover {
     background: #d4d4d4;
   }
+
+  #fm1 {
+    > h2 {
+      display: block;
+    }
+    
+    .btn-reset {
+      display: inline-block;
+    }
+  }
+  
+  
+  
 }
 
 #capslock-on {

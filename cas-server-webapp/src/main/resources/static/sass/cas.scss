@@ -67,6 +67,29 @@ body#cas {
   background: #153e50; /* Old browsers */
 }
 
+
+#cas {
+  .btn-submit {
+    background: #70ba61;
+    border: 0;
+    padding: 10px 25px;
+    font-weight: normal;
+    color: white;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    font-size: 1.25em;
+  }
+
+  .btn-reset {
+    background: #eee;
+    padding: 10px 20px;
+    border: 0;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+  }
+}
 a:link, a:visited {
   color: $link-color;
 }
@@ -452,6 +475,12 @@ table.principal_attributes>tbody>tr>td {
 }
 #view-configuration {
   display: none;
+}
+
+.confirmView, .loginMessageView {
+  .btn-row {
+    text-align: center;
+  }
 }
 
 @import "components/casdashboard";
