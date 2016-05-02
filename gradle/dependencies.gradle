@@ -36,7 +36,8 @@ ext.libraries = [
                     exclude(group: 'junit', module: 'junit')
                     force = true
                 },
-                "org.apache.commons:commons-lang3:$commonsLangVersion"
+                "org.apache.commons:commons-lang3:$commonsLangVersion",
+                "org.jooq:jool:$joolVersion"
         ],
         ehcache          : [
                 dependencies.create("net.sf.ehcache:ehcache:$ehcacheVersion") {

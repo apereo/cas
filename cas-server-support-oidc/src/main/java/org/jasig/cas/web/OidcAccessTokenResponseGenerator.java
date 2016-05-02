@@ -5,24 +5,32 @@ import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.OidcConstants;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.OidcRegisteredService;
 import org.jasig.cas.support.oauth.OAuthAccessTokenResponseGenerator;
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
+import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.lang.JoseException;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 /**
@@ -45,17 +53,25 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
     private Resource jwksFile;
 
     @Override
-    protected void generateJsonInternal(final JsonGenerator jsonGenerator,
+    protected void generateJsonInternal(final HttpServletRequest request,
+                                        final HttpServletResponse response,
+                                        final JsonGenerator jsonGenerator,
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
                                         final long timeout,
                                         final Service service,
                                         final OAuthRegisteredService registeredService) throws Exception {
 
-        super.generateJsonInternal(jsonGenerator, accessTokenId, refreshTokenId, timeout, service, registeredService);
-
-        final JwtClaims claims = produceIdTokenClaims(accessTokenId, timeout, service);
+        super.generateJsonInternal(request, response, jsonGenerator, accessTokenId, 
+                refreshTokenId, timeout, service, registeredService);
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
+
+        final J2EContext context = new J2EContext(request, response);
+        final ProfileManager manager = new ProfileManager(context);
+        final UserProfile profile = manager.get(true);
+        
+        final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout, 
+                oidcRegisteredService, profile, context);
         final JsonWebKeySet jwks = buildJsonWebKeySet(oidcRegisteredService);
         final String idToken = signIdTokenClaim(oidcRegisteredService, jwks, claims);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
@@ -64,22 +80,33 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
     /**
      * Produce id token claims jwt claims.
      *
+     * @param request       the request
      * @param accessTokenId the access token id
      * @param timeout       the timeout
      * @param service       the service
+     * @param profile       the user profile
+     * @param context       the context
      * @return the jwt claims
      */
-    protected JwtClaims produceIdTokenClaims(final AccessToken accessTokenId, final long timeout, final Service service) {
+    protected JwtClaims produceIdTokenClaims(final HttpServletRequest request, 
+                                             final AccessToken accessTokenId, final long timeout, 
+                                             final OidcRegisteredService service,
+                                             final UserProfile profile,
+                                             final J2EContext context) {
         final JwtClaims claims = new JwtClaims();
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(this.issuer);
-        claims.setAudience(service.getId());
+        claims.setAudience(service.getClientId());
         claims.setExpirationTimeMinutesInTheFuture(timeout);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(this.skew);
-        claims.setSubject(accessTokenId.getAuthentication().getPrincipal().getId());
+        claims.setSubject(profile.getId());
 
-        final Principal principal = accessTokenId.getAuthentication().getPrincipal();
+        final Authentication authentication = accessTokenId.getAuthentication();
+        claims.setClaim(OAuthConstants.STATE, authentication.getAttributes().get(OAuthConstants.STATE));
+        claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
+        
+        final Principal principal = authentication.getPrincipal();
         final Sets.SetView<String> setView = Sets.intersection(OidcConstants.CLAIMS, principal.getAttributes().keySet());
         setView.immutableCopy().stream().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
         return claims;
@@ -104,11 +131,12 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
         logger.debug("Generated claims are {}", jsonClaims);
 
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
+        jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
 
         if (svc.isSignIdToken() && !jwks.getJsonWebKeys().isEmpty()) {
             final RsaJsonWebKey jsonWebKey = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
             jws.setKey(jsonWebKey.getPrivateKey());
-
+            jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
             if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
                 jws.setKeyIdHeaderValue(UUID.randomUUID().toString());
             } else {

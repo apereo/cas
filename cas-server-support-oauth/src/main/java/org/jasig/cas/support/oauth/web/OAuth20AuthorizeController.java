@@ -1,5 +1,6 @@
 package org.jasig.cas.support.oauth.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.PrincipalException;
 import org.jasig.cas.authentication.principal.Service;
@@ -58,6 +59,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
         final String state = request.getParameter(OAuthConstants.STATE);
+        final String nonce = request.getParameter(OAuthConstants.NONCE);
 
         logger.debug("Authorize request verification successful for client {} with redirect uri {}",
                 clientId, redirectUri);
@@ -73,7 +75,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
-        final boolean bypassApprovalService = registeredService.isBypassApprovalPrompt();
+        final boolean bypassApprovalService = registeredService != null && registeredService.isBypassApprovalPrompt();
         logger.debug("bypassApprovalService: {}", bypassApprovalService);
 
         final J2EContext context = new J2EContext(request, response);
@@ -87,9 +89,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                 logger.error("Unexpected null profile");
                 return new ModelAndView(OAuthConstants.ERROR_VIEW);
             }
-            
+
             final Service service = createService(registeredService);
-            final Authentication authentication = createAuthentication(profile, registeredService);
+            final Authentication authentication = createAuthentication(profile, registeredService, context);
 
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
@@ -102,9 +104,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
             final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
             final String callbackUrl;
             if (isResponseType(responseType, OAuthResponseType.CODE)) {
-                callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(state, authentication, service, redirectUri);
+                callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(context, authentication, service, redirectUri);
             } else {
-                callbackUrl = buildCallbackUrlForImplicitResponseType(state, authentication, service, redirectUri);
+                callbackUrl = buildCallbackUrlForImplicitResponseType(context, authentication, service, redirectUri);
             }
             logger.debug("callbackUrl: {}", callbackUrl);
             return OAuthUtils.redirectTo(callbackUrl);
@@ -113,29 +115,49 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         return redirectToApproveView(registeredService, context);
     }
 
-    private String buildCallbackUrlForImplicitResponseType(final String state, final Authentication authentication,
-                                                           final Service service, final String redirectUri) {
-        final AccessToken accessToken = generateAccessToken(service, authentication);
+    private String buildCallbackUrlForImplicitResponseType(final J2EContext context,
+                                                           final Authentication authentication,
+                                                           final Service service,
+                                                           final String redirectUri) {
+
+        final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
+        final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
+        
+        final AccessToken accessToken = generateAccessToken(service, authentication, context);
         logger.debug("Generated Oauth access token: {}", accessToken);
 
         String callbackUrl = redirectUri;
-        callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + this.timeout;
-        if (state != null) {
-            callbackUrl += "&state=" + EncodingUtils.urlEncode(state);
+        callbackUrl += '#' + OAuthConstants.ACCESS_TOKEN + '=' + accessToken.getId() + '&'
+                + OAuthConstants.TOKEN_TYPE + '=' + OAuthConstants.TOKEN_TYPE_BEARER + '&'
+                + OAuthConstants.EXPIRES + '=' + this.timeout;
+        if (StringUtils.isNotBlank(state)) {
+            callbackUrl += '&' + OAuthConstants.STATE + '=' + EncodingUtils.urlEncode(state);
+        }
+        if (StringUtils.isNotBlank(nonce)) {
+            callbackUrl += '&' + OAuthConstants.NONCE + '=' + EncodingUtils.urlEncode(nonce);
         }
         return callbackUrl;
     }
 
-    private String buildCallbackUrlForAuthorizationCodeResponseType(final String state, final Authentication authentication,
-                                                                    final Service service, final String redirectUri) {
+    private String buildCallbackUrlForAuthorizationCodeResponseType(final J2EContext context,
+                                                                    final Authentication authentication,
+                                                                    final Service service,
+                                                                    final String redirectUri) {
+
         final OAuthCode code = this.oAuthCodeFactory.create(service, authentication);
         logger.debug("Generated OAuth code: {}", code);
         this.ticketRegistry.addTicket(code);
 
+        final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
+        final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
+
         String callbackUrl = redirectUri;
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
-        if (state != null) {
+        if (StringUtils.isNotBlank(state)) {
             callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.STATE, state);
+        }
+        if (StringUtils.isNotBlank(nonce)) {
+            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.NONCE, nonce);
         }
         return callbackUrl;
     }

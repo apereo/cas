@@ -1,14 +1,10 @@
 package org.jasig.cas.config;
 
 import org.jasig.cas.OidcConstants;
-import org.jasig.cas.support.oauth.AccessTokenResponseGenerator;
-import org.jasig.cas.web.OidcAccessTokenResponseGenerator;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -31,18 +27,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(oidcInterceptor())
                 .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
-
-    /**
-     * Access token response generator access token response generator.
-     *
-     * @return the access token response generator
-     */
-    @Primary
-    @Bean(name = "accessTokenResponseGenerator", autowire = Autowire.BY_NAME)
-    public AccessTokenResponseGenerator accessTokenResponseGenerator() {
-        return new OidcAccessTokenResponseGenerator();
-    }
-
+    
     /**
      * Oidc interceptor handler interceptor.
      *

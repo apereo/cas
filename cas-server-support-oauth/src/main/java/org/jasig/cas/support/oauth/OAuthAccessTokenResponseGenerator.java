@@ -14,8 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -28,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component("oauthAccessTokenResponseGenerator")
 public class OAuthAccessTokenResponseGenerator implements AccessTokenResponseGenerator {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     /**
      * The JSON factory.
      */
@@ -39,9 +41,10 @@ public class OAuthAccessTokenResponseGenerator implements AccessTokenResponseGen
      */
     @Autowired
     protected ResourceLoader resourceLoader;
-    
+
     @Override
-    public void generate(final HttpServletResponse response,
+    public void generate(final HttpServletRequest request,
+                         final HttpServletResponse response,
                          final OAuthRegisteredService registeredService,
                          final Service service,
                          final AccessToken accessTokenId,
@@ -49,28 +52,31 @@ public class OAuthAccessTokenResponseGenerator implements AccessTokenResponseGen
                          final long timeout) {
 
         if (registeredService.isJsonFormat()) {
-            response.setContentType("application/json");
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             try (final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(response.getWriter())) {
                 jsonGenerator.writeStartObject();
-                generateJsonInternal(jsonGenerator, accessTokenId, refreshTokenId, timeout, service, registeredService);
+                generateJsonInternal(request, response, jsonGenerator, accessTokenId,
+                        refreshTokenId, timeout, service, registeredService);
                 jsonGenerator.writeEndObject();
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
         } else {
-            generateTextInternal(response, accessTokenId, refreshTokenId, timeout);
+            generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);
         }
     }
 
     /**
      * Generate text internal.
      *
+     * @param request        the request
      * @param response       the response
      * @param accessTokenId  the access token id
      * @param refreshTokenId the refresh token id
      * @param timeout        the timeout
      */
-    protected void generateTextInternal(final HttpServletResponse response,
+    protected void generateTextInternal(final HttpServletRequest request,
+                                        final HttpServletResponse response,
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
                                         final long timeout) {
@@ -85,6 +91,8 @@ public class OAuthAccessTokenResponseGenerator implements AccessTokenResponseGen
     /**
      * Generate internal.
      *
+     * @param request           the request
+     * @param response          the response
      * @param jsonGenerator     the json generator
      * @param accessTokenId     the access token id
      * @param refreshTokenId    the refresh token id
@@ -93,7 +101,9 @@ public class OAuthAccessTokenResponseGenerator implements AccessTokenResponseGen
      * @param registeredService the registered service
      * @throws Exception the exception
      */
-    protected void generateJsonInternal(final JsonGenerator jsonGenerator,
+    protected void generateJsonInternal(final HttpServletRequest request,
+                                        final HttpServletResponse response,
+                                        final JsonGenerator jsonGenerator,
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
                                         final long timeout,
