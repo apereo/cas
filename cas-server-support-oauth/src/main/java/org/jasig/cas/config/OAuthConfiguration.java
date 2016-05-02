@@ -9,9 +9,12 @@ import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,12 +56,12 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the access token response generator
      */
-    @RefreshScope
-    @Bean(name = "accessTokenResponseGenerator")
+    @ConditionalOnMissingBean(name="accessTokenResponseGenerator")
+    @Bean(name = "accessTokenResponseGenerator", autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuthAccessTokenResponseGenerator();
     }
-    
+        
     /**
      * Oauth sec config config.
      *
