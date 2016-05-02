@@ -38,4 +38,4 @@ This option should only be used for demo and testing purposes. Production deploy
 implementation of the registry that is capable to register accounts into persistent storage. 
 
 To provide such an option, provide an implementation of `GoogleAuthenticatorAccountRegistry`. Make sure your implementation
-is named `googleAuthenticatorAccountRegistry` is the Spring configuration. 
+is named `googleAuthenticatorAccountRegistry` in the Spring configuration. 
