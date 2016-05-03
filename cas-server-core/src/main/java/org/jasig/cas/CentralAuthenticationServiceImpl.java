@@ -150,7 +150,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
-        getAuthenticationSatisfiedByPolicy(authenticationResult, new ServiceContext(service, registeredService));
+        getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
