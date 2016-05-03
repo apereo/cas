@@ -1,0 +1,46 @@
+package org.jasig.cas.services;
+
+import org.apache.commons.io.FileUtils;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+
+import static org.junit.Assert.*;
+
+/**
+ * @author Misagh Moayyed
+ * @since 5.0.0
+ */
+public class OidcRegisteredServiceTests {
+
+    private static final ClassPathResource RESOURCE = new ClassPathResource("services");
+
+    private ServiceRegistryDao dao;
+
+    public OidcRegisteredServiceTests() throws Exception {
+        this.dao = new JsonServiceRegistryDao(RESOURCE);
+    }
+
+    @BeforeClass
+    public static void prepTests() throws Exception {
+        FileUtils.cleanDirectory(RESOURCE.getFile());
+    }
+    
+    @Test
+    public void checkSaveMethod() {
+        final OidcRegisteredService r = new OidcRegisteredService();
+        r.setName("checkSaveMethod");
+        r.setServiceId("testId");
+        r.setJwks("file:/etc/cas/thekeystorehere.jwks");
+        r.setSignIdToken(true);
+        r.setBypassApprovalPrompt(true);
+        final RegisteredService r2 = this.dao.save(r);
+        assertTrue(r2 instanceof OAuthRegisteredService);
+        this.dao.load();
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertTrue(r3 instanceof OAuthRegisteredService);
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+    }
+}

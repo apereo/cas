@@ -106,6 +106,10 @@ public final class WebUtils {
         return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
     }
 
+    public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
+        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+    }
+    
     /**
      * Gets the http servlet response from the context.
      *

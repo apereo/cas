@@ -13,6 +13,16 @@ import java.util.Set;
 public interface OidcConstants {
 
     /**
+     * The sub claim.
+     */
+    String CLAIM_SUB = "sub";
+
+    /**
+     * The preferred username claim.
+     */
+    String CLAIM_PREFERRED_USERNAME = "preferred_username";
+    
+    /**
      * The Scopes.
      */
     Set<String> SCOPES = ImmutableSet.of("openid", "profile", "email", "address", "phone", "offline_access");
@@ -20,7 +30,7 @@ public interface OidcConstants {
     /**
      * The Claims.
      */
-    Set<String> CLAIMS = ImmutableSet.of("sub", "name", "preferred_username",
+    Set<String> CLAIMS = ImmutableSet.of(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
             "family_name", "given_name", "middle_name", "given_name", "profile",
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",

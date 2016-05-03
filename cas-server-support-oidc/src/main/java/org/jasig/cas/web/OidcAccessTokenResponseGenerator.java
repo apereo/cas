@@ -93,6 +93,9 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
                                              final OidcRegisteredService service,
                                              final UserProfile profile,
                                              final J2EContext context) {
+        final Authentication authentication = accessTokenId.getAuthentication();
+        final Principal principal = authentication.getPrincipal();
+        
         final JwtClaims claims = new JwtClaims();
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(this.issuer);
@@ -100,15 +103,18 @@ public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGe
         claims.setExpirationTimeMinutesInTheFuture(timeout);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(this.skew);
-        claims.setSubject(profile.getId());
-
-        final Authentication authentication = accessTokenId.getAuthentication();
+        claims.setSubject(principal.getId());
+        
         claims.setClaim(OAuthConstants.STATE, authentication.getAttributes().get(OAuthConstants.STATE));
         claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
         
-        final Principal principal = authentication.getPrincipal();
         final Sets.SetView<String> setView = Sets.intersection(OidcConstants.CLAIMS, principal.getAttributes().keySet());
         setView.immutableCopy().stream().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
+        
+        if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
+            claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, profile.getId());
+        }
+        
         return claims;
     }
 

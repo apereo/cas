@@ -3,10 +3,11 @@ package org.jasig.cas;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
+import org.jasig.cas.validation.ValidationServiceSelectionStrategy;
 import org.jasig.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -33,7 +36,11 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
-    private AbstractTicketRegistry ticketRegistry;
+    @Qualifier("oauth20ValidationServiceSelectionStrategy")
+    private ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy;
+
+    @Resource(name = "validationServiceSelectionStrategies")
+    private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     /**
      * Initialize servlet application context.
@@ -44,15 +51,20 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         final ReloadableServicesManager servicesManager = getServicesManager();
         final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
-        if (!servicesManager.matchesExistingService(callbackService)) {
+        
+        final RegisteredService svc = servicesManager.findServiceBy(callbackService);
+        
+        if (svc != null && !svc.getServiceId().equals(oAuthCallbackUrl)) {
             final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
             service.setName("OAuth Callback url");
             service.setDescription("OAuth Wrapper Callback Url");
             service.setServiceId(oAuthCallbackUrl);
-
+            service.setEvaluationOrder(Integer.MIN_VALUE);
+            
             addRegisteredServiceToServicesManager(service);
             servicesManager.reload();
         }
 
+        this.validationServiceSelectionStrategies.add(0, this.oauth20ValidationServiceSelectionStrategy);
     }
 }

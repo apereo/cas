@@ -1,5 +1,8 @@
 package org.jasig.cas.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 
 import javax.persistence.DiscriminatorValue;
@@ -39,5 +42,47 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Override
     public Boolean isJsonFormat() {
         return true;
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new OidcRegisteredService();
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final OidcRegisteredService rhs = (OidcRegisteredService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.jwks, rhs.jwks)
+                .append(this.signIdToken, rhs.signIdToken)
+                .isEquals();
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(jwks)
+                .append(signIdToken)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("jwks", jwks)
+                .append("signIdToken", signIdToken)
+                .toString();
     }
 }

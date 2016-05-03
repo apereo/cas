@@ -1,22 +1,28 @@
 package org.jasig.cas.support.oauth.web;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.util.CollectionUtils;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -33,12 +39,18 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ATTRIBUTES = "attributes";
 
-    private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
-
-    @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL)
-    @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
+    /**
+     * Handle request internal response entity.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the response entity
+     * @throws Exception the exception
+     */
+    @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    protected ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws
+            Exception {
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
@@ -49,51 +61,47 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
         }
         logger.debug("{}: {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
-        try (final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(response.getWriter())) {
-            response.setContentType("application/json");
-            // accessToken is required
-            if (StringUtils.isBlank(accessToken)) {
-                logger.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
-                jsonGenerator.writeEndObject();
-                return null;
-            }
-            try {
-
-                final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
-                if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-                    logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
-                    jsonGenerator.writeStartObject();
-                    jsonGenerator.writeStringField(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
-                    jsonGenerator.writeEndObject();
-                    return null;
-                }
-
-                writeOutProfileResponse(jsonGenerator, accessTokenTicket.getAuthentication().getPrincipal());
-            } catch (final Exception e) {
-                logger.error("Cannot JSONify profile", e);
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST + ". " + e.getMessage());
-                jsonGenerator.writeEndObject();
-            }
-            return null;
-        } finally {
-            response.flushBuffer();
+        if (StringUtils.isBlank(accessToken)) {
+            logger.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
+            final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
+            map.add(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
+            return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
         }
+
+        final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
+        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
+            logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
+            final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
+            map.add(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
+            return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
+        }
+
+        final LinkedMultiValueMap<String, String> map =
+                writeOutProfileResponse(accessTokenTicket.getAuthentication().getPrincipal());
+        final String value = new ObjectMapper()
+                            .writer()
+                            .withDefaultPrettyPrinter()
+                            .writeValueAsString(map);
+        return new ResponseEntity<>(value, HttpStatus.OK);
     }
 
-    private void writeOutProfileResponse(final JsonGenerator jsonGenerator, final Principal principal) throws IOException {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField(ID, principal.getId());
-        jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
+    /**
+     * Write out profile response.
+     *
+     * @param principal the principal
+     * @return the linked multi value map
+     * @throws IOException the io exception
+     */
+    protected LinkedMultiValueMap<String, String> writeOutProfileResponse(final Principal principal) throws IOException {
+        final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add(ID, principal.getId());
+
         final Map<String, Object> attributes = principal.getAttributes();
-        for (final Map.Entry<String, Object> stringObjectEntry : attributes.entrySet()) {
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeObjectField(stringObjectEntry.getKey(), stringObjectEntry.getValue());
-            jsonGenerator.writeEndObject();
+        for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
+            final Set<Object> values = CollectionUtils.convertValueToCollection(entry.getValue());
+            values.stream().forEach(value -> map.add(entry.getKey(), value.toString()));
         }
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
+        return map;
     }
+
 }

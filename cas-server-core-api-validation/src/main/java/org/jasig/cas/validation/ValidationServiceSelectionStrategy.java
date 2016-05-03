@@ -22,6 +22,11 @@ import java.io.Serializable;
 public interface ValidationServiceSelectionStrategy extends Serializable, Comparable<ValidationServiceSelectionStrategy> {
 
     /**
+     * Defined order of the strategy in the list of available processors. 
+     */
+    int MAX_ORDER = Integer.MAX_VALUE;
+
+    /**
      * Resolves the real service from the provided service, if appropriate.
      *
      * @param service the provided service by the caller
@@ -33,7 +38,7 @@ public interface ValidationServiceSelectionStrategy extends Serializable, Compar
      * Indicates whether this strategy supports service selection.
      *
      * @param service the service
-     * @return true/false
+     * @return true /false
      */
     boolean supports(Service service);
 }

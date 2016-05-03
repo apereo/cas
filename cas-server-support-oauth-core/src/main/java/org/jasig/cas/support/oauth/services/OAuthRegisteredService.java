@@ -77,7 +77,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     public void setJsonFormat(final Boolean jsonFormat) {
         this.jsonFormat = jsonFormat;
     }
-
+    
     @Override
     public String toString() {
         final ToStringBuilder builder = new ToStringBuilder(this);

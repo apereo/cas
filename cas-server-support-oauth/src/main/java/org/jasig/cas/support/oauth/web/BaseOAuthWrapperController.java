@@ -39,7 +39,7 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public abstract class BaseOAuthWrapperController extends AbstractController {
+public abstract class BaseOAuthWrapperController {
 
     /**
      * The logger.

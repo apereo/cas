@@ -68,7 +68,7 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
@@ -80,7 +80,7 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, "DOES NOT EXIST");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
@@ -99,7 +99,7 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
     }
@@ -120,7 +120,7 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
@@ -156,7 +156,7 @@ public class OAuth20ProfileControllerTests {
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
                 + accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 

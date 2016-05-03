@@ -22,6 +22,7 @@ import java.util.Optional;
  */
 @Component("samlIdPEntityIdValidationServiceSelectionStrategy")
 public class SamlIdPEntityIdValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
+    private static final long serialVersionUID = -2718740284657155873L;
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired

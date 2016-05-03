@@ -47,8 +47,15 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     @Qualifier("defaultOAuthCodeFactory")
     protected OAuthCodeFactory oAuthCodeFactory;
 
+    /**
+     * Handle request internal model and view.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
     @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
-    @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         if (!verifyAuthorizeRequest(request)) {

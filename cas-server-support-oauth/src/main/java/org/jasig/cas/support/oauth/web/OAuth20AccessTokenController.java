@@ -51,8 +51,15 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     @Qualifier("accessTokenResponseGenerator")
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
+    /**
+     * Handle request internal model and view.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
     @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL, method = RequestMethod.POST)
-    @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 

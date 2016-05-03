@@ -11,6 +11,8 @@ import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.ProfileManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -80,8 +82,15 @@ public class TerminateSessionAction {
             WebUtils.putLogoutRequests(context, logoutRequests);
         }
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        
         this.ticketGrantingTicketCookieGenerator.removeCookie(response);
         this.warnCookieGenerator.removeCookie(response);
+
+        final J2EContext j2EContext = new J2EContext(request, response);
+        final ProfileManager manager = new ProfileManager(j2EContext);
+        manager.logout();
+        
         return this.eventFactorySupport.success(this);
     }
 }

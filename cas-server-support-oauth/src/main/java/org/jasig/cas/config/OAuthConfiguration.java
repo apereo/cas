@@ -1,5 +1,6 @@
 package org.jasig.cas.config;
 
+import org.jasig.cas.client.util.URIBuilder;
 import org.jasig.cas.support.oauth.AccessTokenResponseGenerator;
 import org.jasig.cas.support.oauth.OAuthAccessTokenResponseGenerator;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +24,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -72,14 +73,35 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     public Config oauthSecConfig() {
         final CasClient oauthCasClient = new CasClient(this.casLoginUrl);
         oauthCasClient.setName(CAS_OAUTH_CLIENT);
+        oauthCasClient.setCallbackUrlResolver((url, context) -> {
+            if (url.startsWith(OAuthConfiguration.this.callbackUrl)) {
+                final URIBuilder builder = new URIBuilder(url);
+                final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
+                Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
+                        .stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID))
+                        .findFirst();
 
+                if (parameter.isPresent()) {
+                    builder.addParameter(parameter.get().getName(), parameter.get().getValue());
+                }
+                parameter = builderContext.getQueryParams()
+                        .stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI))
+                        .findFirst();
+                if (parameter.isPresent()) {
+                    builder.addParameter(parameter.get().getName(), parameter.get().getValue());
+                }
+                return builder.build().toString();
+            }
+            return url;
+        });
+        
         final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(this.oAuthClientAuthenticator);
         basicAuthClient.setName("clientBasicAuth");
 
         final DirectFormClient directFormClient = new DirectFormClient(this.oAuthClientAuthenticator);
         directFormClient.setName("clientForm");
-        directFormClient.setUsernameParameter("client_id");
-        directFormClient.setPasswordParameter("client_secret");
+        directFormClient.setUsernameParameter(OAuthConstants.CLIENT_ID);
+        directFormClient.setPasswordParameter(OAuthConstants.CLIENT_SECRET);
 
         final DirectFormClient userFormClient = new DirectFormClient(this.oAuthUserAuthenticator);
         userFormClient.setName("userForm");

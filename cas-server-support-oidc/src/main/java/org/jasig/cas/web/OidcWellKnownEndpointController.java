@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * This is {@link WellKnownEndpointController}.
+ * This is {@link OidcWellKnownEndpointController}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RestController("wellknownController")
-public class WellKnownEndpointController {
+@RestController("oidcWellknownController")
+public class OidcWellKnownEndpointController {
 
     @Value("${server.prefix}")
     private String serverPrefix;

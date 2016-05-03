@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
  */
 @Component("defaultValidationServiceSelectionStrategy")
 public class DefaultValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
-    
+
+    private static final long serialVersionUID = -1520729797514798602L;
+
     @Override
     public Service resolveServiceFrom(final Service service) {
         return service;
@@ -25,6 +27,6 @@ public class DefaultValidationServiceSelectionStrategy implements ValidationServ
 
     @Override
     public int compareTo(final ValidationServiceSelectionStrategy o) {
-        return Integer.MAX_VALUE;
+        return MAX_ORDER;
     }
 }
