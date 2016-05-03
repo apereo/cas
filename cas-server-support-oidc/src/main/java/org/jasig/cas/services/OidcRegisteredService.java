@@ -21,6 +21,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private static final long serialVersionUID = 1310899699465091444L;
 
     private String jwks;
+    
     private boolean signIdToken;
 
     public OidcRegisteredService() {

@@ -111,7 +111,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
             final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
             final String callbackUrl;
             if (isResponseType(responseType, OAuthResponseType.CODE)) {
-                callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(context, authentication, service, redirectUri);
+                callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri);
             } else {
                 callbackUrl = buildCallbackUrlForImplicitResponseType(context, authentication, service, redirectUri);
             }
@@ -129,7 +129,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
         final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
         final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
-        
+
         final AccessToken accessToken = generateAccessToken(service, authentication, context);
         logger.debug("Generated Oauth access token: {}", accessToken);
 
@@ -146,8 +146,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         return callbackUrl;
     }
 
-    private String buildCallbackUrlForAuthorizationCodeResponseType(final J2EContext context,
-                                                                    final Authentication authentication,
+    private String buildCallbackUrlForAuthorizationCodeResponseType(final Authentication authentication,
                                                                     final Service service,
                                                                     final String redirectUri) {
 

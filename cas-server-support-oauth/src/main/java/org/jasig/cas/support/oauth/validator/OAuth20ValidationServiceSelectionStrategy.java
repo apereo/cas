@@ -11,7 +11,6 @@ import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.validation.ValidationServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -25,10 +24,7 @@ import java.util.Optional;
 @Component("oauth20ValidationServiceSelectionStrategy")
 public class OAuth20ValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
-
-    @Value("${server.prefix:http://localhost:8080/cas}")
-    private String casServerUrl;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -56,7 +52,7 @@ public class OAuth20ValidationServiceSelectionStrategy implements ValidationServ
     @Override
     public boolean supports(final Service service) {
         final RegisteredService svc = this.servicesManager.findServiceBy(service);
-        return svc != null && svc instanceof OAuthCallbackAuthorizeService;
+        return svc instanceof OAuthCallbackAuthorizeService;
     }
 
     @Override
