@@ -16,6 +16,17 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+## Endpoints
+
+| Field                                     | Description
+|-------------------------------------------+------------------------------------------------------+
+| `/oidc/.well-known`                       | Discovery endpoint.
+| `/oidc/.well-known/openid-configuration`  | Discovery endpoint.
+| `/oidc/authorize`                         | Authorization requests are handled here.
+| `/oidc/profile`                           | User profile requests are handled here.
+| `/oidc/jwks`                              | Provides an aggregate of all keystores
+| `/oidc/accessToken`                       | Produces authorized access tokens.
+
 ## Register Clients
 
 OpenID Connect clients can be registered with CAS as such:
