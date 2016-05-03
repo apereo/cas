@@ -49,7 +49,7 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
-    
+
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j
     compile libraries.springcloud
@@ -63,3 +63,8 @@ dependencies {
     runtime libraries.bouncycastle
 }
 
+npm_run {
+    args = ['gulp']
+}
+
+processResources.dependsOn('npm_install', 'npm_run')
