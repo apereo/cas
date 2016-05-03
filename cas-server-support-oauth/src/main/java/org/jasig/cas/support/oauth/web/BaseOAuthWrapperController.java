@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -40,10 +39,6 @@ import java.util.Map;
  * @since 3.5.0
  */
 public abstract class BaseOAuthWrapperController {
-
-    /**
-     * The logger.
-     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**

@@ -1,6 +1,5 @@
 package org.jasig.cas.support.oauth.validator;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -10,15 +9,11 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.validation.ValidationServiceSelectionStrategy;
-import org.jasig.cas.web.support.WebUtils;
-import org.pac4j.core.context.J2EContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -44,14 +39,14 @@ public class OAuth20ValidationServiceSelectionStrategy implements ValidationServ
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-       final URIBuilder builder = new URIBuilder(service.getId());
-        
-        final Optional<URIBuilder.BasicNameValuePair> clientId = 
+        final URIBuilder builder = new URIBuilder(service.getId());
+
+        final Optional<URIBuilder.BasicNameValuePair> clientId =
                 builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID)).findFirst();
 
         final Optional<URIBuilder.BasicNameValuePair> redirectUri =
                 builder.getQueryParams().stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI)).findFirst();
-        
+
         if (clientId.isPresent() && redirectUri.isPresent()) {
             return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
         }
