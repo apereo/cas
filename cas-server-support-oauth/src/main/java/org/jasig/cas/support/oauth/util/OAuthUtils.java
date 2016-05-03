@@ -1,6 +1,7 @@
 package org.jasig.cas.support.oauth.util;
 
 import org.apache.http.HttpStatus;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -56,6 +58,23 @@ public final class OAuthUtils {
         return null;
     }
 
+    /**
+     * Jsonify string.
+     *
+     * @param map the map
+     * @return the string
+     */
+    public static String jsonify(final Map map) {
+        try {
+            final String value = new ObjectMapper()
+                    .writer()
+                    .withDefaultPrettyPrinter()
+                    .writeValueAsString(map);
+            return value;
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
     /**
      * Return a view which is a redirection to an url.
      *

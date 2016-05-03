@@ -23,6 +23,10 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String jwks;
     private boolean signIdToken;
 
+    public OidcRegisteredService() {
+        setJsonFormat(true);
+    }
+
     public boolean isSignIdToken() {
         return signIdToken;
     }
@@ -38,12 +42,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     public void setJwks(final String jwks) {
         this.jwks = jwks;
     }
-
-    @Override
-    public Boolean isJsonFormat() {
-        return true;
-    }
-
+    
     @Override
     protected AbstractRegisteredService newInstance() {
         return new OidcRegisteredService();
@@ -61,7 +60,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
             return false;
         }
         final OidcRegisteredService rhs = (OidcRegisteredService) obj;
-        return new EqualsBuilder()
+        final EqualsBuilder builder = new EqualsBuilder();
+        return  builder
                 .appendSuper(super.equals(obj))
                 .append(this.jwks, rhs.jwks)
                 .append(this.signIdToken, rhs.signIdToken)

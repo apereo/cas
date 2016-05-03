@@ -8,13 +8,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * This is {@link OidcProfileController}.
@@ -35,10 +35,10 @@ public class OidcProfileController extends OAuth20ProfileController {
     }
 
     @Override
-    protected LinkedMultiValueMap<String, String> writeOutProfileResponse(final Principal principal) throws IOException {
-        final LinkedMultiValueMap<String, String> map = super.writeOutProfileResponse(principal);
+    protected Map<String, Object> writeOutProfileResponse(final Principal principal) throws IOException {
+        final Map<String, Object> map = super.writeOutProfileResponse(principal);
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
-            map.add(OidcConstants.CLAIM_SUB, principal.getId());
+            map.put(OidcConstants.CLAIM_SUB, principal.getId());
         }
         return map;
     }

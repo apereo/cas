@@ -1,11 +1,10 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.jasig.cas.util.CollectionUtils;
+import org.jasig.cas.support.oauth.util.OAuthUtils;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This controller returns a profile for the authenticated user
@@ -33,9 +32,8 @@ import java.util.Set;
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ID = "id";
-
     private static final String ATTRIBUTES = "attributes";
-
+    
     /**
      * Handle request internal response entity.
      *
@@ -48,6 +46,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     protected ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws
             Exception {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
@@ -62,7 +61,8 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
             logger.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.MISSING_ACCESS_TOKEN);
-            return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
+            final String value = OAuthUtils.jsonify(map);
+            return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
         }
 
         final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
@@ -70,15 +70,13 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
             logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
             map.add(OAuthConstants.ERROR, OAuthConstants.EXPIRED_ACCESS_TOKEN);
-            return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
+            final String value = OAuthUtils.jsonify(map);
+            return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
         }
 
-        final LinkedMultiValueMap<String, String> map =
+        final Map<String, Object> map =
                 writeOutProfileResponse(accessTokenTicket.getAuthentication().getPrincipal());
-        final String value = new ObjectMapper()
-                            .writer()
-                            .withDefaultPrettyPrinter()
-                            .writeValueAsString(map);
+        final String value = OAuthUtils.jsonify(map); 
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
 
@@ -89,15 +87,10 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
      * @return the linked multi value map
      * @throws IOException the io exception
      */
-    protected LinkedMultiValueMap<String, String> writeOutProfileResponse(final Principal principal) throws IOException {
-        final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add(ID, principal.getId());
-
-        final Map<String, Object> attributes = principal.getAttributes();
-        for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
-            final Set<Object> values = CollectionUtils.convertValueToCollection(entry.getValue());
-            values.stream().forEach(value -> map.add(entry.getKey(), value.toString()));
-        }
+    protected Map<String, Object> writeOutProfileResponse(final Principal principal) throws IOException {
+        final Map<String, Object> map = new HashMap<>();
+        map.put(ID, principal.getId());
+        map.put(ATTRIBUTES, principal.getAttributes());
         return map;
     }
 

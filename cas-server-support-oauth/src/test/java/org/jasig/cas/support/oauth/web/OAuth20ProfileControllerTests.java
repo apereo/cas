@@ -18,6 +18,8 @@ import org.jasig.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -61,17 +63,18 @@ public class OAuth20ProfileControllerTests {
 
     @Autowired
     private OAuth20ProfileController oAuth20ProfileController;
-
+    
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+        assertTrue(entity.getBody().contains(OAuthConstants.MISSING_ACCESS_TOKEN));
     }
 
     @Test
@@ -80,10 +83,12 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, "DOES NOT EXIST");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+        
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+       
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+        assertTrue(entity.getBody().contains(OAuthConstants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
@@ -99,9 +104,11 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
-        assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertTrue(entity.getBody().contains(OAuthConstants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
@@ -120,8 +127,9 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
         final ObjectMapper mapper = new ObjectMapper();
@@ -129,7 +137,7 @@ public class OAuth20ProfileControllerTests {
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+        final JsonNode receivedObj = mapper.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");
@@ -156,8 +164,8 @@ public class OAuth20ProfileControllerTests {
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
                 + accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
         final ObjectMapper mapper = new ObjectMapper();
@@ -165,7 +173,7 @@ public class OAuth20ProfileControllerTests {
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+        final JsonNode receivedObj = mapper.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");

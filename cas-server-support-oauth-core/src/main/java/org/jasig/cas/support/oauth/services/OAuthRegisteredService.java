@@ -118,7 +118,8 @@ public class OAuthRegisteredService extends RegexRegisteredService {
             return false;
         }
         final OAuthRegisteredService rhs = (OAuthRegisteredService) obj;
-        return new EqualsBuilder()
+        final EqualsBuilder builder = new EqualsBuilder();
+        return builder
                 .appendSuper(super.equals(obj))
                 .append(this.clientSecret, rhs.clientSecret)
                 .append(this.clientId, rhs.clientId)
