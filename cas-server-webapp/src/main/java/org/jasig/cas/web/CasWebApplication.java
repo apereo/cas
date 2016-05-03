@@ -25,14 +25,15 @@ import org.springframework.scheduling.annotation.EnableAsync;
  */
 @SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
-                JerseyAutoConfiguration.class,
-                GroovyTemplateAutoConfiguration.class,
-                DataSourceAutoConfiguration.class,
-                MetricsDropwizardAutoConfiguration.class,
-                VelocityAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.jasig.cas", "org.pac4j.springframework"},
-               excludeFilters = { @ComponentScan.Filter(type = FilterType.REGEX,
-               pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
+                   JerseyAutoConfiguration.class,
+                   GroovyTemplateAutoConfiguration.class,
+                   DataSourceAutoConfiguration.class,
+                   MetricsDropwizardAutoConfiguration.class,
+                   VelocityAutoConfiguration.class})
+@ComponentScan(
+        basePackages = {"org.jasig.cas", "org.pac4j.springframework"},
+        excludeFilters = { @ComponentScan.Filter(type = FilterType.REGEX,
+        pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
 @ImportResource(locations = {"classpath:/spring-configuration/*.xml",
         "classpath:/spring-configuration/*.groovy",
         "classpath:/deployerConfigContext.xml",
