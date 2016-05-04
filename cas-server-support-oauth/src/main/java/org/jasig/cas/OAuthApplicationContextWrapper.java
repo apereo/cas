@@ -25,7 +25,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component
+@Component("oauthApplicationContextWrapper")
 public class OAuthApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Value("${server.prefix:http://localhost:8080/cas}")

@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component
+@Component("wsfedApplicationContextWrapper")
 public class WsFedApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired

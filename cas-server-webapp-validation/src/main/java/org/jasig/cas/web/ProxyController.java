@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,8 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.0.0
  */
 @RefreshScope
-@Component("proxyController")
-@Controller
+@Controller("proxyController")
 public class ProxyController {
 
     /** View for if the creation of a "Proxy" Ticket Fails. */

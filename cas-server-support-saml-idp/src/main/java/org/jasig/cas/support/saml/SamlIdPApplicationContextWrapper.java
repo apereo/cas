@@ -16,7 +16,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component
+@Component("samlIdPApplicationContextWrapper")
 public class SamlIdPApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired

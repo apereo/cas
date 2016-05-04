@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 @RefreshScope
-@Component
+@Component("spnegoApplicationContextWrapper")
 public class SpnegoApplicationContextWrapper extends BaseApplicationContextWrapper {
     @Autowired
     @Qualifier("spnegoHandler")

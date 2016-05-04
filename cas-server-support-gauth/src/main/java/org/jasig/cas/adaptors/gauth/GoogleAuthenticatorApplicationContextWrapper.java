@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component
+@Component("googleAuthenticatorApplicationContextWrapper")
 public class GoogleAuthenticatorApplicationContextWrapper extends BaseApplicationContextWrapper {
     @Autowired
     @Qualifier("googleAuthenticatorAuthenticationHandler")

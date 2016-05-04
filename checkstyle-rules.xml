@@ -321,11 +321,12 @@
 
         <!-- Custom checks based on regular expressions -->
         <module name="RegexpSinglelineJava">
+            <property name="id" value="namedAnnotations"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Component/Controller/Configuration annotations must be named"/>
             <property name="severity" value="error"/>
             <property name="format" value="@(Configuration|Component|Controller)(\(\))*$"/>
             <property name="message"
-                      value="It's based to name controller/component annotations to avoid implicit configuration"/>
+                      value="It's better to name controller/component/configuration annotations to avoid implicit configuration"/>
         </module>
         
         <module name="RegexpSinglelineJava">

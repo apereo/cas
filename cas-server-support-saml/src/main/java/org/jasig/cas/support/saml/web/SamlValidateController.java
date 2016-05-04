@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,8 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @RefreshScope
-@Component("samlValidateController")
-@Controller
+@Controller("samlValidateController")
 public class SamlValidateController extends AbstractServiceValidateController {
 
     /**
