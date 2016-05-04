@@ -29,9 +29,12 @@ public class OidcAccessTokenController extends OAuth20AccessTokenController {
     @Autowired
     @Qualifier("oidcAccessTokenResponseGenerator")
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
-    
+
+    /**
+     * Initi the response generator and the controller in general.
+     */
     @PostConstruct
-    private void init() {
+    protected void init() {
         setAccessTokenResponseGenerator(this.accessTokenResponseGenerator);
     }
     
