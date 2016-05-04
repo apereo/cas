@@ -4,8 +4,8 @@
 
         <ul>
             <li th:each="entry: ${pac4jUrls}" th:switch="${entry.type}">
-                <a class="btn btn-lg btn-block btn-social"
-                   th:classappend="'btn-' + (${entry.type == 'oidc'} ? 'openid' : ${entry.type})"
+                <a class="btn btn-block btn-social"
+                   th:classappend="'btn-' + ${entry.type}"
                    th:href="${entry.redirectUrl}"
                    th:inline="text">
                     <span th:case="twitter" class="fa fa-twitter-square"></span>
@@ -18,29 +18,5 @@
                 </a>
             </li>
         </ul>
-
-<!--
-            <ul th:each="entry : ${pac4jUrls}">
-                <div th:switch="${entry.type}">
-                    <li th:case="'facebook'" th:class="${'fa fa-facebook-square'}">
-                        <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                    </li>
-                    <li th:case="'twitter'" th:class="${'fa fa-twitter-square'}">
-                        <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                    </li>
-                    <li th:case="'oidc'" th:class="${'fa fa-openid'}">
-                        <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                    </li>
-                    <li th:case="'saml2'" th:class="${'fa fa-lock'}">
-                        <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                    </li>
-                    <li th:case="'cas'" th:class="${'fa fa-sign-in'}">
-                        <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                    </li>
-                </div>
-
-            </ul>
--->
-
     </div>
 </div>
