@@ -25,7 +25,7 @@ gruntfile.js
 .gradle/
 build/
 MANIFEST.MF
-
+*.css
 classes/
 *.bin
 
