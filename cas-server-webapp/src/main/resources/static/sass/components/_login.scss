@@ -127,13 +127,21 @@
 
 #list-providers ul {
   margin-bottom: 3em;
+
+  li {
+    margin-bottom: 1em;
+
+    a {
+      color: white;
+    }
+  }
 }
 
 #list-languages h3, #list-providers h3 {
   margin-bottom: 1.4em;
 }
 
-#list-languages ul li, #list-providers ul li {
+#list-languages ul li {
   list-style: none;
   display: inline-block;
   margin-right: 2em;
