@@ -10,6 +10,7 @@ import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.pac4j.Pac4jConfiguration;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
@@ -69,16 +71,11 @@ public class ClientAction extends AbstractAction {
      */
     private static final Set<ClientType> SUPPORTED_PROTOCOLS = ImmutableSet.of(ClientType.CAS_PROTOCOL, ClientType.OAUTH_PROTOCOL,
             ClientType.OPENID_PROTOCOL, ClientType.SAML_PROTOCOL, ClientType.OPENID_CONNECT_PROTOCOL);
-
-    /**
-     * The logger.
-     */
+    
+    
     private transient Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
-    /**
-     * The clients used for authentication.
-     */
-    
+
     @Autowired
     @Qualifier("builtClients")
     private Clients clients;
@@ -87,14 +84,13 @@ public class ClientAction extends AbstractAction {
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
-    /**
-     * The service for CAS authentication.
-     */
     
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     static {
         ProfileHelper.setKeepRawData(true);
     }
@@ -199,8 +195,13 @@ public class ClientAction extends AbstractAction {
         for (final Client client : this.clients.findAllClients()) {
             final IndirectClient indirectClient = (IndirectClient) client;
             // clean Client suffix for default names
-            final String name = client.getName().replace("Client", "");
+            
             final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
+            
+            String name = client.getName().replace("Client", "");
+            name = this.applicationContext.getMessage(Pac4jConfiguration.CAS_PAC4J_PREFIX.concat('.' + name.toLowerCase()), 
+                    null, name, request.getLocale());
+            
             logger.debug("{} -> {}", name, redirectionUrl);
             urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
         }
