@@ -2,31 +2,7 @@
     <div class="sidebar-content">
         <p th:utext="#{screen.welcome.security}"/>
 
-        <div id="list-providers" th:if="${pac4jUrls}">
-            <h3 th:utext="#{screen.welcome.label.loginwith}" />
-            <form>
-                <ul th:each="entry : ${pac4jUrls}">
-                    <div th:switch="${entry.type}">
-                        <li th:case="'facebook'" th:class="${'fa fa-facebook-square'}">
-                            <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                        </li>
-                        <li th:case="'twitter'" th:class="${'fa fa-twitter-square'}">
-                            <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                        </li>
-                        <li th:case="'oidc'" th:class="${'fa fa-openid'}">
-                            <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                        </li>
-                        <li th:case="'saml2'" th:class="${'fa fa-lock'}">
-                            <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                        </li>
-                        <li th:case="'cas'" th:class="${'fa fa-sign-in'}">
-                            <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                        </li>
-                    </div>
 
-                </ul>
-            </form>
-        </div>
     </div>
 </div>
 
