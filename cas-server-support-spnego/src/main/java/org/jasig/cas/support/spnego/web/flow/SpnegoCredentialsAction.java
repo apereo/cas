@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
-@Component
+@Component("spnego")
 public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
 
