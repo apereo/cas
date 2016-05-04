@@ -48,7 +48,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.thresholdRate = (double) failureThreshold / (double) failureRangeInSeconds;
     }
 
