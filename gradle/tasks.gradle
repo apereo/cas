@@ -23,8 +23,13 @@ task cleanLogs(description: "Clean build log files") {
     delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
 }
 
+task cleanNodeModules(type: Delete) {
+    delete fileTree(dir: project.projectDir, includes: ['**/*.*'])
+}
+
 clean << {
     cleanLogs
+    cleanNodeModules
 }
 
 task findbugs(type: FindBugs) {
