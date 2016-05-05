@@ -143,7 +143,7 @@ subprojects {
 
         // If true, it will download node using above parameters.
         // If false, it will try to use globally installed node.
-        download = true
+        download = !Boolean.getBoolean("skipNodeDownload")
 
         // Set the work directory for unpacking node
         workDir = file("${project.projectDir}/nodejs")

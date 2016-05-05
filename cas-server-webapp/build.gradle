@@ -64,8 +64,4 @@ dependencies {
     runtime libraries.bouncycastle
 }
 
-npm_run {
-    args = ['gulp']
-}
-
 processResources.dependsOn('npm_install', 'npm_run')
