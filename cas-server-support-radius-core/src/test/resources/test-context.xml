@@ -16,7 +16,7 @@
           p:sharedSecret="fqhwhgads" />
 
     <bean id="radiusAuthenticationHandler"
-          class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler">
+          class="org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler">
       <property name="servers">
           <list>
               <ref bean="radiusServer" />

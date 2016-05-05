@@ -16,8 +16,8 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <util:list id="ticketPackagesToScan">
-        <value>org.jasig.cas.ticket</value>
-        <value>org.jasig.cas.adaptors.jdbc</value>
+        <value>org.apereo.cas.ticket</value>
+        <value>org.apereo.cas.adaptors.jdbc</value>
     </util:list>
 
     <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"

@@ -15,10 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="warn" additivity="false">
+        <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.jasig.cas.support.spnego" level="warn" additivity="false">
+        <Logger name="org.apereo.cas.support.spnego" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.ldaptive" level="warn" additivity="false">

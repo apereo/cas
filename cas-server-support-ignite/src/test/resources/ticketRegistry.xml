@@ -23,7 +23,7 @@
     </bean>
     <context:property-placeholder location="cas.properties" ignore-resource-not-found="true" />
 
-    <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.apereo.cas" />
     <context:annotation-config/>
 
     <bean id="ticketRegistry" class="org.apereo.cas.ticket.registry.IgniteTicketRegistry"
