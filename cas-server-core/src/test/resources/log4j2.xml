@@ -26,7 +26,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" level="off" />
+        <Logger name="org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" level="off" />
         <Logger name="org.slf4j.impl" level="trace">
             <AppenderRef ref="slf4j"/>
         </Logger>

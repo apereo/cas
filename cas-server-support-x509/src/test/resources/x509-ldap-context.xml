@@ -25,12 +25,12 @@
     <context:property-placeholder location="classpath:/ldap.properties"/>
 
     <bean id="ldapCertFetcher"
-          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
+          class="org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
           c:connectionConfig-ref="provisioningConnectionConfig"
           c:searchExecutor-ref="searchExecutor"  />
 
     <bean id="poolingLdapCertFetcher"
-          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
+          class="org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
           c:connectionConfig-ref="provisioningConnectionConfig"
           c:searchExecutor-ref="searchExecutor"
           c:connectionPool-ref="connectionPool"/>
@@ -101,7 +101,7 @@
           p:validatePeriodically="${ldap.pool.validatePeriodically}"
           p:validatePeriod="${ldap.pool.validatePeriod}" />
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />

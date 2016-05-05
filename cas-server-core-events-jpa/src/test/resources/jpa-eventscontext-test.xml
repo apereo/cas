@@ -34,7 +34,7 @@
     </bean>
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />

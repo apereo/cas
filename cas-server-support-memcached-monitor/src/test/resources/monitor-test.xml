@@ -44,7 +44,7 @@
     <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
           p:compressionThreshold="2048" />
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />

@@ -33,7 +33,7 @@
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
 
-    <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
+    <bean id="shibboleth.OpenSAMLConfig" class="org.apereo.cas.support.saml.OpenSamlConfigBean"
           depends-on="shibboleth.ParserPool"/>
 
     <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
@@ -82,11 +82,11 @@
           class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
 
     <!-- Dynamic metadata retrieval -->
-    <bean id="samlDynamicMetadataUIParserAction" class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+    <bean id="samlDynamicMetadataUIParserAction" class="org.apereo.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
           c:entityIdParameterName="entityId"
           c:metadataAdapter-ref="dynamicMetadataResolverAdapter"/>
 
-    <bean id="dynamicMetadataResolverAdapter" class="org.jasig.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
+    <bean id="dynamicMetadataResolverAdapter" class="org.apereo.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
           c:metadataResources-ref="dynaMetadataResources"
           p:requireValidMetadata="true" />
 
@@ -101,11 +101,11 @@
     </util:map>
 
 
-    <bean id="samlMetadataUIParserAction" class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+    <bean id="samlMetadataUIParserAction" class="org.apereo.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
           c:entityIdParameterName="entityId"
           c:metadataAdapter-ref="staticMetadataResolverAdapter"/>
 
-    <bean id="staticMetadataResolverAdapter" class="org.jasig.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
+    <bean id="staticMetadataResolverAdapter" class="org.apereo.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
           c:metadataResources-ref="metadataResources"
           p:refreshIntervalInMinutes="300"
           p:requireValidMetadata="true" />
@@ -154,19 +154,19 @@
     <bean id="publicKeyInfo" class="org.springframework.core.io.ClassPathResource"
           c:path="/inc-md-pub.pem" />
 
-    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+    <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManagerImpl"
             c:serviceRegistryDao-ref="serviceRegistryDao" />
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+    <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">
-            <bean class="org.jasig.cas.services.RegexRegisteredService"
+            <bean class="org.apereo.cas.services.RegexRegisteredService"
                     p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
         </property>
     </bean>
 
     <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" />
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <util:map id="serviceThemeResolverSupportedBrowsers">

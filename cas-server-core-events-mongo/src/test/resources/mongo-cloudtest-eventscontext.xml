@@ -31,10 +31,10 @@
     <bean id="mongoEventsTemplate" class="org.springframework.data.mongodb.core.MongoTemplate"
           c:mongoDbFactory-ref="mongoDbFactory"/>
 
-    <bean id="mongoDbEventsRepository" class="org.jasig.cas.support.events.mongo.MongoDbCasEventRepository"
+    <bean id="mongoDbEventsRepository" class="org.apereo.cas.support.events.mongo.MongoDbCasEventRepository"
         p:dropCollection="true"/>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <bean id="mongoDbFactory" class="org.springframework.data.mongodb.core.SimpleMongoDbFactory"

@@ -6,12 +6,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="radiusServer"
-          class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"
+          class="org.apereo.cas.adaptors.radius.JRadiusServerImpl"
           c:protocol="EAP_MSCHAPv2"
           c:clientFactory-ref="radiusClientFactory" />
 
     <bean id="radiusClientFactory"
-          class="org.jasig.cas.adaptors.radius.RadiusClientFactory"
+          class="org.apereo.cas.adaptors.radius.RadiusClientFactory"
           p:inetAddress="localhost"
           p:sharedSecret="fqhwhgads" />
 

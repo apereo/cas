@@ -30,7 +30,7 @@
     <context:component-scan base-package="org.jasig.cas" annotation-config="true" />
     <context:annotation-config />
 
-    <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
+    <bean id="shibboleth.OpenSAMLConfig" class="org.apereo.cas.support.saml.OpenSamlConfigBean"
           depends-on="shibboleth.ParserPool"/>
 
     <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
@@ -107,7 +107,7 @@
           p:useSingleLine="${cas.audit.singleline:false}"/>
     
     <util:list id="inMemoryRegisteredServices">
-        <bean class="org.jasig.cas.services.RegexRegisteredService"
+        <bean class="org.apereo.cas.services.RegexRegisteredService"
               p:id="100" p:name="Test" p:description="Another Test Service"
               p:serviceId="^.+" p:evaluationOrder="100" />
     </util:list>

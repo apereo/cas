@@ -29,7 +29,7 @@
         <property name="cacheManagerName" value="ticketRegistryCacheManager"/>
     </bean>
 
-    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry"
+    <bean id="ticketRegistry" class="org.apereo.cas.ticket.registry.EhCacheTicketRegistry"
           p:ehcacheTicketsCache-ref="ehcacheTicketsCache"/>
 
     <bean id="abstractTicketCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"

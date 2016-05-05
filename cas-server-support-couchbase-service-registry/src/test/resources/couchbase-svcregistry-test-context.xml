@@ -33,7 +33,7 @@
         <constructor-arg type="java.lang.String" value="${svcreg.couchbase.nodes:127.0.0.1:8091}"/>
     </bean>
 
-    <bean id="serviceRegistryCouchbaseClientFactory" class="org.jasig.cas.couchbase.core.CouchbaseClientFactory"
+    <bean id="serviceRegistryCouchbaseClientFactory" class="org.apereo.cas.couchbase.core.CouchbaseClientFactory"
           p:nodes-ref="nodesSet"
           p:timeout="${svcreg.couchbase.timeout:10}"
           p:password="${svcreg.couchbase.password:}"

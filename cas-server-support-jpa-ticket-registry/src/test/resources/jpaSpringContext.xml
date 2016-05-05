@@ -42,10 +42,10 @@
           p:validationTimeout="2000"/>
 
 
-    <bean id="jpaTicketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry"/>
+    <bean id="jpaTicketRegistry" class="org.apereo.cas.ticket.registry.JpaTicketRegistry"/>
     <alias name="jpaTicketRegistry" alias="ticketRegistry"/>
 
-    <bean id="jpaLockingStrategy" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"/>
+    <bean id="jpaLockingStrategy" class="org.apereo.cas.ticket.registry.support.JpaLockingStrategy"/>
 
     <!-- CAS Context Core -->
     <alias name="defaultPrincipalFactory" alias="principalFactory"/>

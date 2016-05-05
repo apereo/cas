@@ -21,7 +21,7 @@
     </tx:advice>
 
     <aop:config>
-        <aop:pointcut id="eventsOperations" expression="execution(* org.jasig.cas.support.events.jpa.JpaCasEventRepository.*(..))"/>
+        <aop:pointcut id="eventsOperations" expression="execution(* org.apereo.cas.support.events.jpa.JpaCasEventRepository.*(..))"/>
         <aop:advisor advice-ref="txAdviceEvents" pointcut-ref="eventsOperations"/>
     </aop:config>
 

@@ -26,7 +26,7 @@
     <context:component-scan base-package="org.jasig.cas" />
     <context:annotation-config/>
 
-    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.IgniteTicketRegistry"
+    <bean id="ticketRegistry" class="org.apereo.cas.ticket.registry.IgniteTicketRegistry"
       p:igniteConfiguration-ref="igniteConfiguration" />
 
     <bean id="igniteConfiguration" class="org.apache.ignite.configuration.IgniteConfiguration">
