@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
@@ -18,6 +19,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 4.2.0
  */
+@Component("jcifsConfig")
 public final class JcifsConfig implements InitializingBean {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
@@ -74,18 +76,17 @@ public final class JcifsConfig implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
         if (propValue != null) {
             logger.warn("found login config in system property, may override : {}", propValue);
         }
 
-        URL url = getClass().getResource(
-            this.loginConf == null ? DEFAULT_LOGIN_CONFIG : this.loginConf);
+        URL url = getClass().getResource(StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf);
         if (url != null) {
             this.loginConf = url.toExternalForm();
         }
-        if (this.loginConf != null) {
+        if (StringUtils.isNotBlank(this.loginConf)) {
             System.setProperty(SYS_PROP_LOGIN_CONF, this.loginConf);
         } else {
             url = getClass().getResource("/jcifs/http/login.conf");
@@ -170,7 +171,7 @@ public final class JcifsConfig implements InitializingBean {
     }
 
     @Autowired
-    public void setLoginConf(@Value("${cas.spnego.login.conf.file:/path/to/login.conf}")
+    public void setLoginConf(@Value("${cas.spnego.login.conf.file:}")
                              final String loginConf) {
         this.loginConf = loginConf;
     }
