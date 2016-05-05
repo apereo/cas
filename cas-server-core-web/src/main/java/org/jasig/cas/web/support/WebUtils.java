@@ -524,6 +524,16 @@ public final class WebUtils {
     }
 
     /**
+     * Put tracking id into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putGoogleAnalyticsTrackingIdIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("googleAnalyticsTrackingId", value);
+    }
+    
+    /**
      * Put unauthorized redirect url into flowscope.
      *
      * @param context                 the context

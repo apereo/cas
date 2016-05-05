@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html layout:decorator="layout">
 
-<div th:replace="fragments/top"/>
+<head th:inline="text">
+  <title>[[#{screen.confirmation.message}]]</title>
+</head>
 
 <body id="cas">
-<div id="container">
-  <div th:replace="fragments/logo"/>
+<div layout:fragment="content" class="confirmView">
+    <div class="alert alert-info">
+      <h2 class="h3" th:text="#{screen.confirmation.message}" />
 
-  <div id="content">
-    <div id="msg" class="info">
-      <p th:text="#{screen.confirmation.message}" />
-      <a class="button" th:href="${serviceWarningUrl}"><span th:text="#{screen.button.continue}"/></a>
+      <section class="row btn-row">
+        <a class="btn btn-submit" th:href="${serviceWarningUrl}"><span th:text="#{screen.button.continue}"/></a>
+      </section>
     </div>
-  </div>
-  <div th:include="fragments/footer"/>
 </div>
-<div th:include="fragments/bottom"/>
 </body>
 </html>
-

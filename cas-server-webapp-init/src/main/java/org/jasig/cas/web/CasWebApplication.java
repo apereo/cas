@@ -3,7 +3,6 @@ package org.jasig.cas.web;
 import org.jasig.cas.web.support.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
@@ -13,7 +12,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -37,7 +35,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
         "classpath:/spring-configuration/*.groovy",
         "classpath:/deployerConfigContext.xml",
         "classpath*:/META-INF/spring/*.xml"})
-@Import(AopAutoConfiguration.class)
 @EnableConfigServer
 @EnableAsync
 public class CasWebApplication {
