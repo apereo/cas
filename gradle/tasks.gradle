@@ -29,11 +29,6 @@ task cleanNodeModules(type: Delete) {
     delete loc
 }
 
-clean << {
-    cleanLogs
-    cleanNodeModules
-}
-
 task findbugs(type: FindBugs) {
     pluginClasspath = project.configurations.findbugsPlugins
 }
@@ -41,3 +36,5 @@ task findbugs(type: FindBugs) {
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
+
+clean.dependsOn('cleanLogs', 'cleanNodeModules')
