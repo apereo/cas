@@ -22,7 +22,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private String jwks;
     
-    private boolean signIdToken;
+    private boolean signIdToken = true;
 
     public OidcRegisteredService() {
         setJsonFormat(true);

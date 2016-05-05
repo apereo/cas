@@ -1,9 +1,0 @@
-{
-  "@class" : "org.jasig.cas.services.OidcRegisteredService",
-  "clientId": "client",
-  "clientSecret": "secret",
-  "bypassApprovalPrompt": false,
-  "serviceId" : "^(http|imaps)://.*",
-  "name" : "OIDC",
-  "id" : 100
-}

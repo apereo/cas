@@ -65,9 +65,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        final String state = request.getParameter(OAuthConstants.STATE);
-        final String nonce = request.getParameter(OAuthConstants.NONCE);
-
+        
         logger.debug("Authorize request verification successful for client {} with redirect uri {}",
                 clientId, redirectUri);
 
