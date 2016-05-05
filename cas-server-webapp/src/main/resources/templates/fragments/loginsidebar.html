@@ -22,8 +22,10 @@
                         <li th:case="'cas'" th:class="${'fa fa-sign-in'}">
                             <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
                         </li>
+                        <li th:case="*" th:class="${'fa fa-sign-in'}">
+                            <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
+                        </li>
                     </div>
-
                 </ul>
             </form>
         </div>
