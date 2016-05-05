@@ -22,6 +22,7 @@ rebel.xml
 *.log.gz
 node_modules/
 gruntfile.js
+nodejs
 .gradle/
 build/
 MANIFEST.MF
