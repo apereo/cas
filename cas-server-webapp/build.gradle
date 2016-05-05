@@ -42,6 +42,7 @@ dependencies {
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-validation')
     compile project(':cas-server-core-util')
+    compile project(':cas-server-webapp-init')
     compile project(':cas-server-webapp-throttle')
     compile project(':cas-server-webapp-actions')
     compile project(':cas-server-webapp-cookie')
@@ -49,7 +50,7 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
-    
+
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j
     compile libraries.springcloud
@@ -63,3 +64,4 @@ dependencies {
     runtime libraries.bouncycastle
 }
 
+processResources.dependsOn('npm_install', 'npm_run')
