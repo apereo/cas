@@ -19,7 +19,8 @@ public interface AttributeFilterMapper {
     void mapAttributeFilter(RegisteredServiceAttributeFilter filter, RegisteredServiceEditBean.ServiceData bean);
 
     /**
-     * Create a {@link RegisteredServiceAttributeFilter} represented by the specified {@link RegisteredServiceEditBean.ServiceData} bean. Return
+     * Create a {@link RegisteredServiceAttributeFilter} represented by the specified
+     * {@link RegisteredServiceEditBean.ServiceData} bean. Return
      * null if a supported {@link RegisteredServiceAttributeFilter} couldn't be created.
      *
      * @param data a source data bean

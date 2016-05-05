@@ -28,7 +28,8 @@ public interface AttributeReleasePolicyMapper {
     void mapAttributeReleasePolicy(RegisteredServiceAttributeReleasePolicy policy, RegisteredServiceViewBean bean);
 
     /**
-     * Create a {@link RegisteredServiceAttributeReleasePolicy} represented by the specified {@link RegisteredServiceEditBean.ServiceData} bean.
+     * Create a {@link RegisteredServiceAttributeReleasePolicy} represented by the specified
+     * {@link RegisteredServiceEditBean.ServiceData} bean.
      * Return null if a supported {@link RegisteredServiceAttributeReleasePolicy} couldn't be created.
      *
      * @param data a source data bean

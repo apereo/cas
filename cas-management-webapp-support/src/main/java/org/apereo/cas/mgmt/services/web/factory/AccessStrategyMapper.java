@@ -28,7 +28,8 @@ public interface AccessStrategyMapper {
     void mapAccessStrategy(RegisteredServiceAccessStrategy accessStrategy, RegisteredServiceViewBean bean);
 
     /**
-     * Create a {@link RegisteredServiceAccessStrategy} represented by the specified {@link RegisteredServiceEditBean.ServiceData} bean. Return
+     * Create a {@link RegisteredServiceAccessStrategy} represented by the specified
+     * {@link RegisteredServiceEditBean.ServiceData} bean. Return
      * null if a supported {@link RegisteredServiceAccessStrategy} couldn't be created.
      *
      * @param bean a source data bean

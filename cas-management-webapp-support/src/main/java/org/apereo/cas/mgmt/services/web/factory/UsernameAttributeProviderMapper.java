@@ -30,8 +30,10 @@ public interface UsernameAttributeProviderMapper {
                                       RegisteredServiceViewBean bean);
 
     /**
-     * Create a {@link RegisteredServiceUsernameAttributeProvider} represented by the specified {@link RegisteredServiceEditBean.ServiceData}
-     * bean. Return null if a supported {@link RegisteredServiceUsernameAttributeProvider} couldn't be created.
+     * Create a {@link RegisteredServiceUsernameAttributeProvider}
+     * represented by the specified {@link RegisteredServiceEditBean.ServiceData}
+     * bean. Return null if a supported {@link RegisteredServiceUsernameAttributeProvider}
+     * couldn't be created.
      *
      * @param data a source data bean
      * @return the username attribute provider represented by the specified data bean
