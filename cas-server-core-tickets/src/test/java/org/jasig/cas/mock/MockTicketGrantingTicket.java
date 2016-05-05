@@ -107,12 +107,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     public TicketGrantingTicket getRoot() {
         return this;
     }
-
-    @Override
-    public List<Authentication> getSupplementalAuthentications() {
-        return Collections.emptyList();
-    }
-
+    
     @Override
     public List<Authentication> getChainedAuthentications() {
         return Collections.emptyList();

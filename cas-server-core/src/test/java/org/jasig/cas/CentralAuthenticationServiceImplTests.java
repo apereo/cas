@@ -1,8 +1,8 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.PrincipalException;
@@ -317,7 +317,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final Service svc = getService("TestSsoFalse");
         final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null));
+        assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx));
     }
 
     @Test(expected=UnauthorizedSsoServiceException.class)

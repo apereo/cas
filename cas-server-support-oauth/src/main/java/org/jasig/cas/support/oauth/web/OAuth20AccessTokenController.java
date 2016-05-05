@@ -156,7 +156,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             }
             return null;
         }
-        if (token instanceof OAuthCode) {
+        if (token instanceof OAuthCode && !(token instanceof RefreshToken)) {
             this.ticketRegistry.deleteTicket(token.getId());
         }
 
