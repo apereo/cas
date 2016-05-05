@@ -22,24 +22,14 @@ public interface TicketGrantingTicket extends Ticket {
      * The prefix to use when generating an id for a Ticket Granting Ticket.
      */
     String PREFIX = "TGT";
-
-
+    
     /**
      * Method to retrieve the authentication.
      *
      * @return the authentication
      */
     Authentication getAuthentication();
-
-    /**
-     * Gets a list of supplemental authentications associated with this ticket.
-     * A supplemental authentication is one other than the one used to create the ticket,
-     * for example, a forced authentication that happens after the beginning of a CAS SSO session.
-     *
-     * @return Non -null list of supplemental authentications.
-     */
-    List<Authentication> getSupplementalAuthentications();
-
+    
     /**
      * Grant a ServiceTicket for a specific service.
      *
@@ -93,7 +83,7 @@ public interface TicketGrantingTicket extends Ticket {
     TicketGrantingTicket getRoot();
 
     /**
-     * Gets all authentications ({@link #getAuthentication()}, {@link #getSupplementalAuthentications()}) from this
+     * Gets all authentications ({@link #getAuthentication()} from this
      * instance and all dependent tickets that reference this one.
      *
      * @return Non -null list of authentication associated with this ticket in leaf-first order.
