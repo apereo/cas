@@ -19,7 +19,7 @@ import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,7 +36,7 @@ import java.util.Map;
  * @since 3.5.0
  */
 @RefreshScope
-@Component("authorizeController")
+@Controller("authorizeController")
 public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     
     @Autowired
