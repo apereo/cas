@@ -28,12 +28,14 @@ public interface TicketGrantingTicket extends Ticket {
     Authentication getAuthentication();
 
     /**
+     * @deprecated As of 4.2.x
      * Gets a list of supplemental authentications associated with this ticket.
      * A supplemental authentication is one other than the one used to create the ticket,
      * for example, a forced authentication that happens after the beginning of a CAS SSO session.
      *
      * @return Non-null list of supplemental authentications.
      */
+    @Deprecated
     List<Authentication> getSupplementalAuthentications();
 
     /**
