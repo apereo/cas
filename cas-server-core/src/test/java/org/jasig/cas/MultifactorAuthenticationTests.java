@@ -37,8 +37,8 @@ public class MultifactorAuthenticationTests {
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");
 
-    
-    @Autowired(required=false)
+
+    @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
@@ -48,9 +48,7 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
-
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));
-
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
@@ -60,7 +58,6 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential("alice", "31415"));
-
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
@@ -78,7 +75,7 @@ public class MultifactorAuthenticationTests {
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
-        final AuthenticationResult ctx =  processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential("alice", "31415"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -101,12 +98,11 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
         // Note the original credential used to start SSO session does not satisfy security policy
-
-        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
-        assertNotNull(tgt);
         final AuthenticationResult ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
+
+        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx2);
+        assertNotNull(tgt);
 
         final ServiceTicket st = cas.grantServiceTicket(
                 tgt.getId(),
