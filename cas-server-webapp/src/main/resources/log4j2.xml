@@ -49,7 +49,7 @@
         </CasAppender>
     </Appenders>
     <Loggers>
-        <AsyncLogger name="org.jasig" level="info" additivity="false" includeLocation="true">
+        <AsyncLogger name="org.apereo" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>

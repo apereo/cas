@@ -11,6 +11,7 @@ import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 

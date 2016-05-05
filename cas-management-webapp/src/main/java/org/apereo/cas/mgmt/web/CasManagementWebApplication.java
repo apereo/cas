@@ -18,7 +18,7 @@ import org.springframework.context.annotation.ImportResource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootApplication(scanBasePackages = {"org.apereo.cas.mgmt", "org.apereo.cas.services", 
+@SpringBootApplication(scanBasePackages = {"org.apereo.cas.mgmt", "org.apereo.cas.services",
                                            "org.pac4j.springframework"},
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
