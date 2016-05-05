@@ -13,10 +13,9 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @Component("pac4jProperties")
 @ConfigurationProperties(
-        prefix = "cas.pac4j"
+        prefix = Pac4jConfiguration.CAS_PAC4J_PREFIX
 )
-public class Pac4jProperties {
-
+public class Pac4jProperties {    
     private Facebook facebook = new Facebook();
     private Twitter twitter = new Twitter();
     private Saml saml = new Saml();

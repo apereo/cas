@@ -1,4 +1,7 @@
+// Todo: Export various sections based on functionality
+
 @import "components/variables";
+
 
 /*@import url(https://fonts.googleapis.com/css?family=Lato);*/
 @import url(https://fonts.googleapis.com/css?family=Lato:700,400,300,100);
@@ -67,6 +70,29 @@ body#cas {
   background: #153e50; /* Old browsers */
 }
 
+
+#cas {
+  .btn-submit {
+    background: #70ba61;
+    border: 0;
+    padding: 10px 25px;
+    font-weight: normal;
+    color: white;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    font-size: 1.25em;
+  }
+
+  .btn-reset {
+    background: #eee;
+    padding: 10px 20px;
+    border: 0;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+  }
+}
 a:link, a:visited {
   color: $link-color;
 }
@@ -454,4 +480,23 @@ table.principal_attributes>tbody>tr>td {
   display: none;
 }
 
+.confirmView, .loginMessageView {
+  .btn-row {
+    text-align: center;
+  }
+}
+
 @import "components/casdashboard";
+
+// This sets a default background color for all btn-social implementations.  The actual provider style will
+// override this with their own colors.  This is use as a fallback for unknown social types.
+.btn-social { background-color: slategray; }
+
+@import "vendor/bootstrap-social/bootstrap-social";
+
+/**
+ * Add in our own custom social colors.
+ */
+.btn-cas         { @include btn-social(#153e50); }
+.btn-saml2       { @include btn-social(#cb2027); }
+.btn-oidc        { @include btn-social(#f7931e); }
