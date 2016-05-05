@@ -147,7 +147,7 @@ public class JpaEventsConfiguration {
      */
     @Bean(name = "jpaEventPackagesToScan")
     public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.jasig.cas.support.events.dao"};
+        return new String[]{"org.apereo.cas.support.events.dao"};
     }
 
     /**

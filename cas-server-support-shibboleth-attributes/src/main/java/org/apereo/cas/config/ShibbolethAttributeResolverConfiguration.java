@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Configuration("shibbolethAttributeResolverConfiguration")
 @RefreshScope
-@ComponentScan("org.jasig.cas.persondir.support")
+@ComponentScan("org.apereo.cas.persondir.support")
 public class ShibbolethAttributeResolverConfiguration {
     @Autowired(required = false)
     private ApplicationContext applicationContext;

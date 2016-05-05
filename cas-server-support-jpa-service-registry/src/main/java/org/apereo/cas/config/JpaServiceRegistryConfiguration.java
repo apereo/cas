@@ -103,9 +103,9 @@ public class JpaServiceRegistryConfiguration {
     @Bean(name = "jpaServicePackagesToScan")
     public String[] jpaServicePackagesToScan() {
         return new String[] {
-                "org.jasig.cas.services", 
-                "org.jasig.cas.support.oauth.services",
-                "org.jasig.cas.support.saml.services"
+                "org.apereo.cas.services", 
+                "org.apereo.cas.support.oauth.services",
+                "org.apereo.cas.support.saml.services"
         };
     }
 

@@ -30,7 +30,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
                 DataSourceAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.jasig.cas", "org.pac4j.springframework"},
+@ComponentScan(basePackages = {"org.apereo.cas", "org.pac4j.springframework"},
                excludeFilters = { @ComponentScan.Filter(type = FilterType.REGEX,
                pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
 @ImportResource(locations = {"classpath:/spring-configuration/*.xml",
