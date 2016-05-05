@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockServiceTicket;

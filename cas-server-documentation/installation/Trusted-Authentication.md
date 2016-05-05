@@ -12,7 +12,7 @@ Trusted authentication handler support is enabled by including the following dep
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-trusted-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>

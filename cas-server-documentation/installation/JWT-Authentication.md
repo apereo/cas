@@ -37,7 +37,7 @@ JWT authentication support is enabled by including the following dependency in t
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-token-webflow</artifactId>
      <version>${cas.version}</version>
 </dependency>
@@ -56,18 +56,18 @@ Configure the appropriate service in your service registry to hold the secret:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "https://.+",
   "name" : "testId",
   "id" : 1,
   "properties" : {
     "@class" : "java.util.HashMap",
     "jwtSigningSecret" : {
-      "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "<SIGNING_SECRET>" ] ]
     },
     "jwtEncryptionSecret" : {
-      "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "<ENCRYPTION_SECRET>" ] ]
     }
 }

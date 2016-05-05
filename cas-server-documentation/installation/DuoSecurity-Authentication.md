@@ -17,7 +17,7 @@ Duo offers several options for authenticating users:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-duo</artifactId>
      <version>${cas.version}</version>
 </dependency>

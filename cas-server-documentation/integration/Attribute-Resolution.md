@@ -64,7 +64,7 @@ The following snippet assumes that connection information beans are already defi
 
 ```xml
 <bean id="ldapPersonAttributeDao"
-      class="org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao"
+      class="org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao"
       p:connectionFactory-ref="pooledLdapConnectionFactory"
       p:baseDN="${ldap.baseDn}"
       p:searchControls-ref="searchControls"
@@ -88,7 +88,7 @@ The following snippet assumes that connection information beans are already defi
 
 ```xml
 <bean id="singleRowJdbcPersonAttributeDao"
-    class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+    class="org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
     <constructor-arg index="0" ref="dataSource" />
     <constructor-arg index="1" value="SELECT * FROM USER_DATA WHERE {0}" />
     <property name="queryAttributeMapping">
@@ -113,23 +113,23 @@ Note that this snippet below strictly uses the Person Directory components for r
 
 ```xml
 <bean id="mergedPersonAttributeDao"
-        class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        class="org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl">
     <property name="cacheNullResults" value="true" />
     <property name="userInfoCache">
-        <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+        <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
             <property name="cacheFactory" ref="cacheFactory" />
-            <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged" />
+            <property name="cacheName" value="org.apereo.services.persondir.USER_INFO.merged" />
         </bean>
     </property>
     <property name="cachedPersonAttributesDao" >
         <bean id="mergedPersonAttributeDao"                 
-                class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+                class="org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl">
             <property name="merger">
-                <bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
+                <bean class="org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder" />
             </property>
             <property name="personAttributeDaos">
                 <list>
-                    <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
+                    <bean class="org.apereo.services.persondir.support.CascadingPersonAttributeDao">
                         <property name="personAttributeDaos">
                             <list>
                                 <ref bean="anotherDao" />
@@ -151,7 +151,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-shibboleth-attributes</artifactId>
     <version>${cas.version}</version>
 </dependency>
