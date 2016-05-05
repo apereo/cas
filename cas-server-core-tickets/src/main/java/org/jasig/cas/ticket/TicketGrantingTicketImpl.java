@@ -77,11 +77,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /** The PGTs associated to this ticket. */
     @OneToMany(targetEntity = TicketGrantingTicketImpl.class, mappedBy = "ticketGrantingTicket", fetch = FetchType.EAGER)
     private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
-
-    @Lob
-    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = Integer.MAX_VALUE)
-    private ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
-
+    
     /**
      * Instantiates a new ticket granting ticket impl.
      */
@@ -262,14 +258,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public boolean isExpiredInternal() {
         return this.expired;
     }
-
-
-    @Override
-    public List<Authentication> getSupplementalAuthentications() {
-        return this.supplementalAuthentications;
-    }
-
-
+    
     @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<>();

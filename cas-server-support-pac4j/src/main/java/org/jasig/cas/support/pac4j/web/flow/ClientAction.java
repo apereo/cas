@@ -9,6 +9,7 @@ import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.pac4j.Pac4jConfiguration;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
@@ -71,14 +73,14 @@ public class ClientAction extends AbstractAction {
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
-    /**
-     * The service for CAS authentication.
-     */
+    
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     /**
      * Build the ClientAction.
      */
@@ -175,8 +177,13 @@ public class ClientAction extends AbstractAction {
             for (final Client client : this.clients.findAllClients()) {
                 final IndirectClient indirectClient = (IndirectClient) client;
                 // clean Client suffix for default names
-                final String name = StringUtils.remove(client.getName(), "Client");
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
+                String name = StringUtils.remove(client.getName(), "Client");
+                if (this.applicationContext != null) {
+                    name = this.applicationContext.getMessage(Pac4jConfiguration.CAS_PAC4J_PREFIX.concat('.' + name.toLowerCase()),
+                            null, name, request.getLocale());
+                }
+
                 logger.debug("{} -> {}", name, redirectionUrl);
                 urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
             }
@@ -193,7 +200,7 @@ public class ClientAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
+    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
                                          final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
@@ -206,7 +213,7 @@ public class ClientAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
+    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
                                       final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
@@ -239,9 +246,9 @@ public class ClientAction extends AbstractAction {
      */
     public static class ProviderLoginPageConfiguration implements Serializable {
         private static final long serialVersionUID = 6216882278086699364L;
-        private String name;
-        private String redirectUrl;
-        private String type;
+        private final String name;
+        private final String redirectUrl;
+        private final String type;
 
         /**
          * Instantiates a new Provider ui configuration.
@@ -257,15 +264,15 @@ public class ClientAction extends AbstractAction {
         }
 
         public String getName() {
-            return name;
+            return this.name;
         }
 
         public String getRedirectUrl() {
-            return redirectUrl;
+            return this.redirectUrl;
         }
 
         public String getType() {
-            return type;
+            return this.type;
         }
     }
 }

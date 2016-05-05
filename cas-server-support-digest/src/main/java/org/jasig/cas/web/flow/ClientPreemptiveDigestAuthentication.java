@@ -24,11 +24,11 @@ import org.apache.http.util.EntityUtils;
 public class ClientPreemptiveDigestAuthentication {
 
     public static void main(String[] args) throws Exception {
-        final HttpHost target = new HttpHost("httpbin.org", 80, "http");
+        final HttpHost target = new HttpHost("mmoayyed.unicon.net", 8443, "https");
         final CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
                 new AuthScope(target.getHostName(), target.getPort()),
-                new UsernamePasswordCredentials("user", "passwd"));
+                new UsernamePasswordCredentials("casuser", "Mellon"));
         final CloseableHttpClient httpclient = HttpClients.custom()
                 .setDefaultCredentialsProvider(credsProvider)
                 .build();
@@ -49,7 +49,7 @@ public class ClientPreemptiveDigestAuthentication {
             HttpClientContext localContext = HttpClientContext.create();
             localContext.setAuthCache(authCache);
 
-            final HttpGet httpget = new HttpGet("http://httpbin.org/digest-auth/auth/user/passwd");
+            final HttpGet httpget = new HttpGet("https://mmoayyed.unicon.net:8443/cas/login");
 
             System.out.println("Executing request " + httpget.getRequestLine() + " to target " + target);
             for (int i = 0; i < 3; i++) {

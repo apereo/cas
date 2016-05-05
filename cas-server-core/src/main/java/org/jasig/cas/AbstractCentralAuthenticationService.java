@@ -1,7 +1,12 @@
 package org.jasig.cas;
 
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
@@ -19,11 +24,6 @@ import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Predicate;
 import org.jasig.cas.validation.ValidationServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +46,7 @@ import java.util.List;
  * the needed scaffolding and services that are necessary to CAS, such as ticket registry, service registry, etc.
  * The intention here is to allow extensions to easily benefit these already-configured components
  * without having to to duplicate them again.
+ *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
@@ -54,56 +55,73 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     private static final long serialVersionUID = -7572316677901391166L;
 
-    /** Log instance for logging events, info, warnings, errors, etc. */
+    /**
+     * Log instance for logging events, info, warnings, errors, etc.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Application event publisher. */
+    /**
+     * Application event publisher.
+     */
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;
 
-    /** {@link TicketRegistry}  for storing and retrieving tickets as needed. */
-    @Resource(name="ticketRegistry")
+    /**
+     * {@link TicketRegistry}  for storing and retrieving tickets as needed.
+     */
+    @Resource(name = "ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    /** Implementation of Service Manager. */
-    @Resource(name="servicesManager")
+    /**
+     * Implementation of Service Manager.
+     */
+    @Resource(name = "servicesManager")
     protected ServicesManager servicesManager;
 
-    /** The logout manager. **/
-    @Resource(name="logoutManager")
+    /**
+     * The logout manager.
+     **/
+    @Resource(name = "logoutManager")
     protected LogoutManager logoutManager;
 
-    /** The ticket factory. **/
-    @Resource(name="defaultTicketFactory")
+    /**
+     * The ticket factory.
+     **/
+    @Resource(name = "defaultTicketFactory")
     protected TicketFactory ticketFactory;
 
-    /** The service selection strategy during validation events. **/
-    @Resource(name="validationServiceSelectionStrategies")
+    /**
+     * The service selection strategy during validation events.
+     **/
+    @Resource(name = "validationServiceSelectionStrategies")
     protected List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    @Resource(name="authenticationPolicyFactory")
+    @Resource(name = "authenticationPolicyFactory")
     protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
-    /** Factory to create the principal type. **/
+    /**
+     * Factory to create the principal type.
+     **/
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * Instantiates a new Central authentication service impl.
      */
-    protected AbstractCentralAuthenticationService() {}
+    protected AbstractCentralAuthenticationService() {
+    }
 
     /**
      * Build the central authentication service implementation.
      *
-     * @param ticketRegistry                     the tickets registry.
-     * @param ticketFactory                      the ticket factory
-     * @param servicesManager                    the services manager.
-     * @param logoutManager                      the logout manager.
+     * @param ticketRegistry  the tickets registry.
+     * @param ticketFactory   the ticket factory
+     * @param servicesManager the services manager.
+     * @param logoutManager   the logout manager.
      */
     public AbstractCentralAuthenticationService(
             final TicketRegistry ticketRegistry,
@@ -149,7 +167,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Note:
      * Synchronization on ticket object in case of cache based registry doesn't serialize
      * access to critical section. The reason is that cache pulls serialized data and
@@ -157,7 +175,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
-    @Counted(name="GET_TICKET_COUNTER", monotonic=true)
+    @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz)
             throws InvalidTicketException {
@@ -183,7 +201,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     @Timed(name = "GET_TICKETS_TIMER")
     @Metered(name = "GET_TICKETS_METER")
-    @Counted(name="GET_TICKETS_COUNTER", monotonic=true)
+    @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
         final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
@@ -199,33 +217,47 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * Gets the authentication satisfied by policy.
      *
-     * @param ticket the ticket
-     * @param context the context
+     * @param authenticationResult the authentication result
+     * @param context              the context
      * @return the authentication satisfied by policy
      * @throws AbstractTicketException the ticket exception
      */
     protected Authentication getAuthenticationSatisfiedByPolicy(
-            final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
+            final AuthenticationResult authenticationResult, 
+            final ServiceContext context) throws AbstractTicketException {
+
+        return getAuthenticationSatisfiedByPolicy(authenticationResult.getAuthentication(), context);
+    }
+
+    /**
+     * Gets the authentication satisfied by policy.
+     *
+     * @param authentication the authentication
+     * @param context        the context
+     * @return the authentication satisfied by policy
+     * @throws AbstractTicketException the ticket exception
+     */
+    protected Authentication getAuthenticationSatisfiedByPolicy(
+            final Authentication authentication, 
+            final ServiceContext context) throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
                 this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
-        if (policy.isSatisfiedBy(ticket.getAuthentication())) {
-            return ticket.getAuthentication();
+        if (policy.isSatisfiedBy(authentication)) {
+            return authentication;
         }
-        return ticket.getSupplementalAuthentications().stream().filter(policy::isSatisfiedBy)
-                .findFirst().orElseThrow(() -> new UnsatisfiedAuthenticationPolicyException(policy));
+        throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
-
 
     /**
      * Evaluate proxied service if needed.
      *
-     * @param service the service
+     * @param service              the service
      * @param ticketGrantingTicket the ticket granting ticket
-     * @param registeredService the registered service
+     * @param registeredService    the registered service
      */
     protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket,
-                                                final RegisteredService registeredService) {
+                                                  final RegisteredService registeredService) {
         final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
             logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());

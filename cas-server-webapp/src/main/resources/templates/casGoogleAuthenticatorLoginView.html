@@ -1,44 +1,33 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html layout:decorator="layout">
 
-<div th:replace="fragments/top"/>
+<head th:inline="text">
+    <title>[[#{cas.mfa.googleauth.pagetitle}]]</title>
+</head>
 
 <body id="cas">
-<div id="container">
-    <div th:replace="fragments/logo"/>
+<div layout:fragment="content">
+    <div class="box fl-panel" id="login">
 
-    <div id="content">
+        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
+            <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+            </div>
 
-        <div class="box fl-panel" id="login">
- 
-            <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
-                <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
-                    <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
-                </div>
-                                
-                <div class="row fl-controls-left">
-                    <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
-                    
-                    <input type="password" class="required" id="token" size="25" tabindex="1"
-                           th:field="*{token}"
-                           th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off" />
-                    <input class="btn-submit" name="_eventId_submit" accesskey="l"
-                           th:value="#{screen.welcome.button.login}"  tabindex="4" type="submit" />
-                </div>
-                <div class="row btn-row">
-                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                </div>
-            </form>
-        </div>
+            <div class="row fl-controls-left">
+                <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
 
-        
+                <input type="password" class="required" id="token" size="25" tabindex="1"
+                       th:field="*{token}"
+                       th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
+                <input class="btn-submit" name="_eventId_submit" accesskey="l"
+                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
+            </div>
+            <div class="row btn-row">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            </div>
+        </form>
     </div>
-    <div th:include="fragments/footer"/>
 </div>
-<div th:include="fragments/bottom"/>
 </body>
 </html>
-
-
-
-
