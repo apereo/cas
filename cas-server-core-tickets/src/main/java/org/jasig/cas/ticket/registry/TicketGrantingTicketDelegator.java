@@ -23,9 +23,9 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
     /**
      * Instantiates a new ticket granting ticket delegator.
      *
-     * @param ticketRegistry the ticket registry
+     * @param ticketRegistry       the ticket registry
      * @param ticketGrantingTicket the ticket granting ticket
-     * @param callback the callback
+     * @param callback             the callback
      */
     TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                                   final T ticketGrantingTicket, final boolean callback) {
@@ -41,7 +41,7 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
     public Service getProxiedBy() {
         return getTicket().getProxiedBy();
     }
-
+    
     @Override
     public List<Authentication> getSupplementalAuthentications() {
         return getTicket().getSupplementalAuthentications();

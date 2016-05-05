@@ -184,6 +184,16 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         return serviceTicket;
     }
 
+    /**
+     * Always keep track of a single authentication object,
+     * as opposed to keeping a history of all. This helps with
+     * memory consumption. Note that supplemental authentications
+     * are to be removed.
+     * @param context authentication context
+     * @param ticketGrantingTicket the tgt
+     * @return the processed authentication in the current context
+     * @throws MixedPrincipalException in case there is a principal mismatch between TGT and the current authN. 
+     */
     private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationContext context,
                                                                 final TicketGrantingTicket ticketGrantingTicket)
             throws MixedPrincipalException {
@@ -196,6 +206,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
                     throw new MixedPrincipalException(
                             currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
                 }
+                ticketGrantingTicket.getSupplementalAuthentications().clear();
                 ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
             }
         }
