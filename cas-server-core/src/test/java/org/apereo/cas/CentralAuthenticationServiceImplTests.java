@@ -141,7 +141,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService(), ctx);
 
-        final AuthenticationResult ctx2 =  TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), org.apereo.cas.services.TestUtils.getHttpBasedServiceCredentials());
+        final AuthenticationResult ctx2 =  TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), 
+                org.apereo.cas.services.TestUtils.getHttpBasedServiceCredentials());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), ctx2);
 
