@@ -8,7 +8,8 @@ if (array.length == 3) {
 
 (function () {
     var app = angular.module('casmgmt', [
-        'ui.sortable'
+        'ui.sortable',
+        'ngTable'
     ]);
    
 
@@ -270,6 +271,91 @@ if (array.length == 3) {
             this.getServices();
         }
     ]);
+
+
+    /**
+     * Properties Pane controller
+     */
+    app.controller("propertiesController", propertiesController);
+    propertiesController.$inject = ["NgTableParams"];
+    function propertiesController(NgTableParams) {
+        var self = this;
+
+        var dataList = [{name: "org.cas.jasig.prop1", propValue: 50}, {name: "org.cas.jasic.prop2", propValue: 25}];
+
+        var originalData = angular.copy(dataList);
+
+        self.tableParams = new NgTableParams({}, {
+            filterDelay: 0,
+            dataset: angular.copy(dataList),
+            counts: []
+        });
+
+        self.cancel = cancel;
+        self.del = del;
+        self.save = save;
+
+        //////////
+
+        /**
+         * Todo: Refactor/cleanup the below code and wire things up
+         */
+
+        function cancel(row, rowForm) {
+            var originalRow = resetRow(row, rowForm);
+            angular.extend(row, originalRow);
+        }
+
+        function del(row) {
+            _.remove(self.tableParams.settings().dataset, function(item) {
+                return row === item;
+            });
+            self.tableParams.reload().then(function(data) {
+                if (data.length === 0 && self.tableParams.total() > 0) {
+                    self.tableParams.page(self.tableParams.page() - 1);
+                    self.tableParams.reload();
+                }
+            });
+        }
+
+        function resetRow(row, rowForm){
+            row.isEditing = false;
+            // rowForm.$setPristine();
+            // self.tableTracker.untrack(row);
+            return _.findWhere(originalData, function(r){
+                return r.id === row.id;
+            });
+        }
+
+        function save(row, rowForm) {
+            var originalRow = resetRow(row, rowForm);
+            angular.extend(originalRow, row);
+        }
+
+        function toggleAddRow(p) {
+            // $scope.showAdd = true;
+        }
+
+        function addRow(add) {
+
+            // add.id = $scope.nextid;
+            // $scope.nextid += 1;
+            // $scope.data.push(add);
+            // $scope.showAdd = false;
+            // $scope.add = {};
+
+        }
+        
+        function cancelAdd() {
+            
+        }
+
+    }
+
+
+
+
+
 
 // Service Form: Add/Edit Service View
     app.controller('ServiceFormController', [

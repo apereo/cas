@@ -6943,3 +6943,14 @@ html {
 .casmgmt-app #errorsDiv {
   display: none;
 }
+
+#properties-container table thead tr th {
+  text-align: left;
+}
+
+#properties-container table tbody tr td:last-child {
+  text-align: right;
+}
+#properties-container table tbody tr:last-child {
+  background-color: transparent;
+}
