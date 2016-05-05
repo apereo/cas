@@ -133,10 +133,10 @@ subprojects {
 
     node {
         // Version of node to use.
-        version = '4.4.3'
+        version = "$nodeVersion"
 
         // Version of npm to use.
-        npmVersion = '2.15.1'
+        npmVersion = "$npmVersion"
 
         // Base URL for fetching node distributions (change if you have a mirror).
         distBaseUrl = 'https://nodejs.org/dist'
