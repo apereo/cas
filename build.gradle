@@ -146,7 +146,7 @@ subprojects {
         download = true
 
         // Set the work directory for unpacking node
-        workDir = file("${project.buildDir}/nodejs")
+        workDir = file("${project.projectDir}/nodejs")
 
         // Set the work directory where node_modules should be located
         nodeModulesDir = file("${project.projectDir}")

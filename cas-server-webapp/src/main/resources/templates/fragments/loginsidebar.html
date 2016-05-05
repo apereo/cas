@@ -1,10 +1,6 @@
 <div id="sidebar">
     <div class="sidebar-content">
         <p th:utext="#{screen.welcome.security}"/>
-
-                        <li th:case="*" th:class="${'fa fa-sign-in'}">
-                            <a th:href="${entry.redirectUrl}" th:text="${entry.name}" />
-                        </li>
     </div>
 </div>
 
