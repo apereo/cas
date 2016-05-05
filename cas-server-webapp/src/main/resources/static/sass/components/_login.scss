@@ -100,7 +100,7 @@
     background: #d4d4d4;
   }
 
-  #fm1 {
+  #yubiKeyForm {
     > h2 {
       display: block;
     }
@@ -109,9 +109,7 @@
       display: inline-block;
     }
   }
-  
-  
-  
+
 }
 
 #capslock-on {
@@ -126,8 +124,6 @@
 }
 
 #list-providers ul {
-  margin-bottom: 3em;
-
   li {
     margin-bottom: 1em;
 

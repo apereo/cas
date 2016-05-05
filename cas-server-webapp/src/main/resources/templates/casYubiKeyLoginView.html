@@ -9,7 +9,7 @@
 <div layout:fragment="content">
     <div class="box fl-panel" id="login">
 
-        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
+        <form method="post" id="yubiKeyForm" class="fm-v clearfix" th:object="${credential}">
             <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
             </div>
