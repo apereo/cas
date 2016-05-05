@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="10" packages="org.jasig.cas.logging">
+<Configuration monitorInterval="10" packages="org.apereo.cas.logging">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
@@ -49,7 +49,7 @@
         </CasAppender>
     </Appenders>
     <Loggers>
-        <AsyncLogger name="org.jasig" level="info" additivity="false" includeLocation="true">
+        <AsyncLogger name="org.apereo" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -136,7 +136,7 @@
         <AsyncLogger name="perfStatsLogger" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="casPerf"/>
         </AsyncLogger>
-        <AsyncLogger name="org.jasig.cas.web.flow" level="info" additivity="true" includeLocation="true">
+        <AsyncLogger name="org.apereo.cas.web.flow" level="info" additivity="true" includeLocation="true">
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
         <AsyncLogger name="org.jasig.inspektr.audit.support" level="info" includeLocation="true">

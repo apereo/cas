@@ -27,7 +27,7 @@
                                   ignore-unresolvable="true"/>
 
     <util:properties id="casProperties"/>
-    <context:component-scan base-package="org.jasig.cas" annotation-config="true" />
+    <context:component-scan base-package="org.apereo.cas" annotation-config="true" />
     <context:annotation-config />
 
 </beans>

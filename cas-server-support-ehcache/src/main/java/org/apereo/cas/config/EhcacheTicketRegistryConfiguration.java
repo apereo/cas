@@ -98,7 +98,7 @@ public class EhcacheTicketRegistryConfiguration {
     /**
      * The Service tickets cache name.
      */
-    @Value("${ehcache.cache.name:org.jasig.cas.ticket.TicketCache}")
+    @Value("${ehcache.cache.name:org.apereo.cas.ticket.TicketCache}")
     private String cacheName;
     
     /**

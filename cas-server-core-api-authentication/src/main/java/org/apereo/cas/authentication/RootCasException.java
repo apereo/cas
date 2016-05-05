@@ -7,7 +7,7 @@ package org.apereo.cas.authentication;
  * mapped inside an external resource bundle for internationalization of error messages.
  *
  * @author Misagh Moayyed
- *         see org.jasig.cas.authentication.handler.AuthenticationException
+ *         see org.apereo.cas.authentication.handler.AuthenticationException
  * @since 4.0.0
  */
 public abstract class RootCasException extends RuntimeException {

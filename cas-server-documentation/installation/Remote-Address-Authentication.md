@@ -29,7 +29,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-generic-remote-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>

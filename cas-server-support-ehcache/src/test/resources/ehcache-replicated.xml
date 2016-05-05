@@ -15,7 +15,7 @@
         <!-- Manual Peer Discovery -->
         <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.jasig.cas.ticket.TicketCache" />
+            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.apereo.cas.ticket.TicketCache" />
         <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="port=41001,remoteObjectPort=41002" />

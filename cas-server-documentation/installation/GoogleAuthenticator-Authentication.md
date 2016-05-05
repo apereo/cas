@@ -14,7 +14,7 @@ Support is enabled by including the following module in the Overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-gauth</artifactId>
      <version>${cas.version}</version>
 </dependency>

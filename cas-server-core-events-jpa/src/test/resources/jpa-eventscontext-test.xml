@@ -21,7 +21,7 @@
                                   ignore-unresolvable="false"/>
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.apereo.cas" />
 
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">

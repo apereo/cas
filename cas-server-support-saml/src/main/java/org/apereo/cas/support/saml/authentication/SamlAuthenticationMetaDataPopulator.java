@@ -56,10 +56,10 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
 
         // Next two classes are in other modules, so avoid using Class#getName() to prevent circular dependency
         this.authenticationMethods.put(
-                "org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials",
+                "org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials",
                 AUTHN_METHOD_UNSPECIFIED);
         this.authenticationMethods.put(
-                "org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials",
+                "org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredentials",
                 AUTHN_METHOD_X509_PUBLICKEY);
     }
 

@@ -28,7 +28,7 @@
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="false"/>
 
-    <context:component-scan base-package="org.jasig.cas"/>
+    <context:component-scan base-package="org.apereo.cas"/>
     <context:annotation-config/>
 
     <!-- OAuth View -->

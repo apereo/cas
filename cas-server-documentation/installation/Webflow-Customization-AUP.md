@@ -15,7 +15,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-webapp-actions-aup-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -58,7 +58,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-webapp-actions-aup-ldap</artifactId>
   <version>${cas.version}</version>
 </dependency>

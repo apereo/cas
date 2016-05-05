@@ -143,7 +143,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-saml-mdui</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -153,7 +153,7 @@ Then, adjust the configuration with the following:
 
 ```xml
 <bean id="samlDynamicMetadataUIParserAction"
-  class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+  class="org.apereo.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
   c:entityIdParameterName="entityId"
   c:metadataAdapter-ref="metadataAdapter"/>
 ```
@@ -165,7 +165,7 @@ In this case, metadata sources are statically provided via classpath, file or ur
 
 ```xml
 <bean id="metadataAdapter"
-      class="org.jasig.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
+      class="org.apereo.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
       p:refreshIntervalInMinutes="300"
       p:requireValidMetadata="true" />
@@ -189,7 +189,7 @@ the metadata server to query for the metadata based on the `entityId` provided.
 
 ```xml
 <bean id="metadataAdapter"
-      class="org.jasig.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
+      class="org.apereo.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
       p:refreshIntervalInMinutes="300"
       p:requireValidMetadata="true" />

@@ -21,7 +21,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-jpa-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>

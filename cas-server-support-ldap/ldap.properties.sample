@@ -6,7 +6,7 @@ contextSource.url=ldaps://target.ldap.server
 # LDAP context source used to test SASL/DIGEST-MD5
 saslMd5ContextSource.url=ldaps://target.ldap.server
 
-# Settings for org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler
+# Settings for org.apereo.cas.adaptors.ldap.BindLdapAuthenticationHandler
 bindAuthHandler.filter=uid=%u
 bindAuthHandler.searchBase=dc=yournamespace,dc=edu
 
@@ -16,7 +16,7 @@ bindTestConfig.existsSuccessPassword=RealPasswordHere
 bindTestConfig.existsFailurePassword=BadPassword
 bindTestConfig.notExistsCredential=nobody123
 
-# Settings for org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler
+# Settings for org.apereo.cas.adaptors.ldap.FastBindLdapAuthenticationHandler
 fastBindAuthHandler.filter=uid=%u,ou=people,dc=yournamespace,dc=edu
 
 # Define test data for fast bind authentication test
@@ -26,7 +26,7 @@ fastBindTestConfig.existsFailurePassword=BadPassword
 fastBindTestConfig.notExistsCredential=nobody123
 
 # Settings for the
-# org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler
+# org.apereo.cas.adaptors.ldap.FastBindLdapAuthenticationHandler
 # that handles SASL/DIGEST-MD5 authentication
 saslMd5FastBindAuthHandler.filter=%u
 
@@ -35,13 +35,13 @@ saslMd5FastBindTestConfig.existsCredential=testuser
 saslMd5FastBindTestConfig.existsSuccessPassword=RealPasswordHere
 
 # Settings for
-# org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver
+# org.apereo.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver
 ldapResolver.filter=uid=%u
 ldapResolver.principalAttributeName=eduPersonPrincipalName
 ldapResolver.searchBase=ou=people,dc=yournamespace,dc=edu
 
 # Settings for
-# org.jasig.cas.authentication.principal.ResolverTestConfig
+# org.apereo.cas.authentication.principal.ResolverTestConfig
 # that define the test data for unit test of ldapResolver above
 resolverTestConfig.existsCredential="testuser"
 resolverTestConfig.existsPrincipal="testuser@yournamespace.edu"
