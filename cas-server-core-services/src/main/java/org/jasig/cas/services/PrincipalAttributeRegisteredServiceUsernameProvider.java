@@ -52,10 +52,18 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     @Override
     public String resolveUsername(final Principal principal, final Service service) {
         String principalId = principal.getId();
+        final Map<String, Object> originalPrincipalAttributes = principal.getAttributes();
         final Map<String, Object> attributes = getPrincipalAttributes(principal, service);
 
         if (attributes.containsKey(this.usernameAttribute)) {
             principalId = attributes.get(this.usernameAttribute).toString();
+        } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
+            logger.warn("The selected username attribute [{}] was retrieved as a direct "
+                       + "principal attributes and not through the attribute release policy for service [{}]. "
+                       + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
+                       + "is explicitly authorized for release via the service attribute release policy.", 
+                    this.usernameAttribute, service, this.usernameAttribute);
+            principalId = originalPrincipalAttributes.get(this.usernameAttribute).toString();
         } else {
             logger.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                     + "provide the user attribute the service expects. "
