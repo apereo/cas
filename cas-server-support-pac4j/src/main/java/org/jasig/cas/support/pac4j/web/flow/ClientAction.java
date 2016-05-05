@@ -198,9 +198,11 @@ public class ClientAction extends AbstractAction {
             
             final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
             
-            String name = client.getName().replace("Client", "");
-            name = this.applicationContext.getMessage(Pac4jConfiguration.CAS_PAC4J_PREFIX.concat('.' + name.toLowerCase()), 
-                    null, name, request.getLocale());
+            String name = StringUtils.remove(client.getName(), "Client");
+            if (this.applicationContext != null) {
+                name = this.applicationContext.getMessage(Pac4jConfiguration.CAS_PAC4J_PREFIX.concat('.' + name.toLowerCase()),
+                        null, name, request.getLocale());
+            }
             
             logger.debug("{} -> {}", name, redirectionUrl);
             urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));

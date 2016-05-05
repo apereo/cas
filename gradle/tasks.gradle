@@ -24,7 +24,9 @@ task cleanLogs(description: "Clean build log files") {
 }
 
 task cleanNodeModules(type: Delete) {
-    delete fileTree(dir: project.projectDir, includes: ['**/*.*'])
+    def loc = new File(project.projectDir, 'node_modules')
+    delete fileTree(dir: loc, includes: ['**/*.*'])
+    delete loc
 }
 
 clean << {
