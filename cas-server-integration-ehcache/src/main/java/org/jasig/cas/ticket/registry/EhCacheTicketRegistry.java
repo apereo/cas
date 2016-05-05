@@ -225,7 +225,7 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         logger.info("Setting up Ehcache Ticket Registry...");
 
         if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
