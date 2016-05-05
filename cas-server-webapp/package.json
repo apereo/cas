@@ -1,6 +1,6 @@
 {
   "name": "cas",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "CAS UI automation",
   "repository": {
     "type": "git",
@@ -20,12 +20,10 @@
   "contributors": [],
   "dependencies": {
     "gulp": "^3.9.1",
-    "gulp-sass": "^2.2.0"
+    "gulp-sass": "^2.2.0",
+    "bootstrap-sass": "~> 3.3.6"
   },
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-sass": "^2.2.0"
-  },
+  "devDependencies": {},
   "scripts": {
     "gulp": "gulp"
   },

@@ -1,0 +1,22 @@
+<div class="well well-lg hidden-xs" th:if="${pac4jUrls}">
+    <div id="list-providers">
+        <h3 th:utext="#{screen.welcome.label.loginwith}" />
+
+        <ul>
+            <li th:each="entry: ${pac4jUrls}" th:switch="${entry.type}">
+                <a class="btn btn-block btn-social"
+                   th:classappend="'btn-' + ${entry.type}"
+                   th:href="${entry.redirectUrl}"
+                   th:inline="text">
+                    <span th:case="twitter" class="fa fa-twitter-square"></span>
+                    <span th:case="facebook" class="fa fa-facebook-square"></span>
+                    <span th:case="oidc" class="fa fa-openid"></span>
+                    <span th:case="saml2" class="fa fa-lock"></span>
+                    <span th:case="*" class="fa fa-sign-in"></span>
+
+                    [[${entry.name}]]
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
