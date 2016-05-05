@@ -60,6 +60,7 @@ dependencies {
         exclude(group: 'javax.validation', module: 'validation-api')
     }
     runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
+    runtime group: 'com.lmax', name: 'disruptor', version: disruptorVersion
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(group: 'org.slf4j', module: 'slf4j-api')
         exclude(group: 'org.jboss.logging', module: 'jboss-logging')
