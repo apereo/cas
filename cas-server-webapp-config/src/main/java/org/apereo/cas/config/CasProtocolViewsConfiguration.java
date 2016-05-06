@@ -200,6 +200,9 @@ public class CasProtocolViewsConfiguration {
     
 
     private static class CasProtocolView extends ThymeleafView {
+
+        @Autowired
+        private ThymeleafProperties properties;
         /**
          * Instantiates a new Cas protocol view.
          *
@@ -210,9 +213,10 @@ public class CasProtocolViewsConfiguration {
         CasProtocolView(final String templateName, final ApplicationContext applicationContext,
                         final SpringTemplateEngine templateEngine) {
             super(templateName);
+            applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
             setApplicationContext(applicationContext);
             setTemplateEngine(templateEngine);
-            setCharacterEncoding(properties.getEncoding());
+            setCharacterEncoding(properties.getEncoding().displayName());
             setLocale(Locale.getDefault());
         }
     }
