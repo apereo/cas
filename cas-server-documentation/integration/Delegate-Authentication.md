@@ -22,7 +22,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-pac4j-webflow</artifactId>
     <version>${cas.version}</version>
 </dependency>
@@ -112,7 +112,7 @@ In the CAS server, after this kind of delegated authentication, users have speci
 
 The `Authentication` object has:
 
-* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
+* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
 * The attribute *`clientName`* set to the type of the provider used during authentication process.
 
 The `Principal` object of the `Authentication` object has:
@@ -132,13 +132,13 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "description" : "sample",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "name", "first_name", "middle_name" ] ]
   }
 }

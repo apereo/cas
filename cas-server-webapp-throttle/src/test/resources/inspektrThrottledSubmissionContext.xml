@@ -57,7 +57,7 @@
         <constructor-arg index="4">
             <map>
                 <entry key="AUTHENTICATION_RESOURCE_RESOLVER">
-                    <bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver"/>
+                    <bean class="org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver"/>
                 </entry>
                 <entry key="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
                     <ref bean="returnValueResourceResolver"/>
@@ -66,7 +66,7 @@
                     <ref bean="ticketResourceResolver"/>
                 </entry>
                 <entry key="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER">
-                    <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver"/>
+                    <bean class="org.apereo.cas.audit.spi.ServiceResourceResolver"/>
                 </entry>
                 <entry key="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
                     <ref bean="returnValueResourceResolver"/>
@@ -98,7 +98,7 @@
         <constructor-arg index="1" value="_FAILED"/>
     </bean>
 
-    <bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver"
+    <bean id="auditablePrincipalResolver" class="org.apereo.cas.audit.spi.TicketOrCredentialPrincipalResolver"
           c:centralAuthenticationService-ref="centralAuthenticationService"/>
 
     <bean id="authenticationActionResolver"
@@ -132,7 +132,7 @@
           class="org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver"/>
 
     <bean id="ticketResourceResolver"
-          class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver"/>
+          class="org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver"/>
 
     <bean id="auditTrailManager" class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager">
         <constructor-arg index="0" ref="inspektrTransactionTemplate"/>

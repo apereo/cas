@@ -15,10 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="warn">
+        <Logger name="org.apereo" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.jasig.cas.support.wsfederation" level="warn">
+        <Logger name="org.apereo.cas.support.wsfederation" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.opensaml" level="warn">

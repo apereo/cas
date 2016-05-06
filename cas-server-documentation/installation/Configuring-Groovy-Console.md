@@ -13,7 +13,7 @@ Support is provided via the following dependency:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-console</artifactId>
      <version>${cas.version}</version>
 </dependency>
@@ -69,7 +69,7 @@ are extra helpful.
 
 ```groovy
 groovy:000> defaultTicketRegistry
-===> org.jasig.cas.ticket.registry.DefaultTicketRegistry@bc1fe6
+===> org.apereo.cas.ticket.registry.DefaultTicketRegistry@bc1fe6
 groovy:000> defaultTicketRegistry.getTickets()
 ===> []
 ```
@@ -99,7 +99,7 @@ package scripts
 
 def class CasVersion {
     def static run(def ctx) {
-        def output = "CAS version: " + org.jasig.cas.CasVersion.getVersion()
+        def output = "CAS version: " + org.apereo.cas.CasVersion.getVersion()
         def ticketRegistry = ctx.getBean("ticketRegistry");
         output += "\nTicket registry instance: " + ticketRegistry.getClass().getSimpleName()
         return output

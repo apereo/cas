@@ -10,7 +10,7 @@ failure; it can be customized to produce additional information for troubleshoot
 Logging framework as a facade for the [Log4J engine](http://logging.apache.org) by default.
 
 The default log4j configuration file is located in `src/main/resources/log4j2.xml`.
-By default logging is set to `INFO` for all functionality related to `org.jasig.cas` code and `WARN` for
+By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code and `WARN` for
 messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set
 these levels to  `DEBUG`.
 
@@ -85,7 +85,7 @@ you first to configure the `SysLogAppender` and then specify which messages need
 
 ...
 
-<logger name="org.jasig" additivity="true">
+<logger name="org.apereo" additivity="true">
     <level value="DEBUG" />
     <appender-ref ref="cas" />
     <appender-ref ref="SYSLOG" />

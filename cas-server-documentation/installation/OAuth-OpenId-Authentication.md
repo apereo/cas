@@ -14,7 +14,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-oauth</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -83,7 +83,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 
 ```json
 {
-  "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "clientid",
   "clientSecret": "clientSecret",
   "bypassApprovalPrompt": false,
