@@ -1,180 +1,295 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License.  You may obtain a
-    copy of the License at the following location:
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="persistentIdGenerator"
-          class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
-          p:salt="casrocks"/>
-
-    <bean name="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
-          c:authenticationManager-ref="authenticationManager"
-          c:logoutManager-ref="logoutManager"
-          c:servicesManager-ref="servicesManager"
-          c:serviceTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
-          c:serviceTicketRegistry-ref="ticketRegistry"
-          c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
-          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
-          c:ticketRegistry-ref="ticketRegistry"
-          c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"
-          p:persistentIdGenerator-ref="persistentIdGenerator" />
-
-    <util:map id="uniqueTicketIdGeneratorsForService">
-        <entry
-            key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-            value-ref="uniqueTicketIdGenerator"/>
-        <entry
-            key="org.jasig.cas.authentication.principal.OpenIdService"
-            value-ref="uniqueTicketIdGenerator"/>
-    </util:map>
-
-    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          p:readTimeout="5000"
-          p:connectionTimeout="5000" />
-          
-    <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
-          c:servicesManager-ref="servicesManager"
-          c:httpClient-ref="httpClient"
-          c:logoutMessageBuilder-ref="logoutBuilder"/>
-
-    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
-
-    <bean id="attributeRepository"
-          class="org.jasig.services.persondir.support.StubPersonAttributeDao">
-        <property name="backingMap">
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
             <map>
-                <entry key="uid" value="uid"/>
-                <entry key="eduPersonAffiliation" value="developer"/>
-                <entry key="groupMembership" value="adopters"/>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
             </map>
         </property>
     </bean>
+    
+    <context:component-scan base-package="org.apereo.cas"/>
+    <context:annotation-config/>
 
-    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
-          c:serviceRegistryDao-ref="serviceRegistryDao" />
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
-        <property name="registeredServices">
-            <list>
-                <bean class="org.jasig.cas.services.RegexRegisteredService">
-                    <property name="id" value="0"/>
-                    <property name="name" value="Test Service"/>
-                    <property name="serviceId" value="test$"/>
-                    <property name="evaluationOrder" value="1"/>
-                    <property name="allowedToProxy" value="true" />
+    <context:property-placeholder properties-ref="casProperties"/>
+    <util:properties id="casProperties" location="classpath:cas.properties"/>
+
+
+    <util:map id="authenticationHandlersResolvers">
+        <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
+        <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
+    </util:map>
+    <util:list id="authenticationMetadataPopulators">
+        <ref bean="cacheCredentialsMetaDataPopulator" />
+    </util:list>
+
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
+          p:backingMap-ref="attrRepoBackingMap"/>
+
+    <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
+
+    <util:map id="attrRepoBackingMap">
+        <entry key="uid" value="uid"/>
+        <entry key="eduPersonAffiliation" value="developer"/>
+        <entry key="groupMembership" value="adopters"/>
+    </util:map>
+
+
+    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
+
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
+
+
+    <bean id="auditTrailManager"
+          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          p:entrySeparator="${cas.audit.singleline.separator:|}"
+          p:useSingleLine="${cas.audit.singleline:false}"/>
+
+    <util:list id="monitorsList" value-type="org.apereo.cas.monitor.Monitor">
+        <ref bean="memoryMonitor"/>
+        <ref bean="sessionMonitor"/>
+    </util:list>
+
+    <util:list id="serviceFactoryList">
+        <ref bean="webApplicationServiceFactory" />
+    </util:list>
+
+    <util:list id="argumentExtractors">
+        <ref bean="defaultArgumentExtractor"/>
+    </util:list>
+
+    <util:map id="uniqueIdGeneratorsMap">
+        <entry
+            key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+            value-ref="serviceTicketUniqueIdGenerator" />
+    </util:map>
+
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+
+    <util:list id="inMemoryRegisteredServices">
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="0"/>
+            <property name="name" value="Test Service"/>
+            <property name="serviceId" value="(https://)*google.com$"/>
+            <property name="evaluationOrder" value="1"/>
+            <property name="proxyPolicy">
+                <bean class="org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern=".+"/>
+            </property>
+            <property name="publicKey">
+                <bean class="org.apereo.cas.services.RegisteredServicePublicKeyImpl"
+                      c:location="classpath:RSA1024Public.key"
+                      c:algorithm="RSA"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
+                      p:authorizedToReleaseCredentialPassword="true"
+                      p:authorizedToReleaseProxyGrantingTicket="true"/>
+            </property>
+        </bean>
+
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="2"/>
+            <property name="name" value="EduPerson Test Service"/>
+            <property name="serviceId" value="eduPersonTest"/>
+            <property name="evaluationOrder" value="3"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                      c:usernameAttribute="eduPersonAffiliation"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.apereo.cas.services.ReturnAllAttributeReleasePolicy"/>
+            </property>
+
+        </bean>
+
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="35"/>
+            <property name="name" value="Test Encryption of Attributes"/>
+            <property name="serviceId" value="testencryption$"/>
+            <property name="evaluationOrder" value="3"/>
+            <property name="publicKey">
+                <bean class="org.apereo.cas.services.RegisteredServicePublicKeyImpl"
+                      c:location="classpath:keys/RSA1024Public.key"
+                      c:algorithm="RSA"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
+                      p:authorizedToReleaseCredentialPassword="true"
+                      p:authorizedToReleaseProxyGrantingTicket="true"/>
+            </property>
+        </bean>
+
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="111"/>
+            <property name="name" value="TestServiceAttributeForAuthzFails"/>
+            <property name="serviceId" value="^TestServiceAttributeForAuthzFails"/>
+            <property name="evaluationOrder" value="4"/>
+            <property name="accessStrategy">
+                <bean class="org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy">
+                    <property name="requiredAttributes">
+                        <map>
+                            <entry key="cn"
+                                   value="cnValue"/>
+                            <entry key="givenName"
+                                   value="gnameValue"/>
+                        </map>
+                    </property>
                 </bean>
+            </property>
+        </bean>
 
-                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-                    <property name="id" value="1"/>
-                    <property name="name" value="Test Default Service"/>
-                    <property name="serviceId" value="testDefault"/>
-                    <property name="evaluationOrder" value="2"/>
-                    <property name="usernameAttribute" value="(default)"/>
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="222"/>
+            <property name="name" value="TestSsoFalse"/>
+            <property name="serviceId" value="^TestSsoFalse"/>
+            <property name="evaluationOrder" value="5"/>
+            <property name="accessStrategy">
+                <bean class="org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy"
+                      c:ssoEnabled="false"
+                      c:enabled="true"/>
+            </property>
+        </bean>
+
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="100"/>
+            <property name="name" value="TestServiceAttributeForAuthzPasses"/>
+            <property name="serviceId" value="TestServiceAttributeForAuthzPasses"/>
+            <property name="evaluationOrder" value="6"/>
+            <property name="accessStrategy">
+                <bean class="org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy">
+                    <property name="requiredAttributes">
+                        <map>
+                            <entry key="groupMembership"
+                                   value="adopters"/>
+                        </map>
+                    </property>
                 </bean>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.apereo.cas.services.ReturnAllAttributeReleasePolicy"/>
+            </property>
+        </bean>
 
-                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-                    <property name="id" value="2"/>
-                    <property name="name" value="EduPerson Test Service"/>
-                    <property name="serviceId" value="eduPersonTest"/>
-                    <property name="evaluationOrder" value="3"/>
-                    <property name="usernameAttribute" value="eduPersonAffiliation"/>
-                    <property name="ignoreAttributes" value="true"/>
-                </bean>
 
-                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-                    <property name="id" value="3"/>
-                    <property name="name" value="EduPerson Test Invalid Service"/>
-                    <property name="serviceId" value="eduPersonTestInvalid"/>
-                    <property name="evaluationOrder" value="4"/>
-                    <property name="usernameAttribute" value="nonExistentAttributeName"/>
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="3"/>
+            <property name="name" value="EduPerson Test Invalid Service"/>
+            <property name="serviceId" value="eduPersonTestInvalid"/>
+            <property name="evaluationOrder" value="7"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                      c:usernameAttribute="nonExistentAttributeName"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy">
                     <property name="allowedAttributes">
                         <list>
                             <value>groupMembership</value>
                         </list>
                     </property>
                 </bean>
+            </property>
+        </bean>
 
-                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-                    <property name="id" value="4"/>
-                    <property name="name" value="Test Service anonymous"/>
-                    <property name="serviceId" value="testAnonymous"/>
-                    <property name="evaluationOrder" value="5"/>
-                    <property name="anonymousAccess" value="true" />
-                </bean>
-            </list>
-        </property>
-    </bean>
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="333"/>
+            <property name="name" value="proxyService"/>
+            <property name="serviceId" value="proxyService"/>
+            <property name="evaluationOrder" value="8"/>
+        </bean>
 
-    <bean
-        id="authenticationManager"
-        class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-        <constructor-arg>
-            <map>
-                <entry key-ref="simpleTestUsernamePasswordAuthenticationHandler"
-                       value-ref="usernamePasswordCredentialsToPrincipalResolver" />
-                <entry key-ref="httpBasedServiceCredentialsAuthenticationHandler"
-                       value-ref="httpBasedServiceCredentialsToPrincipalResolver" />
-            </map>
-        </constructor-arg>
-        <property name="authenticationMetaDataPopulators">
-            <list>
-                <ref local="authenticationMetaDataPopulator" />
-            </list>
-        </property>
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="4"/>
+            <property name="name" value="Test Service anonymous"/>
+            <property name="serviceId" value="testAnonymous"/>
+            <property name="evaluationOrder" value="9"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
+            </property>
+        </bean>
 
-    </bean>
 
-    <bean id="neverExpiresExpirationPolicy"
-          class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="10"/>
+            <property name="name" value="Test Regex Jasig Service"/>
+            <property name="serviceId" value="^http://www.jasig.org.+"/>
+            <property name="evaluationOrder" value="10"/>
+            <property name="proxyPolicy">
+                <bean class="org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern=".+"/>
+            </property>
+        </bean>
 
-    <bean id="ticketRegistry"
-          class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="334"/>
+            <property name="name" value="usernameAttributeProviderService"/>
+            <property name="serviceId" value="usernameAttributeProviderService"/>
+            <property name="evaluationOrder" value="11"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider" c:usernameAttribute="cn" />
+            </property>
+        </bean>
 
-    <bean id="uniqueTicketIdGenerator"
-          class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 
-    <bean id="usernamePasswordCredentialsToPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver" >
-        <property name="attributeRepository" ref="attributeRepository" />
-    </bean>
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="100"/>
+            <property name="name" value="TestProxyService"/>
+            <property name="serviceId" value="proxyService"/>
+            <property name="evaluationOrder" value="11"/>
+            <property name="proxyPolicy">
+                <bean class="org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern="^https://.+"/>
+            </property>
+        </bean>
 
-    <bean id="httpBasedServiceCredentialsToPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
+        <bean class="org.apereo.cas.services.RegexRegisteredService">
+            <property name="id" value="1"/>
+            <property name="name" value="Test Default Service"/>
+            <property name="serviceId" value="^test.*"/>
+            <property name="evaluationOrder" value="100"/>
+        </bean>
+    </util:list>
 
-    <bean id="httpBasedServiceCredentialsAuthenticationHandler"
-          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-          p:httpClient-ref="httpClient" />
 
-    <bean id="simpleTestUsernamePasswordAuthenticationHandler"
-          class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+    <util:map id="serviceThemeResolverSupportedBrowsers">
+        <entry key=".*iPhone.*" value="iphone"/>
+        <entry key=".*Android.*" value="android"/>
+        <entry key=".*Safari.*Pre.*" value="safari"/>
+        <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
+    </util:map>
+    
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor" />
 
-    <bean id="authenticationMetaDataPopulator"
-          class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
+    <bean id="cachingPrincipalAttributeRepository"
+          class="org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
+            c:timeUnit="SECONDS"
+            c:expiryDuration="20"/>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
+    <bean id="persistentIdGenerator" class="org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+          c:salt="casrox"  />
+
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <util:list id="validationServiceSelectionStrategies">
+        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
+    </util:list>
 </beans>

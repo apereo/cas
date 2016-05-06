@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{cas.mfa.googleauth.pagetitle}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="box fl-panel" id="login">
+
+        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
+            <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+            </div>
+
+            <div class="row fl-controls-left">
+                <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
+
+                <input type="password" class="required" id="token" size="25" tabindex="1"
+                       th:field="*{token}"
+                       th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
+                <input class="btn-submit" name="_eventId_submit" accesskey="l"
+                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
+            </div>
+            <div class="row btn-row">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

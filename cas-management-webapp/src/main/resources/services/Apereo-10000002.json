@@ -1,0 +1,29 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://www.apereo.org",
+  "name" : "Apereo",
+  "theme" : "apereo",
+  "id" : 10000002,
+  "description" : "Apereo foundation sample service",
+  "proxyPolicy" : {
+    "@class" : "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "evaluationOrder" : 1,
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider"
+  },
+  "logoutType" : "BACK_CHANNEL",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : false,
+    "authorizedToReleaseProxyGrantingTicket" : false
+  },
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true
+  }
+}

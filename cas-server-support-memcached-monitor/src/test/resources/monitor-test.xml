@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:metrics="http://www.ryantenney.com/schema/metrics"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <context:component-scan base-package="org.apereo.cas" />
+    <context:annotation-config />
+    <context:property-placeholder location="cas.properties" ignore-resource-not-found="true" />
+    <util:properties id="casProperties" />
+
+    <bean
+          id="memcachedClient"
+          class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+          p:servers="localhost:11211"
+          p:protocol="BINARY"
+          p:locatorType="ARRAY_MOD"
+          p:failureMode="Redistribute"
+          p:transcoder-ref="serialTranscoder">
+        <property name="hashAlg">
+            <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.FNV1A_64_HASH"/>
+        </property>
+    </bean>
+
+
+    <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
+          p:compressionThreshold="2048" />
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+          p:afterInitialization="true"/>
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <util:map id="serviceThemeResolverSupportedBrowsers" />
+    <metrics:metric-registry id="metrics" />
+    <metrics:health-check-registry id="healthCheckMetrics" />
+    <util:list id="argumentExtractors">
+        <ref bean="defaultArgumentExtractor"/>
+    </util:list>
+    <bean id="auditTrailManager"
+          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          p:entrySeparator="${cas.audit.singleline.separator:|}"
+          p:useSingleLine="${cas.audit.singleline:false}"/>
+    
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+
+</beans>

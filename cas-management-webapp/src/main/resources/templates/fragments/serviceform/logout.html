@@ -1,0 +1,12 @@
+<div class="form-group">
+    <label class="col-sm-3" for="logoutUrl">
+        <span th:remove="tag" th:text="#{services.form.label.logoutUrl}" />
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+           data-toggle="tooltip"
+           data-placement="top"
+           th:title="#{services.form.tooltip.logoutUrl}"></i>
+    </label>
+    <div class="col-sm-9">
+        <input type="text" class="form-control" id="logoutUrl" ng-model="serviceFormCtrl.serviceData.logoutUrl"/>
+    </div>
+</div>

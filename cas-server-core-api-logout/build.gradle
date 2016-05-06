@@ -1,0 +1,8 @@
+
+description = 'Apereo CAS Core Logout APIs'
+dependencies {
+    compile project(':cas-server-core-api-services')
+    compile project(':cas-server-core-api-authentication')
+    compile project(':cas-server-core-api-ticket')
+}
+

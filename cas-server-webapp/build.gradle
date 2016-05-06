@@ -1,0 +1,67 @@
+apply plugin: 'war'
+apply plugin: 'spring-boot'
+
+description = 'Apereo CAS Web Application'
+
+javadoc {
+    enabled false
+}
+
+war {
+    manifest {
+        attributes("Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": java.time.ZonedDateTime.now(),
+                "Implementation-Version": project.version)
+    }
+}
+
+bootRun {
+    addResources = true
+    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+}
+
+springBoot  {
+    mainClass = 'org.apereo.cas.web.CasWebApplication'
+}
+
+bootRepackage {
+    mainClass = 'org.apereo.cas.web.CasWebApplication'
+}
+
+dependencies {
+    compile project(':cas-server-core')
+    compile project(':cas-server-core-monitor')
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-logout')
+    compile project(':cas-server-core-audit')
+    compile project(':cas-server-core-logging')
+    compile project(':cas-server-core-tickets')
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-core-validation')
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-webapp-init')
+    compile project(':cas-server-webapp-throttle')
+    compile project(':cas-server-webapp-actions')
+    compile project(':cas-server-webapp-cookie')
+    compile project(':cas-server-webapp-reports')
+    compile project(':cas-server-webapp-themes')
+    compile project(':cas-server-webapp-config')
+    compile project(':cas-server-webapp-validation')
+
+    providedRuntime libraries.springboottomcat
+    compile libraries.pac4j
+    compile libraries.springcloud
+    compile libraries.springboot
+    compile libraries.thmyeleaf
+    runtime libraries.groovy
+    compile libraries.spring
+    runtime libraries.cassecurityfilter
+    runtime libraries.metrics
+    runtime libraries.hibernate
+    runtime libraries.bouncycastle
+}
+
+processResources.dependsOn('npm_install', 'npm_run')

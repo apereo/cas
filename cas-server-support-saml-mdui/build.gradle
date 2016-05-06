@@ -1,0 +1,16 @@
+description = 'Apereo CAS SAML Server MDUI Support'
+dependencies {
+    compile libraries.quartz
+    compile project(':cas-server-support-saml')
+    compile libraries.opensaml
+    runtime libraries.hibernate
+    testCompile libraries.log4j
+    testCompile libraries.metrics
+    testCompile project(path: ":cas-server-support-saml", configuration: "tests")
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-webapp-cookie')
+}
+
+

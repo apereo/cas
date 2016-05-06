@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <bean id="auditCleanupCriteria"
+          class="org.jasig.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria"
+          c:maxAgeDays="${cas.audit.max.agedays:180}" />
+
+    <bean id="jdbcAuditTrailManager"
+          class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
+          p:cleanupCriteria-ref="auditCleanupCriteria"
+          c:transactionTemplate-ref="inspektrAuditTransactionTemplate"
+          p:dataSource-ref="inspektrAuditTrailDataSource" />
+
+    <bean id="inspektrAuditTrailDataSource"
+          class="com.zaxxer.hikari.HikariDataSource"
+          p:driverClassName="${cas.audit.database.driverClass:org.hsqldb.jdbcDriver}"
+          p:jdbcUrl="${cas.audit.database.url:jdbc:hsqldb:hsql://localhost}"
+          p:username="${cas.audit.database.user:sa}"
+          p:maximumPoolSize="${cas.audit.database.pool.maxSize:18}"
+          p:idleTimeout="${cas.audit.database.pool.maxIdleTime:1000}"
+          p:loginTimeout="${cas.audit.database.pool.maxWait:2000}"
+          p:validationTimeout="${cas.audit.database.pool.maxWait:2000}" />
+
+    <bean id="inspektrAuditTransactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="inspektrAuditTrailDataSource" />
+
+    <bean id="inspektrAuditTransactionTemplate"
+          class="org.springframework.transaction.support.TransactionTemplate"
+          p:transactionManager-ref="inspektrAuditTransactionManager"
+          p:isolationLevelName="ISOLATION_READ_COMMITTED"
+          p:propagationBehaviorName="PROPAGATION_REQUIRED" />
+
+    <bean id="inspektrAuditEntityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:dataSource-ref="inspektrAuditTrailDataSource">
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+                  p:generateDdl="${cas.audit.database.gen.ddl:true}"
+                  p:showSql="${cas.audit.database.show.sql:true}" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${cas.audit.database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${cas.audit.database.ddl.auto:create-drop}</prop>
+                <prop key="hibernate.jdbc.batch_size">${cas.audit.database.batchSize:1}</prop>
+            </props>
+        </property>
+        <property name="packagesToScan">
+            <set>
+                <value>org.apereo.cas.web.support.entity</value>
+            </set>
+        </property>
+    </bean>
+
+</beans>

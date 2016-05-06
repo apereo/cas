@@ -1,0 +1,20 @@
+description = 'Apereo CAS Management Web Application Support'
+
+dependencies {
+    compile libraries.pac4j
+    compile libraries.inspektr
+    compile libraries.spring
+    compile libraries.springboot
+    compile libraries.springcloud
+    compile libraries.casclient
+    compile libraries.javaximpl
+    compile libraries.hibernate
+    runtime libraries.groovy
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-logging')
+    compile project(':cas-server-core-audit')
+    compile project(':cas-server-support-oauth-core')
+
+
+    testCompile project(':cas-server-webapp-cookie')
+}

@@ -1,48 +1,99 @@
 #!/bin/bash
-#
-# Licensed to Jasig under one or more contributor license
-# agreements. See the NOTICE file distributed with this work
-# for additional information regarding copyright ownership.
-# Jasig licenses this file to you under the Apache License,
-# Version 2.0 (the "License"); you may not use this file
-# except in compliance with the License.  You may obtain a
-# copy of the License at the following location:
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
+invokeJavadoc=false
+invokeDoc=false
+branchVersion="development"
+
+# Only invoke the javadoc deployment process
+# for the first job in the build matrix, so as
+# to avoid multiple deployments.
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+  case "${TRAVIS_JOB_NUMBER}" in
+       *\.1) 
+        echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
+        invokeJavadoc=true;
+        invokeDoc=true;;
+  esac
+fi
 
-  echo -e "Start to publish lastest Javadoc to gh-pages...\n"
+echo -e "Starting with project documentation...\n"
 
-  cp -R target/staging $HOME/javadoc-latest
+if [ "$invokeDoc" == true ]; then
+
+  echo -e "Copying project documentation over to $HOME/docs-latest...\n"
+  cp -R cas-server-documentation $HOME/docs-latest
+
+fi
+
+echo -e "Finished with project documentation...\n"
+
+echo -e "Staring with project Javadocs...\n"
+
+if [ "$invokeJavadoc" == true ]; then
+
+  echo -e "Started to publish latest Javadoc to gh-pages...\n"
+
+  echo -e "Invoking build to generate the project site...\n"
+  ./gradlew javadoc -q -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8 --parallel
+  
+  echo -e "Copying the generated docs over...\n"
+  cp -R build/javadoc $HOME/javadoc-latest
+
+fi
+
+echo -e "Finished with project Javadocs...\n"
+
+if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
   echo -e "Cloning the gh-pages branch...\n"
-  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
+  git clone --depth 1 --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
 
   cd gh-pages
-  echo -e "Removing current's javadocs...\n"
-  git rm -rf ./current/javadocs
 
-  echo -e "Copying new javadocs to current...\n"
-  cp -Rf $HOME/javadoc-latest ./current/javadocs
-  echo -e "Adding changes to the index...\n"
-  git add -f .
+  echo -e "Staring to move project documentation over...\n"
+
+  if [ "$invokeDoc" == true ]; then
+    echo -e "Removing previous documentation from $branchVersion...\n"
+    git rm -rf ./"$branchVersion" > /dev/null
+
+    echo -e "Creating $branchVersion directory...\n"
+    test -d "./$branchVersion" || mkdir -m777 -v "./$branchVersion"
+
+    echo -e "Copying new docs from $HOME/docs-latest over to $branchVersion...\n"
+    cp -Rf $HOME/docs-latest/* "./$branchVersion"
+    echo -e "Copied project documentation...\n"
+  fi
+
+  echo -e "Staring to move project Javadocs over...\n"
+
+  if [ "$invokeJavadoc" == true ]; then
+    echo -e "Removing previous Javadocs from /$branchVersion/javadocs...\n"
+    git rm -rf ./"$branchVersion"/javadocs > /dev/null
+
+    echo -e "Creating $branchVersion directory...\n"
+    test -d "./$branchVersion" || mkdir -m777 -v ./"$branchVersion"
+
+    echo -e "Creating Javadocs directory at /$branchVersion/javadocs...\n"
+    test -d "./$branchVersion/javadocs" || mkdir -m777 -v ./"$branchVersion"/javadocs
+
+    echo -e "Copying new Javadocs...\n"
+    cp -Rf $HOME/javadoc-latest/* ./"$branchVersion"/javadocs
+    echo -e "Copied project Javadocs...\n"
+
+  fi
+
+  echo -e "Adding changes to the git index...\n"
+  git add -f . > /dev/null
+
   echo -e "Committing changes...\n"
-  git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+  git commit -m "Published documentation from $TRAVIS_BRANCH to [gh-pages]. Build $TRAVIS_BUILD_NUMBER " > /dev/null
+
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Done magic with auto publishment to gh-pages.\n"
-  
+  echo -e "Successfully published documenetation to [gh-pages] branch.\n"
+
 fi

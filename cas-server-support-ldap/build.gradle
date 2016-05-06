@@ -1,0 +1,15 @@
+description = 'Apereo CAS LDAP Support'
+dependencies {
+
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-support-ldap-core')
+    compile libraries.spring
+    compile libraries.springcloud
+    compile libraries.jackson
+    compile libraries.ldaptive
+    compile libraries.pac4j
+    runtime libraries.hibernate
+    testCompile libraries.tests
+    testCompile project(':cas-server-core-services')
+}

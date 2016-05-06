@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.authentication.warning}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content" class="loginMessageView">
+    <div class="alert alert-warning">
+        <h2 th:text="#{screen.authentication.warning}"/>
+        <div th:each="message : ${messages}">
+            <p class="message" th:text="${message.text}"/>
+        </div>
+        <section class="row btn-row">
+            <a class="btn btn-submit" th:href="@{/login(execution=${flowExecutionKey},_eventId=proceed)}">
+                <span th:text="#{screen.button.continue}"/></a>
+        </section>
+    </div>
+</div>
+</body>
+</html>

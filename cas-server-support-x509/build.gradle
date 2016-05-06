@@ -1,0 +1,22 @@
+description = 'Apereo CAS X.509 Client Certificate Support'
+dependencies {
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-core-web')
+    compile libraries.bouncycastle
+    compile libraries.spring
+    compile libraries.ehcache
+    compile libraries.ldaptive
+    compile libraries.hibernate
+
+    testCompile project(':cas-server-support-generic')
+    testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
+    testCompile libraries.tests
+    testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-core-services')
+    testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core", configuration: "tests")
+    testCompile project(':cas-server-webapp-cookie')
+}

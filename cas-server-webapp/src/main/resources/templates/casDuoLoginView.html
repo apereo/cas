@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{cas.mfa.duologin.pagetitle}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <script th:src="@{/js/duo/Duo-Web-v2.min.js}"></script>
+    <form method="post" id="duo_form" class="fm-v clearfix" th:object="${credential}">
+        <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
+            <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+        </div>
+
+        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        <input type="hidden" name="_eventId" value="submit"/>
+
+        <div class="box fl-panel" id="login">
+            <iframe id="duo_iframe"
+                    width="620"
+                    height="330"
+                    frameborder="0"
+                    th:attr="data-host=${apiHost},data-sig-request=${sigRequest}"
+                    data-post-argument="signedDuoResponse">
+            </iframe>
+        </div>
+    </form>
+</div>
+</body>
+</html>

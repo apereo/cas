@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntityDescriptor entityID="$entityId" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+    <md:SPSSODescriptor AuthnRequestsSigned="$authnRequestSigned" WantAssertionsSigned="$wantAssertionsSigned" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:KeyDescriptor use="signing">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>$x509Certificate</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="$acsUrl" index="1" />
+    </md:SPSSODescriptor>
+</md:EntityDescriptor>

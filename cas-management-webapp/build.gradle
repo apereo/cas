@@ -1,0 +1,43 @@
+apply plugin: 'war'
+apply plugin: 'spring-boot'
+
+description = 'Apereo CAS Management Web Application'
+
+javadoc {
+    enabled false
+}
+
+bootRun {
+    addResources = true
+    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+}
+
+springBoot  {
+    mainClass = 'org.apereo.cas.mgmt.web.CasManagementWebApplication'
+}
+
+bootRepackage {
+    mainClass = 'org.apereo.cas.mgmt.web.CasManagementWebApplication'
+}
+
+war {
+    manifest {
+        attributes("Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": java.time.ZonedDateTime.now(),
+                "Implementation-Version": project.version)
+    }
+}
+
+dependencies {
+    compile libraries.springboot
+    runtime project(':cas-management-webapp-support')
+    providedRuntime libraries.springboottomcat
+    runtime libraries.hibernate
+    runtime libraries.groovy
+    compile libraries.spring
+    compile libraries.thmyeleaf
+    compile libraries.thymeleafdialect
+    compile libraries.thmyeleafboot
+}

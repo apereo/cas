@@ -1,0 +1,14 @@
+description = 'Apereo CAS LDAP Monitor Support'
+dependencies {
+
+    compile project(':cas-server-support-ldap')
+    compile project(':cas-server-core-monitor')
+    testCompile project(':cas-server-core-tickets')
+    testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-core-services')
+    testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
+    runtime libraries.hibernate
+    testCompile libraries.tests   
+
+}
+

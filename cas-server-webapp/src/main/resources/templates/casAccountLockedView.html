@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.accountlocked.heading}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 th:utext="#{screen.accountlocked.heading}"/>
+        <p th:utext="#{screen.accountlocked.message}"/>
+    </div>
+</div>
+</body>
+</html>

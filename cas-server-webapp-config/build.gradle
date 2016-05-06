@@ -1,0 +1,18 @@
+description = 'Apereo CAS Web Application Configuration'
+dependencies {
+    compile libraries.spring
+    compile libraries.springboot
+    compile libraries.springcloud
+    compile libraries.commons
+    compile libraries.groovy
+    compile libraries.cassecurityfilter
+    compile project(':cas-server-core-web')
+    compile libraries.hibernate
+    compile project(':cas-server-webapp-actions')
+    compileOnly project(':cas-server-webapp-themes')
+    compileOnly project(':cas-server-core')
+    compileOnly project(':cas-server-core-audit')
+    compileOnly project(':cas-server-core-logging')
+    compileOnly libraries.bouncycastle
+}
+

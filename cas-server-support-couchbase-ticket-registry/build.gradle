@@ -1,0 +1,15 @@
+description = 'Apereo CAS Couchbase Ticket Registry'
+dependencies {
+
+    compile project(':cas-server-core-tickets')
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-support-couchbase-core')
+    compile libraries.spring
+    compile libraries.hibernate
+    compileOnly libraries.springcloud
+    testCompile project(':cas-server-core-tickets')
+    testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
+    testCompile project(path: ":cas-server-core-util", configuration: "tests")
+}
+
+

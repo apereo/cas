@@ -1,0 +1,8 @@
+grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+
+# kerberos principal used to connect to web service
+grouperClient.webService.login = banderson
+
+# password for shared secret authentication to web service
+# or you can put a filename with an encrypted password
+grouperClient.webService.password = password

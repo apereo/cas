@@ -1,0 +1,472 @@
+description = "Apereo Central Authentication Service $version"
+
+defaultTasks "clean", "build"
+
+ext {
+    publishSnapshots = Boolean.getBoolean("publishSnapshots")
+    publishReleases = Boolean.getBoolean("publishReleases")
+    sonatypeUsername = System.getProperty("sonatypeUsername")
+    sonatypePassword = System.getProperty("sonatypePassword")
+}
+
+apply from: rootProject.file("gradle/dependencies.gradle")
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "https://maven.eveoh.nl/content/repositories/releases" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "nl.eveoh:gradle-aspectj:1.6"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "com.netflix.nebula:gradle-lint-plugin:0.10.0"
+        classpath "org.standardout:gradle-versioneye-plugin:1.3.0"
+        classpath "com.moowork.gradle:gradle-node-plugin:0.12"
+    }
+}
+
+allprojects {
+    apply plugin: "idea"
+    apply plugin: "eclipse"
+    apply plugin: "maven"
+    apply plugin: "signing"
+    apply plugin: "org.standardout.versioneye"
+    apply plugin: "nebula.lint"
+    gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
+
+    signing {
+        required = (publishReleases && sonatypeUsername != null && sonatypePassword != null)
+        sign configurations.archives
+    }
+}
+
+
+subprojects {
+    task allDepInsight(type: DependencyInsightReportTask) << {}
+    task allDeps(type: DependencyReportTask) {}
+
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
+    apply plugin: 'aspectj'
+    apply plugin: 'project-report'
+    apply plugin: 'com.moowork.node'
+
+    apply from: rootProject.file("gradle/tasks.gradle")
+
+    ext.libraries = rootProject.ext.libraries;
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "https://jitpack.io" }
+        maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
+        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
+        maven { url "http://files.couchbase.com/maven2" }
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://dl.bintray.com/uniconiam/maven"}
+    }
+
+    test {
+        enabled = !Boolean.getBoolean("skipTests")
+        maxParallelForks = 1
+        useJUnit()
+        scanForTestClasses false
+
+        ignoreFailures Boolean.getBoolean("ignoreTestFailures")
+        include '**/*Tests.*'
+        exclude '**/*Abstract*.*'
+        classpath = it.classpath + files("${projectDir}/src/main/resources") +
+                files("${projectDir}/src/test/resources")
+        testLogging {
+            events "failed", "standardError"
+            exceptionFormat "full"
+        }
+
+    }
+
+    configurations {
+        tests
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            if (!Boolean.getBoolean("skipVersionConflict")) {
+                failOnVersionConflict()
+            }
+        }
+        exclude(group: "cglib", module: "cglib")
+        exclude(group: "cglib", module: "cglib-full")
+    }
+
+    artifacts {
+        tests testJar
+
+        archives sourcesJar
+        archives javadocJar
+        archives resourcesJar
+        archives testJar
+    }
+    
+
+    sourceSets {
+        test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
+    }
+    
+    jar {
+        manifest {
+            attributes("Implementation-Title": project.name,
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Date": java.time.ZonedDateTime.now(),
+                    "Implementation-Version": project.version)
+        }
+    }
+
+    node {
+        // Version of node to use.
+        version = "$nodeVersion"
+
+        // Version of npm to use.
+        npmVersion = "$npmVersion"
+
+        // Base URL for fetching node distributions (change if you have a mirror).
+        distBaseUrl = 'https://nodejs.org/dist'
+
+        // If true, it will download node using above parameters.
+        // If false, it will try to use globally installed node.
+        download = !Boolean.getBoolean("skipNodeDownload")
+
+        // Set the work directory for unpacking node
+        workDir = file("${project.projectDir}/nodejs")
+
+        // Set the work directory where node_modules should be located
+        nodeModulesDir = file("${project.projectDir}")
+    }
+
+
+    checkstyle {
+        configFile new File(rootDir, "checkstyle-rules.xml")
+        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "checkstyle-suppressions.xml")]
+        ignoreFailures false
+        showViolations true
+        toolVersion "${checkstyleVersion}"
+    }
+
+    checkstyleTest {
+        enabled = !Boolean.getBoolean("skipCheckstyle")
+    }
+
+    checkstyleMain {
+        enabled = !Boolean.getBoolean("skipCheckstyle")
+    }
+
+    versioneye {
+        includePlugins = false
+    }
+    
+    findbugs {
+        toolVersion = "${findbugsVersion}"
+        sourceSets = [sourceSets.main]
+        ignoreFailures = false
+        reportsDir = file("$project.buildDir/findbugsReports")
+        effort = "max"
+        reportLevel = "high"
+        visitors = ["FindSqlInjection", "SwitchFallthrough"]
+        omitVisitors = ["FindNonShortCircuit"]
+        includeFilter = file("$rootProject.projectDir/findbugs-rules.xml")
+    }
+
+    findbugsMain {
+        enabled = !Boolean.getBoolean("skipFindbugs")
+    }
+
+    findbugsTest {
+        enabled = !Boolean.getBoolean("skipFindbugs")
+    }
+
+    dependencies {
+        compile libraries.aspectj
+        compile libraries.validationapi
+        compile libraries.log4j
+        compile libraries.guava
+        compile libraries.commons
+        compile libraries.jodatime
+        compile libraries.inspektr
+
+        compileOnly libraries.javax
+        
+        if (!Boolean.getBoolean("skipAspectJ")) {
+            compile libraries.inspektraspects
+            aspectpath libraries.inspektraspects
+        }
+
+        if (!Boolean.getBoolean("skipFindbugs")) {
+            findbugs libraries.findbugs
+            findbugs configurations.findbugsPlugins.dependencies
+            findbugsPlugins libraries.findbugscontrib
+            findbugsPlugins libraries.findbugssec
+        }
+
+        testCompile libraries.tests
+        runtime libraries.javaximpl
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                if (publishReleases) {
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword);
+                    }
+                }
+
+                if (publishSnapshots) {
+                    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword);
+                    }
+                }
+
+                pom.project {
+                    url "http://www.apereo.org/cas"
+                    inceptionYear 2004
+                    name project.name
+                    description project.name
+                    issueManagement {
+                        system "Github"
+                        url "https://github.com/Jasig/cas/issues"
+                    }
+
+                    scm {
+                        url 'scm:git@github.com:Jasig/cas.git'
+                        connection 'scm:git@github.com:Jasig/cas.git'
+                        developerConnection 'scm:git@github.com:Jasig/cas.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'leleuj'
+                            name 'Jérôme Leleu'
+                        }
+                        developer {
+                            id 'apetro'
+                            name 'Andrew Petro'
+                        }
+                        developer {
+                            id 'wgthom'
+                            name 'William G. Thompson'
+                        }
+                        developer {
+                            id 'serac'
+                            name 'Marvin S. Addison'
+                        }
+                        developer {
+                            id 'battags'
+                            name 'Scott Battaglia'
+                        }
+                        developer {
+                            id 'mmoayyed'
+                            name 'Misagh Moayyed'
+                        }
+                        developer {
+                            id 'robertoschwald'
+                            name 'Robert Oschwald'
+                        }
+                        developer {
+                            id 'frett'
+                            name 'Daniel Frett'
+                        }
+                        developer {
+                            id 'dima767'
+                            name 'Dmitriy Kopylenko'
+                        }
+                    }
+
+                    contributors {
+                        contributor {
+                            name "Adam Rybicki"
+                            email "arybicki@unicon.net"
+                        }
+                        contributor {
+                            name "Andrew Tillinghast"
+                            email "atilling@conncoll.edu"
+                        }
+                        contributor {
+                            name "Arnaud Lesueur"
+                            email "arnaud.lesueur@gmail.com"
+                        }
+                        contributor {
+                            name "Drew Mazurek"
+                            email "dmazurek@unicon.net"
+                        }
+                        contributor {
+                            name "Eric Dalquist"
+                            email "eric.dalquist@doit.wisc.edu"
+                        }
+                        contributor {
+                            name "Eric Pierce"
+                            email "epierce@usf.edu"
+                        }
+                        contributor {
+                            name "Frederic Esnault"
+                            email "esnault.frederic@gmail.com"
+                        }
+                        contributor {
+                            name "Howard Gilbert"
+                            email "Howard.Gilbert@yale.edu"
+                        }
+                        contributor {
+                            name "Jan Van der Velpen"
+                            email "velpi@industria.be"
+                        }
+                        contributor {
+                            name "John Martin"
+                            email "jmartin@unicon.net"
+                        }
+                        contributor {
+                            name "MarcAntoine Garrigue"
+                            email "marc.antoine.garrigue@gmail.com"
+                        }
+                        contributor {
+                            name "Mihir Patel"
+                            email "exploremihir@gmail.com"
+                        }
+                        contributor {
+                            name "Fredrik Jönsson"
+                            email "fjo@kth.se"
+                        }
+                    }
+
+                    mailingLists {
+                        mailingList {
+                            name "cas-user"
+                            subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                            unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                            post "cas-user@apereo.org"
+                            archive "https://groups.google.com/forum/#!forum/jasig-cas-user"
+                        }
+                        mailingList {
+                            name "cas-dev"
+                            subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                            unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                            post "cas-dev@apereo.org"
+                            archive "https://groups.google.com/forum/#!forum/jasig-cas-dev"
+                        }
+                        mailingList {
+                            name "cas-announce"
+                            subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                            unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                            post "cas-announce@apereo.org"
+                            archive "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                        }
+                    }
+
+                    repositories {
+                        repository {
+                            id "shib-release"
+                            url "https://build.shibboleth.net/nexus/content/repositories/releases"
+                            releases {
+                                enabled true
+                            }
+                        }
+                        repository {
+                            id "spring-milestones"
+                            url "http://repo.spring.io/milestone"
+                            releases {
+                                enabled true
+                            }
+                        }
+                        repository {
+                            id "jitpack"
+                            url "https://jitpack.io"
+                            releases {
+                                enabled true
+                            }
+                        }
+                        repository {
+                            id "jasig-legacy"
+                            url "http://developer.jasig.org/repo/content/groups/m2-legacy"
+                            releases {
+                                enabled true
+                            }
+                        }
+                        repository {
+                            id "couchbase"
+                            url "http://files.couchbase.com/maven2/"
+                            releases {
+                                enabled true
+                            }
+                       }
+                       repository {
+                            id "uniconiam"
+                            url "https://dl.bintray.com/uniconiam/maven"
+                            releases {
+                                enabled true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+    gradleVersion = project.gradleVersion
+}
+
+task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory") {
+    source subprojects.collect { project -> project.sourceSets.main.allJava }
+    destinationDir = new File(buildDir, 'javadoc')
+    classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+}
+
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+	def f = new File(buildDir, "libs/cas-server-$version-javadoc.jar")
+	if (f.exists()) {
+    	archives f
+	}
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            
+            if (publishReleases) {
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword);
+                }
+            }
+
+            if (publishSnapshots) {
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword);
+                }
+            }
+        }
+    }
+}

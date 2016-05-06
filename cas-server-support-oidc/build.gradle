@@ -1,0 +1,6 @@
+description = 'Apereo CAS Server OpenID Connect Support'
+dependencies {
+    compileOnly libraries.springcloud
+    compile project(':cas-server-support-oauth')
+    testCompile project(':cas-server-core-util')
+}

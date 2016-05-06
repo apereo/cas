@@ -1,0 +1,18 @@
+description = 'Apereo CAS Web Application Spring Webflow Actions'
+dependencies {
+    compile project(':cas-server-webapp-cookie')
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-core-webflow')
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-tickets')
+    compile project(':cas-server-core-services')
+    compile libraries.spring
+    runtime libraries.hibernate
+    testCompile project(':cas-server-core')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(':cas-server-core-logout')
+    testCompile project(path: ":cas-server-core", configuration: "tests")
+    testCompile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+}

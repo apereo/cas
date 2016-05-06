@@ -1,0 +1,44 @@
+task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
+    baseName = "${project.archivesBaseName}-tests"
+    classifier = "tests"
+    from sourceSets.test.output
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task resourcesJar(type: Jar) {
+    classifier 'resources'
+    from project.file('src/main/resources')
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task cleanLogs(description: "Clean build log files") {
+    delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
+}
+
+task cleanNodeModules(type: Delete) {
+    def loc = new File(project.projectDir, 'node_modules')
+    delete fileTree(dir: loc, includes: ['**/*.*'])
+    delete loc
+}
+
+task findbugs(type: FindBugs) {
+    pluginClasspath = project.configurations.findbugsPlugins
+}
+
+gradle.buildFinished { buildResult ->
+    cleanLogs
+}
+
+npm_run {
+    args = ['gulp']
+}
+
+clean.dependsOn('cleanLogs', 'cleanNodeModules')

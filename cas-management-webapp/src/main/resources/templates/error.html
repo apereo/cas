@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" ng-app="casmgmt">
+
+<div th:replace="fragments/head"/>
+<div th:replace="fragments/headernoauth"/>
+
+<body class="casmgmt-app" ng-controller="actionsController as action">
+
+<div class="col-sm-12">
+    <div id="msg" class="errors">
+        <h2 th:text="#{screen.unavailable.heading}"/>
+        <p th:text="#{screen.unavailable.message}"/>
+    </div>
+</div>
+
+</body>
+</html>
+
+
