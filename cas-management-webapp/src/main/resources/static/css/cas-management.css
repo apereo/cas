@@ -6944,13 +6944,16 @@ html {
   display: none;
 }
 
+#rejectedAttributes table thead tr th,
 #properties-container table thead tr th {
   text-align: left;
 }
 
+#rejectedAttributes table tbody tr td:last-child,
 #properties-container table tbody tr td:last-child {
   text-align: right;
 }
+#rejectedAttributes table tbody tr:last-child,
 #properties-container table tbody tr:last-child {
   background-color: transparent;
 }
