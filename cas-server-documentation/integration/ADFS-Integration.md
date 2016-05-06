@@ -11,7 +11,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-wsfederation-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -55,7 +55,7 @@ The WsFed configuration optionally may allow you to manipulate claims coming fro
 to put together an implementation of `WsFederationAttributeMutator` that changes and manipulates ADFS claims:
 
 ```java
-package org.jasig.cas.support.wsfederation;
+package org.apereo.cas.support.wsfederation;
 
 public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
     public void modifyAttributes(...) {
@@ -68,7 +68,7 @@ The mutator then needs to be declared in your configuration:
 
 ```xml
 <bean id="wsfedAttributeMutator"
-    class="org.jasig.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
+    class="org.apereo.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
 ```
 
 

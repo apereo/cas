@@ -15,7 +15,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig.cas" level="warn">
+        <Logger name="org.apereo" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
 

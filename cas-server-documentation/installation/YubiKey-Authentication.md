@@ -14,7 +14,7 @@ following dependencies in the WAR overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-yubikey</artifactId>
      <version>${cas.version}</version>
 </dependency>

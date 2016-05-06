@@ -8,7 +8,7 @@ Ehcache integration is enabled by including the following dependency in the WAR 
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-ehcache</artifactId>
      <version>${cas.version}</version>
 </dependency>
@@ -56,7 +56,7 @@ ticketRegistry=ehcacheTicketRegistry
 # ehcache.repl.sync.updates=true
 # ehcache.repl.sync.updatescopy=true
 # ehcache.repl.sync.removals=true
-# ehcache.cache.name=org.jasig.cas.ticket.ServiceTicket
+# ehcache.cache.name=org.apereo.cas.ticket.ServiceTicket
 # ehcache.cache.timeIdle=0
 # ehcache.cache.timeAlive=9000
 ```
@@ -82,7 +82,7 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
         <!-- Manual Peer Discovery -->
         <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.jasig.cas.ticket.TicketCache" />
+            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.apereo.cas.ticket.TicketCache" />
         <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="port=41001,remoteObjectPort=41002" />

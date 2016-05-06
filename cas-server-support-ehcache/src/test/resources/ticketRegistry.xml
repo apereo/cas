@@ -20,7 +20,7 @@
     <context:property-placeholder properties-ref="casProperties"/>
     <util:properties id="casProperties"/>
 
-    <context:component-scan base-package="org.jasig.cas"/>
+    <context:component-scan base-package="org.apereo.cas"/>
     <context:annotation-config/>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
@@ -29,7 +29,7 @@
         <property name="cacheManagerName" value="ticketRegistryCacheManager"/>
     </bean>
 
-    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry"
+    <bean id="ticketRegistry" class="org.apereo.cas.ticket.registry.EhCacheTicketRegistry"
           p:ehcacheTicketsCache-ref="ehcacheTicketsCache"/>
 
     <bean id="abstractTicketCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
@@ -49,7 +49,7 @@
 
     <bean id="ehcacheTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
           parent="abstractTicketCache">
-        <property name="cacheName" value="org.jasig.cas.ticket.TicketCache"/>
+        <property name="cacheName" value="org.apereo.cas.ticket.TicketCache"/>
 
         <property name="cacheEventListeners">
             <ref bean="ticketRMISynchronousCacheReplicator"/>

@@ -8,7 +8,7 @@ Memcached integration is enabled by including the following dependency in the WA
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-memcached</artifactId>
     <version>${cas.version}</version>
 </dependency>

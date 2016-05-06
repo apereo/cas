@@ -59,11 +59,11 @@ MFA can be triggered for a specific application registered inside the CAS servic
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "multifactorPolicy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ]
   }
 }
@@ -92,11 +92,11 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "multifactorPolicy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
     "principalAttributeNameTrigger" : "memberOf",
     "principalAttributeValueToMatch" : "faculty|allMfaMembers"
@@ -112,11 +112,11 @@ functionality, if that provider cannot respond.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "multifactorPolicy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
     "failureMode" : "CLOSED"
   }

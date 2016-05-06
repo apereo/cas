@@ -22,7 +22,7 @@
         </property>
     </bean>
     
-    <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.apereo.cas" />
     <context:annotation-config />
     <context:property-placeholder location="cas.properties" ignore-resource-not-found="true" />
     <util:properties id="casProperties" />
@@ -44,7 +44,7 @@
     <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
           p:compressionThreshold="2048" />
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
