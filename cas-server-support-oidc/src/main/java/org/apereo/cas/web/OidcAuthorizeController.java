@@ -1,8 +1,8 @@
-package org.jasig.cas.web;
+package org.apereo.cas.web;
 
-import org.jasig.cas.OidcConstants;
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.web.OAuth20AuthorizeController;
+import org.apereo.cas.OidcConstants;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.web.OAuth20AuthorizeController;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,9 +1,9 @@
-package org.jasig.cas.web;
+package org.apereo.cas.web;
 
-import org.jasig.cas.OidcConstants;
+import org.apereo.cas.OidcConstants;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.web.OAuth20AccessTokenController;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -31,7 +31,7 @@ public class OidcAccessTokenController extends OAuth20AccessTokenController {
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     /**
-     * Initi the response generator and the controller in general.
+     * Init the response generator and the controller in general.
      */
     @PostConstruct
     protected void init() {

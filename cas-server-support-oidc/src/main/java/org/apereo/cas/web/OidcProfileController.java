@@ -1,9 +1,9 @@
-package org.jasig.cas.web;
+package org.apereo.cas.web;
 
-import org.jasig.cas.OidcConstants;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.web.OAuth20ProfileController;
+import org.apereo.cas.OidcConstants;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +26,7 @@ import java.util.Map;
 @Controller("oidcProfileController")
 public class OidcProfileController extends OAuth20ProfileController {
 
+    
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL,
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override

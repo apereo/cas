@@ -1,9 +1,9 @@
-package org.jasig.cas.services;
+package org.apereo.cas.services;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

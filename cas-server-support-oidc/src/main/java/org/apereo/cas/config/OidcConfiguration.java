@@ -1,6 +1,6 @@
-package org.jasig.cas.config;
+package org.apereo.cas.config;
 
-import org.jasig.cas.OidcConstants;
+import org.apereo.cas.OidcConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

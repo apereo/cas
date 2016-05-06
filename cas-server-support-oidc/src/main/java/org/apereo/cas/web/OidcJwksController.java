@@ -1,11 +1,11 @@
-package org.jasig.cas.web;
+package org.apereo.cas.web;
 
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.OidcConstants;
-import org.jasig.cas.services.OidcRegisteredService;
-import org.jasig.cas.services.ServicesManager;
+import org.apereo.cas.OidcConstants;
+import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;

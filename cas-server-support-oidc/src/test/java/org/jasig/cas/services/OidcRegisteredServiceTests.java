@@ -1,6 +1,10 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.services.JsonServiceRegistryDao;
+import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServiceRegistryDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -39,7 +43,7 @@ public class OidcRegisteredServiceTests {
         this.dao.load();
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertTrue(r3 instanceof OidcRegisteredService);
-        //assertEquals(r, r2);
+        assertEquals(r, r2);
         assertEquals(r2, r3);
     }
 }
