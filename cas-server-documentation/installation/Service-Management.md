@@ -75,11 +75,11 @@ This DAO is an in-memory services management seeded from registration beans wire
 
 ```xml
 <bean id="serviceRegistryDao"
-      class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
+      class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl"
       p:registeredServices-ref="registeredServicesList" />
 
 <util:list id="registeredServicesList">
-    <bean class="org.jasig.cas.services.RegexRegisteredService"
+    <bean class="org.apereo.cas.services.RegexRegisteredService"
           p:id="1"
           p:name="HTTPS and IMAPS services on example.com"
           p:serviceId="^(https|imaps)://([A-Za-z0-9_-]+\.)*example\.com/.*"

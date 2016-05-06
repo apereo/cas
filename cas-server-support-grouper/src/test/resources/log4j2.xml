@@ -21,7 +21,7 @@
         <Logger name="edu.internet2.middleware" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.jasig" level="warn" additivity="false">
+        <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">

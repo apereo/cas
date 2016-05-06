@@ -8,7 +8,7 @@ Ignite integration is enabled by including the following dependency in the WAR o
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-ignite</artifactId>
      <version>${cas.version}</version>
 </dependency>

@@ -47,7 +47,7 @@ Stores authentication events into a MongoDb NoSQL database.
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-core-events-mongo</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -66,7 +66,7 @@ Stores authentication events into a RDBMS.
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-core-events-jpa</artifactId>
   <version>${cas.version}</version>
 </dependency>

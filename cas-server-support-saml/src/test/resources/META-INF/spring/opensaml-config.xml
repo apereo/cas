@@ -27,10 +27,10 @@
                                   ignore-unresolvable="false"/>
 
     <util:properties id="casProperties"/>
-    <context:component-scan base-package="org.jasig.cas" annotation-config="true" />
+    <context:component-scan base-package="org.apereo.cas" annotation-config="true" />
     <context:annotation-config />
 
-    <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
+    <bean id="shibboleth.OpenSAMLConfig" class="org.apereo.cas.support.saml.OpenSamlConfigBean"
           depends-on="shibboleth.ParserPool"/>
 
     <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
@@ -78,17 +78,17 @@
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory"
           class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
 
-    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+    <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManagerImpl"
             c:serviceRegistryDao-ref="serviceRegistryDao" />
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+    <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">
-            <bean class="org.jasig.cas.services.RegexRegisteredService"
+            <bean class="org.apereo.cas.services.RegexRegisteredService"
                     p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
         </property>
     </bean>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <util:map id="serviceThemeResolverSupportedBrowsers">

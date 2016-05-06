@@ -15,8 +15,8 @@
           p:url="jdbc:hsqldb:mem:cas-ticket-registry"/>
 
     <util:list id="packagesToScan">
-        <value>org.jasig.cas.services</value>
-        <value>org.jasig.cas.ticket</value>
+        <value>org.apereo.cas.services</value>
+        <value>org.apereo.cas.ticket</value>
     </util:list>
 
     <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"

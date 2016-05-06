@@ -19,7 +19,7 @@ Support is enabled by including the following to the overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest</artifactId>
     <version>${cas.version}</version>
     <scope>runtime</scope>
@@ -88,7 +88,7 @@ Support is enabled by including the following in your maven overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest-services</artifactId>
     <version>${cas.version}</version>
     <scope>runtime</scope>

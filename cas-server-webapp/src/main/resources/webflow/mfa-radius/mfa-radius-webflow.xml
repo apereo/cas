@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <var name="credential" class="org.jasig.cas.adaptors.radius.authentication.RadiusTokenCredential" />
+    <var name="credential" class="org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
