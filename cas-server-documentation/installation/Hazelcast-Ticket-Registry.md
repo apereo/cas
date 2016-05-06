@@ -14,7 +14,7 @@ This ticket registry implementation is enabled by simply including the module in
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-hazelcast</artifactId>
+    <artifactId>cas-server-support-hazelcast-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
