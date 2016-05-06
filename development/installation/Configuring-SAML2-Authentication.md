@@ -87,7 +87,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-saml-idp</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -118,7 +118,7 @@ SAML relying parties and services must be registered within the CAS service regi
 
 ```json
 {
-  "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
   "serviceId" : "the-entity-id-of-the-sp",
   "name" : "SAMLService",
   "id" : 10000003,
@@ -151,7 +151,7 @@ from a Metadata query server, the metadata location must be configured to point 
 
 ```json
 {
-  "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
   "serviceId" : "the-entity-id-of-the-sp",
   "name" : "SAMLService",
   "id" : 10000003,

@@ -19,7 +19,7 @@ Support is added by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-pac4j-authentication</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -27,14 +27,14 @@ Support is added by including the following dependency in the WAR overlay:
 
 ## Configuration
 You can use the first implementation for CAS username/password credentials: 
-`org.jasig.cas.support.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler`.
+`org.apereo.cas.support.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler`.
 
 For example, in the `deployerConfigContext.xml` file:
 
 ```xml
 
 <bean id="primaryAuthenticationHandler" 
-    class="org.jasig.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler" />
+    class="org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler" />
 ```
 
 You may use a specific pac4j authenticator using the `setAuthenticator` method, the default one being the `SimpleTestUsernamePasswordAuthenticator`.

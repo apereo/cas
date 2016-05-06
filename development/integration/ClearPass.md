@@ -53,14 +53,14 @@ as an attribute for the given attribute release policy of choice.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "authorizedToReleaseCredentialPassword" : true
   },
   "publicKey" : {
-    "@class" : "org.jasig.cas.services.RegisteredServicePublicKeyImpl",
+    "@class" : "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
     "location" : "classpath:RSA1024Public.key",
     "algorithm" : "RSA"
   }

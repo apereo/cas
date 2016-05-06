@@ -49,7 +49,7 @@ beans {
     xmlns([lang:'http://www.springframework.org/schema/lang'])
     xmlns([util:'http://www.springframework.org/schema/util'])
 
-    exampleBean(org.jasig.cas.example.ExampleBean) {
+    exampleBean(org.apereo.cas.example.ExampleBean) {
         beanProperty = propertyValue
     }
 }
@@ -151,7 +151,7 @@ in the Maven overlay must include a reference to the Maven Java compiler so clas
                 <warName>cas</warName>
                 <overlays>
                     <overlay>
-                        <groupId>org.jasig.cas</groupId>
+                        <groupId>org.apereo.cas</groupId>
                         <artifactId>cas-server-webapp</artifactId>
                         <excludes>
                             <exclude>WEB-INF/application.properties</exclude>

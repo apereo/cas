@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Implementation-Title: cas-server-documentation
-Implementation-Vendor: org.jasig.cas
-Created-By: org.jasig.cas
-Implementation-Date: 2016-05-05T19:36:08.030Z[Etc/UTC]
+Implementation-Vendor: org.apereo.cas
+Created-By: org.apereo.cas
+Implementation-Date: 2016-05-06T00:39:53.689Z[Etc/UTC]
 Implementation-Version: 5.0.0-SNAPSHOT
 

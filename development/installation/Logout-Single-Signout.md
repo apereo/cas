@@ -86,7 +86,7 @@ Sample configuration follows:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -103,7 +103,7 @@ To configure a service specific endpoint, try the following example:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,

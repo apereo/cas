@@ -31,7 +31,7 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-spnego-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
