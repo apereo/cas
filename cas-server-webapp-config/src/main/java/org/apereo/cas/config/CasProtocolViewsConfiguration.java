@@ -212,7 +212,7 @@ public class CasProtocolViewsConfiguration {
             super(templateName);
             setApplicationContext(applicationContext);
             setTemplateEngine(templateEngine);
-            setCharacterEncoding("UTF-8");
+            setCharacterEncoding(properties.getEncoding());
             setLocale(Locale.getDefault());
         }
     }
