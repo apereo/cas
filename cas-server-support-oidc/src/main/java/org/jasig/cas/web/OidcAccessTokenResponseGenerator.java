@@ -9,7 +9,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.OidcRegisteredService;
-import org.jasig.cas.support.oauth.OAuthAccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
@@ -41,7 +41,7 @@ import java.util.UUID;
  */
 @RefreshScope
 @Component("oidcAccessTokenResponseGenerator")
-public class OidcAccessTokenResponseGenerator extends OAuthAccessTokenResponseGenerator {
+public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
 
     @Value("${cas.oidc.issuer:http://localhost:8080/cas/oidc}")
     private String issuer;

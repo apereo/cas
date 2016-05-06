@@ -1,14 +1,15 @@
-package org.jasig.cas.support.oauth;
+package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
-import org.jasig.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link OAuthAccessTokenResponseGenerator}.
+ * This is {@link OAuth20AccessTokenResponseGenerator}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @RefreshScope
 @Component("oauthAccessTokenResponseGenerator")
-public class OAuthAccessTokenResponseGenerator implements AccessTokenResponseGenerator {
+public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**

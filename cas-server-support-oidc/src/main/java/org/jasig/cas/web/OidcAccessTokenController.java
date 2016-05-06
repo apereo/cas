@@ -1,7 +1,7 @@
 package org.jasig.cas.web;
 
 import org.jasig.cas.OidcConstants;
-import org.jasig.cas.support.oauth.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.web.OAuth20AccessTokenController;
 import org.springframework.beans.factory.annotation.Autowired;

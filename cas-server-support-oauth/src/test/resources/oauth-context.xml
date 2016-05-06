@@ -69,6 +69,6 @@
         </bean>
     </util:list>
     <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.jasig.cas.support.oauth.validator.OAuth20ValidationServiceSelectionStrategy" />
+        <bean class="org.apereo.cas.support.oauth.validator.OAuth20ValidationServiceSelectionStrategy" />
     </util:list>
 </beans>

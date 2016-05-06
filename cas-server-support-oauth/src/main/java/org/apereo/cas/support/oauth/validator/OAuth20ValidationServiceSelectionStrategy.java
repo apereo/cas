@@ -1,14 +1,14 @@
-package org.jasig.cas.support.oauth.validator;
+package org.apereo.cas.support.oauth.validator;
 
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.ServiceFactory;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.client.util.URIBuilder;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.jasig.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

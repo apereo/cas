@@ -1,9 +1,9 @@
-package org.jasig.cas.support.oauth;
+package org.apereo.cas.support.oauth.web;
 
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.jasig.cas.support.oauth.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
