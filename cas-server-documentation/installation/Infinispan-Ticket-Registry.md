@@ -9,7 +9,7 @@ Infinispan integration is enabled by including the following dependency in the W
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-infinispan</artifactId>
+     <artifactId>cas-server-support-infinispan-ticket-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

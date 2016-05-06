@@ -3,6 +3,6 @@ dependencies {
     compile libraries.hazelcast
     compileOnly libraries.springcloud
     compile project(':cas-server-core-monitor')
-    compile project(':cas-server-support-hazelcast')
+    compile project(':cas-server-support-hazelcast-ticket-registry')
 }
 

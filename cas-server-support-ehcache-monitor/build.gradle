@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS Ehcache Integration Monitor'
 dependencies {
-	compile project(':cas-server-support-ehcache')
+	compile project(':cas-server-support-ehcache-ticket-registry')
 	compile project(':cas-server-core-monitor')
 }
 
