@@ -37,8 +37,10 @@ gradle.buildFinished { buildResult ->
     cleanLogs
 }
 
+/*
 npm_run {
     args = ['gulp']
 }
+ */
 
 clean.dependsOn('cleanLogs', 'cleanNodeModules')

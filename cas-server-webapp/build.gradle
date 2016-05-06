@@ -1,6 +1,8 @@
 apply plugin: 'war'
 apply plugin: 'spring-boot'
 
+apply from: '../gradle/node.gradle'
+
 description = 'Apereo CAS Web Application'
 
 javadoc {
@@ -63,5 +65,3 @@ dependencies {
     runtime libraries.hibernate
     runtime libraries.bouncycastle
 }
-
-processResources.dependsOn('npm_install', 'npm_run')
