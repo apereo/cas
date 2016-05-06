@@ -9,7 +9,7 @@ Ignite integration is enabled by including the following dependency in the WAR o
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ignite</artifactId>
+     <artifactId>cas-server-support-ignite-ticket-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
