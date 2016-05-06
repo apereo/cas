@@ -4,10 +4,10 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <var name="credential" class="org.jasig.cas.authentication.UsernamePasswordCredential"/>
+    <var name="credential" class="org.apereo.cas.authentication.UsernamePasswordCredential"/>
 
     <!--
-    <var name="credential" class="org.jasig.cas.authentication.RememberMeUsernamePasswordCredential" />
+    <var name="credential" class="RememberMeUsernamePasswordCredential" />
     -->
     <on-start>
         <evaluate expression="initialFlowSetupAction"/>
@@ -138,7 +138,7 @@
 
     <action-state id="redirect">
         <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)"
-                  result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response"/>
+                  result-type="org.apereo.cas.authentication.principal.Response" result="requestScope.response"/>
         <transition to="postRedirectDecision"/>
     </action-state>
 
@@ -150,7 +150,7 @@
         <on-entry>
             <evaluate expression="genericSuccessViewAction.getAuthenticationPrincipal(flowScope.ticketGrantingTicketId)"
                       result="requestScope.principal"
-                      result-type="org.jasig.cas.authentication.principal.Principal"/>
+                      result-type="org.apereo.cas.authentication.principal.Principal"/>
         </on-entry>
     </end-state>
     
@@ -192,8 +192,8 @@
 
     <end-state id="viewRedirectToUnauthorizedUrlView" view="externalRedirect:#{flowScope.unauthorizedRedirectUrl}"/>
     <global-transitions>
-        <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException"/>
+        <transition to="viewLoginForm" on-exception="org.apereo.cas.services.UnauthorizedSsoServiceException"/>
         <transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException"/>
-        <transition to="serviceUnauthorizedCheck" on-exception="org.jasig.cas.services.UnauthorizedServiceException"/>
+        <transition to="serviceUnauthorizedCheck" on-exception="org.apereo.cas.services.UnauthorizedServiceException"/>
     </global-transitions>
 </flow>

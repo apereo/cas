@@ -25,11 +25,11 @@
                                   ignore-resource-not-found="false"
                                   ignore-unresolvable="false"/>
 
-    <context:component-scan base-package="org.jasig.cas"
+    <context:component-scan base-package="org.apereo.cas"
                             annotation-config="true" />
     <context:annotation-config />
 
-    <bean id="wsFedConfig" class="org.jasig.cas.support.wsfederation.WsFederationConfiguration">
+    <bean id="wsFedConfig" class="org.apereo.cas.support.wsfederation.WsFederationConfiguration">
         <property name="identityProviderUrl" value="https://adfs.example.com/adfs/ls/" />
         <property name="identityProviderIdentifier" value="http://adfs.example.edu/adfs/services/trust" />
         <property name="relyingPartyIdentifier" value="urn:federation:cas" />

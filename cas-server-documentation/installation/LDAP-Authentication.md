@@ -8,7 +8,7 @@ LDAP integration is enabled by including the following dependency in the WAR ove
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-ldap</artifactId>
      <version>${cas.version}</version>
 </dependency>
@@ -20,7 +20,7 @@ configuration needs to be put into the `deployerConfigContext.xml` file:
 
 ```xml
 <bean id="ldapAuthenticationHandler"
-class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+class="org.apereo.cas.authentication.LdapAuthenticationHandler"
       p:principalIdAttribute="sAMAccountName"
       c:authenticator-ref="authenticator" />
 ```
@@ -42,7 +42,7 @@ The `LdapAuthenticationHandler` is also capable of resolving and retrieving prin
 
 ```xml
 <bean id="ldapAuthenticationHandler"
-class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+class="org.apereo.cas.authentication.LdapAuthenticationHandler"
       p:principalIdAttribute="sAMAccountName"
       c:authenticator-ref="authenticator">
     <property name="principalAttributeMap">
@@ -59,7 +59,7 @@ The above configuration defines a map of attributes. Keys are LDAP attribute nam
 
 ```xml
 <bean id="ldapAuthenticationHandler"
-    class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+    class="org.apereo.cas.authentication.LdapAuthenticationHandler"
     p:principalIdAttribute="sAMAccountName"
     c:authenticator-ref="authenticator">
     <property name="principalAttributeList">
@@ -348,7 +348,7 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 
 ```xml
 <bean id="ldapAuthenticationHandler"
-      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      class="org.apereo.cas.authentication.LdapAuthenticationHandler"
       p:passwordPolicyConfiguration-ref="passwordPolicyConfiguration">
       ...
 </bean>

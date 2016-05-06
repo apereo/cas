@@ -10,7 +10,7 @@ For a fully working example, see [https://github.com/UniconLabs/cas-gradle-sampl
 
 1. Modify `build.gradle` or `pom.xml` to add the dependency
 
-        compile "org.jasig.cas:cas-server-support-shibboleth-attributes:${project.'cas.version'}"
+        compile "org.apereo.cas:cas-server-support-shibboleth-attributes:${project.'cas.version'}"
 
     Note that, at least in the case of gradle, you'll need to add the Shibboleth repositories as well
 

@@ -45,7 +45,7 @@
         <property name="timeToLive" value="300"/>
     </bean>
 
-    <bean id="monitor" class="org.jasig.cas.monitor.EhCacheMonitor"
+    <bean id="monitor" class="org.apereo.cas.monitor.EhCacheMonitor"
           c:ehcacheTicketsCache-ref="testCache"/>
 
 
