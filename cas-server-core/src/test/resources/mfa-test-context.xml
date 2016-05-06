@@ -19,7 +19,7 @@
         </property>
     </bean>
     
-    <context:component-scan base-package="org.jasig.cas"/>
+    <context:component-scan base-package="org.apereo.cas"/>
     <context:annotation-config/>
 
     <context:property-placeholder properties-ref="propertiesMfa"
@@ -64,12 +64,12 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
-    <util:list id="monitorsList" value-type="org.jasig.cas.monitor.Monitor">
+    <util:list id="monitorsList" value-type="org.apereo.cas.monitor.Monitor">
         <ref bean="memoryMonitor"/>
         <ref bean="sessionMonitor"/>
     </util:list>
 
-    <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
+    <util:list id="serviceFactoryList" value-type="org.apereo.cas.authentication.principal.ServiceFactory">
         <ref bean="webApplicationServiceFactory"/>
     </util:list>
 
@@ -79,7 +79,7 @@
 
     <util:map id="uniqueIdGeneratorsMap">
         <entry
-                key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"
                 value-ref="serviceTicketUniqueIdGenerator"/>
     </util:map>
 
@@ -87,13 +87,13 @@
 
 
     <util:list id="inMemoryRegisteredServices">
-        <bean class="org.jasig.cas.services.RegexRegisteredService"
+        <bean class="org.apereo.cas.services.RegexRegisteredService"
               p:id="1"
               p:name="Normal"
               p:serviceId="https://example\.com/normal/.*"
               p:evaluationOrder="10"/>
 
-        <bean class="org.jasig.cas.services.RegexRegisteredService"
+        <bean class="org.apereo.cas.services.RegexRegisteredService"
               p:id="2"
               p:name="High"
               p:serviceId="https://example\.com/high/.*"
@@ -110,7 +110,7 @@
 
 
     <bean id="passwordHandler"
-          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler"
+          class="org.apereo.cas.authentication.AcceptUsersAuthenticationHandler"
           p:name="passwordHandler">
         <property name="users">
             <map>
@@ -122,7 +122,7 @@
     </bean>
 
     <bean id="oneTimePasswordHandler"
-          class="org.jasig.cas.TestOneTimePasswordAuthenticationHandler"
+          class="org.apereo.cas.TestOneTimePasswordAuthenticationHandler"
           p:name="oneTimePasswordHandler">
         <constructor-arg>
             <map>
@@ -137,6 +137,6 @@
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
     <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.jasig.cas.validation.DefaultValidationServiceSelectionStrategy" />
+        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
     </util:list>
 </beans>

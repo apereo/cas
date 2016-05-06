@@ -8,7 +8,7 @@ Infinispan integration is enabled by including the following dependency in the W
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-infinispan</artifactId>
      <version>${cas.version}</version>
 </dependency>

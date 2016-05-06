@@ -16,12 +16,12 @@ Disallows proxy authentication for a service. This is default policy and need no
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "proxyPolicy" : {
-    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+    "@class" : "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
   }
 }
 ```
@@ -31,12 +31,12 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "proxyPolicy" : {
-    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "@class" : "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
     "pattern" : "^https?://.*"
   }
 }

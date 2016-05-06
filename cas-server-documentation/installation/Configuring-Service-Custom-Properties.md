@@ -15,14 +15,14 @@ A sample JSON file follows:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "sample service",
   "id" : 100,
   "properties" : {
     "@class" : "java.util.HashMap",
     "email" : {
-      "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "person@place.edu", "admin@place.edu" ] ]
     }
   }
