@@ -13,8 +13,8 @@ This ticket registry implementation is enabled by simply including the module in
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-hazelcast</artifactId>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-hazelcast-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```

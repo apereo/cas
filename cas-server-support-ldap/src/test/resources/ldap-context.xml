@@ -21,7 +21,7 @@
             </map>
         </property>
     </bean>
-    <context:component-scan base-package="org.jasig.cas" />
+    <context:component-scan base-package="org.apereo.cas" />
     <context:annotation-config />
     <context:property-placeholder location="classpath:/ldap.properties"/>
 

@@ -26,7 +26,7 @@ A sample JSON file follows:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,

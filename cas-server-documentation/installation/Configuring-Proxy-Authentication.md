@@ -65,21 +65,21 @@ as an attribute for the given attribute release policy of choice.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 1,
   "evaluationOrder" : 0,
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+      "@class" : "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository"
     },
     "authorizedToReleaseCredentialPassword" : false,
     "authorizedToReleaseProxyGrantingTicket" : true
   },
   "publicKey" : {
-    "@class" : "org.jasig.cas.services.RegisteredServicePublicKeyImpl",
+    "@class" : "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
     "location" : "classpath:RSA1024Public.key",
     "algorithm" : "RSA"
   }

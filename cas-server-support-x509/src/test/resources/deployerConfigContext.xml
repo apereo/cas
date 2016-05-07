@@ -4,7 +4,7 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+    <bean id="authenticationManager" class="org.apereo.cas.authentication.PolicyBasedAuthenticationManager">
         <constructor-arg>
             <map>
                 <entry key-ref="acceptUsersAuthenticationHandler" value-ref="usernamePasswordCredentialsResolver" />
@@ -18,7 +18,7 @@
        | Authentication handler beans
        -->
     <bean id="acceptUsersAuthenticationHandler"
-          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
+          class="org.apereo.cas.authentication.AcceptUsersAuthenticationHandler">
         <property name="users">
             <map>
                 <entry key="casuser" value="Mellon"/>
@@ -27,10 +27,10 @@
     </bean>
 
     <bean id="httpBasedAuthenticationHandler"
-          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+          class="org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
 
     <bean id="x509AuthenticationHandler"
-          class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
+          class="org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
         <property name="trustedIssuerDnPattern"
                   value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
         <property name="subjectDnPattern"
@@ -40,7 +40,7 @@
         <property name="maxPathLength" value="2147483647" />
         <property name="maxPathLengthAllowUnspecified" value="true" />
         <property name="revocationChecker">
-            <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker">
+            <bean class="org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker">
                 <constructor-arg>
                     <!-- Cache CRL fetches for 6h -->
                     <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
@@ -59,13 +59,13 @@
                 <property name="unavailableCRLPolicy">
                     <!--
                         Default is to trigger authentication failure on unavailable CRL data.
-                        Use org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy
+                        Use AllowRevocationPolicy
                         to allow auth on unavailable CRL data.
                     -->
-                    <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
+                    <bean class="org.apereo.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
                 </property>
                 <property name="expiredCRLPolicy">
-                    <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy">
+                    <bean class="org.apereo.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy">
                         <!--
                                 Allow expired CRL data up to 48h after expiration.
                                 Set to 0 to prevent expired CRL data.
@@ -81,10 +81,10 @@
        | Credential-to-principal resolver beans
        -->
     <bean id="usernamePasswordCredentialsResolver"
-          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
+          class="org.apereo.cas.authentication.principal.BasicPrincipalResolver" />
 
     <bean id="httpBasedCredentialsResolver"
-          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
+          class="org.apereo.cas.authentication.principal.BasicPrincipalResolver" />
 
     <!--
        | Resolves a principal from the subject DN of an X.509 certificate.
@@ -92,7 +92,7 @@
        | subject DN is DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto.
        -->
     <bean id="x509CredentialsResolver"
-          class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
+          class="org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
           p:descriptor="$UID@$DC.$DC" />
 
 </beans>

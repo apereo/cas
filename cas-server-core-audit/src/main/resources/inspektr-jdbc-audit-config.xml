@@ -54,7 +54,7 @@
         </property>
         <property name="packagesToScan">
             <set>
-                <value>org.jasig.cas.web.support.entity</value>
+                <value>org.apereo.cas.web.support.entity</value>
             </set>
         </property>
     </bean>

@@ -80,14 +80,14 @@
 
     <aop:config>
         <aop:pointcut id="ticketRegistryOperations"
-                      expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
+                      expression="execution(* org.apereo.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
         <aop:pointcut id="ticketRegistrySupportOperations"
-                      expression="execution(* org.jasig.cas.ticket.registry.TicketRegistrySupport.*(..))"/>
+                      expression="execution(* org.apereo.cas.ticket.registry.TicketRegistrySupport.*(..))"/>
         <aop:pointcut id="ticketRegistryLockingOperations"
-                      expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
+                      expression="execution(* org.apereo.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
  
         <aop:pointcut id="casOperations"
-                      expression="execution(* org.jasig.cas.CentralAuthenticationService.*(..))"/>
+                      expression="execution(* org.apereo.cas.CentralAuthenticationService.*(..))"/>
 
         <aop:advisor advice-ref="txRegistryAdvice"
                      pointcut-ref="ticketRegistryOperations"/>

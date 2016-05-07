@@ -64,10 +64,10 @@ The cookie has the following properties:
 If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
 
 ```bash
-WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key>
-WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Generated encryption key ABC of size ... . The generated key MUST be added to CAS settings.>
-WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Secret key for signing is not defined. CAS will attempt to auto-generate the signing key>
-WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
+WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key>
+WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Generated encryption key ABC of size ... . The generated key MUST be added to CAS settings.>
+WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for signing is not defined. CAS will attempt to auto-generate the signing key>
+WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
 ```
 
 You should then grab each generated key for encryption and signing, and put them inside your cas.properties file for each now-enabled setting.
@@ -80,7 +80,7 @@ If you wish to turn off cookie encryption, adjust your configuration to be the f
 In local `deployerConfigContext.xml`:
 
 ```xml
-<bean id="noOpCipherExecutor" class="org.jasig.cas.util.NoOpCipherExecutor" />
+<bean id="noOpCipherExecutor" class="org.apereo.cas.util.NoOpCipherExecutor" />
 ```
 
 In `application.properties`:

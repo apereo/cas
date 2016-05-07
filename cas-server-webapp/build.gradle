@@ -23,11 +23,11 @@ bootRun {
 }
 
 springBoot  {
-    mainClass = 'org.jasig.cas.web.CasWebApplication'
+    mainClass = 'org.apereo.cas.web.CasWebApplication'
 }
 
 bootRepackage {
-    mainClass = 'org.jasig.cas.web.CasWebApplication'
+    mainClass = 'org.apereo.cas.web.CasWebApplication'
 }
 
 dependencies {
