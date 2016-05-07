@@ -62,13 +62,13 @@ In `application.properties`:
 
 ```properties
 #CAS components mappings
-grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
+grantingTicketExpirationPolicy=hardTimeoutExpirationPolicy
 ```
 
 Settings are controlled via:
 
 ```properties
-# tgt.timeout.hard.maxTimeToLiveInSeconds
+# tgt.timeout.hard.maxTimeToLiveInSeconds=28000
 ```
 
 #### Throttled
