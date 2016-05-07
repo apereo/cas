@@ -16,42 +16,147 @@ The authentication subsystem in CAS natively supports handling multiple credenti
 and Webflow tier are designed for the simple case of accepting a single credential, all core API components that
 interface with the authentication subsystem accept one or more credentials to authenticate.
 
-Beyond support for multiple credentials, an extensible policy framework is available to apply policy arbitrarily.
-CAS ships with support for applying policy in the following areas:
+## Supported Providers
 
-* Credential authentication success and failure.
-* Service-specific authentication requirements.
+### Duo Security
 
-## Components
+Configure authentication per instructions [here](DuoSecurity-Authentication.html). 
 
-### `PolicyBasedAuthenticationManager`
-CAS ships with an authentication manager component that is fundamentally MFA-aware. It supports a number of
-policies, discussed above, that could facilitate a simple MFA design; for example, where multiple credentials are
-invariably required to start a CAS SSO session.
+| Field                | Description
+|----------------------+---------------------------------+
+| `id`                 | `mfa-duo`
 
-### `ContextualAuthenticationPolicy`
-Strategy pattern component for applying security policy in an arbitrary context. These components are assumed to be
-stateful once created.
+### YubiKey
 
-### `ContextualAuthenticationPolicyFactory`
-Factory class for creating stateful instances of `ContextualAuthenticationPolicy` that apply to a particular context.
+Configure authentication per instructions [here](YubiKey-Authentication.html). 
 
-### `AcceptAnyAuthenticationPolicyFactory`
-Simple factory class that produces contextual security policies that always pass. This component is configured by
-default in some cases to provide backward compatibility with CAS 3.x.
+| Field                | Description
+|----------------------+---------------------------------+
+| `id`                 | `mfa-yubikey`
 
-### `RequiredHandlerAuthenticationPolicyFactory`
-Factory that produces policy objects based on the security context of the service requesting a ticket. In particular the security context is based on the required authentication handlers that must have successfully validated credentials in order to access the service.
+### RSA/RADIUS
 
-With the above configuration in mind, the [service management facility](Service-Management.html)
-may now be leveraged to register services that require specific kinds of credentials be used to access the service.
-The kinds of required credentials are specified by naming the authentication handlers that accept them, for example,
-`ldapHandler` and `oneTimePasswordHandler`. Thus a service could be registered that imposes security constraints like
-the following:
+Configure authentication per instructions [here](RADIUS-Authentication.html). 
 
-_Only permit users with SSO sessions created from both a username/password and OTP token to access this service._
+| Field                | Description
+|----------------------+---------------------------------+
+| `id`                 | `mfa-radius`
 
-## Authentication Handlers
-The following authentication handlers may be used for multifactor authentication:
+### Google Authenticator
 
-* [YubiKey](YubiKey-Authentication.html)
+Configure authentication per instructions [here](GoogleAuthenticator-Authentication.html). 
+
+| Field                | Description
+|----------------------+---------------------------------+
+| `id`                 | `mfa-gauth`
+
+## Triggers
+
+Multifactor authentication can be activated based on the following triggers:
+
+### Applications
+MFA can be triggered for a specific application registered inside the CAS service registry.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ]
+  }
+}
+```
+
+### Principal Attribute
+MFA can be triggered for all users/subjects carrying a specific attribute that matches configured attribute value. The attribute
+value is a regex pattern and must match the provider
+id of an available MFA provider described above. See below to learn about how to configure MFA settings. 
+
+### Opt-In Request Parameter
+MFA can be triggered for a specific authentication request, provided
+the initial request to the CAS `/login` endpoint contains a parameter
+that indicates the required MFA authentication flow. The parameter name
+is configurable, but its value must match the authentication provider id
+of an available MFA provider described above. 
+
+```bash
+https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
+```
+
+### Principal Attribute Per Application
+As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided
+the authenticated principal carries an attribute that matches configured attribute value. The attribute
+value can be an arbitrary regex pattern. See below to learn about how to configure MFA settings.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
+    "principalAttributeNameTrigger" : "memberOf",
+    "principalAttributeValueToMatch" : "faculty|allMfaMembers"
+  }
+}
+```
+
+## Fail-Open vs Fail-Closed
+The authentication policy by default supports fail-close mode, which means that if you attempt to exercise a particular
+provider available to CAS and the provider is not available and cannot be reached, authentication will be stopped and an error
+will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
+functionality, if that provider cannot respond. 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
+    "failureMode" : "CLOSED"
+  }
+}
+```
+
+The following failure modes are supported:
+
+| Field                | Description
+|----------------------+---------------------------------+
+| `CLOSED`                  | Authentication is blocked if the provider cannot be reached. 
+| `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
+| `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
+| `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
+
+## Ranking Providers
+At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
+already has established an SSO session with/without a provider and has reached a level of authentication. Another incoming
+request attempts to exercise that SSO session with a different and often competing authentication requirement that may differ
+from the authentication level CAS has already established. Concretely, examples may be:
+
+- CAS has achieved an SSO session, but a separate request now requires step-up authentication with DuoSecurity.
+- CAS has achieved an SSO session with an authentication level satisfied by DuoSecurity, but a separate request now requires step-up 
+authentication with YubiKey. 
+
+In certain scenarios, CAS will attempt to rank authentication levels and compare them with each other. If CAS already has achieved a level
+that is higher than what the incoming request requires, no step-up authentication will be performed. If the opposite is true, CAS will
+route the authentication flow to the required authentication level and upon success, will adjust the SSO session with the new higher 
+authentication level now satisfied. 
+
+Ranking of authentication methods is done per provider via specific properties for each in `application.properties`. Note that
+the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps 
+and override others with a lower value. 
+
+## Settings
+The following general MFA settings are available for configuration in `application.properties`:
+
+```properties
+# cas.mfa.principal.attributes=memberOf,groupName,authnClass
+# cas.mfa.request.parameter=authn_method
+# cas.mfa.authn.ctx.attribute=authnContextClass
+# cas.mfa.failure.mode=CLOSED
+```

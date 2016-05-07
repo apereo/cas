@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-public final class DuoWeb {
+public class DuoWeb {
     private static final String DUO_PREFIX = "TX";
     private static final String APP_PREFIX = "APP";
     private static final String AUTH_PREFIX = "AUTH";

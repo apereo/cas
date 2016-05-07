@@ -26,7 +26,7 @@ user experience by creating symmetry between login and logout.
 
 Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter.
 
-The redirect behavior is turned off by default, and is activated via the following setting in `cas.properties`:
+The redirect behavior is turned off by default, and is activated via the following setting in `application.properties`:
 
 ```bash
 # Specify whether CAS should redirect to the specified service parameter on /logout requests
@@ -72,7 +72,7 @@ to CAS. The session identifier is used to correlate a CAS session with an applic
 session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
 
 ### Turning Off Single Logout
-To disable single logout, adjust the following setting in `cas.properties` file:
+To disable single logout, adjust the following setting in `application.properties` file:
 
 ```bash
 # To turn off all back channel SLO requests set slo.disabled to true
@@ -86,7 +86,7 @@ Sample configuration follows:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -103,7 +103,7 @@ To configure a service specific endpoint, try the following example:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -113,7 +113,7 @@ To configure a service specific endpoint, try the following example:
 ```
 
 ### Aynchronous SLO Messages
-By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
+By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `application.properties`:
 
 ```bash
 # To send callbacks to endpoints synchronously, set this to false

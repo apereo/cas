@@ -4,20 +4,21 @@ title: CAS - Couchbase Ticket Registry
 ---
 
 # Couchbase Ticket Registry
-Couchbase integration is enabled by including the following dependency in the Maven WAR overlay:
+Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-couchbase-ticket-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
 
-Enable the registry via:
+Enable the registry in `application.properties` via:
 
-```xml
-<alias name="couchbaseTicketRegistry" alias="ticketRegistry" />
+```properties
+#CAS components mappings
+ticketRegistry=couchbaseTicketRegistry
 ```
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 

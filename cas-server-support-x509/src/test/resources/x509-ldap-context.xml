@@ -12,18 +12,27 @@
        ttp://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.jasig.cas" />
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <context:component-scan base-package="org.apereo.cas" />
     <context:annotation-config />
 
     <context:property-placeholder location="classpath:/ldap.properties"/>
 
     <bean id="ldapCertFetcher"
-          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
+          class="org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
           c:connectionConfig-ref="provisioningConnectionConfig"
           c:searchExecutor-ref="searchExecutor"  />
 
     <bean id="poolingLdapCertFetcher"
-          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
+          class="org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
           c:connectionConfig-ref="provisioningConnectionConfig"
           c:searchExecutor-ref="searchExecutor"
           c:connectionPool-ref="connectionPool"/>
@@ -52,7 +61,7 @@
                               validatePeriod="${ldap.pool.validatePeriod}" />
 
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
@@ -70,5 +79,6 @@
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 
 </beans>

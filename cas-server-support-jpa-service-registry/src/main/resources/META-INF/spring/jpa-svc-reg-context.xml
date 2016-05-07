@@ -26,7 +26,7 @@
 
 
     <aop:config>
-        <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
+        <aop:pointcut id="servicesManagerOperations" expression="execution(* org.apereo.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
         <aop:advisor advice-ref="txAdviceServiceReg" pointcut-ref="servicesManagerOperations"/>
     </aop:config>
 

@@ -20,16 +20,16 @@ A sample Maven overlay for the services management webapp is provided here: [htt
 
 ## Services Registry
 
-You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml`
+You also need to define the *common* services registry by overriding the `src/main/resources/managementConfigContext.xml`
 file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
-It should be the same configuration you already use in your CAS server in the `WEB-INF/deployerConfigContext.xml` file.
+It should be the same configuration you already use in your CAS server in the `/deployerConfigContext.xml` file.
 
 ## Authentication Method
 
 By default, the `cas-management-webapp` is configured to authenticate against a CAS server. 
 
 ## Configuration
-The following properties are applicable and must be adjusted by overriding the default `WEB-INF/cas-management.properties` file:
+The following properties are applicable and must be adjusted by overriding the default `src/main/resources/cas-management.properties` file:
 
 ```properties
 # CAS
@@ -47,21 +47,14 @@ cas-management.securityContext.serviceProperties.adminRoles=ROLE_ADMIN
 
 ## Securing Access and Authorization
 Access to the management webapp is controlled via pac4j. Rules are defined in 
-the `/WEB-INF/managementConfigContext.xml` file.
+the `src/main/resources/managementConfigContext.xml` file.
 
 
 ### Static List of Users
 By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` 
-file that should be available on the runtime classpath.
+file that should be available on the runtime classpath. You can change the location of this file, by uncommenting the following key in your `cas-management.properties` file:
 
-```xml
-<sec:user-service id="userDetailsService"
-   properties="${user.details.file.location:classpath:user-details.properties}" />
-```
-
-You can change the location of this file, by uncommenting the following key in your `cas-management.properties` file:
-
-```bash
+```properties
 ##
 # User details file location that contains list of users
 # who are allowed access to the management webapp:
@@ -96,17 +89,17 @@ Define a custom set of roles and permissions that would be cross-checked later a
 defined in the configuration.
  
 ```xml
-<bean id="authorizationGenerator" class="org.pac4j.core.authorization.DefaultRolesPermissionsAuthorizationGenerator">
+<bean id="authorizationGenerator" class="org.pac4j.core.authorization.DefaultRolesPermissionsAuthorizationGenerator"
     c:defaultRoles="ROLE_ADMIN,ROLE_CUSTOM" c:defaultPermissions="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
 ```
 
 ### LDAP
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-ldap</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -115,6 +108,9 @@ Support is enabled by including the following dependency in the Maven WAR overla
 Define a custom set of roles and permissions that would be cross-checked later against the value of `adminRoles`.
  
 ```xml
+
+<alias name="ldapAuthorizationGenerator" alias="authorizationGenerator" />
+
 <ldaptive:pooled-connection-factory
     id="ldapAuthorizationGeneratorConnectionFactory"
     ldapUrl="${ldap.url}"
@@ -160,3 +156,15 @@ The following properties are applicable to this configuration:
 # ldap.authorizationgenerator.allow.multiple=false
 ```
 
+You will also need to configure the `ldaptive` namespace at the top of the `managementConfigContext.xml` file:
+
+```xml
+<beans xmlns="http://www.springframework.org/schema/beans"
+       ...
+       ...
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+       ...
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
+       ...
+```       

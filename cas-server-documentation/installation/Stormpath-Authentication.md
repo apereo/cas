@@ -6,18 +6,21 @@ title: CAS - Stormpath Authentication
 # Stormpath Authentication
 Verify and authenticate credentials against the [Stormpath](https://stormpath.com/) Cloud Identity.
 
-```xml
-<alias name="stormpathAuthenticationHandler" alias="primaryAuthenticationHandler" />
-```
-
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-stormpath</artifactId>
   <version>${cas.version}</version>
 </dependency>
+```
+
+In `application.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=stormpathAuthenticationHandler
 ```
 
 The following settings are applicable:

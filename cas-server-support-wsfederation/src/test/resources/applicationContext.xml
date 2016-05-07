@@ -11,21 +11,31 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
     <context:property-placeholder location="classpath:cas.properties"
                                   ignore-resource-not-found="false"
                                   ignore-unresolvable="false"/>
 
-    <context:component-scan base-package="org.jasig.cas"
+    <context:component-scan base-package="org.apereo.cas"
                             annotation-config="true" />
     <context:annotation-config />
 
-    <bean id="wsFedConfig" class="org.jasig.cas.support.wsfederation.WsFederationConfiguration">
+    <bean id="wsFedConfig" class="org.apereo.cas.support.wsfederation.WsFederationConfiguration">
         <property name="identityProviderUrl" value="https://adfs.example.com/adfs/ls/" />
         <property name="identityProviderIdentifier" value="http://adfs.example.edu/adfs/services/trust" />
         <property name="relyingPartyIdentifier" value="urn:federation:cas" />
         <property name="identityAttribute" value="upn" />
         <property name="tolerance" value="2000" />
-        <property name="signingCertificateFiles">
+        <property name="signingCertificateResources">
             <list>
                 <value>classpath:adfs-signing.crt</value>
             </list>
@@ -69,4 +79,5 @@
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 </beans>

@@ -13,7 +13,7 @@ Support is provided via the following dependency:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-console</artifactId>
      <version>${cas.version}</version>
 </dependency>
@@ -54,7 +54,7 @@ groovy:000>
 The following variables are available to the shell automatically:
 
 * All beans that are registered with the application context. In other words, every bean that 
-is registered with CAS application context inside its XML files is available to the console, 
+is registered with CAS application context is available to the console, 
 except of course those that cannot be instantiated, such as abstract beans. Note that you cannot invoke aliases for bean names. 
 You would instead need to invoke the actual bean name that is aliased. For instance, invoking `ticketRegistry` in the console has no 
 affect. Rather, you would need to invoke `defaultTicketRegistry` which is the real bean mapped to the alias `ticketRegistry`. 
@@ -69,7 +69,7 @@ are extra helpful.
 
 ```groovy
 groovy:000> defaultTicketRegistry
-===> org.jasig.cas.ticket.registry.DefaultTicketRegistry@bc1fe6
+===> org.apereo.cas.ticket.registry.DefaultTicketRegistry@bc1fe6
 groovy:000> defaultTicketRegistry.getTickets()
 ===> []
 ```
@@ -99,7 +99,7 @@ package scripts
 
 def class CasVersion {
     def static run(def ctx) {
-        def output = "CAS version: " + org.jasig.cas.CasVersion.getVersion()
+        def output = "CAS version: " + org.apereo.cas.CasVersion.getVersion()
         def ticketRegistry = ctx.getBean("ticketRegistry");
         output += "\nTicket registry instance: " + ticketRegistry.getClass().getSimpleName()
         return output

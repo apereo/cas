@@ -1,6 +1,6 @@
 description = 'Apereo CAS JPA Ticket Registry Support'
 dependencies {
-
+    compileOnly libraries.springcloud
     compile project(':cas-server-core-tickets')
     compile project(':cas-server-core-monitor')
     compile project(':cas-server-core-util')
@@ -15,6 +15,7 @@ dependencies {
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-logout')
     testCompile project(':cas-server-core-services')
+    testCompile project(':cas-server-webapp-cookie')
     testCompile project(':cas-server-core')
 
 }

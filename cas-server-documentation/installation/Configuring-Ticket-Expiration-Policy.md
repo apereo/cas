@@ -21,8 +21,11 @@ to obtain a new (valid) TGT.
 #### Default
 This is default option, which provides a hard-time out as well as a sliding window.
 
-```xml
-<alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 ```
 
 Settings are controlled via:
@@ -37,8 +40,11 @@ The expiration policy applied to TGTs provides for most-recently-used expiration
 For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise 
 it would be marked as expired.
 
-```xml
-<alias name="timeoutExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+grantingTicketExpirationPolicy=timeoutExpirationPolicy
 ```
 
 Settings are controlled via:
@@ -52,8 +58,11 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired 
 and the user will be forced to re-authenticate.
 
-```xml
-<alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 ```
 
 Settings are controlled via:
@@ -67,8 +76,11 @@ The throttled timeout policy extends the TimeoutExpirationPolicy with the concep
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client 
 attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
-```xml
-<alias name="throttledUseAndTimeoutExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+grantingTicketExpirationPolicy=throttledUseAndTimeoutExpirationPolicy
 ```
 
 Settings are controlled via:
@@ -87,8 +99,11 @@ server resource usage for the ticket registries backed by filesystem storage. Si
 for those registries with this policy in effect, use of this policy with those ticket registry implementations 
 is strongly discouraged.</p></div>
 
-```xml
-<alias name="neverExpiresExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+grantingTicketExpirationPolicy=neverExpiresExpirationPolicy
 ```
 
 ### Service Ticket Policies

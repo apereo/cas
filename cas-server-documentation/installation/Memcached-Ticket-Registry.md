@@ -4,12 +4,12 @@ title: CAS - Memcached Ticket Registry
 ---
 
 # Memcached Ticket Registry
-Memcached integration is enabled by including the following dependency in the Maven WAR overlay:
+Memcached integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-memcached</artifactId>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-memcached-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
@@ -27,10 +27,13 @@ where _h(K)_ is the hash of key _K_, _N1 ... Nm_ is the set of cache nodes, and 
 The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
 Note that a change in the set of available cache nodes may produce a different target node on which to store the key.
 
-Enable the registry via:
+Enable the registry in `application.properties` via:
 
-```xml
-<alias name="memcachedTicketRegistry" alias="ticketRegistry" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+ticketRegistry=memcachedTicketRegistry
 ```
 
 ## Configuration Considerations

@@ -8,4 +8,5 @@ dependencies {
     compile project(':cas-server-core-api-logout')
     compile libraries.pac4j
     compile libraries.spring
+    compile libraries.springboot
 }

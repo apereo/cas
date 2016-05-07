@@ -17,7 +17,7 @@ The following list of CAS components are those most often customized by deployer
 
 1. Authentication handlers (i.e. `LdapAuthenticationHandler`)
 2. Storage backend (i.e. `MemcachedTicketRegistry`)
-3. View layer files (JSP/CSS/Javascript)
+3. View layer files (HTML/CSS/Javascript)
 
 Every aspect of CAS can be controlled by
 adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
@@ -35,13 +35,8 @@ CAS server depends heavily on the Spring framework. Two modes of configuration a
 can be used at the same time. 
 
 ### XML
-There are exact and specific XML configuration files under `spring-configuration` 
-directory that control various properties of CAS as well as `deployerConfigContext.xml` which is mostly expected by CAS adopters to be 
+There is a `deployerConfigContext.xml` which is mostly expected by CAS adopters to be 
 included in the overlay for environment-specific CAS settings.
-
-XML configuration files can be overwritten to change behavior if need be via the Maven overlay process. The XML file can be obtained 
-from source for the CAS version and placed at the same exact path by the same exact name in the Maven overlay build. If configured 
-correctly, the build will use the locally-provided XML file rather than the default.
 
 ### Groovy
 The CAS application context is able to load any `.groovy` file under the `spring-configuration` directory. 
@@ -54,7 +49,7 @@ beans {
     xmlns([lang:'http://www.springframework.org/schema/lang'])
     xmlns([util:'http://www.springframework.org/schema/util'])
 
-    exampleBean(org.jasig.cas.example.ExampleBean) {
+    exampleBean(org.apereo.cas.example.ExampleBean) {
         beanProperty = propertyValue
     }
 }
@@ -156,11 +151,11 @@ in the Maven overlay must include a reference to the Maven Java compiler so clas
                 <warName>cas</warName>
                 <overlays>
                     <overlay>
-                        <groupId>org.jasig.cas</groupId>
+                        <groupId>org.apereo.cas</groupId>
                         <artifactId>cas-server-webapp</artifactId>
                         <excludes>
-                <exclude>WEB-INF/cas.properties</exclude>
-                            <exclude>WEB-INF/classes/log4j.xml</exclude>
+                            <exclude>WEB-INF/application.properties</exclude>
+                            <exclude>WEB-INF/classes/log4j2.xml</exclude>
                             <exclude>...</exclude>
                         </excludes>
                     </overlay>

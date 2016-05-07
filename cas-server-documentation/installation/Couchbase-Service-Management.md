@@ -4,20 +4,21 @@ title: CAS - Couchbase Service Registry
 ---
 
 # Couchbase Service Registry
-Couchbase integration is enabled by including the following dependency in the Maven WAR overlay:
+Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-couchbase-service-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
 
-Enable the registry via:
+Enable the registry in `application.properties` via:
 
-```xml
-<alias name="couchbaseServiceRegistryDao" alias="serviceRegistryDao" />
+```properties
+#CAS components mappings
+serviceRegistryDao=couchbaseServiceRegistryDao
 ```
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 

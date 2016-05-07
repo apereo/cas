@@ -1,11 +1,11 @@
-
 description = 'Apereo CAS Core Monitor Support'
 dependencies {
-  compile project(':cas-server-core-api-monitor')
-  compile project(':cas-server-core-api-ticket')
-  compile libraries.spring
-  testCompile project(':cas-server-core-tickets')
-  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
-  testCompile project(path: ":cas-server-core-util", configuration: "tests")
+    compile project(':cas-server-core-api-monitor')
+    compile project(':cas-server-core-api-ticket')
+    compile libraries.spring
+    compile libraries.springcloud
+    testCompile project(':cas-server-core-tickets')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core-util", configuration: "tests")
 }
 

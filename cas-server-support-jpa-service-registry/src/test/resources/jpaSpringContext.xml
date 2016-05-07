@@ -15,17 +15,24 @@
 
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
     <context:property-placeholder properties-ref="casProperties"/>
     <util:properties id="casProperties"/>
 
 
-    <context:component-scan base-package="org.jasig.cas"/>
+    <context:component-scan base-package="org.apereo.cas"/>
     <context:annotation-config/>
 
     <import resource="classpath:META-INF/spring/jpa-svc-reg-context.xml"/>
-
-    <bean id="jpaServiceRegistryDao" class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"/>
+    
     <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao"/>
 
     <!-- CAS Context Core -->

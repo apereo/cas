@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.badhours.heading}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 th:utext="#{screen.badhours.heading}"/>
+        <p th:utext="#{screen.badhours.message}"/>
+    </div>
+</div>
+</body>
+</html>

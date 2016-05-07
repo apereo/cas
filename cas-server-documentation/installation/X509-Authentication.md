@@ -15,11 +15,11 @@ additional work.
 
 
 ## X.509 Components
-X.509 support is enabled by including the following dependency in the Maven WAR overlay:
+X.509 support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-x509-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -34,8 +34,11 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-```xml
-<alias name="x509CredentialsAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=x509CredentialsAuthenticationHandler
 ```
 
 The following settings are applicable:
@@ -182,4 +185,4 @@ user-friendly server-side error messages.
 
 ## X.509 Webflow Configuration
 
-Replace all instances of the `generateLoginTicket` transition in other states with `startX509Authenticate`.
+Replace all instances of the `initializeLoginForm` transition in other states with `startX509Authenticate`.

@@ -14,7 +14,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-ldap-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
@@ -23,12 +23,17 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
+In `application.properties`:
+
+```properties
+#CAS components mappings
+serviceRegistryDao=ldapServiceRegistryDao
+```
+
+In local `deployerConfigContext.xml`:
+
 ```xml
-...
-<alias name="ldapServiceRegistryDao" alias="serviceRegistryDao" />
-<alias name="mySearchRequest" alias="ldapServiceRegistrySearchRequest" />
 <alias name="myConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
-...
 ```
 
 The default mapper has support for the following optional items:
@@ -42,3 +47,9 @@ The default mapper has support for the following optional items:
 Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html).
+
+The following settings are applicable:
+
+```properties
+svcreg.ldap.baseDn=dc=example,dc=org
+```

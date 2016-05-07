@@ -16,7 +16,16 @@
 
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:component-scan base-package="org.jasig.cas" />
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <context:component-scan base-package="org.apereo.cas" />
     <context:annotation-config />
 
     <context:property-placeholder location="classpath:/ldap.properties"/>
@@ -73,4 +82,6 @@
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+
 </beans>

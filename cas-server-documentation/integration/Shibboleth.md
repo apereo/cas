@@ -53,7 +53,7 @@ CAS Filters
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
   <filter-class>
-      org.jasig.cas.client.authentication.AuthenticationFilter
+      org.apereo.cas.client.authentication.AuthenticationFilter
   </filter-class>
   <init-param>
     <param-name>casServerLoginUrl</param-name>
@@ -69,7 +69,7 @@ CAS Filters
 <filter>
   <filter-name>CAS Validation Filter</filter-name>
   <filter-class>
-    org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter
+    org.apereo.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter
   </filter-class>
   <init-param>
     <param-name>casServerUrlPrefix</param-name>
@@ -89,7 +89,7 @@ CAS Filters
 <filter>
   <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
   <filter-class>
-    org.jasig.cas.client.util.HttpServletRequestWrapperFilter
+    org.apereo.cas.client.util.HttpServletRequestWrapperFilter
   </filter-class>
 </filter>
 
@@ -139,21 +139,21 @@ about metadata sources that the identity provider uses.
 
 ### Configuration
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-saml-mdui</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
 
-Then, adjust `cas-servlet.xml` with the following:
+Then, adjust the configuration with the following:
 
 ```xml
 <bean id="samlDynamicMetadataUIParserAction"
-  class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+  class="org.apereo.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
   c:entityIdParameterName="entityId"
   c:metadataAdapter-ref="metadataAdapter"/>
 ```
@@ -165,7 +165,7 @@ In this case, metadata sources are statically provided via classpath, file or ur
 
 ```xml
 <bean id="metadataAdapter"
-      class="org.jasig.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
+      class="org.apereo.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
       p:refreshIntervalInMinutes="300"
       p:requireValidMetadata="true" />
@@ -189,7 +189,7 @@ the metadata server to query for the metadata based on the `entityId` provided.
 
 ```xml
 <bean id="metadataAdapter"
-      class="org.jasig.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
+      class="org.apereo.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
       p:refreshIntervalInMinutes="300"
       p:requireValidMetadata="true" />

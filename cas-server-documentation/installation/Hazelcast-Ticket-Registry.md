@@ -13,24 +13,25 @@ This ticket registry implementation is enabled by simply including the module in
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-hazelcast</artifactId>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-hazelcast-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
 
 ## Configuration
 
-Enable the registry via:
+Enable the registry in `application.properties` via:
 
-```xml
-<alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
+```properties
+#CAS components mappings
+ticketRegistry=hazelcastTicketRegistry
 ```
 
 This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry
 implementation to retrieve Hazelcast's `IMap` instance for its distributed tickets storage. Some aspects of `HazelcastInstance`
 configuration in this auto-configuration mode are controlled by the following exposed properties which could be set via
-an external `cas.properties` file (with sensible defaults for all the properties if not explicitly set):
+an external `application.properties` file (with sensible defaults for all the properties if not explicitly set):
 
 ```properties
 # hz.config.location=file:/etc/cas/hazelcast.xml
@@ -126,7 +127,7 @@ Here's a simple example of `hazelcast.xml` that configures AWS cluster join stra
 </hazelcast>
 ```
 
-For more information on the Hazelcast configuration options available, refer to [the Hazelcast documentation](http://docs.hazelcast.org/docs/3.6/manual/html/configuringhazelcast.html)
+For more information on the Hazelcast configuration options available, refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#hazelcast-configuration)
 
 ## Logging
 To enable additional logging for the registry, configure the log4j configuration file to add the following

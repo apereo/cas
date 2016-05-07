@@ -9,21 +9,24 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
+task resourcesJar(type: Jar) {
+    classifier 'resources'
+    from project.file('src/main/resources')
+}
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
-}
-
-task wrapper(type: Wrapper, description: "Gradle's wrapper") {
-    gradleVersion = project.gradleVersion
 }
 
 task cleanLogs(description: "Clean build log files") {
     delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
 }
 
-clean << {
-    cleanLogs
+task cleanNodeModules(type: Delete) {
+    def loc = new File(project.projectDir, 'node_modules')
+    delete fileTree(dir: loc, includes: ['**/*.*'])
+    delete loc
 }
 
 task findbugs(type: FindBugs) {
@@ -33,3 +36,9 @@ task findbugs(type: FindBugs) {
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
+
+npm_run {
+    args = ['gulp']
+}
+
+clean.dependsOn('cleanLogs', 'cleanNodeModules')

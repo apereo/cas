@@ -11,15 +11,15 @@ client SSL certificates for application-to-application authentication of request
 by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that to obtain a Service Ticket.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The REST endpoint may
- become a tremendously convenient target for brute force dictionary attacks on CAS server. Enable support
- only soberly and with due consideration of security aspects.</p></div>
+ become a tremendously convenient target for brute force dictionary attacks on CAS server. Consider
+ enabling throttling support to ensure brute force attacks are prevented upon authentication failures.</p></div>
 
 # Components
-Support is enabled by including the following in your `pom.xml` file:
+Support is enabled by including the following to the overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest</artifactId>
     <version>${cas.version}</version>
     <scope>runtime</scope>
@@ -48,6 +48,7 @@ Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
 #### Unsuccessful Response
+
 If incorrect credentials are sent, CAS will respond with a 400 Bad Request error
 (will also respond for missing parameters, etc.). If you send a media type
 it does not understand, it will send the 415 Unsupported Media Type.
@@ -68,11 +69,15 @@ service={form encoded parameter for the service url}
 200 OK
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
+
 #### Unsuccessful Response
+
 CAS will send a 400 Bad Request. If an incorrect media type is
 sent, it will send the 415 Unsupported Media Type.
 
 ## Logout
+Destroy the SSO session by removing the issued ticket: 
+
 ```bash
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 ```
@@ -83,7 +88,7 @@ Support is enabled by including the following in your maven overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-rest-services</artifactId>
     <version>${cas.version}</version>
     <scope>runtime</scope>
@@ -100,6 +105,8 @@ via the following properties:
 # cas.rest.services.attributename=
 # cas.rest.services.attributevalue=
 ```
+
+### Sample Request 
 
 ```bash
 POST /cas/v1/services/add/{TGT id} HTTP/1.0
@@ -131,4 +138,17 @@ final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
 final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);
 final CasProfile casProfile = client.validateServiceTicket("<SERVICE_URL>", casCreds);
 client.destroyTicketGrantingTicket(context, profile);
+```
+
+## Throttling
+
+To understand how to throttling works in CAS, 
+please review [the available options](../installation/Configuring-Authentication-Throttling.html).
+
+By default, throttling REST requests is turned off. To enable this behavior,
+adjust the following settings: 
+
+```properties
+#CAS components mappings
+restAuthenticationThrottle=inMemoryIpAddressUsernameThrottle
 ```

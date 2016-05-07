@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.service.error.header}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 th:utext="#{screen.service.error.header}"/>
+        <p th:utext="#{${rootCauseException.code}}"/>
+    </div>
+</div>
+</body>
+</html>

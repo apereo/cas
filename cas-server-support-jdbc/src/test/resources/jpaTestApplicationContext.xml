@@ -19,7 +19,7 @@
   <util:properties id="casProperties"/>
 
   <util:list id="ticketPackagesToScan">
-    <value>org.jasig.cas</value>
+    <value>org.apereo.cas</value>
   </util:list>
 
   <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"

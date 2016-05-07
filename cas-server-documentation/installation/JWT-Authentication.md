@@ -33,11 +33,11 @@ Once the token is generated, you may pass it to the `/login` endpoint of CAS as 
 ```
 
 ## Configuration
-JWT authentication support is enabled by including the following dependency in the Maven WAR overlay:
+JWT authentication support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-token-webflow</artifactId>
      <version>${cas.version}</version>
 </dependency>
@@ -45,26 +45,29 @@ JWT authentication support is enabled by including the following dependency in t
 
 Then, configure the JWT handler in your overlay configuration:
 
-```xml
-<alias name="tokenAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=tokenAuthenticationHandler
 ```
 
 Configure the appropriate service in your service registry to hold the secret:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "https://.+",
   "name" : "testId",
   "id" : 1,
   "properties" : {
     "@class" : "java.util.HashMap",
     "jwtSigningSecret" : {
-      "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "<SIGNING_SECRET>" ] ]
     },
     "jwtEncryptionSecret" : {
-      "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "<ENCRYPTION_SECRET>" ] ]
     }
 }

@@ -13,15 +13,24 @@
                            http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
     <context:property-placeholder location="classpath:cas.properties"
                                   ignore-resource-not-found="false"
                                   ignore-unresolvable="false"/>
 
     <util:properties id="casProperties"/>
-    <context:component-scan base-package="org.jasig.cas" annotation-config="true" />
+    <context:component-scan base-package="org.apereo.cas" annotation-config="true" />
     <context:annotation-config />
 
-    <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
+    <bean id="shibboleth.OpenSAMLConfig" class="org.apereo.cas.support.saml.OpenSamlConfigBean"
           depends-on="shibboleth.ParserPool"/>
 
     <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
@@ -69,17 +78,17 @@
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory"
           class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
 
-    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+    <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManagerImpl"
             c:serviceRegistryDao-ref="serviceRegistryDao" />
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+    <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">
-            <bean class="org.jasig.cas.services.RegexRegisteredService"
+            <bean class="org.apereo.cas.services.RegexRegisteredService"
                     p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
         </property>
     </bean>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <util:map id="serviceThemeResolverSupportedBrowsers">
@@ -109,42 +118,5 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
-    <!-- CAS 2.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
-
-    <!-- Proxy Response Protocol Views: /proxy -->
-
-    <!-- Failure Proxy Views -->
-    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
-
-    <!-- Successful Proxy Views -->
-    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
-
-    <!-- CAS 3.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <!-- Successful Validation Views -->
-
-    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
-
-    <!-- Post View -->
-    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
-
+    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 </beans>

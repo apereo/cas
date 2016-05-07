@@ -7,24 +7,12 @@ title: CAS - Logging Configuration
 # Logging
 CAS provides a logging facility that logs important informational events like authentication success and
 failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J
-Logging framework as a facade for the [Log4J engine](http://logging.apache.org‎) by default.
+Logging framework as a facade for the [Log4J engine](http://logging.apache.org) by default.
 
-The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WEB-INF/classes/log4j2.xml`.
-By default logging is set to `INFO` for all functionality related to `org.jasig.cas` code and `WARN` for
+The default log4j configuration file is located in `src/main/resources/log4j2.xml`.
+By default logging is set to `INFO` for all functionality related to `org.apereo.cas` code and `WARN` for
 messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set
 these levels to  `DEBUG`.
-
-```xml
-...
-
-<AsyncLogger name="org.jasig" level="info" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
-</AsyncLogger>
-
-<AsyncLogger name="org.springframework" level="warn" />
-...
-```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though,
 you probably want to run them both as `WARN`.</p></div>
@@ -32,31 +20,11 @@ you probably want to run them both as `WARN`.</p></div>
 ## Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath. 
-These may be overridden by the `cas.properties` file
+These may be overridden by the `application.properties` file
 
-```bash
-# log4j.config.location=classpath:log4j2.xml
+```properties
+# logging.config=classpath:log4j2.xml
 ```
-
-The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `appender` elements that
-decide where and how messages from components should be displayed. Two are provided by default that
-output messages to the system console and a `cas.log` file:
-
-### Multiple Logger Bindings
-CAS by default attempts to scan the runtime application context looking for suitable logger frameworks. 
-By default, the framework that is chosen is Log4j. If there are multiple logging frameworks found 
-on the application classpath at runtime, you can instruct CAS to specifically select Log4j as the logging framework
-via the following property passed to the JVM runtime instance:
-
-```bash
--DloggerFactory="org.apache.logging.slf4j.Log4jLoggerFactory"
-```
-
-### Alternative Loggers
-If you wish to use an alternative logging framework other than Log4j, you will need to exclude
-all `log4j` JAR artifacts and the `cas-server-core-logging` module from your configuration. Ensure
-an alternative framework such as Logback is provided instead to the application runtime and the necessary
-configuration is available per the framework. 
 
 ### Refresh Interval
 The `log4j2.xml` itself controls the refresh interval of the logging configuration. Log4j has the ability
@@ -68,60 +36,9 @@ server environment.
 
 ```xml
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="60">
-    <Appenders>
+<Configuration monitorInterval="15">
         ...
-```
-
-### Appenders
-```xml
-<Console name="console" target="SYSTEM_OUT">
-    <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
-</Console>
-<RollingFile name="file" fileName="cas.log" append="true"
-             filePattern="cas-%d{yyyy-MM-dd-HH}-%i.log">
-    <PatternLayout pattern="%d %p [%c] - %m%n"/>
-    <Policies>
-        <OnStartupTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="10 MB"/>
-        <TimeBasedTriggeringPolicy />
-    </Policies>
-</RollingFile>
-```
-
-
-### AsyncLoggers
-Additional AsyncLoggers are available to specify the logging level for component categories.
-
-```xml
-<AsyncLogger name="org.jasig" level="info" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
-</AsyncLogger>
-<AsyncLogger name="org.springframework" level="warn" />
-<AsyncLogger name="org.springframework.webflow" level="warn" />
-<AsyncLogger name="org.springframework.web" level="warn" />
-<AsyncLogger name="org.springframework.security" level="warn" />
-
-<AsyncLogger name="org.jasig.cas.web.flow" level="info" additivity="true">
-    <AppenderRef ref="file"/>
-</AsyncLogger>
-<AsyncLogger name="org.jasig.inspektr.audit.support" level="info">
-    <AppenderRef ref="file"/>
-</AsyncLogger>
-<Root level="error">
-    <AppenderRef ref="console"/>
-</Root>
-```
-
-If you wish enable another package for logging, you can simply add another `AsyncLogger`
-element to the configuration. Here is an example:
-
-```xml
-<AsyncLogger name="org.ldaptive" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
-</AsyncLogger>
+</Configuration>
 ```
 
 ## Log Data Sanitation
@@ -152,3 +69,47 @@ this feature from working. You may need to change the `catalina.properties` and 
 You may need to do something similar on other containers if they skip scanning Log4j JAR files.
 
 Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang. 
+
+## Routing Logs to SysLog
+CAS logging framework does have the ability to route messages to an external syslog instance. To configure this,
+you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
+
+```xml
+...
+<Appenders>
+    <Syslog name="SYSLOG" format="RFC5424" host="localhost" port="8514"
+            protocol="TCP" appName="MyApp" includeMDC="true"
+            facility="LOCAL0" enterpriseNumber="18060" newLine="true"
+            messageId="Audit" id="App"/>
+</Appenders>
+
+...
+
+<logger name="org.apereo" additivity="true">
+    <level value="DEBUG" />
+    <appender-ref ref="cas" />
+    <appender-ref ref="SYSLOG" />
+</logger>
+
+```
+
+You can also configure the remote destination output over SSL and specify the related keystore configuration:
+
+```xml
+...
+
+<Appenders>
+    <TLSSyslog name="bsd" host="localhost" port="6514">
+      <SSL>
+        <KeyStore location="log4j2-keystore.jks" password="changeme"/>
+        <TrustStore location="truststore.jks" password="changeme"/>
+      </SSL>
+    </TLSSyslog>
+</Appenders>
+
+...
+
+```
+
+For additional logging functionality, please refer to the Log4j configuration url or view
+the [CAS Logging functionality](Logging.html).

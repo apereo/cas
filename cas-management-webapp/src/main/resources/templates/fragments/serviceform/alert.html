@@ -1,0 +1,11 @@
+<div class="alert alert-{{ serviceFormCtrl.alert.type }}" role="alert" ng-show="serviceFormCtrl.alert">
+    <p>
+        <i class="fa fa-lg fa-{{ serviceFormCtrl.alert.type === 'danger' ? 'exclamation-triangle' : 'info-circle' }}"></i>
+        <span ng-if="serviceFormCtrl.alert.name === 'notloaded'" th:text="#{services.form.alert.loadingFailed}" />
+        <span ng-if="serviceFormCtrl.alert.name === 'notvalid'"  th:text="#{services.form.alert.formHasErrors}" />
+        <span ng-if="serviceFormCtrl.alert.name === 'updated'" th:text="#{services.form.alert.serviceUpdated}" />
+        <span ng-if="serviceFormCtrl.alert.name === 'added'" th:text="#{services.form.alert.serviceAdded}" />
+        <span ng-if="serviceFormCtrl.alert.name === 'notsaved'" th:text="#{services.form.alert.unableToSave}" />
+        <span ng-if="serviceFormCtrl.alert.name === 'instructions'" th:text="#{services.form.instructions}" />
+    </p>
+</div>

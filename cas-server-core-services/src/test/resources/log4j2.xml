@@ -26,10 +26,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.slf4j.impl" level="trace">
-            <AppenderRef ref="slf4j"/>
-        </Logger>
-        <Logger name="org.jasig" level="debug" additivity="false">
+        <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">

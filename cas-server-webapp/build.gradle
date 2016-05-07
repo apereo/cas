@@ -1,14 +1,7 @@
 apply plugin: 'war'
-apply plugin: "org.akhikhl.gretty"
+apply plugin: 'spring-boot'
 
 description = 'Apereo CAS Web Application'
-
-ext {
-    jettySslConfigEnabled = project.hasProperty('jettySslKeyStorePath') && 
-                            project.hasProperty('jettySslTrustStorePath') &&
-                            project.hasProperty('jettySslTrustStorePassword') &&
-                            project.hasProperty('jettySslKeyStorePassword')
-}
 
 javadoc {
     enabled false
@@ -24,8 +17,20 @@ war {
     }
 }
 
+bootRun {
+    addResources = true
+    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+}
+
+springBoot  {
+    mainClass = 'org.apereo.cas.web.CasWebApplication'
+}
+
+bootRepackage {
+    mainClass = 'org.apereo.cas.web.CasWebApplication'
+}
+
 dependencies {
-    compile project(':cas-server-webapp-support')
     compile project(':cas-server-core')
     compile project(':cas-server-core-monitor')
     compile project(':cas-server-core-authentication')
@@ -37,6 +42,7 @@ dependencies {
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-validation')
     compile project(':cas-server-core-util')
+    compile project(':cas-server-webapp-init')
     compile project(':cas-server-webapp-throttle')
     compile project(':cas-server-webapp-actions')
     compile project(':cas-server-webapp-cookie')
@@ -44,27 +50,18 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
-    
+
+    providedRuntime libraries.springboottomcat
     compile libraries.pac4j
-    runtime libraries.spring
-    runtime libraries.cassecurityfilter
+    compile libraries.springcloud
+    compile libraries.springboot
+    compile libraries.thmyeleaf
     runtime libraries.groovy
+    compile libraries.spring
+    runtime libraries.cassecurityfilter
     runtime libraries.metrics
     runtime libraries.hibernate
     runtime libraries.bouncycastle
 }
 
-gretty {
-    jvmArgs = ["-DloggerFactory=org.apache.logging.slf4j.Log4jLoggerFactory", "-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug",
-               "-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
-    scanInterval = 5
-    contextPath = '/cas'
-    httpsEnabled = project.ext.jettySslConfigEnabled
-    if (project.ext.jettySslConfigEnabled) {
-        httpsPort = 8443
-        sslKeyStorePath = project.ext.jettySslKeyStorePath
-        sslKeyStorePassword = project.ext.jettySslKeyStorePassword
-        sslTrustStorePath = project.ext.jettySslTrustStorePath
-        sslTrustStorePassword = project.ext.jettySslTrustStorePassword
-    }
-}
+processResources.dependsOn('npm_install', 'npm_run')

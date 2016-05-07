@@ -9,11 +9,11 @@ CAS support handling the authentication event via [Apache Shiro](http://shiro.ap
 
 
 ## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-generic</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -26,8 +26,11 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-```xml
-<alias name="shiroAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=shiroAuthenticationHandler
 ```
 
 The following settings are applicable:

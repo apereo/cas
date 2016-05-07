@@ -7,11 +7,11 @@ title: CAS - ADFS Integration
 The integration between the CAS Server and ADFS delegates user authentication from CAS Server to ADFS, making CAS Server a WS-Federation client. 
 Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-wsfederation-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -55,7 +55,7 @@ The WsFed configuration optionally may allow you to manipulate claims coming fro
 to put together an implementation of `WsFederationAttributeMutator` that changes and manipulates ADFS claims:
 
 ```java
-package org.jasig.cas.support.wsfederation;
+package org.apereo.cas.support.wsfederation;
 
 public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
     public void modifyAttributes(...) {
@@ -68,7 +68,7 @@ The mutator then needs to be declared in your configuration:
 
 ```xml
 <bean id="wsfedAttributeMutator"
-    class="org.jasig.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
+    class="org.apereo.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
 ```
 
 
@@ -77,9 +77,8 @@ your `attributeRepository` configuration.
 
 ### Handling CAS Logout
 
-An optional step, it is recommended that the `casLogoutView.jsp` be replace to redirect to ADFS's logout page.
+An optional step, the `casLogoutView.html` can be modified to place a link to ADFS's logout page.
 
-```jsp
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:redirect url="https://adfs.example.org/adfs/ls/?wa=wsignout1.0"/>
+```html
+<a href="https://adfs.example.org/adfs/ls/?wa=wsignout1.0">Logout</a>
 ```

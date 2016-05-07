@@ -8,9 +8,11 @@ dependencies {
     compile libraries.jcifs
     compile libraries.spring
     runtime libraries.hibernate
+    compileOnly libraries.springcloud
 
     testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-webapp-cookie')
     testCompile libraries.tests
 }

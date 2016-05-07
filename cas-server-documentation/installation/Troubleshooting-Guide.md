@@ -7,13 +7,6 @@ title: CAS - Troubleshooting Guide
 
 ## Authentication
 
-### Login Form Clearing Credentials
-You may encounter an issue where upon submission of credentials on the login form, the screen clears the input data and asks the user again to repopulate the form. The CAS Server log may also indicate the received login ticket is invalid and therefore unable to accept the authentication request.
-
-The CAS server itself initiates a web session upon authentication requests that by default is configured to last for 5 minutes. The state of the session is managed at server-side and thus, once the session expires any authentication activity on the client side such as submission of the login form is disregarded until a new session a regenerated. Another possible cause may be related to a clustered CAS environment where CAS nodes are protected by a load balancer whose "timeout" is configured less than the default session expiration timeout of CAS. Thus, once the authentication form is submitted and the request is routed to the load balancer, it is seen as a new request and is redirected back to a CAS node for authentication. 
-
-To remedy the problem, the  suggestion is to configure the default CAS session timeout to be an appropriate value that matches the time a given user is expected to stay on the login screen. Similarly, the same change may be applied to the load balancer to treat authentication requests within a longer time span. In `web.xml`, adjust the `session-timeout` attribute to extend the session expiration time. 
-
 ### Application Not Authorized
 You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match for the requested application url.
 
@@ -58,7 +51,7 @@ Finally, review the eviction policy of your ticket registry and ensure the value
 
 ```bash
 
-Sep 28, 2009 4:13:26 PM org.jasig.cas.client.validation.AbstractCasProtocolUrlBasedTicketValidator retrieveResponseFromServer
+Sep 28, 2009 4:13:26 PM org.apereo.cas.client.validation.AbstractCasProtocolUrlBasedTicketValidator retrieveResponseFromServer
 SEVERE: javax.net.ssl.SSLHandshakeException:
 sun.security.validator.ValidatorException: PKIX path building failed:
 sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
@@ -96,9 +89,9 @@ This is a hostname/SSL certificate CN mismatch. This commonly happens when a sel
 ### HTTPS hostname wrong
 ```bash
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
-    org.jasig.cas.client.validation.Saml11TicketValidator.retrieveResponseFromServer(Saml11TicketValidator.java:203)
-    org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator.validate(AbstractUrlBasedTicketValidator.java:185)
-    org.jasig.cas.client.validation.AbstractTicketValidationFilter.doFilter
+    org.apereo.cas.client.validation.Saml11TicketValidator.retrieveResponseFromServer(Saml11TicketValidator.java:203)
+    org.apereo.cas.client.validation.AbstractUrlBasedTicketValidator.validate(AbstractUrlBasedTicketValidator.java:185)
+    org.apereo.cas.client.validation.AbstractTicketValidationFilter.doFilter
 ```
 
 The above error occurs most commonly when the CAS client ticket validator attempts to contact the CAS server and is presented a certificate whose CN does not match the fully-qualified host name of the CAS server. There are a few common root causes of this mismatch:
@@ -135,7 +128,11 @@ Alternatively, you can disable the SNI detection in JDK7, by adding this flag to
 
 
 ### When All Else Fails
-If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, please perform an SSL trace and attach it to a posting to the `cas-user@lists.jasig.org` mailing list. An SSL trace is written to STDOUT when the following system property is set, `javax.net.debug=ssl`. An example follows of how to do this in the Tomcat servlet container.
+If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, 
+please perform an SSL trace and attach it to a posting to the 
+CAS mailing lists. An SSL trace is written to 
+STDOUT when the following system property is set, `javax.net.debug=ssl`. 
+An example follows of how to do this in the Tomcat servlet container.
 
 Sample `setenv.sh` Tomcat Script follows:
 
@@ -161,10 +158,10 @@ export CATALINA_OPTS
 ```
 
 ## Review logs
-CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. Specifically you want to make sure `DEBUG` levels are turned on the `org.jasig` package in the log configuration:
+CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
 
 ```xml
-<AsyncLogger  name="org.jasig" level="debug" additivity="false" includeLocation="true">
+<AsyncLogger  name="org.apereo" level="debug" additivity="false" includeLocation="true">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>

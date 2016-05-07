@@ -9,8 +9,8 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-mongo</artifactId>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-mongo-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
@@ -18,12 +18,15 @@ Support is enabled by adding the following module into the Maven overlay:
 ## Configuration
 This implementation auto-configures most of the internal details.
 
-```xml
-<alias name="mongoServiceRegistryDao" alias="serviceRegistryDao" />
+Enable the registry in `application.properties` via:
+
+```properties
+#CAS components mappings
+serviceRegistryDao=mongoServiceRegistryDao
 ```
 
 
-The following configuration in `cas.properties` is required.
+The following configuration in `application.properties` is required.
 
 ```properties
 mongodb.host=mongodb database url

@@ -13,19 +13,21 @@ These are:
 
 
 ## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-generic</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
 
-### `AcceptUsersAuthenticationHandler`
-```xml
-<alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=acceptUsersAuthenticationHandler
 ```
 
 The following settings are applicable:

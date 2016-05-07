@@ -21,7 +21,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-jpa-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
@@ -30,43 +30,56 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-```xml
-<alias name="jpaTicketRegistry" alias="ticketRegistry" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+ticketRegistry=jpaTicketRegistry
 ```
 
 The following settings are expected:
 
 ```properties
 # ticketreg.database.ddl.auto=create-drop
-# ticketreg.database.hibernate.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
-# ticketreg.database.hibernate.batchSize=10
+# ticketreg.database.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
+# ticketreg.database.batchSize=10
 # ticketreg.database.driverClass=org.hsqldb.jdbcDriver
 # ticketreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
 # ticketreg.database.user=sa
 # ticketreg.database.password=
-# ticketreg.database.pool.minSize=6
-# ticketreg.database.pool.maxSize=18
-# ticketreg.database.pool.maxWait=10000
-# ticketreg.database.pool.maxIdleTime=120
-# ticketreg.database.pool.acquireIncrement=6
-# ticketreg.database.pool.idleConnectionTestPeriod=30
-# ticketreg.database.pool.connectionHealthQuery=select 1
-# ticketreg.database.pool.acquireRetryAttempts=5
-# ticketreg.database.pool.acquireRetryDelay=2000
-# ticketreg.database.pool.connectionHealthQuery=select 1
+# ticketreg.database.pool.minSize=5
+# ticketreg.database.pool.maxSize=20
+# ticketreg.database.pool.maxIdleTime=10000
+# ticketreg.database.pool.maxWait=3000
+# ticketreg.database.idle.timeout=3000
+# ticketreg.database.leak.threshold=10
+# ticketreg.database.fail.fast=true
+# ticketreg.database.isolate.internal.queries=false
+# ticketreg.database.health.query=select 1
+# ticketreg.database.pool.suspension=false
+# ticketreg.database.autocommit=false
+# ticketreg.database.jpa.locking.tgt.enabled=true
 ```
 
+Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`
+which may not be appropriate for use in production. Setting the value to
+`validate` may be more desirable, but any of the following options can be used:
 
-## TicketGrantingTicket Locking
+* `validate` - validate the schema, but make no changes to the database.
+* `update` - update the schema.
+* `create` - create the schema, destroying previous data.
+* `create-drop` - drop the schema at the end of the session.
 
-TicketGrantingTickets are almost always updated within the same transaction they are loaded from the database in, but
+## TGT Locking
+
+TGTs are almost always updated within the same transaction they are loaded from the database in, but
 after some processing delays. Because of this, the JPA Ticket Registry utilizes write locks on all loads of
-TicketGrantingTickets from the database to prevent deadlocks and ensure usage meta-data consistency when a single
-TicketGrantingTicket is used concurrently by multiple requests.
+TGTs from the database to prevent deadlocks and ensure usage meta-data consistency when a single
+TGT is used concurrently by multiple requests.
 
 This reduces performance of the JPA Ticket Registry and may not be desirable or necessary for some deployments depending
-the database in use, it's configured transaction isolation level, and expected concurrency of a single
-TicketGrantingTicket.
+the database in use, its configured transaction isolation level, and expected concurrency of a single
+TGT.
 
 The following setting can disable this locking behavior:
 

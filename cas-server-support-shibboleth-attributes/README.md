@@ -10,7 +10,7 @@ For a fully working example, see [https://github.com/UniconLabs/cas-gradle-sampl
 
 1. Modify `build.gradle` or `pom.xml` to add the dependency
 
-        compile "org.jasig.cas:cas-server-support-shibboleth-attributes:${project.'cas.version'}"
+        compile "org.apereo.cas:cas-server-support-shibboleth-attributes:${project.'cas.version'}"
 
     Note that, at least in the case of gradle, you'll need to add the Shibboleth repositories as well
 
@@ -20,7 +20,7 @@ For a fully working example, see [https://github.com/UniconLabs/cas-gradle-sampl
 
         <alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
 
-1. Modify either `cas.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
+1. Modify either `application.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
 comma seperated list of resources to use for the configuration
 
         -Dshibboleth.attributeResolver.resources=classpath:attribute-resolver.xml

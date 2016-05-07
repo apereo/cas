@@ -4,33 +4,45 @@ title: CAS - LDAP Authentication
 ---
 
 # LDAP Authentication
-LDAP integration is enabled by including the following dependency in the Maven WAR overlay:
+LDAP integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-ldap</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
 
-`LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
-or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
-
-1. [Active Directory](#active-directory-authentication) - Users authenticate with _sAMAAccountName_.
-2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
-3. [Anonymous Search](#ldap-supporting-anonymous-search) - Anonymous search followed by user simple bind.
-4. [Direct Bind](#ldap-supporting-direct-bind) - Compute user DN from format string and perform simple bind.
-5. [Principal Attributes Retrieval](#ldap-authentication-principal-attributes) - Resolve principal attributes directly as part of LDAP authentication.
-
-See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
-
-## Ldap Authentication Principal Attributes
-The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html).
+## Configuration
+The `LdapAuthenticationHandler` must first be configured to handle the task of credential verification. The following
+configuration needs to be put into the `deployerConfigContext.xml` file:
 
 ```xml
 <bean id="ldapAuthenticationHandler"
-class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+class="org.apereo.cas.authentication.LdapAuthenticationHandler"
+      p:principalIdAttribute="sAMAccountName"
+      c:authenticator-ref="authenticator" />
+```
+
+The above configuration attempts to authenticate credentials via an `authenticator` to be defined later, and constructs a final CAS authenticated subject based on the `sAMAccountName`. The attribute configuration is an optional setting.
+
+The `ldapAuthenticationHandler` defined above needs to also be added to the list of available active authentication handlers in the same file:
+
+```xml
+<util:map id="authenticationHandlersResolvers">
+   ...
+   <entry key-ref="ldapAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+   ...
+</util:map>
+```
+
+## Attribute Retrieval
+The `LdapAuthenticationHandler` is also capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html).
+
+```xml
+<bean id="ldapAuthenticationHandler"
+class="org.apereo.cas.authentication.LdapAuthenticationHandler"
       p:principalIdAttribute="sAMAccountName"
       c:authenticator-ref="authenticator">
     <property name="principalAttributeMap">
@@ -47,7 +59,7 @@ The above configuration defines a map of attributes. Keys are LDAP attribute nam
 
 ```xml
 <bean id="ldapAuthenticationHandler"
-    class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+    class="org.apereo.cas.authentication.LdapAuthenticationHandler"
     p:principalIdAttribute="sAMAccountName"
     c:authenticator-ref="authenticator">
     <property name="principalAttributeList">
@@ -60,8 +72,18 @@ The above configuration defines a map of attributes. Keys are LDAP attribute nam
 </bean>
 ```
 
+If you do decide to let the authentication handler retrieve attributes instead of a separate principal resolver, you will need to ensure the linked resolver is made inactive:
+
+```xml
+<util:map id="authenticationHandlersResolvers">
+   ...
+   <entry key-ref="ldapAuthenticationHandler" value="#{null}" />
+</util:map>
+```
+
 ## Schema Declaration
-LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that the XML configuration file contains the `ldaptive` namespace declarations:
+LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that 
+the XML configuration file contains the `ldaptive` namespace declarations:
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -70,6 +92,16 @@ LDAP authentication is declared using a custom schema to reduce configuration no
        http://www.ldaptive.org/schema/spring-ext
        http://www.ldaptive.org/schema/spring-ext.xsd">
 ```
+
+## Directory Authenticator
+`LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
+
+1. [Active Directory](#active-directory-authentication) - Users authenticate with _sAMAccountName_.
+2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
+3. [Anonymous Search](#ldap-supporting-anonymous-search) - Anonymous search followed by user simple bind.
+4. [Direct Bind](#ldap-supporting-direct-bind) - Compute user DN from format string and perform simple bind.
+
+See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
 ## Active Directory Authentication
 The following configuration authenticates users with a custom filter,
@@ -98,11 +130,10 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
         prunePeriod="${ldap.pool.prunePeriod}"
         useSSL="${ldap.use.ssl:false}"
         subtreeSearch="${ldap.subtree.search:true}"
-        useStartTLS="${ldap.useStartTLS}"
-            />
+        useStartTLS="${ldap.useStartTLS}" />
 ```
 
-## LDAP Requiring Authenticated Search
+## LDAP Authenticated Search
 The following configuration snippet provides a template for LDAP authentication performed with manager credentials
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 
@@ -130,7 +161,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 />
 ```
 
-## LDAP Supporting Anonymous Search
+## LDAP Anonymous Search
 The following configuration snippet provides a template for LDAP authentication performed with an anonymous search
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 ```xml
@@ -155,8 +186,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 />
 ```
 
-
-## LDAP Supporting Direct Bind
+## LDAP Direct Bind
 The following configuration snippet provides a template for LDAP authentication where no search is required to
 compute the DN needed for a bind operation. There are two requirements for this use case:
 
@@ -164,8 +194,8 @@ compute the DN needed for a bind operation. There are two requirements for this 
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
-```xml
 
+```xml
 <ldaptive:direct-authenticator id="authenticator"
         format="${ldap.authn.searchFilter}"
         ldapUrl="${ldap.url}"
@@ -180,8 +210,8 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
         validatePeriod="${ldap.pool.validatePeriod}"
         prunePeriod="${ldap.pool.prunePeriod}"
         useSSL="${ldap.use.ssl:false}"
-        useStartTLS="${ldap.useStartTLS}" />
-
+        useStartTLS="${ldap.useStartTLS}" 
+/>
 ```
 
 ## LDAP Provider Configuration
@@ -206,8 +236,7 @@ Note that additional dependencies must be available to CAS at runtime depending 
 ## LDAP Properties Starter
 The following LDAP configuration properties provide a reasonable starting point for configuring the LDAP
 authentication handler. The `ldap.url` property must be changed at a minumum. LDAP properties may be added to the
-`cas.properties` configuration file; alternatively they may be isolated in an `ldap.properties` file and loaded
-into the Spring application context by modifying the `propertyFileConfigurer.xml` configuration file.
+`application.properties` configuration file.
 
 ```properties
 #========================================
@@ -313,7 +342,7 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 
 ```xml
 <bean id="ldapAuthenticationHandler"
-      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      class="org.apereo.cas.authentication.LdapAuthenticationHandler"
       p:passwordPolicyConfiguration-ref="passwordPolicyConfiguration">
       ...
 </bean>

@@ -25,11 +25,11 @@ be deployed within an internal network this is generally not a problem.
 
 
 ## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-generic-remote-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -37,8 +37,11 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ### Configuring Authentication
 
-```xml
-<alias name="remoteAddressAuthenticationHandler" alias="primaryAuthenticationHandler" />
+In `application.properties`:
+
+```properties
+#CAS components mappings
+primaryAuthenticationHandler=remoteAddressAuthenticationHandler
 ```
 
 The following settings are applicable:

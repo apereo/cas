@@ -6,23 +6,26 @@ title: CAS - CAS SAML Protocol
 # SAML Protocol
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-saml</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
 
 ## SAML2
+
 CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html). 
 
 ## Google Apps
+
 CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html). 
 
 ## SAML 1.1
+
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
 - Support a method of [attribute release](../integration/Attribute-Release.html)
@@ -120,16 +123,32 @@ Content-Type: text/xml
 
 
 ## Configuration
-SAML configuration in CAS is contained within the `cas.properties` file.
+
+SAML configuration in CAS is contained within the `application.properties` file.
 
 ```properties
 # Indicates the SAML response issuer
 # cas.saml.response.issuer=localhost
-
+#
 # Indicates the skew allowance which controls the issue instant of the SAML response
 # cas.saml.response.skewAllowance=0
+# 
+# Indicates the default namespace used for SAML attributes
+# cas.saml.attribute.namespace=http://www.ja-sig.org/products/cas/
 ```
 
+You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>shibboleth-releases</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+    </repository>
+    ...
+</repositories>
+```
 
 
 

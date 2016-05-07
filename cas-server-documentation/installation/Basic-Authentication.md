@@ -6,11 +6,11 @@ title: CAS - Basic Authentication
 # Basic Authentication
 Verify and authenticate credentials using Basic Authentication.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-basic</artifactId>
   <version>${cas.version}</version>
 </dependency>

@@ -28,7 +28,7 @@ principal id as the username for this service.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
@@ -42,13 +42,13 @@ is not available, the default principal id will be used.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 600,
   "description" : "sample",
   "usernameAttributeProvider" : {
-    "@class" : "org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
     "usernameAttribute" : "cn"
   }
 }
@@ -61,15 +61,15 @@ of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 500,
   "description" : "sample",
   "usernameAttributeProvider" : {
-    "@class" : "org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+    "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
     "persistentIdGenerator" : {
-      "@class" : "org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
       "salt" : "aGVsbG93b3JsZA=="
     }
   }
@@ -94,13 +94,13 @@ Return all resolved attributes to the service.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "description" : "sample",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy"
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   }
 }
 ```
@@ -110,13 +110,13 @@ Only return the attributes that are explicitly allowed by the configuration.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "description" : "sample",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
   }
 }
@@ -133,13 +133,13 @@ release `uid`, `affiliation` and `group` to the web application configured.
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 300,
   "description" : "sample",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnMappedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes" : {
       "@class" : "java.util.TreeMap",
       "eduPersonAffiliation" : "affiliation",
@@ -172,15 +172,15 @@ is 3 characters. Therefor, out of the above list, only `groupMembership` is rele
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 200,
   "description" : "sample",
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "attributeFilter" : {
-      "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
+      "@class" : "org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter",
       "pattern" : "^\w{3}$"
     },
     "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
@@ -195,10 +195,6 @@ commencement of SSO session, the changes are not reflected and returned back
 to the service upon release time.
 
 ### Components
-
-### `PrincipalAttributesRepository`
-Parent component that describes the relationship between a CAS `Principal`
-and the underlying attribute repository source.
 
 ### Default
 The default relationship between a CAS `Principal` and the underlying attribute
@@ -229,14 +225,14 @@ Sample configuration follows:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
+      "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
@@ -265,14 +261,14 @@ For example:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
+      "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
@@ -295,14 +291,14 @@ For example:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
+      "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
@@ -326,14 +322,14 @@ For example:
 
 ```xml
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
   "attributeReleasePolicy" : {
-    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
+      "@class" : "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
@@ -350,7 +346,7 @@ CAS by default supports the ability to encrypt certain attributes, such as the p
 If you wish to take this a step further and encrypt other attributes that you deem sensitive, you can use the following components
 as a baseline to carry out the task at hand:
 
-`DefaultCasAttributeEncoder`
+#### Default
 The default implementation of the attribute encoder that will use a per-service key-pair
 to encrypt. It will attempt to query the collection of attributes that resolved to determine
 which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`.
@@ -364,10 +360,10 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
     p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
 <bean id="casRegisteredServiceCipherExecutor"
-    class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
+    class="org.apereo.cas.services.DefaultRegisteredServiceCipherExecutor" />
 
 <bean id="casAttributeEncoder"
-    class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
+    class="org.apereo.cas.authentication.support.DefaultCasAttributeEncoder"
     c:servicesManager-ref="servicesManager"
     c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
 ```

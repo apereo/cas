@@ -108,7 +108,7 @@
     </ldaptive:bind-search-authenticator>
 
     <bean id="ldapAuthenticationHandler"
-          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+          class="org.apereo.cas.authentication.LdapAuthenticationHandler"
           p:principalIdAttribute-ref="usernameAttribute"
           c:authenticator-ref="authenticator">
         <property name="principalAttributeList">

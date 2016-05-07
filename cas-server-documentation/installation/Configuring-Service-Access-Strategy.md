@@ -13,6 +13,7 @@ validated when an authentication request from the application arrives.
 
 ## Default Strategy
 The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
+### Default
 
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
@@ -30,7 +31,7 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-## Time-based Strategy
+### Time-Based
 The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
@@ -39,13 +40,26 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
-## Grouper Strategy
-The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the Maven WAR overlay:
+### Remote Endpoint
+The `RemoteEndpointServiceAccessStrategy` is an extension of the default which additionally,
+allows one to configure a service with the following properties:
+
+| Field                             | Description
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `endpointUrl`                | Endpoint that receives the authorization request from CAS for the authenticated principal. 
+| `acceptableResponseCodes`    | Comma-separated response codes that are considered accepted for service access.
+
+The objective of this policy is to ensure a remote endpoint can make service access decisions by
+receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
+the endpoint returns is then compared against the policy setting and if a match is found, access is granted.
+
+### Grouper
+The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-integration-grouper</artifactId>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-grouper</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
@@ -76,12 +90,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : false,
     "ssoEnabled" : true
   }
@@ -93,12 +107,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : false
   }
@@ -111,12 +125,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "requiredAttributes" : {
@@ -132,12 +146,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "requiredAttributes" : {
@@ -155,12 +169,12 @@ OR the principal must have a `member` attribute whose value is either of `admins
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "requireAllAttributes" : false,
     "ssoEnabled" : true,
@@ -180,12 +194,12 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "requireAllAttributes" : false,
     "ssoEnabled" : true,
@@ -206,12 +220,12 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 62,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "unauthorizedRedirectUrl" : "https://www.github.com",
@@ -225,12 +239,12 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 62,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "requireAllAttributes" : true,
@@ -239,6 +253,21 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
       "memberOf" : [ "java.util.HashSet", [ "admin" ] ]
     },
     "groupField" : "DISPLAY_EXTENSION"
+  }
+}
+```
+
+* Remote endpoint access strategy authorizing service access based on response code:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy",
+    "endpointUrl" : "https://somewhere.example.org",
+    "acceptableResponseCodes" : "200,202"
   }
 }
 ```

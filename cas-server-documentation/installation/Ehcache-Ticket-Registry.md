@@ -4,12 +4,12 @@ title: CAS - Ehcache Ticket Registry
 ---
 
 # Ehcache Ticket Registry
-Ehcache integration is enabled by including the following dependency in the Maven WAR overlay:
+Ehcache integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-integration-ehcache</artifactId>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-ehcache</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -28,10 +28,11 @@ Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi
 replication for distributed caches composed of two or more nodes. To learn more about RMI
 replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 
-Enable the registry via:
+Enable the registry in `application.properties` via:
 
-```xml
-<alias name="ehcacheTicketRegistry" alias="ticketRegistry" />
+```properties
+#CAS components mappings
+ticketRegistry=ehcacheTicketRegistry
 ```
 
 #### Configuration
@@ -55,7 +56,7 @@ Enable the registry via:
 # ehcache.repl.sync.updates=true
 # ehcache.repl.sync.updatescopy=true
 # ehcache.repl.sync.removals=true
-# ehcache.cache.name=org.jasig.cas.ticket.ServiceTicket
+# ehcache.cache.name=org.apereo.cas.ticket.ServiceTicket
 # ehcache.cache.timeIdle=0
 # ehcache.cache.timeAlive=9000
 ```
@@ -81,7 +82,7 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
         <!-- Manual Peer Discovery -->
         <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.jasig.cas.ticket.TicketCache" />
+            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.apereo.cas.ticket.TicketCache" />
         <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="port=41001,remoteObjectPort=41002" />

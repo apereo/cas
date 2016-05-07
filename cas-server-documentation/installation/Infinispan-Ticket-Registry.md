@@ -4,12 +4,12 @@ title: CAS - Infinispan Ticket Registry
 ---
 
 # Infinispan Ticket Registry
-Infinispan integration is enabled by including the following dependency in the Maven WAR overlay:
+Infinispan integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-integration-infinispan</artifactId>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-infinispan-ticket-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -45,10 +45,12 @@ There are a variety of cache stores available to choose from, some of which are:
 See the [full list of implementations](http://infinispan.org/cache-store-implementations/).
 
 ## Distributed Cache
-Enable the registry via:
 
-```xml
-<alias name="infinispanTicketRegistry" alias="ticketRegistry" />
+Enable the registry in `application.properties` via:
+
+```properties
+#CAS components mappings
+ticketRegistry=infinispanTicketRegistry
 ```
 
 The above ticket registry expects a `infinispanTicketsCache` element to be available in the Spring context.
