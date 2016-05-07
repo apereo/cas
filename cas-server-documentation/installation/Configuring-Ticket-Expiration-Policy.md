@@ -53,13 +53,13 @@ for this policy means that a ticket created at 1PM may be used up until 5PM; sub
 and the user will be forced to re-authenticate.
 
 ```xml
-<alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+<alias name="hardTimeoutExpirationPolicy" alias="grantingTicketExpirationPolicy" />
 ```
 
 Settings are controlled via:
 
 ```properties
-# tgt.timeout.hard.maxTimeToLiveInSeconds
+# tgt.timeout.hard.maxTimeToLiveInSeconds=28000
 ```
 
 #### `ThrottledUseAndTimeoutExpirationPolicy`
