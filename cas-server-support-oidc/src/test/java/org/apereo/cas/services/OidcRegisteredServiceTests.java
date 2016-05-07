@@ -1,4 +1,4 @@
-package org.jasig.cas.services;
+package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.JsonServiceRegistryDao;

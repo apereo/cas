@@ -33,7 +33,7 @@ OpenID Connect clients can be registered with CAS as such:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.OidcRegisteredService",
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
   "serviceId" : "^<https://the-redirect-uri>",
