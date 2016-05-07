@@ -73,7 +73,7 @@ subprojects {
         maven { url "http://files.couchbase.com/maven2" }
         maven { url "http://repo.spring.io/milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
-        maven { url "https://github.com/vt-middleware/maven-repo" }
+        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
     }
 
     test {
