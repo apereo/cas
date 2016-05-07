@@ -445,10 +445,7 @@ task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
-	def f = new File(buildDir, "libs/cas-server-$version-javadoc.jar")
-	if (f.exists()) {
-    	archives f
-	}
+    archives aggregateJavadocsIntoJar
 }
 
 uploadArchives {
