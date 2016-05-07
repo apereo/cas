@@ -1,10 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.services.JsonServiceRegistryDao;
-import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServiceRegistryDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;

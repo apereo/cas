@@ -62,7 +62,7 @@ In `application.properties`:
 
 ```properties
 #CAS components mappings
-grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
+grantingTicketExpirationPolicy=hardTimeoutExpirationPolicy
 ```
 
 Settings are controlled via:
