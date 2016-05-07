@@ -31,12 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component("oauthAccessTokenResponseGenerator")
 public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * The JSON factory.
-     */
-    protected final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
-
+    
     /**
      * The Resource loader.
      */
@@ -54,13 +49,14 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            try (final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(response.getWriter())) {
+            final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
+            try (final JsonGenerator jsonGenerator = jsonFactory.createGenerator(response.getWriter())) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                         refreshTokenId, timeout, service, registeredService);
                 jsonGenerator.writeEndObject();
             } catch (final Exception e) {
-                throw new RuntimeException(e);
+                throw new IllegalArgumentException(e);
             }
         } else {
             generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);
