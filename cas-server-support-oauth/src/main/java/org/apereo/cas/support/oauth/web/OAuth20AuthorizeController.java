@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
@@ -56,7 +57,8 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @throws Exception the exception
      */
     @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, 
+                                              final HttpServletResponse response) throws Exception {
 
         if (!verifyAuthorizeRequest(request)) {
             logger.error("Authorize request verification fails");
@@ -123,25 +125,42 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     private String buildCallbackUrlForImplicitResponseType(final J2EContext context,
                                                            final Authentication authentication,
                                                            final Service service,
-                                                           final String redirectUri) {
+                                                           final String redirectUri) throws Exception {
 
         final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
         final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
 
         final AccessToken accessToken = generateAccessToken(service, authentication, context);
         logger.debug("Generated Oauth access token: {}", accessToken);
-
-        String callbackUrl = redirectUri;
-        callbackUrl += '#' + OAuthConstants.ACCESS_TOKEN + '=' + accessToken.getId() + '&'
-                + OAuthConstants.TOKEN_TYPE + '=' + OAuthConstants.TOKEN_TYPE_BEARER + '&'
-                + OAuthConstants.EXPIRES + '=' + this.timeout;
+        
+        final URIBuilder builder = new URIBuilder(redirectUri);
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(OAuthConstants.ACCESS_TOKEN)
+                     .append('=')
+                     .append(accessToken.getId())
+                     .append('&')
+                     .append(OAuthConstants.TOKEN_TYPE)
+                     .append('=')
+                     .append(OAuthConstants.TOKEN_TYPE_BEARER)
+                     .append('&')
+                     .append(OAuthConstants.EXPIRES)
+                     .append('=')
+                     .append(this.timeout);
+        
         if (StringUtils.isNotBlank(state)) {
-            callbackUrl += '&' + OAuthConstants.STATE + '=' + EncodingUtils.urlEncode(state);
+            stringBuilder.append('&')
+                        .append(OAuthConstants.STATE)
+                        .append('=')
+                        .append(EncodingUtils.urlEncode(state));
         }
         if (StringUtils.isNotBlank(nonce)) {
-            callbackUrl += '&' + OAuthConstants.NONCE + '=' + EncodingUtils.urlEncode(nonce);
+            stringBuilder.append('&')
+                    .append(OAuthConstants.NONCE)
+                    .append('=')
+                    .append(EncodingUtils.urlEncode(nonce));
         }
-        return callbackUrl;
+        builder.setFragment(stringBuilder.toString());
+        return builder.toString();
     }
 
     private String buildCallbackUrlForAuthorizationCodeResponseType(final Authentication authentication,

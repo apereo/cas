@@ -81,12 +81,17 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
                                         final long timeout) {
-        String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenId.getId(),
-                OAuthConstants.EXPIRES, timeout);
+        final StringBuilder builder = new StringBuilder(
+                String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenId.getId(),
+                        OAuthConstants.EXPIRES, timeout));
+
         if (refreshTokenId != null) {
-            text += '&' + OAuthConstants.REFRESH_TOKEN + '=' + refreshTokenId.getId();
+            builder.append('&')
+                    .append(OAuthConstants.REFRESH_TOKEN)
+                    .append('=')
+                    .append(refreshTokenId.getId());
         }
-        OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
+        OAuthUtils.writeText(response, builder.toString(), HttpStatus.SC_OK);
     }
 
     /**
