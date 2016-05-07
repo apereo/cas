@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow;
+package org.apereo.cas.web.flow;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -19,7 +19,7 @@ import org.apache.http.util.EntityUtils;
  * This is {@link ClientPreemptiveDigestAuthentication}.
  *
  * @author Misagh Moayyed
- * @since x.y.z
+ * @since 5.0.0
  */
 public class ClientPreemptiveDigestAuthentication {
 

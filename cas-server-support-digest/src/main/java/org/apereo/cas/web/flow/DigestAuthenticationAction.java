@@ -1,8 +1,8 @@
-package org.jasig.cas.web.flow;
+package org.apereo.cas.web.flow;
 
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.web.support.WebUtils;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.http.credentials.DigestCredentials;

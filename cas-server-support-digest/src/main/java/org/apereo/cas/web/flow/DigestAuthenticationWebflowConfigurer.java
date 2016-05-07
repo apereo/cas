@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow;
+package org.apereo.cas.web.flow;
 
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.engine.ActionState;
