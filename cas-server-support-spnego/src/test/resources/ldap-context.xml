@@ -50,7 +50,8 @@
                                  useSSL="false"
                                  bindDn="${ldap.managerDn}"
                                  provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
-                                 bindCredential="${ldap.managerPassword}" />
+                                 bindCredential="${ldap.managerPassword}" >
+    </ldaptive:connection-factory>
 
     <ldaptive:connection-pool id="connectionPool"
                               provider="org.ldaptive.provider.unboundid.UnboundIDProvider"

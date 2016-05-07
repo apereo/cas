@@ -12,7 +12,6 @@
        http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-
     <ldaptive:ad-authenticator id="authenticator-ad"
             ldapUrl="${ldap.url}"
             userFilter="${ldap.authn.searchFilter}"
@@ -53,12 +52,9 @@
            useStartTLS="${ldap.useStartTLS}"
            allowMultipleDns="${ldap.allowMultipleDns:false}"
            baseDn="${ldap.baseDn}"
+           usePasswordPolicy="true"
            subtreeSearch="${ldap.subtree.search:true}"
-           userFilter="${ldap.authn.searchFilter}">
-        <ldaptive:authentication-response-handler>
-            <ldaptive:password-policy-handler />
-        </ldaptive:authentication-response-handler>
-    </ldaptive:anonymous-search-authenticator>
+           userFilter="${ldap.authn.searchFilter}" />
 
     <ldaptive:direct-authenticator id="authenticator-direct"
             format="${ldap.authn.searchFilter}"
@@ -75,11 +71,8 @@
             validatePeriod="${ldap.pool.validatePeriod}"
             prunePeriod="${ldap.pool.prunePeriod}"
             useSSL="${ldap.use.ssl:false}"
-            useStartTLS="${ldap.useStartTLS}">
-        <ldaptive:authentication-response-handler>
-            <ldaptive:password-policy-handler />
-        </ldaptive:authentication-response-handler>
-    </ldaptive:direct-authenticator>
+            usePasswordPolicy="true"
+            useStartTLS="${ldap.useStartTLS}" />
 
     <ldaptive:bind-search-authenticator id="authenticator"
             ldapUrl="${ldap.url}"
@@ -99,13 +92,10 @@
             idleTime="${ldap.pool.idleTime}"
             prunePeriod="${ldap.pool.prunePeriod}"
             failFastInitialize="true"
+            usePasswordPolicy="true"                          
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
             subtreeSearch="${ldap.subtree.search:true}"
-            useSSL="${ldap.use.ssl:false}">
-        <ldaptive:authentication-response-handler>
-            <ldaptive:password-policy-handler />
-        </ldaptive:authentication-response-handler>
-    </ldaptive:bind-search-authenticator>
+            useSSL="${ldap.use.ssl:false}" />
 
     <bean id="ldapAuthenticationHandler"
           class="org.apereo.cas.authentication.LdapAuthenticationHandler"
