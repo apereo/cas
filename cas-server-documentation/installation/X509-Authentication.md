@@ -19,7 +19,7 @@ X.509 support is enabled by including the following dependency in the WAR overla
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-x509-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>

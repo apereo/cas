@@ -15,7 +15,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info" additivity="false">
+        <Logger name="org.apereo" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.springframework.data" level="info" additivity="false">

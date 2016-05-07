@@ -58,7 +58,7 @@ The `GrouperRegisteredServiceAccessStrategy` is enabled by including the followi
 
 ```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-grouper</artifactId>
   <version>${cas.version}</version>
 </dependency>
@@ -90,12 +90,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : false,
     "ssoEnabled" : true
   }
@@ -107,12 +107,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : false
   }
@@ -125,12 +125,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "requiredAttributes" : {
@@ -146,12 +146,12 @@ Some examples of RBAC configuration follow:
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "requiredAttributes" : {
@@ -169,12 +169,12 @@ OR the principal must have a `member` attribute whose value is either of `admins
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "requireAllAttributes" : false,
     "ssoEnabled" : true,
@@ -194,12 +194,12 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "requireAllAttributes" : false,
     "ssoEnabled" : true,
@@ -220,12 +220,12 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 62,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "unauthorizedRedirectUrl" : "https://www.github.com",
@@ -239,12 +239,12 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "test",
   "id" : 62,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
+    "@class" : "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "requireAllAttributes" : true,
@@ -261,11 +261,11 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
 
 ```json
 {
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "id" : 1,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.RemoteEndpointServiceAccessStrategy",
+    "@class" : "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy",
     "endpointUrl" : "https://somewhere.example.org",
     "acceptableResponseCodes" : "200,202"
   }

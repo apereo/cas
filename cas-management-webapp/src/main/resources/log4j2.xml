@@ -24,7 +24,7 @@
             <AppenderRef ref="console"/>
         </AsyncLogger>
 
-        <AsyncLogger name="org.jasig" level="info" additivity="false">
+        <AsyncLogger name="org.apereo" level="info" additivity="false">
             <AppenderRef ref="cas-management"/>
             <AppenderRef ref="console"/>
         </AsyncLogger>

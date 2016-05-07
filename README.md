@@ -2,10 +2,10 @@
 # Central Authentication Service (CAS)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas)][caswebheroku]
-[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
+[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
-[![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.jasig.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.jasig.cas/cas-server)
+[![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC)
 
 ## Introduction
@@ -61,7 +61,7 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 [contribute]: http://jasig.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: http://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/
-[casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
+[casmavencentral]: http://mvnrepository.com/artifact/org.apereo.cas
 [downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
 [releasenotes]: https://github.com/Jasig/cas/releases
 [casimg]: https://cloud.githubusercontent.com/assets/1205228/14939607/7cd35c3c-0f02-11e6-9564-80d8dfc0a064.png
