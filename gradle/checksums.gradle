@@ -243,7 +243,7 @@ dependencyVerification {
         'org.codehaus.woodstox:woodstox-core-asl:4.4.1:274fa403ed08c0d6f2f574dc1916adaaaec9a493e56d6442f8797ede620bca65',
         'javax.xml.stream:stax-api:1.0-2:e8c70ebd76f982c9582a82ef82cf6ce14a7d58a4a4dca5cb7b7fc988c80089b7',
         'org.codehaus.woodstox:stax2-api:3.1.4:86d7c0b775a7c9b454cc6ba61d40a8eb3b99cc129f832eb9b977a3755b4b338e',
-        'com.github.coova:jradius:jradius-1.1.5:30348343d52a22b0d1f66a385a3b1dcd792f19f2281718509d5043a7e8203832',
+        'com.github.coova:jradius:jradius-1.1.5:8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85',
         'gnu.getopt:java-getopt:1.0.13:f09dc6369ffc4fe4362cbd49b6ac6c4a7471375ac5d884c71b0a625a889c38c4',
         'com.github.coova.jradius:jradius-apps:jradius-1.1.5:d6f9d04ae31833334bf1ecd27d3b7b50c6e22a0d7780d3dc8efc42994ab91c99',
         'com.github.coova.jradius:jradius-client:jradius-1.1.5:ad4fbdd80da0af95cfafaadf3d45eace00f03a62834c102291186287cd969fe5',
