@@ -26,13 +26,6 @@ buildscript {
         classpath "com.netflix.nebula:gradle-lint-plugin:0.10.0"
         classpath "org.standardout:gradle-versioneye-plugin:1.3.0"
         classpath "com.moowork.gradle:gradle-node-plugin:0.12"
-        /*
-           It doesn't make sense to publish gradle-witness as an artifact, since 
-           that creates a bootstrapping problem.
-           This gradle plugin simply allows the author of a project to statically specify the 
-           sha256sum of the dependencies that it uses. 
-        */
-        classpath files("$rootProject.projectDir/gradle/plugins/gradle-witness.jar")
     }
 }
 

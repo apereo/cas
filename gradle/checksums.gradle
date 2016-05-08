@@ -1,6 +1,7 @@
 dependencyVerification {
     ignorePattern = project.group + ".+" + project.version + ".*"
     //ignorePattern = ".*"
+    enabled = Boolean.getBoolean("verifyChecksums")
     verify = [
             'org.aspectj:aspectjrt:403913aa06b8dfe3a847211350f164ef98ce7221d65442ce930c1ddd0d3ef2cd',
             'org.aspectj:aspectjweaver:5e41d39eca300e2d8e6067f5660d70dcc66ec2da9cbd46a3d5985e609d1e6ecf',
@@ -133,7 +134,6 @@ dependencyVerification {
             'org.apache.commons:commons-collections4:b1fe8b5968b57d8465425357ed2d9dc695504518bed2df5b565c4b8e68c1c8a5',
             'com.nimbusds:lang-tag:e905742f587ec8127031a43e329c89eebf4e44cd340fcfc478bd719a2990c29e',
             'xalan:serializer:e8f5b4340d3b12a0cfa44ac2db4be4e0639e479ae847df04c4ed8b521734bb4a',
-            'commons-collections:commons-collections:87363a4c94eaabeefd8b930cb059f66b64c9f7d632862f23de3012da7660047b',
             'commons-lang:commons-lang:2c73b940c91250bc98346926270f13a6a10bb6e29d2c9316a70d134e382c873e',
             'com.stormpath.sdk:stormpath-sdk-impl:de0aaab943c52ad016f11bf97a3792661ff545d0e56911ba24a3d05285c29c41',
             'com.fasterxml.jackson.core:jackson-annotations:03348c047d981376cc444fc466cd80bda8d7eb0698dc6a99dd52c5aa15eff5ad',
@@ -156,7 +156,6 @@ dependencyVerification {
             'org.jasig.service.persondir:person-directory-api:2bc84b17076b22e6bbd88f9a2e13a81ff81f754a063513381c3a873b60c17389',
             'javax.activation:activation:2881c79c9d6ef01c58e62beea13e9d1ac8b8baa16f2fc198ad6e6776defdcdd3',
             'org.codehaus.jackson:jackson-mapper-asl:246ee4dcb26cb040608eab5d978efe2618564568923c0a98e6118f8858b31def',
-            'commons-beanutils:commons-beanutils:e1407b81d8138fb9c1fc731b87b5e0068ddccabfbc65dee59cdb378a90c5e81a',
             'io.dropwizard.metrics:metrics-annotation:f0b36eb556bc12c5ad0d876cae6d25ca20d2ce3b08f8549071c7d970afdfc02b',
             'io.dropwizard.metrics:metrics-core:245ba2a66a9bc710ce4db14711126e77bcb4e6d96ef7e622659280f3c90cbb5c',
             'io.dropwizard.metrics:metrics-jvm:0350dd123d20a1090858a44ef2809cccfb6d49fcf31bc636a1b4aa5cf3e7a50d',
@@ -295,7 +294,7 @@ dependencyVerification {
             'com.github.coova.jradius:jradius-server:f26a6c4e163fc98f7e403b8b446e19fb0b3c30cc2e47586fdfcb241ab23a6579',
             'commons-configuration:commons-configuration:e5c824dd43b40517a111da36887c2b1233a1128f0a8fa464f6b32e5b78163998',
             'commons-chain:commons-chain:d5489b5f6b54b74665ad76ad3ffb3ad904830fe4863392784f311897ffcbfca8',
-            'commons-pool:commons-pool:22095672ac3ad6503e42ec6d4cbc330cd1318040223f6c5d9605473b6d2aa0fd',
+            'commons-pool:commons-pool:46c42b4a38dc6b2db53a9ee5c92c63db103665d56694e2cfce2c95d51a6860cc',
             'net.sf.ehcache:ehcache-core:e22f8689459bb1528f8927bde41c5c0798009fd625607840a336b25a104bd144',
             'commons-digester:commons-digester:05662373044f3dff112567b7bb5dfa1174e91e074c0c727b4412788013f49d56',
             'commons-beanutils:commons-beanutils-core:dbdac3b81a1c22a1d09b8c4a1c55b00af4767bd068838651c04c2f130172a207',
