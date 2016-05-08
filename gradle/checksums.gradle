@@ -250,7 +250,7 @@ dependencyVerification {
         'com.github.coova.jradius:jradius-core:jradius-1.1.5:72fc2f29c66a98cbcc2b15dfa801732c6f64ece3d3350568f0a5fa66ad14dae6',
         'com.github.coova.jradius:jradius-dictionary:jradius-1.1.5:15f0c137ac1e427c11ca4645fa0594156bed51340cf7f5557e030677944ffc9b',
         'com.github.coova.jradius:jradius-dictionary-min:jradius-1.1.5:b3d16a83c859b8e928282567491b4afb9ee2d7ad80ecf70cb786d494833cd700',
-        'com.github.coova.jradius:jradius-example:jradius-1.1.5:77b7f45ab192cf4b99ef06435ab868063fda38fb7766c0dca382423bfb3d13c8',
+        'com.github.coova.jradius:jradius-example:jradius-1.1.5:78e2df5507d7847984711784b4a22e79cd5d03c71f9a1fef860aa1ff8d5397c7',
         'com.github.coova.jradius:jradius-extended:jradius-1.1.5:da7b32e2ac9679f251e81cf9256909fc5237782b0ee60a33cab2f7a0e4adb4b3',
         'com.github.coova.jradius:jradius-extras:jradius-1.1.5:ade2f3fe0d2a5737c2e1702e3eb015a04ebe1b67bbb6be5a8dced336175ceee0',
         'com.github.coova.jradius:jradius-server:jradius-1.1.5:f26a6c4e163fc98f7e403b8b446e19fb0b3c30cc2e47586fdfcb241ab23a6579',
