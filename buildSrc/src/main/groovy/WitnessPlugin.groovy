@@ -47,11 +47,12 @@ class WitnessPlugin implements Plugin<Project> {
                         List parts = assertion.tokenize(":")
                         String group = parts.get(0)
                         String name = parts.get(1)
-                        String hash = parts.get(2)
+                        String ver = parts.get(2)
+                        String hash = parts.get(3)
 
                         log.info  "Checking dependency verification entry " + group + ":" + name
 
-                        if (it.name.equals(name) && groupId.equals(group)) {
+                        if (it.name.equals(name) && groupId.equals(group) && version.equals(ver)) {
                             log.info  "Found hash " + hash
                             return true
                         }
@@ -61,7 +62,7 @@ class WitnessPlugin implements Plugin<Project> {
                         throw new InvalidUserDataException("No dependency for integrity assertion found")
                     }
 
-                    def csum = result.tokenize(":").get(2)
+                    def csum = result.tokenize(":").get(3)
                     log.info  "Result is " + csum
 
                     def calc = calculateSha256(it.file);
@@ -75,16 +76,18 @@ class WitnessPlugin implements Plugin<Project> {
         }
 
         project.task('calculateChecksums') << {
-            log.info  "dependencyVerification {"
-            log.info  "    verify = ["
+            println  "dependencyVerification {"
+            println  "    verify = ["
 
             project.configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
                 dep ->
-                    log.info  "        '" + dep.moduleVersion.id.group + ":" + dep.name + ":" + calculateSha256(dep.file) + "',"
+                    if (dep.file.exists()) {
+                        println  "        '" + dep.moduleVersion.id.group + ":" + dep.name + ":" + dep.moduleVersion.id.version + ":" + calculateSha256(dep.file) + "',"
+                    }
             }
 
-            log.info  "    ]"
-            log.info  "}"
+            println "    ]"
+            println  "}"
         }
     }
 }

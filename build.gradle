@@ -197,6 +197,8 @@ subprojects {
     }
 
     dependencies {
+        compile gradleApi()
+        
         compile libraries.aspectj
         compile libraries.validationapi
         compile libraries.log4j
