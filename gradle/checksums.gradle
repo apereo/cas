@@ -308,7 +308,7 @@ dependencyVerification {
         'org.glassfish:javax.json:1.0.4:0e1dec40a1ede965941251eda968aeee052cc4f50378bc316cc48e8159bdbeb4',
         'org.codehaus.janino:commons-compiler:2.7.8:69094456b227ec07d908938c8f90eb57e51ca6d0e82f96475770af7224b508b2',
         'javax.json:javax.json-api:1.0:1924ecfef6e9ba57c4425cf4b278192950037e5ca65d7d2d77e7d87ddaef8738',
-        'eu.bitwalker:UserAgentUtils:1.18:4f0015249a04e49baed21486716e5665ee3ae2723335c3d863e48509dc2bcf69',
+        'eu.bitwalker:UserAgentUtils:1.18:7089302c4a1c871f5f10403a950f7b70d873fb6dd25f1d35980b159eb2756ca4',
         'org.apache.ant:ant-launcher:1.9.4:7bccea20b41801ca17bcbc909a78c835d0f443f12d639c77bd6ae3d05861608d',
         'org.opensaml:opensaml-soap-impl:3.2.0:92b25ac2b5fb461f2974ea297d4c43b37998b2757b295af7b465a2495d5a8ba9',
         'org.slf4j:log4j-over-slf4j:1.7.12:59b0c933bb61f0a30f5ae16aa05e9eea120871f27619e67519bb568f20b29f23',
