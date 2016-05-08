@@ -431,6 +431,9 @@ ext.libraries = [
                 },
                 dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
                     force = true
+                },
+                dependencies.create("org.hjson:hjson:$hjsonVersion") {
+                    force = true
                 }
         ],
         couchbase        : "com.couchbase.client:java-client:$couchbaseVersion",

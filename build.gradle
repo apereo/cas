@@ -55,7 +55,9 @@ subprojects {
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
     apply plugin: 'com.moowork.node'
+    apply plugin: 'witness'
 
+    apply from: rootProject.file("gradle/checksums.gradle")
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;

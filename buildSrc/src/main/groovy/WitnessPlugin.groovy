@@ -50,7 +50,7 @@ class WitnessPlugin implements Plugin<Project> {
                         String ver = parts.get(2)
                         String hash = parts.get(3)
 
-                        log.info  "Checking dependency verification entry " + group + ":" + name
+                        log.info  "Checking dependency " + artifactName
 
                         if (it.name.equals(name) && groupId.equals(group) && version.equals(ver)) {
                             log.info  "Found hash " + hash
@@ -58,14 +58,18 @@ class WitnessPlugin implements Plugin<Project> {
                         }
                     }
 
+                    def calc = calculateSha256(it.file)
                     if (result == null) {
-                        throw new InvalidUserDataException("No dependency for integrity assertion found")
+                        throw new InvalidUserDataException("No dependency configuration found in the checksums configuration for [" 
+                                                           + artifactName + "]. Examine the pre-configured checksums and ensure [" 
+                                                           + artifactName + "] is defined with the appropriate hash value: "
+                                                           + "[" + calc + "]: \n\n\t'" + artifactName + ":" + calc + "',")
                     }
 
                     def csum = result.tokenize(":").get(3)
                     log.info  "Result is " + csum
 
-                    def calc = calculateSha256(it.file);
+                    
                     if (!csum.equals(calc)) {
                         throw new InvalidUserDataException("Checksum failed for " + it.file
                                 + " linked to dependency definition " + groupId + ":" + it.name + ":" + version
@@ -76,18 +80,18 @@ class WitnessPlugin implements Plugin<Project> {
         }
 
         project.task('calculateChecksums') << {
-            println  "dependencyVerification {"
-            println  "    verify = ["
+            log.info  "dependencyVerification {"
+            log.info  "    verify = ["
 
             project.configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
                 dep ->
                     if (dep.file.exists()) {
-                        println  "        '" + dep.moduleVersion.id.group + ":" + dep.name + ":" + dep.moduleVersion.id.version + ":" + calculateSha256(dep.file) + "',"
+                        log.info  "        '" + dep.moduleVersion.id.group + ":" + dep.name + ":" + dep.moduleVersion.id.version + ":" + calculateSha256(dep.file) + "',"
                     }
             }
 
-            println "    ]"
-            println  "}"
+            log.info "    ]"
+            log.info  "}"
         }
     }
 }
