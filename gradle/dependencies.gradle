@@ -81,8 +81,10 @@ ext.libraries = [
                 dependencies.create("com.maxmind.geoip2:geoip2:$maxmindVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
                     exclude(group: 'commons-codec', module: 'commons-codec')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-core')
+                    exclude(group: 'com.google.code.findbugs', module: 'jsr305')
                     force = true
                 }
         ],
@@ -408,6 +410,7 @@ ext.libraries = [
         thmyeleafboot    : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion") {
                     exclude(group: 'com.fasterxml', module: 'classmate')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     exclude(group: 'ch.qos.logback', module: 'logback-core')
                     exclude(group: 'ch.qos.logback', module: 'logback-classic')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
@@ -417,9 +420,13 @@ ext.libraries = [
         ],
 
         jackson          : [
-                "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion") {
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
+                    force = true
+                },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     force = true
                 }
         ],
@@ -810,6 +817,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-core')
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
@@ -844,12 +852,14 @@ ext.libraries = [
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     exclude(group: 'org.hibernate', module: 'hibernate-validator')
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-actuator:$springBootVersion") {
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     force = true
                 }
         ],
@@ -1041,6 +1051,7 @@ ext.libraries = [
                     exclude(group: 'commons-logging', module: 'commons-logging')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.springframework.data', module: 'spring-data-commons')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework', module: 'spring-web')
                     exclude(group: 'org.springframework', module: 'spring-beans')
