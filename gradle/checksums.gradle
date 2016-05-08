@@ -246,7 +246,7 @@ dependencyVerification {
         'com.github.coova:jradius:jradius-1.1.5:8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85',
         'gnu.getopt:java-getopt:1.0.13:f09dc6369ffc4fe4362cbd49b6ac6c4a7471375ac5d884c71b0a625a889c38c4',
         'com.github.coova.jradius:jradius-apps:jradius-1.1.5:a48a236086114692a9fb6a0cf017d09330f2b2494a4fcf288284fa425523570c',
-        'com.github.coova.jradius:jradius-client:jradius-1.1.5:ad4fbdd80da0af95cfafaadf3d45eace00f03a62834c102291186287cd969fe5',
+        'com.github.coova.jradius:jradius-client:jradius-1.1.5:58ab3ec9902e0def345fbbc0d1a2d4320377517220903b97a19479be887c4942',
         'com.github.coova.jradius:jradius-core:jradius-1.1.5:30348343d52a22b0d1f66a385a3b1dcd792f19f2281718509d5043a7e8203832',
         'com.github.coova.jradius:jradius-dictionary:jradius-1.1.5:ff0537b7e4afb37e960475311d42bf6cb8a6d134783ce13f8d84bf3d7ca52198',
         'com.github.coova.jradius:jradius-dictionary-min:jradius-1.1.5:0701769bfa2c532e55dc651efeb8f4eba0dc0a8c40e04fb205064676821b742e',
