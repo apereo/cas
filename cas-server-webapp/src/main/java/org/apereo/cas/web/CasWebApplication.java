@@ -37,7 +37,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
         "classpath:/spring-configuration/*.groovy",
         "classpath:/deployerConfigContext.xml",
         "classpath*:/META-INF/spring/*.xml"})
-@Import(AopAutoConfiguration.class)
 @EnableConfigServer
 @EnableAsync
 public class CasWebApplication {
