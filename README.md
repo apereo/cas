@@ -2,7 +2,7 @@
 # Central Authentication Service (CAS)
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas)][caswebheroku]
-[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
+[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
 [![Dependency Status](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b)
 [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
@@ -42,7 +42,7 @@ The foundations of CAS are built upon: Spring Framework, Spring Boot, Spring Clo
 - [Release Notes][releasenotes]
 - [Support] [cassupport]
 
-## Deployment [![Build Status](https://api.travis-ci.org/Jasig/cas.png?branch=master)](http://travis-ci.org/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
+## Deployment [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) [![Issue Stats](http://www.issuestats.com/github/apereo/cas/badge/pr?style=flat)](http://www.issuestats.com/github/apereo/cas) [![Issue Stats](http://www.issuestats.com/github/apereo/cas/badge/issue?style=flat)](http://www.issuestats.com/github/apereo/cas)
 
 It is recommended to build and deploy CAS locally using the [WAR Overlay method][overlay]. 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
@@ -56,17 +56,17 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 ## Contributions
 - [How to contribute][contribute]
 
-[wiki]: http://jasig.github.io/cas
-[overlay]: http://jasig.github.io/cas/development/installation/Maven-Overlay-Installation.html
-[contribute]: http://jasig.github.io/cas/developer/Contributor-Guidelines.html
+[wiki]: http://apereo.github.io/cas
+[overlay]: http://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
+[contribute]: http://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: http://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/
 [casmavencentral]: http://mvnrepository.com/artifact/org.apereo.cas
-[downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
-[releasenotes]: https://github.com/Jasig/cas/releases
+[downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
+[releasenotes]: https://github.com/apereo/cas/releases
 [casimg]: https://cloud.githubusercontent.com/assets/1205228/14939607/7cd35c3c-0f02-11e6-9564-80d8dfc0a064.png
 [caswebheroku]: http://jasigcas.heroku.com
 [casmgheroku]: http://jasigcasmgmt.heroku.com
-[cassupport]: http://jasig.github.io/cas/Support.html
+[cassupport]: http://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
