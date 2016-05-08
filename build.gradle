@@ -38,7 +38,6 @@ allprojects {
     apply plugin: "nebula.lint"
     gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
 
-
     signing {
         required = (publishReleases && sonatypeUsername != null && sonatypePassword != null)
         sign configurations.archives
@@ -56,13 +55,11 @@ subprojects {
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
     apply plugin: 'com.moowork.node'
-    apply plugin: "witness"
-    
+
+    apply from: rootProject.file("gradle/tasks.gradle")
+
     ext.libraries = rootProject.ext.libraries;
 
-    apply from: rootProject.file("gradle/checksums.gradle")
-    apply from: rootProject.file("gradle/tasks.gradle")
-    
     repositories {
         mavenLocal()
         mavenCentral()
@@ -197,8 +194,6 @@ subprojects {
     }
 
     dependencies {
-        compile gradleApi()
-        
         compile libraries.aspectj
         compile libraries.validationapi
         compile libraries.log4j

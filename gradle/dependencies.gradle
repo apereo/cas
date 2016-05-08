@@ -428,6 +428,9 @@ ext.libraries = [
                     exclude(group: 'com.google.guava', module: 'guava')
                     exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     force = true
+                },
+                dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
+                    force = true
                 }
         ],
         couchbase        : "com.couchbase.client:java-client:$couchbaseVersion",
@@ -1052,6 +1055,20 @@ ext.libraries = [
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.springframework.data', module: 'spring-data-commons')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework', module: 'spring-beans')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-expression')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-tx')
+                    exclude(group: 'org.mongodb', module: 'mongo-java-driver')
+                    force = true
+                },
+                dependencies.create("org.springframework.data:spring-data-commons:$springDataCommonsVersion") {
+                    exclude(group: 'commons-logging', module: 'commons-logging')
+                    exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework', module: 'spring-web')
                     exclude(group: 'org.springframework', module: 'spring-beans')
