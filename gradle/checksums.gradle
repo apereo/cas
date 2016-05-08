@@ -253,7 +253,7 @@ dependencyVerification {
         'com.github.coova.jradius:jradius-example:jradius-1.1.5:78e2df5507d7847984711784b4a22e79cd5d03c71f9a1fef860aa1ff8d5397c7',
         'com.github.coova.jradius:jradius-extended:jradius-1.1.5:d7b4a9d9c1b50cbccdd197d39cd4eb2bee960404c94debf751f63059e9ab3840',
         'com.github.coova.jradius:jradius-extras:jradius-1.1.5:cfc2a570a2e6e3496ee56dfeb710dd1b976e6cddd1c19c8041a954b2715d0a7e',
-        'com.github.coova.jradius:jradius-server:jradius-1.1.5:f26a6c4e163fc98f7e403b8b446e19fb0b3c30cc2e47586fdfcb241ab23a6579',
+        'com.github.coova.jradius:jradius-server:jradius-1.1.5:0a0dd5d8ed39ec3a3622ad9beeebf664128b0988a7d42af931c9267a92c41159',
         'commons-configuration:commons-configuration:1.5:e5c824dd43b40517a111da36887c2b1233a1128f0a8fa464f6b32e5b78163998',
         'commons-chain:commons-chain:1.2:d5489b5f6b54b74665ad76ad3ffb3ad904830fe4863392784f311897ffcbfca8',
         'commons-pool:commons-pool:1.5.4:22095672ac3ad6503e42ec6d4cbc330cd1318040223f6c5d9605473b6d2aa0fd',
