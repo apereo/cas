@@ -510,10 +510,10 @@ if (array.length == 3) {
                     {name: 'DISPLAY_EXTENSION', value: 'display_extension'}
                 ],
                 failureMode: [
+                    {name: 'NONE',          value: 'none'},
                     {name: 'OPEN',          value:'open'},
                     {name: 'CLOSED',        value: 'closed'},
-                    {name: 'PHANTOM',       value: 'phantom'},
-                    {name: 'NONE',          value: 'none'}
+                    {name: 'PHANTOM',       value: 'phantom'}
                 ]
             };
 
