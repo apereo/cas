@@ -57,7 +57,11 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     @Value("${events.track.geolocation:false}")
     private boolean trackGeoLocation;
-    
+
+    @Value("${cas.google.analytics.id:}")
+    private String googleAnalyticsTrackingId;
+
+
     /** If no authentication request from a service is present, halt and warn the user. */
     private boolean enableFlowOnAbsentServiceRequest = true;
 
@@ -85,7 +89,7 @@ public class InitialFlowSetupAction extends AbstractAction {
 
         WebUtils.putTicketGrantingTicketInScopes(context,
                 this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
-
+        WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, this.googleAnalyticsTrackingId);
         WebUtils.putWarningCookie(context,
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
