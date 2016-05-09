@@ -64,4 +64,4 @@ dependencies {
     runtime libraries.bouncycastle
 }
 
-processResources.dependsOn('npm_install', 'npm_run')
+//processResources.dependsOn('npm_install', 'npm_run')

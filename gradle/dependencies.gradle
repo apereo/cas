@@ -357,7 +357,7 @@ ext.libraries = [
                 }
         ],
         inspektraspects  : [
-                dependencies.create("org.jasig.inspektr:inspektr-aspects:$inspektrVersion") {
+                dependencies.create("org.apereo.inspektr:inspektr-aspects:$inspektrVersion") {
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.aspectj', module: 'aspectjrt')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
@@ -365,13 +365,13 @@ ext.libraries = [
                 }
         ],
         inspektr         : [
-                dependencies.create("org.jasig.inspektr:inspektr-audit:$inspektrVersion") {
+                dependencies.create("org.apereo.inspektr:inspektr-audit:$inspektrVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.aspectj', module: 'aspectjrt')
                     force = true
                 },
-                dependencies.create("org.jasig.inspektr:inspektr-support-spring:$inspektrVersion") {
+                dependencies.create("org.apereo.inspektr:inspektr-support-spring:$inspektrVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.springframework', module: 'spring-web')

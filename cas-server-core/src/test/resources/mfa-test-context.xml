@@ -60,7 +60,7 @@
 
 
     <bean id="auditTrailManager"
-          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
