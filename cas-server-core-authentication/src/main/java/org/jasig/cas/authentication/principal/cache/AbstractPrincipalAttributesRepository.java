@@ -39,8 +39,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private static final long serialVersionUID = 6350245643948535906L;
 
     /** Logger instance. */
-    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPrincipalAttributesRepository.class);
+    
     /** The expiration time. */
     protected final long expiration;
 
@@ -172,13 +172,13 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         final IPersonAttributes attrs = getAttributeRepository().getPerson(id);
 
         if (attrs == null) {
-            logger.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
+            LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
             return Collections.emptyMap();
         }
 
         final Map<String, List<Object>> attributes = attrs.getAttributes();
         if (attributes == null) {
-            logger.debug("Principal [{}] has no attributes and so none are returned.", id);
+            LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
             return Collections.emptyMap();
         }
         return attributes;
@@ -188,28 +188,28 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public final Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
-            logger.debug("Found [{}] cached attributes for principal [{}]", cachedAttributes.size(), p.getId());
+            LOGGER.debug("Found [{}] cached attributes for principal [{}]", cachedAttributes.size(), p.getId());
             return cachedAttributes;
         }
 
         if (getAttributeRepository() == null) {
-            logger.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}",
+            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}",
                     getClass().getName(), p.getId());
             return cachedAttributes;
         }
 
         final Map<String, List<Object>> sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
-        logger.debug("Found [{}] attributes for principal [{}] from the attribute repository.",
+        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.",
                 sourceAttributes.size(), p.getId());
 
         if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
-            logger.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
+            LOGGER.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
             return convertAttributesToPrincipalAttributesAndCache(p, sourceAttributes);
         }
 
         final Map<String, List<Object>> principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
 
-        logger.debug("Merging current principal attributes with that of the repository via strategy [{}]",
+        LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]",
                 this.mergingStrategy.getClass().getSimpleName());
         final Map<String, List<Object>> mergedAttributes =
                 this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
@@ -257,7 +257,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             if (context != null) {
                 return context.getBean("attributeRepository", IPersonAttributeDao.class);
             } else {
-                logger.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
+                LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
             }
         }
         return this.attributeRepository;
