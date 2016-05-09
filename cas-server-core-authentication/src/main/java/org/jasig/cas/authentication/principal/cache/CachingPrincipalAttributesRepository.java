@@ -4,6 +4,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import org.jasig.cas.authentication.principal.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,6 +23,8 @@ public final class CachingPrincipalAttributesRepository extends AbstractPrincipa
     private static final long serialVersionUID = 6350244643948535906L;
     private static final long DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingPrincipalAttributesRepository.class);
+    
     private final transient Cache<String, Map<String, Object>> cache;
     private final transient PrincipalAttributesCacheLoader cacheLoader =
             new PrincipalAttributesCacheLoader();
@@ -66,7 +70,7 @@ public final class CachingPrincipalAttributesRepository extends AbstractPrincipa
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
         this.cache.put(id, attributes);
-        logger.debug("Cached attributes for {}", id);
+        LOGGER.debug("Cached attributes for {}", id);
     }
 
     @Override
@@ -75,12 +79,12 @@ public final class CachingPrincipalAttributesRepository extends AbstractPrincipa
             return this.cache.get(p.getId(), new Callable<Map<String, Object>>() {
                 @Override
                 public Map<String, Object> call() throws Exception {
-                    logger.debug("No cached attributes could be found for {}", p.getId());
+                    LOGGER.debug("No cached attributes could be found for {}", p.getId());
                     return new HashMap<>();
                 }
             });
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
