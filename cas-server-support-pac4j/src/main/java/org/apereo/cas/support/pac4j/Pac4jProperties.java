@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @Component("pac4jProperties")
 @ConfigurationProperties(
-        prefix = "cas.pac4j"
+        prefix = Pac4jConfiguration.CAS_PAC4J_PREFIX
 )
 public class Pac4jProperties {
 
