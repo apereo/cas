@@ -57,6 +57,10 @@ dependencies {
     compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
     }
     compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
+    
+    providedCompile (group: 'javax', name: 'javaee-api', version: project.versions.javaeeVersion)
+	providedCompile (group: 'javax', name: 'javaee-web-api', version: project.versions.javaeeVersion)
+	providedCompile (group: 'javax', name: 'javaee-endorsed-api', version: project.versions.javaeeVersion)
 
     runtime (group: 'org.pac4j', name: 'pac4j-cas', version: pac4jVersion) {
         exclude(module: 'slf4j-api')
@@ -146,6 +150,29 @@ artifactory {
 			publishArtifacts = true
 		}
 	}
+}
+
+eclipse {
+    classpath {
+        file {
+            withXml { provider ->
+                def node = provider.asNode()
+                node.appendNode('classpathentry', [kind: 'con', path: 'org.eclipse.jst.j2ee.internal.module.container'])
+            }
+        }
+    }
+    wtp {
+        facet {
+            file {
+                withXml { provider ->
+                    def node = provider.asNode()
+                    node.appendNode('fixed', [facet: 'wst.jsdt.web'])
+                    node.appendNode('installed', [facet: 'wst.jsdt.web', version: '1.0'])
+                    node.installed.find { it.@facet == 'jst.web' }.@version = '3.0'
+                }
+            }
+        }
+    }
 }
 	
 // EOF

@@ -113,7 +113,8 @@ subprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: "idea"
-    apply plugin: "eclipse"
+    apply plugin: 'eclipse'
+	apply plugin: 'eclipse-wtp'
     apply plugin: "signing"
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'
@@ -143,6 +144,11 @@ subprojects {
 			downloadSources=true
 		}
 	}
+	eclipse.classpath.file {
+		whenMerged { classpath ->
+			classpath.entries.findAll { entry -> entry.kind == 'lib' }*.exported = false
+		}
+	}
 
     test {
         enabled = !Boolean.getBoolean("skipTests")
@@ -169,9 +175,9 @@ subprojects {
 
     configurations.all {
         resolutionStrategy {
-            // if (!Boolean.getBoolean("skipVersionConflict")) {
-            //    failOnVersionConflict()
-            // }
+//             if (!Boolean.getBoolean("skipVersionConflict")) {
+//                 failOnVersionConflict()
+//             }
         }
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
@@ -248,7 +254,7 @@ subprojects {
         compile group: 'org.aspectj', name: 'aspectjrt', version: aspectjVersion
         compile group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
         compile group: 'javax.validation', name: 'validation-api', version: javaxValidationVersion
-        compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+		compile (group: 'org.slf4j', name: 'slf4j-api', version: project.versions.slf4jVersion)
         
         // wavity
         compile (group: 'wavity-dependency', name: 'wavity-dependency', version: project.versions.wavityDependencyVersion) {
