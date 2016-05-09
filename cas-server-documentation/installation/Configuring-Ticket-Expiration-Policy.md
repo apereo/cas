@@ -68,7 +68,7 @@ grantingTicketExpirationPolicy=hardTimeoutExpirationPolicy
 Settings are controlled via:
 
 ```properties
-# tgt.timeout.hard.maxTimeToLiveInSeconds
+# tgt.timeout.hard.maxTimeToLiveInSeconds=28000
 ```
 
 #### Throttled

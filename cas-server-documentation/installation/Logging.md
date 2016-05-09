@@ -85,11 +85,11 @@ you first to configure the `SysLogAppender` and then specify which messages need
 
 ...
 
-<logger name="org.apereo" additivity="true">
+<AsyncLogger name="org.apereo" additivity="true">
     <level value="DEBUG" />
     <appender-ref ref="cas" />
     <appender-ref ref="SYSLOG" />
-</logger>
+</AsyncLogger>
 
 ```
 
@@ -110,6 +110,3 @@ You can also configure the remote destination output over SSL and specify the re
 ...
 
 ```
-
-For additional logging functionality, please refer to the Log4j configuration url or view
-the [CAS Logging functionality](Logging.html).
