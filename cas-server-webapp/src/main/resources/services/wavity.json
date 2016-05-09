@@ -1,7 +1,7 @@
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.*.wavity.com.*",
-  "name" : "Wavity Oneteam Web App",
+  "serviceId" : "^https://.*.wavity.(com|net|info).*",
+  "name" : "Wavity Web Services",
   "theme" : "wavity",
   "id" : 175854194241240,
   "description" : "This is a web app for testing the theme change.",
