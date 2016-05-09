@@ -24,7 +24,11 @@
                 <col width="10%"/>
             </colgroup>
             <tr ng-repeat="row in $data">
-                <td title="'Name'"
+                <!--
+                Todo: Look into custom table header template and pass in the messages.properties attributes.
+                      note: the value in the messages.properties file MUST HAVE single quotes around it.
+                -->
+                <td th:title="#{services.form.label.sas.rejectedattributes.name}"
                     ng-switch="row.isEditing"
                     ng-class="name.$dirty ? 'bg-warning' : ''"
                     ng-form="name">
@@ -36,7 +40,7 @@
                                       ng-model="row.name"></textarea>
                     </div>
                 </td>
-                <td title="'propValue'"
+                <td th:title="#{services.form.label.sas.rejectedattributes.value}"
                     ng-switch="row.isEditing"
                     ng-class="propValue.$dirty ? 'bg-warning' : ''"
                     ng-form="propValue">
