@@ -28,7 +28,10 @@ import java.util.Map;
 @Configuration("pac4jConfiguration")
 public class Pac4jConfiguration {
 
-    private static final String CAS_PAC4J_PREFIX = "cas.pac4j";
+    /**
+     * Property prefix.
+     */
+    public static final String CAS_PAC4J_PREFIX = "cas.pac4j";
 
     @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String serverLoginUrl;
