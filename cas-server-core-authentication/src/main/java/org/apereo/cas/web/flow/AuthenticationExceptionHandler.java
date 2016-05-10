@@ -181,11 +181,12 @@ public class AuthenticationExceptionHandler {
     /**
      * Maps an {@link AbstractTicketException} onto a state name equal to the simple class name of the exception with
      * highest precedence. Also sets an ERROR severity message in the message context with the error code found in
-     * {@link AbstractTicketException#getCode()}. If no match is found, {@value #UNKNOWN} is returned.
+     * {@link AbstractTicketException#getCode()}. If no match is found, 
+     * {@value AuthenticationExceptionHandler#UNKNOWN} is returned.
      *
      * @param e              Ticket exception to handle.
      * @param messageContext the spring message context
-     * @return Name of next flow state to transition to or {@value #UNKNOWN}
+     * @return Name of next flow state to transition to or {@value AuthenticationExceptionHandler#UNKNOWN}
      */
     protected String handleAbstractTicketException(final AbstractTicketException e, final MessageContext messageContext) {
         // find the first error in the error list that matches the AbstractTicketException
