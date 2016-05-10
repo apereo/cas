@@ -44,15 +44,23 @@ class PGPVerifyPlugin implements Plugin<Project> {
         }
         
         project.task('verifyPGPs') << {
-            log.info "Evaluating project " + project.name
             
-            try {
-                initCache()
-                keysMap.load(keysMapLocation)
-            } catch (Throwable e) {
-                throw new InvalidUserDataException("Could not load keys map", e)
-            }
+        }
+        project.task('obtainPGPs') << {
+            log.info "Evaluating project " + project.name
 
+            if (pgpKeysCachePath.exists()) {
+                if (!pgpKeysCachePath.isDirectory()) {
+                    throw new InvalidUserDataException("PGP keys cache path exist but is not a directory: " + pgpKeysCachePath)
+                }
+            } else {
+                if (pgpKeysCachePath.mkdirs()) {
+                    log.info("Create cache for PGP keys: " + pgpKeysCachePath)
+                } else {
+                    throw new InvalidUserDataException("Cache directory create error")
+                }
+            }
+            
             project.configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
                 def groupId = it.moduleVersion.id.group
                 def version = it.moduleVersion.id.version
@@ -71,16 +79,7 @@ class PGPVerifyPlugin implements Plugin<Project> {
                                     + it.name + '/' + version + '/' + tempPomName);
                             log.info "Retrieving POM file from " + pomFileUrl + " for " + artifactName
 
-                            try {
-                                def writer = new FileWriter(pomFile)
-                                IOUtils.copy(pomFileUrl.openStream(), writer)
-                            } catch (FileNotFoundException e) {
-                                log.warn "Could not locate POM file from " + pomFileUrl + ': ' + e.getMessage()
-                            }
-                            if (!pomFile.exists()) {
-                                println it.classifier + " @@@@@@@@ " + it.file.canonicalPath
-                                throw new InvalidUserDataException("Could not locate POM file: " + pomFile.canonicalPath)
-                            }
+                            retrieveUrl(pomFileUrl, pomFile)
                         }
                     } else if (!pomFile.exists()) {
                         log.warn("POM file does not exist for " + artifactName + " @ " + pomFile.canonicalPath)
@@ -94,48 +93,36 @@ class PGPVerifyPlugin implements Plugin<Project> {
                             + it.name + '/' + version + '/' + tempName);
 
                     log.info "Retrieving signature file from " + ascFileUrl + " for " + artifactName
-
                     def destSigFile = new File(pgpKeysCachePath, tempName)
                     log.info "Destination signature file for " + artifactName + " is @ " + destSigFile
 
                     if (!destSigFile.exists()) {
-                        try {
-                            def writer = new FileWriter(destSigFile)
-                            IOUtils.copy(ascFileUrl.openStream(), writer)
-                        } catch (FileNotFoundException e) {
-                            log.warn "Could not locate signature file from " + ascFileUrl + ': ' + e.getMessage()
-                        }
-                        if (!destSigFile.exists()) {
-                            throw new InvalidUserDataException("Could not locate signature (.asc) file for " + artifactName
-                                    + " from " + ascFileUrl)
-                        }
+                        retrieveUrl(ascFileUrl, destSigFile)
                     }
-
-                    def artifact = new ResolvedArtifact(it.file, pomFile, destSigFile)
-                    log.info "Resolved and collected artifact [" + artifactName + "]"
-                    artifacts.put(artifactName, artifact)
                 }
             }
-
-            println "Found " + artifacts.size() + " having processed " + project.name
         }        
         
 
     }
 
-    void initCache() {
-        if (pgpKeysCachePath.exists()) {
-            if (!pgpKeysCachePath.isDirectory()) {
-                throw new InvalidUserDataException("PGP keys cache path exist but is not a directory: " + pgpKeysCachePath)
-            }
-        } else {
-            if (pgpKeysCachePath.mkdirs()) {
-                log.info("Create cache for PGP keys: " + pgpKeysCachePath)
-            } else {
-                throw new InvalidUserDataException("Cache directory create error")
+    void retrieveUrl(URL url, def file) {
+        def inputStream
+        try {
+            inputStream = url.openStream()
+        } catch (FileNotFoundException e) {
+            throw new InvalidUserDataException("Could not locate resource: " + url)
+        } finally {
+            if (inputStream != null) {
+                def writer = new FileWriter(file)
+                writer.withCloseable {
+                    IOUtils.copy(inputStream, writer)
+                }
             }
         }
-
+    }
+    
+    void initCache() {
         try {
             pgpKeysCache = new PGPKeysCache(pgpKeysCachePath, pgpKeyServer)
         } catch (Throwable e) {

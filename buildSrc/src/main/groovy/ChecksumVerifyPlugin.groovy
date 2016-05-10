@@ -11,7 +11,7 @@ class WitnessPluginExtension {
 }
 
 @Slf4j
-class ChecksumPlugin implements Plugin<Project> {
+class ChecksumVerifyPlugin implements Plugin<Project> {
     static String calculateSha256(file) {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         file.eachByte 4096, { bytes, size ->
