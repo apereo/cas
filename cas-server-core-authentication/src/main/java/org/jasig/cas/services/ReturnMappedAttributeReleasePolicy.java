@@ -3,6 +3,8 @@ package org.jasig.cas.services;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     private static final long serialVersionUID = -6249488544306639050L;
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnMappedAttributeReleasePolicy.class);
+
     private Map<String, String> allowedAttributes;
 
     /**
@@ -64,7 +68,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
             if (value != null) {
                 final String mappedAttributeName = entry.getValue();
-                logger.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
                         key, mappedAttributeName);
                 attributesToRelease.put(mappedAttributeName, value);
             }
