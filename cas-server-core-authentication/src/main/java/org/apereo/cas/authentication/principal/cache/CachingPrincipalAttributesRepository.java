@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,6 +23,8 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long serialVersionUID = 6350244643948535906L;
     private static final long DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingPrincipalAttributesRepository.class);
+    
     private transient Cache<String, Map<String, Object>> cache;
     private transient PrincipalAttributesCacheLoader cacheLoader =
             new PrincipalAttributesCacheLoader();
@@ -66,18 +70,18 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
         this.cache.put(id, attributes);
-        logger.debug("Cached attributes for {}", id);
+        LOGGER.debug("Cached attributes for {}", id);
     }
 
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         try {
             return this.cache.get(p.getId(), () -> {
-                logger.debug("No cached attributes could be found for {}", p.getId());
+                LOGGER.debug("No cached attributes could be found for {}", p.getId());
                 return new HashMap<>();
             });
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }

@@ -73,7 +73,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "cas2SuccessView")
     public View cas2SuccessView() {
-        return new CasProtocolView(this.cas2SuccessView, this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView(this.cas2SuccessView, 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -84,7 +85,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "cas2ServiceFailureView")
     public View cas2ServiceFailureView() {
-        return new CasProtocolView(this.cas2FailureView, this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView(this.cas2FailureView, 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -95,7 +97,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "cas2ProxyFailureView")
     public View cas2ProxyFailureView() {
-        return new CasProtocolView(this.cas2ProxyFailureView, this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView(this.cas2ProxyFailureView, 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -106,7 +109,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "cas2ProxySuccessView")
     public View cas2ProxySuccessView() {
-        return new CasProtocolView(this.cas2ProxySuccessView, this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView(this.cas2ProxySuccessView, 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -117,7 +121,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "cas3SuccessView")
     public View cas3SuccessView() {
-        return new CasProtocolView(this.cas3SuccessView, this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView(this.cas3SuccessView, 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -128,7 +133,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "cas3ServiceFailureView")
     public View cas3ServiceFailureView() {
-        return new CasProtocolView(this.cas3FailureView, this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView(this.cas3FailureView, 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -139,7 +145,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "oauthConfirmView")
     public View oauthConfirmView() {
-        return new CasProtocolView("protocol/oauth/confirm", this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView("protocol/oauth/confirm", 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
 
@@ -151,7 +158,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "casOpenIdServiceFailureView")
     public View casOpenIdServiceFailureView() {
-        return new CasProtocolView("protocol/openid/casOpenIdServiceFailureView", this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView("protocol/openid/casOpenIdServiceFailureView", 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -162,7 +170,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "casOpenIdServiceSuccessView")
     public View casOpenIdServiceSuccessView() {
-        return new CasProtocolView("protocol/openid/casOpenIdServiceSuccessView", this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView("protocol/openid/casOpenIdServiceSuccessView", 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -173,7 +182,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "casOpenIdAssociationFailureView")
     public View casOpenIdAssociationFailureView() {
-        return new CasProtocolView("protocol/openid/casOpenIdAssociationFailureView", this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView("protocol/openid/casOpenIdAssociationFailureView", 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -184,7 +194,8 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "casOpenIdAssociationSuccessView")
     public View casOpenIdAssociationSuccessView() {
-        return new CasProtocolView("protocol/openid/casOpenIdAssociationSuccessView", this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView("protocol/openid/casOpenIdAssociationSuccessView", 
+                this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
     /**
@@ -195,14 +206,12 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean(name = "openIdProviderView")
     public View openIdProviderView() {
-        return new CasProtocolView("protocol/openid/user", this.applicationContext, this.springTemplateEngine);
+        return new CasProtocolView("protocol/openid/user", this.applicationContext, this.springTemplateEngine,
+                this.properties);
     }
     
 
     private static class CasProtocolView extends ThymeleafView {
-
-        @Autowired
-        private ThymeleafProperties properties;
         /**
          * Instantiates a new Cas protocol view.
          *
@@ -211,9 +220,8 @@ public class CasProtocolViewsConfiguration {
          * @param templateEngine     the template engine
          */
         CasProtocolView(final String templateName, final ApplicationContext applicationContext,
-                        final SpringTemplateEngine templateEngine) {
+                        final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
             super(templateName);
-            applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
             setApplicationContext(applicationContext);
             setTemplateEngine(templateEngine);
             setCharacterEncoding(properties.getEncoding().displayName());
