@@ -709,6 +709,7 @@ ext.libraries = [
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'commons-io', module: 'commons-io')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
@@ -799,6 +800,7 @@ ext.libraries = [
             exclude(group: 'org.springframework', module: 'spring-core')
             exclude(group: 'org.springframework', module: 'spring-tx')
             exclude(group: 'com.google.guava', module: 'guava')
+            exclude(group: 'commons-io', module: 'commons-io')
             force = true
         },
         quartz           : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {

@@ -4,4 +4,5 @@ repositories {
 
 dependencies {
     compile 'org.bouncycastle:bcpg-jdk15on:1.54'
+    compile 'commons-io:commons-io:2.5'
 }

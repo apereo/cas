@@ -1,4 +1,6 @@
+import groovy.transform.TupleConstructor
 import groovy.util.logging.Slf4j
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.bouncycastle.openpgp.PGPPublicKey
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection
@@ -21,6 +23,8 @@ class PGPVerifyPluginExtension {
     String pgpKeyServer
 }
 
+
+
 @Slf4j
 class PGPVerifyPlugin implements Plugin<Project> {
     String keysMapLocation
@@ -32,12 +36,72 @@ class PGPVerifyPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("pgpPlugin", PGPVerifyPluginExtension)
         project.afterEvaluate {
+
+            log.info "Evaluating project " + project.name
+
+            if (!project.pgpPlugin.enabled) {
+                return
+            }
+
+            
             initCache()
             try {
                 keysMap.load(keysMapLocation)
             } catch (Throwable) {
-                throw new InvalidUserDataException("load keys map", e)
+                throw new InvalidUserDataException("Could not load keys map", e)
             }
+
+            def artifacts = [:]
+            
+            project.configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
+                def groupId = it.moduleVersion.id.group
+                def version = it.moduleVersion.id.version
+
+                def artifactName = groupId + ":" + it.name + ":" + version
+                
+                if (!version.endsWith("SNAPSHOT")) {
+                    log.info "Looking at " + artifactName + " @ " + it.file.canonicalPath
+                    
+                    def pomFile = new File(it.file.canonicalPath.replaceAll("\\.jar", ".pom"))
+                    
+                    if (project.pgpPlugin.verifyPomFiles) {
+                        if (!pomFile.exists()) {
+                            throw new InvalidUserDataException("Could not locate pom file: " + pomFile.canonicalPath)
+                        } 
+                        log.warn("Pom file does not exist for " + artifactName + " @ " + pomFile.canonicalPath)
+                    }
+
+                    def ascFilePath = groupId.replace('.', '/')
+                     
+                    def tempName = it.name + '-' + version + ".jar.asc"
+                    
+                    def ascFileUrl = new URL("https://repo1.maven.org/maven2/" + ascFilePath + '/'
+                            + it.name + '/' + version + '/' + tempName);
+                    
+                    log.info "Retrieving signature file from " + ascFileUrl + " for " + artifactName
+                    
+                    def destSigFile = new File(pgpKeysCachePath, tempName)
+                    log.info "Destination signature file for " + artifactName + " is @ " + destSigFile
+                                        
+                    try {
+                        def writer = new FileWriter(destSigFile)
+                        IOUtils.copy(ascFileUrl.openStream(), writer)
+                    } catch (Throwable e) {
+                        log.warn e.getMessage()
+                    }
+
+                    if (!destSigFile.exists()) {
+                        throw new InvalidUserDataException("Could not locate signature (.asc) file for " + artifactName
+                                + " from " + ascFileUrl)
+                    }
+
+                    def artifact = new ResolvedArtifact(it.file, pomFile, destSigFile)
+                    log.info "Resolved and collected artifact [" + artifactName + "]"
+                    artifacts.put(artifactName, artifact)
+                }
+            }
+            
+            println "Found " + artifacts.size()
         }
     }
 
@@ -338,4 +402,11 @@ class PGPKeysCache {
         }
         keyFile.delete()
     }
+}
+
+@TupleConstructor
+class ResolvedArtifact {
+    File original
+    File pom
+    File signature
 }
