@@ -44,7 +44,6 @@ allprojects {
     }
 }
 
-
 subprojects {
     task allDepInsight(type: DependencyInsightReportTask) << {}
     task allDeps(type: DependencyReportTask) {}
@@ -56,8 +55,10 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: 'com.moowork.node'
     apply plugin: 'witness'
+    apply plugin: 'pgpverify'
 
     apply from: rootProject.file("gradle/checksums.gradle")
+    apply from: rootProject.file("gradle/pgpverify.gradle")
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;
@@ -203,7 +204,7 @@ subprojects {
         compile libraries.commons
         compile libraries.jodatime
         compile libraries.inspektr
-
+                
         compileOnly libraries.javax
         
         if (!Boolean.getBoolean("skipAspectJ")) {
