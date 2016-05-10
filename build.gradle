@@ -52,7 +52,7 @@ subprojects {
     apply plugin: 'findbugs'
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
-    apply plugin: 'witness'
+    apply plugin: 'checksumverify'
     apply plugin: 'pgpverify'
 
     apply from: rootProject.file("gradle/checksums.gradle")

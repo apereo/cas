@@ -1,6 +1,5 @@
 dependencyVerification {
     ignorePattern = project.group + ".+" + project.version + ".*"
-    enabled = Boolean.getBoolean("verifyChecksums")
     verify = [
         'org.aspectj:aspectjrt:1.8.9:403913aa06b8dfe3a847211350f164ef98ce7221d65442ce930c1ddd0d3ef2cd',
         'org.aspectj:aspectjweaver:1.8.9:5e41d39eca300e2d8e6067f5660d70dcc66ec2da9cbd46a3d5985e609d1e6ecf',
@@ -16,7 +15,7 @@ dependencyVerification {
         'com.google.guava:guava:19.0:58d4cc2e05ebb012bbac568b032f75623be1cb6fb096f3c60c72a86f7f057de4',
         'org.reflections:reflections:0.9.10:6eecd8b68f937e7220cf4da839403730e102cc31d25ccf5685a2dba0ea8d7553',
         'org.javassist:javassist:3.20.0-GA:d7691062fb779c2381640c8f72acba2c23873b01c243866d41c15dc4c8848ea2',
-        'commons-io:commons-io:2.4:cc6a41dc3eaacc9e440a6bd0d2890b20d36b4ee408fe2d67122f328bb6e01581',
+        'commons-io:commons-io:2.5:a10418348d234968600ccb1d988efcbbd08716e1d96936ccc1880e7d22513474',
         'commons-codec:commons-codec:1.10:4241dfa94e711d435f29a4604a3e2de5c4aa3c165e23bd066be6fc1fc4309569',
         'commons-jexl:commons-jexl:1.1:83347de7cfb4a37e10ec1a72c4465c19bc35214277b18244bb2cb4e142d983de',
         'org.apache.commons:commons-lang3:3.4:734c8356420cc8e30c795d64fd1fcd5d44ea9d90342a2cc3262c5158fbc6d98b',
@@ -44,7 +43,7 @@ dependencyVerification {
         'org.springframework:spring-tx:4.2.6.RELEASE:7f9e44b6bd0dc899c69b0d81c903fee8771ee60152ac3ce003f5909b03b9eb26',
         'org.springframework:spring-web:4.2.6.RELEASE:1a5d8da8f2d31f069fd8cbd8b9abdc888b17f31c25ca42af10eb43bbb1a626ba',
         'org.springframework.webflow:spring-webflow:2.4.2.RELEASE:92e4a6c728ddc69f2460a74cdf97deb7bf74ee6dbddc19d0db56cf56c6cbd85f',
-        'org.jasig:spring-webflow-client-repo:1.0.2:22d72ad6f666361730c991a741cc13b2a3b2c63ae037ed5ec2877472a89ae6f1',
+        'org.apereo:spring-webflow-client-repo:1.0.3:ffe02adb7f063a3ccc81e3c4361bf95cd8262482857910a988cc11df3e286628',
         'org.springframework:spring-webmvc:4.2.6.RELEASE:b6d3a0c55769dd8599143913ef2be2b27bdb3113a6a732977a7e6e5531a52e75',
         'org.thymeleaf:thymeleaf-spring4:2.1.4.RELEASE:0c8301d3341d7c511d76626c48b9783aac0fec6f6e412916703d9ed3c49c489e',
         'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.3.3:a2a480d2e846c62b98e3984d6f153b455b6264ed77ecf149c4fa99ee34cd5238',
@@ -321,7 +320,7 @@ dependencyVerification {
         'org.samba.jcifs:jcifs-ext:0.9.4:1bb68a993ea427210c1e3a1235a576bf0049625c19a5bef204a42ca7d81d496a',
         'javax.servlet:servlet-api:2.4:243f8b5577f59bffdd30fd15cc25fc13004a6b08773a61cc32e48726c3633b7c',
         'com.yubico:yubico-validation-client2:3.0.1:c7d46eda394799e2b0cc215bffdd7ed0c17a2bf8788182d11de95f88545fd2f1',
-        'org.jasig.cas:cas-server-security-filter:2.0.4:79eb65614b859b71553c5b99943c7df19f7e0255c4a39ff20bc0df6848309360',
+        'org.apereo.cas:cas-server-security-filter:2.0.5:3be049a47943b6219d28fbce0344a55fe57586eabfc397710a90e5bb13a69499',
         'commons-beanutils:commons-beanutils:1.9.2:23729e3a2677ed5fb164ec999ba3fcdde3f8460e5ed086b6a43d8b5d46998d42',
         'commons-collections:commons-collections:3.2.2:eeeae917917144a68a741d4c0dff66aa5c5c5fd85593ff217bced3fc8ca783b8',
         'org.springframework.session:spring-session:1.1.1.RELEASE:612f434f29fcb1b900423c8a11f418b9a515d8db786c7e081339be9a07b9675b',

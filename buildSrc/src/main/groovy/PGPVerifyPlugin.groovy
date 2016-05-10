@@ -16,7 +16,6 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class PGPVerifyPluginExtension {
-    Boolean enabled
     Boolean failNoSignature
     Boolean failWeakSignature
     Boolean verifyPomFiles
@@ -26,52 +25,46 @@ class PGPVerifyPluginExtension {
 @Slf4j
 class PGPVerifyPlugin implements Plugin<Project> {
     def MAVEN_CENTRAL = "https://repo1.maven.org/maven2/"
+
+    def artifacts = [:]
     
     String keysMapLocation
     File pgpKeysCachePath = new File(System.getProperty("user.home"), ".gradle/pgp-cache")
     String pgpKeyServer = "https://pgp.mit.edu"
     KeysMap keysMap = new KeysMap()
     PGPKeysCache pgpKeysCache
-
-    
     
     void apply(Project project) {
+        project.extensions.create("PGPVerifyPlugin", PGPVerifyPluginExtension)
+        
         project.task('cleanPGPCache') << {
             if (pgpKeysCachePath.exists()) {
                 FileUtils.forceDelete(pgpKeysCachePath)
             }
         }
         
-        project.extensions.create("pgpPlugin", PGPVerifyPluginExtension)
-        project.afterEvaluate {
-
+        project.task('verifyPGPs') << {
             log.info "Evaluating project " + project.name
-
-            if (!project.pgpPlugin.enabled) {
-                return
-            }
             
             try {
                 initCache()
                 keysMap.load(keysMapLocation)
-            } catch (Throwable) {
+            } catch (Throwable e) {
                 throw new InvalidUserDataException("Could not load keys map", e)
             }
 
-            def artifacts = [:]
-            
             project.configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
                 def groupId = it.moduleVersion.id.group
                 def version = it.moduleVersion.id.version
 
                 def artifactName = groupId + ":" + it.name + ":" + version
-                
+
                 if (!version.endsWith("SNAPSHOT")) {
                     log.info "Looking at " + artifactName + " @ " + it.file.canonicalPath
 
                     def tempPomName = it.name + '-' + version + ".pom"
                     def pomFile = new File(pgpKeysCachePath, tempPomName)
-                    if (it.extension.equals("jar") && project.pgpPlugin.verifyPomFiles) {
+                    if (it.extension.equals("jar") && project.PGPVerifyPlugin.verifyPomFiles) {
                         if (!pomFile.exists()) {
                             def pomFilePath = groupId.replace('.', '/')
                             def pomFileUrl = new URL(MAVEN_CENTRAL + pomFilePath + '/'
@@ -94,14 +87,14 @@ class PGPVerifyPlugin implements Plugin<Project> {
                     }
 
                     def ascFilePath = groupId.replace('.', '/')
-                     
+
                     def tempName = it.name + '-' + version + ".jar.asc"
-                    
+
                     def ascFileUrl = new URL(MAVEN_CENTRAL + ascFilePath + '/'
                             + it.name + '/' + version + '/' + tempName);
-                    
+
                     log.info "Retrieving signature file from " + ascFileUrl + " for " + artifactName
-                    
+
                     def destSigFile = new File(pgpKeysCachePath, tempName)
                     log.info "Destination signature file for " + artifactName + " is @ " + destSigFile
 
@@ -117,15 +110,17 @@ class PGPVerifyPlugin implements Plugin<Project> {
                                     + " from " + ascFileUrl)
                         }
                     }
-                    
+
                     def artifact = new ResolvedArtifact(it.file, pomFile, destSigFile)
                     log.info "Resolved and collected artifact [" + artifactName + "]"
                     artifacts.put(artifactName, artifact)
                 }
             }
-            
-            log.info "Found " + artifacts.size() + " having processed " + project.name
-        }
+
+            println "Found " + artifacts.size() + " having processed " + project.name
+        }        
+        
+
     }
 
     void initCache() {
