@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
+ * Abstract release policy for attributes, provides common shared settings such as LOGGERs and attribute filter config.
  * Subclasses are to provide the behavior for attribute retrieval.
  * @author Misagh Moayyed
  * @since 4.1.0
@@ -21,9 +21,9 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     
     private static final long serialVersionUID = 5325460875620586503L;
 
-    /** The logger. */
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    /** The LOGGER. */
+ //   protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredServiceAttributeReleasePolicy.class);
     /** The attribute filter. */
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
 
