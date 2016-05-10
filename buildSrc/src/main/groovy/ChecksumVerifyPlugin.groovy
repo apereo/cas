@@ -5,7 +5,7 @@ import org.gradle.api.Project
 
 import java.security.MessageDigest
 
-class WitnessPluginExtension {
+class ChecksumVerifyPluginExtension {
     List verify
     String ignorePattern
 }
@@ -22,7 +22,7 @@ class ChecksumVerifyPlugin implements Plugin<Project> {
 
 
     void apply(Project project) {
-        project.extensions.create("dependencyVerification", WitnessPluginExtension)
+        project.extensions.create("dependencyVerification", ChecksumVerifyPluginExtension)
 
         project.task('verifyChecksums') << {
             log.info "Evaluating project " + project.name

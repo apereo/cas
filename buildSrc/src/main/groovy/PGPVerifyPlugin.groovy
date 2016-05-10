@@ -46,9 +46,10 @@ class PGPVerifyPlugin implements Plugin<Project> {
         project.task('verifyPGPs') << {
             
         }
+        
         project.task('obtainPGPs') << {
             log.info "Evaluating project " + project.name
-
+            
             if (pgpKeysCachePath.exists()) {
                 if (!pgpKeysCachePath.isDirectory()) {
                     throw new InvalidUserDataException("PGP keys cache path exist but is not a directory: " + pgpKeysCachePath)
@@ -75,11 +76,15 @@ class PGPVerifyPlugin implements Plugin<Project> {
                     if (it.extension.equals("jar") && project.PGPVerifyPlugin.verifyPomFiles) {
                         if (!pomFile.exists()) {
                             def pomFilePath = groupId.replace('.', '/')
+                            
+                            
                             def pomFileUrl = new URL(MAVEN_CENTRAL + pomFilePath + '/'
                                     + it.name + '/' + version + '/' + tempPomName);
                             log.info "Retrieving POM file from " + pomFileUrl + " for " + artifactName
-
                             retrieveUrl(pomFileUrl, pomFile)
+                            
+                            
+                            
                         }
                     } else if (!pomFile.exists()) {
                         log.warn("POM file does not exist for " + artifactName + " @ " + pomFile.canonicalPath)
@@ -101,9 +106,7 @@ class PGPVerifyPlugin implements Plugin<Project> {
                     }
                 }
             }
-        }        
-        
-
+        }
     }
 
     void retrieveUrl(URL url, def file) {
