@@ -170,11 +170,11 @@ public class CasApplicationContextConfiguration {
             }
         };
     }
-    
+
     /**
-     * Scheduler scheduler factory bean.
+     * Scheduler factory bean.
      *
-     * @return the scheduler factory bean
+     * @return the factory bean
      */
     @Bean(name = "scheduler")
     public FactoryBean<Scheduler> scheduler() {
@@ -183,7 +183,7 @@ public class CasApplicationContextConfiguration {
         factory.setJobFactory(this.casSpringBeanJobFactory);
 
         final Properties properties = new Properties();
-        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);
+        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);        
         properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, this.interruptJobs);
         factory.setQuartzProperties(properties);
         return factory;
