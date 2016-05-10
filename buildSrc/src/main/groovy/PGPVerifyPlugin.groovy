@@ -23,17 +23,25 @@ class PGPVerifyPluginExtension {
     String pgpKeyServer
 }
 
-
-
 @Slf4j
 class PGPVerifyPlugin implements Plugin<Project> {
+    def MAVEN_CENTRAL = "https://repo1.maven.org/maven2/"
+    
     String keysMapLocation
     File pgpKeysCachePath = new File(System.getProperty("user.home"), ".gradle/pgp-cache")
     String pgpKeyServer = "https://pgp.mit.edu"
     KeysMap keysMap = new KeysMap()
     PGPKeysCache pgpKeysCache
+
+    
     
     void apply(Project project) {
+        project.task('cleanPGPCache') << {
+            if (pgpKeysCachePath.exists()) {
+                FileUtils.forceDelete(pgpKeysCachePath)
+            }
+        }
+        
         project.extensions.create("pgpPlugin", PGPVerifyPluginExtension)
         project.afterEvaluate {
 
@@ -42,10 +50,9 @@ class PGPVerifyPlugin implements Plugin<Project> {
             if (!project.pgpPlugin.enabled) {
                 return
             }
-
             
-            initCache()
             try {
+                initCache()
                 keysMap.load(keysMapLocation)
             } catch (Throwable) {
                 throw new InvalidUserDataException("Could not load keys map", e)
@@ -61,52 +68,67 @@ class PGPVerifyPlugin implements Plugin<Project> {
                 
                 if (!version.endsWith("SNAPSHOT")) {
                     log.info "Looking at " + artifactName + " @ " + it.file.canonicalPath
-                    
-                    def pomFile = new File(it.file.canonicalPath.replaceAll("\\.jar", ".pom"))
-                    
-                    if (project.pgpPlugin.verifyPomFiles) {
+
+                    def tempPomName = it.name + '-' + version + ".pom"
+                    def pomFile = new File(pgpKeysCachePath, tempPomName)
+                    if (it.extension.equals("jar") && project.pgpPlugin.verifyPomFiles) {
                         if (!pomFile.exists()) {
-                            throw new InvalidUserDataException("Could not locate pom file: " + pomFile.canonicalPath)
-                        } 
-                        log.warn("Pom file does not exist for " + artifactName + " @ " + pomFile.canonicalPath)
+                            def pomFilePath = groupId.replace('.', '/')
+                            def pomFileUrl = new URL(MAVEN_CENTRAL + pomFilePath + '/'
+                                    + it.name + '/' + version + '/' + tempPomName);
+                            log.info "Retrieving POM file from " + pomFileUrl + " for " + artifactName
+
+                            try {
+                                def writer = new FileWriter(pomFile)
+                                IOUtils.copy(pomFileUrl.openStream(), writer)
+                            } catch (FileNotFoundException e) {
+                                log.warn "Could not locate POM file from " + pomFileUrl + ': ' + e.getMessage()
+                            }
+                            if (!pomFile.exists()) {
+                                println it.classifier + " @@@@@@@@ " + it.file.canonicalPath
+                                throw new InvalidUserDataException("Could not locate POM file: " + pomFile.canonicalPath)
+                            }
+                        }
+                    } else if (!pomFile.exists()) {
+                        log.warn("POM file does not exist for " + artifactName + " @ " + pomFile.canonicalPath)
                     }
 
                     def ascFilePath = groupId.replace('.', '/')
                      
                     def tempName = it.name + '-' + version + ".jar.asc"
                     
-                    def ascFileUrl = new URL("https://repo1.maven.org/maven2/" + ascFilePath + '/'
+                    def ascFileUrl = new URL(MAVEN_CENTRAL + ascFilePath + '/'
                             + it.name + '/' + version + '/' + tempName);
                     
                     log.info "Retrieving signature file from " + ascFileUrl + " for " + artifactName
                     
                     def destSigFile = new File(pgpKeysCachePath, tempName)
                     log.info "Destination signature file for " + artifactName + " is @ " + destSigFile
-                                        
-                    try {
-                        def writer = new FileWriter(destSigFile)
-                        IOUtils.copy(ascFileUrl.openStream(), writer)
-                    } catch (Throwable e) {
-                        log.warn e.getMessage()
-                    }
 
                     if (!destSigFile.exists()) {
-                        throw new InvalidUserDataException("Could not locate signature (.asc) file for " + artifactName
-                                + " from " + ascFileUrl)
+                        try {
+                            def writer = new FileWriter(destSigFile)
+                            IOUtils.copy(ascFileUrl.openStream(), writer)
+                        } catch (FileNotFoundException e) {
+                            log.warn "Could not locate signature file from " + ascFileUrl + ': ' + e.getMessage()
+                        }
+                        if (!destSigFile.exists()) {
+                            throw new InvalidUserDataException("Could not locate signature (.asc) file for " + artifactName
+                                    + " from " + ascFileUrl)
+                        }
                     }
-
+                    
                     def artifact = new ResolvedArtifact(it.file, pomFile, destSigFile)
                     log.info "Resolved and collected artifact [" + artifactName + "]"
                     artifacts.put(artifactName, artifact)
                 }
             }
             
-            println "Found " + artifacts.size()
+            log.info "Found " + artifacts.size() + " having processed " + project.name
         }
     }
 
     void initCache() {
-
         if (pgpKeysCachePath.exists()) {
             if (!pgpKeysCachePath.isDirectory()) {
                 throw new InvalidUserDataException("PGP keys cache path exist but is not a directory: " + pgpKeysCachePath)

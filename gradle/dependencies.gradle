@@ -464,7 +464,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework', module: 'spring-context-support')
                     exclude(group: 'org.springframework', module: 'spring-core')
-                    exclude(module: 'commons-lang')
+                    exclude(group: 'commons-lang', module: 'commons-lang')
                     force = true
                 },
                 "gnu.getopt:java-getopt:1.0.13"
@@ -493,6 +493,7 @@ ext.libraries = [
                     exclude(group: 'org.apache.commons', module: 'commons-lang3')
                     exclude(group: 'net.spy', module: 'spymemcached')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'commons-io', module: 'commons-io')
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
