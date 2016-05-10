@@ -26,7 +26,7 @@ ext.libraries = [
             exclude(group: 'org.slf4j', module: 'slf4j-api')
             force = true
         },
-        cassecurityfilter: "org.jasig.cas:cas-server-security-filter:$casSecurityFilterVersion",
+        cassecurityfilter: "org.apereo.cas:cas-server-security-filter:$casSecurityFilterVersion",
         commons          : [
                 "commons-io:commons-io:$commonsIoVersion",
                 "commons-codec:commons-codec:$commonsCodecVersion",
@@ -1097,7 +1097,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     force = true
                 },
-                dependencies.create("org.jasig:spring-webflow-client-repo:$springWebflowClientVersion") {
+                dependencies.create("org.apereo:spring-webflow-client-repo:$springWebflowClientVersion") {
                     exclude(group: 'log4j', module: 'log4j')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
