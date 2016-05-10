@@ -63,7 +63,7 @@ Settings are controlled via:
 ```
 
 #### `ThrottledUseAndTimeoutExpirationPolicy`
-The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at 
+The throttled timeout policy provides the concept of throttling where a ticket may be used at 
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client 
 attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
