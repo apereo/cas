@@ -168,7 +168,7 @@
     <!-- Password policy failure states -->
     <end-state id="abstactPasswordChangeView">
         <on-entry>
-            <set name="flowScope.passwordPolicyUrl" value="passwordPolicy.passwordPolicyUrl"/>
+            <set name="flowScope.passwordPolicyUrl" value="passwordPolicyConfiguration.passwordPolicyUrl"/>
         </on-entry>
     </end-state>
     <end-state id="casExpiredPassView" view="casExpiredPassView" parent="#abstactPasswordChangeView"/>
