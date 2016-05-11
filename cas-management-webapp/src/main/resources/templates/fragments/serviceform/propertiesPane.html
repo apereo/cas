@@ -1,13 +1,87 @@
-<!-- Todo: Add properties table -->
-<div class="properties-container">
+<!--
+Todo: Polish the table functionality
+Todo: Wire up the save/edit functionality
+-->
+<div id="properties-container" ng-controller="propertiesController as property">
     <div class="panel panel-success">
         <div class="panel-heading">
             <h3 class="panel-title">
-                <span th:text="#{services.form.header.properties}" />
+                <span th:text="#{services.form.header.properties}"/>
             </h3>
         </div> <!-- end .panel-header div -->
         <div class="panel-body">
-            add table here...
+            <table ng-table="property.tableParams"
+                   class="table table-striped table-responsive table-condensed editable-table" show-filter="false">
+                <colgroup>
+                    <col width="45%"/>
+                    <col width="45%"/>
+                    <col width="10%"/>
+                </colgroup>
+                <tr ng-repeat="row in $data">
+                    <td th:title="#{services.form.header.properties.name}"
+                        ng-switch="row.isEditing"
+                        ng-class="name.$dirty ? 'bg-warning' : ''"
+                        ng-form="name">
+                        <span ng-switch-default="ng-switch-default" class="editable-text">{{row.name}}</span>
+                        <div class="controls"
+                             ng-class="name.$invalid &amp;&amp; name.$dirty ? 'has-error' : ''"
+                             ng-switch-when="true">
+                            <textarea class="form-control noresize editable-text" rows="2"
+                                      ng-model="row.name"></textarea>
+                        </div>
+                    </td>
+                    <td th:title="#{services.form.header.properties.value}"
+                        ng-switch="row.isEditing"
+                        ng-class="propValue.$dirty ? 'bg-warning' : ''"
+                        ng-form="propValue">
+                        <span ng-switch-default="ng-switch-default" class="editable-text">{{row.propValue}}</span>
+                        <div class="controls"
+                             ng-class="propValue.$invalid &amp;&amp; propValue.$dirty ? 'has-error' : ''"
+                             ng-switch-when="true">
+                            <textarea class="form-control noresize editable-text" rows="2"
+                                      ng-model="row.propValue"></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" ng-click="property.save(row, rowForm)"
+                                ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span
+                                class="glyphicon glyphicon-ok"></span></button>
+                        <button class="btn btn-default btn-sm" ng-click="property.cancel(row, rowForm)"
+                                ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+                        <button class="btn btn-default btn-sm" ng-click="row.isEditing = true" ng-if="!row.isEditing">
+                            <span class="glyphicon glyphicon-pencil"></span></button>
+                        <button class="btn btn-danger btn-sm" ng-click="property.del(row)" ng-if="!row.isEditing"><span
+                                class="glyphicon glyphicon-trash"></span></button>
+                    </td>
+                </tr>
+                <tr ng-show="row.isAdding">
+                    <td><textarea class="form-control noresize editable-text" rows="2" placeholder="New property name"
+                                  ng-model="row.propValue"></textarea></td>
+                    <td><textarea class="form-control noresize editable-text" rows="2" placeholder="New property value"
+                                  ng-model="row.propValue"></textarea></td>
+                    <td>
+                        <button class="btn btn-success btn-sm"
+                                ng-click=""
+                                ng-if="row.isAdding" ng-disabled="">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                        <!-- Todo: change this so it calls a method to reset the form -->
+                        <button class="btn btn-default btn-sm"
+                                ng-click="row.isAdding=false">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr class="addRow" ng-show="!row.isAdding">
+                    <td>
+                        <button class="btn btn-default btn-sm" ng-click="row.isAdding = true" >
+                            <span class="glyphicon glyphicon-plus text-success"></span>
+                        </button>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
