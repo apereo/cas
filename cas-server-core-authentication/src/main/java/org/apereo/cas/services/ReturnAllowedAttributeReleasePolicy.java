@@ -3,6 +3,8 @@ package org.apereo.cas.services;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +21,8 @@ import java.util.Map;
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnAllowedAttributeReleasePolicy.class);
     
     private List<String> allowedAttributes;
 
@@ -62,7 +66,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
 
         this.allowedAttributes.stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
                 .forEach(attribute -> {
-                    logger.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
+                    LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
             attributesToRelease.put((String) attribute[0], attribute[1]);
         });
         return attributesToRelease;
