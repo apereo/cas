@@ -18,6 +18,7 @@ import java.util.Properties;
  * This this {@link JpaServiceRegistryConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("jpaServiceRegistryConfiguration")
@@ -114,7 +115,6 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-    @RefreshScope
     @Bean(name = "serviceEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();

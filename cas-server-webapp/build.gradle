@@ -21,7 +21,7 @@ war {
 
 bootRun {
     addResources = true
-    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    //jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
 }
 
 springBoot  {
@@ -52,6 +52,11 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-webapp-validation')
+
+    //Local development
+    compile project(':cas-server-support-jpa-service-registry')
+    //compile 'mysql:mysql-connector-java:6.0.2'
+    compile 'org.hsqldb:hsqldb:2.3.3'
 
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j
