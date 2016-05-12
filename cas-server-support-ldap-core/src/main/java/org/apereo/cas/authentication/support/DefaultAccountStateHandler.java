@@ -1,17 +1,17 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.DefaultMessageDescriptor;
+import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.InvalidLoginLocationException;
 import org.apereo.cas.authentication.InvalidLoginTimeException;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
 import org.ldaptive.auth.ext.EDirectoryAccountState;
+import org.ldaptive.auth.ext.FreeIPAAccountState;
 import org.ldaptive.auth.ext.PasswordExpirationAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.slf4j.Logger;
@@ -21,7 +21,9 @@ import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -67,6 +69,15 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         this.errorMap.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
         this.errorMap.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new CredentialExpiredException());
+        this.errorMap.put(FreeIPAAccountState.Error.FAILED_AUTHENTICATION, new FailedLoginException());
+        this.errorMap.put(FreeIPAAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(FreeIPAAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
+        this.errorMap.put(FreeIPAAccountState.Error.MAXIMUM_LOGINS_EXCEEDED, new AccountLockedException());
+        this.errorMap.put(FreeIPAAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
+        this.errorMap.put(FreeIPAAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
+        this.errorMap.put(FreeIPAAccountState.Error.ACCOUNT_NOT_FOUND, new AccountNotFoundException());
+        this.errorMap.put(FreeIPAAccountState.Error.CREDENTIAL_NOT_FOUND, new FailedLoginException());
+        this.errorMap.put(FreeIPAAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
     }
 
     @Override
