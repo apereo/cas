@@ -12,7 +12,7 @@
        http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="ldaptivePersonAttributeDao" class="org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao"
+    <bean id="ldaptivePersonAttributeDao" class="org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao"
           p:connectionFactory-ref="provisioningConnectionFactory"
           p:baseDN="${ldap.baseDn}"
           p:searchFilter="${ldap.resolver.searchFilter}"

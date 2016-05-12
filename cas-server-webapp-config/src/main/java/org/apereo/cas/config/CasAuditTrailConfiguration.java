@@ -59,9 +59,12 @@ public class CasAuditTrailConfiguration {
     @Value("${cas.audit.singleline:false}")
     private boolean useSingleLine;
 
-    @Value("${cas.audit.format:JSON}")
+    @Value("${cas.audit.format:DEFAULT}")
     private AbstractStringAuditTrailManager.AuditFormats auditFormat;
 
+    @Value("${cas.audit.ignore.failures:true}")
+    private boolean ignoreAuditFailures;
+    
     /**
      * Audit trail management aspect audit trail management aspect.
      *
@@ -69,10 +72,11 @@ public class CasAuditTrailConfiguration {
      */
     @Bean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
-        return new AuditTrailManagementAspect(this.appCode,
+        final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(this.appCode,
                 this.principalResolver, ImmutableList.of(auditTrailManager()), auditActionResolverMap(),
                 auditResourceResolverMap());
-
+        aspect.setFailOnAuditFailures(!this.ignoreAuditFailures);
+        return aspect;
     }
 
     /**

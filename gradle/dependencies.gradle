@@ -790,7 +790,7 @@ ext.libraries = [
                 },
                 "commons-codec:commons-codec:$commonsCodecVersion",
         ],
-        persondirectory  : dependencies.create("org.jasig.service.persondir:person-directory-impl:$personDirectoryVersion") {
+        persondirectory  : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {
             exclude(group: 'commons-logging', module: 'commons-logging')
             exclude(group: 'org.slf4j', module: 'slf4j-api')
             exclude(group: 'org.apache.commons', module: 'commons-lang3')
