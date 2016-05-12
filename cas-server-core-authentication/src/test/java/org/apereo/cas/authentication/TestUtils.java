@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import java.net.MalformedURLException;
 import java.net.URL;

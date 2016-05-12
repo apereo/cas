@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.aspectj.lang.JoinPoint;
-import org.jasig.inspektr.common.spi.PrincipalResolver;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

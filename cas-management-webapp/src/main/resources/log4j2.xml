@@ -32,7 +32,7 @@
             <AppenderRef ref="console"/>
             <AppenderRef ref="cas-management"/>
         </AsyncLogger>
-        <AsyncLogger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+        <AsyncLogger name="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
             <AppenderRef ref="cas-management"/>
         </AsyncLogger>
 

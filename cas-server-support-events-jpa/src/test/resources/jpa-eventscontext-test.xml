@@ -49,7 +49,7 @@
     <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
     <util:list id="serviceFactoryList" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />

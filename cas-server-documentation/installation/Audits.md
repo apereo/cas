@@ -20,6 +20,8 @@ a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the 
 ```properties
 # cas.audit.singleline=true
 # cas.audit.singleline.separator=|
+# cas.audit.format=DEFAULT
+# cas.audit.ignore.failures=false
 # cas.audit.appcode=CAS
 ```
 
