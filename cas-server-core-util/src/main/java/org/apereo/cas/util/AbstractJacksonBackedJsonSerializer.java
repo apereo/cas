@@ -8,11 +8,18 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.hjson.JsonValue;
+import org.hjson.Stringify;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 
 /**
@@ -22,16 +29,10 @@ import java.io.Writer;
  */
 public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
-
-    /**
-     * The Pretty printer.
-     */
-    private PrettyPrinter prettyPrinter;
-
-    /**
-     * The Object mapper.
-     */
-    private ObjectMapper objectMapper;
+    
+    private final PrettyPrinter prettyPrinter;
+    
+    private final ObjectMapper objectMapper;
 
     /**
      * Instantiates a new Registered service json serializer.
@@ -65,66 +66,74 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     @Override
     public T fromJson(final String json) {
         try {
-            return this.objectMapper.readValue(json, getTypeToSerialize());
+            final String jsonString = JsonValue.readHjson(json).toString();
+            return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     public T fromJson(final File json) {
         try {
-            return this.objectMapper.readValue(json, getTypeToSerialize());
+            final String jsonString = JsonValue.readHjson(FileUtils.readFileToString(json)).toString();
+            return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     public T fromJson(final Reader json) {
         try {
-            return this.objectMapper.readValue(json, getTypeToSerialize());
+            final String jsonString = JsonValue.readHjson(json).toString();
+            return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     public T fromJson(final InputStream json) {
         try {
-            return this.objectMapper.readValue(json, getTypeToSerialize());
+            final String jsonString = JsonValue.readHjson(IOUtils.toString(json)).toString();
+            return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     public void toJson(final OutputStream out, final T object) {
-        try {
-            this.objectMapper.writer(this.prettyPrinter).writeValue(out, object);
+        try (final StringWriter writer = new StringWriter()) {
+            this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+            final String hjsonString = JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON);
+            IOUtils.write(hjsonString, out);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     public void toJson(final Writer out, final T object) {
-        try {
-            this.objectMapper.writer(this.prettyPrinter).writeValue(out, object);
+        try (final StringWriter writer = new StringWriter()) {
+            this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+            JsonValue.readHjson(writer.toString()).writeTo(out, Stringify.FORMATTED);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
     @Override
     public void toJson(final File out, final T object) {
-        try {
-            this.objectMapper.writer(this.prettyPrinter).writeValue(out, object);
+        try (final StringWriter writer = new StringWriter()) {
+            this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+            JsonValue.readHjson(writer.toString()).writeTo(new BufferedWriter(new FileWriter(out)));
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
-
+    
     /**
      * Initialize object mapper.
      *

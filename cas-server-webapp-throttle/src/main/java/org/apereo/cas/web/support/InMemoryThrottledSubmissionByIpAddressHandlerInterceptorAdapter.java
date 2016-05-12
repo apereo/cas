@@ -1,6 +1,6 @@
 package org.apereo.cas.web.support;
 
-import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 

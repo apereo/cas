@@ -365,7 +365,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                             .repeatForever()).build();
 
             logger.debug("Scheduling {} job", getClass().getSimpleName());
-            scheduler.getContext().put(getClass().getSimpleName(), this);
+            this.scheduler.getContext().put(getClass().getSimpleName(), this);
             this.scheduler.scheduleJob(job, trigger);
             logger.info("{} will clean tickets every {} minutes",
                     getClass().getSimpleName(),

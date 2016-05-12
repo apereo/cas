@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.aspectj.lang.JoinPoint;
 
-import org.jasig.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 
 import org.apereo.cas.util.AopUtils;
 
