@@ -7,8 +7,8 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext
 import org.apereo.cas.config.ShibbolethAttributeResolverConfiguration
 import org.apereo.cas.config.TestShibbolethAttributeResolverConfiguration
-import org.jasig.services.persondir.IPersonAttributeDao
-import org.jasig.services.persondir.support.NamedPersonImpl
+import org.apereo.services.persondir.IPersonAttributeDao
+import org.apereo.services.persondir.support.NamedPersonImpl
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import spock.lang.Unroll

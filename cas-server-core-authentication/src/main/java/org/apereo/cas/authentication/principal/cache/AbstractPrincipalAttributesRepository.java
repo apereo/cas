@@ -3,12 +3,12 @@ package org.apereo.cas.authentication.principal.cache;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.util.ApplicationContextProvider;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.merger.IAttributeMerger;
-import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -160,7 +160,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     /**
      * Obtains attributes first from the repository by calling
-     * {@link org.jasig.services.persondir.IPersonAttributeDao#getPerson(String)}.
+     * {@link org.apereo.services.persondir.IPersonAttributeDao#getPerson(String)}.
      *
      * @param id the person id to locate in the attribute repository
      * @return the map of attributes

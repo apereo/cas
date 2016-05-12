@@ -2,7 +2,7 @@ package org.apereo.cas.audit.spi;
 
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
-import org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
+import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;

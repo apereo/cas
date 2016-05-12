@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
-import org.jasig.inspektr.audit.annotation.Audit;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import com.google.common.base.Predicate;
 import org.quartz.Job;
