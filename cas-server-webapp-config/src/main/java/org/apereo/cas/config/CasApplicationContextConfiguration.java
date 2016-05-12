@@ -183,9 +183,7 @@ public class CasApplicationContextConfiguration {
         factory.setJobFactory(this.casSpringBeanJobFactory);
 
         final Properties properties = new Properties();
-        properties.put("org.quartz.scheduler.interruptJobsOnShutdown", this.interruptJobs);
-        properties.put("org.quartz.scheduler.interruptJobsOnShutdownWithWait", this.interruptJobs);
-        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);
+        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);        
         properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, this.interruptJobs);
         factory.setQuartzProperties(properties);
         return factory;

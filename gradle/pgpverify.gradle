@@ -1,0 +1,3 @@
+PGPVerifyPlugin {
+    verifyPomFiles = true
+}

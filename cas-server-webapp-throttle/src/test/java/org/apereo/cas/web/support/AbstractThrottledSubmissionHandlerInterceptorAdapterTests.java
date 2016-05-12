@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support;
 
 import org.apache.http.HttpStatus;
-import org.jasig.inspektr.common.web.ClientInfo;
-import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

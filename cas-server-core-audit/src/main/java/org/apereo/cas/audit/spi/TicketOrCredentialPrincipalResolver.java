@@ -10,7 +10,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.jasig.inspektr.common.spi.PrincipalResolver;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 
 import org.aspectj.lang.JoinPoint;
 import org.slf4j.Logger;
