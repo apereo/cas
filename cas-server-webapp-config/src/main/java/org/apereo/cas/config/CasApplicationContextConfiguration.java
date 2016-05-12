@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.support.NamedStubPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -183,9 +183,7 @@ public class CasApplicationContextConfiguration {
         factory.setJobFactory(this.casSpringBeanJobFactory);
 
         final Properties properties = new Properties();
-        properties.put("org.quartz.scheduler.interruptJobsOnShutdown", this.interruptJobs);
-        properties.put("org.quartz.scheduler.interruptJobsOnShutdownWithWait", this.interruptJobs);
-        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);
+        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);        
         properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, this.interruptJobs);
         factory.setQuartzProperties(properties);
         return factory;

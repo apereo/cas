@@ -1,7 +1,7 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.FormData;
-import org.jasig.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
