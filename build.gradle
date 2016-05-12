@@ -52,11 +52,7 @@ subprojects {
     apply plugin: 'findbugs'
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
-    apply plugin: 'checksumverify'
-    apply plugin: 'pgpverify'
-
-    apply from: rootProject.file("gradle/checksums.gradle")
-    apply from: rootProject.file("gradle/pgpverify.gradle")
+    
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;

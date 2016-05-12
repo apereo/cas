@@ -52,4 +52,4 @@ task copyPackageFile(type: Copy) {
 
 npm_install.dependsOn('copyPackageFile')
 
-processResources.dependsOn('npm_run')
+processResources.dependsOn('npm_install', 'npm_run')

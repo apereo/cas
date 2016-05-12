@@ -9,6 +9,7 @@ import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
+import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
@@ -58,6 +59,9 @@ public class CasAuditTrailConfiguration {
     @Value("${cas.audit.singleline:false}")
     private boolean useSingleLine;
 
+    @Value("${cas.audit.format:JSON}")
+    private AbstractStringAuditTrailManager.AuditFormats auditFormat;
+
     /**
      * Audit trail management aspect audit trail management aspect.
      *
@@ -81,6 +85,7 @@ public class CasAuditTrailConfiguration {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(this.useSingleLine);
         mgmr.setEntrySeparator(this.entrySeparator);
+        mgmr.setAuditFormat(this.auditFormat);
         return mgmr;
     }
 
