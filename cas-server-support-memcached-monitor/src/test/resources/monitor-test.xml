@@ -57,7 +57,7 @@
 
     <util:list id="serviceFactoryList" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <util:map id="serviceThemeResolverSupportedBrowsers" />
     <metrics:metric-registry id="metrics" />
@@ -66,7 +66,7 @@
         <ref bean="defaultArgumentExtractor"/>
     </util:list>
     <bean id="auditTrailManager"
-          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
     

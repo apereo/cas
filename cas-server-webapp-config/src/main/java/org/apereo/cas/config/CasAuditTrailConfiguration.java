@@ -3,15 +3,16 @@ package org.apereo.cas.config;
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
-import org.jasig.inspektr.audit.AuditTrailManagementAspect;
-import org.jasig.inspektr.audit.AuditTrailManager;
-import org.jasig.inspektr.audit.spi.AuditActionResolver;
-import org.jasig.inspektr.audit.spi.AuditResourceResolver;
-import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
-import org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
-import org.jasig.inspektr.common.spi.PrincipalResolver;
-import org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter;
+import org.apereo.inspektr.audit.AuditTrailManagementAspect;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
+import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
+import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +59,12 @@ public class CasAuditTrailConfiguration {
     @Value("${cas.audit.singleline:false}")
     private boolean useSingleLine;
 
+    @Value("${cas.audit.format:DEFAULT}")
+    private AbstractStringAuditTrailManager.AuditFormats auditFormat;
+
+    @Value("${cas.audit.ignore.failures:true}")
+    private boolean ignoreAuditFailures;
+    
     /**
      * Audit trail management aspect audit trail management aspect.
      *
@@ -65,10 +72,11 @@ public class CasAuditTrailConfiguration {
      */
     @Bean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
-        return new AuditTrailManagementAspect(this.appCode,
+        final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(this.appCode,
                 this.principalResolver, ImmutableList.of(auditTrailManager()), auditActionResolverMap(),
                 auditResourceResolverMap());
-
+        aspect.setFailOnAuditFailures(!this.ignoreAuditFailures);
+        return aspect;
     }
 
     /**
@@ -81,6 +89,7 @@ public class CasAuditTrailConfiguration {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(this.useSingleLine);
         mgmr.setEntrySeparator(this.entrySeparator);
+        mgmr.setAuditFormat(this.auditFormat);
         return mgmr;
     }
 

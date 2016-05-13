@@ -26,7 +26,7 @@ ext.libraries = [
             exclude(group: 'org.slf4j', module: 'slf4j-api')
             force = true
         },
-        cassecurityfilter: "org.jasig.cas:cas-server-security-filter:$casSecurityFilterVersion",
+        cassecurityfilter: "org.apereo.cas:cas-server-security-filter:$casSecurityFilterVersion",
         commons          : [
                 "commons-io:commons-io:$commonsIoVersion",
                 "commons-codec:commons-codec:$commonsCodecVersion",
@@ -82,8 +82,10 @@ ext.libraries = [
                 dependencies.create("com.maxmind.geoip2:geoip2:$maxmindVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
                     exclude(group: 'commons-codec', module: 'commons-codec')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-core')
+                    exclude(group: 'com.google.code.findbugs', module: 'jsr305')
                     force = true
                 }
         ],
@@ -356,7 +358,7 @@ ext.libraries = [
                 }
         ],
         inspektraspects  : [
-                dependencies.create("org.jasig.inspektr:inspektr-aspects:$inspektrVersion") {
+                dependencies.create("org.apereo.inspektr:inspektr-aspects:$inspektrVersion") {
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.aspectj', module: 'aspectjrt')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
@@ -364,13 +366,13 @@ ext.libraries = [
                 }
         ],
         inspektr         : [
-                dependencies.create("org.jasig.inspektr:inspektr-audit:$inspektrVersion") {
+                dependencies.create("org.apereo.inspektr:inspektr-audit:$inspektrVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.aspectj', module: 'aspectjrt')
                     force = true
                 },
-                dependencies.create("org.jasig.inspektr:inspektr-support-spring:$inspektrVersion") {
+                dependencies.create("org.apereo.inspektr:inspektr-support-spring:$inspektrVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.springframework', module: 'spring-web')
@@ -409,6 +411,7 @@ ext.libraries = [
         thmyeleafboot    : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion") {
                     exclude(group: 'com.fasterxml', module: 'classmate')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     exclude(group: 'ch.qos.logback', module: 'logback-core')
                     exclude(group: 'ch.qos.logback', module: 'logback-classic')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
@@ -418,9 +421,19 @@ ext.libraries = [
         ],
 
         jackson          : [
-                "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+                dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion") {
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
+                    force = true
+                },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
+                    force = true
+                },
+                dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
+                    force = true
+                },
+                dependencies.create("org.hjson:hjson:$hjsonVersion") {
                     force = true
                 }
         ],
@@ -452,7 +465,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework', module: 'spring-context-support')
                     exclude(group: 'org.springframework', module: 'spring-core')
-                    exclude(module: 'commons-lang')
+                    exclude(group: 'commons-lang', module: 'commons-lang')
                     force = true
                 },
                 "gnu.getopt:java-getopt:1.0.13"
@@ -481,6 +494,7 @@ ext.libraries = [
                     exclude(group: 'org.apache.commons', module: 'commons-lang3')
                     exclude(group: 'net.spy', module: 'spymemcached')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'commons-io', module: 'commons-io')
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
@@ -697,6 +711,7 @@ ext.libraries = [
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'commons-io', module: 'commons-io')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
@@ -776,7 +791,7 @@ ext.libraries = [
                 },
                 "commons-codec:commons-codec:$commonsCodecVersion",
         ],
-        persondirectory  : dependencies.create("org.jasig.service.persondir:person-directory-impl:$personDirectoryVersion") {
+        persondirectory  : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {
             exclude(group: 'commons-logging', module: 'commons-logging')
             exclude(group: 'org.slf4j', module: 'slf4j-api')
             exclude(group: 'org.apache.commons', module: 'commons-lang3')
@@ -787,6 +802,7 @@ ext.libraries = [
             exclude(group: 'org.springframework', module: 'spring-core')
             exclude(group: 'org.springframework', module: 'spring-tx')
             exclude(group: 'com.google.guava', module: 'guava')
+            exclude(group: 'commons-io', module: 'commons-io')
             force = true
         },
         quartz           : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
@@ -811,6 +827,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-core')
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
@@ -845,12 +862,14 @@ ext.libraries = [
                 dependencies.create("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion") {
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     exclude(group: 'org.hibernate', module: 'hibernate-validator')
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-actuator:$springBootVersion") {
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
                     force = true
                 }
         ],
@@ -1042,6 +1061,21 @@ ext.libraries = [
                     exclude(group: 'commons-logging', module: 'commons-logging')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'org.springframework.data', module: 'spring-data-commons')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.springframework', module: 'spring-web')
+                    exclude(group: 'org.springframework', module: 'spring-beans')
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-expression')
+                    exclude(group: 'org.springframework', module: 'spring-webmvc')
+                    exclude(group: 'org.springframework', module: 'spring-tx')
+                    exclude(group: 'org.mongodb', module: 'mongo-java-driver')
+                    force = true
+                },
+                dependencies.create("org.springframework.data:spring-data-commons:$springDataCommonsVersion") {
+                    exclude(group: 'commons-logging', module: 'commons-logging')
+                    exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework', module: 'spring-web')
                     exclude(group: 'org.springframework', module: 'spring-beans')
@@ -1067,7 +1101,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-webmvc')
                     force = true
                 },
-                dependencies.create("org.jasig:spring-webflow-client-repo:$springWebflowClientVersion") {
+                dependencies.create("org.apereo:spring-webflow-client-repo:$springWebflowClientVersion") {
                     exclude(group: 'log4j', module: 'log4j')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
