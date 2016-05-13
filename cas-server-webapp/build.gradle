@@ -65,3 +65,25 @@ dependencies {
     runtime libraries.hibernate
     runtime libraries.bouncycastle
 }
+
+npm_run {
+    args = [
+            'gulp',
+            '--',
+            "sass",
+            "--gulpfile ${project.file('gulpfile.jsp')}",
+            "--cwd", "${project.buildDir}",
+            'sass',
+            "--sassPath", "${project.file('src/main/resources/static/sass')}",
+            "--npmPath", "${project.buildDir}/node_modules",
+            "--cssPath", "${project.buildDir}/generated-src/main/resources/static/csspie"
+    ]
+}
+
+tasks.npm_install.inputs.file(project.file('package.json'))
+
+tasks.npm_run.dependsOn 'npm_install'
+tasks.npm_run.inputs.dir(project.file('src/main/resources/static/sass'))
+tasks.npm_run.inputs.file(project.file('gulpfile.js'))
+tasks.npm_run.outputs.dir("${project.buildDir}/generated-src/main/resources/static/csspie")
+tasks.npm_run.outputs.upToDateWhen { false }
