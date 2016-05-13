@@ -9,6 +9,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -33,10 +34,15 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         accessBean.setCasEnabled(accessStrategy.isServiceAccessAllowed());
         accessBean.setSsoEnabled(accessStrategy.isServiceAccessAllowedForSso());
 
+        if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
+            accessBean.setUnauthzUrl(accessStrategy.getUnauthorizedRedirectUrl().toString());
+        }
+        
         if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
             final DefaultRegisteredServiceAccessStrategy def = (DefaultRegisteredServiceAccessStrategy) accessStrategy;
             accessBean.setRequireAll(def.isRequireAllAttributes());
             accessBean.setRequiredAttr(def.getRequiredAttributes());
+            accessBean.setRejectedAttr(def.getRejectedAttributes());
         }
 
         if (accessStrategy instanceof TimeBasedRegisteredServiceAccessStrategy) {
@@ -73,7 +79,25 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             }
         }
         accessStrategy.setRequiredAttributes(requiredAttrs);
-
+        
+        final Map<String, Set<String>> rejectedAttrs = supportAccess.getRejectedAttr();
+        final Set<Map.Entry<String, Set<String>>> rejectedEntries = rejectedAttrs.entrySet();
+        final Iterator<Map.Entry<String, Set<String>>> it2 = rejectedEntries.iterator();
+        while (it2.hasNext()) {
+            final Map.Entry<String, Set<String>> entry = it2.next();
+            if (entry.getValue().isEmpty()) {
+                it2.remove();
+            }
+        }
+        accessStrategy.setRejectedAttributes(rejectedAttrs);
+        
+        if (supportAccess.getUnauthzUrl() != null && !supportAccess.getUnauthzUrl().trim().isEmpty()) {
+            try {
+                accessStrategy.setUnauthorizedRedirectUrl(new URI(supportAccess.getUnauthzUrl()));
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         accessStrategy.setEndingDateTime(supportAccess.getEndingTime());
         accessStrategy.setStartingDateTime(supportAccess.getStartingTime());
         return accessStrategy;

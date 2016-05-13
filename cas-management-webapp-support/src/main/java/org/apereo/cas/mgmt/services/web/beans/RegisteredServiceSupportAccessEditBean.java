@@ -20,8 +20,11 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     private boolean casEnabled;
     private boolean ssoEnabled;
     private boolean requireAll;
+    private String unauthzUrl;
+            
     private Map<String, Set<String>> requiredAttr = new HashMap<>();
-
+    private Map<String, Set<String>> rejectedAttr = new HashMap<>();
+    
     public boolean isCasEnabled() {
         return this.casEnabled;
     }
@@ -54,6 +57,14 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
         this.requiredAttr = requiredAttr;
     }
 
+    public void setRejectedAttr(final Map<String, Set<String>> rejectedAttr) {
+        this.rejectedAttr = requiredAttr;
+    }
+
+    public Map<String, Set<String>> getRejectedAttr() {
+        return rejectedAttr;
+    }
+
     public String getStartingTime() {
         return this.startingTime;
     }
@@ -68,5 +79,13 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
 
     public void setEndingTime(final String endingTime) {
         this.endingTime = endingTime;
+    }
+
+    public String getUnauthzUrl() {
+        return unauthzUrl;
+    }
+
+    public void setUnauthzUrl(final String unauthzUrl) {
+        this.unauthzUrl = unauthzUrl;
     }
 }
