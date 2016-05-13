@@ -1,9 +1,11 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
+import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSupportAccessEditBean;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -43,6 +45,8 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             accessBean.setRequireAll(def.isRequireAllAttributes());
             accessBean.setRequiredAttr(def.getRequiredAttributes());
             accessBean.setRejectedAttr(def.getRejectedAttributes());
+            accessBean.setCaseSensitive(def.isCaseInsensitive());
+            accessBean.setType(RegisteredServiceSupportAccessEditBean.Types.DEFAULT);
         }
 
         if (accessStrategy instanceof TimeBasedRegisteredServiceAccessStrategy) {
@@ -50,6 +54,20 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
                     accessStrategy;
             accessBean.setStartingTime(def.getStartingDateTime());
             accessBean.setEndingTime(def.getEndingDateTime());
+            accessBean.setType(RegisteredServiceSupportAccessEditBean.Types.TIME);
+        }
+
+        if (accessStrategy instanceof GrouperRegisteredServiceAccessStrategy) {
+            final GrouperRegisteredServiceAccessStrategy def = (GrouperRegisteredServiceAccessStrategy) accessStrategy;
+            accessBean.setGroupField(def.getGroupField().toString());
+            accessBean.setType(RegisteredServiceSupportAccessEditBean.Types.GROUPER);
+        }
+
+        if (accessStrategy instanceof RemoteEndpointServiceAccessStrategy) {
+            final RemoteEndpointServiceAccessStrategy def = (RemoteEndpointServiceAccessStrategy) accessStrategy;
+            accessBean.setCodes(def.getAcceptableResponseCodes());
+            accessBean.setUrl(def.getEndpointUrl());
+            accessBean.setType(RegisteredServiceSupportAccessEditBean.Types.REMOTE);
         }
     }
 
@@ -63,11 +81,12 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
     public RegisteredServiceAccessStrategy toAccessStrategy(final RegisteredServiceEditBean.ServiceData bean) {
         final RegisteredServiceSupportAccessEditBean supportAccess = bean.getSupportAccess();
 
-        final TimeBasedRegisteredServiceAccessStrategy accessStrategy = new TimeBasedRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
 
         accessStrategy.setEnabled(supportAccess.isCasEnabled());
         accessStrategy.setSsoEnabled(supportAccess.isSsoEnabled());
         accessStrategy.setRequireAllAttributes(supportAccess.isRequireAll());
+        accessStrategy.setCaseInsensitive(supportAccess.isCaseSensitive());
 
         final Map<String, Set<String>> requiredAttrs = supportAccess.getRequiredAttr();
         final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
@@ -98,8 +117,22 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
                 throw new RuntimeException(e);
             }
         }
-        accessStrategy.setEndingDateTime(supportAccess.getEndingTime());
-        accessStrategy.setStartingDateTime(supportAccess.getStartingTime());
+        
+        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME) {
+            ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setEndingDateTime(supportAccess.getEndingTime());
+            ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setStartingDateTime(supportAccess.getStartingTime());
+        }
+
+        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
+            ((GrouperRegisteredServiceAccessStrategy) accessStrategy)
+                    .setGroupField(GrouperRegisteredServiceAccessStrategy.GrouperGroupField.valueOf(supportAccess.getGroupField()));
+        }
+
+        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.REMOTE) {
+            ((RemoteEndpointServiceAccessStrategy) accessStrategy).setAcceptableResponseCodes(supportAccess.getCodes());
+            ((RemoteEndpointServiceAccessStrategy) accessStrategy).setEndpointUrl(supportAccess.getUrl());
+        }
+        
         return accessStrategy;
     }
 }
