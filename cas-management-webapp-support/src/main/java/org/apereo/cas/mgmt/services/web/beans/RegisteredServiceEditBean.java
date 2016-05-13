@@ -121,6 +121,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
+        private Map<String, Set<String>> properties = new HashMap<>();
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
             return this.attrRelease;
@@ -134,6 +135,13 @@ public class RegisteredServiceEditBean implements Serializable {
             return this.publicKey;
         }
 
+        public Map<String, Set<String>> getProps() {
+            return this.properties;
+        }
+        
+        public void setProps(final Map<String, Set<String>> p) {
+            this.properties = p;
+        }
         public void setPublicKey(final RegisteredServicePublicKeyEditBean publicKey) {
             this.publicKey = publicKey;
         }

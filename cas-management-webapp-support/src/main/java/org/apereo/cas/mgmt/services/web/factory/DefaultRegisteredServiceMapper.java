@@ -9,9 +9,11 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSamlTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
@@ -24,6 +26,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Default mapper for converting {@link RegisteredService} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -105,6 +110,14 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             pBean.setAlgorithm(key.getAlgorithm());
             pBean.setLocation(key.getLocation());
         }
+        
+        final Map<String, RegisteredServiceProperty> props = svc.getProperties();
+        final Map<String, Set<String>> beanProps = bean.getProps();
+        for (final Map.Entry<String, RegisteredServiceProperty> stringRegisteredServicePropertyEntry : props.entrySet()) {
+            final Set<String> set = stringRegisteredServicePropertyEntry.getValue().getValues();
+            beanProps.put(stringRegisteredServicePropertyEntry.getKey(), set);
+        }
+        
     }
 
     @Override
@@ -189,7 +202,15 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 regSvc.setPublicKey(new RegisteredServicePublicKeyImpl(publicKey.getLocation(), publicKey
                         .getAlgorithm()));
             }
-
+            
+            final Map<String, Set<String>> props = data.getProps();
+            for (final Map.Entry<String, Set<String>> stringSetEntry : props.entrySet()) {
+                final DefaultRegisteredServiceProperty value = new DefaultRegisteredServiceProperty();
+                value.setValues(stringSetEntry.getValue());
+                regSvc.getProperties().put(stringSetEntry.getKey(), value);
+            }
+            
+            
             return regSvc;
         } catch (final Exception e) {
             throw new RuntimeException(e);
