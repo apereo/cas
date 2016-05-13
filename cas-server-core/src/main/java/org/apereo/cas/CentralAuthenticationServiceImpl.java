@@ -63,7 +63,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@RefreshScope
 @Component("centralAuthenticationService")
 public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
