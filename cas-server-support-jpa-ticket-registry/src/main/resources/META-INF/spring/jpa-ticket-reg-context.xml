@@ -82,12 +82,12 @@
         <aop:pointcut id="ticketRegistryOperations"
                       expression="execution(* org.apereo.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
         <aop:pointcut id="ticketRegistrySupportOperations"
-                      expression="execution(* org.apereo.cas.ticket.registry.TicketRegistrySupport.*(..))"/>
+                      expression="execution(* org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport.*(..))"/>
         <aop:pointcut id="ticketRegistryLockingOperations"
                       expression="execution(* org.apereo.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
  
         <aop:pointcut id="casOperations"
-                      expression="execution(* org.apereo.cas.CentralAuthenticationService.*(..))"/>
+                      expression="execution(* org.apereo.cas.CentralAuthenticationServiceImpl.*(..))"/>
 
         <aop:advisor advice-ref="txRegistryAdvice"
                      pointcut-ref="ticketRegistryOperations"/>
