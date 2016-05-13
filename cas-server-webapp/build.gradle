@@ -70,10 +70,9 @@ npm_run {
     args = [
             'gulp',
             '--',
-            "sass",
-            "--gulpfile ${project.file('gulpfile.jsp')}",
-            "--cwd", "${project.buildDir}",
             'sass',
+            "--gulpfile", "${project.file('gulpfile.js')}",
+            "--cwd", "${project.buildDir}",
             "--sassPath", "${project.file('src/main/resources/static/sass')}",
             "--npmPath", "${project.buildDir}/node_modules",
             "--cssPath", "${project.buildDir}/generated-src/main/resources/static/csspie"
