@@ -5,6 +5,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceLogoutTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceOAuthTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServicePublicKeyEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSamlTypeEditBean;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -12,6 +13,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
@@ -65,6 +67,19 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             oauthBean.setJsonFormat(oauth.isJsonFormat());
         }
 
+        if (svc instanceof SamlRegisteredService) {
+            bean.setType(RegisteredServiceTypeEditBean.SAML.toString());
+            final SamlRegisteredService saml = (SamlRegisteredService) svc;
+            final RegisteredServiceSamlTypeEditBean samlbean = bean.getSaml();
+            samlbean.setMdLoc(saml.getMetadataLocation());
+            samlbean.setMdMaxVal(saml.getMetadataMaxValidity());
+            samlbean.setMdSigLoc(saml.getMetadataSignatureLocation());
+            samlbean.setAuthCtxCls(saml.getRequiredAuthenticationContextClass());
+            samlbean.setEncAssert(saml.isEncryptAssertions());
+            samlbean.setSignResp(saml.isSignResponses());
+            samlbean.setSignAssert(saml.isSignAssertions());
+        }
+        
         bean.setTheme(svc.getTheme());
         bean.setEvalOrder(svc.getEvaluationOrder());
         final LogoutType logoutType = svc.getLogoutType();
@@ -123,6 +138,17 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
                 ((OAuthRegisteredService) regSvc).setGenerateRefreshToken(oauthBean.isRefreshToken());
                 ((OAuthRegisteredService) regSvc).setJsonFormat(oauthBean.isJsonFormat());
+            } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
+                regSvc = new SamlRegisteredService();
+
+                final RegisteredServiceSamlTypeEditBean samlBean = data.getSaml();
+                ((SamlRegisteredService) regSvc).setEncryptAssertions(samlBean.isEncAssert());
+                ((SamlRegisteredService) regSvc).setSignAssertions(samlBean.isSignAssert());
+                ((SamlRegisteredService) regSvc).setSignResponses(samlBean.isSignResp());
+                ((SamlRegisteredService) regSvc).setMetadataLocation(samlBean.getMdLoc());
+                ((SamlRegisteredService) regSvc).setMetadataSignatureLocation(samlBean.getMdSigLoc());
+                ((SamlRegisteredService) regSvc).setMetadataMaxValidity(samlBean.getMdMaxVal());
+                ((SamlRegisteredService) regSvc).setRequiredAuthenticationContextClass(samlBean.getAuthCtxCls());
             } else {
                 if (RegexUtils.isValidRegex(data.getServiceId())) {
                     regSvc = new RegexRegisteredService();

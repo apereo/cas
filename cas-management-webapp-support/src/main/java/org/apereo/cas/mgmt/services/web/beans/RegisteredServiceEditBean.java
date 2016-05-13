@@ -112,6 +112,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceSupportAccessEditBean supportAccess = new RegisteredServiceSupportAccessEditBean();
         private String type = RegisteredServiceTypeEditBean.CAS.toString();
         private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
+        private RegisteredServiceSamlTypeEditBean saml = new RegisteredServiceSamlTypeEditBean();
         private String logoutType = RegisteredServiceLogoutTypeEditBean.BACK.toString();
         private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider =
                 new RegisteredServiceUsernameAttributeProviderEditBean();
@@ -264,6 +265,14 @@ public class RegisteredServiceEditBean implements Serializable {
          */
         public Map<String, ? extends Map<String, ?>> getCustomComponent() {
             return this.customComponent;
+        }
+
+        public RegisteredServiceSamlTypeEditBean getSaml() {
+            return saml;
+        }
+
+        public void setSaml(final RegisteredServiceSamlTypeEditBean saml) {
+            this.saml = saml;
         }
 
         /**
