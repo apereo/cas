@@ -60,8 +60,8 @@ public final class AuthUtils {
   public static String extractTenantID(String uri) {
     String tenantID = SELF;
     LOGGER.info("Request URI for tenant extraction:{}", uri);
-    Pattern servicePattern = Pattern.compile("^https://.*.wavity.(com|net|info).*", Pattern.CASE_INSENSITIVE);
-    boolean isServiceUrl = servicePattern.matcher(uri).matches();
+    final Pattern servicePattern = Pattern.compile("^https://.*.wavity.(com|net|info).*", Pattern.CASE_INSENSITIVE);
+    final boolean isServiceUrl = servicePattern.matcher(uri).matches();
     try {
       URL url = new URL(uri);
       String host = url.getHost();
