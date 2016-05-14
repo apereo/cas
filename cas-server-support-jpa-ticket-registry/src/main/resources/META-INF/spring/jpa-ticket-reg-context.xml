@@ -25,7 +25,7 @@
             <tx:method name="createProxyGrantingTicket" read-only="false" />
             <tx:method name="grantProxyTicket" read-only="false" />
 
-            <tx:method name="getTicket" read-only="false" />
+            <tx:method name="getTicket" read-only="false" no-rollback-for="org.apereo.cas.ticket.InvalidTicketException" />
             <tx:method name="getTickets" read-only="true" />
         </tx:attributes>
     </tx:advice>
