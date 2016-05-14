@@ -19,7 +19,6 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Configuration("hazelcastSessionConfiguration")
 @EnableHazelcastHttpSession
 public class HazelcastSessionConfiguration {

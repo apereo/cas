@@ -12,7 +12,6 @@ import org.springframework.session.data.mongo.config.annotation.web.http.EnableM
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Configuration("mongoSessionConfiguration")
 @EnableMongoHttpSession
 public class MongoSessionConfiguration {

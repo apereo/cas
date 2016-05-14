@@ -99,7 +99,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public long size() {
-        return this.mongoTemplate.count(new Query(), RegisteredService.class);
+        return this.mongoTemplate.count(new Query(), RegisteredService.class, this.collectionName);
     }
 
     /**
