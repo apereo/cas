@@ -29,7 +29,7 @@ task cleanNodeModules(type: Delete) {
     delete loc
 }
 
-task findbugs(type: FindBugs) {
+task findbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
     pluginClasspath = project.configurations.findbugsPlugins
 }
 
@@ -37,8 +37,5 @@ gradle.buildFinished { buildResult ->
     cleanLogs
 }
 
-npm_run {
-    args = ['gulp']
-}
 
 clean.dependsOn('cleanLogs', 'cleanNodeModules')

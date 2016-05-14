@@ -139,7 +139,7 @@
         <AsyncLogger name="org.apereo.cas.web.flow" level="info" additivity="true" includeLocation="true">
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.jasig.inspektr.audit.support" level="info" includeLocation="true">
+        <AsyncLogger name="org.apereo.inspektr.audit.support" level="info" includeLocation="true">
             <AppenderRef ref="casAudit"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>

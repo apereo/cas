@@ -23,7 +23,6 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RefreshScope
 @Component("jpaLockingStrategy")
 public class JpaLockingStrategy implements LockingStrategy {
 

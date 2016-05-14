@@ -11,7 +11,7 @@
           class="org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator"
           c:properties-ref="userProperties"/>
     
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao" 
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.StubPersonAttributeDao" 
           p:backingMap-ref="backingMap"/>
 
     <util:map id="backingMap">

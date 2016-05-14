@@ -42,7 +42,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.validation.Assertion;
-import org.jasig.inspektr.audit.annotation.Audit;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +63,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@RefreshScope
 @Component("centralAuthenticationService")
 public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
