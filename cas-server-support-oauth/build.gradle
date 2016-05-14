@@ -5,4 +5,5 @@ dependencies {
     testCompile project(':cas-server-core-util')
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-logout')
+    testCompile libraries.tests
 }
