@@ -51,25 +51,6 @@
         </tx:attributes>
     </tx:advice>
 
-    <tx:advice id="txRegistryServiceTicketDelegatorAdvice" transaction-manager="ticketTransactionManager">
-        <tx:attributes>
-            <tx:method name="grantProxyGrantingTicket" read-only="false" />
-        </tx:attributes>
-    </tx:advice>
-
-    <tx:advice id="txRegistryTicketGrantingTicketDelegatorAdvice" transaction-manager="ticketTransactionManager">
-        <tx:attributes>
-            <tx:method name="markTicketExpired" read-only="false" />
-            <tx:method name="grantServiceTicket" read-only="false" />
-        </tx:attributes>
-    </tx:advice>
-
-    <tx:advice id="txRegistryProxyGrantingTicketDelegatorAdvice" transaction-manager="ticketTransactionManager">
-        <tx:attributes>
-            <tx:method name="grantProxyTicket" read-only="false" />
-        </tx:attributes>
-    </tx:advice>
-
     <tx:advice id="txRegistryLockingAdvice" transaction-manager="ticketTransactionManager">
         <tx:attributes>
             <tx:method name="getOwner" read-only="true" />
@@ -99,6 +80,4 @@
                      pointcut-ref="casOperations"/>
 
     </aop:config>
-
-
 </beans>
