@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.MessageInterpolator;
 import java.util.HashMap;
 import java.util.Locale;
@@ -36,8 +38,8 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Value("${cas.themeResolver.param.name:theme}")
     private String themeParamName;
     
-    @Value("${locale.default:en}")
-    private Locale defaultLocale;
+    @Value("${locale.default:}")
+    private String defaultLocale;
     
     @Value("${locale.param.name:locale}")
     private String localeParamName;
@@ -73,11 +75,18 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the cookie locale resolver
      */
-    @RefreshScope
     @Bean(name = "localeResolver")
     public CookieLocaleResolver localeResolver() {
-        final CookieLocaleResolver bean = new CookieLocaleResolver();
-        bean.setDefaultLocale(this.defaultLocale);
+        final CookieLocaleResolver bean = new CookieLocaleResolver() {
+            @Override
+            protected Locale determineDefaultLocale(final HttpServletRequest request) {
+                final Locale locale = request.getLocale();
+                if (StringUtils.isBlank(defaultLocale) || locale.getLanguage().equals(defaultLocale)) {
+                    return locale;
+                }
+                return new Locale(defaultLocale);
+            }
+        };
         return bean;
     }
 
