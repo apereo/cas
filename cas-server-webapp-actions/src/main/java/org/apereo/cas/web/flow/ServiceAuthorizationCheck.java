@@ -53,7 +53,7 @@ public class ServiceAuthorizationCheck extends AbstractAction {
             final String msg = String.format("No service definitions are found in the service manager. "
                     + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
             logger.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EMPTY_SVC_MGMR);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EMPTY_SVC_MGMR, msg);
         }
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
