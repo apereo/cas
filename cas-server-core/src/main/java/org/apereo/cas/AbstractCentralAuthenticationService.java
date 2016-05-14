@@ -284,7 +284,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        this.ticketRegistry.addTicket(ticket);
+        this.ticketRegistry.updateTicket(ticket);
         return ticket;
     }
 
