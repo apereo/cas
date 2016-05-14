@@ -1,6 +1,10 @@
 package org.apereo.cas;
 
 
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Set;
+
 /**
  * This is {@link OidcConstants}.
  *
@@ -8,6 +12,35 @@ package org.apereo.cas;
  * @since 5.0.0
  */
 public interface OidcConstants {
+
+    /**
+     * The sub claim.
+     */
+    String CLAIM_SUB = "sub";
+
+    /**
+     * The preferred username claim.
+     */
+    String CLAIM_PREFERRED_USERNAME = "preferred_username";
+
+    /**
+     * The Scopes.
+     */
+    Set<String> SCOPES = ImmutableSet.of("openid", "profile", "email", "address", "phone", "offline_access");
+
+    /**
+     * The Claims.
+     */
+    Set<String> CLAIMS = ImmutableSet.of(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
+            "family_name", "given_name", "middle_name", "given_name", "profile",
+            "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
+            "birthdate", "email", "email_verified", "phone_number",
+            "phone_number_verified", "address");
+
+    /**
+     * The id token.
+     */
+    String ID_TOKEN = "id_token";
 
     /**
      * Base OIDC URL.
