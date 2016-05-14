@@ -5,9 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 import javax.annotation.PostConstruct;
 
@@ -20,7 +18,6 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 @Configuration("serviceRegistryInitializationConfiguration")
-@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class ServiceRegistryInitializationConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializationConfiguration.class);
@@ -44,13 +41,13 @@ public class ServiceRegistryInitializationConfiguration {
      */
     @PostConstruct
     public void initServiceRegistryIfNecessary() {
-        
+
         if (this.serviceRegistryDao.equals(this.jsonServiceRegistryDao)) {
             return;
         }
-        
+
         final long size = this.serviceRegistryDao.size();
-        
+
         if (size == 0) {
             if (this.initFromJsonIfAvailable) {
                 LOGGER.debug("Service registry database will be auto-initialized from default JSON services");
