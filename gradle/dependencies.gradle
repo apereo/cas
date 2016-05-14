@@ -1,9 +1,10 @@
 /*
-Override the version used by Spring boot to match ours.
+  Override the version used by Spring boot to match ours.
  */
 ext['hibernate.version'] = "$hibernateVersion"
 ext['hazelcast.version'] = "$hazelcastVersion"
 ext['spring-session.version'] = "$springSessionVersion"
+ext['tomcat.version'] = "$springBootTomcatVersion"
 
 ext.libraries = [
         aspectj          : [
