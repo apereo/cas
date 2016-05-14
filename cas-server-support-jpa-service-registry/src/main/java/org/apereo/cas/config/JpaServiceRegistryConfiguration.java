@@ -59,8 +59,7 @@ public class JpaServiceRegistryConfiguration {
     
     @Value("${svcreg.database.pool.maxWait:2000}")
     private int checkoutTimeout;
-
-
+    
     @Value("${svcreg.database.idle.timeout:5000}")
     private int idleTimeout;
 

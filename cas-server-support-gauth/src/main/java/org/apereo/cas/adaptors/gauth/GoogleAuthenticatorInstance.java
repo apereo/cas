@@ -72,4 +72,14 @@ public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
     public boolean authorizeUser(final String userName, final int verificationCode) throws GoogleAuthenticatorException {
         return this.googleAuthenticator.authorizeUser(userName, verificationCode);
     }
+
+    @Override
+    public boolean authorize(final String secret, final int verificationCode, final long time) throws GoogleAuthenticatorException {
+        return this.googleAuthenticator.authorize(secret, verificationCode, time);
+    }
+
+    @Override
+    public boolean authorizeUser(final String userName, final int verificationCode, final long time) throws GoogleAuthenticatorException {
+        return this.googleAuthenticator.authorize(userName, verificationCode, time);
+    }
 }

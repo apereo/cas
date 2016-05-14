@@ -42,8 +42,6 @@ The following settings are expected:
 
 ## Configuration
 
-The following configuration assumes a `dataSource` bean is defined in the context.
-
 In `application.properties`:
 
 ```properties

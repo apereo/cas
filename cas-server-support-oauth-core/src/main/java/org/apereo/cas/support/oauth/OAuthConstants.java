@@ -85,4 +85,13 @@ public interface OAuthConstants {
 
     /** The remaining time in seconds before expiration with syntax : expires=3600... */
     String EXPIRES = "expires";
+
+    /** The nonce parameter. */
+    String NONCE = "nonce";
+
+    /** The token type parameter. */
+    String TOKEN_TYPE = "token_type";
+
+    /** The bearer type. */
+    String TOKEN_TYPE_BEARER = "bearer";
 }
