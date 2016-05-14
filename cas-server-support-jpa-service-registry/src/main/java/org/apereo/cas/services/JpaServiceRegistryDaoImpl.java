@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -16,6 +18,8 @@ import java.util.List;
 @Component("jpaServiceRegistryDao")
 public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpaServiceRegistryDaoImpl.class);
+    
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 

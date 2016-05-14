@@ -97,6 +97,11 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         return getClass().getSimpleName();
     }
 
+    @Override
+    public long size() {
+        return this.mongoTemplate.count(new Query(), RegisteredService.class);
+    }
+
     /**
      * Optionally, specify the name of the mongodb collection where services are to be kept.
      * By default, the name of the collection is specified by the constant {@link #MONGODB_COLLECTION_NAME}
