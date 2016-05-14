@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @RefreshScope
-@Component("v3ProxyValidateController")
-@Controller
+@Controller("v3ProxyValidateController")
 public class V3ProxyValidateController extends V3ServiceValidateController {
     /**
      * Handle model and view.
