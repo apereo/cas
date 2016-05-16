@@ -1,13 +1,13 @@
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.*.wavity.(com|net|info).*",
+  "serviceId" : "^http://.*.wavity.(com|net|info).*",
   "name" : "Wavity Web Services",
   "theme" : "wavity",
   "id" : 175854194241240,
   "description" : "This is a web app for testing the theme change.",
   "proxyPolicy" : {
     "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-    "pattern" : "^https://.*"
+    "pattern" : "^http://.*"
   },
   "evaluationOrder" : 0,
   "usernameAttributeProvider" : {
