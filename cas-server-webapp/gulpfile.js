@@ -29,7 +29,6 @@ gulp.task('sass', function () {
     process.stdout.write("\tsassPath: " + argv.sassPath + "\n");
     process.stdout.write("\tnpmPath: " + argv.npmPath + "\n");
     process.stdout.write("\tcssPath: " + argv.cssPath + "\n");
-    process.stdout.write("\there: " + argv.here + "\n");
     return gulp.src(argv.sassPath + '/**/*.scss')
         .pipe(sass({
             //outputStyle: 'compressed',
