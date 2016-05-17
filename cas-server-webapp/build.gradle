@@ -5,6 +5,14 @@ apply from: '../gradle/node.gradle'
 
 description = 'Apereo CAS Web Application'
 
+sourceSets {
+    main {
+        resources {
+            srcDir "${project.buildDir}/generated-src/main/resources"
+        }
+    }
+}
+
 javadoc {
     enabled false
 }
@@ -17,12 +25,13 @@ war {
                 "Implementation-Date": java.time.ZonedDateTime.now(),
                 "Implementation-Version": project.version)
     }
-    from "${project.buildDir}/generated-src/main/resources"
+    from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
 }
 
 bootRun {
     addResources = true
     jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    systemProperties = System.properties
 }
 
 springBoot  {
