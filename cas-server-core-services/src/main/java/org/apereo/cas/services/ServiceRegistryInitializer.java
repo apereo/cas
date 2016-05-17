@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -17,23 +17,25 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("serviceRegistryInitializationConfiguration")
-public class ServiceRegistryInitializationConfiguration {
+@Component("serviceRegistryInitializer")
+public class ServiceRegistryInitializer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializationConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializer.class);
 
-    @Autowired
-    @Qualifier("serviceRegistryDao")
-    private ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistryDao serviceRegistryDao;
 
-    @Autowired
-    @Qualifier("jsonServiceRegistryDao")
-    private ServiceRegistryDao jsonServiceRegistryDao;
+    private final ServiceRegistryDao jsonServiceRegistryDao;
 
     @Value("${svcreg.database.from.json:true}")
     private boolean initFromJsonIfAvailable;
-
-    public ServiceRegistryInitializationConfiguration() {
+    
+    @Autowired
+    public ServiceRegistryInitializer(@Qualifier("jsonServiceRegistryDao")
+                                      final ServiceRegistryDao jsonServiceRegistryDao,
+                                      @Qualifier("serviceRegistryDao")
+                                      final ServiceRegistryDao serviceRegistryDao) {
+        this.jsonServiceRegistryDao = jsonServiceRegistryDao;
+        this.serviceRegistryDao = serviceRegistryDao;
     }
 
     /**
