@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 @Component("serviceRegistryInitializer")
-public class ServiceRegistryInitializer {
+class ServiceRegistryInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializer.class);
 
@@ -28,12 +28,12 @@ public class ServiceRegistryInitializer {
 
     @Value("${svcreg.database.from.json:true}")
     private boolean initFromJsonIfAvailable;
-    
+
     @Autowired
-    public ServiceRegistryInitializer(@Qualifier("jsonServiceRegistryDao")
-                                      final ServiceRegistryDao jsonServiceRegistryDao,
-                                      @Qualifier("serviceRegistryDao")
-                                      final ServiceRegistryDao serviceRegistryDao) {
+    ServiceRegistryInitializer(@Qualifier("jsonServiceRegistryDao")
+                               final ServiceRegistryDao jsonServiceRegistryDao,
+                               @Qualifier("serviceRegistryDao")
+                               final ServiceRegistryDao serviceRegistryDao) {
         this.jsonServiceRegistryDao = jsonServiceRegistryDao;
         this.serviceRegistryDao = serviceRegistryDao;
     }
