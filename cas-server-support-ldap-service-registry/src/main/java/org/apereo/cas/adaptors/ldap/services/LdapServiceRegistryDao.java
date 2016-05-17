@@ -130,12 +130,13 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
     }
 
     /**
+     * {@inheritDoc}
      * This may be an expensive operation.
-     * In order to count the number of available definitions in ldap,
+     * In order to count the number of available definitions in LDAP,
      * this call will attempt to execute a search query to load services
      * and the results will be counted. Do NOT attempt to call this
      * operation in a loop. 
-     * @return
+     * @return number of entries in the service registry
      */
     @Override
     public long size() {

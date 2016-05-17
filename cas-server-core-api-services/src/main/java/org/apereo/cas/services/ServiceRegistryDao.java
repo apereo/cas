@@ -49,7 +49,7 @@ public interface ServiceRegistryDao {
      * Provides Java 8 supported default implementation so that implementations needed this new functionality could
      * override it and other implementations not caring for it could be left alone.
      *
-     * The default implementation simply throws <code>UnsupportedOperationException</code>
+     * The default implementation simply throws <code>UnsupportedOperationException</code>.
      *
      * @return number of registered services held by any particular implementation
      * @since 5.0.0
