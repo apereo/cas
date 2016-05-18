@@ -229,6 +229,11 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         return this.serviceMap.get(id);
     }
 
+    @Override
+    public long size() {
+        return this.serviceMap.size();
+    }
+    
     /**
      * Load registered service from file.
      *

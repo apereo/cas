@@ -19,7 +19,6 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Configuration("ehcacheTicketRegistryConfiguration")
 public class EhcacheTicketRegistryConfiguration {
 

@@ -1,9 +1,10 @@
 /*
-Override the version used by Spring boot to match ours.
+  Override the version used by Spring boot to match ours.
  */
 ext['hibernate.version'] = "$hibernateVersion"
 ext['hazelcast.version'] = "$hazelcastVersion"
 ext['spring-session.version'] = "$springSessionVersion"
+ext['tomcat.version'] = "$springBootTomcatVersion"
 
 ext.libraries = [
         aspectj          : [
@@ -906,6 +907,7 @@ ext.libraries = [
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-annotations')
                     exclude(group: 'org.hibernate', module: 'hibernate-validator')
                     exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
@@ -925,6 +927,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-core')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-annotations')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.hibernate', module: 'hibernate-validator')
                     exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
@@ -984,53 +987,47 @@ ext.libraries = [
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-actuator')
                     force = true
-                }
-                /*
-                dependencies.create("org.springframework.cloud:spring-cloud-config-monitor:$springCloudConfigMonitorVersion") {
-                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
-                    exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
-                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-core')
-                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter')
-                    exclude(group: 'org.springframework', module: 'spring-context')
-                    exclude(group: 'org.springframework', module: 'spring-web')
-                    exclude(group: 'org.springframework', module: 'spring-beans')
-                    exclude(group: 'org.springframework', module: 'spring-core')
-                    exclude(group: 'org.springframework.cloud', module: 'spring-cloud-bus')
-                    exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
-                    exclude(group: 'org.springframework.cloud', module: 'spring-cloud-config-server')
-                    exclude(group: 'org.springframework.security', module: 'spring-security-crypto')
-                    exclude(group: 'org.springframework.integration', module: 'spring-integration-core')
-                    exclude(group: 'org.yaml', module: 'snakeyaml')
-                    exclude(group: 'com.fasterxml', module: 'classmate')
-                    exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
-                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
-                    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
-                    exclude(group: 'org.hibernate', module: 'hibernate-core')
-                    exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
-                    force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-bus-amqp:$springCloudBusAmqpVersion") {
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
                     exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-core')
                     exclude(group: 'org.springframework.boot', module: 'spring-boot-starter')
                     exclude(group: 'org.springframework', module: 'spring-beans')
+                    exclude(group: 'org.springframework', module: 'spring-core')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.springframework.cloud', module: 'spring-cloud-context')
                     exclude(group: 'org.hibernate', module: 'hibernate-core')
                     exclude(group: 'org.hibernate', module: 'hibernate-entitymanager')
+                    exclude(group: 'org.springframework.integration', module: 'spring-integration-amqp')
                     exclude(group: 'org.springframework.integration', module: 'spring-integration-core')
+                    exclude(group: 'org.springframework.amqp', module: 'spring-rabbit')
+                    exclude(group: 'com.fasterxml', module: 'classmate')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
+                    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
                     force = true
                 },
-                dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {
+                dependencies.create("org.springframework.integration:spring-integration-amqp:$springVersion") {
                     exclude(group: 'org.springframework', module: 'spring-tx')
                     exclude(group: 'org.springframework', module: 'spring-aop')
                     exclude(group: 'org.springframework', module: 'spring-context')
                     exclude(group: 'org.springframework', module: 'spring-beans')
                     exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-web')
                     exclude(group: 'org.springframework', module: 'spring-messaging')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
+                    exclude(group: 'com.fasterxml', module: 'classmate')
+                    exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+                    exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-core')
+                    exclude(group: 'com.fasterxml.jackson.core', module:'jackson-annotations')
+                    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
                     force = true
                 }
-                */
         ],
         springsession    : [
                 dependencies.create("org.springframework.session:spring-session:$springSessionVersion") {
