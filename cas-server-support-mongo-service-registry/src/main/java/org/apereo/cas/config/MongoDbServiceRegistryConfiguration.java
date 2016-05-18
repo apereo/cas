@@ -98,22 +98,25 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
      *
      * @return the mongo client options factory bean
      */
-
     @RefreshScope
     @Bean(name = "mongoClientOptions")
-    public MongoClientOptions mongoClientOptions() throws Exception {
-        final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-        bean.setWriteConcern(this.writeConcern);
-        bean.setHeartbeatConnectTimeout(this.heartBeatConnectionTimeout);
-        bean.setHeartbeatSocketTimeout(this.heartBeatSocketTimeout);
-        bean.setMaxConnectionLifeTime(this.maxConnectionsLifeTime);
-        bean.setSocketKeepAlive(this.socketKeepAlive);
-        bean.setMaxConnectionIdleTime(this.idleTime);
-        bean.setConnectionsPerHost(this.connectionsPerHost);
-        bean.setSocketTimeout(this.socketTimeout);
-        bean.setConnectTimeout(this.connectTimeout);
-        bean.afterPropertiesSet();
-        return bean.getObject();
+    public MongoClientOptions mongoClientOptions() {
+        try {
+            final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
+            bean.setWriteConcern(this.writeConcern);
+            bean.setHeartbeatConnectTimeout(this.heartBeatConnectionTimeout);
+            bean.setHeartbeatSocketTimeout(this.heartBeatSocketTimeout);
+            bean.setMaxConnectionLifeTime(this.maxConnectionsLifeTime);
+            bean.setSocketKeepAlive(this.socketKeepAlive);
+            bean.setMaxConnectionIdleTime(this.idleTime);
+            bean.setConnectionsPerHost(this.connectionsPerHost);
+            bean.setSocketTimeout(this.socketTimeout);
+            bean.setConnectTimeout(this.connectTimeout);
+            bean.afterPropertiesSet();
+            return bean.getObject();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
