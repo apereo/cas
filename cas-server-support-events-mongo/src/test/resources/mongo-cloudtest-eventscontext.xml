@@ -15,7 +15,15 @@
         http://www.springframework.org/schema/properties/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
-
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
     <context:property-placeholder location="classpath:cloud.properties"
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="false"/>

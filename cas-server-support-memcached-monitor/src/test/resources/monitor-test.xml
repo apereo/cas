@@ -69,7 +69,9 @@
           class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
-    
+    <util:list id="validationServiceSelectionStrategies">
+        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
+    </util:list>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />

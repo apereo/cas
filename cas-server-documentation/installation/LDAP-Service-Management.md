@@ -53,3 +53,13 @@ The following settings are applicable:
 ```properties
 svcreg.ldap.baseDn=dc=example,dc=org
 ```
+
+## Auto Initialization
+
+Upon startup and if the services registry database is blank, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS. This behavior can be controlled via:
+
+```properties
+# svcreg.database.from.json=false
+```
