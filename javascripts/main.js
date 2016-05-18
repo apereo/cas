@@ -133,10 +133,6 @@ function generateTableOfContentsForPage() {
         if ($(this).is('h1,h2')) {
             // If it is a H2 and the submenu flag is NOT set, then arr.push('<li>h2 text')
             if (!subMenu) {
-                // arr.push('<li>');
-                // arr.push('<a href="#' + this.id + '">');
-                // arr.push(this.textContent);
-                // arr.push('</a>');
                 arr.push( tocItem(this.id, this.textContent));
             }
 
@@ -144,10 +140,6 @@ function generateTableOfContentsForPage() {
             if (subMenu) {
                 subMenu = false;
                 arr.push('</ul></li>');
-                // arr.push('<li>');
-                // arr.push('<a href="#' + this.id + '">');
-                // arr.push(this.textContent);
-                // arr.push('</a>');
                 arr.push( tocItem(this.id, this.textContent));
             }
         }
@@ -158,20 +150,9 @@ function generateTableOfContentsForPage() {
             if (!subMenu) {
                 subMenu = true;
                 arr.push('<ul class="nav">');
-                // arr.push('<li>');
-                // arr.push('<a href="#' + this.id + '">');
-                // arr.push(this.textContent);
-                // arr.push('</a>');
-                // arr.push('</li>');
                 arr.push( tocItem(this.id, this.textContent));
             } else if (subMenu) {
-                // If it is a H3 and the submenu flag is set, then arr.push('<li>h3 text</li>')
                 arr.push( tocItem(this.id, this.textContent));
-                // arr.push('<li>');
-                // arr.push('<a href="#' + this.id + '">');
-                // arr.push(this.textContent);
-                // arr.push('</a>');
-                // arr.push('</li>');
             }
         }
         ; // End H2
@@ -251,33 +232,6 @@ $(function () {
     }
     hideDevelopmentVersionWarning();
     document.title = $("h1").first().text() + formattedVersion;
-/*
-
-    /!* activate sidebar *!/
-    $('#tableOfContents ul').affix({
-        offset: {
-            top: 235
-        }
-    });
-
-    /!* activate scrollspy menu *!/
-    var $body   = $(document.body);
-    var navHeight = $('.navbar').outerHeight(true) + 10;
-
-    $body.scrollspy({
-        target: '#tableOfContents',
-        offset: navHeight
-    });
-*/
-
-
-/*
-
-    $('body').scrollspy({
-        target: '#tableOfContents',
-        offset: 40
-    });
-*/
 
 });
 
