@@ -1,87 +1,106 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="CAS - Single Sign-On for the Web" />
-    
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="CAS - Single Sign-On for the Web"/>
+
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
 
-    <link rel="stylesheet"
-	  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/redmond/jquery-ui.css" />
+    <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"
+          integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" media="screen"
-          href="{{ relative }}stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="print"
-          href="{{ relative }}stylesheets/print.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/redmond/jquery-ui.css"/>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ relative }}stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="print" href="{{ relative }}stylesheets/print.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
 
     <title>{{ page.title }}</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
-    <script src="{{ relative }}javascripts/URI.js"></script>
-    <script src="{{ relative }}javascripts/main.js"></script>
-  </head>
+</head>
 
-  <body>
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
-          <div id="project_title">
-            <a class="undecorated" href="{{ relative }}index.html">
-              <img class="undecorated" src="{{ relative }}images/cas_logo.png"/>
-            </a>
-          </div>
-          <h2 id="project_tagline">Single Sign-On for the Web</h2>
-        </header>
+<body>
+<!-- HEADER -->
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-4 col-md-2">
+                <a href="{{ relative }}index.html">
+                    <img class="undecorated" src="{{ relative }}images/cas_logo.png"/>
+                </a>
+            </div>
+            <div class="col-xs-8 col-md-6">
+                <h1>Single Sign-On for the Web</h1>
+            </div>
+            <div class="hidden-sm-down col-md-4">
+                <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
+            </div>
+        </div>
     </div>
+</header>
 
-    <!-- NAVBAR -->
-    <div id="navbar_wrap" class="outer">
-      <header id="navbar_content" class="inner">
-        {% include navbar.html %}
-        </header>
+
+<!-- NAVBAR -->
+{% include navbar.html %}
+
+<!-- SIDEBAR -->
+<!--
+<div id="sidebar_wrap" class="outer">
+    <div id="sidebar_content" class="inner">
+        <span id="sidebartoc"></span>
     </div>
+</div>
+-->
+<section id="cas-docs-container" class="container cas-docs-container">
+    <div class="row">
+        <!-- MAIN CONTENT -->
+        <div class="col-xs-12 col-md-9" role="main">
+            <div id="dev-doc-info" class="alert alert-info"><strong>Work in progress</strong>
+                <p>You are viewing the development documentation for the CAS server. <strong>The functionality presented
+                    here is not officially released yet and may be unstable</strong>.
+                    This is a work in progress and will be continually updated as development makes progress. To view
+                    the documentation for a specific CAS server version, please <a href="/cas/Older-Versions.html">choose
+                        an appropriate version.</a></p>
+            </div>
 
-      <!-- SIDEBAR -->
-      <div id="sidebar_wrap" class="outer">
-        <header id="sidebar_content" class="inner">
-          <span id="sidebartoc"></span>
-        </header >
-      </div>
+            <span id="toolbarIcons"></span>
+            {{ content }}
+        </div>
 
-      <!-- PAGE TABLE OF CONTENTS -->
-      <div id="table_contents" class="outer">
-        <header id="sidebar_content" class="inner">
-          <span id="tableOfContents"></span>
-        </header>
-      </div>
-
-      <!-- MAIN CONTENT -->
-      <div id="main_content_wrap" class="outer">
-        <section id="main_content" class="inner">
-          <div id="dev-doc-info" class="alert alert-info"><strong>Work in progress</strong><p>You are viewing the development
-          	documentation for the CAS server. <strong>The functionality presented here is not officially released yet and may be unstable</strong>.
-          	This is a work in progress and will be continually updated
-          	as development makes progress. To view the documentation for a specific CAS server version,
-          	please <a href="/cas/Older-Versions.html">choose an appropriate version.</a></p>
-          </div>
-
-          <span id="toolbarIcons" align="right" style="float:right"></span>
-          {{ content }}
-        </section>
-      </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p>CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a>.</p>
-      </footer>
+        <!-- PAGE TABLE OF CONTENTS -->
+        <div class="hidden-xs-down col-md-3" role="complementary">
+            <nav id="tableOfContents" class="cas-docs-sidebar hidden-print">
+                <h4>Table of Contents</h4>
+                <ul class="nav cas-docs-sidenav"></ul>
+            </nav>
+        </div>
     </div>
-  </body>
+</section>
+
+<!-- FOOTER  -->
+<footer>
+    <div class="container">
+        CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a>.
+    </div>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
+
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"
+        integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7"
+        crossorigin="anonymous"></script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+<script src="{{ relative }}javascripts/URI.js"></script>
+<script src="{{ relative }}javascripts/main.js"></script>
+
+</body>
 </html>
