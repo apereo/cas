@@ -5,9 +5,9 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.LogoutConversionService;
 import org.apereo.cas.web.flow.SelectiveFlowHandlerAdapter;
-import org.cryptacular.bean.CipherBean;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
+import org.cryptacular.bean.CipherBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +47,6 @@ import java.io.OutputStream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Configuration("casWebflowContextConfiguration")
 public class CasWebflowContextConfiguration {
 
