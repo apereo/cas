@@ -27,46 +27,46 @@ import java.util.Collections;
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
 public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfiguration {
-    
+
     @Value("${cas.service.registry.mongo.db:cas-service-registry}")
     private String databaseName;
-    
+
     @Value("${mongodb.userId:}")
     private String username;
-    
+
     @Value("${mongodb.userPassword:}")
     private String password;
-    
+
     @Value("${mongodb.host:localhost}")
     private String host;
-    
+
     @Value("${mongodb.port:27017}")
     private int port;
-    
+
     @Value("${mongodb.writeconcern:NORMAL}")
     private WriteConcern writeConcern;
-    
+
     @Value("${mongodb.timeout:5000}")
     private int heartBeatConnectionTimeout;
-    
+
     @Value("${mongodb.timeout:5000}")
     private int heartBeatSocketTimeout;
-    
+
     @Value("${mongodb.conns.lifetime:60000}")
     private int maxConnectionsLifeTime;
-    
+
     @Value("${mongodb.socket.keepalive:false}")
     private boolean socketKeepAlive;
-    
+
     @Value("${mongodb.idle.timeout:30000}")
     private int idleTime;
-    
+
     @Value("${mongodb.timeout:5000}")
     private int connectTimeout;
-    
+
     @Value("${mongodb.timeout:5000}")
     private int socketTimeout;
-    
+
     @Value("${mongodb.conns.per.host:10}")
     private int connectionsPerHost;
 
@@ -79,7 +79,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
-    
+
     @Override
     protected String getDatabaseName() {
         return this.databaseName;
@@ -88,11 +88,11 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     @Override
     public Mongo mongo() throws Exception {
         return new MongoClient(new ServerAddress(this.host, this.port),
-                Collections.singletonList(MongoCredential.createCredential(this.username, 
+                Collections.singletonList(MongoCredential.createCredential(this.username,
                         this.databaseName, this.password.toCharArray())),
                 mongoClientOptions());
     }
-    
+
     /**
      * Mongo mongo client options factory bean.
      *
@@ -115,7 +115,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
             bean.afterPropertiesSet();
             return bean.getObject();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -134,6 +134,6 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
                 new BaseConverters.CacheConverter()
         ));
     }
-    
-    
+
+
 }
