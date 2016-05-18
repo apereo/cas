@@ -82,4 +82,13 @@
     <bean id="mongo" factory-bean="fongo" factory-method="getMongo" />
     <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" />
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
 </beans>
