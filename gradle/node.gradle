@@ -6,11 +6,13 @@ buildscript {
     }
     dependencies {
         classpath "com.moowork.gradle:gradle-node-plugin:0.12"
+        classpath "com.moowork.gradle:gradle-gulp-plugin:0.12"
     }
 }
 
 if (!project.plugins.findPlugin(com.moowork.gradle.node.NodePlugin)) {
     project.apply(plugin: com.moowork.gradle.node.NodePlugin)
+    project.apply(plugin: com.moowork.gradle.gulp.GulpPlugin)
 }
 
 node {
@@ -34,22 +36,10 @@ node {
     nodeModulesDir = file("${project.buildDir}")
 }
 
-npm_run {
-    args = ['gulp']
-}
-
-task copyPackageFile(type: Copy) {
-    from 'package.json'
-    from 'gulpfile.js'
-    into project.file(project.node.nodeModulesDir)
-}
-
 ['npm_install', 'npm_run'].each {
     project."${it}".inputs.file project.file("${project.node.nodeModulesDir}/package.json")
     project."${it}".outputs.dir project.file("${project.node.nodeModulesDir}/node_modules")
     project."${it}".setWorkingDir(project.node.nodeModulesDir)
 }
-
-npm_install.dependsOn('copyPackageFile')
 
 processResources.dependsOn('npm_install', 'npm_run')
