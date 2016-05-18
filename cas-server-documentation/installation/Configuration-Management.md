@@ -26,7 +26,7 @@ serves as a reference and a placeholder for all settings that are available to C
 
 CAS is also configured to load `*.properties` files from an external location that is `/etc/cas/config`. This location is constantly
 monitored by CAS to detect external changes. Note that this location simply needs to exist, and does not require any special permissions
-or structure. The names of the configuration files that go inside this directory also do not matter, and they can be many. 
+or structure. The names of the configuration files that go inside this directory also do not matter, and there can be many. 
 
 The configuration of this behavior is controlled via the `bootstrap.properties` file:
 
@@ -64,7 +64,7 @@ Needless to say, the repositories could use both YAML and Properties syntax to h
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>Again, in all of the above strategies,
 an adopter is encouraged to only keep and maintain properties needed for their particular deployment. It is
-unnecessary to grab a copy of all CAS settings and move it to an external location. Settings that are
+unnecessary to grab a copy of all CAS settings and move them to an external location. Settings that are
 defined by the external configuration location or repository are able to override what is provided by CAS
 as a default.</p></div>
 

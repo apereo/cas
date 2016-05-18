@@ -49,8 +49,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
-    private transient Object lock = new Object();
-
     /**
      * Instantiates a new service ticket impl.
      */
@@ -133,7 +131,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     public ProxyGrantingTicket grantProxyGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
-        synchronized (this.lock) {
+        synchronized (this) {
             if(this.grantedTicketAlready) {
                 throw new InvalidProxyGrantingTicketForServiceTicket(this.service);
             }
