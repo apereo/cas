@@ -2,3 +2,16 @@ markdown: kramdown
 gems:
   - jekyll-sitemap
   - jekyll-feed
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  hard_wrap: false
+  syntax_highlighter_opts:
+    # Rouge Options › https://github.com/jneen/rouge#full-options
+    css_class: 'highlight'
+    #line_numbers: true # bad idea, spans don't need linenos and would inherit this option
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
