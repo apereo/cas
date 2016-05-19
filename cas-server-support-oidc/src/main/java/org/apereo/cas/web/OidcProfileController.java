@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
@@ -25,7 +26,6 @@ import java.util.Map;
 @RefreshScope
 @Controller("oidcProfileController")
 public class OidcProfileController extends OAuth20ProfileController {
-
     
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL,
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,11 +36,15 @@ public class OidcProfileController extends OAuth20ProfileController {
     }
 
     @Override
-    protected Map<String, Object> writeOutProfileResponse(final Principal principal) throws IOException {
-        final Map<String, Object> map = super.writeOutProfileResponse(principal);
+    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication, 
+                                                          final Principal principal) throws IOException {
+        final Map<String, Object> map = super.writeOutProfileResponse(authentication, principal);
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
             map.put(OidcConstants.CLAIM_SUB, principal.getId());
         }
+        
+        map.put(OidcConstants.CLAIM_AUTH_TIME, authentication.getAuthenticationDate().toEpochSecond());
+        
         return map;
     }
 }

@@ -35,7 +35,7 @@ public class WellKnownEndpointController {
                 new ServerDiscoveryProperties(this.serverPrefix, this.issuer);
 
         discoveryProperties.setSupportedClaims(
-                ImmutableList.of("sub", "name", "preferred_username",
+                ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
                         "family_name", "given_name", "middle_name", "given_name", "profile",
                         "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
                         "birthdate", "email", "email_verified", "phone_number",

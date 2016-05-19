@@ -24,6 +24,11 @@ public interface OidcConstants {
     String CLAIM_PREFERRED_USERNAME = "preferred_username";
 
     /**
+     * The authentication time claim.
+     */
+    String CLAIM_AUTH_TIME = "auth_time";
+    
+    /**
      * The Scopes.
      */
     Set<String> SCOPES = ImmutableSet.of("openid", "profile", "email", "address", "phone", "offline_access");
