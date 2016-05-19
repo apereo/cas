@@ -144,10 +144,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
-        final boolean credentialsProvided, final boolean onlyTrackMostRecentSession) {
+        final Authentication currentAuthentication, final boolean onlyTrackMostRecentSession) {
 
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
-                service, this.getCountOfUses() == 0 || credentialsProvided,
+                service, currentAuthentication,
                 expirationPolicy);
 
         updateStateAndTrackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);

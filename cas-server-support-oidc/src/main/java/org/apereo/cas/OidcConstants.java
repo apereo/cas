@@ -48,6 +48,11 @@ public interface OidcConstants {
     String ID_TOKEN = "id_token";
 
     /**
+     * The max age. 
+     */
+    String MAX_AGE = "max_age";
+    
+    /**
      * Base OIDC URL.
      */
     String BASE_OIDC_URL = "oidc";

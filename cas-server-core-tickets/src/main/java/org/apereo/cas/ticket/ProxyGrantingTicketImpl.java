@@ -62,7 +62,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                         final boolean onlyTrackMostRecentSession) {
         final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this,
-                service, this.getCountOfUses() == 0,
+                service, null,
                 expirationPolicy);
 
         updateStateAndTrackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);

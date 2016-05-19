@@ -2,20 +2,20 @@ package org.apereo.cas.web;
 
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.config.ServerDiscoveryProperties;
+import org.apereo.cas.config.OidcServerDiscoveryProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * This is {@link WellKnownEndpointController}.
+ * This is {@link OidcWellKnownEndpointController}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @RestController("wellknownController")
-public class WellKnownEndpointController {
+public class OidcWellKnownEndpointController {
 
     @Value("${server.prefix}")
     private String serverPrefix;
@@ -29,10 +29,10 @@ public class WellKnownEndpointController {
      * @return the well known discovery configuration
      */
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", method = RequestMethod.GET)
-    public ServerDiscoveryProperties getWellKnownDiscoveryConfiguration() {
+    public OidcServerDiscoveryProperties getWellKnownDiscoveryConfiguration() {
 
-        final ServerDiscoveryProperties discoveryProperties =
-                new ServerDiscoveryProperties(this.serverPrefix, this.issuer);
+        final OidcServerDiscoveryProperties discoveryProperties =
+                new OidcServerDiscoveryProperties(this.serverPrefix, this.issuer);
 
         discoveryProperties.setSupportedClaims(
                 ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
@@ -57,7 +57,7 @@ public class WellKnownEndpointController {
      * @return the well known discovery configuration
      */
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", method = RequestMethod.GET)
-    public ServerDiscoveryProperties getWellKnownOpenIdDiscoveryConfiguration() {
+    public OidcServerDiscoveryProperties getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();
     }
 }

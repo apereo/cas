@@ -3,6 +3,7 @@ dependencies {
     compileOnly libraries.springcloud
     compile project(':cas-server-support-oauth')
     compile libraries.jose4j
+    compileOnly project(':cas-server-webapp-cookie')
     testCompile project(':cas-server-core-util')
     
 }

@@ -22,26 +22,28 @@ public interface TicketGrantingTicket extends Ticket {
      * The prefix to use when generating an id for a Ticket Granting Ticket.
      */
     String PREFIX = "TGT";
-    
+
     /**
      * Method to retrieve the authentication.
      *
      * @return the authentication
      */
     Authentication getAuthentication();
-    
+
     /**
      * Grant a ServiceTicket for a specific service.
      *
      * @param id                         The unique identifier for this ticket.
      * @param service                    The service for which we are granting a ticket
      * @param expirationPolicy           the expiration policy.
-     * @param credentialsProvided        if the credentials are provided.
+     * @param currentAuthentication      current authentication event for issuing this ticket. Could be null.
      * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
      * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
     ServiceTicket grantServiceTicket(String id, Service service,
-        ExpirationPolicy expirationPolicy, boolean credentialsProvided, boolean onlyTrackMostRecentSession);
+                                     ExpirationPolicy expirationPolicy, 
+                                     Authentication currentAuthentication, 
+                                     boolean onlyTrackMostRecentSession);
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.

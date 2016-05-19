@@ -46,7 +46,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
 
     @Test
     public void verifyTicketUsedButWithTimeout() throws InterruptedException {
-        this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(), this.expirationPolicy, false,
+        this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(), this.expirationPolicy, null,
                 true);
         expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         expirationPolicy.setTimeInBetweenUsesInMilliSeconds(-10);
@@ -55,7 +55,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
 
     @Test
     public void verifyNotWaitingEnoughTime() {
-        this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(), this.expirationPolicy, false,
+        this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(), this.expirationPolicy, null,
                 true);
         expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         assertTrue(this.ticket.isExpired());

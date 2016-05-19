@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 
@@ -29,11 +30,11 @@ public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
      * @param id           the id
      * @param ticket       the ticket
      * @param service      the service
-     * @param fromNewLogin the from new login
+     * @param currentAuthentication the authentication that prompted this ticket. Could be null.
      * @param policy       the policy
      */
-    public ProxyTicketImpl(final String id,  final TicketGrantingTicketImpl ticket,  final Service service,
-                           final boolean fromNewLogin, final ExpirationPolicy policy) {
-        super(id, ticket, service, fromNewLogin, policy);
+    public ProxyTicketImpl(final String id, final TicketGrantingTicketImpl ticket, final Service service,
+                           final Authentication currentAuthentication, final ExpirationPolicy policy) {
+        super(id, ticket, service, currentAuthentication, policy);
     }
 }

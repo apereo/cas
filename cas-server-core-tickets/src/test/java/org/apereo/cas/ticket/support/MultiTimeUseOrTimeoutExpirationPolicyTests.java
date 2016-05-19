@@ -58,7 +58,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     public void verifyTicketIsExpiredByCount() {
         IntStream.range(0, NUMBER_OF_USES)
                 .forEach(i -> this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(),
-                        new NeverExpiresExpirationPolicy(), false, true));
+                        new NeverExpiresExpirationPolicy(), null, true));
         assertTrue(this.ticket.isExpired());
     }
 }

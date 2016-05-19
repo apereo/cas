@@ -71,7 +71,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
             }
             if (isCookieHttpOnly()) {
                 final Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly", boolean.class);
-                if(setHttpOnlyMethod != null) {
+                if (setHttpOnlyMethod != null) {
                     cookie.setHttpOnly(true);
                 } else {
                     logger.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");

@@ -6,22 +6,22 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import java.util.List;
 
 /**
- * This is {@link ServerDiscoveryProperties}.
+ * This is {@link OidcServerDiscoveryProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ServerDiscoveryProperties {
-    private String issuer;
+public class OidcServerDiscoveryProperties {
+    private final String issuer;
     private List<String> supportedScopes;
     private List<String> supportedResponseTypes;
     private List<String> supportedSubjectTypes;
     private List<String> supportedClaimTypes;
     private List<String> supportedClaims;
     private List<String> supportedGrantTypes;
-    private String serverPrefix;
+    private final String serverPrefix;
 
-    public ServerDiscoveryProperties(final String serverPrefix, final String issuer) {
+    public OidcServerDiscoveryProperties(final String serverPrefix, final String issuer) {
         this.issuer = issuer;
         this.serverPrefix = serverPrefix;
     }
@@ -105,4 +105,6 @@ public class ServerDiscoveryProperties {
     public void setSupportedGrantTypes(final List<String> supportedGrantTypes) {
         this.supportedGrantTypes = supportedGrantTypes;
     }
+    
+    
 }

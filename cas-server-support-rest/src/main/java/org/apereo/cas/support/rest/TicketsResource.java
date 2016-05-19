@@ -85,7 +85,7 @@ public class TicketsResource {
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
 
-    private ObjectMapper jacksonObjectMapper = new ObjectMapper();
+    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
 
     /**

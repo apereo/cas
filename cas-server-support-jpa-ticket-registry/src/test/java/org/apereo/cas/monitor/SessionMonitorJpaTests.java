@@ -71,7 +71,7 @@ public class SessionMonitorJpaTests {
                       GENERATOR.getNewTicketId("ST"),
                       new MockService("junit"),
                       TEST_EXP_POLICY,
-                      false,
+                      null,
                       true));
           }
         }

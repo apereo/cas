@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 
 /**
@@ -14,13 +15,13 @@ public interface ServiceTicketFactory extends TicketFactory {
     /**
      * Create the ticket object.
      *
-     * @param <T>                  the type parameter
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param service              the service
-     * @param credentialsProvided  the credentials provided
+     * @param <T>                   the type parameter
+     * @param ticketGrantingTicket  the ticket granting ticket
+     * @param service               the service
+     * @param currentAuthentication current authentication event, may be null.
      * @return the t
      */
     <T extends Ticket> T create(TicketGrantingTicket ticketGrantingTicket,
                                 Service service,
-                                boolean credentialsProvided);
+                                Authentication currentAuthentication);
 }
