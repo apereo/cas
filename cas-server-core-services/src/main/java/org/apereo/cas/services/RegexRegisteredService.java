@@ -1,10 +1,11 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.RegexUtils;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -35,28 +36,18 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     @Override
     public boolean matches(final Service service) {
         if (this.servicePattern == null) {
-            this.servicePattern = createPattern(this.serviceId);
+            final Optional<Pattern> parsedPattern = RegexUtils.createPattern(this.serviceId);
+            if (parsedPattern.isPresent()) {
+                this.servicePattern = parsedPattern.get();
+            }
         }
-        return service != null && this.servicePattern.matcher(service.getId()).matches();
+        return service != null && this.servicePattern != null
+                && this.servicePattern.matcher(service.getId()).matches();
     }
 
     @Override
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
     }
-
-    /**
-     * Creates the pattern. Matching is by default
-     * case insensitive.
-     *
-     * @param pattern the pattern, may not be null.
-     * @return the pattern
-     */
-    private static Pattern createPattern(final String pattern) {
-        if (pattern == null) {
-            throw new IllegalArgumentException("Pattern cannot be null.");
-        }
-        
-        return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-    }
+    
 }
