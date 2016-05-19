@@ -177,6 +177,7 @@ subprojects {
             exclude(group: 'javax.el', module: 'javax.el-api')
         }
         runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4jVersion
+        runtime group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: groovyVersion
         runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4jVersion
         runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
         runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion) {
