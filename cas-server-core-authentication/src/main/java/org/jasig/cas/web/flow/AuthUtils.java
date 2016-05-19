@@ -6,8 +6,12 @@
 package org.jasig.cas.web.flow;
 
 import java.net.URL;
+import java.util.regex.Pattern;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +59,9 @@ public final class AuthUtils {
    */
   public static String extractTenantID(String uri) {
     String tenantID = SELF;
-    String domain = "wavity.com"; //TODO: see if it doesn't need to be hard-coded.
     LOGGER.info("Request URI for tenant extraction:{}", uri);
-    //URI is http://tenantid.ziontech.com:8080/oneteam/..
+    final Pattern servicePattern = Pattern.compile("^http://.*.wavity.(com|net|info).*", Pattern.CASE_INSENSITIVE);
+    final boolean isServiceUrl = servicePattern.matcher(uri).matches();
     try {
       URL url = new URL(uri);
       String host = url.getHost();
@@ -65,8 +69,7 @@ public final class AuthUtils {
       if (idx != -1) {
         String subDomain = host.substring(0, idx);
         if (host.length() > idx) {
-          String theDomain = host.substring(idx + 1);
-          if (theDomain.equalsIgnoreCase(domain) && subDomain != null && !subDomain.equalsIgnoreCase(WWW)) {
+          if (isServiceUrl && subDomain != null && !subDomain.equalsIgnoreCase(WWW)) {
             tenantID = subDomain;
           }
         }
@@ -81,8 +84,7 @@ public final class AuthUtils {
           if (idx != -1) {
             String subDomain = host.substring(0, idx);
             if (host.length() > idx) {
-              String theDomain = host.substring(idx + 1);
-              if (theDomain.equalsIgnoreCase(domain) && subDomain != null
+              if (isServiceUrl && subDomain != null
                       && !subDomain.equalsIgnoreCase(WWW)) {
                 tenantID = subDomain;
               }
