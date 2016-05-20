@@ -36,7 +36,8 @@ public class OidcCasClientRedirectActionBuilder extends DefaultOAuthCasClientRed
         }
 
         oidcAuthorizationRequestSupport.configureClientForPromptLoginAuthorizationRequest(casClient, context);
-                
+        oidcAuthorizationRequestSupport.configureClientForPromptNoneAuthorizationRequest(casClient, context);
+        
         return super.build(casClient, context);
     }
 }

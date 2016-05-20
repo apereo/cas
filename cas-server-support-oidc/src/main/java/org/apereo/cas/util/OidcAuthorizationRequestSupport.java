@@ -48,11 +48,11 @@ public class OidcAuthorizationRequestSupport {
     /**
      * Gets oidc prompt from authorization request.
      *
-     * @param context the context
+     * @param url the url
      * @return the oidc prompt from authorization request
      */
-    public static Set<String> getOidcPromptFromAuthorizationRequest(final WebContext context) {
-        final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
+    public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
+        final URIBuilder builderContext = new URIBuilder(url);
         final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
                 .stream().filter(p -> p.getName().equals(OidcConstants.PROMPT))
                 .findFirst();
@@ -61,6 +61,16 @@ public class OidcAuthorizationRequestSupport {
             return ImmutableSet.copyOf(parameter.get().getValue().split(" "));
         }
         return Collections.emptySet();
+    }
+    
+    /**
+     * Gets oidc prompt from authorization request.
+     *
+     * @param context the context
+     * @return the oidc prompt from authorization request
+     */
+    public static Set<String> getOidcPromptFromAuthorizationRequest(final WebContext context) {
+        return getOidcPromptFromAuthorizationRequest(context.getFullRequestURL());
     }
     
     /**
@@ -198,6 +208,20 @@ public class OidcAuthorizationRequestSupport {
         final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_LOGIN)) {
             casClient.setRenew(true);
+        }
+    }
+
+    /**
+     * Configure client for prompt none authorization request.
+     *
+     * @param casClient the cas client
+     * @param context   the context
+     */
+    public static void configureClientForPromptNoneAuthorizationRequest(final CasClient casClient, final WebContext context) {
+        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
+        if (prompts.contains(OidcConstants.PROMPT_NONE)) {
+            casClient.setRenew(false);
+            casClient.setGateway(true);
         }
     }
 }

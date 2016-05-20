@@ -16,7 +16,7 @@ import java.util.Set;
 public interface OidcConstants {
 
     /**
-     * The Authorization Server MUST NOT display any authentication or consent user interface pages. 
+     * The Authorization Server MUST NOT display any authentication or consent user interface pages.
      */
     String PROMPT_NONE = "none";
 
@@ -24,7 +24,7 @@ public interface OidcConstants {
      * The Authorization Server SHOULD prompt the End-User for reauthentication.
      */
     String PROMPT_LOGIN = "login";
-    
+
     /**
      * The sub claim.
      */
@@ -39,7 +39,7 @@ public interface OidcConstants {
      * The authentication time claim.
      */
     String CLAIM_AUTH_TIME = "auth_time";
-    
+
     /**
      * The Scopes.
      */
@@ -60,15 +60,15 @@ public interface OidcConstants {
     String ID_TOKEN = "id_token";
 
     /**
-     * The max age. 
+     * The max age.
      */
     String MAX_AGE = "max_age";
 
     /**
-     * The prompt parameter. 
+     * The prompt parameter.
      */
     String PROMPT = "prompt";
-    
+
     /**
      * Base OIDC URL.
      */
@@ -93,4 +93,9 @@ public interface OidcConstants {
      * Revocation endpoint url.
      */
     String REVOCATION_URL = "revocation";
+
+    /**
+     * Indicates authentication is required and could not be performed.
+     */
+    String LOGIN_REQUIRED = "login_required";
 }

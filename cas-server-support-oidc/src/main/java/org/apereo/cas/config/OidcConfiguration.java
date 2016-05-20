@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -11,14 +13,20 @@ import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,6 +57,31 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
 
+    /**
+     * Callback authorize view resolver.
+     *
+     * @return the oauth 20 callback authorize view resolver
+     */
+    @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
+    @Bean(name="callbackAuthorizeViewResolver")
+    public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
+        return new OAuth20CallbackAuthorizeViewResolver() {
+            @Override
+            public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
+                final Set<String> prompts = oidcAuthzRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+                if (prompts.contains(OidcConstants.PROMPT_NONE)) {
+                    if (manager.get(true) != null) {
+                        return new ModelAndView(url);
+                    }
+                    final Map<String, String> model = new HashMap<>();
+                    model.put(OAuthConstants.ERROR, OidcConstants.LOGIN_REQUIRED);
+                    return new ModelAndView(new MappingJackson2JsonView(), model);
+                }
+                return new ModelAndView(new RedirectView(url));
+            }
+        };
+    }
+    
     /**
      * Oidc interceptor handler interceptor.
      *
@@ -96,9 +129,14 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                     }
                 }
 
+
+                final Set<String> prompts = oidcAuthzRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
                 if (!clearCreds) {
-                    final Set<String> prompts = oidcAuthzRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
                     clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
+                }
+
+                if (clearCreds) {
+                    clearCreds = !prompts.contains(OidcConstants.PROMPT_NONE);
                 }
                 
                 if (clearCreds) {

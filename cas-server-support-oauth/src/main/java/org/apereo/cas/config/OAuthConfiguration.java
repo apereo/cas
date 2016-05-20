@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
@@ -147,6 +148,17 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
 
+    /**
+     * Callback authorize view resolver.
+     *
+     * @return the oauth 20 callback authorize view resolver
+     */
+    @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
+    @Bean(name="callbackAuthorizeViewResolver")
+    public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
+        return new OAuth20CallbackAuthorizeViewResolver() {};
+    }
+    
     /**
      * Requires authentication access token interceptor requires authentication interceptor.
      *
