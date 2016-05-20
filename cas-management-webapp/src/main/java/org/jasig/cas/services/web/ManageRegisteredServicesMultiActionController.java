@@ -22,7 +22,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.web.view.JsonViewUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,8 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * @param defaultServiceUrl the default service url
      */
     @Autowired
-    public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
+    public ManageRegisteredServicesMultiActionController(
+             final ReloadableServicesManager servicesManager,
             @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
         super(servicesManager);
         this.defaultService = new SimpleWebApplicationServiceImpl(defaultServiceUrl);
@@ -72,6 +73,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * Ensure default service exists.
      */
     private void ensureDefaultServiceExists() {
+        this.servicesManager.reload();
         final Collection<RegisteredService> c = this.servicesManager.getAllServices();
         if (c == null) {
             throw new IllegalStateException("Services cannot be empty");

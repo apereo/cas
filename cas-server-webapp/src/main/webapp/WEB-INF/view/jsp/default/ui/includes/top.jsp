@@ -30,12 +30,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-  <title>CAS &#8211; Central Authentication Service</title>
+    <title>CAS &#8211; Central Authentication Service</title>
   
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
-  <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
-  <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
+    <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
+    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
   
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js" type="text/javascript"></script>

@@ -19,18 +19,22 @@
 
 package org.jasig.cas.services;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.joda.time.DateTime;
+import org.jasig.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultRegisteredServiceAccessStrategy}
@@ -60,6 +64,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /** Is the service allowed to use SSO? **/
     private boolean ssoEnabled = true;
 
+    private String startingDateTime;
+
+    private String endingDateTime;
+
+    private URI unauthorizedRedirectUrl;
+
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
      * Default requires that all attributes be present and match the principal's.
@@ -71,6 +81,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * for this service to proceed.
      */
     private Map<String, Set<String>> requiredAttributes = new HashMap<>();
+
+    /**
+     * Indicates whether matching on required attribute values
+     * should be done in a case-insensitive manner.
+     */
+    private boolean caseInsensitive;
 
     /**
      * Instantiates a new Default registered service authorization strategy.
@@ -127,6 +143,50 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     public Map<String, Set<String>> getRequiredAttributes() {
         return new HashMap<>(this.requiredAttributes);
+    }
+
+    public String getStartingDateTime() {
+        return startingDateTime;
+    }
+
+    public String getEndingDateTime() {
+        return endingDateTime;
+    }
+
+    public void setStartingDateTime(final String startingDateTime) {
+        this.startingDateTime = startingDateTime;
+    }
+
+    public void setEndingDateTime(final String endingDateTime) {
+        this.endingDateTime = endingDateTime;
+    }
+
+    public void setUnauthorizedRedirectUrl(final URI unauthorizedRedirectUrl) {
+        this.unauthorizedRedirectUrl = unauthorizedRedirectUrl;
+    }
+
+    @Override
+    public URI getUnauthorizedRedirectUrl() {
+        return this.unauthorizedRedirectUrl;
+    }
+
+    /**
+     * Is attribute value matching case insensitive?
+     *
+     * @return true/false
+     */
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    /**
+     * Sets case insensitive.
+     *
+     * @param caseInsensitive the case insensitive
+     * @since 4.3
+     */
+    public void setCaseInsensitive(final boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
     }
 
     /**
@@ -187,18 +247,25 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         }
 
         for (final String key : copy) {
-            final Set<?> requiredValues = this.requiredAttributes.get(key);
-            final Set<?> availableValues;
+            final Set<String> requiredValues = this.requiredAttributes.get(key);
+            final Set<String> availableValues;
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
                 final Collection valCol = (Collection) objVal;
-                availableValues = Sets.newHashSet(valCol.toArray());
+                availableValues = Sets.newHashSet(valCol.iterator());
             } else {
-                availableValues = Collections.singleton(objVal);
+                availableValues = Sets.newHashSet(objVal.toString());
             }
 
-            final Sets.SetView<?> differenceInValues = Sets.intersection(availableValues, requiredValues);
+            final Set<?> differenceInValues;
+            final Pattern pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
+            if (pattern != null) {
+                differenceInValues = Sets.filter(availableValues, Predicates.contains(pattern));
+            } else {
+                differenceInValues = Sets.intersection(availableValues, requiredValues);
+            }
+
             if (!differenceInValues.isEmpty()) {
                 logger.info("Principal is authorized to access the service");
                 return true;
@@ -221,6 +288,28 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         if (!this.enabled) {
             logger.trace("Service is not enabled in service registry.");
         }
+
+        final DateTime now = DateTime.now();
+
+        if (this.startingDateTime != null) {
+            final DateTime st = DateTime.parse(this.startingDateTime);
+
+            if (now.isBefore(st)) {
+                logger.warn("Service access not allowed because it starts at {}. Now is {}",
+                        this.startingDateTime, now);
+                return false;
+            }
+        }
+
+        if (this.endingDateTime != null) {
+            final DateTime et = DateTime.parse(this.endingDateTime);
+            if  (now.isAfter(et)) {
+                logger.warn("Service access not allowed because it ended at {}. Now is {}",
+                        this.endingDateTime, now);
+                return false;
+            }
+        }
+
         return this.enabled;
     }
 
@@ -242,6 +331,10 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.ssoEnabled, rhs.ssoEnabled)
                 .append(this.requireAllAttributes, rhs.requireAllAttributes)
                 .append(this.requiredAttributes, rhs.requiredAttributes)
+                .append(this.startingDateTime, rhs.startingDateTime)
+                .append(this.endingDateTime, rhs.endingDateTime)
+                .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
+                .append(this.caseInsensitive, rhs.caseInsensitive)
                 .isEquals();
     }
 
@@ -252,6 +345,10 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.ssoEnabled)
                 .append(this.requireAllAttributes)
                 .append(this.requiredAttributes)
+                .append(this.startingDateTime)
+                .append(this.endingDateTime)
+                .append(this.unauthorizedRedirectUrl)
+                .append(this.caseInsensitive)
                 .toHashCode();
     }
 
@@ -263,6 +360,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("ssoEnabled", ssoEnabled)
                 .append("requireAllAttributes", requireAllAttributes)
                 .append("requiredAttributes", requiredAttributes)
+                .append("startingDateTime", startingDateTime)
+                .append("endingDateTime", endingDateTime)
+                .append("unauthorizedRedirectUrl", unauthorizedRedirectUrl)
+                .append("caseInsensitive", caseInsensitive)
                 .toString();
     }
+
+
 }

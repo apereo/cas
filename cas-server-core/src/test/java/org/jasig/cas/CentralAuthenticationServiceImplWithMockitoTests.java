@@ -18,7 +18,7 @@
  */
 package org.jasig.cas;
 
-import org.apache.commons.collections4.functors.TruePredicate;
+import com.google.common.base.Predicates;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
@@ -89,7 +89,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
         private final String id;
 
-        public VerifyServiceByIdMatcher(final String id) {
+        VerifyServiceByIdMatcher(final String id) {
             this.id = id;
         }
 
@@ -155,7 +155,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(ticketIdGenForServiceMock.containsKey(any())).thenReturn(true);
         when(ticketIdGenForServiceMock.get(any())).thenReturn(new DefaultUniqueTicketIdGenerator());
         
-        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, mock(AuthenticationManager.class),
+        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, mock(AuthenticationManager.class),
                 mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
                 mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
     }
@@ -187,7 +187,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.INSTANCE);
+        final Collection<Ticket> c = this.cas.getTickets(Predicates.alwaysTrue());
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 

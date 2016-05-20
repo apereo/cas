@@ -13,7 +13,7 @@ containing metadata that drives a number of CAS behaviors:
 * Forced authentication - Provides administrative control for forced authentication.
 * Attribute release - Provide user details to services for authorization and personalization.
 * Proxy control - Further restrict authorized services by granting/denying proxy authentication capability.
-* Theme control - Define alternate CAS themese to be used for particular services.
+* Theme control - Define alternate CAS themes to be used for particular services.
 
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
@@ -44,7 +44,7 @@ Registered services present the following metadata:
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `id`                              | Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
-| `name`                            | Required name (255 characters or less).
+| `name`                            | Required name (255 characters or less). Must include valid characters allowed by the file system.
 | `description`                     | Optional free-text description of the service. (255 characters or less)
 | `logo`                              | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name.  
 | `serviceId`                       | Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
@@ -56,171 +56,62 @@ Registered services present the following metadata:
 | `logoutType`                      | Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout.
 | `usernameAttributeProvider`       | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `accessStrategy`                  | The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
-| `publicKey`                  		| The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
-| `logoutUrl`                  		| URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
+| `publicKey`                       | The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
+| `logoutUrl`                       | URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
+| `properties`                  		| Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis.
 
-###Configure Service Access Strategy
-The access strategy of a registered service provides fine-grained control over the service authorization rules. it describes whether the service is allowed to use the CAS server, allowed to participate in single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal attributes that must exist before access can be granted to the service. This behavior allows one to configure various attributes in terms of access roles for the application and define rules that would be enacted and validated when an authentication request from the application arrives.
+### Configure Service Access Strategy
 
-####Components
+[See this guide](Configuring-Service-Access-Strategy.html) for more info please.
 
-#####`RegisteredServiceAccessStrategy`
-This is the parent interface that outlines the required operations from the CAS perspective that need to be carried out in order to determine whether the service can proceed to the next step in the authentication flow.
+### Configure Service Custom Properties
 
-#####`DefaultRegisteredServiceAccessStrategy`
-The default access manager allows one to configure a service with the following properties:
-
-| Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
-| `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
-| `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
-| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
-| `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
-
-<div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attributes is case-sensitive. Exact matches are required for any individual attribute value.</p></div>
-
-<div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
-
-####Configuration of Role-based Access Control
-Some examples of RBAC configuration follow:
-
-* Service is not allowed to use CAS:
-
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                c:ssoEnabled="true"
-                c:enabled="false"/>
-    </property>
-...
-</bean>
-{% endhighlight %}
+[See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
 
-* Service will be challenged to present credentials every time, thereby not using SSO:
-
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                c:ssoEnabled="false"
-                c:enabled="true"/>
-    </property>
-...
-</bean>
-{% endhighlight %}
-
-
-* To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
-`givenName` attribute with the value of `Administrator`:
-
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-             <map>
-                 <entry key="cn" value="admin" />
-                 <entry key="givenName" value="Administrator" />
-             </map>
-        </bean>
-    </property>
-...
-</bean>
-{% endhighlight %}
-
-* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
-
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-            <map>
-                <entry key="cn">
-                    <list>
-                           <value>admin</value>
-                           <value>Admin</value>
-                           <value>TheAdmin</value>
-                    </list>
-                </entry>
-             </map>
-        </bean>
-    </property>
-...
-</bean>
-{% endhighlight %}
-
-
-* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
-OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
-
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                p:requireAllAttributes="false">
-            <map>
-                <entry key="cn">
-                    <list>
-                        <value>admin</value>
-                        <value>Admin</value>
-                        <value>TheAdmin</value>
-                    </list>
-                </entry>
-                <entry key="member">
-                    <list>
-                        <value>admins</value>
-                        <value>adminGroup</value>
-                        <value>staff</value>
-                    </list>
-                </entry>
-             </map>
-        </bean>
-    </property>
-...
-</bean>
-{% endhighlight %}
-
-
-###Configure Proxy Authentication Policy
+### Configure Proxy Authentication Policy
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT.
 
 Note that by default, the proxy authentication is disallowed for all applications.
 
-####Components
+#### Components
 
-#####`RefuseRegisteredServiceProxyPolicy`
+##### `RefuseRegisteredServiceProxyPolicy`
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
 
-#####`RegexMatchingRegisteredServiceProxyPolicy`
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+  }
+}
+{% endhighlight %}
+
+##### `RegexMatchingRegisteredServiceProxyPolicy`
 A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:description="Allows HTTP(S) and IMAP(S) protocols"
-         p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
-    <property name="proxyPolicy">
-        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-            c:pgtUrlPattern="^https?://.*" />
-    </property>
-</bean>
+
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*"
+  }
+}
 {% endhighlight %}
 
 ## Persisting Registered Service Data
 
-######`InMemoryServiceRegistryDaoImpl`
-CAS uses in-memory services management by default, with the registry seeded from registration beans wired via Spring.
+###### `InMemoryServiceRegistryDaoImpl`
+This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
 
 {% highlight xml %}
 <bean id="serviceRegistryDao"
@@ -241,7 +132,7 @@ This component is _NOT_ suitable for use with the service management webapp sinc
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
-######`JsonServiceRegistryDao`
+###### `JsonServiceRegistryDao`
 This DAO reads services definitions from JSON configuration files at the application context initialization time. JSON files are
 expected to be found inside a configured directory location and this DAO will recursively look through the directory structure to find relevant JSON files.
 
@@ -254,35 +145,12 @@ A sample JSON file follows:
 
 {% highlight json %}
 {
-    "@class" : "org.jasig.cas.services.RegexRegisteredService",
-    "id" : 103935657744185,
-    "description" : "Service description",
-    "serviceId" : "https://**",
-    "name" : "testJsonFile",
-    "theme" : "testtheme",
-    "proxyPolicy" : {
-        "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-        "pattern" : "https://.+"
-    },
-    "accessStrategy" : {
-        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-    },
-    "evaluationOrder" : 1000,
-    "usernameAttributeProvider" : {
-        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
-    },
-    "logoutType" : "BACK_CHANNEL",
-    "requiredHandlers" : [ "java.util.HashSet", [ "handler1", "handler2" ] ],
-    "attributeReleasePolicy" : {
-        "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
-        "attributeFilter" : {
-            "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
-            "pattern" : "\\w+"
-        },
-        "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "cn", "sn" ] ]
-    }
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "evaluationOrder" : 0
 }
-
 {% endhighlight %}
 
 
@@ -294,6 +162,10 @@ changes synchronized from one node to the next.
 
 The JSON service registry is also able to auto detect changes to the specified directory. It will monitor changes to recognize
 file additions, removals and updates and will auto-refresh CAS so changes do happen instantly.
+
+<div class="alert alert-info"><strong>Escaping Characters</strong><p>
+Please make sure all field values in the JSON blob are correctly escaped, specially for the service id. If the service is defined as a regular expression, certain regex constructs such as "." and "\d" need to be doubly escaped.
+</p></div>
 
 The naming convention for new JSON files is recommended to be the following:
 
@@ -315,7 +187,7 @@ if duplicate data is found.
 </p></div>
 
 
-######`MongoServiceRegistryDao`
+###### `MongoServiceRegistryDao`
 This DAO uses a [MongoDb](https://www.mongodb.org/) instance to load and persist service definitions. Support is enabled by adding the following module into the Maven overlay:
 
 {% highlight xml %}
@@ -339,7 +211,7 @@ mongodb.userPassword=mongodb password to bind
 cas.service.registry.mongo.db=Collection name to store service definitions
 {% endhighlight %}
 
-######`LdapServiceRegistryDao`
+###### `LdapServiceRegistryDao`
 Service registry implementation which stores the services in a LDAP Directory. Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapRegisteredServiceMapper` in order to configure settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` `casRegisteredService` attribute and are looked up by the `uid` attribute.
 
 {% highlight xml %}
@@ -360,7 +232,7 @@ Note that the configuration of the mapper is optional and need not explicitly ex
 
 <p/>
 
-######`DefaultLdapRegisteredServiceMapper`
+###### `DefaultLdapRegisteredServiceMapper`
 The default mapper has support for the following optional items:
 
 | Field                             | Default Value
@@ -372,7 +244,7 @@ The default mapper has support for the following optional items:
 Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as JSON objects. The format and syntax of the JSON is identical to that of `JsonServiceRegistryDao`.
 
 
-######`JpaServiceRegistryDaoImpl`
+###### `JpaServiceRegistryDaoImpl`
 Stores registered service data in a database; the preferred choice when using the service management webapp.
 The following schema shall be generated by CAS automatically for brand new deployments, and must be massaged
 when doing CAS upgrades:
@@ -403,78 +275,74 @@ create table RegisteredServiceImpl (
 
 
 The following configuration template may be applied to `deployerConfigContext.xml` to provide for persistent
-registered service storage. The configuration assumes a `dataSource` bean is defined in the context.
+registered service storage.
 
 {% highlight xml %}
-<tx:annotation-driven />
+<bean
+    id="dataSource"
+    class="com.mchange.v2.c3p0.ComboPooledDataSource"
+    p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+    p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
+    p:user="${database.user:sa}"
+    p:password="${database.password:}"
+    p:initialPoolSize="${database.pool.minSize:6}"
+    p:minPoolSize="${database.pool.minSize:6}"
+    p:maxPoolSize="${database.pool.maxSize:18}"
+    p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime:1000}"
+    p:checkoutTimeout="${database.pool.maxWait:2000}"
+    p:acquireIncrement="${database.pool.acquireIncrement:16}"
+    p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
+    p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
+    p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
+    p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"
+/>
 
-<bean id="factoryBean"
+<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+<util:list id="packagesToScan">
+    <value>org.jasig.cas.services</value>
+    <value>org.jasig.cas.support.oauth.services</value>
+</util:list>
+
+<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+      id="jpaVendorAdapter"
+      p:generateDdl="true"
+      p:showSql="true" />
+
+<bean id="entityManagerFactory"
       class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
       p:dataSource-ref="dataSource"
       p:jpaVendorAdapter-ref="jpaVendorAdapter"
       p:packagesToScan-ref="packagesToScan">
     <property name="jpaProperties">
-      <props>
-        <prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
-        <prop key="hibernate.hbm2ddl.auto">update</prop>
-        <prop key="hibernate.jdbc.batch_size">${database.hibernate.batchSize:10}</prop>
-      </props>
+        <props>
+            <prop key="hibernate.dialect">${database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+            <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+            <prop key="hibernate.jdbc.batch_size">${database.batchSize:1}</prop>
+        </props>
     </property>
 </bean>
 
-<util:list id="packagesToScan">
-    <value>org.jasig.cas.services</value>
-    <value>org.jasig.cas.ticket</value>
-    <value>org.jasig.cas.adaptors.jdbc</value>
-</util:list>
+<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+      p:entityManagerFactory-ref="entityManagerFactory" />
 
-<bean id="jpaVendorAdapter"
-      class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-      p:generateDdl="true"
-      p:showSql="true" />
+<tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+        <tx:method name="delete*" read-only="false"/>
+        <tx:method name="save*" read-only="false"/>
+        <tx:method name="update*" read-only="false"/>
+        <tx:method name="get*" read-only="true"/>
+        <tx:method name="*" />
+    </tx:attributes>
+</tx:advice>
+
+<aop:config>
+    <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
+    <aop:advisor advice-ref="txAdvice" pointcut-ref="servicesManagerOperations"/>
+</aop:config>
 
 <bean id="serviceRegistryDao"
       class="org.jasig.cas.services.JpaServiceRegistryDaoImpl" />
-
-<bean id="transactionManager"
-      class="org.springframework.orm.jpa.JpaTransactionManager"
-      p:entityManagerFactory-ref="factoryBean" />
-
-<!--
-   | Injects EntityManager/Factory instances into beans with
-   | @PersistenceUnit and @PersistenceContext
--->
-<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
-
-<!--
-   Configuration via JNDI
--->
-<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"
-    p:jndiName="java:comp/env/jdbc/cas-source" />
-{% endhighlight %}
-
-If you prefer a direct connection to the database, here's a sample configuration of the `dataSource`:
-
-{% highlight xml %}
- <bean
-        id="dataSource"
-        class="org.apache.commons.dbcp2.BasicDataSource"
-        p:driverClassName="org.hsqldb.jdbcDriver"
-        p:jdbcUrl-ref="database"
-        p:password=""
-        p:username="sa" />
-{% endhighlight %}
-
-The data source will need to be modified for your particular database (i.e. Oracle, MySQL, etc.), but the name `dataSource` should be preserved. Here is a MYSQL sample:
-
-{% highlight xml %}
-<bean
-        id="dataSource"
-        class="org.apache.commons.dbcp2.BasicDataSource"
-        p:driverClassName="com.mysql.jdbc.Driver"
-        p:url="jdbc:mysql://localhost:3306/test?autoReconnect=true"
-        p:password=""
-        p:username="sa" />
 {% endhighlight %}
 
 You will also need to change the property `hibernate.dialect` in adequacy with your database in `cas.properties` and `deployerConfigContext.xml`.
@@ -493,40 +361,29 @@ In `deployerConfigContext.xml`:
 <prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
 {% endhighlight %}
 
-You will also need to ensure that the xml configuration file contains the `tx` namespace:
+You will also need to ensure that the xml configuration file contains the `tx`, `util` and `aop` namespaces:
 
 {% highlight xml %}
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 {% endhighlight %}
 
-Finally, when adding a new source new dependencies may be required on Hibernate, `commons-dbcp2`. Be sure to add those to your `pom.xml`. Below is a sample configuration for MYSQL. Be sure to adjust the version elements for the appropriate version number.
+Finally, be sure to add those to your `pom.xml`:
 
 {% highlight xml %}
 
 <dependency>
-  	<groupId>org.jasig.cas</groupId>
-  	<artifactId>cas-server-support-jdbc</artifactId>
-  	<version>${cas.version}</version>
-  	<scope>runtime</scope>
-</dependency>
-
-<dependency>
-  	<groupId>org.apache.commons</groupId>
-  	<artifactId>commons-dbcp2</artifactId>
-	<version>${commons.dbcp.version}</version>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-jdbc</artifactId>
+    <version>${cas.version}</version>
     <scope>runtime</scope>
-</dependency>
-
-<dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-core</artifactId>
-    <version>${hibernate.version}</version>
-    <scope>compile</scope>
 </dependency>
 
 <dependency>
@@ -536,10 +393,18 @@ Finally, when adding a new source new dependencies may be required on Hibernate,
 </dependency>
 
 <dependency>
+  <groupId>com.mchange</groupId>
+  <artifactId>c3p0</artifactId>
+  <version>${c3p0.version}</version>
+</dependency>
+
+<!-- Required for MySQL. Swap with the appropriate driver for your deployment.
+<dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
     <version>${mysql.connector.version}</version>
 </dependency>
+-->
 
 {% endhighlight %}
 

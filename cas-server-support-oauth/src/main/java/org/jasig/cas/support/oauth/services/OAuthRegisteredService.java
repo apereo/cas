@@ -25,20 +25,29 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 /**
  * An extension of the {@link RegexRegisteredService} that defines the
  * OAuth client id and secret for a given registered service.
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Entity
+@DiscriminatorValue("oauth")
 public final class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 
+    @Column(length = 255, updatable = true, insertable = true)
     private String clientSecret;
 
+    @Column(length = 255, updatable = true, insertable = true)
     private String clientId;
 
+    @Column(length = 255, updatable = true, insertable = true)
     private Boolean bypassApprovalPrompt = Boolean.FALSE;
 
     public String getClientId() {

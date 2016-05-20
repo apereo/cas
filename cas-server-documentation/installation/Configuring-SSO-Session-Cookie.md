@@ -7,25 +7,8 @@ title: CAS - Configuring SSO Session Cookie
 A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. This cookie maintains login state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials. Services can opt out of single sign-on through the `renew` parameter. See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
 
 ## Configuration
-The generation of the ticket-granting cookie is controlled by the file `cas-server-webapp\src\main\webapp\WEB-INF\spring-configuration\ticketGrantingTicketCookieGenerator.xml`
+The generation of the ticket-granting cookie is controlled by the file `ticketGrantingTicketCookieGenerator.xml`
 
-{% highlight xml %}
-<bean id="ticketGrantingTicketCookieGenerator" 
-    class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-    c:casCookieValueManager-ref="cookieValueManager"
-    p:cookieSecure="true"
-    p:cookieMaxAge="-1"
-    p:cookieName="TGC"
-    p:cookiePath="/cas" />
-
-<bean id="cookieCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
-    c:secretKeyEncryption="${tgc.encryption.key}"
-    c:secretKeySigning="${tgc.signing.key}" />
-
-<bean id="cookieValueManager" class="org.jasig.cas.web.support.DefaultCasCookieValueManager"
-      c:cipherExecutor-ref="cookieCipherExecutor" />
-
-{% endhighlight %}
 
 The cookie has the following properties:
 
@@ -36,14 +19,10 @@ The cookie has the following properties:
 ## Cookie Value Encryption
 
 The cookie value is linked to the active ticket-granting ticket, the remote IP address that initiated the request 
-as well as the user agent that submitted the request. The final cookie value is then encrypted and signed
-using `AES_128_CBC_HMAC_SHA_256` and `HMAC_SHA512` respectively.
+as well as the user agent that submitted the request. The final cookie value is then encrypted and signed.
 
-The secret keys are defined in the `cas.properties` file. While sample data is provided
-for initial deployments, these keys **MUST** be regenerated per your specific environment. Each key
-is a JSON Web Token with a defined length per the algorithm used for encryption and signing. 
-You may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator)
-to generate your own JSON Web Tokens.
+The secret keys are defined in the `cas.properties` file. These keys **MUST** be regenerated per your specific environment. Each key
+is a JSON Web Token with a defined length per the algorithm used for encryption and signing.
 
 {% highlight properties %}
 # CAS SSO Cookie Generation & Security
@@ -53,12 +32,26 @@ to generate your own JSON Web Tokens.
 #
 # Defaults at spring-configuration/ticketGrantingTicketCookieGenerator.xml
 # The encryption secret key. By default, must be a octet string of size 256.
-tgc.encryption.key=1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM
+tgc.encryption.key=
 
 # The signing secret key. By default, must be a octet string of size 512.
-tgc.signing.key=szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w
+tgc.signing.key=
 
 {% endhighlight %}
+
+
+If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
+
+```bash
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key>
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Generated encryption key ABC of size ... . The generated key MUST be added to CAS settings.>
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Secret key for signing is not defined. CAS will attempt to auto-generate the signing key>
+WARN [org.jasig.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
+```
+
+You should then grab each generated key for encryption and signing, and put them inside your cas.properties file for each now-enabled setting.
+
+If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
 ## Turning Off Cookie Value Encryption
 if you wish to disable the signing and encryption of the cookie, in the
@@ -67,8 +60,7 @@ configuration xml file, use the following beans instead of those provided by def
 {% highlight xml %}
 <bean id="cookieCipherExecutor" class="org.jasig.cas.util.NoOpCipherExecutor" />
 
-<bean id="cookieValueManager" class="org.jasig.cas.web.support.NoOpCookieValueManager"
-      c:cipherExecutor-ref="cookieCipherExecutor" />
+<bean id="cookieValueManager" class="org.jasig.cas.web.support.NoOpCookieValueManager"/>
 
 {% endhighlight %}
 

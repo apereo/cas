@@ -233,17 +233,19 @@
 
     <end-state id="viewServiceErrorView" view="serviceErrorView"/>
 
-    <end-state id="viewServiceSsoErrorView" view="serviceSsoErrorView"/>
+    <decision-state id="serviceUnauthorizedCheck">
+        <if test="flowScope.unauthorizedRedirectUrl != null"
+            then="viewRedirectToUnauthorizedUrlView"
+            else="viewServiceErrorView"/>
+    </decision-state>
+
+    <end-state id="viewRedirectToUnauthorizedUrlView" view="externalRedirect:#{flowScope.unauthorizedRedirectUrl}"/>
+    <end-state id="viewServiceSsoErrorView" view="serviceErrorSsoView" />
 
     <global-transitions>
-        <!--
-          CAS-1023 This one is simple - redirects to a login page (same as renew) when 'ssoEnabled' flag is unchecked
-          instead of showing an intermediate unauthorized view with a link to login page
-        -->
         <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException"/>
-
         <transition to="viewServiceErrorView"
                     on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException"/>
-        <transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException"/>
+        <transition to="serviceUnauthorizedCheck" on-exception="org.jasig.cas.services.UnauthorizedServiceException"/>
     </global-transitions>
 </flow>

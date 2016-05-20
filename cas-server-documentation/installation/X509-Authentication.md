@@ -28,7 +28,7 @@ X.509 support is enabled by including the following dependency in the Maven WAR 
 CAS provides an X.509 authentication handler, a handful of X.509-specific principal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
 
-######`X509CredentialsAuthenticationHandler`
+###### `X509CredentialsAuthenticationHandler`
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
 by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
@@ -46,7 +46,7 @@ acceptable client certificates.
 
 ### Principal Resolver Components
 
-######`X509SubjectPrincipalResolver`
+###### `X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
 The following configuration snippet produces prinicpals of the form _cn@example.com_. For example, given a
 certificate with the subject _DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto_ it would produce the ID
@@ -61,19 +61,19 @@ _jacky@vt.edu_.
 See the Javadocs for a thorough discussion of the format string specification.
 
 
-######`X509SubjectDNPrincipalResolver`
+###### `X509SubjectDNPrincipalResolver`
 Creates a principal ID from the certificate subject distinguished name.
 
 
-######`X509SerialNumberPrincipalResolver`
+###### `X509SerialNumberPrincipalResolver`
 Creates a principal ID from the certificate serial number.
 
 
-######`X509SerialNumberAndIssuerDNPrincipalResolver`
+###### `X509SerialNumberAndIssuerDNPrincipalResolver`
 Creates a principal ID by concatenating the certificate serial number, a delimiter, and the issuer DN.
 The serial number may be prefixed with an optional string. See the Javadocs for more information.
 
-######`X509SubjectAlternativeNameUPNPrincipalResolver`
+###### `X509SubjectAlternativeNameUPNPrincipalResolver`
 Adds support the embedding of a `UserPrincipalName` object as a `SubjectAlternateName` extension within an X509 certificate,
 allowing properly-empowered certificates to be used for network logon (via SmartCards, or alternately by 'soft certs' in certain environments).
 This resolver extracts the Subject Alternative Name UPN extension from the provided certificate if available as a resolved principal id.
@@ -119,7 +119,7 @@ The following policies are available by default:
 | `ThresholdExpiredCRLRevocationPolicy`   | Deny if CRL is more than X seconds expired.
 
 
-####`ResourceCRLRevocationChecker`
+#### `ResourceCRLRevocationChecker`
 Performs a certificate revocation check against a CRL hosted at a fixed location. Any resource type supported by the
 Spring [`Resource`]() class may be specified for the CRL resource. The CRL is fetched at periodic intervals and cached.
 
@@ -154,7 +154,7 @@ Configuration properties:
 {% endhighlight %}
 
 
-####`CRLDistributionPointRevocationChecker`
+#### `CRLDistributionPointRevocationChecker`
 Performs certificate revocation checking against the CRL URI(s) mentioned in the certificate _cRLDistributionPoints_
 extension field. The component leverages a cache to prevent excessive IO against CRL endpoints; CRL data is fetched
 if does not exist in the cache or if it is expired.
@@ -202,11 +202,11 @@ Configuration properties:
 #### CRL Fetching Configuration
 By default, all revocation checks use the `ResourceCRLFetcher` component to fetch the CRL resource from the specified location. The following alternatives are available:
 
-#####`LdaptiveResourceCRLFetcher`
+##### `LdaptiveResourceCRLFetcher`
 Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance:
 
 
-#####`PoolingLdaptiveResourceCRLFetcher`
+##### `PoolingLdaptiveResourceCRLFetcher`
 Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance. This component is able to use connection pooling.
 
 ##### Example Configuration
@@ -346,7 +346,7 @@ Use the following template to configure authentication in `deployerConfigContext
       p:maxPathLengthAllowUnspecified="true"
       p:checkKeyUsage="true"
       p:requireKeyUsage="true"
-      p:revocationChecker-ref="revocationChecker">
+      p:revocationChecker-ref="revocationChecker" />
 
 <bean id="x509PrincipalResolver"
       class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
@@ -373,7 +373,7 @@ Uncomment the `startAuthenticate` state in `login-webflow.xml`:
 
 {% highlight xml %}
 <action-state id="startAuthenticate">
-  <action bean="x509Check" />
+  <evaluate expression="x509Check" />
   <transition on="success" to="sendTicketGrantingTicket" />
   <transition on="warn" to="warn" />
   <transition on="error" to="generateLoginTicket" />

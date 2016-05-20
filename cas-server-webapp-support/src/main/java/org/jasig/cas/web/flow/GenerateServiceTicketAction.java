@@ -19,15 +19,14 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -52,14 +51,10 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
-            final Credential credential = WebUtils.getCredential(context);
-
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicket, service, credential);
+                .grantServiceTicket(ticketGrantingTicket, service);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
-        } catch (final AuthenticationException e) {
-            logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final TicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -67,9 +62,9 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
-        }
 
-        return error();
+            return newEvent("error", e);
+        }
     }
 
     public void setCentralAuthenticationService(
@@ -86,5 +81,16 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
             .getRequestParameterMap().get("gateway"));
+    }
+
+    /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id the id
+     * @param error the error
+     * @return the event
+     */
+    private Event newEvent(final String id, final Exception error) {
+        return new Event(this, id, new LocalAttributeMap<Object>("error", error));
     }
 }

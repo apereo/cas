@@ -58,8 +58,8 @@ public interface AuthenticationHandler {
      *     <li>User account expired: {@link javax.security.auth.login.AccountExpiredException}</li>
      *     <li>User account locked: {@link javax.security.auth.login.AccountLockedException}</li>
      *     <li>User account not found: {@link javax.security.auth.login.AccountNotFoundException}</li>
-     *     <li>Time of authentication not allowed: {@link InvalidLoginTimeException}</li>
-     *     <li>Location of authentication not allowed: {@link InvalidLoginLocationException}</li>
+     *     <li>Time of authentication not allowed: org.jasig.cas.authentication.InvalidLoginTimeException</li>
+     *     <li>Location of authentication not allowed: org.jasig.cas.authentication.InvalidLoginLocationException</li>
      *     <li>Expired X.509 certificate: {@link java.security.cert.CertificateExpiredException}</li>
      * </ul>
      * @throws PreventedException On errors that prevented authentication from occurring. Implementing classes SHOULD

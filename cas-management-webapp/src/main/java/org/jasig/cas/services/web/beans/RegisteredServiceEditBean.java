@@ -19,7 +19,6 @@
 
 package org.jasig.cas.services.web.beans;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -38,7 +37,6 @@ import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServicePublicKey;
@@ -50,6 +48,7 @@ import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.cas.util.RegexUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
@@ -69,8 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import static org.slf4j.LoggerFactory.*;
 
@@ -125,7 +122,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         final RegisteredServiceEditBean serviceBean = new RegisteredServiceEditBean();
         final ServiceData bean = serviceBean.getServiceData();
 
-        bean.setAssignedId(svc.getId());
+        bean.setAssignedId(Long.toString(svc.getId()));
         bean.setServiceId(svc.getServiceId());
         bean.setName(svc.getName());
         bean.setDescription(svc.getDescription());
@@ -190,16 +187,15 @@ public final class RegisteredServiceEditBean implements Serializable {
      * @param bean the bean
      */
     private static void configureAccessStrategy(final RegisteredService svc, final ServiceData bean) {
-        final RegisteredServiceAccessStrategy accessStrategy = svc.getAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy accessStrategy = (DefaultRegisteredServiceAccessStrategy) svc.getAccessStrategy();
+
         final RegisteredServiceSupportAccessEditBean accessBean = bean.getSupportAccess();
         accessBean.setCasEnabled(accessStrategy.isServiceAccessAllowed());
         accessBean.setSsoEnabled(accessStrategy.isServiceAccessAllowedForSso());
-
-        if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
-            final DefaultRegisteredServiceAccessStrategy def = (DefaultRegisteredServiceAccessStrategy) accessStrategy;
-            accessBean.setRequireAll(def.isRequireAllAttributes());
-            accessBean.setRequiredAttr(def.getRequiredAttributes());
-        }
+        accessBean.setRequireAll(accessStrategy.isRequireAllAttributes());
+        accessBean.setRequiredAttr(accessStrategy.getRequiredAttributes());
+        accessBean.setEndingTime(accessStrategy.getEndingDateTime());
+        accessBean.setStartingTime(accessStrategy.getStartingDateTime());
     }
 
     /**
@@ -237,7 +233,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
                 attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
 
-                final IAttributeMerger merger = cc.getMergingStrategy();
+                final IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
 
                 if (merger != null) {
                     if (merger instanceof NoncollidingAttributeAdder) {
@@ -305,12 +301,13 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final ShibbolethCompatiblePersistentIdGenerator sh =
                         (ShibbolethCompatiblePersistentIdGenerator) generator;
 
-                String salt = new String(sh.getSalt(), Charset.defaultCharset());
-                if (Base64.isBase64(salt)) {
-                    salt = new String(Base64.decodeBase64(salt));
+                final byte[] saltByte = sh.getSalt();
+                if (saltByte != null) {
+                    final String salt = new String(saltByte, Charset.defaultCharset());
+                    uBean.setValue(salt);
+                } else {
+                    throw new IllegalArgumentException("Salt cannot be null");
                 }
-
-                uBean.setValue(salt);
             }
         } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
             final PrincipalAttributeRegisteredServiceUsernameProvider p =
@@ -339,7 +336,7 @@ public final class RegisteredServiceEditBean implements Serializable {
      * The type Service data.
      */
     public static class ServiceData {
-        private long assignedId;
+        private String assignedId;
         private String serviceId;
         private String name;
         private String description;
@@ -455,11 +452,11 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.supportAccess = supportAccess;
         }
 
-        public long getAssignedId() {
+        public String getAssignedId() {
             return assignedId;
         }
 
-        public void setAssignedId(final long assignedId) {
+        public void setAssignedId(final String assignedId) {
             this.assignedId = assignedId;
         }
 
@@ -520,10 +517,11 @@ public final class RegisteredServiceEditBean implements Serializable {
                     regSvc = determineServiceTypeByPattern(this.serviceId);
                 }
 
-                if (this.assignedId <=0) {
+                final long assignedId = Long.parseLong(this.assignedId);
+                if (assignedId <= 0) {
                     regSvc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
                 } else {
-                    regSvc.setId(this.assignedId);
+                    regSvc.setId(assignedId);
                 }
 
                 regSvc.setServiceId(this.serviceId);
@@ -551,14 +549,14 @@ public final class RegisteredServiceEditBean implements Serializable {
                     regSvc.setLogoutUrl(new URL(this.logoutUrl));
                 }
 
-                final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
+                final DefaultRegisteredServiceAccessStrategy accessStrategy =
+                        (DefaultRegisteredServiceAccessStrategy) regSvc.getAccessStrategy();
 
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setEnabled(this.supportAccess.isCasEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setSsoEnabled(this.supportAccess.isSsoEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequireAllAttributes(this.supportAccess.isRequireAll());
+                accessStrategy.setEnabled(this.supportAccess.isCasEnabled());
+                accessStrategy.setSsoEnabled(this.supportAccess.isSsoEnabled());
+                accessStrategy.setRequireAllAttributes(this.supportAccess.isRequireAll());
+                accessStrategy.setStartingDateTime(this.supportAccess.getStartingTime());
+                accessStrategy.setEndingDateTime(this.supportAccess.getEndingTime());
 
                 final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
                 final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
@@ -569,8 +567,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                         it.remove();
                     }
                 }
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequiredAttributes(requiredAttrs);
+                accessStrategy.setRequiredAttributes(requiredAttrs);
 
                 final String proxyType = this.proxyPolicy.getType();
                 if (StringUtils.equalsIgnoreCase(proxyType,
@@ -579,7 +576,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 } else if (StringUtils.equalsIgnoreCase(proxyType,
                         RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
                     final String value = this.proxyPolicy.getValue();
-                    if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
+                    if (StringUtils.isNotBlank(value) && RegexUtils.isValidRegex(value)) {
                         regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
                     } else {
                         throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
@@ -649,7 +646,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final String attrType = this.attrRelease.getAttrOption();
                 if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(
                             TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
                             this.attrRelease.getCachedExpiration()));
                 } else if (StringUtils.equalsIgnoreCase(attrType,
@@ -670,35 +667,17 @@ public final class RegisteredServiceEditBean implements Serializable {
          * @param serviceId the service id
          * @return the abstract registered service
          */
-        private AbstractRegisteredService determineServiceTypeByPattern(final String serviceId) {
-            try {
-                Pattern.compile(serviceId);
+        private static AbstractRegisteredService determineServiceTypeByPattern(final String serviceId) {
+            if (RegexUtils.isValidRegex(serviceId)) {
                 LOGGER.debug("Service id {} is a valid regex.", serviceId);
                 return new RegexRegisteredService();
-            } catch (final PatternSyntaxException exception) {
-                LOGGER.debug("Service id {} is not a valid regex. Checking ant patterns...", serviceId);
-                if (new AntPathMatcher().isPattern(serviceId)) {
-                    LOGGER.debug("Service id {} is a valid ant pattern.", serviceId);
-                    return new RegisteredServiceImpl();
-                }
+            }
+
+            if (new AntPathMatcher().isPattern(serviceId)) {
+                LOGGER.debug("Service id {} is a valid ant pattern.", serviceId);
+                return new RegisteredServiceImpl();
             }
             throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
-        }
-
-        /**
-         * Determine service type by pattern.
-         *
-         * @param pattern the pattern
-         * @return the abstract registered service
-         */
-        private boolean isValidRegex(final String pattern) {
-            try {
-                Pattern.compile(serviceId);
-                LOGGER.debug("Pattern is a valid regex.", pattern);
-                return true;
-            } catch (final PatternSyntaxException exception) {
-                return false;
-            }
         }
     }
 }

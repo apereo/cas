@@ -19,7 +19,7 @@
 package org.jasig.cas.services.web;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
 import org.jasig.cas.web.view.JsonViewUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -62,8 +62,9 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
      * @param personAttributeDao the attribute repository
      */
     @Autowired
-    public RegisteredServiceSimpleFormController(final ServicesManager servicesManager,
-                                                 final IPersonAttributeDao personAttributeDao) {
+    public RegisteredServiceSimpleFormController(
+        final ReloadableServicesManager servicesManager,
+        final IPersonAttributeDao personAttributeDao) {
         super(servicesManager);
         this.personAttributeDao = personAttributeDao;
     }
@@ -83,12 +84,6 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
         try {
 
             final RegisteredService svcToUse = service.toRegisteredService(this.personAttributeDao);
-            if (svcToUse.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-                final RegisteredService curService = this.servicesManager.findServiceBy(svcToUse.getId());
-                if (curService != null && this.servicesManager.delete(curService.getId()) == null) {
-                    throw new IllegalArgumentException("Service " + curService.getId() + " cannot be updated");
-                }
-            }
 
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
@@ -129,8 +124,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                 bean = RegisteredServiceEditBean.fromRegisteredService(service);
             }
             final RegisteredServiceEditBean.FormData formData = bean.getFormData();
-            final List<String> possibleAttributeNames = new ArrayList<>();
-            possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
+            final List<String> possibleAttributeNames = new ArrayList<>(this.personAttributeDao.getPossibleUserAttributeNames());
             Collections.sort(possibleAttributeNames);
             formData.setAvailableAttributes(possibleAttributeNames);
 

@@ -1,17 +1,17 @@
-Copyright 2010, JA-SIG, Inc.
-This project includes software developed by Jasig.
-http://www.jasig.org/
+Licensed to Apereo under one or more contributor license
+agreements. See the NOTICE file distributed with this work
+for additional information regarding copyright ownership.
+Apereo licenses this file to you under the Apache License,
+Version 2.0 (the "License"); you may not use this file
+except in compliance with the License.  You may obtain a
+copy of the License at the following location:
 
-Licensed under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License. You may obtain a copy of the License at:
-
-http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on
-an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied. See the License for the
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 
@@ -20,7 +20,6 @@ This project includes:
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
-  Apache Commons Collections under The Apache Software License, Version 2.0
   Apache Commons Lang under Apache License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
@@ -28,14 +27,17 @@ This project includes:
   Apache Log4j Commons Logging Bridge under The Apache Software License, Version 2.0
   Apache Log4j Core under The Apache Software License, Version 2.0
   Apache Log4j SLF4J Binding under The Apache Software License, Version 2.0
+  Apache Shiro :: Core under The Apache Software License, Version 2.0
   Apereo CAS Core under Apache 2
   Apereo CAS Core APIs under Apache 2
   Apereo CAS Mongo Integration under Apache 2
+  Apereo CAS OAuth Server Support under Apache 2
   AspectJ runtime under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   Bean Validation API under The Apache Software License, Version 2.0
   CDI APIs under Apache License, Version 2.0
   ClassMate under The Apache Software License, Version 2.0
+  Commons BeanUtils under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
@@ -72,7 +74,6 @@ This project includes:
   JCL 1.1.1 implemented over SLF4J under MIT License
   Joda-Time under Apache 2
   jose4j under The Apache Software License, Version 2.0
-  js under Mozilla Public License, Version 1.1
   JSR-250 Common Annotations for the JavaTM Platform under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   JSR107 API and SPI under JSR-000107 JCACHE 2.9 Public Review - Updated Specification
                 License
@@ -90,6 +91,7 @@ This project includes:
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   Reflections under WTFPL or The New BSD License
+  Rhino under Mozilla Public License
   SLF4J API Module under MIT License
   Spring AOP under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0

@@ -61,7 +61,9 @@ public class InitialFlowSetupActionTests {
     @Before
     public void setUp() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.warnCookieGenerator.setCookiePath("");
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.tgtCookieGenerator.setCookiePath("");
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
         final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new CasArgumentExtractor()};

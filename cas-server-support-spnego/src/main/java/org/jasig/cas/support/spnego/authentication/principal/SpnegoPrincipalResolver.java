@@ -35,7 +35,7 @@ import java.util.Locale;
 public final class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     /** Tranformation types. **/
-    public static enum Transform {NONE, UPPERCASE, LOWERCASE}
+    public enum Transform {NONE, UPPERCASE, LOWERCASE}
 
     @NotNull
     private Transform transformPrincipalId = Transform.NONE;

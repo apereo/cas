@@ -23,12 +23,12 @@ import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.jasig.services.persondir.support.StubPersonAttributeDao;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -109,12 +109,13 @@ public class JsonServiceRegistryDaoTests {
                 new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
         final RegisteredService r2 = this.dao.save(r);
+        this.dao.load();
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         final AnonymousRegisteredServiceUsernameAttributeProvider anon =
-                (AnonymousRegisteredServiceUsernameAttributeProvider) r2.getUsernameAttributeProvider();
+                (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
         assertEquals(new String(ss.getSalt()), "helloworld");
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -265,9 +266,8 @@ public class JsonServiceRegistryDaoTests {
 
         final CachingPrincipalAttributesRepository repository =
                 new CachingPrincipalAttributesRepository(
-                        new StubPersonAttributeDao(attributes),
                         TimeUnit.MILLISECONDS, 100);
-        repository.setMergingStrategy(new ReplacingAttributeAdder());
+        repository.setMergingStrategy(CachingPrincipalAttributesRepository.MergingStrategy.REPLACE);
 
         policy.setPrincipalAttributesRepository(repository);
         r.setAttributeReleasePolicy(policy);
@@ -279,6 +279,10 @@ public class JsonServiceRegistryDaoTests {
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+
+
+        this.dao.load();
+
     }
 
     @Test
@@ -296,7 +300,7 @@ public class JsonServiceRegistryDaoTests {
 
         for (final RegisteredService r2 : list) {
             this.dao.delete(r2);
-            Thread.sleep(1);
+            Thread.sleep(3000);
             assertNull(this.dao.findServiceById(r2.getId()));
         }
 
@@ -324,6 +328,27 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
+    public void verifyAccessStrategyWithStarEndDate() throws Exception {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("verifyAccessStrategyWithStarEndDate");
+        r.setId(62);
+
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, false);
+
+        authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
+        authz.setEndingDateTime(DateTime.now().plusDays(10).toString());
+
+        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        r.setAccessStrategy(authz);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
     public void serializePublicKeyForServiceAndVerify() throws Exception {
         final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
                 "classpath:RSA1024Public.key", "RSA");
@@ -339,4 +364,64 @@ public class JsonServiceRegistryDaoTests {
         assertNotNull(this.dao.findServiceById(r.getId()));
     }
 
+    @Test
+    public void verifyEdit()  {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("test");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+
+        this.dao.save(r);
+
+        final List<RegisteredService> services = this.dao.load();
+
+        final RegisteredService r2 = services.get(0);
+
+        r.setId(r2.getId());
+        r.setTheme("mytheme");
+
+        this.dao.save(r);
+
+        final RegisteredService r3 = this.dao.findServiceById(r.getId());
+
+        assertEquals(r, r3);
+        assertEquals(r.getTheme(), r3.getTheme());
+        this.dao.delete(r);
+    }
+
+    @Test
+    public void persistCustomServiceProperties() throws Exception {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("persistCustomServiceProperties");
+        r.setId(4245);
+
+        final Map<String, RegisteredServiceProperty> properties = new HashMap<>();
+        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final Set<String> values = new HashSet<>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        properties.put("field1", property);
+
+
+        final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
+        final Set<String> values2 = new HashSet<>();
+        values2.add("value12");
+        values2.add("value22");
+        property2.setValues(values2);
+        properties.put("field2", property2);
+
+        r.setProperties(properties);
+
+        this.dao.save(r);
+        final List<RegisteredService> list = this.dao.load();
+        assertNotNull(this.dao.findServiceById(r.getId()));
+        assertEquals(r.getProperties().size(), 2);
+        assertNotNull(r.getProperties().get("field1"));
+
+        final RegisteredServiceProperty prop = r.getProperties().get("field1");
+        assertEquals(prop.getValues().size(), 2);
+    }
 }

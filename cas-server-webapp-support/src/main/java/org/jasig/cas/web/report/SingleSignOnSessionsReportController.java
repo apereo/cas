@@ -21,7 +21,7 @@ package org.jasig.cas.web.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -70,7 +70,7 @@ public final class SingleSignOnSessionsReportController {
          *
          * @param attributeKey the attribute key
          */
-        private SsoSessionAttributeKeys(final String attributeKey) {
+        SsoSessionAttributeKeys(final String attributeKey) {
             this.attributeKey = attributeKey;
         }
 
@@ -134,7 +134,7 @@ public final class SingleSignOnSessionsReportController {
     private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
         return this.centralAuthenticationService.getTickets(new Predicate() {
             @Override
-            public boolean evaluate(final Object ticket) {
+            public boolean apply(final Object ticket) {
                 if (ticket instanceof TicketGrantingTicket) {
                     return !((TicketGrantingTicket) ticket).isExpired();
                 }

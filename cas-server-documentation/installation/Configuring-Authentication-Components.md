@@ -6,23 +6,23 @@ title: CAS - Configuring Authentication Components
 # Authentication
 The CAS authentication process is performed by several related components:
 
-######`PrincipalNameTransformer`
+###### `PrincipalNameTransformer`
 Transforms the user id string that is typed into the login form into a tentative Principal Name to be
 validated by a specific type of Authentication Handler.
 
-######`AuthenticationManager`
+###### `AuthenticationManager`
 Entry point into authentication subsystem. It accepts one or more credentials and delegates authentication to
 configured `AuthenticationHandler` components. It collects the results of each attempt and determines effective
 security policy.
 
-######`AuthenticationHandler`
+###### `AuthenticationHandler`
 Authenticates a single credential and reports one of three possible results: success, failure, not attempted.
 
-######`PrincipalResolver`
+###### `PrincipalResolver`
 Converts information in the authentication credential into a security principal that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
 
-######`AuthenticationMetaDataPopulator`
+###### `AuthenticationMetaDataPopulator`
 Strategy component for setting arbitrary metadata about a successful authentication event; these are commonly used
 to set protocol-specific data.
 
@@ -51,25 +51,26 @@ but the behavior can be further controlled by setting `#setAuthenticationPolicy(
 with one of the following policies.
 
 
-######`AnyAuthenticationPolicy`
+###### `AnyAuthenticationPolicy`
 Satisfied if any handler succeeds. Supports a `tryAll` flag to avoid short circuiting at step 4.1 above and try every
 handler even if one prior succeeded. This policy is the default and provides backward-compatible behavior with the
 `AuthenticationManagerImpl` component of CAS 3.x.
 
 
-######`AllAuthenticationPolicy`
+###### `AllAuthenticationPolicy`
 Satisfied if and only if all given credentials are successfully authenticated. Support for multiple credentials is
 new in CAS and this handler would only be acceptable in a multi-factor authentication situation.
 
 
-######`RequiredHandlerAuthenticationPolicy`
+###### `RequiredHandlerAuthenticationPolicy`
 Satisfied if an only if a specified handler successfully authenticates its credential. Supports a `tryAll` flag to
 avoid short circuiting at step 4.1 above and try every handler even if one prior succeeded. This policy could be
 used to support a multi-factor authentication situation, for example, where username/password authentication is
 required but an additional OTP is optional.
 
 The following configuration snippet demonstrates how to configure `PolicyBasedAuthenticationManager` for a
-straightforward multi-factor authentication case where username/password authentication is required and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
+straightforward multi-factor authentication case where username/password authentication is required 
+and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
 
 {% highlight xml %}
 <bean id="passwordHandler"
@@ -85,19 +86,21 @@ straightforward multi-factor authentication case where username/password authent
       class="org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory"
       c:requiredHandlerName="passwordHandler"
       p:tryAll="true" />
+      
 
-<bean id="ldapPrincipalResolver"
-      class="org.jasig.cas.authentication.principal.CredentialsToLdapAttributePrincipalResolver">
-      <!-- Details elided for simplicity -->
-</bean>
-
+<bean id="principalResolver"
+      class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
+      p:principalAttributeName="username"
+      p:attributeRepository-ref="attributeRepository"
+      p:returnNullIfNoAttributes="true" />
+      
 <bean id="authenticationManager"
       class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
       p:authenticationPolicy-ref="authenticationPolicy">
   <constructor-arg>
     <map>
-      <entry key-ref="passwordHandler" value-ref="ldapPrincipalResolver"/>
-      <entry key-ref="oneTimePasswordHandler" value-ref="ldapPrincipalResolver" />
+      <entry key-ref="passwordHandler" value-ref="principalResolver"/>
+      <entry key-ref="oneTimePasswordHandler" value-ref="principalResolver" />
     </map>
   </constructor-arg>
   <property name="authenticationMetaDataPopulators">
@@ -131,7 +134,7 @@ There are some additional handlers for small deployments and special cases:
 * [Blacklist](Blacklist-Authentication.html)
 
 
-##Argument Extractors
+## Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction. 
 
 Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`. Here's a brief sample:
@@ -145,25 +148,25 @@ Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-c
 {% endhighlight %}
 
 
-###Components
+### Components
 
-####`ArgumentExtractor`
+#### `ArgumentExtractor`
 Strategy parent interface that defines operations needed to extract arguments from the http request.
 
 
-####`CasArgumentExtractor`
+#### `CasArgumentExtractor`
 Argument extractor that maps the request based on the specifications of the CAS protocol.
 
 
-####`GoogleAccountsArgumentExtractor`
+#### `GoogleAccountsArgumentExtractor`
 Argument extractor to be used to enable Google Apps integration and SAML v2 specification.
 
 
-####`SamlArgumentExtractor`
+#### `SamlArgumentExtractor`
 Argument extractor compliant with SAML v1.1 specification.
 
 
-####`OpenIdArgumentExtractor`
+#### `OpenIdArgumentExtractor`
 Argument extractor compliant with OpenId protocol.
 
 
@@ -174,15 +177,16 @@ Please [see this guide](Configuring-Principal-Resolution.html) more full details
 Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence. The following components are available:
 
-######`NoOpPrincipalNameTransformer`
+###### `NoOpPrincipalNameTransformer`
 Default transformer, that actually does no transformation on the user id.
 
-######`PrefixSuffixPrincipalNameTransformer`
+###### `PrefixSuffixPrincipalNameTransformer`
 Transforms the user id by adding a postfix or suffix.
 
-######`ConvertCasePrincipalNameTransformer`
-A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed. The transformer is also able
-to accept and work on the result of a previous transformer that might have modified the uid, such that the two can be chained.
+###### `ConvertCasePrincipalNameTransformer`
+A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
+The transformer is also able to accept and work on the result of 
+a previous transformer that might have modified the uid, such that the two can be chained.
 
 #### Configuration
 Here is an example configuration based for the `AcceptUsersAuthenticationHandler`:
@@ -198,8 +202,9 @@ Here is an example configuration based for the `AcceptUsersAuthenticationHandler
     </property>
 </bean>
 
-<bean id="convertCasePrincipalNameTransformer" class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
-p:toUpperCase="true" />
+<bean id="convertCasePrincipalNameTransformer" 
+    class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
+    p:toUpperCase="true" />
 
 {% endhighlight %}
 

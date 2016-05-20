@@ -87,12 +87,15 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @return sanitized arguments
      */
     private Object[] manipulateLogArguments(final Object... args) {
+        final Object[] out = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             if (args[i] != null) {
-                args[i] = removeTicketId(args[i].toString());
+                out[i] = removeTicketId(args[i].toString());
+            } else {
+                out[i] = null;
             }
         }
-        return args;
+        return out;
     }
 
     /**

@@ -72,7 +72,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
                         handler, new X509SerialNumberPrincipalResolver()));
 
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
-                new DefaultTicketRegistry(), null, authenticationManager, new DefaultUniqueTicketIdGenerator(),
+                new DefaultTicketRegistry(), authenticationManager, new DefaultUniqueTicketIdGenerator(),
                 idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
 

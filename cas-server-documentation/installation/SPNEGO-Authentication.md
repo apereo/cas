@@ -29,14 +29,16 @@ ticket expires.
 ## SPNEGO Components
 SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-spnego</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-spnego</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 
 
-######`JCIFSSpnegoAuthenticationHandler`
+###### `JCIFSSpnegoAuthenticationHandler`
 The authentication handler that provides SPNEGO support in both Kerberos and NTLM flavors. NTLM is disabled by default.
 Configuration properties:
 
@@ -44,7 +46,7 @@ Configuration properties:
 * `NTLMallowed` - True to enable NTLM support, false otherwise. (Disabled by default.)
 
 
-######`JCIFSConfig`
+###### `JCIFSConfig`
 Configuration helper for JCIFS and the Spring framework. Configuration properties:
 
 * `jcifsServicePrincipal` - service principal name.
@@ -56,13 +58,13 @@ Configuration helper for JCIFS and the Spring framework. Configuration propertie
 
 
 
-######`SpnegoNegociateCredentialsAction`
+###### `SpnegoNegociateCredentialsAction`
 CAS login Webflow action that begins the SPNEGO authenticaiton process. The action checks the `Authorization` request
 header for a suitable value (`Negotiate` for Kerberos or `NTLM`). If the check is successful, flow continues to the
 `SpnegoCredentialsAction` state; otherwise a 401 (not authorized) response is returned.
 
 
-######`SpnegoCredentialsAction`
+###### `SpnegoCredentialsAction`
 Constructs CAS credentials from the encoded GSSAPI data in the `Authorization` request header. The standard CAS
 authentication process proceeds as usual after this step: authentication is attempted with a suitable handler,
 `JCIFSSpnegoAuthenticationHandler` in this case. The action also sets response headers accordingly based on whether
@@ -211,37 +213,37 @@ The activation strategies are as follows:
 ### By Remote IP
 Checks to see if the request's remote ip address matches a predefine pattern.
 
-```xml
+{% highlight xml %}
 <bean id="baseSpnegoClientAction" 
       class="org.jasig.cas.support.spnego.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction"
       c:ipsToCheckPattern="127.+"
       c:alternativeRemoteHostAttribute="alternateRemoteHeader" />
-```
+{% endhighlight %}
 
 ### By Hostname
 Checks to see if the request's remote hostname matches a predefine pattern. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
 
-```xml
+{% highlight xml %}
 <bean id="hostnameSpnegoClientAction" 
       class="org.jasig.cas.support.spnego.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction"
       c:hostNamePatternString="something.+" />
-```
+{% endhighlight %}
 
 ### By LDAP Attribute
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence would allow the webflow to resume to SPNEGO. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
 
 
-```xml
+{% highlight xml %}
 <bean id="ldapSpnegoClientAction" 
       class="org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction"
       c:connectionFactory-ref="connectionFactory"
       c:searchRequest-ref="searchRequest"
       c:spnegoAttributeName="spnegoAttribute" />
-```
+{% endhighlight %}
 
 Sample search request and filer:
 
-```xml
+{% highlight xml %}
 <bean id="searchRequest" class="org.ldaptive.SearchRequest"
       p:baseDn-ref="baseDn"
       p:searchFilter-ref="searchFilter"/>
@@ -252,13 +254,13 @@ Sample search request and filer:
 <bean id="baseDn" class="java.lang.String">
     <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
 </bean>
-```
+{% endhighlight %}
 
 ### Webflow Configuration
 
 Insert the appropriate action before SPNEGO initiation, assigning a `yes` response route to SPNEGO, and a `no` response to route to viewing the login form.
 
-```xml
+{% highlight xml %}
 <action-state id="eveluateClientRequest">
   <evaluate expression="hostnameSpnegoClientAction" />
   <transition on="yes" to="startAuthenticate" />
@@ -266,4 +268,4 @@ Insert the appropriate action before SPNEGO initiation, assigning a `yes` respon
 </action-state>
 
 ...
-```
+{% endhighlight %}

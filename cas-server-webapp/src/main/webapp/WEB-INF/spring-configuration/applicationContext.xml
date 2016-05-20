@@ -86,7 +86,8 @@
           p:readTimeout="${http.client.read.timeout:5000}"
           p:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" parent="httpClient"
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+          parent="supportsTrustStoreSslSocketFactoryHttpClient"
           p:redirectsEnabled="false" p:circularRedirectsAllowed="false"/>
 
     <bean id="trustStoreSslSocketFactory" class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
@@ -112,7 +113,6 @@
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
           c:ticketRegistry-ref="ticketRegistry"
-          c:serviceTicketRegistry="#{null}"
           c:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"
           c:authenticationManager-ref="authenticationManager"
           c:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
@@ -136,6 +136,14 @@
           p:afterInitialization="true"/>
 
     <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
-    <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
+    <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"
+        p:waitForJobsToCompleteOnShutdown="${scheduler.shutdown.wait:true}">
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.scheduler.interruptJobsOnShutdown">${scheduler.shutdown.interruptJobs:true}</prop>
+                <prop key="org.quartz.scheduler.interruptJobsOnShutdownWithWait">${scheduler.shutdown.interruptJobs:true}</prop>
+            </props>
+        </property>
+    </bean>
 
 </beans>

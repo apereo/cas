@@ -34,6 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -169,7 +170,7 @@ public final class WebUtils {
      * @param map the map
      * @param ticketValue the ticket value
      */
-    private static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
+    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
                                                        @NotNull final String ticketValue) {
         map.put("ticketGrantingTicketId", ticketValue);
     }
@@ -219,6 +220,15 @@ public final class WebUtils {
      */
     public static void putLoginTicket(final RequestContext context, final String ticket) {
         context.getFlowScope().put("loginTicket", ticket);
+    }
+
+    /**
+     * Put unauthorized URL into flow scope.
+     * @param context request context
+     * @param url unauthorized url
+     */
+    public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
+        context.getFlowScope().put("unauthorizedRedirectUrl", url);
     }
 
     /**
@@ -310,5 +320,16 @@ public final class WebUtils {
             return null;
         }
         return credential;
+    }
+
+    /**
+     * Put unauthorized redirect url into flowscope.
+     *
+     * @param context the context
+     * @param unauthorizedRedirectUrl the url to redirect to
+     */
+    public static void putUnauthorizedRedirectUrl(final RequestContext context,
+                                            final URI unauthorizedRedirectUrl) {
+        context.getFlowScope().put("unauthorizedRedirectUrl", unauthorizedRedirectUrl);
     }
 }

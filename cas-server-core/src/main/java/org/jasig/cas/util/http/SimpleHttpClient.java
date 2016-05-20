@@ -81,7 +81,7 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
      * @param httpClient the HTTP client used by the client
      * @param requestExecutorService the request executor service used by the client
      */
-    public SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
+    SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
             final FutureRequestExecutionService requestExecutorService) {
         this.acceptableCodes = ImmutableList.copyOf(acceptableCodes);
         this.httpClient = httpClient;

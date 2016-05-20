@@ -19,7 +19,6 @@
 package org.jasig.cas.support.saml.web.support;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.web.support.AbstractArgumentExtractor;
 import org.slf4j.Logger;
@@ -47,27 +46,28 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
     @NotNull
     private final PrivateKey privateKey;
 
-    @NotNull
-    private final ServicesManager servicesManager;
+    private int skewAllowance;
 
     /**
      * Instantiates a new google accounts argument extractor.
      *
      * @param publicKey the public key
      * @param privateKey the private key
-     * @param servicesManager the services manager
      */
     public GoogleAccountsArgumentExtractor(final PublicKey publicKey,
-                                           final PrivateKey privateKey, final ServicesManager servicesManager) {
+                                           final PrivateKey privateKey) {
         this.publicKey = publicKey;
         this.privateKey = privateKey;
-        this.servicesManager = servicesManager;
     }
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return GoogleAccountsService.createServiceFrom(request,
-                this.privateKey, this.publicKey, this.servicesManager);
+        final GoogleAccountsService service = GoogleAccountsService.createServiceFrom(request,
+                this.privateKey, this.publicKey);
+        if (service != null) {
+            service.setSkewAllowance(this.skewAllowance);
+        }
+        return service;
     }
 
     /**
@@ -100,5 +100,17 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
     @Deprecated
     public void setAlternateUsername(final String alternateUsername) {
         LOGGER.warn("setAlternateUsername() is deprecated and has no effect. Instead use the configuration in service registry.");
+    }
+
+    /**
+     * Sets the allowance for time skew in seconds
+     * between CAS and the client server.  Default 0s.
+     * This value will be subtracted from the current time when setting the SAML
+     * <code>NotBeforeDate</code> attribute, thereby allowing for the
+     * CAS server to be ahead of the client by as much as the value defined here.
+     * @param skewAllowance allowance in seconds
+     */
+    public void setSkewAllowance(final int skewAllowance) {
+        this.skewAllowance = skewAllowance;
     }
 }

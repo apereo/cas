@@ -115,6 +115,12 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
+
+            if (registeredService != null) {
+                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext,
+                        registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+            }
+
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                     "Entity " + entityId + " not recognized");
         }
@@ -132,6 +138,11 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         }
 
         final Extensions extensions = spssoDescriptor.getExtensions();
+        if (extensions == null) {
+            logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
+            return success();
+        }
+
         final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
             logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());

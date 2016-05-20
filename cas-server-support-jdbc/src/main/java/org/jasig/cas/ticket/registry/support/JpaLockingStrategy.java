@@ -21,7 +21,6 @@ package org.jasig.cas.ticket.registry.support;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -110,9 +109,8 @@ public class JpaLockingStrategy implements LockingStrategy {
      * {@inheritDoc}
      **/
     @Override
-    @Transactional(readOnly = false)
     public boolean acquire() {
-        Lock lock;
+        final Lock lock;
         try {
             lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
         } catch (final PersistenceException e) {
@@ -144,7 +142,6 @@ public class JpaLockingStrategy implements LockingStrategy {
      * {@inheritDoc}
      **/
     @Override
-    @Transactional(readOnly = false)
     public void release() {
         final Lock lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
 
@@ -169,7 +166,6 @@ public class JpaLockingStrategy implements LockingStrategy {
      *
      * @return  Current lock owner or null if no one presently owns lock.
      */
-    @Transactional(readOnly = true)
     public String getOwner() {
         final Lock lock = entityManager.find(Lock.class, applicationId);
         if (lock != null) {

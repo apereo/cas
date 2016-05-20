@@ -24,12 +24,12 @@ import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.jasig.cas.util.ISOStandardDateFormat;
-import org.jdom.Document;
-import org.springframework.util.StringUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.jasig.cas.util.ApplicationContextProvider;
+import org.jdom.Document;
+import org.jdom.Element;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -38,14 +38,15 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jdom.Element;
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -56,12 +57,6 @@ import org.jdom.Element;
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
-    private static final int INFLATED_BYTE_ARRAY_LENGTH = 10000;
-    private static final int DEFLATED_BYTE_ARRAY_BUFFER_LENGTH = 1024;
-    private static final int SAML_RESPONSE_RANDOM_ID_LENGTH = 20;
-    private static final int SAML_RESPONSE_ID_LENGTH = 40;
-    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
-    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
 
     private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
 
@@ -73,8 +68,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String requestId;
 
-    private final ServicesManager servicesManager;
-    
+    private int skewAllowance;
+
     /**
      * Instantiates a new google accounts service.
      *
@@ -83,11 +78,10 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param servicesManager the services manager
      */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey, final ServicesManager servicesManager) {
-        this(id, id, null, relayState, requestId, privateKey, publicKey, servicesManager);
+            final PrivateKey privateKey, final PublicKey publicKey) {
+        this(id, id, null, relayState, requestId, privateKey, publicKey);
     }
 
     /**
@@ -100,20 +94,15 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param requestId the request id
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param servicesManager the services manager
      */
     protected GoogleAccountsService(final String id, final String originalUrl,
             final String artifactId, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey,
-            final ServicesManager servicesManager) {
+            final PrivateKey privateKey, final PublicKey publicKey) {
         super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.requestId = requestId;
-        this.servicesManager = servicesManager;
-
-
     }
 
     /**
@@ -122,12 +111,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param request the request
      * @param privateKey the private key
      * @param publicKey the public key
-     * @param servicesManager the services manager
      * @return the google accounts service
      */
     public static GoogleAccountsService createServiceFrom(
             final HttpServletRequest request, final PrivateKey privateKey,
-            final PublicKey publicKey, final ServicesManager servicesManager) {
+            final PublicKey publicKey) {
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
         final String xmlRequest = BUILDER.decodeSamlAuthnRequest(
@@ -148,7 +136,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String requestId = root.getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
-                relayState, requestId, privateKey, publicKey, servicesManager);
+                relayState, requestId, privateKey, publicKey);
     }
 
     @Override
@@ -179,10 +167,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @return the SAML response
      */
     private String constructSamlResponse() {
-        final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+        final DateTime currentDateTime = new DateTime();
         final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
 
-        final RegisteredService svc = this.servicesManager.findServiceBy(this);
+        final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+        final ServicesManager servicesManager = context.getBean("servicesManager", ServicesManager.class);
+        final RegisteredService svc = servicesManager.findServiceBy(this);
         final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
 
         final org.opensaml.saml.saml2.core.Response response = BUILDER.newResponse(
@@ -198,11 +188,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
                 notBeforeIssueInstant, BUILDER.generateSecureRandomId());
 
         final Conditions conditions = BUILDER.newConditions(notBeforeIssueInstant,
-                currentDateTime, getId());
+                currentDateTime.plusSeconds(this.skewAllowance), getId());
         assertion.setConditions(conditions);
 
         final Subject subject = BUILDER.newSubject(NameID.EMAIL, userId,
-                getId(), currentDateTime, this.requestId);
+                getId(), currentDateTime.plusSeconds(this.skewAllowance), this.requestId);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
@@ -213,5 +203,21 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String result = writer.toString();
         logger.debug("Generated Google SAML response: {}", result);
         return result;
+    }
+
+    /**
+     * Sets the allowance for time skew in seconds
+     * between CAS and the client server.  Default 0s.
+     * This value will be subtracted from the current time when setting the SAML
+     * <code>NotBeforeDate</code> attribute, thereby allowing for the
+     * CAS server to be ahead of the client by as much as the value defined here.
+     * @param skewAllowance allowance in seconds
+     */
+    public void setSkewAllowance(final int skewAllowance) {
+        this.skewAllowance = skewAllowance;
+    }
+
+    public int getSkewAllowance() {
+        return skewAllowance;
     }
 }

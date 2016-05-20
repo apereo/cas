@@ -41,7 +41,6 @@ public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     /** The time to kill in milliseconds. */
     private final long timeToKillInMilliSeconds;
 
-
     /** No-arg constructor for serialization support. */
     private TimeoutExpirationPolicy() {
         this.timeToKillInMilliSeconds = 0;

@@ -28,7 +28,7 @@ The CAS login throttling components are listed below along with a sample configu
 preventing more than 1 failed login every 3 seconds.
 
 
-#####`InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
+##### `InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
 Uses a memory map to prevent successive failed login attempts from the same IP address.
 {% highlight xml %}
 <bean id="loginThrottle"
@@ -39,21 +39,21 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
 {% endhighlight %}
 
 
-#####`InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+##### `InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
 Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
 {% highlight xml %}
 <bean id="loginThrottle"
-      class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"
+      class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter"
       p:failureRangeInSeconds="3"
       p:failureThreshold="1"
       p:usernameParameter="username" />
 {% endhighlight %}
 
 
-#####`InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+##### `InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
-[inspektr library](https://github.com/dima767/inspektr) used for CAS auditing be configured with
+[inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
 `JdbcAuditTrailManager`, which writes audit data to a database.
 {% highlight xml %}
 <bean id="loginThrottle"
@@ -112,7 +112,7 @@ It is convenient to place Spring configuration for login throttling components i
 
 <!-- A scheduler that drives all configured triggers is provided by default in applicationContext.xml. -->
 <bean id="loginThrottleTrigger"
-      class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+      class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
       p:jobDetail-ref="loginThrottleJobDetail"
       p:startDelay="1000"
       p:repeatInterval="1000"/>

@@ -30,6 +30,10 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.ServiceRegistryDao;
+import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -114,6 +118,45 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
+    public void verifyOAuthServices() {
+        final OAuthRegisteredService r = new OAuthRegisteredService();
+        r.setName("test456");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        r.setClientId("testoauthservice");
+        r.setClientSecret("anothertest");
+        r.setBypassApprovalPrompt(true);
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyOAuthServicesCallback() {
+        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
+        r.setName("test345");
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyOAuthRegisteredServicesCallback() {
+        final OAuthRegisteredCallbackAuthorizeService r = new OAuthRegisteredCallbackAuthorizeService();
+        r.setName("testoauth");
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final RegisteredService r2 = this.dao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
     public void verifySavingServiceChangesDn() {
         this.dao.save(getRegisteredService());
         final List<RegisteredService> services = this.dao.load();
@@ -162,7 +205,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler8", "handle92")));
+        rs.setRequiredHandlers(new HashSet<>(Arrays.asList("handler8", "handle92")));
         return rs;
     }
 
@@ -176,7 +219,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
-        rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
+        rs.setRequiredHandlers(new HashSet<>(Arrays.asList("handler1", "handler2")));
         return rs;
     }
 }

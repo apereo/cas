@@ -3,7 +3,7 @@ layout: default
 title: CAS - CAS SAML Protocol
 ---
 
-#SAML Protocol
+# SAML Protocol
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
@@ -16,7 +16,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-#SAML 1.1
+# SAML 1.1
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
 - Support a method of [attribute release](../integration/Attribute-Release.html)
@@ -25,7 +25,7 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
 
-##Sample Request
+## Sample Request
 {% highlight xml %}
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
@@ -47,7 +47,7 @@ Content-Type: text/xml
 {% endhighlight %}
 
 
-##Sample Response
+## Sample Response
 {% highlight xml %}
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
@@ -113,11 +113,11 @@ Content-Type: text/xml
 {% endhighlight %}
 
 
-##Configuration
+## Configuration
 
 In addition to the `cas-server-support-saml` module dependency, the following steps are required to enabled the SAML 1.1 support.
 
-###Definition/Mapping of `samlValidateController` 
+### Definition/Mapping of `samlValidateController` 
 
 In `cas-servlet.xml`:
 
@@ -126,6 +126,7 @@ In `cas-servlet.xml`:
   p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
   p:centralAuthenticationService-ref="centralAuthenticationService"
   p:proxyHandler-ref="proxy20Handler"
+  p:servicesManager-ref="servicesManager"
   p:argumentExtractor-ref="samlArgumentExtractor"
   p:successView="casSamlServiceSuccessView"
   p:failureView="casSamlServiceFailureView"/>
@@ -138,7 +139,7 @@ In `cas-servlet.xml`:
       ...
 {% endhighlight %}
 
-###Servlet mapping for `/samlValidate` 
+### Servlet mapping for `/samlValidate` 
 
 In the `web.xml` file:
 
@@ -149,7 +150,7 @@ In the `web.xml` file:
 </servlet-mapping>
 {% endhighlight %}
 
-###SAML Argument Extractor 
+### SAML Argument Extractor 
 
 In the `argumentExtractorsConfiguration.xml` file:
 
@@ -162,7 +163,7 @@ In the `argumentExtractorsConfiguration.xml` file:
 </util:list>
 {% endhighlight %}
 
-###SAML ID Generator
+### SAML ID Generator
 
 In the uniqueIdGenerators.xml file:
 
@@ -181,7 +182,7 @@ In the uniqueIdGenerators.xml file:
 </util:map>
 {% endhighlight %}
 
-###SAML Views 
+### SAML Views 
 In `cas-servlet.xml`, uncomment the following:
 
 {% highlight xml %}
@@ -190,7 +191,21 @@ In `cas-servlet.xml`, uncomment the following:
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
 {% endhighlight %}
 
-#SAML 2
+### Repositories
+You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>shibboleth-releases</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+    </repository>
+    ...
+</repositories>
+```
+
+# SAML 2
 
 CAS support for SAML 2 at this point is mostly limited to [Google Apps Integration](../integration/Google-Apps-Integration.html). Full SAML 2 support can also be achieved via Shibboleth with CAS handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
 

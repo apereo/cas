@@ -18,7 +18,7 @@
  */
 package org.jasig.cas;
 
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
@@ -66,7 +66,7 @@ public interface CentralAuthenticationService {
      * @return Non-null ticket-granting ticket identifier.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws org.jasig.cas.ticket.TicketException if ticket cannot be created
+     * @throws TicketException if ticket cannot be created
      */
     TicketGrantingTicket createTicketGrantingTicket(@NotNull Credential... credentials)
         throws AuthenticationException, TicketException;
@@ -83,7 +83,7 @@ public interface CentralAuthenticationService {
      * @param clazz the ticket type that is reques to be found
      * @param <T> the generic ticket type to return that extends {@link Ticket}
      * @return the ticket object
-     * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
+     * @throws InvalidTicketException if ticket is not found or has expired.
      * @since 4.1.0
      */
     <T extends Ticket> T getTicket(@NotNull String ticketId, @NotNull Class<? extends Ticket> clazz)
@@ -111,7 +111,7 @@ public interface CentralAuthenticationService {
      *
      * @return Non-null service ticket identifier.
      *
-     * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
+     * @throws TicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(@NotNull String ticketGrantingTicketId, @NotNull Service service) throws TicketException;
 
@@ -133,7 +133,7 @@ public interface CentralAuthenticationService {
      * @return Non-null service ticket identifier.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws org.jasig.cas.ticket.TicketException if the ticket could not be created.
+     * @throws TicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
             @NotNull final String ticketGrantingTicketId, @NotNull final Service service, final Credential... credentials)
@@ -147,7 +147,7 @@ public interface CentralAuthenticationService {
      *
      * @return Non-null ticket validation assertion.
      *
-     * @throws org.jasig.cas.ticket.TicketException if there was an error validating the ticket.
+     * @throws TicketException if there was an error validating the ticket.
      */
     Assertion validateServiceTicket(@NotNull final String serviceTicketId, @NotNull final Service service) throws TicketException;
 
@@ -173,7 +173,7 @@ public interface CentralAuthenticationService {
      * that proxy authentication.
      *
      * @throws AuthenticationException on errors authenticating the credentials
-     * @throws org.jasig.cas.ticket.TicketException if there was an error creating the ticket
+     * @throws TicketException if there was an error creating the ticket
      */
     TicketGrantingTicket delegateTicketGrantingTicket(@NotNull final String serviceTicketId, @NotNull final Credential... credentials)
             throws AuthenticationException, TicketException;

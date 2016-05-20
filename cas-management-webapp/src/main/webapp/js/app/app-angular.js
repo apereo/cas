@@ -420,6 +420,7 @@ if (array.length == 3) {
                     if (pattern == "")
                         return true;
                     var patt = new RegExp(pattern);
+		    return true;
                 } catch (e) {
                     return false;
                 }

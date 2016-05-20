@@ -20,8 +20,6 @@ package org.jasig.cas.ticket;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.junit.Test;
 
 /**
@@ -34,13 +32,5 @@ public class InvalidTicketExceptionTests {
     public void verifyCodeNoThrowable() {
         final TicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
-    }
-
-    @Test
-    public void verifyCodeWithThrowable() {
-        final AuthenticationException a = new BadCredentialsAuthenticationException();
-        final TicketException t = new InvalidTicketException(a, "InvalidTicketId");
-
-        assertEquals(a.toString(), t.getCode());
     }
 }

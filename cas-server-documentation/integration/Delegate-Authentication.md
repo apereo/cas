@@ -3,7 +3,7 @@ layout: default
 title: CAS - Delegate authentication
 ---
 
-#Overview
+# Overview
 The CAS server implements the CAS protocol on server side and may even behave like an OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
 
 But the CAS server can also act as a client using the [pac4j library](https://github.com/leleuj/pac4j) and delegate the authentication to:
@@ -24,10 +24,10 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-##How to use CAS/OAuth/OpenID/SAML client support in CAS applications?
+## How to use CAS/OAuth/OpenID/SAML client support in CAS applications?
 
 
-###Information returned by a delegated authentication
+### Information returned by a delegated authentication
 
 Once you have configured (see information below) your CAS server to act as an OAuth, CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML provider (like Facebook) instead of authenticating directly inside the CAS server.
 
@@ -43,36 +43,31 @@ The `Principal` object of the `Authentication` object has:
 * An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
 * Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
-###How to send profile attributes to CAS client applications?
+### How to send profile attributes to CAS client applications?
 
 In CAS applications, through service ticket validation, user information are pushed to the CAS client and therefore to the application itself.
 
 The identifier of the user is always pushed to the CAS client. For user attributes, it involves both the configuration at the server and the way of validating service tickets.
 
-On CAS server side, to push attributes to the CAS client, it should be configured in the `deployerConfigContext.xml` file for the expected service:
+On CAS server side, to push attributes to the CAS client, the service needs to be configured to allow attribute release:
 
-{% highlight xml %}
-<bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
- <property name="registeredServices">
-   <list>
-     <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-       <property name="id" value="0" />
-       <property name="name" value="HTTP" />
-       <property name="description" value="Only Allows HTTP Urls" />
-       <property name="serviceId" value="http://**" />
-       <property name="evaluationOrder" value="10000001" />
-       <property name="allowedAttributes">
-        <list>
-          <!-- facebook -->
-          <value>name</value>
-          <value>first_name</value>
-          <value>middle_name</value>
-...
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "name", "first_name", "middle_name" ] ]
+  }
+}
 {% endhighlight %}
 
 On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
 
-###How to recreate user profiles in CAS applications?
+### How to recreate user profiles in CAS applications?
 
 In the CAS server, the complete user profile is known but when attributes are sent back to the CAS client applications, there is some kind of "CAS serialization" which makes data uneasy to be restored at their original state.
 
@@ -95,9 +90,9 @@ final FacebookProfile rebuiltProfileOnCasClientSide =
 
 and then use it in your application!
 
-##Configuration
+## Configuration
 
-###Add the required pac4j-* libraries
+### Add the required pac4j-* libraries
 
 To add CAS client support, add the following dependency:
 
@@ -149,7 +144,7 @@ To add SAML support, add the following dependency:
 </dependency>
 {% endhighlight %}
 
-###Add the needed clients
+### Add the needed clients
 
 A provider is a server which can authenticate user (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. Clients classes are defined in the pac4j library.
 
@@ -159,27 +154,27 @@ All the needed clients to authenticate against providers must be declared in the
 <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">
   <property name="key" value="fbkey" />
   <property name="secret" value="fbsecret" />
-  <property name="scope" 
+  <property name="scope"
     value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
-  <property name="fields" 
+  <property name="fields"
     value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
 </bean>
- 
+
 <bean id="twitter1" class="org.pac4j.oauth.client.TwitterClient">
   <property name="key" value="twkey" />
   <property name="secret" value="twsecret" />
 </bean>
- 
+
 <bean id="caswrapper1" class="org.pac4j.oauth.client.CasOAuthWrapperClient">
   <property name="key" value="this_is_the_key" />
   <property name="secret" value="this_is_the_secret" />
   <property name="casOAuthUrl" value="http://mycasserver2/oauth2.0" />
 </bean>
-  
+
 <bean id="cas1" class="org.pac4j.cas.client.CasClient">
   <property name="casLoginUrl" value="http://mycasserver2/login" />
 </bean>
- 
+
 <bean id="myopenid1" class="org.pac4j.openid.client.MyOpenIdClient" />
 {% endhighlight %}
 
@@ -205,7 +200,7 @@ To simplify configuration, all clients and the CAS server login url are gathered
 {% endhighlight %}
 
 
-###Add the client action in webflow
+### Add the client action in webflow
 
 In the `login-webflow.xml` file, the `ClientAction` must be added at the beginning of the webflow. Its role is to intercept callback calls from providers (like Facebook, Twitter...) after a delegated authentication:
 
@@ -229,7 +224,7 @@ This `ClientAction` has to be defined in the `cas-servlet.xml` file with all the
 
 This `ClientAction` uses the *centralAuthenticationService* bean to finish the CAS authentication and references all the clients.
 
-###Add the handler and the metadata populator (optional) for authentication
+### Add the handler and the metadata populator (optional) for authentication
 
 To be able to finish authenticating users in the CAS server after a remote authentication by an external provider, you have to add the `ClientAuthenticationHandler` class and might add the `ClientAuthenticationMetaDataPopulator` class (to track the provider) in the `deployerConfigContext.xml` file:
 
@@ -262,11 +257,11 @@ By default, the identifier returned by a delegated authentication is composed of
 <bean id="primaryAuthenticationHandler"
     class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
     c:clients-ref="clients"
-    p:typeIdUsed="false" />
+    p:typedIdUsed="false" />
 {% endhighlight %}
 
 
-###Add links on the login page to authenticate on remote providers
+### Add links on the login page to authenticate on remote providers
 
 To start authentication on a remote provider, these links must be added on the login page `casLoginView.jsp` (*ClientNameUrl* attributes are automatically created by the `ClientAction`):
 
@@ -287,7 +282,6 @@ To start authentication on a remote provider, these links must be added on the l
 </form>
 {% endhighlight %}
 
-##Demo
+## Demo
 
 Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) to see this authentication delegation mechanism in action.
-

@@ -21,7 +21,7 @@ package org.jasig.cas.services.web;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +40,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     private ManageRegisteredServicesMultiActionController controller;
 
-    private ServicesManager servicesManager;
+    private ReloadableServicesManager servicesManager;
 
     @Before
     public void setUp() throws Exception {

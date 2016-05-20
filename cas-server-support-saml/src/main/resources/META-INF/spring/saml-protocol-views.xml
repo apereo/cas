@@ -35,6 +35,8 @@
          is required to be included in the final weba application file.  -->
 
     <bean id="abstractsamlView" class="org.jasig.cas.support.saml.web.view.AbstractSaml10ResponseView"
+          p:casAttributeEncoder-ref="casAttributeEncoder"
+          p:servicesManager-ref="servicesManager"
           abstract="true"/>
 
     <bean id="casSamlServiceSuccessView" class="org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView"

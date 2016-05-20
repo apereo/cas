@@ -20,6 +20,7 @@
 package org.jasig.cas.services;
 
 import com.google.common.collect.Sets;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -124,7 +125,9 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        authz.setRequiredAttributes(this.getRequiredAttributes());
+        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        reqs.remove("phone");
+        authz.setRequiredAttributes(reqs);
         authz.setRequireAllAttributes(false);
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
@@ -136,18 +139,53 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        authz.setRequiredAttributes(this.getRequiredAttributes());
+
+        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        reqs.remove("phone");
+        authz.setRequiredAttributes(reqs);
+
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.put("cn", "CAS");
         pAttrs.put("givenName", "kaz");
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
     }
 
+    @Test
+    public void checkAuthorizationByRangePass() {
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(DateTime.now().toString());
+        authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
+        assertTrue(authz.isServiceAccessAllowed());
+
+    }
+
+    @Test
+    public void checkAuthorizationByRangeFailStartTime() {
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
+        authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
+        assertFalse(authz.isServiceAccessAllowed());
+
+    }
+
+    @Test
+    public void checkAuthorizationByRangePassEndTime() {
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(DateTime.now().toString());
+        authz.setEndingDateTime(DateTime.now().plusSeconds(30).toString());
+        assertTrue(authz.isServiceAccessAllowed());
+    }
 
     private Map<String, Set<String>> getRequiredAttributes() {
+
+
         final Map<String, Set<String>> map = new HashMap<>();
         map.put("cn", Sets.newHashSet("cas", "SSO"));
         map.put("givenName", Sets.newHashSet("CAS", "KAZ"));
+        map.put("phone", Sets.newHashSet("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
         return map;
     }
 

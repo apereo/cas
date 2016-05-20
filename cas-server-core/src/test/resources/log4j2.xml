@@ -49,7 +49,7 @@
         <Logger name="org.slf4j.impl" level="trace">
             <AppenderRef ref="slf4j"/>
         </Logger>
-        <Logger name="org.jasig" level="warn">
+        <Logger name="org.jasig" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">

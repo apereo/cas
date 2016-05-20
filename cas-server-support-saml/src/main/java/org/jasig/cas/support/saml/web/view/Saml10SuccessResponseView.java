@@ -22,6 +22,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -90,7 +91,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         assertion.setConditions(conditions);
 
         final Subject subject = this.samlObjectBuilder.newSubject(getPrincipal(model).getId());
-        final Map<String, Object> attributesToSend = prepareSamlAttributes(model);
+        final Map<String, Object> attributesToSend = prepareSamlAttributes(model, service);
 
         if (!attributesToSend.isEmpty()) {
             assertion.getAttributeStatements().add(this.samlObjectBuilder.newAttributeStatement(
@@ -107,21 +108,29 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
      * attributes. If the authentication is to be remembered, uses {@link #setRememberMeAttributeName(String)}
      * for the remember-me attribute name.
      *
-     * @param model the model
+     * @param model   the model
+     * @param service the service
      * @return the final map
      * @since 4.1.0
      */
-    private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model) {
-        final Map<String, Object> authnAttributes =
-                new HashMap<>(getAuthenticationAttributesAsMultiValuedAttributes(model));
+    private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model, final Service service) {
+        final Map<String, Object> authnAttributes = new HashMap<>(getAuthenticationAttributesAsMultiValuedAttributes(model));
         if (isRememberMeAuthentication(model)) {
             authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }
+
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+
         final Map<String, Object> attributesToReturn = new HashMap<>();
         attributesToReturn.putAll(getPrincipalAttributesAsMultiValuedAttributes(model));
         attributesToReturn.putAll(authnAttributes);
-        return attributesToReturn;
+
+        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
+        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
+
+        final Map<String, Object> finalAttributes = this.casAttributeEncoder.encodeAttributes(attributesToReturn, service);
+        return finalAttributes;
     }
 
     public void setIssueLength(final long issueLength) {

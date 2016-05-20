@@ -22,6 +22,8 @@ package org.jasig.cas.services;
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -67,5 +69,32 @@ public class InMemoryServiceRegistryDaoImplTests {
         assertEquals(reg.save(svc), svc);
         assertTrue(reg.delete(svc));
         assertEquals(reg.load().size(), 0);
+    }
+
+    @Test
+    public void verifyEdit()  {
+        final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("test");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+
+        reg.save(r);
+
+        final List<RegisteredService> services = reg.load();
+
+        final RegisteredService r2 = services.get(0);
+
+        r.setId(r2.getId());
+        r.setTheme("mytheme");
+
+        reg.save(r);
+
+        final RegisteredService r3 = reg.findServiceById(r.getId());
+
+        assertEquals(r, r3);
+        assertEquals(r.getTheme(), r3.getTheme());
+        reg.delete(r);
     }
 }

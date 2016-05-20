@@ -17,5 +17,4 @@
     specific language governing permissions and limitations
     under the License.
 
---%>
-<%= "openid.mode:cancel\n" %>
+--%><%= "openid.mode:cancel\n" %>

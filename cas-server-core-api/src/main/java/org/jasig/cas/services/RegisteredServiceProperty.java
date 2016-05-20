@@ -16,25 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jasig.cas.services;
 
-package org.jasig.cas.util;
-
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
- * Test cases for {@link org.jasig.cas.util.DefaultCipherExecutor}.
+ * The {@link RegisteredServiceProperty} defines a single custom
+ * property that is associated with a service.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class DefaultCipherExecutorTests {
+public interface RegisteredServiceProperty extends Serializable {
 
-    @Test
-    public void checkEncryptionWithDefaultSettings() {
-        final CipherExecutor cipherExecutor = new DefaultCipherExecutor("1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
-                "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
-        assertEquals(cipherExecutor.decode(cipherExecutor.encode("CAS Test")), "CAS Test");
-    }
+    /**
+     * Gets values.
+     *
+     * @return the values
+     */
+    Set<String> getValues();
+
+    /**
+     * Gets the first single value.
+     *
+     *
+     * @return the value, or null if the collection is empty.
+     */
+    String getValue();
+
+    /**
+     * Contains elements?
+     *
+     * @param value the value
+     * @return true/false
+     */
+    boolean contains(String value);
 }

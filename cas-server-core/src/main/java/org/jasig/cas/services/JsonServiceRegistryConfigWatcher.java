@@ -19,9 +19,11 @@
 
 package org.jasig.cas.services;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -44,7 +46,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-class JsonServiceRegistryConfigWatcher implements Runnable {
+class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryConfigWatcher.class);
 
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -60,7 +62,7 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
      *
      * @param serviceRegistryDao the registry to callback
      */
-    public JsonServiceRegistryConfigWatcher(final JsonServiceRegistryDao serviceRegistryDao) {
+    JsonServiceRegistryConfigWatcher(final JsonServiceRegistryDao serviceRegistryDao) {
         try {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();
@@ -192,5 +194,10 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
         }
         this.serviceRegistryDao.updateRegisteredService(service);
         this.serviceRegistryDao.refreshServicesManager();
+    }
+
+    @Override
+    public void close() {
+        IOUtils.closeQuietly(this.watcher);
     }
 }

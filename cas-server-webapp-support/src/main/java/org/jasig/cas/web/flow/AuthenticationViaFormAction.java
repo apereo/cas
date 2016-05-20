@@ -26,9 +26,9 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.WebUtils;
@@ -174,16 +174,14 @@ public class AuthenticationViaFormAction {
             return newEvent(WARN);
         } catch (final AuthenticationException e) {
             return newEvent(AUTHENTICATION_FAILURE, e);
-        } catch (final TicketCreationException e) {
-            logger.warn(
-                    "Invalid attempt to access service using renew=true with different credential. "
-                            + "Ending SSO session.");
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
         } catch (final TicketException e) {
+            if (e instanceof TicketCreationException) {
+                logger.warn("Invalid attempt to access service using renew=true with different credential. "
+                        + "Ending SSO session.");
+                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
+            }
             return newEvent(ERROR, e);
         }
-        return newEvent(ERROR);
-
     }
     /**
      * Create ticket granting ticket for the given credentials.
@@ -207,8 +205,10 @@ public class AuthenticationViaFormAction {
             }
             return newEvent(SUCCESS);
         } catch (final AuthenticationException e) {
+            logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
+            logger.debug(e.getMessage(), e);
             return newEvent(ERROR, e);
         }
     }
@@ -277,7 +277,7 @@ public class AuthenticationViaFormAction {
      * @return the event
      */
     private Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap("error", error));
+        return new Event(this, id, new LocalAttributeMap<Object>("error", error));
     }
 
     public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {

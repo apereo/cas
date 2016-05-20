@@ -127,7 +127,7 @@ public class MockWebServer {
          * @param resource Single resource to serve.
          * @param contentType MIME content type of resource to serve.
          */
-        public Worker(final ServerSocket sock, final Resource resource, final String contentType) {
+        Worker(final ServerSocket sock, final Resource resource, final String contentType) {
             this.serverSocket = sock;
             this.resource = resource;
             this.contentType = contentType;

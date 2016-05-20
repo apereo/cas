@@ -23,6 +23,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 /**
  * An extension of the {@link RegexRegisteredService} that attempts to enforce the
  * correct url syntax for the OAuth callback authorize url. The url must end with
@@ -30,6 +33,8 @@ import org.jasig.cas.support.oauth.OAuthConstants;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Entity
+@DiscriminatorValue("oauthcba")
 public final class OAuthCallbackAuthorizeService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 1365893114273585648L;

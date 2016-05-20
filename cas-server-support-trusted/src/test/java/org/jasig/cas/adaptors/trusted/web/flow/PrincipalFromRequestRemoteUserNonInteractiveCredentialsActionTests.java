@@ -69,7 +69,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                         new PrincipalBearingCredentialsAuthenticationHandler(),
                         new PrincipalBearingPrincipalResolver()));
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
-                new DefaultTicketRegistry(), null, authenticationManager, new DefaultUniqueTicketIdGenerator(),
+                new DefaultTicketRegistry(), authenticationManager, new DefaultUniqueTicketIdGenerator(),
                 idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
         this.action.setCentralAuthenticationService(centralAuthenticationService);

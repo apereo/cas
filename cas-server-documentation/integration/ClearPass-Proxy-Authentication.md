@@ -5,7 +5,7 @@ title: CAS - ClearPass
 
 # ClearPass: Credential Caching and Replay
 
-<div class="alert alert-warning"><strong>Deprecated!</strong><p>Exercising ClearPass via the architecture and configuration that is described below is deprecated. Consider [using the alternative](ClearPass.html) that would allow adopters to consume the credential directly in the CAS validation response.</p></div>
+<div class="alert alert-warning"><strong>Deprecated!</strong><p>Exercising ClearPass via the architecture and configuration that is described below is deprecated. Consider <a href="ClearPass.html">using the alternative</a> that would allow adopters to consume the credential directly in the CAS validation response.</p></div>
 
 To enable single sign-on into some legacy application it may be necessary to provide them with the actual cleartext password. While such approach inevitably increases security risk, at times this may be a necessary evil in order to integrate applications with CAS.
 
@@ -54,30 +54,30 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-###`CacheCredentialsMetaDataPopulator`
+### `CacheCredentialsMetaDataPopulator`
 Retrieve and store the password in our cache.
  
 
-###`ClearPassController`
+### `ClearPassController`
 A controller that returns the password based on some external authentication/authorization rules. Attempts to obtain the password from the cache and render the appropriate output.
 
 
-###`EncryptedMapDecorator`
+### `EncryptedMapDecorator`
 A `Map` implementation that will hash and store cached credentials.
 
 
-###`EhcacheBackedMap`
+### `EhcacheBackedMap`
 A `Map` implementation that will use Ehcache as the backend storage.
 
 
-###`TicketRegistryDecorator`
+### `TicketRegistryDecorator`
 A ticket registry implementation that dispatches ticketing operations to the *real* registry while mapping tickets to user names and placing them in the provided cache.
 
 
 ## Single Node Configuration
 
 
-###`AuthenticationMetaDataPopulator` in `deployerConfigContext.xml`
+### `AuthenticationMetaDataPopulator` in `deployerConfigContext.xml`
 Uncomment the below element that is responsible for capturing and caching the password:
 
 {% highlight xml %}
@@ -85,13 +85,12 @@ Uncomment the below element that is responsible for capturing and caching the pa
   <list>
     <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
       c:credentialCache-ref="encryptedMap" />
-    </bean>
   </list>
 </property>
 {% endhighlight %}
 
 
-###Modifying `web.xml`
+### Modifying `web.xml`
 In your Maven overlay, modify the `web.xml` to include the following:
 {% highlight xml %}
 <servlet-mapping>
@@ -118,7 +117,7 @@ Next, add the following filter and filter-mapping:
 Be sure to put this snippet with the other filter and filter-mappings.
 
 
-###Modifying `clearpass-configuration.xml`
+### Modifying `clearpass-configuration.xml`
 Obtain a copy of the [`clearpass-configuration.xml`](https://github.com/Jasig/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/unused-spring-configuration/clearpass-configuration.xml) file inside the `WEB-INF/unused-spring-configuration` of the project. Place that in your project's `WEB-INF/spring-configuration` directory.
 
 Next, declare the following bean inside the file:
@@ -155,7 +154,7 @@ with:
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>It's not appropriate in your environment to allow any service that can obtain a proxy ticket to proxy to ClearPass. Explicitly authorizing proxy chains to access ClearPass (and denying all unauthorized proxy chains) is an important access control on release of the end-user's password.</p></div>
 
 
-###Modifying `ticketRegistry.xml`
+### Modifying `ticketRegistry.xml`
 Obtain a copy of the [`ticketRegistry.xml`](https://github.com/Jasig/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/ticketRegistry.xml) file and place that in your project's `WEB-INF/spring-configuration` directory.
 
 Replace:
@@ -171,18 +170,18 @@ with:
 {% endhighlight %}
 
 
-##Multiple Nodes Configuration
+## Multiple Nodes Configuration
 ClearPass stores the password information it collects in a non-distributed EhCache-based Map. This works fine in single-server CAS environments but causes issues in multi-server CAS environments. In a normal multi-server CAS environment you would use a Distributed Ticket Registry like the `MemcacheTicketRegistry` or the `EhcacheTicketRegistry` so that all CAS servers would have knowledge of all the tickets. After the distributed Ticket Registry is setup you should replace ClearPass's default in-memory Map with a Map implemenation that matches your ticket registry. 
 
 
-###EhCache-based Map
+### EhCache-based Map
 By default ClearPass is setup to use a non-distrbuted EhCache to store its passwords. If you are using the `EhcacheTicketRegistry` you will want to ensure that your ehcacheClearPass.xml file is setup to replicate the ClearPass Ehcache to all your CAS servers. 
 
 
-####Configuration
+#### Configuration
 
 
-#####Sample `clearpass-configuration.xml`
+##### Sample `clearpass-configuration.xml`
 {% highlight xml %}
 <!--  Credentials Cache implementation -->
 <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
@@ -196,8 +195,8 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
     p:bootstrapCacheLoader-ref="ticketCacheBootstrapCacheLoader" 
     p:cacheEventListeners-ref="ticketRMISynchronousCacheReplicator"
     p:cacheName="org.jasig.cas.extension.clearpass.CACHE"
-    p:timeToIdle="720"
-    p:timeToLive="720" />
+    p:timeToIdle="7201"
+    p:timeToLive="7201" />
 
 <bean id="ticketRMISynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
     <constructor-arg name="replicatePuts" value="true"/> 
@@ -239,7 +238,7 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
 {% endhighlight %}
 
 
-#####Sample `clearpass-replicated.xml`
+##### Sample `clearpass-replicated.xml`
 {% highlight xml %}
 <ehcache name="clearPassEhCacheManager" updateCheck="false" 
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -262,14 +261,14 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
 Note that the above uses manual peer discovery with RMI replication to transfer cached objects that are obtained by ClearPass. The IP addresses need to be changed for each CAS node to point to each other.
 
 
-###Memcached  Map
+### Memcached  Map
 The spymemcached java client includes a Memcached Map implementation called `CacheMap`. 
 
 
-####Configuration
+#### Configuration
 
 
-#####Sample `clearpass-configuration.xml`
+##### Sample `clearpass-configuration.xml`
 {% highlight xml %}
 <bean id="CPserialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
     p:compressionThreshold="2048" />

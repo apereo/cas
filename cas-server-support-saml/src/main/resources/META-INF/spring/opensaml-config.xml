@@ -32,7 +32,7 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:component-scan base-package="org.jasig.cas.support.saml"/>
+    <context:component-scan base-package="org.jasig.cas"/>
     <context:annotation-config/>
 
     <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
@@ -42,6 +42,8 @@
           p:maxPoolSize="100"
           p:coalescing="true"
           p:ignoreComments="true"
+          p:xincludeAware="false"
+          p:expandEntityReferences="false"
           p:ignoreElementContentWhitespace="true"
           p:namespaceAware="true"
           init-method="initialize">
@@ -63,6 +65,12 @@
                 </entry>
                 <entry key="http://javax.xml.XMLConstants/feature/secure-processing">
                     <util:constant static-field="java.lang.Boolean.TRUE"/>
+                </entry>
+                <entry key="http://xml.org/sax/features/external-general-entities">
+                    <util:constant static-field="java.lang.Boolean.FALSE"/>
+                </entry>
+                <entry key="http://xml.org/sax/features/external-parameter-entities">
+                    <util:constant static-field="java.lang.Boolean.FALSE"/>
                 </entry>
             </map>
         </property>

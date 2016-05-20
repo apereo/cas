@@ -4,7 +4,7 @@ title: CAS - Attribute Resolution
 ---
 
 # Attribute Resolution
-Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory‎). The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
+Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory). The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
 
 <div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, attributes are cached to the length of the SSO session. This means that while the underlying component provided by Person Directory may have a different caching model, attributes by default and from a CAS perspective will not be refreshed and retrieved again on subsequent requests as long as the SSO session exists.</p></div>
 
@@ -30,6 +30,16 @@ A Person Directory `IPersonAttributeDao` attribute source is defined and configu
 | `TomlLdapPersonAttributeDao`| Resolve person attributes and insert the ldap/context settings from an external Toml file. 
 | `JsonBackedComplexStubPersonAttributeDao`| Resolve person attributes that are specified in an external JSON file.
 
+Note that the Person Directory project requires the following configuration in CAS overlays:
+
+```xml
+<dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>4.1</version>
+</dependency>
+```
+
 More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
 
 
@@ -43,7 +53,7 @@ The CAS project provides the following additional implementations:
 ### Sample Usage
 
 
-####LDAP
+#### LDAP
 The following snippet assumes that connection information beans are already defined.
 
 {% highlight xml %}
@@ -67,7 +77,7 @@ The following snippet assumes that connection information beans are already defi
 {% endhighlight %}
 
 
-####JDBC
+#### JDBC
 The following snippet assumes that connection information beans are already defined.
 
 {% highlight xml %}
@@ -92,7 +102,7 @@ The following snippet assumes that connection information beans are already defi
 {% endhighlight %}
 
 
-####Caching, Merging and Cascading
+#### Caching, Merging and Cascading
 Note that this snippet below strictly uses the Person Directory components for resolving attributes.
 
 {% highlight xml %}

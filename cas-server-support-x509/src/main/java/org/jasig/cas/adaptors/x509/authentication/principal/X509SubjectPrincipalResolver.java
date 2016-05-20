@@ -19,15 +19,21 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
-import edu.vt.middleware.crypt.x509.DNUtils;
-import edu.vt.middleware.crypt.x509.types.AttributeType;
+import org.cryptacular.x509.dn.Attribute;
+import org.cryptacular.x509.dn.AttributeType;
+import org.cryptacular.x509.dn.NameReader;
+import org.cryptacular.x509.dn.RDN;
+import org.cryptacular.x509.dn.RDNSequence;
+import org.cryptacular.x509.dn.StandardAttributeType;
 
 
 /**
@@ -85,7 +91,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      *  <li>UNIQUEIDENTIFIER</li>
      * </ul>
      * For a complete list of supported attributes, see
-     * {@link edu.vt.middleware.crypt.x509.types.AttributeType}.
+     * {@link org.cryptacular.x509.dn.StandardAttributeType}.
      *
      */
     public void setDescriptor(final String s) {
@@ -106,15 +112,15 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<>();
+        final RDNSequence rdnSequence = new NameReader(certificate).readSubject();
         String name;
         String[] values;
         AttributeContext context;
         while (m.find()) {
             name = m.group(1);
             if (!attrMap.containsKey(name)) {
-                values = DNUtils.getAttributeValues(
-                        certificate.getSubjectX500Principal(),
-                        AttributeType.fromName(name));
+                values = getAttributeValues(rdnSequence,
+                        StandardAttributeType.fromName(name));
                 attrMap.put(name, new AttributeContext(name, values));
             }
             context = attrMap.get(name);
@@ -122,7 +128,36 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         }
         m.appendTail(sb);
         return sb.toString();
+    }    
+    
+    /**
+     * Gets the values of the given attribute contained in the DN.
+     * 
+     * <p><strong>NOTE:</strong> no escaping is done on special characters in the
+     * values, which could be different from what would appear in the string
+     * representation of the DN.</p>
+     *
+     * @param rdnSequence list of relative distinguished names
+     * that contains the attributes comprising the DN.
+     * @param attribute Attribute whose values will be retrieved.
+     * @return The attribute values for the given attribute in the order they
+     * appear would appear in the string representation of the DN or an empty
+     * array if the given attribute does not exist.
+     */
+    private static String[] getAttributeValues(final RDNSequence rdnSequence,
+            final AttributeType attribute) {
+        // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
+        final List<String> values = new ArrayList<String>();
+        for (final RDN rdn : rdnSequence.backward()) {
+            for (final Attribute attr : rdn.getAttributes()) {
+                if (attr.getType().equals(attribute)) {
+                    values.add(attr.getValue());
+                }
+            }
+        }
+        return values.toArray(new String[values.size()]);
     }
+
 
     private static final class AttributeContext {
         private int currentIndex;
@@ -135,7 +170,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
          * @param name the name
          * @param values the values
          */
-        public AttributeContext(final String name, final String[] values) {
+        AttributeContext(final String name, final String[] values) {
             this.values = values;
         }
 

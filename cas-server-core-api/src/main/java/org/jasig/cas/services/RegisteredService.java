@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -179,5 +180,14 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @since 4.1
      */
     RegisteredServicePublicKey getPublicKey();
+
+    /**
+     * Describes extra metadata about the service; custom fields
+     * that could be used by submodules implementing additional
+     * behavior on a per-service basis.
+     * @return map of custom metadata.
+     * @since 4.2
+     */
+    Map<String, RegisteredServiceProperty> getProperties();
     
 }

@@ -22,3 +22,14 @@ rebel.xml
 node_modules/
 package.json
 gruntfile.js
+.gradle/
+**/build/
+**/MANIFEST.MF
+
+classes/
+*.gradle
+out
+*.bin
+**/gradle/*
+**/gradlew
+**/gradlew.bat

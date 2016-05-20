@@ -23,6 +23,9 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.TestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +80,39 @@ public class HazelcastTicketRegistryTests {
         this.hzTicketRegistry1.deleteTicket("ST-TEST");
         assertNull(this.hzTicketRegistry1.getTicket("ST-TEST"));
         assertNull(this.hzTicketRegistry2.getTicket("ST-TEST"));
+    }
+
+    @Test
+    public void verifyDeleteTicketWithChildren() throws Exception {
+        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
+                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st2 = tgt.grantServiceTicket(
+                "ST2", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st3 = tgt.grantServiceTicket(
+                "ST3", service, new NeverExpiresExpirationPolicy(), true);
+
+        this.hzTicketRegistry1.addTicket(st1);
+        this.hzTicketRegistry1.addTicket(st2);
+        this.hzTicketRegistry1.addTicket(st3);
+
+        assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
+
+        this.hzTicketRegistry1.deleteTicket(tgt.getId());
+
+        assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
     }
 
     private TicketGrantingTicket newTestTgt() {

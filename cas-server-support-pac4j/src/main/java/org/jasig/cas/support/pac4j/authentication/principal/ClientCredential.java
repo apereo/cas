@@ -36,6 +36,8 @@ public final class ClientCredential implements Credential, Serializable {
      */
     private static final long serialVersionUID = -7883301304291894763L;
 
+    private boolean typedIdUsed = true;
+
     /**
      * The user profile after authentication.
      */
@@ -85,8 +87,15 @@ public final class ClientCredential implements Credential, Serializable {
     @Override
     public String getId() {
         if (this.userProfile != null) {
-            return this.userProfile.getTypedId();
+            if (this.typedIdUsed) {
+                return this.userProfile.getTypedId();
+            }
+            return this.userProfile.getId();
         }
         return null;
+    }
+
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.typedIdUsed = typedIdUsed;
     }
 }

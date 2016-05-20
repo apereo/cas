@@ -26,7 +26,6 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
@@ -75,10 +74,9 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
 
     /**
      * Refresh metadata. Schedules the job to retrieve metadata.
-     * @throws SchedulerException the scheduler exception
      */
     @PostConstruct
-    public void refreshMetadata() throws SchedulerException {
+    public void refreshMetadata() {
         final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -95,9 +93,14 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
                         .repeatForever()).build();
 
         final SchedulerFactory schFactory = new StdSchedulerFactory();
-        final Scheduler sch = schFactory.getScheduler();
-        sch.start();
-        sch.scheduleJob(job, trigger);
+
+        try {
+            final Scheduler sch = schFactory.getScheduler();
+            sch.start();
+            sch.scheduleJob(job, trigger);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

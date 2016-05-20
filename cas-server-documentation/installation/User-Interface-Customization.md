@@ -4,13 +4,13 @@ title: CAS - User Interface Customization
 ---
 
 
-#Overview
+# Overview
 Branding the CAS User Interface (UI) involves simply editing the CSS stylesheet and also a small collection of relatively simple JSP include files,
 also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects on these views.
 
 All the files that we'll be discussing in this section that concern the theme are located in and referenced from: `/cas-server-webapp/src/main/webapp`.
 
-#Browser Support
+# Browser Support
 CAS user interface should properly and comfortably lend itself to all major browser vendors:
 
 * Google Chrome
@@ -27,9 +27,9 @@ To instruct CAS to render UI in compatibility mode, add the following to relevan
 <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
 {% endhighlight %}
 
-#Getting Started
+# Getting Started
 
-##CSS
+## CSS
 The default styles are all contained in a single file located in `css/cas.css`. This location is set in `WEB-INF/classes/cas-theme-default.properties`. If you would like to create your own `css/custom.css file`, for example, you will need to update `standard.custom.css.file` key in that file.
 
 {% highlight bash %}
@@ -38,7 +38,7 @@ cas.javascript.file=/js/cas.js
 {% endhighlight %}
 
 
-###CSS per Locale
+### CSS per Locale
 Selecting CSS files per enabled locale would involve changing the `top.jsp` file to include the below sample code:
 
 {% highlight jsp %}
@@ -56,7 +56,7 @@ Selecting CSS files per enabled locale would involve changing the `top.jsp` file
 {% endhighlight %}
 
 
-###Responsive Design
+### Responsive Design
 CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file. Below follows an example:
 
 {% highlight css %}
@@ -77,7 +77,7 @@ CSS media queries bring responsive design features to CAS which would allow adop
 {% endhighlight %}
 
 
-##Javascript
+## Javascript
 If you need to add some JavaScript, feel free to append `js/cas.js`.
 
 You can also create your own `custom.js` file, for example, and call it from within `WEB-INF/view/jsp/default/ui/includes/bottom.jsp` like so:
@@ -96,7 +96,7 @@ The following Javascript libraries are utilized by CAS automatically:
 * JQuery Cookie
 * [JavaScript Debug](http://benalman.com/projects/javascript-debug-console-log/): A simple wrapper for `console.log()`
 
-###Asynchronous Script Loading
+### Asynchronous Script Loading
 CAS will attempt load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.
 The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of `cas.js` file:
 
@@ -125,7 +125,7 @@ function jqueryReady() {
 {% endhighlight %}
 
 
-###Checking CAPSLOCK
+### Checking CAPSLOCK
 CAS will display a brief warning when the CAPSLOCK key is turned on during the typing of the credential password. This check
 is enforced by the `cas.js` file.
 
@@ -141,7 +141,7 @@ $('#password').keypress(function(e) {
 }
 {% endhighlight %}
 
-###Browser Cookie Support
+### Browser Cookie Support
 For CAS to honor a single sign-on session, the browser MUST support and accept cookies. CAS will notify the
 user if the browser has turned off its support for cookies. This behavior is controlled via the `cas.js` file.
 
@@ -157,11 +157,11 @@ function areCookiesEnabled() {
 }
 {% endhighlight %}
 
-###Preserving Anchor Fragments
+### Preserving Anchor Fragments
 Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url.
 This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
 
-####Changes to `cas.js`
+#### Changes to `cas.js`
 {% highlight javascript %}
 /**
  * Prepares the login form for submission by appending any URI
@@ -186,7 +186,7 @@ function prepareSubmit(form) {
 {% endhighlight %}
 
 
-####Changes to Login Form
+#### Changes to Login Form
 
 {% highlight jsp %}
 <form:form method="post" id="fm1" cssClass="fm-v clearfix" 
@@ -199,7 +199,7 @@ The default views are found at `WEB-INF/view/jsp/default/ui/`.
 
 Notice `top.jsp` and `bottom.jsp` include files located in the `../includes` directory. These serve as the layout template for the other JSP files, which get injected in between during compilation to create a complete HTML page.
 
-####Tag Libraries
+#### Tag Libraries
 The following JSP tag libraries are used by the user interface:
 
 {% highlight jsp %}
@@ -210,7 +210,7 @@ The following JSP tag libraries are used by the user interface:
 {% endhighlight %}
 
 
-####Glossary of Views
+#### Glossary of Views
 
 | View                             | Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
@@ -229,7 +229,7 @@ The following JSP tag libraries are used by the user interface:
 | `serviceErrorSsoView` | Displayed when a user would otherwise have experienced non-interactive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
 
 
-####Glossary of Monitoring Views
+#### Glossary of Monitoring Views
 The monitoring views are found at `WEB-INF/view/jsp/monitoring/`.
 
 
@@ -240,7 +240,7 @@ The monitoring views are found at `WEB-INF/view/jsp/monitoring/`.
 | `viewStatistics`  | Displayed when user wishes review the CAS server statistics.
 
 
-####Glossary of System Error Views
+#### Glossary of System Error Views
 The error views are found at `WEB-INF/view/jsp/`.
 
 | View                             | Description 
@@ -248,7 +248,7 @@ The error views are found at `WEB-INF/view/jsp/`.
 | `errors`  | Displayed when CAS experiences an error it doesn't know how to handle (an unhandled Exception). For instance, CAS might be unable to access a database backing the services registry. This is the generic CAS error page. It's important to brand it to provide an acceptable error experience to your users.
 | `authorizationFailure` | Displayed when a user successfully authenticates to the services management web-based administrative UI included with CAS, but the user is not authorized to access that application.
 
-###Warning Before Accessing Application
+### Warning Before Accessing Application
 CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in. 
 (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.)
 Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
@@ -260,7 +260,7 @@ Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't off
 ...
 {% endhighlight %}
 
-###"I am at a public workstation" authentication
+### "I am at a public workstation" authentication
 CAS has the ability to allow the user to opt-out of SSO, by indicating on the login page that the authentication
 is happening at a public workstation. By electing to do so, CAS will not honor the subsequent SSO session
 and will not generate the TGC that is designed to do so.
@@ -272,7 +272,7 @@ and will not generate the TGC that is designed to do so.
 ...
 {% endhighlight %}
 
-##Localization
+## Localization
 The CAS Web application includes a number of localized message files:
 
 - English (US)
@@ -304,7 +304,7 @@ https://cas.server.edu/login?locale=it
 Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions. 
 For an accurate and complete list of localized messages, always refer to the English language bundle.
 
-###Configuration
+### Configuration
 All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the 
 English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views, 
 they may also be formatted under `custom_messages.properties` files.
@@ -331,7 +331,7 @@ Messages are then read on each JSP view via the following sample configuration:
 In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
 
 
-##Themes
+## Themes
 With the introduction of [Service Management application](Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
 Note that support for themes comes with the following components:
@@ -342,7 +342,7 @@ Note that support for themes comes with the following components:
 | `RegisteredServiceThemeBasedViewResolver` | If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs an overhaul with additional icons, images, text, etc then this component` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
 
 
-###`ServiceThemeResolver`
+### `ServiceThemeResolver`
 Configuration of service-specific themes is backed by the Spring framework and provided by the following component:
 {% highlight xml %}
 <bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
@@ -353,27 +353,31 @@ Configuration of service-specific themes is backed by the Spring framework and p
 
 Furthermore, deployers may be able to use the functionality provided by the `ThemeChangeInterceptor` of Spring framework to provide theme configuration per each request. 
 
-####Configuration
+#### Configuration
 - Add another theme properties file, which must be placed to the root of `/WEB-INF/classes` folder, name it as `theme_name.properties`. Contents of this file should match the `cas-theme-default.properties` file.
 - Add the location of related styling files, such as CSS and Javascript in the file above.
 - Specify the name of your theme for the service definition under the `theme` property.
 
-###`RegisteredServiceThemeBasedViewResolver`
+### `RegisteredServiceThemeBasedViewResolver`
 `RegisteredServiceThemeBasedViewResolver` is an alternate Spring View Resolver that utilizes a service's
 associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.jsp`, etc). This is specially useful in cases where the set of pages for a theme that are targeted
 for a different type of audience are entirely different structurally that simply
 using the `ServiceThemeResolver` is not practical to augment the default views. In such cases, new view pages may be required.
 
-Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/` 
+Replace the `internalViewResolver` definition with the following:
 
 {% highlight xml %}
-<bean id="themeResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
-    c:defaultThemeName="${cas.themeResolver.defaultThemeName}"
+<bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
+    c:defaultThemeId="default"
     c:servicesManager-ref="servicesManager"
-    p:pathPrefix="/WEB-INF/view/jsp" />
+    p:pathPrefix="/WEB-INF/view/jsp"
+    p:suffix=".jsp"
+    p:order="3" />
 {% endhighlight %}
 
-####Configuration
+Change the `c:defaultThemeId` value if your default theme is in a different directory than `/WEB-INF/view/jsp/default/`. Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/`
+
+#### Configuration
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `/WEB-INF/view/jsp/<theme-id>/ui/`).
 - Specify the name of your theme for the service definition under the `theme` property.
 

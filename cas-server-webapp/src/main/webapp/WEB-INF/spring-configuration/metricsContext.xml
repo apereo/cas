@@ -42,7 +42,7 @@
     <metrics:annotation-driven metric-registry="metrics" />
 
     <metrics:reporter type="slf4j" metric-registry="metrics"
-                      period="${metrics.refresh.internal:30s}"
+                      period="${metrics.refresh.interval:30s}"
                       duration-unit="MILLISECONDS"
                       rate-unit="MILLISECONDS"
                       logger="perfStatsLogger"/>

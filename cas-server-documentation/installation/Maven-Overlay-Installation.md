@@ -11,7 +11,7 @@ The output of a Maven WAR overlay build is a `cas.war` file that can be deployed
 [Tomcat](http://tomcat.apache.org/whichversion.html).
 
 A simple Maven WAR overlay project is provided for reference and study:
-[https://github.com/UniconLabs/simple-cas4-overlay-template](https://github.com/UniconLabs/simple-cas4-overlay-template)
+[https://github.com/Jasig/cas-overlay-template](https://github.com/Jasig/cas-overlay-template)
 
 The following list of CAS components are those most often customized by deployers:
 

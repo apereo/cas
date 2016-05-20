@@ -20,9 +20,6 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,34 +72,38 @@ public class CachingPrincipalAttributesRepositoryTests {
     @Test
     public void checkExpiredCachedAttributes() throws Exception {
         assertEquals(this.principal.getAttributes().size(), 1);
-        final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(
                 TimeUnit.MILLISECONDS, 100);
+        repository.setAttributeRepository(this.dao);
         assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
         assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
         Thread.sleep(200);
         this.attributes.remove("mail");
         assertTrue(repository.getAttributes(this.principal).containsKey("a2"));
         assertFalse(repository.getAttributes(this.principal).containsKey("mail"));
-        ((Closeable) repository).close();
+        repository.close();
     }
 
     @Test
     public void ensureCachedAttributesWithUpdate() throws Exception {
-        final PrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(
                 TimeUnit.SECONDS, 5);
+        repository.setAttributeRepository(this.dao);
+
         assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
         assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
 
         attributes.clear();
         assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
-        ((Closeable) repository).close();
+        repository.close();
     }
 
     @Test
     public void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Exception {
-        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(
                 TimeUnit.SECONDS, 5);
-        repository.setMergingStrategy(new NoncollidingAttributeAdder());
+        repository.setAttributeRepository(this.dao);
+        repository.setMergingStrategy(CachingPrincipalAttributesRepository.MergingStrategy.ADD);
 
         assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
         assertEquals(repository.getAttributes(this.principal).get("mail").toString(), "final@school.com");
@@ -111,9 +112,10 @@ public class CachingPrincipalAttributesRepositoryTests {
 
     @Test
     public void verifyMergingStrategyWithReplacingAttributeAdder() throws Exception {
-        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(
                 TimeUnit.SECONDS, 5);
-        repository.setMergingStrategy(new ReplacingAttributeAdder());
+        repository.setAttributeRepository(this.dao);
+        repository.setMergingStrategy(CachingPrincipalAttributesRepository.MergingStrategy.REPLACE);
 
         assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
         assertEquals(repository.getAttributes(this.principal).get("mail").toString(), "final@example.com");
@@ -122,9 +124,10 @@ public class CachingPrincipalAttributesRepositoryTests {
 
     @Test
     public void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Exception {
-        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(this.dao,
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(
                 TimeUnit.SECONDS, 5);
-        repository.setMergingStrategy(new MultivaluedAttributeMerger());
+        repository.setAttributeRepository(this.dao);
+        repository.setMergingStrategy(CachingPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
 
         assertTrue(repository.getAttributes(this.principal).get("mail") instanceof List);
 

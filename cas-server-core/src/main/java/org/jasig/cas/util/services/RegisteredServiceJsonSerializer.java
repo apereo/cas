@@ -25,7 +25,10 @@ import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.util.AbstractJacksonBackedJsonSerializer;
 
+
 import javax.cache.expiry.Duration;
+
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
@@ -109,6 +112,11 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @Override
         public  boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) {
             return false;
+        }
+
+        @Override
+        public URI getUnauthorizedRedirectUrl() {
+            return null;
         }
     }
 

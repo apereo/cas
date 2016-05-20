@@ -5,7 +5,7 @@ title: CAS - Logout & Single Logout
 
 
 
-#Logout and Single Logout (SLO)
+# Logout and Single Logout (SLO)
 
 There are potentially many active application sessions during a CAS single sign-on session, and the distinction between
 logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. The scope of logout
@@ -24,9 +24,9 @@ CAS during the SSO session. While this is a best-effort process, in many cases i
 user experience by creating symmetry between login and logout.
 
 
-##CAS Logout
+## CAS Logout
 
-Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter. 
+Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter.
 
 The redirect behavior is turned off by default, and is activated via the following setting in `cas.properties`:
 
@@ -37,17 +37,7 @@ The redirect behavior is turned off by default, and is activated via the followi
 
 The specified url must be registered in the service registry of CAS and enabled.
 
-##Web Session Termination
-By default, CAS comes with a `TerminateWebSessionListener` whose job is to expire the web session once the webflow has ended. The goal is to clean up the session as soon as possible to decrease memory consumption.
-
-The listener configures the maximum inactivity interval for the web session, which is the time, in seconds, between client requests before the servlet container will invalidate this session. An interval value of zero or less indicates that the session should never timeout. This value can be controlled via the following setting in `cas.properties`:
-
-{% highlight bash %}
-# Specifies the time, in seconds, to invalidate the web session.
-# terminate.web.session.timeout=2
-{% endhighlight %}
-
-##Single Logout (SLO)
+## Single Logout (SLO)
 CAS is designed to support single sign out: it means that it will be able to invalidate client application sessions in addition to its own SSO session.  
 Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
 
@@ -62,7 +52,7 @@ This can happen in two ways:
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Front-channel SLO at this point is still experimental.</p></div>
 
-##SLO Requests
+## SLO Requests
 The way the notification is done (_back_ or _front_ channel) is configured at a service level through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default. The message is delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
 
 A sample SLO message:
@@ -90,12 +80,12 @@ Logout protocol is effectively managed by the `LogoutManagerImpl` component:
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
-          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
+          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}"
           p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 {% endhighlight %}
 
 
-###Turning Off Single Logout
+### Turning Off Single Logout
 To disable single logout, adjust the following setting in `cas.properties` file:
 
 {% highlight bash %}
@@ -103,62 +93,41 @@ To disable single logout, adjust the following setting in `cas.properties` file:
 # slo.callbacks.disabled=false
 {% endhighlight %}
 
-###Single Logout Per Service
+### Single Logout Per Service
 Registered applications with CAS have the option to control single logout behavior individually via the [Service Managament](Service-Management.html) component. Each registered service in the service registry will include configuration that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 
 Sample configuration follows:
 
-{% highlight xml %}
-
-<!-- Turning single logout off for this application -->
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.NONE"/>
-
-<!--
-For back-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
-
-For front-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
--->
-
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:description="Allows HTTP(S) and IMAP(S) protocols"
-         p:serviceId="^https://web.application.net"
-         p:evaluationOrder="10000001"
-         p:logoutType-ref="LOGOUTTYPE" />
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "logoutType" : "BACK_CHANNEL"
+}
 {% endhighlight %}
 
-###Service Endpoint for Logout Requests
+### Service Endpoint for Logout Requests
 By default, logout requests are submitted to the original service id. CAS has the option to submit such requests to a specific service endpoint that is different
 from the original service id, and of course can be configured on a per-service level. This is useful in cases where the application that is integrated with CAS
 does not exactly use a CAS client that supports intercepting such requests and instead, exposes a different endpoint for its logout operations.
 
 To configure a service specific endpoint, try the following example:
 
-{% highlight xml %}
 
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.NONE"/>
-
-<!--
-For back-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
-
-For front-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
--->
-
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-        p:id="10000001" p:name="HTTP and IMAP"
-        p:description="Allows HTTP(S) and IMAP(S) protocols"
-        p:serviceId="^https://web.application.net/login"
-        p:evaluationOrder="10000001"
-        p:logoutType-ref="LOGOUTTYPE"
-        p:logoutUrl="https://web.application.net/logout" />
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "logoutType" : "BACK_CHANNEL",
+  "logoutUrl" : "https://web.application.net/logout",
+}
 {% endhighlight %}
 
-
-###Aynchronous SLO Messages
+### Aynchronous SLO Messages
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
 
 {% highlight bash %}
@@ -167,32 +136,32 @@ By default, backchannel logout messages are sent to endpoint in an asynchronous 
 {% endhighlight %}
 
 
-###Ticket Registry Cleaner Behavior
+### Ticket Registry Cleaner Behavior
 Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
 
 {% highlight xml %}
 <bean id="ticketRegistryCleaner"
-      class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+      c:centralAuthenticationService-ref="centralAuthenticationService"
       c:ticketRegistry-ref="ticketRegistry"
-      c:lockingStrategy-ref="cleanerLock"
-      c:logoutManager-ref="logoutManager" />
+      p:lock-ref="cleanerLock"/>
 {% endhighlight %}
 
 Note that certain ticket registries don't use or need a registry cleaner. For such registries, the option of having a ticker registry cleaner is entirely done away with and is currently not implemented. With that being absent, you will no longer receive automatic SLO callbacks upon TGT expiration. As such, the only thing that would reach back to the should then be explicit logout requests per the CAS protocol.
 
 
-####With `TicketRegistryCleaner`
+#### With `TicketRegistryCleaner`
 1. Single Logout is turned on
-2. The cleaner runs to detect the ticket that are automatically expired. It will query the tickets in the ticket registry, and will accumulate those that are expired. 
+2. The cleaner runs to detect the ticket that are automatically expired. It will query the tickets in the ticket registry, and will accumulate those that are expired.
 3. For the collection of expired tickets, the cleaner will again ask them to "expire" which triggers the SLO callback to be issued.
 4. The cleaner subsequently removes the TGT from the registry. Note that simply removing a ticket by itself from the registry does not issue the SLO callback. A ticket needs to be explicitly told one way or another, to "expire" itself:
     - If the ticket is already expired, the mechanism will issue the SLO callback.
     - If the ticket is not already expired, it will be marked as expired and the SLO callback will be issued.
 
 
-####Without `TicketRegistryCleaner`
+#### Without `TicketRegistryCleaner`
 1. Single Logout is turned on
-2. There is no cleaner, so nothing runs in the background or otherwise to "expire" and delete tickets from the registry and thus, no SLO callbacks will be issued automatically. 
+2. There is no cleaner, so nothing runs in the background or otherwise to "expire" and delete tickets from the registry and thus, no SLO callbacks will be issued automatically.
 2. A logout request is received by CAS
 3. CAS will locate the TGT and will attempt to destroy the SSO session.
 4. In destroying the ticket, CAS will:
@@ -216,7 +185,7 @@ of the application session itself is entirely independent of CAS and may be loos
 and adjusted depending on the ideal user experience in the event that the application session expires.
 
 In the event that Single Logout is not activated, typically, application may expose a logout endpoint in order to destroy the session and next, redirect
-the agent to the CAS `logout` endpoint in order to completely destroy the SSO session as well. 
+the agent to the CAS `logout` endpoint in order to completely destroy the SSO session as well.
 
 Here's a brief diagram that demonstrates various application session configuration and interactions with CAS:
 

@@ -23,6 +23,7 @@ import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.web.support.AbstractArgumentExtractor;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 /**
  * Constructs an OpenId Service.
@@ -32,8 +33,22 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class OpenIdArgumentExtractor extends AbstractArgumentExtractor {
 
+    /**
+     * The prefix url for OpenID (without the trailing slash).
+     */
+    @NotNull
+    private String openIdPrefixUrl;
+
     @Override
     protected WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return OpenIdService.createServiceFrom(request);
+        return OpenIdService.createServiceFrom(request, openIdPrefixUrl);
+    }
+
+    public String getOpenIdPrefixUrl() {
+        return openIdPrefixUrl;
+    }
+
+    public void setOpenIdPrefixUrl(final String openIdPrefixUrl) {
+        this.openIdPrefixUrl = openIdPrefixUrl;
     }
 }

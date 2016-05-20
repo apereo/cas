@@ -19,7 +19,7 @@
 
 package org.jasig.cas.services.web.beans;
 
-import org.jasig.cas.services.AbstractAttributeReleasePolicy;
+import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
@@ -41,7 +41,7 @@ public class RegisteredServiceViewBean implements Serializable {
     private static final long serialVersionUID = 4882440567964605644L;
 
     private int evalOrder = Integer.MIN_VALUE;
-    private long assignedId;
+    private String assignedId;
     private boolean sasCASEnabled;
     private String serviceId;
     private String name;
@@ -58,11 +58,11 @@ public class RegisteredServiceViewBean implements Serializable {
         this.evalOrder = evalOrder;
     }
 
-    public long getAssignedId() {
+    public String getAssignedId() {
         return assignedId;
     }
 
-    public void setAssignedId(final long assignedId) {
+    public void setAssignedId(final String assignedId) {
         this.assignedId = assignedId;
     }
 
@@ -130,7 +130,7 @@ public class RegisteredServiceViewBean implements Serializable {
      */
     public static RegisteredServiceViewBean fromRegisteredService(final RegisteredService svc) {
         final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
-        bean.setAssignedId(svc.getId());
+        bean.setAssignedId(Long.toString(svc.getId()));
         bean.setServiceId(svc.getServiceId());
         bean.setName(svc.getName());
         bean.setDescription(svc.getDescription());
@@ -152,7 +152,7 @@ public class RegisteredServiceViewBean implements Serializable {
             proxyPolicyBean.setValue(option.getPattern().toString());
         }
 
-        final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
+        final AttributeReleasePolicy attrPolicy = svc.getAttributeReleasePolicy();
         final RegisteredServiceAttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
 
         attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());

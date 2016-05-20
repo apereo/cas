@@ -349,15 +349,26 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         assertNotNull(serviceTicket);
     }
 
-    @Test(expected= UnauthorizedSsoServiceException.class)
+    @Test
     public void verifyGrantServiceTicketWithNoCredsAndSsoFalse() throws Exception {
         final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 
         final Service svc = TestUtils.getService("TestSsoFalse");
-        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null);
+        assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null));
     }
 
+    @Test(expected=UnauthorizedSsoServiceException.class)
+    public void verifyGrantServiceTicketWithNoCredsAndSsoFalseAndTgtUsed() throws Exception {
+        final UsernamePasswordCredential cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        
+        final Service service = TestUtils.getService("eduPersonTest");
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service);
+        final Service svc = TestUtils.getService("TestSsoFalse");
+        assertNotNull(getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null));
+    }
+    
     @Test
     public void verifyValidateServiceTicketNoAttributesReturned() throws Exception {
         final Service service = TestUtils.getService();
@@ -477,7 +488,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         // consider authentication has happened and the TGT is in the registry
         registry.addTicket(tgt);
         // create a new CASimpl
-        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry,  null,  null, null, null, null, null,
+        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry,  null, null, null, null, null,
                 null, logoutManager);
         // destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry
         cas.destroyTicketGrantingTicket(tgt.getId());

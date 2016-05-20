@@ -65,12 +65,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      */
     public CookieRetrievingCookieGenerator(final CookieValueManager casCookieValueManager) {
         super();
-        final Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly", boolean.class);
-        if(setHttpOnlyMethod != null) {
-            super.setCookieHttpOnly(true);
-        } else {
-            logger.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
-        }
         this.casCookieValueManager = casCookieValueManager;
     }
     /**
@@ -92,8 +86,23 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
             if (isCookieSecure()) {
                 cookie.setSecure(true);
             }
+            if (isCookieHttpOnly()) {
+                final Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly", boolean.class);
+                if(setHttpOnlyMethod != null) {
+                    cookie.setHttpOnly(true);
+                } else {
+                    logger.debug("Cookie cannot be marked as HttpOnly; container is not using servlet 3.0.");
+                }
+            }
             response.addCookie(cookie);
         }
+    }
+
+    @Override
+    public void removeCookie(final HttpServletResponse response) {
+        final Cookie cookie = this.createCookie("");
+        cookie.setMaxAge(0);
+        super.addCookie(response, "");
     }
 
     /**

@@ -18,7 +18,9 @@
  */
 package org.jasig.cas.support.saml.web.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
@@ -29,6 +31,8 @@ import org.opensaml.saml.saml1.core.Response;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -91,23 +95,40 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     protected void renderMergedOutputModel(
             final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-        response.setCharacterEncoding(this.encoding);
-
-        final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
-        final String serviceId = service != null ? service.getId() : "UNKNOWN";
-
+        String serviceId = null;
         try {
+            response.setCharacterEncoding(this.encoding);
+            final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
+            if (service == null || StringUtils.isBlank(service.getId())) {
+                serviceId = "UNKNOWN";
+            } else {
+                try {
+                    serviceId = new URL(service.getId()).getHost();
+                } catch (final MalformedURLException e) {
+                    logger.debug(e.getMessage(), e);
+                }
+            }
+
+            logger.debug("Using {} as the recipient of the SAML response for {}", serviceId, service);
             final Response samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     DateTime.now().minusSeconds(this.skewAllowance), serviceId, service);
-
             prepareResponse(samlResponse, model);
-
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
-            logger.error("Error generating SAML response for service {}.", serviceId);
+            logger.error("Error generating SAML response for service {}.", serviceId, e);
             throw e;
         }
+    }
+
+    /**
+     * Sets cas attribute encoder.
+     *
+     * @param casAttributeEncoder the cas attribute encoder
+     * @since 4.1
+     */
+    public void setCasAttributeEncoder(@NotNull final CasAttributeEncoder casAttributeEncoder) {
+        this.casAttributeEncoder = casAttributeEncoder;
     }
 
     /**

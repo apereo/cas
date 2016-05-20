@@ -134,7 +134,7 @@ public final class InternalConfigStateController {
         /**
          * Instantiates a new Bean object json serializer.
          */
-        public BeanObjectJsonSerializer() {
+        BeanObjectJsonSerializer() {
             super(new MinimalPrettyPrinter());
         }
 

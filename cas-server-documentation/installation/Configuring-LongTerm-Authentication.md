@@ -20,14 +20,8 @@ by weighing convenience against security risks. The length of the long term auth
 
 The use of long term authentication sessions dramatically increases the length of time ticket-granting tickets are
 stored in the ticket registry. Loss of a ticket-granting ticket corresponding to a long-term SSO session would require
-the user to reauthenticate to CAS. A security policy that requires that long term authentication sessions MUST NOT
-be terminated prior to their natural expiration would mandate a ticket registry component that provides for durable storage. Memcached is a notable example of a store that has no facility for durable storage. In many cases loss of
-ticket-granting tickets is acceptable, even for long term authentication sessions.
-
-It's important to note that ticket-granting tickets and service tickets can be stored in separate registries, where
-the former provides durable storage for persistent long-term authentication tickets and the latter provides less
-durable storage for ephemeral service tickets. Thus deployers could mix `JpaTicketRegistry` and
-`MemcachedTicketRegistry`, for example, to take advantage of their strengths, durability and speed respectively.
+the user to re-authenticate to CAS. A security policy that requires that long term authentication sessions MUST NOT
+be terminated prior to their natural expiration would mandate a ticket registry component that provides for durable storage, such as the `JpaTicketRegistry`.
 
 
 ### Component Configuration
@@ -120,9 +114,7 @@ Change the `viewLoginForm` action state as follows:
   <on-entry>
     <set name="viewScope.commandName" value="'credential'" />
   </on-entry>
-  <transition on="submit" bind="true" validate="true" to="realSubmit">
-    <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credential)" />
-  </transition>
+  <transition on="submit" bind="true" validate="true" to="realSubmit"/>
 </view-state>
 {% endhighlight %}
 

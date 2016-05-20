@@ -15,7 +15,7 @@ LDAP integration is enabled by including the following dependency in the Maven W
 {% endhighlight %}
 
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
-or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
+or OpenLDAP. There are numerous directory architectures and we provide configuration for these common cases:
 
 1. [Active Directory](#active-directory-authentication) - Users authenticate with _sAMAAccountName_.
 2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
@@ -25,12 +25,29 @@ or OpenLDAP. There are numerous directory architectures and we provide configura
 
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
+You also need to make sure component scanning is turned on when you configure LDAP authentication. Be sure to include the following in the same configuration file that houses the LDAP configuration for CAS:
+
+{% highlight xml %}
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+     ...
+     <context:component-scan base-package="org.jasig.cas" />
+     <context:annotation-config/>
+     ...
+{% endhighlight %}
+
 ## Ldap Authentication Principal Attributes
 The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html). 
 
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
 class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      init-method="initialize"
       p:principalIdAttribute="sAMAccountName"
       c:authenticator-ref="authenticator">
     <property name="principalAttributeMap">
@@ -48,6 +65,7 @@ The above configuration defines a map of attribtues. Keys are LDAP attribute nam
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
     class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+    init-method="initialize"
     p:principalIdAttribute-ref="usernameAttribute"
     c:authenticator-ref="authenticator">
     <property name="principalAttributeList">
@@ -155,13 +173,13 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
 <!-- If you wish to search by user, rather than by dn, change {dn} to {user} -->
 <bean id="entryResolver"
       class="org.ldaptive.auth.SearchEntryResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:userFilter="userPrincipalName={dn}"
       p:subtreeSearch="true" />
 {% endhighlight %}
 
 
-#### LDAP Requiring Authenticated Search
+## LDAP Requiring Authenticated Search
 The following configuration snippet provides a template for LDAP authentication performed with manager credentials
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 {% highlight xml %}
@@ -189,7 +207,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
@@ -211,10 +229,10 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 
 <bean id="bindConnectionInitializer"
       class="org.ldaptive.BindConnectionInitializer"
-      p:bindDn="${ldap.managerDn}">
+      p:bindDn="${ldap.authn.managerDN}">
     <property name="bindCredential">
         <bean class="org.ldaptive.Credential"
-              c:password="${ldap.managerPassword}" />
+              c:password="${ldap.authn.managerPassword}" />
     </property>
 </bean>
 
@@ -300,7 +318,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
@@ -400,7 +418,7 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
    -->
 <bean id="dnResolver"
       class="org.ldaptive.auth.FormatDnResolver"
-      c:format="uid=%s,${ldap.baseDn}" />
+      c:format="uid=%s,${ldap.authn.baseDn}" />
 
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
       p:connectionFactory-ref="pooledLdapConnectionFactory" />
@@ -484,7 +502,7 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     ldap.connectTimeout=3000
 
     # Whether to use StartTLS (probably needed if not SSL connection)
-    ldap.useStartTLS=true
+    ldap.useStartTLS=false
 
     #========================================
     # LDAP connection pool configuration
@@ -530,7 +548,10 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
     ldap.authn.format=%s@example.com
 
+	# A path to trusted X.509 certificate for StartTLS 
+	ldap.trustedCert=/path/to/cert.cer
 
+	
 ## LDAP Password Policy Enforcement
 The purpose of the LPPE is twofold:
  
@@ -595,7 +616,9 @@ Next, you have to explicitly define an LDAP-specific response handler in your `A
     <property name="authenticationResponseHandlers">
         <util:list>
             <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
+            <!--
             <bean class="org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler" />
+            -->
         </util:list>
 </property>
 </bean>

@@ -28,9 +28,13 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!-- CAS 1.0 Protocol Response Views -->
-    <bean id="cas1ServiceFailureView" class="org.jasig.cas.web.view.Cas10ResponseView"/>
+    <bean id="cas1ServiceFailureView" class="org.jasig.cas.web.view.Cas10ResponseView"
+          p:casAttributeEncoder-ref="casAttributeEncoder"
+          p:servicesManager-ref="servicesManager"/>
 
     <bean id="cas1ServiceSuccessView" class="org.jasig.cas.web.view.Cas10ResponseView"
+          p:casAttributeEncoder-ref="casAttributeEncoder"
+          p:servicesManager-ref="servicesManager"
           p:successResponse="true" />
 
     <!-- CAS 2.0 Response Protocol Views -->
@@ -40,6 +44,8 @@
     <!-- Successful Validation Views -->
     <bean id="cas2ServiceSuccessView" class="org.jasig.cas.web.view.Cas20ResponseView"
           c:view-ref="cas2JstlSuccessView"
+          p:casAttributeEncoder-ref="casAttributeEncoder"
+          p:servicesManager-ref="servicesManager"
           p:successResponse="true" />
 
     <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"

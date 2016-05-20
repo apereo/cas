@@ -31,8 +31,8 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -50,24 +50,18 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @NotNull
-    private String ticketGrantingTicketPrefix = "TGT";
-
-    @Transactional(readOnly = false)
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
 
-    @Transactional(readOnly = false)
     @Override
     public void addTicket(final Ticket ticket) {
         entityManager.persist(ticket);
         logger.debug("Added ticket [{}] to registry.", ticket);
     }
 
-    @Transactional(readOnly = false)
     @Override
     public boolean deleteTicket(final String ticketId) {
         final Ticket ticket = getRawTicket(ticketId);
@@ -133,7 +127,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         }
     }
 
-    @Transactional(readOnly=true)
     @Override
     public Ticket getTicket(final String ticketId) {
         return getProxiedTicketInstance(getRawTicket(ticketId));
@@ -147,10 +140,11 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-                return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
-            }
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
+                    || ticketId.startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
+                return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
 
+            }
             return entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
             logger.error("Error getting ticket {} from registry.", ticketId, e);
@@ -158,7 +152,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         return null;
     }
 
-    @Transactional(readOnly=true)
     @Override
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = entityManager
@@ -175,23 +168,17 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         return tickets;
     }
 
-    public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
-    }
-
     @Override
     protected boolean needsCallback() {
         return false;
     }
 
-    @Transactional(readOnly=true)
     @Override
     public int sessionCount() {
         return countToInt(entityManager.createQuery(
                 "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
-    @Transactional(readOnly=true)
     @Override
     public int serviceTicketCount() {
         return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
