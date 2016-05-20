@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 @EnableMetrics
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
 
-    @Value("${metrics.refresh.internal:30}")
+    @Value("${metrics.refresh.interval:30}")
     private long perfStatsPeriod;
 
     @Value("${metrics.logger.name:perfStatsLogger}")

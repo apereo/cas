@@ -213,7 +213,7 @@ The metrics reporting interval can be configured via the `application.properties
 
 ```properties
 # Define how often should metric data be reported. Default is 30 seconds.
-# metrics.refresh.internal=30
+# metrics.refresh.interval=30
 ```
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
