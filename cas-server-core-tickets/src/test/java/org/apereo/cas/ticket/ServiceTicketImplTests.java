@@ -17,10 +17,10 @@ import org.junit.Test;
  */
 public class ServiceTicketImplTests {
 
-    private TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
+    private final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     @Test(expected = Exception.class)
     public void verifyNoService() {
@@ -35,16 +35,22 @@ public class ServiceTicketImplTests {
     @Test
     public void verifyIsFromNewLoginTrue() {
         final ServiceTicket s = new ServiceTicketImpl("stest1", this.ticketGrantingTicket,
-                org.apereo.cas.services.TestUtils.getService(), null,
+                org.apereo.cas.services.TestUtils.getService(), TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         assertTrue(s.isFromNewLogin());
     }
 
     @Test
     public void verifyIsFromNewLoginFalse() {
-        final ServiceTicket s = new ServiceTicketImpl("stest1", this.ticketGrantingTicket,
-                org.apereo.cas.services.TestUtils.getService(), TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
+        ServiceTicket s = this.ticketGrantingTicket.grantServiceTicket("stest1",
+                org.apereo.cas.services.TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(), null, false);
+
+        assertTrue(s.isFromNewLogin());
+        
+        s = this.ticketGrantingTicket.grantServiceTicket("stest1", 
+                org.apereo.cas.services.TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(), null, false);
         assertFalse(s.isFromNewLogin());
     }
 

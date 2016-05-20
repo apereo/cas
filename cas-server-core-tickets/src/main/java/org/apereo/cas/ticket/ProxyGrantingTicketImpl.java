@@ -65,7 +65,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
                 service, null,
                 expirationPolicy);
 
-        updateStateAndTrackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
 
         return serviceTicket;
     }

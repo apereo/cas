@@ -145,12 +145,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final Authentication currentAuthentication, final boolean onlyTrackMostRecentSession) {
-
+        
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
                 service, currentAuthentication,
                 expirationPolicy);
-
-        updateStateAndTrackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        
+        trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
 
@@ -161,9 +161,9 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @param service                    the service
      * @param onlyTrackMostRecentSession the only track most recent session
      */
-    protected void updateStateAndTrackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
+    protected void trackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         update();
-
+        
         final List<Authentication> authentications = getChainedAuthentications();
         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
 
