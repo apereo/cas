@@ -65,3 +65,26 @@ will have the same id. If this happens, loading one definition will stop loading
 can be chosen arbitrarily, make sure all service numeric identifiers are unique. CAS will also output warnings
 if duplicate data is found.
 </p></div>
+
+## JSON Syntax
+
+CAS uses [a version of the JSON syntax](http://hjson.org/) that provides a much more relaxed 
+syntax with the ability to specify comments.
+
+A given JSON file for instance could be formatted as such in CAS:
+
+```
+{
+  /*
+    Generic service definition that applies to https/imaps urls 
+    that wish to register with CAS for authentication.
+  */
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "name" : "HTTPS and IMAPS",
+  "id" : 10000001,
+}
+
+```
+
+Note the trailing comma at the end. See the above link for more info on the alternative syntax. 

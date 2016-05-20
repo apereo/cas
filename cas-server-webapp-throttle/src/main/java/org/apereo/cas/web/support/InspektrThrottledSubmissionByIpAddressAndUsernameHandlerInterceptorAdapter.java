@@ -1,11 +1,11 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.util.DateTimeUtils;
-import org.jasig.inspektr.audit.AuditActionContext;
-import org.jasig.inspektr.audit.AuditPointRuntimeInfo;
-import org.jasig.inspektr.audit.AuditTrailManager;
-import org.jasig.inspektr.common.web.ClientInfo;
-import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

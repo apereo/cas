@@ -1,0 +1,45 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.moowork.gradle:gradle-node-plugin:0.12"
+        classpath "com.moowork.gradle:gradle-gulp-plugin:0.12"
+    }
+}
+
+if (!project.plugins.findPlugin(com.moowork.gradle.node.NodePlugin)) {
+    project.apply(plugin: com.moowork.gradle.node.NodePlugin)
+    project.apply(plugin: com.moowork.gradle.gulp.GulpPlugin)
+}
+
+node {
+    // Version of node to use.
+    version = "$nodeVersion"
+
+    // Version of npm to use.
+    npmVersion = "$npmVersion"
+
+    // Base URL for fetching node distributions (change if you have a mirror).
+    distBaseUrl = 'https://nodejs.org/dist'
+
+    // If true, it will download node using above parameters.
+    // If false, it will try to use globally installed node.
+    download = !Boolean.getBoolean("skipNodeDownload")
+
+    // Set the work directory for unpacking node
+    workDir = file("${project.buildDir}/nodejs")
+
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.buildDir}")
+}
+
+['npm_install', 'npm_run'].each {
+    project."${it}".inputs.file project.file("${project.node.nodeModulesDir}/package.json")
+    project."${it}".outputs.dir project.file("${project.node.nodeModulesDir}/node_modules")
+    project."${it}".setWorkingDir(project.node.nodeModulesDir)
+}
+
+processResources.dependsOn('npm_install', 'npm_run')

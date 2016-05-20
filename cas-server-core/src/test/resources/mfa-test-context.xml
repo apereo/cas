@@ -41,7 +41,7 @@
         <ref bean="successfulHandlerMetaDataPopulator"/>
     </util:list>
 
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"
           p:backingMap-ref="attrRepoBackingMap"/>
 
     <util:map id="attrRepoBackingMap">
@@ -60,7 +60,7 @@
 
 
     <bean id="auditTrailManager"
-          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 

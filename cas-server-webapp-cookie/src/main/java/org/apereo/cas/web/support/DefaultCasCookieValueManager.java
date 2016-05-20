@@ -3,8 +3,8 @@ package org.apereo.cas.web.support;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.CipherExecutor;
-import org.jasig.inspektr.common.web.ClientInfo;
-import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
      * @param cipherExecutor the cipher executor
      */
     @Autowired
-    public DefaultCasCookieValueManager(@Qualifier("defaultCookieCipherExecutor")
+    public DefaultCasCookieValueManager(@Qualifier("cookieCipherExecutor")
                                         final CipherExecutor<String, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",

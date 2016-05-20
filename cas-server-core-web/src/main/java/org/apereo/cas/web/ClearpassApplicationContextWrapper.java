@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component
+@Component("clearpassApplicationContextWrapper")
 public class ClearpassApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());

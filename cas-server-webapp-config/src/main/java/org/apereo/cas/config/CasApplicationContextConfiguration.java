@@ -2,12 +2,14 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.support.NamedStubPersonAttributeDao;
+import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
+import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.quartz.Scheduler;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
@@ -168,21 +169,21 @@ public class CasApplicationContextConfiguration {
             }
         };
     }
+
     /**
-     * Scheduler scheduler factory bean.
+     * Scheduler factory bean.
      *
-     * @return the scheduler factory bean
+     * @return the factory bean
      */
-    @RefreshScope
     @Bean(name = "scheduler")
-    public SchedulerFactoryBean scheduler() {
+    public FactoryBean<Scheduler> scheduler() {
         final SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setWaitForJobsToCompleteOnShutdown(this.waitForJobsToCompleteOnShutdown);
         factory.setJobFactory(this.casSpringBeanJobFactory);
 
         final Properties properties = new Properties();
-        properties.put("org.quartz.scheduler.interruptJobsOnShutdown", this.interruptJobs);
-        properties.put("org.quartz.scheduler.interruptJobsOnShutdownWithWait", this.interruptJobs);
+        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);        
+        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, this.interruptJobs);
         factory.setQuartzProperties(properties);
         return factory;
     }
@@ -210,28 +211,10 @@ public class CasApplicationContextConfiguration {
      *
      * @return the factory bean
      */
-    @RefreshScope
     @Bean(name="casAttributesToResolve")
     public FactoryBean<Properties> casAttributesToResolve() {
         final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
         bean.setPrefix("cas.attrs.resolve.");
-        return bean;
-    }
-    
-    /**
-     * Handler mapping c simple url handler mapping.
-     *
-     * @return the simple url handler mapping
-     */
-    @Bean(name = "handlerMappingC")
-    public SimpleUrlHandlerMapping handlerMappingC() {
-        final SimpleUrlHandlerMapping bean = new SimpleUrlHandlerMapping();
-        bean.setOrder(URL_HANDLER_MAPPING_ORDER);
-        bean.setAlwaysUseFullPath(true);
-
-        final Properties properties = new Properties();
-        bean.setMappings(properties);
-        bean.setRootHandler(rootController());
         return bean;
     }
 }

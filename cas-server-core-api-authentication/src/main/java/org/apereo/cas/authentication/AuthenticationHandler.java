@@ -40,14 +40,14 @@ public interface AuthenticationHandler {
      * e.g. invalid credential. Implementing classes SHOULD be as specific as possible in communicating the reason for
      * authentication failure. Recommendations for common cases:
      * <ul>
-     *     <li>Bad password: {@link javax.security.auth.login.FailedLoginException}</li>
-     *     <li>Expired password: {@link javax.security.auth.login.CredentialExpiredException}</li>
-     *     <li>User account expired: {@link javax.security.auth.login.AccountExpiredException}</li>
-     *     <li>User account locked: {@link javax.security.auth.login.AccountLockedException}</li>
-     *     <li>User account not found: {@link javax.security.auth.login.AccountNotFoundException}</li>
-     *     <li>Time of authentication not allowed: org.apereo.cas.authentication.InvalidLoginTimeException</li>
-     *     <li>Location of authentication not allowed: org.apereo.cas.authentication.InvalidLoginLocationException</li>
-     *     <li>Expired X.509 certificate: {@link java.security.cert.CertificateExpiredException}</li>
+     *     <li>Bad password: {@code javax.security.auth.login.FailedLoginException}</li>
+     *     <li>Expired password: {@code javax.security.auth.login.CredentialExpiredException}</li>
+     *     <li>User account expired: {@code javax.security.auth.login.AccountExpiredException}</li>
+     *     <li>User account locked: {@code javax.security.auth.login.AccountLockedException}</li>
+     *     <li>User account not found: {@code javax.security.auth.login.AccountNotFoundException}</li>
+     *     <li>Time of authentication not allowed: {@code org.apereo.cas.authentication.InvalidLoginTimeException}</li>
+     *     <li>Location of authentication not allowed: {@code org.apereo.cas.authentication.InvalidLoginLocationException}</li>
+     *     <li>Expired X.509 certificate: {@code java.security.cert.CertificateExpiredException}</li>
      * </ul>
      * @throws PreventedException On errors that prevented authentication from occurring. Implementing classes SHOULD
      * take care to populate the cause, where applicable, with the error that prevented authentication.

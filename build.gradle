@@ -23,9 +23,8 @@ buildscript {
     dependencies {
         classpath "nl.eveoh:gradle-aspectj:1.6"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:0.10.0"
-        classpath "org.standardout:gradle-versioneye-plugin:1.3.0"
-        classpath "com.moowork.gradle:gradle-node-plugin:0.12"
+        classpath "com.netflix.nebula:gradle-lint-plugin:0.27.0"
+        classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
     }
 }
 
@@ -44,7 +43,6 @@ allprojects {
     }
 }
 
-
 subprojects {
     task allDepInsight(type: DependencyInsightReportTask) << {}
     task allDeps(type: DependencyReportTask) {}
@@ -54,8 +52,7 @@ subprojects {
     apply plugin: 'findbugs'
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
-    apply plugin: 'com.moowork.node'
-
+    
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;
@@ -131,27 +128,6 @@ subprojects {
         }
     }
 
-    node {
-        // Version of node to use.
-        version = "$nodeVersion"
-
-        // Version of npm to use.
-        npmVersion = "$npmVersion"
-
-        // Base URL for fetching node distributions (change if you have a mirror).
-        distBaseUrl = 'https://nodejs.org/dist'
-
-        // If true, it will download node using above parameters.
-        // If false, it will try to use globally installed node.
-        download = !Boolean.getBoolean("skipNodeDownload")
-
-        // Set the work directory for unpacking node
-        workDir = file("${project.projectDir}/nodejs")
-
-        // Set the work directory where node_modules should be located
-        nodeModulesDir = file("${project.projectDir}")
-    }
-
 
     checkstyle {
         configFile new File(rootDir, "checkstyle-rules.xml")
@@ -171,6 +147,7 @@ subprojects {
 
     versioneye {
         includePlugins = false
+        includeSubProjects = true
     }
     
     findbugs {
@@ -201,7 +178,7 @@ subprojects {
         compile libraries.commons
         compile libraries.jodatime
         compile libraries.inspektr
-
+                
         compileOnly libraries.javax
         
         if (!Boolean.getBoolean("skipAspectJ")) {
@@ -445,10 +422,7 @@ task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
-	def f = new File(buildDir, "libs/cas-server-$version-javadoc.jar")
-	if (f.exists()) {
-    	archives f
-	}
+    archives aggregateJavadocsIntoJar
 }
 
 uploadArchives {

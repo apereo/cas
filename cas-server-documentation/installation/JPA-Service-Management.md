@@ -42,11 +42,19 @@ The following settings are expected:
 
 ## Configuration
 
-The following configuration assumes a `dataSource` bean is defined in the context.
-
 In `application.properties`:
 
 ```properties
 #CAS components mappings
 serviceRegistryDao=jpaServiceRegistryDao
+```
+
+## Auto Initialization
+
+Upon startup and if the services registry database is blank, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS. This behavior can be controlled via:
+
+```properties
+# svcreg.database.from.json=false
 ```
