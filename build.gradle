@@ -221,13 +221,13 @@ subprojects {
                     description project.name
                     issueManagement {
                         system "Github"
-                        url "https://github.com/Jasig/cas/issues"
+                        url "https://github.com/Apereo/cas/issues"
                     }
 
                     scm {
-                        url 'scm:git@github.com:Jasig/cas.git'
-                        connection 'scm:git@github.com:Jasig/cas.git'
-                        developerConnection 'scm:git@github.com:Jasig/cas.git'
+                        url 'scm:git@github.com:Apereo/cas.git'
+                        connection 'scm:git@github.com:Apereo/cas.git'
+                        developerConnection 'scm:git@github.com:Apereo/cas.git'
                     }
 
                     licenses {
