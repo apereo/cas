@@ -73,7 +73,7 @@ syntax with the ability to specify comments.
 
 A given JSON file for instance could be formatted as such in CAS:
 
-```json
+```
 {
   /*
     Generic service definition that applies to https/imaps urls 

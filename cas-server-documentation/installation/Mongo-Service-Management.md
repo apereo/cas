@@ -29,9 +29,20 @@ serviceRegistryDao=mongoServiceRegistryDao
 The following configuration in `application.properties` is required.
 
 ```properties
-mongodb.host=mongodb database url
-mongodb.port=mongodb database port
-mongodb.userId=mongodb userid to bind
-mongodb.userPassword=mongodb password to bind
-cas.service.registry.mongo.db=Collection name to store service definitions
+# mongodb.host=mongodb database url
+# mongodb.port=mongodb database port
+# mongodb.userId=mongodb userid to bind
+# mongodb.userPassword=mongodb password to bind
+# cas.service.registry.mongo.db=Collection name to store service definitions
 ```
+
+## Auto Initialization
+
+Upon startup and if the services registry database is blank, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS. This behavior can be controlled via:
+
+```properties
+# svcreg.database.from.json=false
+```
+

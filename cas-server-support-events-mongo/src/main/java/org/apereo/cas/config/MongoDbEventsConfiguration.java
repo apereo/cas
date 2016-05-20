@@ -17,7 +17,6 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Configuration("mongoDbEventsConfiguration")
 public class MongoDbEventsConfiguration {
 

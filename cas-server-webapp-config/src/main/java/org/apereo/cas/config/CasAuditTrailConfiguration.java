@@ -32,7 +32,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Configuration("casAuditTrailConfiguration")
 @EnableAspectJAutoProxy
 public class CasAuditTrailConfiguration {

@@ -21,7 +21,7 @@ public class TGCCookieRetrievingCookieGenerator extends CookieRetrievingCookieGe
      * @param casCookieValueManager the cas cookie value manager
      */
     @Autowired
-    public TGCCookieRetrievingCookieGenerator(@Qualifier("defaultCookieValueManager")
+    public TGCCookieRetrievingCookieGenerator(@Qualifier("cookieValueManager")
         final CookieValueManager casCookieValueManager) {
         super(casCookieValueManager);
     }
