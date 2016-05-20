@@ -20,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link OidcConfiguration}.
@@ -95,6 +96,11 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                     }
                 }
 
+                if (!clearCreds) {
+                    final Set<String> prompts = oidcAuthzRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
+                    clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
+                }
+                
                 if (clearCreds) {
                     manager.remove(true);
                 }

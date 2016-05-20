@@ -34,6 +34,9 @@ public class OidcCasClientRedirectActionBuilder extends DefaultOAuthCasClientRed
         if (auth.isPresent()) {
             oidcAuthorizationRequestSupport.configureClientForMaxAgeAuthorizationRequest(casClient, context, auth.get());
         }
+
+        oidcAuthorizationRequestSupport.configureClientForPromptLoginAuthorizationRequest(casClient, context);
+                
         return super.build(casClient, context);
     }
 }

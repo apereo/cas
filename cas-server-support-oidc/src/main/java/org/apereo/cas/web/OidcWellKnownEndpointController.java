@@ -40,8 +40,7 @@ public class OidcWellKnownEndpointController {
                         "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
                         "birthdate", "email", "email_verified", "phone_number",
                         "phone_number_verified", "address"));
-        discoveryProperties.setSupportedScopes(
-                ImmutableList.of("openid", "profile", "email", "address", "phone", "offline_access"));
+        discoveryProperties.setSupportedScopes(OidcConstants.SCOPES);
 
         discoveryProperties.setSupportedResponseTypes(ImmutableList.of("code", "token"));
         discoveryProperties.setSupportedSubjectTypes(ImmutableList.of("public", "pairwise"));

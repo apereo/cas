@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -20,7 +21,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link OidcAuthorizationRequestSupport}.
@@ -42,6 +45,24 @@ public class OidcAuthorizationRequestSupport {
     private TicketRegistrySupport ticketRegistrySupport;
 
 
+    /**
+     * Gets oidc prompt from authorization request.
+     *
+     * @param context the context
+     * @return the oidc prompt from authorization request
+     */
+    public static Set<String> getOidcPromptFromAuthorizationRequest(final WebContext context) {
+        final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
+        final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
+                .stream().filter(p -> p.getName().equals(OidcConstants.PROMPT))
+                .findFirst();
+
+        if (parameter.isPresent()) {
+            return ImmutableSet.copyOf(parameter.get().getValue().split(" "));
+        }
+        return Collections.emptySet();
+    }
+    
     /**
      * Gets oidc max age from authorization request.
      *
@@ -167,4 +188,16 @@ public class OidcAuthorizationRequestSupport {
         }
     }
 
+    /**
+     * Configure client for prompt login authorization request.
+     *
+     * @param casClient the cas client
+     * @param context   the context
+     */
+    public static void configureClientForPromptLoginAuthorizationRequest(final CasClient casClient, final WebContext context) {
+        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
+        if (prompts.contains(OidcConstants.PROMPT_LOGIN)) {
+            casClient.setRenew(true);
+        }
+    }
 }

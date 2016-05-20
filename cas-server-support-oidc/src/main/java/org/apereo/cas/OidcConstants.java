@@ -1,8 +1,10 @@
 package org.apereo.cas;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,6 +15,16 @@ import java.util.Set;
  */
 public interface OidcConstants {
 
+    /**
+     * The Authorization Server MUST NOT display any authentication or consent user interface pages. 
+     */
+    String PROMPT_NONE = "none";
+
+    /**
+     * The Authorization Server SHOULD prompt the End-User for reauthentication.
+     */
+    String PROMPT_LOGIN = "login";
+    
     /**
      * The sub claim.
      */
@@ -31,7 +43,7 @@ public interface OidcConstants {
     /**
      * The Scopes.
      */
-    Set<String> SCOPES = ImmutableSet.of("openid", "profile", "email", "address", "phone", "offline_access");
+    List<String> SCOPES = ImmutableList.of("openid", "profile", "email", "address", "phone", "offline_access");
 
     /**
      * The Claims.
@@ -51,6 +63,11 @@ public interface OidcConstants {
      * The max age. 
      */
     String MAX_AGE = "max_age";
+
+    /**
+     * The prompt parameter. 
+     */
+    String PROMPT = "prompt";
     
     /**
      * Base OIDC URL.
