@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("defaultOAuthCasClientRedirectActionBuilder")
 public class DefaultOAuthCasClientRedirectActionBuilder implements OAuthCasClientRedirectActionBuilder {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOAuthCasClientRedirectActionBuilder.class);
     
     @Override
     public RedirectAction build(final CasClient casClient, final WebContext context) {

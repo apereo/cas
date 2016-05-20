@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 

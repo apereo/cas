@@ -11,6 +11,15 @@ import org.pac4j.core.context.WebContext;
  * @since 5.0.0
  */
 public interface OAuthCasClientRedirectActionBuilder {
-    
+
+    /**
+     * Build redirect action for the client dynamically
+     * and configure the CAS client accordingly based
+     * on the properties of the web context.
+     *
+     * @param casClient the cas client
+     * @param context   the context
+     * @return the redirect action
+     */
     RedirectAction build(CasClient casClient, WebContext context);
 }

@@ -70,6 +70,11 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
 
+    /**
+     * Oauth cas client redirect action builder.
+     *
+     * @return the oauth cas client redirect action builder.
+     */
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
     @Bean(name = "oauthCasClientRedirectActionBuilder", autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {

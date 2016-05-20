@@ -90,9 +90,8 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
      * @return the linked multi value map
      * @throws IOException the io exception
      */
-    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication, 
-                                                          final Principal principal) throws 
-            IOException {
+    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication,
+                                                          final Principal principal) throws IOException {
         final Map<String, Object> map = new HashMap<>();
         map.put(ID, principal.getId());
         map.put(ATTRIBUTES, principal.getAttributes());

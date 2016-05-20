@@ -31,8 +31,8 @@ import java.util.Optional;
 @Component("oidcAuthorizationRequestSupport")
 public class OidcAuthorizationRequestSupport {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizationRequestSupport.class);
+    
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -42,7 +42,13 @@ public class OidcAuthorizationRequestSupport {
     private TicketRegistrySupport ticketRegistrySupport;
 
 
-    public Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
+    /**
+     * Gets oidc max age from authorization request.
+     *
+     * @param context the context
+     * @return the oidc max age from authorization request
+     */
+    public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
         final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
         final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
                 .stream().filter(p -> p.getName().equals(OidcConstants.MAX_AGE))
@@ -55,7 +61,13 @@ public class OidcAuthorizationRequestSupport {
         return Optional.empty();
     }
 
-    public Optional<UserProfile> isAuthenticationProfileAvailable(final WebContext context) {
+    /**
+     * Is authentication profile available?.
+     *
+     * @param context the context
+     * @return the optional user profile
+     */
+    public static Optional<UserProfile> isAuthenticationProfileAvailable(final WebContext context) {
         final ProfileManager manager = new ProfileManager(context);
         final UserProfile profile = manager.get(true);
         if (profile != null) {
@@ -64,6 +76,12 @@ public class OidcAuthorizationRequestSupport {
         return Optional.empty();
     }
 
+    /**
+     * Is cas authentication available?
+     *
+     * @param context the context
+     * @return the optional authn
+     */
     public Optional<Authentication> isCasAuthenticationAvailable(final WebContext context) {
         final J2EContext j2EContext = (J2EContext) context;
         if (j2EContext != null) {
@@ -79,6 +97,13 @@ public class OidcAuthorizationRequestSupport {
         return Optional.empty();
     }
 
+    /**
+     * Is cas authentication old for max age authorization request boolean.
+     *
+     * @param context            the context
+     * @param authenticationDate the authentication date
+     * @return the boolean
+     */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final ZonedDateTime authenticationDate) {
         final Optional<Long> maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
@@ -87,7 +112,7 @@ public class OidcAuthorizationRequestSupport {
             final long authTime = authenticationDate.toEpochSecond();
             final long diffInSeconds = now - authTime;
             if (diffInSeconds > maxAge.get()) {
-                logger.debug("Authentication is too old: {} and was created {} seconds ago.", 
+                LOGGER.info("Authentication is too old: {} and was created {} seconds ago.",
                         authTime, diffInSeconds);
                 return true;
             }
@@ -95,11 +120,25 @@ public class OidcAuthorizationRequestSupport {
         return false;
     }
 
+    /**
+     * Is cas authentication old for max age authorization request?
+     *
+     * @param context        the context
+     * @param authentication the authentication
+     * @return true/false
+     */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final Authentication authentication) {
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication.getAuthenticationDate());
     }
 
+    /**
+     * Is cas authentication old for max age authorization request?
+     *
+     * @param context the context
+     * @param profile the profile
+     * @return true/false
+     */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final UserProfile profile) {
 
@@ -112,6 +151,15 @@ public class OidcAuthorizationRequestSupport {
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, dt);
     }
 
+    /**
+     * Configure client for max age authorization request.
+     * Sets the CAS client to ask for renewed authentication if
+     * the authn time is too old based on the requested max age.
+     *
+     * @param casClient      the cas client
+     * @param context        the context
+     * @param authentication the authentication
+     */
     public void configureClientForMaxAgeAuthorizationRequest(final CasClient casClient, final WebContext context,
                                                              final Authentication authentication) {
         if (isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication)) {
