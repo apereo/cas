@@ -101,6 +101,11 @@ a:hover {
   color: $link-hover-color;
 }
 
+a.btn-success:link, a.btn-success:visited, a.btn-success:hover  {
+  color: white;
+}
+
+
 p {
   margin-bottom: 1.4em;
 }

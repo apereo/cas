@@ -2,8 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.web.OidcConsentApprovalViewResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
@@ -13,7 +15,6 @@ import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -58,11 +59,20 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     /**
+     * Consent approval view resolver.
+     *
+     * @return the consent approval view resolver
+     */
+    @Bean(name = "consentApprovalViewResolver")
+    public ConsentApprovalViewResolver consentApprovalViewResolver() {
+        return new OidcConsentApprovalViewResolver();
+    }
+    
+    /**
      * Callback authorize view resolver.
      *
      * @return the oauth 20 callback authorize view resolver
      */
-    @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
     @Bean(name="callbackAuthorizeViewResolver")
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {

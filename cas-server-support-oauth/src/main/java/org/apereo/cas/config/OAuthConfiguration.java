@@ -2,8 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
@@ -148,6 +150,17 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
 
+    /**
+     * Consent approval view resolver.
+     *
+     * @return the consent approval view resolver
+     */
+    @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
+    @Bean(name = "consentApprovalViewResolver")
+    public ConsentApprovalViewResolver consentApprovalViewResolver() {
+        return new OAuth20ConsentApprovalViewResolver();
+    }
+        
     /**
      * Callback authorize view resolver.
      *

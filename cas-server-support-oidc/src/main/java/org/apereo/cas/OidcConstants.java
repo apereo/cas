@@ -26,6 +26,11 @@ public interface OidcConstants {
     String PROMPT_LOGIN = "login";
 
     /**
+     * The Authorization Server SHOULD prompt the End-User consent.
+     */
+    String PROMPT_CONSENT = "consent";
+    
+    /**
      * The sub claim.
      */
     String CLAIM_SUB = "sub";
