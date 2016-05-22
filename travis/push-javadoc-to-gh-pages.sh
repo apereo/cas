@@ -11,7 +11,8 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; th
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1) 
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
-        invokeJavadoc=true;
+        # Do not deploy javadocs to gh-pages as they are pulled from Maven Central
+        # invokeJavadoc=true;
         invokeDoc=true;;
   esac
 fi
