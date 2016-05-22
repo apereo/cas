@@ -12,13 +12,15 @@ import java.util.List;
  * @since 5.0.0
  */
 public class OidcServerDiscoveryProperties {
-    private final String issuer;
+    
     private List<String> supportedScopes;
     private List<String> supportedResponseTypes;
     private List<String> supportedSubjectTypes;
     private List<String> supportedClaimTypes;
     private List<String> supportedClaims;
     private List<String> supportedGrantTypes;
+
+    private final String issuer;
     private final String serverPrefix;
 
     public OidcServerDiscoveryProperties(final String serverPrefix, final String issuer) {
