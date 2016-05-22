@@ -20,7 +20,7 @@ signing.secretKeyRingFile=
 org.gradle.daemon=false
 ```
 
-- Checkout the CAS project: `git clone git@github.com:Jasig/cas.git cas-server`
+- Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
 
 ## Preparing the Release
 
@@ -38,7 +38,7 @@ org.gradle.daemon=false
 ```
 
 - In the project's `gradle.properties`, change the project version to the *next* release version (i.e. `4.2.0-RC2`) 
-- Create a tag for the released version, commit the change and push the tag to the upstream Jasig repository. (i.e. `v4.2.0-RC1`).
+- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v4.2.0-RC1`).
 - Switch to the `master` branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `4.3.0-SNAPSHOT`). Push your changes to the upstream repository. 
 
 ## Performing the Release
@@ -52,8 +52,8 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 
 ## Housekeeping
 
-- Close [the milestone](https://github.com/Jasig/cas/milestones) for this release.
-- Find [the release](https://github.com/Jasig/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
+- Close [the milestone](https://github.com/apereo/cas/milestones) for this release.
+- Find [the release](https://github.com/apereo/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
 - Mark the release as pre-release, when releasing RC versions of the project. 
 
 To generate the changelog and release notes, use the below steps:
@@ -63,7 +63,7 @@ To generate the changelog and release notes, use the below steps:
 3. Execute the following command:
 
 ```bash
-github-changes -o Jasig -r cas -b x.y.z -k <TOKEN> -a --use-commit-body
+github-changes -o apereo -r cas -b x.y.z -k <TOKEN> -a --use-commit-body
 ```
 
 Note that `x.y.z` is the name of the branch that is released. The output will be saved in `ChangeLog.md` file. Comb
@@ -85,10 +85,10 @@ John Smith
 ## Update Maven Overlay
 Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.
 
-- [CAS WebApp Overlay](https://github.com/Jasig/cas-overlay-template)
-- [CAS Services Management WebApp Overlay](https://github.com/Jasig/cas-services-management-overlay)
+- [CAS WebApp Overlay](https://github.com/apereo/cas-overlay-template)
+- [CAS Services Management WebApp Overlay](https://github.com/apereo/cas-services-management-overlay)
 
 
 ## Docker Image
-Release a new CAS [Docker image](https://github.com/Jasig/cas/tree/dockerized-caswebapp).
+Release a new CAS [Docker image](https://github.com/apereo/cas/tree/dockerized-caswebapp).
 This task is only relevant when dealing with GA releases.
