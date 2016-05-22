@@ -63,10 +63,10 @@ To generate the changelog and release notes, use the below steps:
 3. Execute the following command:
 
 ```bash
-github-changes -o apereo -r cas -b x.y.z -k <TOKEN> -a --use-commit-body
+github-changes -o apereo -r cas -k <TOKEN> -a --use-commit-body
 ```
 
-Note that `x.y.z` is the name of the branch that is released. The output will be saved in `ChangeLog.md` file. Comb
+The output will be saved in `CHANGELOG.md` file. Comb
 through the file, edit, format and paste the final content under the release tag. 
 
 - Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. A template follows:
