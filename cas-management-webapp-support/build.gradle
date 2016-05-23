@@ -16,5 +16,5 @@ dependencies {
     compile project(':cas-server-support-oauth-core')
 
 
-    testCompile project(':cas-server-webapp-cookie')
+    testCompile project(':cas-server-support-cookie')
 }

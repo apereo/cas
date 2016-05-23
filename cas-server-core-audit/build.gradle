@@ -13,6 +13,6 @@ dependencies {
     testCompile project(':cas-server-core-util')
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core')
-    testCompile project(':cas-server-webapp-cookie')
+    testCompile project(':cas-server-support-cookie')
     testCompile project(path: ":cas-server-core", configuration: "tests")
 }
