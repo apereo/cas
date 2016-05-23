@@ -25,7 +25,7 @@ public class CasBanner implements Banner {
     
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
-    	out.println();
+        out.println();
         for (final String line : BANNER) {
             out.println(line);
         }
@@ -39,7 +39,7 @@ public class CasBanner implements Banner {
      *
      * @return environment info
      */
-    private String collectEnvironmentInfo() {
+    private static String collectEnvironmentInfo() {
         final Properties properties = System.getProperties();
         try (final Formatter formatter = new Formatter()) {
             formatter.format("\n******************** Welcome to CAS *******************\n");
