@@ -1,3 +1,15 @@
+task pathingJar(type: Jar) {
+    dependsOn configurations.runtime
+    appendix = 'pathing'
+ 
+    doFirst {
+        manifest {
+            attributes "Class-Path": configurations.runtime.files.collect {
+                it.toURL().toString().replaceFirst('/file:/+/', '/')}.join(' ')
+        }
+    }
+}
+
 task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
     baseName = "${project.archivesBaseName}-tests"
     classifier = "tests"

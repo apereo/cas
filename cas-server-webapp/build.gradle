@@ -28,7 +28,13 @@ war {
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
 }
 
+
 bootRun {
+    dependsOn pathingJar
+    doFirst {
+        classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+    }
+    
     addResources = true
     jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     systemProperties = System.properties
@@ -96,3 +102,4 @@ tasks.npm_run.inputs.dir(project.file('src/main/resources/static/sass'))
 tasks.npm_run.inputs.file(project.file('gulpfile.js'))
 tasks.npm_run.outputs.dir("${project.buildDir}/generated-src/main/resources/static/css")
 tasks.npm_run.outputs.upToDateWhen { false }
+
