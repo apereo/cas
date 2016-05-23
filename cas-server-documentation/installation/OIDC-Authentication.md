@@ -38,6 +38,8 @@ OpenID Connect clients can be registered with CAS as such:
   "clientSecret": "secret",
   "serviceId" : "^<https://the-redirect-uri>",
   "signIdToken": true,
+  "name": "OIDC",
+  "id": 1000,
   "jwks": "..."
 }
 ```

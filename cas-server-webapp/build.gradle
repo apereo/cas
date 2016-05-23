@@ -28,7 +28,7 @@ war {
 
 
 bootRun {
-	dependsOn pathingJar
+    dependsOn pathingJar
     doFirst {
         classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
     }
