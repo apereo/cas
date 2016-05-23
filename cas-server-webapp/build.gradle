@@ -1,8 +1,6 @@
 apply plugin: 'war'
 apply plugin: 'spring-boot'
 
-apply from: '../gradle/node.gradle'
-
 description = 'Apereo CAS Web Application'
 
 sourceSets {
@@ -82,24 +80,4 @@ dependencies {
     runtime libraries.bouncycastle
 }
 
-npm_run {
-    args = [
-            'gulp',
-            '--',
-            'sass',
-            "--gulpfile", "${project.file('gulpfile.js')}",
-            "--cwd", "${project.buildDir}",
-            "--sassPath", "${project.file('src/main/resources/static/sass')}",
-            "--npmPath", "${project.buildDir}/node_modules",
-            "--cssPath", "${project.buildDir}/generated-src/main/resources/static/css"
-    ]
-}
-
-tasks.npm_install.inputs.file(project.file('package.json'))
-
-tasks.npm_run.dependsOn 'npm_install'
-tasks.npm_run.inputs.dir(project.file('src/main/resources/static/sass'))
-tasks.npm_run.inputs.file(project.file('gulpfile.js'))
-tasks.npm_run.outputs.dir("${project.buildDir}/generated-src/main/resources/static/css")
-tasks.npm_run.outputs.upToDateWhen { false }
-
+uploadArchives.dependsOn bootRepackage  
