@@ -68,8 +68,13 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory) {
+        this(protocol, clientFactory, DEFAULT_RETRY_COUNT);
+    }
+
+    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
+        this.retries = retries;
     }
 
     @Override
