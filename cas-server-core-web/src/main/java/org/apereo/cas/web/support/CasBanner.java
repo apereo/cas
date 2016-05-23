@@ -25,6 +25,7 @@ public class CasBanner implements Banner {
     
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
+    	out.println();
         for (final String line : BANNER) {
             out.println(line);
         }

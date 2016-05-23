@@ -41,3 +41,5 @@ dependencies {
     compile libraries.thymeleafdialect
     compile libraries.thmyeleafboot
 }
+
+uploadArchives.dependsOn bootRepackage
