@@ -22,6 +22,9 @@ public final class AuthUtils {
 
   //The www declaration.
   public static final String WWW = "www";
+  
+  //The accounts declaration.
+  public static final String ACCOUNTS = "accounts";
 
   //The self tenant id.
   public static final String SELF = "self";
@@ -69,7 +72,7 @@ public final class AuthUtils {
       if (idx != -1) {
         String subDomain = host.substring(0, idx);
         if (host.length() > idx) {
-          if (isServiceUrl && subDomain != null && !subDomain.equalsIgnoreCase(WWW)) {
+          if (isServiceUrl && subDomain != null && !subDomain.equalsIgnoreCase(WWW) && !subDomain.equalsIgnoreCase(ACCOUNTS)) {
             tenantID = subDomain;
           }
         }
@@ -85,7 +88,8 @@ public final class AuthUtils {
             String subDomain = host.substring(0, idx);
             if (host.length() > idx) {
               if (isServiceUrl && subDomain != null
-                      && !subDomain.equalsIgnoreCase(WWW)) {
+                      && !subDomain.equalsIgnoreCase(WWW)
+                      && !subDomain.equalsIgnoreCase(ACCOUNTS)) {
                 tenantID = subDomain;
               }
             }
