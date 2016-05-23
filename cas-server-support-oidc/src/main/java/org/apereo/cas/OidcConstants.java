@@ -1,8 +1,10 @@
 package org.apereo.cas;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,6 +16,21 @@ import java.util.Set;
 public interface OidcConstants {
 
     /**
+     * The Authorization Server MUST NOT display any authentication or consent user interface pages.
+     */
+    String PROMPT_NONE = "none";
+
+    /**
+     * The Authorization Server SHOULD prompt the End-User for reauthentication.
+     */
+    String PROMPT_LOGIN = "login";
+
+    /**
+     * The Authorization Server SHOULD prompt the End-User consent.
+     */
+    String PROMPT_CONSENT = "consent";
+    
+    /**
      * The sub claim.
      */
     String CLAIM_SUB = "sub";
@@ -24,9 +41,14 @@ public interface OidcConstants {
     String CLAIM_PREFERRED_USERNAME = "preferred_username";
 
     /**
+     * The authentication time claim.
+     */
+    String CLAIM_AUTH_TIME = "auth_time";
+
+    /**
      * The Scopes.
      */
-    Set<String> SCOPES = ImmutableSet.of("openid", "profile", "email", "address", "phone", "offline_access");
+    List<String> SCOPES = ImmutableList.of("openid", "profile", "email", "address", "phone", "offline_access");
 
     /**
      * The Claims.
@@ -41,6 +63,16 @@ public interface OidcConstants {
      * The id token.
      */
     String ID_TOKEN = "id_token";
+
+    /**
+     * The max age.
+     */
+    String MAX_AGE = "max_age";
+
+    /**
+     * The prompt parameter.
+     */
+    String PROMPT = "prompt";
 
     /**
      * Base OIDC URL.
@@ -66,4 +98,9 @@ public interface OidcConstants {
      * Revocation endpoint url.
      */
     String REVOCATION_URL = "revocation";
+
+    /**
+     * Indicates authentication is required and could not be performed.
+     */
+    String LOGIN_REQUIRED = "login_required";
 }

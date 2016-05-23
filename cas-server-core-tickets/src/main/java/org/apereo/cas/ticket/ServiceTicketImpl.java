@@ -21,32 +21,36 @@ import javax.persistence.Table;
  * can be anything.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 @Entity
-@Table(name="SERVICETICKET")
-@DiscriminatorColumn(name="TYPE")
+@Table(name = "SERVICETICKET")
+@DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(ServiceTicket.PREFIX)
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
-
-    /** Unique Id for serialization. */
+    
     private static final long serialVersionUID = -4223319704861765405L;
 
-    /** The {@link TicketGrantingTicket} this is associated with. */
-    @ManyToOne(targetEntity=TicketGrantingTicketImpl.class)
+    /**
+     * The {@link TicketGrantingTicket} this is associated with.
+     */
+    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     private TicketGrantingTicket ticketGrantingTicket;
 
-    /** The service this ticket is valid for. */
+    /**
+     * The service this ticket is valid for.
+     */
     @Lob
-    @Column(name="SERVICE", nullable=false, length = Integer.MAX_VALUE)
+    @Column(name = "SERVICE", nullable = false, length = Integer.MAX_VALUE)
     private Service service;
 
-    /** Is this service ticket the result of a new login. */
-    @Column(name="FROM_NEW_LOGIN", nullable=false)
+    /**
+     * Is this service ticket the result of a new login.
+     */
+    @Column(name = "FROM_NEW_LOGIN", nullable = false)
     private boolean fromNewLogin;
 
-    @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
+    @Column(name = "TICKET_ALREADY_GRANTED", nullable = false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
     /**
@@ -61,24 +65,24 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * a Service, Expiration Policy and a flag to determine if the ticket
      * creation was from a new Login or not.
      *
-     * @param id the unique identifier for the ticket.
-     * @param ticket the TicketGrantingTicket parent.
-     * @param service the service this ticket is for.
-     * @param fromNewLogin is it from a new login.
-     * @param policy the expiration policy for the Ticket.
+     * @param id           the unique identifier for the ticket.
+     * @param ticket       the TicketGrantingTicket parent.
+     * @param service      the service this ticket is for.
+     * @param currentAuthentication current authenticatioon that prompted this service ticket. May be null.
+     * @param policy       the expiration policy for the Ticket.
      * @throws IllegalArgumentException if the TicketGrantingTicket or the
-     * Service are null.
+     *                                  Service are null.
      */
     public ServiceTicketImpl(final String id,
-         final TicketGrantingTicketImpl ticket,  final Service service,
-        final boolean fromNewLogin, final ExpirationPolicy policy) {
+                             final TicketGrantingTicketImpl ticket, final Service service,
+                             final Authentication currentAuthentication, final ExpirationPolicy policy) {
         super(id, policy);
 
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(ticket, "ticket cannot be null");
         this.ticketGrantingTicket = ticket;
         this.service = service;
-        this.fromNewLogin = fromNewLogin;
+        this.fromNewLogin = currentAuthentication != null || ticket.getCountOfUses() == 0;
     }
 
     @Override
@@ -129,10 +133,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(
-        final String id, final Authentication authentication,
-        final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
+            final String id, final Authentication authentication,
+            final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         synchronized (this) {
-            if(this.grantedTicketAlready) {
+            if (this.grantedTicketAlready) {
                 throw new InvalidProxyGrantingTicketForServiceTicket(this.service);
             }
             this.grantedTicketAlready = Boolean.TRUE;
@@ -150,7 +154,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     @Override
     public Authentication getAuthentication() {
-        return null;
+        return getGrantingTicket().getAuthentication();
     }
 
 }

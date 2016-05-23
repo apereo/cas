@@ -7,7 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -93,11 +92,10 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         authenticationBuilder.setAttributes(authenticationAttributes);
         LOGGER.debug("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
-        final ZonedDateTime dt = ZonedDateTime.now(ZoneOffset.UTC);
-        authenticationBuilder.setAuthenticationDate(dt);
-        LOGGER.debug("Authentication result commenced at [{}]", dt);
-
-        return authenticationBuilder.build();
+        authenticationBuilder.setAuthenticationDate(ZonedDateTime.now());
+        final Authentication auth = authenticationBuilder.build();
+        LOGGER.debug("Authentication result commenced at [{}]", auth.getAuthenticationDate());
+        return auth;
 
     }
 
