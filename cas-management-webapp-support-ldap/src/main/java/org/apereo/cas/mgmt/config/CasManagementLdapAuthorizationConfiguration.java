@@ -32,12 +32,22 @@ public class CasManagementLdapAuthorizationConfiguration {
     @Qualifier("ldapAuthorizationGenerator")
     private AuthorizationGenerator authorizationGenerator;
 
+    /**
+     * Authorization generator for ldap access.
+     *
+     * @return the authorization generator
+     */
     @RefreshScope
     @Bean(name = "authorizationGenerator")
     public AuthorizationGenerator authorizationGenerator() {
         return this.authorizationGenerator;
     }
 
+    /**
+     * Ldap authorization search executor.
+     *
+     * @return the search executor
+     */
     @RefreshScope
     @Bean(name = "ldapAuthorizationGeneratorUserSearchExecutor")
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
