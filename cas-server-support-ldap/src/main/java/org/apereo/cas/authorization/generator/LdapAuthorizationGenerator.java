@@ -2,7 +2,6 @@ package org.apereo.cas.authorization.generator;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
@@ -47,56 +46,23 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
      */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
 
-    /**
-     * Logger instance.
-     */
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * Source of LDAP connections.
-     */
     @Nullable
     @Autowired(required = false)
     @Qualifier("ldapAuthorizationGeneratorConnectionFactory")
     private ConnectionFactory connectionFactory;
 
-    /**
-     * Executes the search query for user data.
-     */
     @Nullable
     @Autowired(required = false)
     @Qualifier("ldapAuthorizationGeneratorUserSearchExecutor")
     private SearchExecutor userSearchExecutor;
 
-    /**
-     * Executes the search query for roles.
-     */
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ldapAuthorizationGeneratorRoleSearchExecutor")
-    private SearchExecutor roleSearchExecutor;
-
-    /**
-     * Specify the name of LDAP attribute to use as principal identifier.
-     */
-
-    @Value("${ldap.authorizationgenerator.user.attr:}")
-    private String userAttributeName;
-
-    /**
-     * Specify the name of LDAP attribute to be used as the basis for the roles.
-     */
-
-    @Value("${ldap.authorizationgenerator.role.attr:}")
-    private String roleAttributeName;
-
-    /**
-     * Prefix appended to the uppercased
-     * {@link #roleAttributeName} (Spring Security convention).
-     **/
+    @Value("${ldap.authorizationgenerator.role.attribute:}")
+    private String roleAttribute;
 
     @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + '}')
-    private String rolePrefix = DEFAULT_ROLE_PREFIX;
+    private String rolePrefix;
 
     /**
      * Flag that indicates whether multiple search results are allowed for a given credential.
@@ -115,31 +81,15 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
      *
      * @param factory            Source of LDAP connections for searches.
      * @param userSearchExecutor Executes the LDAP search for user data.
-     * @param roleSearchExecutor Executes the LDAP search for role data.
-     * @param userAttributeName  Name of LDAP attribute that contains username for user details.
-     * @param roleAttributeName  Name of LDAP attribute that contains role membership data for the user.
      */
     public LdapAuthorizationGenerator(
             final ConnectionFactory factory,
-            final SearchExecutor userSearchExecutor,
-            final SearchExecutor roleSearchExecutor,
-            final String userAttributeName,
-            final String roleAttributeName) {
-
+            final SearchExecutor userSearchExecutor) {
         this.connectionFactory = factory;
         this.userSearchExecutor = userSearchExecutor;
-        this.roleSearchExecutor = roleSearchExecutor;
-        this.userAttributeName = userAttributeName;
-        this.roleAttributeName = roleAttributeName;
     }
 
 
-    /**
-     * Sets the prefix appended to the uppercase {@link #roleAttributeName} (Spring Security convention).
-     * The default value {@value #DEFAULT_ROLE_PREFIX} is sufficient in most cases.
-     *
-     * @param rolePrefix Role prefix.
-     */
     public void setRolePrefix(final String rolePrefix) {
         this.rolePrefix = rolePrefix;
     }
@@ -161,7 +111,6 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     @Override
     public void generate(final CommonProfile profile) {
         Assert.notNull(this.connectionFactory, "connectionFactory must not be null");
-        Assert.notNull(this.roleSearchExecutor, "roleSearchExecutor must not be null");
         Assert.notNull(this.userSearchExecutor, "userSearchExecutor must not be null");
 
         final String username = profile.getId();
@@ -173,56 +122,42 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
                     createSearchFilter(this.userSearchExecutor, username));
             logger.debug("LDAP user search response: {}", response);
             userResult = response.getResult();
+
+            if (userResult.size() == 0) {
+                throw new AccountNotFoundException(username + " not found.");
+            }
+            if (userResult.size() > 1 && !this.allowMultipleResults) {
+                throw new IllegalStateException(
+                        "Found multiple results for user which is not allowed (allowMultipleResults=false).");
+            }
+
+            if (userResult.getEntry().getAttributes().isEmpty()) {
+                throw new IllegalStateException("No attributes are retrieved for this user.");
+            }
+            
+            final LdapAttribute attribute = userResult.getEntry().getAttribute(this.roleAttribute);
+            if (attribute == null) {
+                throw new IllegalStateException("Configured role attribute cannot be found for this user");
+            }
+
+            addProfileRolesFromAttributes(profile, attribute);
+
         } catch (final LdapException e) {
             throw new RuntimeException("LDAP error fetching details for user.", e);
         }
-        if (userResult.size() == 0) {
-            throw new AccountNotFoundException(username + " not found.");
-        }
-        if (userResult.size() > 1 && !this.allowMultipleResults) {
-            throw new IllegalStateException(
-                    "Found multiple results for user which is not allowed (allowMultipleResults=false).");
-        }
-        final LdapEntry userResultEntry = userResult.getEntry();
-        final String userDn = userResultEntry.getDn();
-        final LdapAttribute userAttribute = userResultEntry.getAttribute(this.userAttributeName);
-        if (userAttribute == null) {
-            throw new IllegalStateException(this.userAttributeName + " attribute not found in results.");
-        }
-
-        final SearchResult roleResult;
-        try {
-            logger.debug("Attempting to get roles for user {}.", userDn);
-            final Response<SearchResult> response = this.roleSearchExecutor.search(
-                    this.connectionFactory,
-                    createSearchFilter(this.roleSearchExecutor, userDn));
-            logger.debug("LDAP role search response: {}", response);
-            roleResult = response.getResult();
-        } catch (final LdapException e) {
-            throw new RuntimeException("LDAP error fetching roles for user.", e);
-        }
-        addProfileRolesFromAttributes(profile, roleResult);
     }
 
     /**
      * Add profile roles from attributes.
      *
-     * @param profile    the profile
-     * @param roleResult the role result
+     * @param profile       the profile
+     * @param ldapAttribute the ldap attribute
      */
-    protected void addProfileRolesFromAttributes(final CommonProfile profile, final SearchResult roleResult) {
-        LdapAttribute roleAttribute;
-        for (final LdapEntry entry : roleResult.getEntries()) {
-            roleAttribute = entry.getAttribute(this.roleAttributeName);
-            if (roleAttribute == null) {
-                logger.warn("Role attribute not found on entry {}", entry);
-                continue;
-            }
-
-            for (final String role : roleAttribute.getStringValues()) {
-                profile.addRole(this.rolePrefix + role.toUpperCase());
-            }
-        }
+    protected void addProfileRolesFromAttributes(final CommonProfile profile, final LdapAttribute ldapAttribute) {
+        ldapAttribute.getStringValues().stream().forEach(value -> {
+            profile.addRole(this.rolePrefix.concat(value.toUpperCase()));
+            profile.addAttribute(ldapAttribute.getName(), value);
+        });
     }
 
     /**

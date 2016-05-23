@@ -1,6 +1,5 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas.util;
 
-import org.apereo.cas.CasVersion;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
 
@@ -22,10 +21,10 @@ public class CasBanner implements Banner {
             "                     / /    / /| |  \\__ \\ ",
             "                    / /___ / ___ | ___/ / ",
             "                    \\____//_/  |_|/____/  "};
-    
+
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
-    	out.println();
+        out.println();
         for (final String line : BANNER) {
             out.println(line);
         }
@@ -39,7 +38,7 @@ public class CasBanner implements Banner {
      *
      * @return environment info
      */
-    private String collectEnvironmentInfo() {
+    private static String collectEnvironmentInfo() {
         final Properties properties = System.getProperties();
         try (final Formatter formatter = new Formatter()) {
             formatter.format("\n******************** Welcome to CAS *******************\n");

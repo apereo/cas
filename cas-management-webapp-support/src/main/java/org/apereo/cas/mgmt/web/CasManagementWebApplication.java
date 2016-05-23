@@ -1,5 +1,6 @@
 package org.apereo.cas.mgmt.web;
 
+import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -41,6 +42,6 @@ public class CasManagementWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasManagementWebApplication.class).run(args);
+        new SpringApplicationBuilder(CasManagementWebApplication.class).banner(new CasBanner()).run(args);
     }
 }
