@@ -20,6 +20,8 @@ package org.jasig.cas.adaptors.radius;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.lang.Class;
+import java.lang.String;
 
 import net.jradius.client.RadiusClient;
 import net.jradius.client.auth.PAPAuthenticator;
@@ -183,9 +185,10 @@ public final class JRadiusServerImpl implements RadiusServer {
             attributeList);
 
         try {
+            RadiusAuthenticator thisAuth = getNewRadiusAuthenticator();
             final RadiusPacket response = radiusClient.authenticate(request,
-                this.radiusAuthenticator, this.retries);
-
+                thisAuth, this.retries);
+            
             // accepted
             if (response instanceof AccessAccept) {
                 LOG.debug("Authentication request suceeded for host:"
@@ -214,5 +217,23 @@ public final class JRadiusServerImpl implements RadiusServer {
     private RadiusClient getNewRadiusClient() {
         return new RadiusClient(this.inetAddress, this.sharedSecret,
             this.authenticationPort, this.accountingPort, this.socketTimeout);
+    }
+
+    private RadiusAuthenticator getNewRadiusAuthenticator() {
+        RadiusAuthenticator tempAuth = null;
+        if ( this.radiusAuthenticator.getAuthName().startsWith("eap-") ) {
+            Class <?> c = this.radiusAuthenticator.getClass();
+            try {
+                tempAuth = (RadiusAuthenticator)c.newInstance();
+            }
+            catch(Exception e) { 
+                LOG.error("Unable to create new instance of authenticator", e);
+                tempAuth = this.radiusAuthenticator;
+            }
+        }
+        else
+            tempAuth = this.radiusAuthenticator;
+
+        return tempAuth;
     }
 }
