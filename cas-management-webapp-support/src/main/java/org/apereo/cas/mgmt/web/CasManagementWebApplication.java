@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ImportResource;
                 DataSourceAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
-@ImportResource(locations = {"classpath:/managementConfigContext.xml"})
+@ImportResource(locations = {"classpath*:/META-INF/spring/*.xml", "classpath:/managementConfigContext.xml"})
 @Import(AopAutoConfiguration.class)
 public class CasManagementWebApplication {
     /**

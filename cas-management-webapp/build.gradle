@@ -33,6 +33,7 @@ war {
 dependencies {
     compile libraries.springboot
     runtime project(':cas-management-webapp-support')
+    runtime project(':cas-management-webapp-support-ldap')
     providedRuntime libraries.springboottomcat
     runtime libraries.hibernate
     runtime libraries.groovy
