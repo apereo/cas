@@ -61,13 +61,13 @@ dependencies {
     compile project(':cas-server-core-validation')
     compile project(':cas-server-core-util')
     compile project(':cas-server-webapp-init')
-    compile project(':cas-server-webapp-throttle')
-    compile project(':cas-server-webapp-actions')
-    compile project(':cas-server-webapp-cookie')
-    compile project(':cas-server-webapp-reports')
-    compile project(':cas-server-webapp-themes')
+    compile project(':cas-server-support-throttle')
+    compile project(':cas-server-support-actions')
+    compile project(':cas-server-support-cookie')
+    compile project(':cas-server-support-reports')
+    compile project(':cas-server-support-themes')
     compile project(':cas-server-webapp-config')
-    compile project(':cas-server-webapp-validation')
+    compile project(':cas-server-support-validation')
 
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j

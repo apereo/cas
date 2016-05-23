@@ -8,8 +8,8 @@ dependencies {
     compile libraries.cassecurityfilter
     compile project(':cas-server-core-web')
     compile libraries.hibernate
-    compile project(':cas-server-webapp-actions')
-    compileOnly project(':cas-server-webapp-themes')
+    compile project(':cas-server-support-actions')
+    compileOnly project(':cas-server-support-themes')
     compileOnly project(':cas-server-core')
     compileOnly project(':cas-server-core-audit')
     compileOnly project(':cas-server-core-logging')
