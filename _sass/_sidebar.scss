@@ -1,0 +1,172 @@
+.row-offcanvas {
+  position: relative;
+  -webkit-transition: all 0.25s ease-out;
+  -moz-transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out;
+}
+
+.row-offcanvas-right {
+  right: 0;
+}
+
+.row-offcanvas-right.active {
+  right: 168px;
+}
+
+.row-offcanvas-right.active .sidebar-offcanvas {
+  position: absolute;
+  top: 0;
+  margin-right: 5px;
+
+  right: -173px;
+  width: 203px;
+}
+
+#sidebar {
+  padding: 0px;
+  padding-top: 15px;
+
+  color: white;
+  background-color: #333;
+
+  a {
+    color: inherit;
+  }
+
+  .nav {
+    font-size: 13px;
+
+    li {
+      &>a {
+        position: relative;
+        display: block;
+        padding: 10px 15px;
+        &:hover, &:focus {
+          background-color: #393939;
+          text-decoration: none;
+        }
+
+      }
+
+    }
+  }
+}
+
+/**
+ * Collapse menu
+ */
+
+#lg-menu li.active a {
+  background-color: transparent;
+}
+#lg-menu a i.expand {
+  float: right;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: inherit;
+  font-size: 12px;
+  padding-right: 0.5em;
+}
+
+#lg-menu a.collapsed i.expand:before {
+  content: "\f105";
+}
+
+#lg-menu li > a {}
+#lg-menu li > a.collapsed {
+  background-color: transparent;
+}
+#lg-menu a i.expand:before {
+  content: "\f107";
+}
+
+#lg-menu a ul, #lg-menu ul li {
+  list-style: none;
+}
+
+
+#lg-menu ul {
+  li {
+    margin-bottom: 5px;
+    margin-left: 20px;
+
+    & > ul {
+      margin-right: -4px;
+
+      li {
+          padding-left: 20px;
+        a {
+          margin-left: -15px;
+        }
+
+        >ul {
+          padding-left: 0;
+          li {
+            padding-left: 0;
+          }
+        }
+      }
+    }
+
+/*    ul {
+      padding-left: 0;
+      li {
+
+      }
+    }*/
+  }
+}
+
+
+/*
+#lg-menu ul li {
+  margin-bottom: 5px;
+  margin-left: 20px;
+}
+*/
+
+#lg-menu ul li>ul {
+/*  background-color: #e9eaed;
+  color: black;*/
+
+  //margin-right: -4px;
+}
+/*
+#lg-menu ul li >ul {
+  li {
+    padding-left: 20px;
+    a {
+      //color: black;
+      margin-left: -15px;
+    }
+  }
+}
+
+#lg-menu ul li ul {
+  padding-left: 0;
+}
+
+*/
+
+
+
+@media (min-width: 34em) {
+  .row-offcanvas-right.active .sidebar-offcanvas {
+    width: 223px;
+  }
+}
+
+@media (min-width: 48em) {
+  .row-offcanvas-right.active .sidebar-offcanvas {
+    width: 223px;
+  }
+}
+
+@media (min-width: 62em) {
+
+}
+
+@media (min-width: 75em) {
+
+}
