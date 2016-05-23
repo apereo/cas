@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 3.2.1
  *
  */
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
+public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements BatchableTicketRegistry {
     
     @NotNull
     @PersistenceContext
@@ -150,7 +150,29 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         
         return tickets;
     }
-    
+
+    @Transactional(readOnly=true)
+    public Collection<Ticket> getTicketGrantingTicketBatch(int offset, int batchSize) {
+        final List<TicketGrantingTicketImpl> tgts = entityManager
+                .createQuery("select t from TicketGrantingTicketImpl t order by t.creationTime asc", TicketGrantingTicketImpl.class)
+                .setFirstResult(offset)
+                .setMaxResults(batchSize)
+                .getResultList();
+
+        return new ArrayList<Ticket>(tgts);
+    }
+
+    @Transactional(readOnly=true)
+    public Collection<Ticket> getServiceTicketBatch(int offset, int batchSize) {
+        final List<ServiceTicketImpl> sts = entityManager
+                .createQuery("select s from ServiceTicketImpl s order by s.creationTime asc", ServiceTicketImpl.class)
+                .setFirstResult(offset)
+                .setMaxResults(batchSize)
+                .getResultList();
+
+        return new ArrayList<Ticket>(sts);
+    }
+
     public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
         this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
     }
