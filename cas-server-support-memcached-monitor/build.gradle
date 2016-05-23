@@ -6,7 +6,7 @@ dependencies {
     compile libraries.hibernate
     testCompile project(':cas-server-core-authentication')
     testCompile project(path: ":cas-server-support-memcached-ticket-registry", configuration: "tests")
-    testCompile project(':cas-server-webapp-cookie')
+    testCompile project(':cas-server-support-cookie')
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-logout')
     compileOnly project(':cas-server-support-saml')
