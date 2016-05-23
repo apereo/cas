@@ -186,7 +186,8 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public void update(final Map<String, Object> attributes) {
-        this.attributes.putAll(attributes);
+    public void update(final Authentication authn) {
+        this.attributes.putAll(authn.getAttributes());
+        this.authenticationDate = authn.getAuthenticationDate();
     }
 }
