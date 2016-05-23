@@ -77,9 +77,9 @@ public interface Authentication extends Serializable {
     Map<String, Class<? extends Exception>> getFailures();
 
     /**
-     * Updates the authentication attributes, replacing existing values with new ones.
+     * Updates the authentication object with what's passed.
      *
-     * @param attributes the attributes
+     * @param authn the authn object
      */
-    void update(final Map<String, Object> attributes);
+    void update(Authentication authn);
 }

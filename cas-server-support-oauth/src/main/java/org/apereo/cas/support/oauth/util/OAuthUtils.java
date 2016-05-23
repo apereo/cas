@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public final class OAuthUtils {
      * @return a null view
      */
     public static ModelAndView writeTextError(final HttpServletResponse response, final String error) {
-        return OAuthUtils.writeText(response, "error=" + error, HttpStatus.SC_BAD_REQUEST);
+        return OAuthUtils.writeText(response, OAuthConstants.ERROR + '=' + error, HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
