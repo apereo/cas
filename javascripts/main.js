@@ -239,20 +239,6 @@ function guidGenerator() {
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
-function collapseCodeBlocks() {
-    $(".highlight").each(function () {
-        var id = guidGenerator();
-        var showCodeButton = "<button type='button' class='btn btn-default' data-toggle='collapse' " +
-            "data-target='#" + id + "' aria-expanded='true'>" +
-            "<span class='glyphicon glyphicon-stats' aria-hidden='true'></span>" +
-            "&nbsp;Show Code</button>";
-        $(this).attr("id", id);
-        $(this).before(showCodeButton);
-        $(this).addClass('collapse');
-        $(this).prepend('<br>');
-    });
-}
-
 function ensureBootrapIsLoaded() {
     if (typeof($.fn.modal) === 'undefined') {
         // require a minimum version of bootstrap
@@ -281,7 +267,6 @@ $(function () {
     generateToolbarIcons();
     responsiveImages();
     responsiveTables();
-    // collapseCodeBlocks();
 
     var formattedVersion = getActiveDocumentationVersionInView();
     if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
