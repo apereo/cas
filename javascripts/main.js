@@ -42,19 +42,6 @@ function loadSidebarForActiveVersion() {
         topLevel.each(function() {
             sidebarTopNav( $(this) );
         });
-/*
-        topLevel.each(function(idx) {
-            $(this).attr({
-                'data-toggle': "collapse",
-                'data-parent': "#" + $(this).closest('ul').attr('id'),
-                'aria-expanded': "false",
-                title: $(this)[0].innerText,
-                class: 'collapsed'
-            })
-                // .prepend('<i class="fa fa-list"></i>')
-                .append('<i class="expand"></i></a>');
-        });
-*/
 
         subLevel.each( function() {
             sidebarSubNav( $(this) );
@@ -63,20 +50,6 @@ function loadSidebarForActiveVersion() {
         nestedMenu.each(function() {
             sidebarTopNav( $(this) );
         });
-
-
-        /*subLevel.each(function() {
-            var prevId = $(this).prev('a').attr('href');
-
-            if ( prevId.search(/^#.*$/) >= 0) {
-                prevId = prevId.substr(1);
-            } else {
-                prevId = '';
-            }
-
-            $(this).addClass('nav collapse').attr('id', prevId);
-        });
-    */
 
         $('#sidebartoc').append(menu);
 
@@ -99,9 +72,6 @@ function sidebarTopNav( el ) {
     } else {
 
     }
-
-    // .prepend('<i class="fa fa-list"></i>')
-    // .append('<i class="expand"></i></a>');
 };
 
 
@@ -117,8 +87,6 @@ function sidebarSubNav( el ) {
     if (!prevId == '') {
         $(el).addClass('nav collapse').attr('id', prevId);
     }
-
-    // $(el).addClass('nav collapse').attr('id', prevId);
 }
 
 function hideDevelopmentVersionWarning() {
@@ -260,7 +228,6 @@ function generateTableOfContentsForPage() {
 }
 
 function tocItem(id, text) {
-    // return '<li><a href="#' + id + '">' + text + '</a></li>';
     return '<li><a href="#' + id + '">' + text + '</a>';
 }
 
@@ -325,16 +292,12 @@ $(function () {
     hideDevelopmentVersionWarning();
     document.title = $("h1").first().text() + formattedVersion;
 
-
-
     $('[data-toggle=offcanvas]').click(function () {
         $(this).toggleClass('visible-xs-up text-center');
         $(this).find('i').toggleClass('fa-chevron-left fa-chevron-right');
         $('.row-offcanvas').toggleClass('active');
         $('#lg-menu').toggleClass('hidden-sm-down');
-        // $('#xs-menu').toggleClass('visible-xs').toggleClass('hidden-xs');
-        // $('#accordion').toggleClass('hidden-xs').toggleClass('visible-xs');
-        // $('#btnShow').toggle();
+
     });
 
 });
