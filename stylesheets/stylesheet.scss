@@ -57,20 +57,7 @@ h3 {
   display: none;
 }
 
-pre {
-  width: 94%;
-  margin: 0 auto 2rem auto;
-  padding: 10px;
-  background-color: #f8f8f4;
-  border: 1px solid #ececec;
-  overflow: auto;
-}
-
-pre, code {
-  color: #296643;
-  font-family: "Consolas", "Andale Mono", "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-  font-size: 12px;
-}
+@import "syntax-highlighting";
 
 footer {
   border-top: 1px solid #333;
