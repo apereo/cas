@@ -29,31 +29,39 @@ function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
 
 function loadSidebarForActiveVersion() {
     $.get( "/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html", function( data ) {
+
         var menu = $(data);
 
-        menu.addClass('nav collapse').attr('id', 'sidebarTopics');
+        if ( menu.first().is('ul') ) {
 
-        var topLevel = menu.find('> li>a');
+            menu.addClass('nav collapse').attr('id', 'sidebarTopics');
 
-        var subLevel = menu.find('> li ul');
+            var topLevel = menu.find('> li>a');
 
-        var nestedMenu = menu.find("ul li" ).has( "ul" ).children('a');
+            var subLevel = menu.find('> li ul');
 
-        topLevel.each(function() {
-            sidebarTopNav( $(this) );
-        });
+            var nestedMenu = menu.find("ul li" ).has( "ul" ).children('a');
 
-        subLevel.each( function() {
-            sidebarSubNav( $(this) );
-        });
+            topLevel.each(function() {
+                sidebarTopNav( $(this) );
+            });
 
-        nestedMenu.each(function() {
-            sidebarTopNav( $(this) );
-        });
+            subLevel.each( function() {
+                sidebarSubNav( $(this) );
+            });
 
-        $('#sidebartoc').append(menu);
+            nestedMenu.each(function() {
+                sidebarTopNav( $(this) );
+            });
 
-        generateSidebarLinksForActiveVersion();
+            $('#sidebartoc').append(menu);
+
+            generateSidebarLinksForActiveVersion();
+
+        } else {
+            $('#sidebartoc').hide();
+        }
+
 
     });
 }
