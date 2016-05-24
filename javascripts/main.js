@@ -80,12 +80,12 @@ function loadSidebarForActiveVersion() {
 
         $('#sidebartoc').append(menu);
 
+        generateSidebarLinksForActiveVersion();
+
     });
 }
 
 function sidebarTopNav( el ) {
-    console.log('sidebarTopNav:', el[0].href, el[0].href.search(/(?:^|)#/g) );
-
     // If the link is an anchor, then wire up toggle functionality, otherwise leave it.
     if ( el.attr('href').search(/(?:^|)#/g) >= 0 ) {
         el.attr({
@@ -129,8 +129,10 @@ function hideDevelopmentVersionWarning() {
 }
 
 function generateSidebarLinksForActiveVersion() {
-    $('a').each(function () {
+    $('#sidebar a').each(function () {
         var href = this.href;
+        console.log( href );
+
         if (href.indexOf("$version") != -1) {
             href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
             $(this).attr('href', href);
@@ -310,6 +312,7 @@ $(function () {
     ensureBootrapIsLoaded();
     loadSidebarForActiveVersion();
     generateTableOfContentsForPage();
+
     generateToolbarIcons();
     responsiveImages();
     responsiveTables();
