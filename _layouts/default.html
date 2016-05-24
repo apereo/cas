@@ -11,7 +11,6 @@
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
 
-    <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"
           integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
 
@@ -29,7 +28,7 @@
 <div class="wrapper">
     <div class="box">
         <!-- HEADER -->
-        <header>
+        <header class="hidden-sm-down">
             <div class="container">
                 <div class="row">
                     <div class="col-xs-4 col-md-2">
@@ -54,34 +53,57 @@
 
         <div class="row row-offcanvas row-offcanvas-right">
             <div class="column col-md-10 col-sm-9 col-xs-11" id="main">
-                <section id="cas-docs-container" class="container cas-docs-container">
-                    <div class="row">
-                        <!-- MAIN CONTENT -->
-                        <!--<div class="col-xs-12" role="main">-->
-                        <div id="dev-doc-info" class="alert alert-info"><strong>Work in progress</strong>
-                            <p>You are viewing the development documentation for the CAS server. <strong>The
-                                functionality presented
-                                here is not officially released yet and may be unstable</strong>.
-                                This is a work in progress and will be continually updated as development makes
-                                progress. To view
-                                the documentation for a specific CAS server version, please <a
-                                        href="/cas/Older-Versions.html">choose
-                                    an appropriate version.</a></p>
+                <section>
+                    <div id="mobile-nav" class="navbar navbar-cas navbar-static-top hidden-sm-up" role="banner">
+                        <!-- top nav -->
+                        <div class="navbar-header clearfix">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                    data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle</span>
+                                <span class="fa fa-bars"></span>
+                            </button>
+                            <a href="{{ relative }}index.html" class="navbar-brand logo"><img
+                                    class="undecorated img-responsive" src="{{ relative }}images/cas_logo.png"/></a>
+                            <h1>Single Sign-On for the Web</h1>
                         </div>
+                        <nav class="collapse navbar-collapse" role="navigation">
+                            <ul class="nav navbar-nav">
+                                <li class="nav-item active"><a href="{{ relative }}index.html" class="nav-link">Home</a>
+                                </li>
+                                <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="nav-link">Downloads</a>
+                                </li>
+                                <li class="nav-item"><a
+                                        href="https://www.google.com/cse/publicurl?cx=017040929083740828958:sqr2hwvrxmg"
+                                        class="nav-link">Search</a></li>
+                                <li class="nav-item"><a href="{{ relative }}Support.html" class="nav-link">Support</a>
+                                </li>
+                                <li class="nav-item"><a href="{{ relative }}Mailing-Lists.html" class="nav-link">Mailing
+                                    Lists</a></li>
+                                <li class="nav-item"><a href="{{ relative }}Older-Versions.html" class="nav-link">Versions</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- /top nav -->
+                    </div>
 
-                        <span id="toolbarIcons"></span>
-                        {{ content }}
-                        <!--</div>-->
+                    <div id="cas-docs-container" class="container cas-docs-container">
 
-                        <!-- PAGE TABLE OF CONTENTS -->
-                        <!--
-                                        <div class="hidden-xs-down col-md-3" role="complementary">
-                                            <nav id="tableOfContents" class="cas-docs-sidebar hidden-print">
-                                                <h4>Table of Contents</h4>
-                                                <ul class="nav cas-docs-sidenav"></ul>
-                                            </nav>
-                                        </div>
-                        -->
+                        <div class="row">
+                            <!-- MAIN CONTENT -->
+                            <div id="dev-doc-info" class="alert alert-info"><strong>Work in progress</strong>
+                                <p>You are viewing the development documentation for the CAS server. <strong>The
+                                    functionality presented
+                                    here is not officially released yet and may be unstable</strong>.
+                                    This is a work in progress and will be continually updated as development makes
+                                    progress. To view
+                                    the documentation for a specific CAS server version, please <a
+                                            href="/cas/Older-Versions.html">choose
+                                        an appropriate version.</a></p>
+                            </div>
+
+                            <span id="toolbarIcons"></span>
+                            {{ content }}
+                        </div>
                     </div>
                 </section>
             </div>
@@ -116,17 +138,6 @@
                 </ul>
             </div>
         </div>
-
-
-        <!-- SIDEBAR -->
-        <!--
-        <div id="sidebar_wrap" class="outer">
-            <div id="sidebar_content" class="inner">
-                <span id="sidebartoc"></span>
-            </div>
-        </div>
-        -->
-
 
         <!-- FOOTER  -->
         <footer>

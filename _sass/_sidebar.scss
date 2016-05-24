@@ -37,7 +37,7 @@
     font-size: 13px;
 
     li {
-      &>a {
+      & > a {
         position: relative;
         display: block;
         padding: 10px 15px;
@@ -59,6 +59,7 @@
 #lg-menu li.active a {
   background-color: transparent;
 }
+
 #lg-menu a i.expand {
   float: right;
   font-family: FontAwesome;
@@ -73,10 +74,13 @@
   content: "\f105";
 }
 
-#lg-menu li > a {}
+#lg-menu li > a {
+}
+
 #lg-menu li > a.collapsed {
   background-color: transparent;
 }
+
 #lg-menu a i.expand:before {
   content: "\f107";
 }
@@ -84,7 +88,6 @@
 #lg-menu a ul, #lg-menu ul li {
   list-style: none;
 }
-
 
 #lg-menu ul {
   li {
@@ -95,61 +98,23 @@
       margin-right: -4px;
 
       li {
-          padding-left: 20px;
+        padding-left: 20px;
+
         a {
           margin-left: -15px;
         }
 
-        >ul {
+        > ul {
           padding-left: 0;
+
           li {
             padding-left: 0;
           }
         }
       }
     }
-
-/*    ul {
-      padding-left: 0;
-      li {
-
-      }
-    }*/
   }
 }
-
-
-/*
-#lg-menu ul li {
-  margin-bottom: 5px;
-  margin-left: 20px;
-}
-*/
-
-#lg-menu ul li>ul {
-/*  background-color: #e9eaed;
-  color: black;*/
-
-  //margin-right: -4px;
-}
-/*
-#lg-menu ul li >ul {
-  li {
-    padding-left: 20px;
-    a {
-      //color: black;
-      margin-left: -15px;
-    }
-  }
-}
-
-#lg-menu ul li ul {
-  padding-left: 0;
-}
-
-*/
-
-
 
 @media (min-width: 34em) {
   .row-offcanvas-right.active .sidebar-offcanvas {

@@ -48,39 +48,10 @@ h3 {
 
 .cas-docs-container {
   padding-top: 10px;
+  margin-top: 50px;
 }
 
-.navbar-toggler {
-  margin-left: -10px;
-}
-
-.navbar-cas {
-  border-radius: 0;
-  background-color: #006dc1;
-  color: #000;
-}
-
-.navbar-cas a {
-  color: #fff;
-}
-
-.navbar-cas a:hover {
-  color: #d3d3d3;
-}
-
-.navbar-brand {
-  float: none;
-}
-
-.navbar-nav .nav-item {
-  float: none;
-}
-
-.navbar-divider,
-.navbar-nav .nav-item + .nav-item,
-.navbar-nav .nav-link + .nav-link {
-  margin-left: 0;
-}
+@import "navbar";
 
 #toolbarIcons {
   display: none;
@@ -201,20 +172,8 @@ footer {
     }
   }
 
-  .navbar-toggler {
-    margin-left: inherit;
-    color: white;
-  }
-  .navbar-brand {
-    float: left;
-  }
-  .navbar-nav .nav-item {
-    float: left;
-  }
-  .navbar-divider,
-  .navbar-nav .nav-item + .nav-item,
-  .navbar-nav .nav-link + .nav-link {
-    margin-left: 1rem;
+  .cas-docs-container {
+    margin-top: 0;
   }
 }
 
