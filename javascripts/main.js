@@ -131,7 +131,6 @@ function hideDevelopmentVersionWarning() {
 function generateSidebarLinksForActiveVersion() {
     $('#sidebar a').each(function () {
         var href = this.href;
-        console.log( href );
 
         if (href.indexOf("$version") != -1) {
             href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
@@ -257,7 +256,6 @@ function generateTableOfContentsForPage() {
         arr.push('</li>');
     }
 
-// console.log(arr.join(''));
     toc.append(arr.join(''));
 }
 
