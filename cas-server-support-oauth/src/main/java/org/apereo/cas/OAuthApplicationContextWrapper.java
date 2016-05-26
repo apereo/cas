@@ -54,7 +54,7 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
 
         final RegisteredService svc = servicesManager.findServiceBy(callbackService);
 
-        if (svc != null && !svc.getServiceId().equals(oAuthCallbackUrl)) {
+        if (svc == null || !svc.getServiceId().equals(oAuthCallbackUrl)) {
             final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
             service.setName("OAuth Callback url");
             service.setDescription("OAuth Wrapper Callback Url");
