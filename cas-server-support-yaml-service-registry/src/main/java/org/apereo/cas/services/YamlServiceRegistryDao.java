@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 
-import org.apereo.cas.util.services.RegisteredServiceYamlSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
