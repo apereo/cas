@@ -49,7 +49,7 @@ public class LdapAuthorizationGeneratorTests extends AbstractLdapTests {
         });
     }
 
-    private boolean hasAuthority(final CommonProfile profile, final String name) {
+    private static boolean hasAuthority(final CommonProfile profile, final String name) {
         return profile.getRoles().contains(name);
     }
 }

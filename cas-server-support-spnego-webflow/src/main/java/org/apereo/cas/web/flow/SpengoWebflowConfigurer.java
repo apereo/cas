@@ -15,7 +15,7 @@ import org.springframework.webflow.engine.Flow;
 @Component("spnegoWebflowConfigurer")
 public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String SPNEGO = "spnegp";
+    private static final String SPNEGO = "spnego";
     
     private static final String START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
 
