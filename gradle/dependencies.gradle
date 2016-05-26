@@ -436,6 +436,10 @@ ext.libraries = [
                 },
                 dependencies.create("org.hjson:hjson:$hjsonVersion") {
                     force = true
+                },
+                dependencies.create("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonDatabindVersion") {
+                    exclude(group: 'org.yaml', module: 'snakeyaml')
+                    force = true
                 }
         ],
         couchbase        : "com.couchbase.client:java-client:$couchbaseVersion",
