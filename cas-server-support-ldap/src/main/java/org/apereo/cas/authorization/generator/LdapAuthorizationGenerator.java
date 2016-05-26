@@ -176,4 +176,16 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
         logger.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;
     }
+
+    public void setConnectionFactory(@Nullable final ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+    public void setUserSearchExecutor(@Nullable final SearchExecutor userSearchExecutor) {
+        this.userSearchExecutor = userSearchExecutor;
+    }
+
+    public void setRoleAttribute(final String roleAttribute) {
+        this.roleAttribute = roleAttribute;
+    }
 }
