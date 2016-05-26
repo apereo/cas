@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Inspektr's principal resolver that first checks if the return value of the target joinpoint is instance
- * of {@link org.jasig.cas.client.validation.Assertion} and then retrieves the principal from there.
+ * of {@link Assertion} and then retrieves the principal from there.
  *
  * If that is not the case, it delegates to the wrapped {@link TicketOrCredentialPrincipalResolver} which might return
  * <code>org.apereo.inspektr.common.spi.PrincipalResolver.UNKNOWN_USER</code> if it's unable to resolve principal id.
