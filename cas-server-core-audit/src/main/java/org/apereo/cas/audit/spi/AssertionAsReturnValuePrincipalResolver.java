@@ -21,14 +21,14 @@ public class AssertionAsReturnValuePrincipalResolver implements PrincipalResolve
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AssertionAsReturnValuePrincipalResolver.class);
 
-    private TicketOrCredentialPrincipalResolver delegate;
+    private final TicketOrCredentialPrincipalResolver delegate;
 
-    public AssertionAsReturnValuePrincipalResolver(TicketOrCredentialPrincipalResolver delegate) {
+    public AssertionAsReturnValuePrincipalResolver(final TicketOrCredentialPrincipalResolver delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public String resolveFrom(JoinPoint auditTarget, Object returnValue) {
+    public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
         LOGGER.debug("Trying to see if target's return value is instance of [Assertion]...");
         if(returnValue instanceof Assertion) {
             LOGGER.debug("Assertion instance is found in the return value. Resolving principal id from associated Authentication...");
@@ -44,7 +44,7 @@ public class AssertionAsReturnValuePrincipalResolver implements PrincipalResolve
     }
 
     @Override
-    public String resolveFrom(JoinPoint auditTarget, Exception exception) {
+    public String resolveFrom(final JoinPoint auditTarget, final Exception exception) {
         return this.delegate.resolveFrom(auditTarget, exception);
     }
 
