@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * <code>org.apereo.inspektr.common.spi.PrincipalResolver.UNKNOWN_USER</code> if it's unable to resolve principal id.
  *
  * @author Dmitriy Kopylenko
- * @since 4.2.3
+ * @since 4.1.9
  */
 public class AssertionAsReturnValuePrincipalResolver implements PrincipalResolver {
 
