@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.web.support.CasBanner;
+import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 
