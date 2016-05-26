@@ -1,7 +1,6 @@
-package org.apereo.cas;
+package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.VfsResource;

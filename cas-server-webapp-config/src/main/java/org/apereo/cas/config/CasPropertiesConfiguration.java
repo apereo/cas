@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CasVersion;
+import org.apereo.cas.util.CasVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -72,7 +73,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         
         final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout, 
                 oidcRegisteredService, profile, context);
-        final JsonWebKeySet jwks = buildJsonWebKeySet(oidcRegisteredService);
+        final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet(oidcRegisteredService);
         final String idToken = signIdTokenClaim(oidcRegisteredService, jwks, claims);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
     }
@@ -128,7 +129,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
      * @throws JoseException the jose exception
      */
     protected String signIdTokenClaim(final OidcRegisteredService svc,
-                                      final JsonWebKeySet jwks,
+                                      final Optional<JsonWebKeySet> jwks,
                                       final JwtClaims claims) throws JoseException {
         final JsonWebSignature jws = new JsonWebSignature();
 
@@ -139,8 +140,8 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
         jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
 
-        if (svc.isSignIdToken() && !jwks.getJsonWebKeys().isEmpty()) {
-            final RsaJsonWebKey jsonWebKey = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
+        if (svc.isSignIdToken() && jwks.isPresent() && !jwks.get().getJsonWebKeys().isEmpty()) {
+            final RsaJsonWebKey jsonWebKey = (RsaJsonWebKey) jwks.get().getJsonWebKeys().get(0);
             jws.setKey(jsonWebKey.getPrivateKey());
             jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
             if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
@@ -162,7 +163,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
      * @return the json web key set
      * @throws Exception the exception
      */
-    protected JsonWebKeySet buildJsonWebKeySet(final OidcRegisteredService service) throws Exception {
+    protected Optional<JsonWebKeySet> buildJsonWebKeySet(final OidcRegisteredService service) throws Exception {
         JsonWebKeySet jsonWebKeySet = null;
         try {
             if (StringUtils.isNotBlank(service.getJwks())) {
@@ -175,11 +176,14 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         } finally {
             if (jsonWebKeySet == null) {
                 logger.debug("Loading default JWKS from {}", this.jwksFile);
-                final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), "UTF-8");
-                jsonWebKeySet = new JsonWebKeySet(jsonJwks);
+                
+                if (this.jwksFile != null) {
+                    final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), "UTF-8");
+                    jsonWebKeySet = new JsonWebKeySet(jsonJwks);
+                }
             }
         }
-        return jsonWebKeySet;
+        return jsonWebKeySet != null ? Optional.of(jsonWebKeySet) : Optional.empty();
     }
 }
 
