@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -140,7 +141,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
      * @return the object mapper
      */
     protected ObjectMapper initializeObjectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper(getJsonFactory());
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
@@ -150,6 +151,10 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
         return mapper;
     }
 
+    protected JsonFactory getJsonFactory() {
+        return null;
+    }
+    
     /**
      * Gets type to serialize.
      *
