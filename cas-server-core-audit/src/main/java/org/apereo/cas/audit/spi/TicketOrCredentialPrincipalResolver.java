@@ -17,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -31,22 +28,14 @@ import java.util.Collection;
  * @since 3.1.2
  *
  */
-@RefreshScope
-@Component("auditablePrincipalResolver")
 public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
-    
-    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired(required = false)
-    @Qualifier("principalIdProvider")
     private PrincipalIdProvider principalIdProvider = new DefaultPrincipalIdProvider();
-
-    private TicketOrCredentialPrincipalResolver() {}
 
     /**
      * Instantiates a new Ticket or credential principal resolver.
@@ -56,6 +45,17 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
      */
     public TicketOrCredentialPrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    /**
+     * Get principal id provider.
+     *
+     * @return principal id provider
+     */
+    @Autowired(required = false)
+    @Qualifier("principalIdProvider")
+    public PrincipalIdProvider getPrincipalIdProvider() {
+        return principalIdProvider;
     }
 
     @Override
@@ -142,7 +142,6 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
      * Default implementation that simply returns principal#id.
      */
     static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
-
         @Override
         public String getPrincipalIdFrom(final Authentication authentication) {
             return authentication.getPrincipal().getId();
