@@ -23,6 +23,7 @@ import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.execution.RequestContext;
@@ -91,23 +92,17 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object o, final ModelAndView modelAndView) throws Exception {
-        if (!"POST".equals(request.getMethod())) {
+        if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return;
         }
 
-        final RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
+        final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
+                && response.getStatus() != HttpStatus.SC_OK;
 
-        if (context == null || context.getCurrentEvent() == null) {
-            return;
+        if (recordEvent) {
+            logger.debug("Recording submission failure for {}", request.getRequestURI());
+            recordSubmissionFailure(request);
         }
-
-        // User successfully authenticated
-        if (SUCCESSFUL_AUTHENTICATION_EVENT.equals(context.getCurrentEvent().getId())) {
-            return;
-        }
-
-        // User submitted invalid credentials, so we update the invalid login count
-        recordSubmissionFailure(request);
     }
 
     public final void setFailureThreshold(final int failureThreshold) {
