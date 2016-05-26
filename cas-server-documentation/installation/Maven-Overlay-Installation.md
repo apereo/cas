@@ -106,7 +106,7 @@ under a `src/java/main` directory in the overlay project source tree.
     │   │   │                           └── UrlBuilder.java
 
 
-Also, note that for any custom Java component to compile and be included in the final `cas.war` file, the `pom.xml` in the Maven overlay must include a reference to the Maven Java compiler so classes can compiled. Here is a *sample* build configuration:
+Also, note that for any custom Java component to compile and be included in the final `cas.war` file, the `pom.xml` in the Maven overlay must include a reference to the Maven Java compiler so classes can compile. Here is a *sample* build configuration:
 
 
 ```xml

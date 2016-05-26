@@ -45,8 +45,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
-    private final transient Object lock = new Object();
-
     /**
      * Instantiates a new service ticket impl.
      */
@@ -128,7 +126,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     public ProxyGrantingTicket grantProxyGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
-        synchronized (this.lock) {
+        synchronized (this) {
             if(this.grantedTicketAlready) {
                 throw new IllegalStateException(
                     "PGT already generated for this ST. Cannot grant more than one TGT for ST");

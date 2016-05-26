@@ -1,10 +1,10 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.RegexUtils;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
 import java.util.regex.Pattern;
 
 /**
@@ -26,18 +26,19 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     @Override
     public void setServiceId(final String id) {
-        serviceId = id;
+        this.serviceId = id;
 
         // reset the servicePattern because we just changed the serviceId
-        servicePattern = null;
+        this.servicePattern = null;
     }
-    
+
     @Override
     public boolean matches(final Service service) {
-        if (servicePattern == null) {
-            servicePattern = createPattern(serviceId);
+        if (this.servicePattern == null) {
+            this.servicePattern = RegexUtils.createPattern(this.serviceId);
         }
-        return service != null && servicePattern.matcher(service.getId()).matches();
+        return service != null && this.servicePattern != null
+                && this.servicePattern.matcher(service.getId()).matches();
     }
 
     @Override
@@ -45,18 +46,4 @@ public class RegexRegisteredService extends AbstractRegisteredService {
         return new RegexRegisteredService();
     }
 
-    /**
-     * Creates the pattern. Matching is by default
-     * case insensitive.
-     *
-     * @param pattern the pattern, may not be null.
-     * @return the pattern
-     */
-    private static Pattern createPattern(final String pattern) {
-        if (pattern == null) {
-            throw new IllegalArgumentException("Pattern cannot be null.");
-        }
-        
-        return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-    }
 }
