@@ -65,12 +65,12 @@ public class CasAuditTrailConfiguration {
     /**
      * Audit trail management aspect audit trail management aspect.
      *
-     * @param centralAuthenticationService
+     * @param centralAuthenticationService centralAuthenticationService
      * @return the audit trail management aspect
      */
     @Autowired
     @Bean(name = "auditTrailManagementAspect")
-    public AuditTrailManagementAspect auditTrailManagementAspect(CentralAuthenticationService centralAuthenticationService) {
+    public AuditTrailManagementAspect auditTrailManagementAspect(final CentralAuthenticationService centralAuthenticationService) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(this.appCode,
                 auditablePrincipalResolver(centralAuthenticationService), ImmutableList.of(auditTrailManager()), auditActionResolverMap(),
                 auditResourceResolverMap());
@@ -191,11 +191,11 @@ public class CasAuditTrailConfiguration {
     /**
      * Principal resolver.
      *
-     * @param centralAuthenticationService
+     * @param centralAuthenticationService centralAuthenticationService
      * @return the principal resolver
      */
     @Bean(name = "auditablePrincipalResolver")
-    public PrincipalResolver auditablePrincipalResolver(CentralAuthenticationService centralAuthenticationService) {
+    public PrincipalResolver auditablePrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
         return new AssertionAsReturnValuePrincipalResolver(new TicketOrCredentialPrincipalResolver(centralAuthenticationService));
     }
 }
