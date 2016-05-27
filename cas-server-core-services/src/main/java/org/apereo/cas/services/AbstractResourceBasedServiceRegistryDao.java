@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.JsonSerializer;
+import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.LockedOutputStream;
 import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
     /**
      * The Registered service json serializer.
      */
-    private JsonSerializer<RegisteredService> registeredServiceSerializer;
+    private StringSerializer<RegisteredService> registeredServiceSerializer;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -64,7 +64,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      * @param serializer      the registered service json serializer
      */
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
-                                                   final JsonSerializer<RegisteredService> serializer) {
+                                                   final StringSerializer<RegisteredService> serializer) {
         initializeRegistry(configDirectory, serializer);
     }
 
@@ -76,13 +76,13 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      * @throws Exception the exception
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
-                                                   final JsonSerializer<RegisteredService> serializer) throws Exception {
+                                                   final StringSerializer<RegisteredService> serializer) throws Exception {
 
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer);
     }
 
-    private void initializeRegistry(final Path configDirectory, final JsonSerializer<RegisteredService> registeredServiceJsonSerializer) {
+    private void initializeRegistry(final Path configDirectory, final StringSerializer<RegisteredService> registeredServiceJsonSerializer) {
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
@@ -220,7 +220,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
         }
 
         try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-            return this.registeredServiceSerializer.fromJson(in);
+            return this.registeredServiceSerializer.from(in);
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file {}", file.getName(), e);
         }
@@ -236,7 +236,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
         }
         final File f = makeFile(service);
         try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
-            this.registeredServiceSerializer.toJson(out, service);
+            this.registeredServiceSerializer.to(out, service);
 
             if (this.serviceMap.containsKey(service.getId())) {
                 LOGGER.debug("Found existing service definition by id [{}]. Saving...", service.getId());

@@ -279,6 +279,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         return this.timeUnit;
     }
 
+    public void setTimeUnit(final TimeUnit unit) {
+        this.timeUnit = unit;
+    }
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

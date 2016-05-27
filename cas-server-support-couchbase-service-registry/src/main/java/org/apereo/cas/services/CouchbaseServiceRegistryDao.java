@@ -7,7 +7,7 @@ import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.util.JsonSerializer;
+import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,14 +60,14 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     @Value("${svcreg.couchbase.query.enabled:true}")
     private boolean queryEnabled;
 
-    private JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
+    private StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
     /**
      * Default constructor.
      *
      * @param serviceJsonSerializer the JSON serializer to use.
      */
-    public CouchbaseServiceRegistryDao(final JsonSerializer<RegisteredService> serviceJsonSerializer) {
+    public CouchbaseServiceRegistryDao(final StringSerializer<RegisteredService> serviceJsonSerializer) {
         this.registeredServiceJsonSerializer = serviceJsonSerializer;
     }
 
@@ -87,7 +87,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
         }
 
         final StringWriter stringWriter = new StringWriter();
-        this.registeredServiceJsonSerializer.toJson(stringWriter, service);
+        this.registeredServiceJsonSerializer.to(stringWriter, service);
 
         this.couchbase.bucket().upsert(
                 RawJsonDocument.create(
@@ -118,7 +118,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
                     LOGGER.debug("Found service: {}", json);
 
                     final StringReader stringReader = new StringReader(json);
-                    services.add(this.registeredServiceJsonSerializer.fromJson(stringReader));
+                    services.add(this.registeredServiceJsonSerializer.from(stringReader));
                 }
             }
             return services;
@@ -140,7 +140,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
             if (document != null) {
                 final String json = document.content();
                 final StringReader stringReader = new StringReader(json);
-                return this.registeredServiceJsonSerializer.fromJson(stringReader);
+                return this.registeredServiceJsonSerializer.from(stringReader);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

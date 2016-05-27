@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.JsonSerializer;
+import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.LdapAttribute;
@@ -33,7 +33,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
 
     
-    private JsonSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
+    private StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
 
     
     @Value("${ldap.svc.reg.map.objclass:casRegisteredService}")
@@ -60,7 +60,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
             attrs.add(new LdapAttribute(this.idAttribute, String.valueOf(svc.getId())));
 
             final StringWriter writer = new StringWriter();
-            this.jsonSerializer.toJson(writer, svc);
+            this.jsonSerializer.to(writer, svc);
             attrs.add(new LdapAttribute(this.serviceDefinitionAttribute, writer.toString()));
             attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, "top", this.objectClass));
 
@@ -75,7 +75,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         try {
             final String value = LdapUtils.getString(entry, this.serviceDefinitionAttribute);
             if (StringUtils.hasText(value)) {
-                final RegisteredService service = this.jsonSerializer.fromJson(value);
+                final RegisteredService service = this.jsonSerializer.from(value);
                 return service;
             }
 
@@ -111,7 +111,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         this.serviceDefinitionAttribute = serviceDefinitionAttribute;
     }
 
-    public void setJsonSerializer(final JsonSerializer<RegisteredService> jsonSerializer) {
+    public void setJsonSerializer(final StringSerializer<RegisteredService> jsonSerializer) {
         this.jsonSerializer = jsonSerializer;
     }
 
