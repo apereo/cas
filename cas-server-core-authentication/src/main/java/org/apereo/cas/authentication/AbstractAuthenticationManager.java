@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.jasig.inspektr.audit.annotation.Audit;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;

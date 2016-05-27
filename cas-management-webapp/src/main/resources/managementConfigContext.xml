@@ -7,11 +7,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
-    <bean id="authorizationGenerator"
-          class="org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator"
-          c:properties-ref="userProperties"/>
-    
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao" 
+       
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.StubPersonAttributeDao" 
           p:backingMap-ref="backingMap"/>
 
     <util:map id="backingMap">

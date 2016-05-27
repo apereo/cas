@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component
+@Component("radiusApplicationContextWrapper")
 public class RadiusApplicationContextWrapper extends BaseApplicationContextWrapper {
     @Autowired
     @Qualifier("radiusAuthenticationHandler")

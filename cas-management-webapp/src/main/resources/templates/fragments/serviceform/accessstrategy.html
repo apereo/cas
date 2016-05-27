@@ -102,20 +102,8 @@ Todo: add field: Rejected Attributes: As a table,
                    th:title="#{services.form.tooltip.sas.unauthorizedredirecturl}"></i>
             </label>
             <div class="col-sm-8">
-                <div class="radio-group">
-                    <!-- Case Insensitive Radio Button - True -->
-                    <label class="radio-inline">
-                        <input type="radio" name="caseInsensitiveRadio" id="sasCaseInsensitiveTrue" value="true"
-                               ng-model="serviceFormCtrl.serviceData.accessStrategy.caseInsensitive" ng-checked="true" />
-                        <span th:text="#{services.form.label.true}" />
-                    </label>
-
-                    <!-- Case Insensitive Radio Button - False -->
-                    <label class="radio-inline">
-                        <input type="radio" name="proxyPolicyRadio" id="sasCaseInsensitiveFalse" value="false"
-                               ng-model="serviceFormCtrl.serviceData.accessStrategy.caseInsensitive" />
-                        <span th:text="#{services.form.label.false}" />
-                    </label>
+                <div class="checkbox checkbox-inline">
+                    <input type="checkbox" id="caseInsensitive" ng-model="serviceFormCtrl.serviceData.accessStrategy.caseInsensitive" />
                 </div>
             </div>
         </div>

@@ -4,18 +4,19 @@ import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
-import org.jasig.inspektr.audit.AuditTrailManagementAspect;
-import org.jasig.inspektr.audit.AuditTrailManager;
-import org.jasig.inspektr.audit.spi.AuditActionResolver;
-import org.jasig.inspektr.audit.spi.AuditResourceResolver;
-import org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.jasig.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
-import org.jasig.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
-import org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
-import org.jasig.inspektr.common.spi.PrincipalResolver;
+import org.apereo.inspektr.audit.AuditTrailManagementAspect;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
+import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.AuthorizationGenerator;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
+import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
@@ -24,6 +25,7 @@ import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -64,30 +66,26 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Value("${user.details.file.location:classpath:user-details.properties}")
     private Resource userPropertiesFile;
-    
-    @Autowired
-    @Qualifier("authorizationGenerator")
-    private AuthorizationGenerator authorizationGenerator;
 
     @Value("${cas-management.securityContext.serviceProperties.adminRoles}")
     private String roles;
 
     @Value("${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}")
     private String loginUrl;
-    
+
     @Value("${cas-management.securityContext.serviceProperties.service}")
     private String callbackUrl;
 
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
-    
+
     @javax.annotation.Resource(name = "auditResourceResolverMap")
     private Map auditResourceResolverMap;
-    
+
     @javax.annotation.Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
-    
+
     @Value("${cas-management.viewResolver.basename:default_views}")
     private String baseName;
 
@@ -119,7 +117,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean(name = "casClient")
     public CasClient casClient() {
         final CasClient client = new CasClient(this.loginUrl);
-        client.setAuthorizationGenerator(this.authorizationGenerator);
+        client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }
 
@@ -140,7 +138,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the controller
      */
-    @Bean(name="rootController")
+    @Bean(name = "rootController")
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
@@ -170,7 +168,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         mapping.setMappings(properties);
         return mapping;
     }
-    
+
     /**
      * Cas management security interceptor requires authentication interceptor.
      *
@@ -188,7 +186,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         };
         return interceptor;
     }
-    
+
     /**
      * Save service resource resolver parameters as string resource resolver.
      *
@@ -280,6 +278,17 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     /**
+     * Authorization generator authorization generator.
+     *
+     * @return the authorization generator
+     */
+    @ConditionalOnBean(name = "authorizationGenerator")
+    @Bean(name = "authorizationGenerator")
+    public AuthorizationGenerator authorizationGenerator() {
+        return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
+    }
+
+    /**
      * Locale resolver cookie locale resolver.
      *
      * @return the cookie locale resolver
@@ -290,33 +299,33 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         resolver.setDefaultLocale(Locale.ENGLISH);
         return resolver;
     }
-        
+
     /**
      * Audit resource resolver map map.
      *
      * @return the map
      */
-    @Bean(name="auditResourceResolverMap")
+    @Bean(name = "auditResourceResolverMap")
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_RESOURCE_RESOLVER", deleteServiceResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", saveServiceResourceResolver());
         return map;
     }
-    
+
     /**
      * Audit action resolver map map.
      *
      * @return the map
      */
-    @Bean(name="auditActionResolverMap")
+    @Bean(name = "auditActionResolverMap")
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_ACTION_RESOLVER", deleteServiceActionResolver());
         map.put("SAVE_SERVICE_ACTION_RESOLVER", saveServiceActionResolver());
         return map;
     }
-    
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(casManagementSecurityInterceptor())
@@ -332,9 +341,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-    
+
     /**
-     * Place holder configurer property sources placeholder configurer.
+     * Place holder configurer ..
      *
      * @return the property sources placeholder configurer
      */

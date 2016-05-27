@@ -88,7 +88,6 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the hibernate jpa vendor adapter
      */
-    @RefreshScope
     @Bean(name = "ticketJpaVendorAdapter")
     public HibernateJpaVendorAdapter ticketJpaVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
@@ -115,7 +114,6 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-    @RefreshScope
     @Bean(name = "ticketEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
@@ -124,7 +122,6 @@ public class JpaTicketRegistryConfiguration {
         bean.setPersistenceUnitName("jpaTicketRegistryContext");
         bean.setPackagesToScan(ticketPackagesToScan());
         bean.setDataSource(dataSourceTicket());
-
         final Properties properties = new Properties();
         properties.put("hibernate.dialect", this.hibernateDialect);
         properties.put("hibernate.hbm2ddl.auto", this.hibernateHbm2DdlAuto);
@@ -139,7 +136,6 @@ public class JpaTicketRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    @RefreshScope
     @Bean(name = "ticketTransactionManager")
     public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {

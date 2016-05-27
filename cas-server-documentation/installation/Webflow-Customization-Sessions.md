@@ -48,3 +48,72 @@ the following properties:
 ```
 
 Doing so will likely require you to also enable sticky sessions and/or session replication in a clustered deployment of CAS.
+
+### Hazelast Session Replication
+
+If you don't wish to use the native container's strategy for session replication, 
+you can use CAS's support for Hazelcast session replication.
+
+This feature is enabled via the following module:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-webapp-session-hazelcast</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+The following settings are applicable:
+
+```properties
+# webflow.session.hz.location=classpath:/hazelcast.xml
+```
+
+### Redis Session Replication
+
+If you don't wish to use the native container's strategy for session replication, 
+you can use CAS's support for Redis session replication.
+
+This feature is enabled via the following module:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-webapp-session-redis</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+The following settings are applicable:
+
+```properties
+# spring.redis.host=pub-redis-16216.us-east-1-4.2.ec2.garantiadata.com
+# spring.redis.password=cassession
+# spring.redis.port=16216
+```
+
+### Mongo Session Replication
+
+If you don't wish to use the native container's strategy for session replication, 
+you can use CAS's support for Mongo session replication.
+
+This feature is enabled via the following module:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-webapp-session-mongo</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+The following settings are applicable:
+
+```properties
+# spring.data.mongodb.host=
+# spring.data.mongodb.username=
+# spring.data.mongodb.password=
+# spring.data.mongodb.port=
+# spring.data.mongodb.database=
+```

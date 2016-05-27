@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apereo.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
@@ -14,10 +13,13 @@ import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
+import org.apereo.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -68,10 +70,11 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+        assertTrue(entity.getBody().contains(OAuthConstants.MISSING_ACCESS_TOKEN));
     }
 
     @Test
@@ -80,15 +83,17 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, "DOES NOT EXIST");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+        assertTrue(entity.getBody().contains(OAuthConstants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
     public void verifyExpiredAccessToken() throws Exception {
-        final Principal principal = TestUtils.getPrincipal(ID, new HashMap<>());
+        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, new HashMap<>());
         final Authentication authentication = getAuthentication(principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory();
         expiringAccessTokenFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
@@ -99,9 +104,11 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
-        assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+        assertTrue(entity.getBody().contains(OAuthConstants.EXPIRED_ACCESS_TOKEN));
     }
 
     @Test
@@ -111,7 +118,7 @@ public class OAuth20ProfileControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = TestUtils.getPrincipal(ID, map);
+        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(TestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
@@ -120,8 +127,9 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
         final ObjectMapper mapper = new ObjectMapper();
@@ -129,7 +137,7 @@ public class OAuth20ProfileControllerTests {
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+        final JsonNode receivedObj = mapper.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");
@@ -146,7 +154,7 @@ public class OAuth20ProfileControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = TestUtils.getPrincipal(ID, map);
+        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(TestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
@@ -156,8 +164,8 @@ public class OAuth20ProfileControllerTests {
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
                 + accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
+        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
         final ObjectMapper mapper = new ObjectMapper();
@@ -165,7 +173,7 @@ public class OAuth20ProfileControllerTests {
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+        final JsonNode receivedObj = mapper.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");
@@ -175,7 +183,7 @@ public class OAuth20ProfileControllerTests {
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 
-    private Authentication getAuthentication(final Principal principal) {
+    private static Authentication getAuthentication(final Principal principal) {
         final CredentialMetaData metadata = new BasicCredentialMetaData(
                 new BasicIdentifiableCredential(principal.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(principal.getClass().getCanonicalName(),

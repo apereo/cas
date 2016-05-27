@@ -1,8 +1,10 @@
 package org.apereo.cas.support.oauth.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -35,7 +38,7 @@ public final class OAuthUtils {
      * @return a null view
      */
     public static ModelAndView writeTextError(final HttpServletResponse response, final String error) {
-        return OAuthUtils.writeText(response, "error=" + error, HttpStatus.SC_BAD_REQUEST);
+        return OAuthUtils.writeText(response, OAuthConstants.ERROR + '=' + error, HttpStatus.SC_BAD_REQUEST);
     }
 
     /**
@@ -82,5 +85,23 @@ public final class OAuthUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Jsonify string.
+     *
+     * @param map the map
+     * @return the string
+     */
+    public static String jsonify(final Map map) {
+        try {
+            final String value = new ObjectMapper()
+                    .writer()
+                    .withDefaultPrettyPrinter()
+                    .writeValueAsString(map);
+            return value;
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 }

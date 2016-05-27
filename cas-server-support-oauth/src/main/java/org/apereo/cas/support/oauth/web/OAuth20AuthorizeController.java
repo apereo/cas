@@ -1,7 +1,12 @@
 package org.apereo.cas.support.oauth.web;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
@@ -9,24 +14,18 @@ import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
@@ -35,112 +34,157 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
 @Controller("authorizeController")
 public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
-    
+
+    /**
+     * The code factory instance.
+     */
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
-    private OAuthCodeFactory oAuthCodeFactory;
+    protected OAuthCodeFactory oAuthCodeFactory;
 
-    @RequestMapping(path= OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
-    @Override
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @Autowired
+    @Qualifier("consentApprovalViewResolver")
+    private ConsentApprovalViewResolver consentApprovalViewResolver;
+
+    /**
+     * Handle request internal model and view.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                              final HttpServletResponse response) throws Exception {
 
         if (!verifyAuthorizeRequest(request)) {
             logger.error("Authorize request verification fails");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
-        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        final String state = request.getParameter(OAuthConstants.STATE);
-        final String bypassApprovalParameter = request.getParameter(OAuthConstants.BYPASS_APPROVAL_PROMPT);
-        logger.debug("bypassApprovalParameter: {}", bypassApprovalParameter);
+        final J2EContext context = new J2EContext(request, response);
 
+        final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
-        } catch (final UnauthorizedServiceException e) {
+        } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         
-        final boolean bypassApprovalService = registeredService.isBypassApprovalPrompt();
-        logger.debug("bypassApprovalService: {}", bypassApprovalService);
+        final ModelAndView mv = this.consentApprovalViewResolver.resolve(context, registeredService);
+        if (!mv.isEmpty() && mv.hasView()) {
+            return mv;
+        }
 
-        final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
+        return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
+
+    }
+
+    private ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
+                                                       final OAuthRegisteredService registeredService,
+                                                       final J2EContext context,
+                                                       final String clientId) throws Exception {
         final UserProfile profile = manager.get(true);
-        
         if (profile == null) {
             logger.error("Unexpected null profile");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
-        // bypass approval -> redirect to the application with code or access token
-        if (bypassApprovalService || bypassApprovalParameter != null) {
-            final Service service = createService(registeredService);
-            final Authentication authentication = createAuthentication(profile, registeredService);
+        final Service service = createService(registeredService);
+        final Authentication authentication = createAuthentication(profile, registeredService, context);
 
-            try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, 
-                        registeredService, authentication);
-            } catch (final UnauthorizedServiceException | PrincipalException e) {
-                logger.error(e.getMessage(), e);
-                return new ModelAndView(OAuthConstants.ERROR_VIEW);
-            }
-
-            final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
-            final String callbackUrl;
-            if (isResponseType(responseType, OAuthResponseType.CODE)) {
-                callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(state, authentication, service, redirectUri);
-            } else {
-                callbackUrl = buildCallbackUrlForImplicitResponseType(state, authentication, service, redirectUri);
-            }
-            logger.debug("callbackUrl: {}", callbackUrl);
-            return OAuthUtils.redirectTo(callbackUrl);
+        try {
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService, authentication);
+        } catch (final UnauthorizedServiceException | PrincipalException e) {
+            logger.error(e.getMessage(), e);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
-        return redirectToApproveView(registeredService, context);
+        final String redirectUri = context.getRequestParameter(OAuthConstants.REDIRECT_URI);
+        logger.debug("Authorize request verification successful for client {} with redirect uri {}",
+                clientId, redirectUri);
+
+        final String responseType = context.getRequestParameter(OAuthConstants.RESPONSE_TYPE);
+        final String callbackUrl;
+        if (isResponseType(responseType, OAuthResponseType.CODE)) {
+            callbackUrl = buildCallbackUrlForAuthorizationCodeResponseType(authentication, service, redirectUri);
+        } else {
+            callbackUrl = buildCallbackUrlForImplicitResponseType(context, authentication, service, redirectUri);
+        }
+        logger.debug("callbackUrl: {}", callbackUrl);
+        return OAuthUtils.redirectTo(callbackUrl);
     }
 
-    private String buildCallbackUrlForImplicitResponseType(final String state, final Authentication authentication, 
-                                                             final Service service, final String redirectUri) {
-        final AccessToken accessToken = generateAccessToken(service, authentication);
+    private String buildCallbackUrlForImplicitResponseType(final J2EContext context,
+                                                           final Authentication authentication,
+                                                           final Service service,
+                                                           final String redirectUri) throws Exception {
+
+        final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
+        final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
+
+        final AccessToken accessToken = generateAccessToken(service, authentication, context);
         logger.debug("Generated Oauth access token: {}", accessToken);
 
-        String callbackUrl = redirectUri;
-        callbackUrl += "#access_token=" + accessToken.getId() + "&token_type=bearer&expires_in=" + this.timeout;
-        if (state != null) {
-            callbackUrl += "&state=" + EncodingUtils.urlEncode(state);
+        final URIBuilder builder = new URIBuilder(redirectUri);
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(OAuthConstants.ACCESS_TOKEN)
+                .append('=')
+                .append(accessToken.getId())
+                .append('&')
+                .append(OAuthConstants.TOKEN_TYPE)
+                .append('=')
+                .append(OAuthConstants.TOKEN_TYPE_BEARER)
+                .append('&')
+                .append(OAuthConstants.EXPIRES)
+                .append('=')
+                .append(this.timeout);
+
+        if (StringUtils.isNotBlank(state)) {
+            stringBuilder.append('&')
+                    .append(OAuthConstants.STATE)
+                    .append('=')
+                    .append(EncodingUtils.urlEncode(state));
         }
-        return callbackUrl;
+        if (StringUtils.isNotBlank(nonce)) {
+            stringBuilder.append('&')
+                    .append(OAuthConstants.NONCE)
+                    .append('=')
+                    .append(EncodingUtils.urlEncode(nonce));
+        }
+        builder.setFragment(stringBuilder.toString());
+        return builder.toString();
     }
 
-    private String buildCallbackUrlForAuthorizationCodeResponseType(final String state, final Authentication authentication,
-                                                                    final Service service, final String redirectUri) {
+    private String buildCallbackUrlForAuthorizationCodeResponseType(final Authentication authentication,
+                                                                    final Service service,
+                                                                    final String redirectUri) {
+
         final OAuthCode code = this.oAuthCodeFactory.create(service, authentication);
         logger.debug("Generated OAuth code: {}", code);
         this.ticketRegistry.addTicket(code);
 
+        final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
+        final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
+
         String callbackUrl = redirectUri;
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.CODE, code.getId());
-        if (state != null) {
+        if (StringUtils.isNotBlank(state)) {
             callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.STATE, state);
+        }
+        if (StringUtils.isNotBlank(nonce)) {
+            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.NONCE, nonce);
         }
         return callbackUrl;
     }
 
-    private ModelAndView redirectToApproveView(final OAuthRegisteredService registeredService, final J2EContext context) {
-        String callbackUrl = context.getFullRequestURL();
-        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuthConstants.BYPASS_APPROVAL_PROMPT, "true");
-        final Map<String, Object> model = new HashMap<>();
-        model.put("callbackUrl", callbackUrl);
-        model.put("serviceName", registeredService.getName());
-        logger.debug("callbackUrl: {}", callbackUrl);
-        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
-    }
 
     /**
      * Verify the authorize request.
@@ -160,15 +204,15 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
 
         return checkParameterExist
-            && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
-            && this.validator.checkServiceValid(registeredService)
-            && this.validator.checkCallbackValid(registeredService, redirectUri);
+                && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
+                && this.validator.checkServiceValid(registeredService)
+                && this.validator.checkCallbackValid(registeredService, redirectUri);
     }
 
     /**
      * Check the response type against expected response types.
      *
-     * @param type the current response type
+     * @param type          the current response type
      * @param expectedTypes the expected response types
      * @return whether the response type is supported
      */
@@ -187,7 +231,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     /**
      * Check the response type against an expected response type.
      *
-     * @param type the given response type
+     * @param type         the given response type
      * @param expectedType the expected response type
      * @return whether the response type is the expected one
      */

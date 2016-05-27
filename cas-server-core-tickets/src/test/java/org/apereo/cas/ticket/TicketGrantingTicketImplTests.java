@@ -120,7 +120,7 @@ public class TicketGrantingTicketImplTests {
                 TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), org.apereo.cas.services.TestUtils.getService(),
-            new NeverExpiresExpirationPolicy(), false, true);
+            new NeverExpiresExpirationPolicy(), null, true);
 
         assertTrue(s.isFromNewLogin());
     }
@@ -134,13 +134,13 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
         final ServiceTicket s = t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
 
         assertFalse(s.isFromNewLogin());
@@ -153,7 +153,7 @@ public class TicketGrantingTicketImplTests {
                 TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), testService,
-            new NeverExpiresExpirationPolicy(), false, true);
+            new NeverExpiresExpirationPolicy(), null, true);
         Map<String, Service> services = t.getServices();
         assertEquals(1, services.size());
         final String ticketId = services.keySet().iterator().next();
@@ -170,7 +170,7 @@ public class TicketGrantingTicketImplTests {
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
                         .getNewTicketId(ServiceTicket.PREFIX), testService,
-                new NeverExpiresExpirationPolicy(), false, true);
+                new NeverExpiresExpirationPolicy(), null, true);
         assertFalse(t.isExpired());
         t.markTicketExpired();
         assertTrue(t.isExpired());
@@ -185,13 +185,13 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
 
         assertEquals(1, t.getServices().size());
@@ -206,13 +206,13 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService("http://host.com?test"),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService("http://host.com;JSESSIONID=xxx"),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
 
         assertEquals(1, t.getServices().size());
@@ -227,13 +227,13 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService("http://host.com/webapp1"),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService("http://host.com/webapp1?test=true"),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
 
         assertEquals(1, t.getServices().size());
@@ -248,13 +248,13 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 false);
 
         assertEquals(2, t.getServices().size());
@@ -269,13 +269,13 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService2(),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
 
         assertEquals(2, t.getServices().size());
@@ -290,13 +290,13 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService("http://host.com/webapp1"),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 org.apereo.cas.services.TestUtils.getService("http://host.com/webapp2"),
                 new NeverExpiresExpirationPolicy(),
-                false,
+                null,
                 true);
 
         assertEquals(2, t.getServices().size());

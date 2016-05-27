@@ -10,7 +10,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +22,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @RefreshScope
-@Component
-@Qualifier("defaultAuthnContextClassRefBuilder")
+@Component("defaultAuthnContextClassRefBuilder")
 public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefBuilder {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 

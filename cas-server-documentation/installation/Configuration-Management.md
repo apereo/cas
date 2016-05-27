@@ -17,16 +17,34 @@ The following strategies may be used to fully extend the CAS configuration model
 <div class="alert alert-info"><strong>YAML or Properties?</strong><p>CAS configuration allows for both
 YAML and Properties syntax in any of the below strategies used.</p></div>
 
+## Overview
+
+CAS allows you to externalize your configuration so you can work with the same CAS instance in different environments. You can use properties files, YAML files, environment variables and command-line arguments to externalize configuration.
+
+CAS uses a very particular order that is designed to allow sensible overriding of values, properties are considered in the following order:
+
+1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
+2. Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable/system property)
+3. JNDI attributes from `java:comp/env`.
+4. Java System properties.
+5. OS environment variables.
+6. Profile-specific application properties outside of your packaged jar (application-{profile}.properties and YAML variants)
+7. Profile-specific application properties packaged inside your jar (application-{profile}.properties and YAML variants)
+8. Application properties outside of your packaged jar (application.properties and YAML variants).
+9. Application properties packaged inside your jar (application.properties and YAML variants).
+
+All CAS settings can be overriden via the above outlined strategies.
+
 ## Embedded
 
 By default, all CAS settings and configuration is controlled via the `application.properties` file. This file
-serves as a reference and a placeholder for all settings that are available to CAS. 
+serves as a reference and a placeholder for all settings that are available to CAS.
 
 ## Native
 
 CAS is also configured to load `*.properties` files from an external location that is `/etc/cas/config`. This location is constantly
 monitored by CAS to detect external changes. Note that this location simply needs to exist, and does not require any special permissions
-or structure. The names of the configuration files that go inside this directory also do not matter, and they can be many. 
+or structure. The names of the configuration files that go inside this directory also do not matter, and there can be many. 
 
 The configuration of this behavior is controlled via the `bootstrap.properties` file:
 
@@ -43,7 +61,7 @@ st.timeToKillInSeconds:10000
 st.numberOfUses:100
 ```
 
-You could have just as well used a `cas.yml` file to host the changes. 
+You could have just as well used a `cas.yml` file to host the changes.
 
 ## Default
 
@@ -64,7 +82,7 @@ Needless to say, the repositories could use both YAML and Properties syntax to h
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>Again, in all of the above strategies,
 an adopter is encouraged to only keep and maintain properties needed for their particular deployment. It is
-unnecessary to grab a copy of all CAS settings and move it to an external location. Settings that are
+unnecessary to grab a copy of all CAS settings and move them to an external location. Settings that are
 defined by the external configuration location or repository are able to override what is provided by CAS
 as a default.</p></div>
 
@@ -76,9 +94,9 @@ to the rest of the CAS application, which would act as a client of the configura
 to quietly reload its configuration. 
 
 Therefor, in order to broadcast such `change` events CAS presents [various endpoints](Monitoring-Statistics.html) that allow the adopter
-to **refresh** the configuration as needed. This means that an adopter would simply change a required CAS settings and then would submit 
+to **refresh** the configuration as needed. This means that an adopter would simply change a required CAS settings and then would submit
 a request to CAS to refresh its current state. All CAS internal components that are affected by the external change are quietly reloaded
-and the setting takes immediate effect, completely removing the need for container restarts or CAS redeployments. 
+and the setting takes immediate effect, completely removing the need for container restarts or CAS redeployments.
 
 <div class="alert alert-info"><strong>Do Not Discriminate!</strong><p>Most if not all CAS settings are eligible candidates
 for reloads. CAS should be smart enough to reload the appropriate configuration, regardless of setting/module that
@@ -87,5 +105,22 @@ relevant settings is completely and utterly reloadable. </p></div>
 
 ## Clustered Deployments
 
-TODO
+CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a distributed system with a lightweight message broker. This can then be used to broadcast state changes (e.g. configuration changes) or other management instructions.
+
+The bus supports sending messages to all nodes listening or all nodes for a particular service (as defined by Eureka). Broadcasted events will attempt to update, refreshh and reload each application’s configuration.
+
+The following properties need to be adjusted, in order to turn on the bus configuration:
+
+```properties
+# spring.cloud.bus.enabled=false
+# spring.cloud.bus.refresh.enabled=true
+# spring.cloud.bus.env.enabled=true
+# spring.cloud.bus.destination=CasCloudBus
+# spring.cloud.bus.ack.enabled=true
+# spring.activemq.broker-url=
+# spring.activemq.in-memory=
+# spring.activemq.pooled=
+# spring.activemq.user=
+# spring.activemq.password=
+```
 

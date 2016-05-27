@@ -3,7 +3,7 @@ package org.apereo.cas.audit.spi;
 import org.apereo.cas.authentication.principal.Service;
 import org.aspectj.lang.JoinPoint;
 
-import org.jasig.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 
 import org.apereo.cas.util.AopUtils;
 

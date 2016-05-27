@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.jasig.cas.security.RequestParameterPolicyEnforcementFilter;
-import org.jasig.cas.security.ResponseHeadersEnforcementFilter;
+import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
+import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

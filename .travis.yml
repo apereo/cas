@@ -31,6 +31,7 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
+- ./gradlew clean --parallel --stacktrace
 install:
 - ./gradlew clean build -DskipAspectJ=true --parallel -x test
 script:

@@ -23,8 +23,12 @@ The following endpoints are secured and available:
 | `/status/config`                  | Visual representation of application properties and configuration.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
+| `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
+| `/status/refresh`                 | Refresh the application configuration via a `POST`.
 | `/status/dashboard`               | Control panel to CAS server functionality and management.
 | `/status/ssosessions`             | Report of active SSO sessions and authentications.
+| `/status/bus/refresh`             | Reload each application node’s configuration if the cloud bus is turned on.
+| `/status/bus/env`                 | Sends key/values pairs to update each node's Spring Environment if the cloud bus is turned on.
 
 ## Security
 Access is granted the following settings in `application.properties` file:
@@ -213,7 +217,7 @@ The metrics reporting interval can be configured via the `application.properties
 
 ```properties
 # Define how often should metric data be reported. Default is 30 seconds.
-# metrics.refresh.internal=30
+# metrics.refresh.interval=30
 ```
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
@@ -267,4 +271,3 @@ type=METER, name=org.apereo.cas.CentralAuthenticationServiceImpl.DESTROY_TICKET_
 
 type=TIMER, name=org.apereo.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
 ```
-

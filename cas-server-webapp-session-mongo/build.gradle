@@ -1,0 +1,7 @@
+description = 'Apereo CAS Web Application Mongo Session Management'
+dependencies {
+    compile libraries.spring
+    compile libraries.springcloud
+    compile libraries.springsession
+    runtime libraries.mongo
+}

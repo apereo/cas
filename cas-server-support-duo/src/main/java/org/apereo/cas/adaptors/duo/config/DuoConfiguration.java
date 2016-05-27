@@ -17,7 +17,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 5.0.0
  */
 @Configuration("duoConfiguration")
-
 public class DuoConfiguration {
 
     @Autowired

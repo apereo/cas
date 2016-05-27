@@ -2,9 +2,9 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.Pair;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

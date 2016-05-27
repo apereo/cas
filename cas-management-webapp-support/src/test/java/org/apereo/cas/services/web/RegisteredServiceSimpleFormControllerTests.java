@@ -12,7 +12,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
-import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

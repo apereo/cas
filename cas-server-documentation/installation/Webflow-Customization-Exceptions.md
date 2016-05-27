@@ -36,6 +36,7 @@ this customization, one would need to do the following:
  ```properties
  cas.custom.authentication.exceptions=com.mycompany.MyAuthenticationException
  ```
+ 
  2. Define custom message mapping in `messages.properties` (or the variant for the locale in question):
 
  ```properties

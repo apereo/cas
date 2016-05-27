@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.support.openid.web.mvc.OpenIdValidateController;
 import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.apereo.cas.web.AbstractDelegateController;
-import org.apereo.cas.support.openid.web.mvc.OpenIdValidateController;
 import org.apereo.cas.web.DelegatingController;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
@@ -20,7 +20,6 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
 @Configuration("openidConfiguration")
 public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);

@@ -8,11 +8,11 @@
 
 
     <bean id="auditCleanupCriteria"
-          class="org.jasig.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria"
+          class="org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria"
           c:maxAgeDays="${cas.audit.max.agedays:180}" />
 
     <bean id="jdbcAuditTrailManager"
-          class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
+          class="org.apereo.inspektr.audit.support.JdbcAuditTrailManager"
           p:cleanupCriteria-ref="auditCleanupCriteria"
           c:transactionTemplate-ref="inspektrAuditTransactionTemplate"
           p:dataSource-ref="inspektrAuditTrailDataSource" />

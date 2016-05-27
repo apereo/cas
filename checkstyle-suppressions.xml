@@ -11,6 +11,7 @@
     <suppress checks="InterfaceIsType"  files=".*Constants\.java"/>
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="sysOutConsoleLogs" files="\.xml" />
+    <suppress id="namedAnnotations" files="(Base.*|Abstract.*|Root.*)\.java" />
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade))\.java" />
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>

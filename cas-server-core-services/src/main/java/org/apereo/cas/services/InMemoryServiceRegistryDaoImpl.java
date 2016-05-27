@@ -35,8 +35,7 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
      */
     public InMemoryServiceRegistryDaoImpl() {
     }
-
-
+    
     /**
      * After properties set.
      */
@@ -106,7 +105,7 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
         return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse((long) 0);
     }
 
-    private void logWarning() {
+    private static void logWarning() {
         LOGGER.debug("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
             + "Changes that are made to service definitions during runtime "
             + "will be LOST upon container restarts.");
@@ -115,5 +114,10 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public long size() {
+        return registeredServices.size();
     }
 }

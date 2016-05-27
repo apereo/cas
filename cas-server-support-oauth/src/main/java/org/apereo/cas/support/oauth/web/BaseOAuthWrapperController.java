@@ -1,31 +1,31 @@
 package org.apereo.cas.support.oauth.web;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.support.oauth.validator.OAuthValidator;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -38,40 +38,42 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public abstract class BaseOAuthWrapperController extends AbstractController {
-
-    /** The logger. */
+public abstract class BaseOAuthWrapperController {
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The services manager. */
+    /**
+     * The services manager.
+     */
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
-    /** The ticket registry. */
+    /**
+     * The ticket registry.
+     */
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    /** The access token timeout. */
-    
+    /**
+     * The access token timeout.
+     */
+
     @Value("${tgt.timeToKillInSeconds:7200}")
     protected long timeout;
 
-    /** The OAuth validator. */
+    /**
+     * The OAuth validator.
+     */
     @Autowired
     @Qualifier("oAuthValidator")
     protected OAuthValidator validator;
 
-    /** The JSON factory. */
-    protected final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
-
-    
     @Autowired
     @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory accessTokenFactory;
 
-    
+
     @Autowired
     @Qualifier("defaultPrincipalFactory")
     private PrincipalFactory principalFactory;
@@ -79,11 +81,14 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     /**
      * Generate an access token from a service and authentication.
      *
-     * @param service the service
+     * @param service        the service
      * @param authentication the authentication
+     * @param context        the context
      * @return an access token
      */
-    protected AccessToken generateAccessToken(final Service service, final Authentication authentication) {
+    protected AccessToken generateAccessToken(final Service service,
+                                              final Authentication authentication,
+                                              final J2EContext context) {
         final AccessToken accessToken = this.accessTokenFactory.create(service, authentication);
         this.ticketRegistry.addTicket(accessToken);
         return accessToken;
@@ -104,9 +109,12 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      *
      * @param profile the given user profile
      * @param service the registered service
+     * @param context the context
      * @return the built authentication
      */
-    protected Authentication createAuthentication(final UserProfile profile, final RegisteredService service) {
+    protected Authentication createAuthentication(final UserProfile profile,
+                                                  final RegisteredService service,
+                                                  final J2EContext context) {
         final Principal principal = this.principalFactory.createPrincipal(profile.getId(), profile.getAttributes());
 
         final Map<String, Object> newAttributes = service.getAttributeReleasePolicy().getAttributes(principal);
@@ -117,9 +125,14 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
                 new BasicIdentifiableCredential(profile.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, newPrincipal, new ArrayList<>());
 
+        final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), "");
+        final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.NONCE), "");
+
         return DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", profile.getPermissions())
                 .addAttribute("roles", profile.getRoles())
+                .addAttribute(OAuthConstants.STATE, state)
+                .addAttribute(OAuthConstants.NONCE, nonce)
                 .addCredential(metadata)
                 .setPrincipal(newPrincipal)
                 .setAuthenticationDate(ZonedDateTime.now())

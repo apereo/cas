@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,19 +24,18 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @RefreshScope
-@Component("samlValidateController")
-@Controller
+@Controller("samlValidateController")
 public class SamlValidateController extends AbstractServiceValidateController {
 
     /**
      * Handle model and view.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path="/samlValidate", method = RequestMethod.POST)
+    @RequestMapping(path = "/samlValidate", method = RequestMethod.POST)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {

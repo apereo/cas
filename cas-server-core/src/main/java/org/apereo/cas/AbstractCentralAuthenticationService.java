@@ -8,12 +8,15 @@ import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
+import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
@@ -21,9 +24,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,7 +284,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        this.ticketRegistry.addTicket(ticket);
+        this.ticketRegistry.updateTicket(ticket);
         return ticket;
     }
 

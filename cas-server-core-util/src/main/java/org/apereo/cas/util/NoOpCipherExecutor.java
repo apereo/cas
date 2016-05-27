@@ -2,12 +2,14 @@ package org.apereo.cas.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * No-Op cipher executor that does nothing for encryption/decryption.
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("noOpCipherExecutor")
 public class NoOpCipherExecutor extends AbstractCipherExecutor<String, String> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoOpCipherExecutor.class);
@@ -19,7 +21,7 @@ public class NoOpCipherExecutor extends AbstractCipherExecutor<String, String> {
     public NoOpCipherExecutor() {
         super(NoOpCipherExecutor.class.getName());
         LOGGER.warn("[{}] does no encryption and may NOT be safe in a production environment. "
-                + "Consider using other choices, such as [{}] that handle encryption, signing and verification of "
+                + "Consider using other choices, such as [{}] to handle encryption, signing and verification of "
                 + "all appropriate values.", this.getClass().getName(), BaseStringCipherExecutor.class.getName());
     }
 

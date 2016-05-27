@@ -26,7 +26,7 @@
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />
     <util:map id="uniqueIdGeneratorsMap"/>
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <util:list id="serviceFactoryList" />
 
     <bean id="nodesSet" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">

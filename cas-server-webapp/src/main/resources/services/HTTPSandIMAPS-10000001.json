@@ -1,9 +1,13 @@
 {
+  /*
+    Generic service definition that applies to https/imaps urls 
+    that wish to register with CAS for authentication.
+  */
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "name" : "HTTPS and IMAPS",
   "id" : 10000001,
-  "description" : "This service definition authorized all application urls that support HTTPS and IMAPS protocols.",
+  "description" : "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
   "proxyPolicy" : {
     "@class" : "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
   },

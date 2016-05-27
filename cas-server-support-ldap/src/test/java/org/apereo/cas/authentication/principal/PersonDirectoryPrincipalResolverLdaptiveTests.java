@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao;
+import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,15 +19,17 @@ import java.util.Map;
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
     private static final long serialVersionUID = -4535358847021241725L;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalAttributesRepository.class);
+    
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
-        logger.debug("Using {}, no caching takes place for {} to add attributes.", id,
+        LOGGER.debug("Using {}, no caching takes place for {} to add attributes.", id,
                 this.getClass().getSimpleName());
     }
 
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
-        logger.debug("{} will return the collection of attributes directly associated with the principal object which are [{}]",
+        LOGGER.debug("{} will return the collection of attributes directly associated with the principal object which are [{}]",
                 this.getClass().getSimpleName(), p.getAttributes());
         return p.getAttributes();
     }

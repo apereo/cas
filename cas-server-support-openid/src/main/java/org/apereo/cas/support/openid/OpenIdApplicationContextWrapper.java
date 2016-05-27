@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component
+@Component("openIdApplicationContextWrapper")
 public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired

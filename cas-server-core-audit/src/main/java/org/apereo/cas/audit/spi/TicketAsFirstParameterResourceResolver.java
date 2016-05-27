@@ -1,6 +1,6 @@
 package org.apereo.cas.audit.spi;
 
-import org.jasig.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.apereo.cas.util.AopUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

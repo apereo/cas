@@ -93,7 +93,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
-                logger.debug(e.getMessage(), e);
+                logger.warn(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);

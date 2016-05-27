@@ -7,10 +7,10 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesReposit
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleasePolicyEditBean;
-import org.jasig.services.persondir.support.merger.IAttributeMerger;
-import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;

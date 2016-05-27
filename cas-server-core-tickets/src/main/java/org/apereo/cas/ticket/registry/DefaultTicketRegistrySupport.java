@@ -1,11 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -17,7 +16,6 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@RefreshScope
 @Component("defaultTicketRegistrySupport")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 

@@ -1,16 +1,16 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.support.oauth.ticket.OAuthToken;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCodeImpl;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.registry.support.LockingStrategy;
-import org.apereo.cas.support.oauth.ticket.OAuthToken;
-import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

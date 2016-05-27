@@ -28,7 +28,8 @@
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="false"/>
 
-    <context:component-scan base-package="org.apereo.cas"/>
+    <context:component-scan base-package="org.apereo.cas" />
+    <context:component-scan base-package="org.pac4j.springframework" />
     <context:annotation-config/>
 
     <!-- OAuth View -->
@@ -53,7 +54,7 @@
 
     <util:list id="serviceFactoryList" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
@@ -68,5 +69,7 @@
             </property>
         </bean>
     </util:list>
-
+    <util:list id="validationServiceSelectionStrategies">
+        <bean class="org.apereo.cas.support.oauth.validator.OAuth20ValidationServiceSelectionStrategy" />
+    </util:list>
 </beans>
