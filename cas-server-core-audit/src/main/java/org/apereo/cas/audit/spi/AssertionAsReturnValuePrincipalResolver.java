@@ -50,6 +50,6 @@ public class AssertionAsReturnValuePrincipalResolver implements PrincipalResolve
 
     @Override
     public String resolve() {
-        return this.resolve();
+        return this.delegate.resolve();
     }
 }
