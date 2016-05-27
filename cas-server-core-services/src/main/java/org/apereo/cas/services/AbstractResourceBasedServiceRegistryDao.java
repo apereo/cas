@@ -171,7 +171,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
             }
             return result;
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -252,7 +252,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
             this.serviceMap.put(service.getId(), service);
             LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
         } catch (final IOException e) {
-            throw new RuntimeException("IO error opening file stream.", e);
+            throw new IllegalArgumentException("IO error opening file stream.", e);
         }
         return findServiceById(service.getId());
     }

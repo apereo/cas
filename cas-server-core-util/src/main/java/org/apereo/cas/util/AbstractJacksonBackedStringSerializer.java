@@ -27,7 +27,9 @@ import java.util.stream.Collectors;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
+ *
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 4.1
  */
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
