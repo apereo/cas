@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.audit.spi;
 
-import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
@@ -28,6 +27,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.AopUtils;
+import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -42,22 +42,25 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @since 3.1.2
- *
  */
 public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
-    /** Logger instance. */
+    /**
+     * Logger instance.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
+    private PrincipalIdProvider principalIdProvider = new DefaultPrincipalIdProvider();
+    
     @NotNull
     private final CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Instantiates a new ticket or credential principal resolver.
      *
+     * @param ticketRegistry the ticket registry
      * @deprecated As of 4.1 access to the registry is no longer relevant
      * Consider using alternative constructors instead.
-     * @param ticketRegistry the ticket registry
      */
     @Deprecated
     public TicketOrCredentialPrincipalResolver(final TicketRegistry ticketRegistry) {
@@ -74,7 +77,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     public TicketOrCredentialPrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
-        
+
     @Override
     public String resolveFrom(final JoinPoint joinPoint, final Object retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
@@ -102,7 +105,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
         final Object arg1 = joinPoint.getArgs()[0];
         if (arg1.getClass().isArray()) {
             final Object[] args1AsArray = (Object[]) arg1;
-            for (final Object arg: args1AsArray) {
+            for (final Object arg : args1AsArray) {
                 builder.append(resolveArgument(arg));
             }
         } else {
@@ -146,13 +149,27 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
                 if (authentication != null) {
                     return ((UserDetails) authentication.getPrincipal()).getUsername();
                 }
-    }
-
-    public PrincipalIdProvider getPrincipalIdProvider() {
-        return principalIdProvider;
             }
         }
         LOGGER.debug("Unable to determine the audit argument. Returning [{}]", UNKNOWN_USER);
         return UNKNOWN_USER;
+    }
+
+    public void setPrincipalIdProvider(final PrincipalIdProvider principalIdProvider) {
+        this.principalIdProvider = principalIdProvider;
+    }
+
+    public PrincipalIdProvider getPrincipalIdProvider() {
+        return principalIdProvider;
+    }
+
+    /**
+     * Default implementation that simply returns principal#id.
+     */
+    static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
+        @Override
+        public String getPrincipalIdFrom(final org.jasig.cas.authentication.Authentication authentication) {
+            return authentication.getPrincipal().toString();
+        }
     }
 }
