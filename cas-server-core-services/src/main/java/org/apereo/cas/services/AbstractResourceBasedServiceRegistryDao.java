@@ -2,9 +2,9 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.LockedOutputStream;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +62,12 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      *
      * @param configDirectory the config directory
      * @param serializer      the registered service json serializer
+     * @param enableWatcher   enable watcher thread
      */
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
-                                                   final StringSerializer<RegisteredService> serializer) {
-        initializeRegistry(configDirectory, serializer);
+                                                   final StringSerializer<RegisteredService> serializer,
+                                                   final boolean enableWatcher) {
+        initializeRegistry(configDirectory, serializer, enableWatcher);
     }
 
     /**
@@ -73,26 +75,32 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      *
      * @param configDirectory the config directory
      * @param serializer      the serializer
+     * @param enableWatcher   the enable watcher
      * @throws Exception the exception
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
-                                                   final StringSerializer<RegisteredService> serializer) throws Exception {
+                                                   final StringSerializer<RegisteredService> serializer,
+                                                   final boolean enableWatcher) throws Exception {
 
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
-        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer);
+        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher);
     }
 
-    private void initializeRegistry(final Path configDirectory, final StringSerializer<RegisteredService> registeredServiceJsonSerializer) {
+    private void initializeRegistry(final Path configDirectory,
+                                    final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
+                                    final boolean enableWatcher) {
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
         this.registeredServiceSerializer = registeredServiceJsonSerializer;
 
-        this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this);
-        this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
-        this.serviceRegistryWatcherThread.setName(this.getClass().getName());
-        this.serviceRegistryWatcherThread.start();
-        LOGGER.debug("Started service registry watcher thread");
+        if (enableWatcher) {
+            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this);
+            this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
+            this.serviceRegistryWatcherThread.setName(this.getClass().getName());
+            this.serviceRegistryWatcherThread.start();
+            LOGGER.debug("Started service registry watcher thread");
+        }
     }
 
     /**

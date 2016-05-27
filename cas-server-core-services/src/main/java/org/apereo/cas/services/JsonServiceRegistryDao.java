@@ -64,16 +64,17 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * File extension of registered service JSON files.
      */
     private static final String FILE_EXTENSION = "json";
-    
+
     /**
      * Instantiates a new Json service registry dao.
      * Sets the path to the directory where JSON service registry entries are
      * stored. Uses the {@link RegisteredServiceJsonSerializer} by default.
      *
      * @param configDirectory the config directory where service registry files can be found.
+     * @param enableWatcher   the enable watcher
      */
-    public JsonServiceRegistryDao(final Path configDirectory) {
-        super(configDirectory, new RegisteredServiceJsonSerializer());
+    public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher) {
+        super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher);
     }
 
     /**
@@ -82,12 +83,15 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * stored. Uses the {@link RegisteredServiceJsonSerializer} by default.
      *
      * @param configDirectory the config directory where service registry files can be found.
+     * @param enableWatcher   the enable watcher
      * @throws Exception the IO exception
      */
     @Autowired
     public JsonServiceRegistryDao(@Value("${service.registry.config.location:classpath:services}")
-                                  final Resource configDirectory) throws Exception {
-        super(configDirectory, new RegisteredServiceJsonSerializer());
+                                  final Resource configDirectory,
+                                  @Value("${service.registry.watcher.enabled:true}")
+                                  final boolean enableWatcher) throws Exception {
+        super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher);
     }
 
 

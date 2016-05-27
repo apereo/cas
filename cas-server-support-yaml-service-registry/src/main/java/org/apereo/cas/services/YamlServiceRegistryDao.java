@@ -18,7 +18,7 @@ import java.nio.file.Path;
  * the directory structure to find relevant YAML files. Files are expected to have the
  * {@value YamlServiceRegistryDao#FILE_EXTENSION} extension. An example of the YAML file is included here:
  * <pre>
- 
+ *
  * </pre>
  *
  * @author Dmitriy Kopylenko
@@ -35,16 +35,17 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * File extension of registered service YAML files.
      */
     private static final String FILE_EXTENSION = "yml";
-    
+
     /**
      * Instantiates a new YAML service registry dao.
      * Sets the path to the directory where YAML service registry entries are
      * stored. Uses the {@link RegisteredServiceYamlSerializer} by default.
      *
      * @param configDirectory the config directory where service registry files can be found.
+     * @param enableWatcher   the enable watcher
      */
-    public YamlServiceRegistryDao(final Path configDirectory) {
-        super(configDirectory, new RegisteredServiceYamlSerializer());
+    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher) {
+        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher);
     }
 
     /**
@@ -53,12 +54,15 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * stored. Uses the {@link RegisteredServiceYamlSerializer} by default.
      *
      * @param configDirectory the config directory where service registry files can be found.
+     * @param enableWatcher   the enable watcher
      * @throws Exception the IO exception
      */
     @Autowired
     public YamlServiceRegistryDao(@Value("${service.registry.config.location:classpath:services}")
-                                  final Resource configDirectory) throws Exception {
-        super(configDirectory, new RegisteredServiceYamlSerializer());
+                                  final Resource configDirectory,
+                                  @Value("${service.registry.watcher.enabled:true}")
+                                  final boolean enableWatcher) throws Exception {
+        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher);
     }
 
 
