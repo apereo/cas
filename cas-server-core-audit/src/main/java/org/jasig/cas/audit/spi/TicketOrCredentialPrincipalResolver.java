@@ -54,7 +54,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     public TicketOrCredentialPrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
-
+        
     @Override
     public String resolveFrom(final JoinPoint joinPoint, final Object retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
@@ -137,6 +137,10 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
             LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         }
         return WebUtils.getAuthenticatedUsername();
+    }
+
+    public PrincipalIdProvider getPrincipalIdProvider() {
+        return principalIdProvider;
     }
 
     /**
