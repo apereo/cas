@@ -74,7 +74,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     public TicketOrCredentialPrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
-
+        
     @Override
     public String resolveFrom(final JoinPoint joinPoint, final Object retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
@@ -146,6 +146,10 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
                 if (authentication != null) {
                     return ((UserDetails) authentication.getPrincipal()).getUsername();
                 }
+    }
+
+    public PrincipalIdProvider getPrincipalIdProvider() {
+        return principalIdProvider;
             }
         }
         LOGGER.debug("Unable to determine the audit argument. Returning [{}]", UNKNOWN_USER);

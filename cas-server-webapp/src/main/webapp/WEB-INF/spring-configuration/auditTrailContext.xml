@@ -39,7 +39,7 @@
   <aop:aspectj-autoproxy/>
 
   <bean id="auditTrailManagementAspect" class="org.jasig.inspektr.audit.AuditTrailManagementAspect"
-    c:applicationCode="CAS" c:auditablePrincipalResolver-ref="auditablePrincipalResolver" 
+          c:applicationCode="${cas.audit.appcode:CAS}" c:auditablePrincipalResolver-ref="assertionAsReturnValuePrincipalResolver"
     c:auditTrailManagers-ref="auditTrailManager" c:auditActionResolverMap-ref="auditActionResolverMap"
     c:auditResourceResolverMap-ref="auditResourceResolverMap" />
 
