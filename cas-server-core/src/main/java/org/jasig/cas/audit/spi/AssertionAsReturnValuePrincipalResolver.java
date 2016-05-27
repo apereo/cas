@@ -6,9 +6,6 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 /**
  * Inspektr's principal resolver that first checks if the return value of the target joinpoint is instance
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Component;
  * @author Dmitriy Kopylenko
  * @since 4.1.9
  */
-@Component("assertionAsReturnValuePrincipalResolver")
 public class AssertionAsReturnValuePrincipalResolver implements PrincipalResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AssertionAsReturnValuePrincipalResolver.class);
@@ -32,9 +28,7 @@ public class AssertionAsReturnValuePrincipalResolver implements PrincipalResolve
      *
      * @param delegate the delegate
      */
-    @Autowired
-    public AssertionAsReturnValuePrincipalResolver(@Qualifier("auditablePrincipalResolver")
-                                                   final TicketOrCredentialPrincipalResolver delegate) {
+    public AssertionAsReturnValuePrincipalResolver(final TicketOrCredentialPrincipalResolver delegate) {
         this.delegate = delegate;
     }
 
