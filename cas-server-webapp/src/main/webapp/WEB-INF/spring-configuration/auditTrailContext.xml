@@ -105,4 +105,8 @@
      
   <bean id="ticketResourceResolver"
     class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver" />
+  
+  <bean id="assertionAsReturnValuePrincipalResolver"
+    class="org.jasig.cas.audit.spi.AssertionAsReturnValuePrincipalResolver"
+    c:delegate-ref="auditablePrincipalResolver" />
 </beans>
