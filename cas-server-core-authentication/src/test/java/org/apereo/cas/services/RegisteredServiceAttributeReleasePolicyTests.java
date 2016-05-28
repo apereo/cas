@@ -118,7 +118,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(person.getAttributes()).thenReturn(attributes);
 
         final CachingPrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS, 100);
+                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
         repository.setAttributeRepository(dao);
 
         final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
