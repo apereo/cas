@@ -1,21 +1,23 @@
 package org.apereo.cas.services;
 
+
 import org.junit.Before;
 
 /**
- * Handles test cases for {@link JsonServiceRegistryDao}.
+ * Test cases for {@link YamlServiceRegistryDao}.
  *
  * @author Misagh Moayyed
- * @since 4.1.0
+ * @since 5.0.0
  */
-public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryDaoTests {
+public class YamlServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryDaoTests {
 
     @Before
     public void setup() {
         try {
-            this.dao = new JsonServiceRegistryDao(RESOURCE, false);
+            this.dao = new YamlServiceRegistryDao(RESOURCE, false);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
+
 }

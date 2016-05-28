@@ -1,0 +1,74 @@
+---
+layout: default
+title: CAS - YAML Service Registry
+---
+
+# YAML Service Registry
+This DAO reads services definitions from YAML configuration files at the application context initialization time.
+YAML files are expected to be found inside a configured directory location and this DAO will recursively look through
+the directory structure to find relevant files.
+
+Support is enabled by adding the following module into the Maven overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-yaml-service-registry</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+In `application.properties`:
+
+```properties
+#CAS components mappings
+serviceRegistryDao=yamlServiceRegistryDao
+```
+
+Path to the service definitions directory is controlled via:
+
+```properties
+service.registry.config.location=classpath:services
+```
+
+A sample YAML file follows:
+
+```yml
+--- !<org.apereo.cas.services.RegexRegisteredService>
+serviceId: "testId"
+name: "YAML"
+id: 1000
+description: "description"
+attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllAttributeReleasePolicy>
+accessStrategy: !<org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy>
+  enabled: true
+  ssoEnabled: true
+```
+
+<div class="alert alert-warning"><strong>Clustering Services</strong><p>
+You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have
+access to the same set of configuration files as the other, or you may have to devise a strategy to keep
+changes synchronized from one node to the next.
+</p></div>
+
+The service registry is also able to auto detect changes to the specified directory. It will monitor changes to recognize
+file additions, removals and updates and will auto-refresh CAS so changes do happen instantly.
+
+<div class="alert alert-info"><strong>Escaping Characters</strong><p>
+Please make sure all field values in the blob are correctly escaped, specially for the service id. If the service is defined as a regular expression, certain regex constructs such as "." and "\d" need to be doubly escaped.
+</p></div>
+
+
+The naming convention for new files is recommended to be the following:
+
+```bash
+YAML fileName = serviceName + "-" + serviceNumericId + ".yml"
+```
+
+
+<div class="alert alert-warning"><strong>Duplicate Services</strong><p>
+As you add more files to the directory, you need to be absolutely sure that no two service definitions
+will have the same id. If this happens, loading one definition will stop loading the other. While service ids
+can be chosen arbitrarily, make sure all service numeric identifiers are unique. CAS will also output warnings
+if duplicate data is found.
+</p></div>

@@ -21,14 +21,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
- * This is {@link JsonServiceRegistryConfigWatcher} that watches the json config directory
+ * This is {@link ServiceRegistryConfigWatcher} that watches the json config directory
  * for changes and promptly attempts to reload the CAS service registry configuration.
  *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryConfigWatcher.class);
+class ServiceRegistryConfigWatcher implements Runnable, Closeable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryConfigWatcher.class);
 
     private AtomicBoolean running = new AtomicBoolean(false);
     private ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -36,14 +36,14 @@ class JsonServiceRegistryConfigWatcher implements Runnable, Closeable {
 
     private WatchService watcher;
 
-    private JsonServiceRegistryDao serviceRegistryDao;
+    private AbstractResourceBasedServiceRegistryDao serviceRegistryDao;
 
     /**
      * Instantiates a new Json service registry config watcher.
      *
      * @param serviceRegistryDao the registry to callback
      */
-    JsonServiceRegistryConfigWatcher(final JsonServiceRegistryDao serviceRegistryDao) {
+    ServiceRegistryConfigWatcher(final AbstractResourceBasedServiceRegistryDao serviceRegistryDao) {
         try {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();

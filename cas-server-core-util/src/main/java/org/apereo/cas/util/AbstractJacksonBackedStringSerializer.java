@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
@@ -21,13 +23,16 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.stream.Collectors;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
+ *
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 4.1
  */
-public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSerializer<T> {
+public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
     
     private final PrettyPrinter prettyPrinter;
@@ -38,7 +43,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
      * Instantiates a new Registered service json serializer.
      * Uses the {@link com.fasterxml.jackson.core.util.DefaultPrettyPrinter} for formatting.
      */
-    public AbstractJacksonBackedJsonSerializer() {
+    public AbstractJacksonBackedStringSerializer() {
         this(new DefaultPrettyPrinter());
     }
 
@@ -47,7 +52,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
      *
      * @param prettyPrinter the pretty printer
      */
-    public AbstractJacksonBackedJsonSerializer(final PrettyPrinter prettyPrinter) {
+    public AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
         this.objectMapper = initializeObjectMapper();
         this.prettyPrinter = prettyPrinter;
     }
@@ -58,15 +63,19 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
      * @param objectMapper  the object mapper
      * @param prettyPrinter the pretty printer
      */
-    public AbstractJacksonBackedJsonSerializer(final ObjectMapper objectMapper, final PrettyPrinter prettyPrinter) {
+    public AbstractJacksonBackedStringSerializer(final ObjectMapper objectMapper, final PrettyPrinter prettyPrinter) {
         this.objectMapper = objectMapper;
         this.prettyPrinter = prettyPrinter;
     }
 
+    private boolean isJsonFormat() {
+        return !(this.objectMapper.getFactory() instanceof YAMLFactory);
+    }
+    
     @Override
-    public T fromJson(final String json) {
+    public T from(final String json) {
         try {
-            final String jsonString = JsonValue.readHjson(json).toString();
+            final String jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -74,9 +83,12 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     }
 
     @Override
-    public T fromJson(final File json) {
+    public T from(final File json) {
         try {
-            final String jsonString = JsonValue.readHjson(FileUtils.readFileToString(json)).toString();
+            final String jsonString = isJsonFormat() 
+                    ? JsonValue.readHjson(FileUtils.readFileToString(json)).toString()
+                    : FileUtils.readFileToString(json);
+            
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -84,9 +96,12 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     }
 
     @Override
-    public T fromJson(final Reader json) {
+    public T from(final Reader json) {
         try {
-            final String jsonString = JsonValue.readHjson(json).toString();
+            final String jsonString = isJsonFormat() 
+                    ? JsonValue.readHjson(json).toString()
+                    : IOUtils.readLines(json).stream().collect(Collectors.joining());
+            
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -94,9 +109,12 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     }
 
     @Override
-    public T fromJson(final InputStream json) {
+    public T from(final InputStream json) {
         try {
-            final String jsonString = JsonValue.readHjson(IOUtils.toString(json)).toString();
+            final String jsonString = isJsonFormat() 
+                    ? JsonValue.readHjson(IOUtils.toString(json)).toString()
+                    : IOUtils.readLines(json, "UTF-8").stream().collect(Collectors.joining("\n"));
+            
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -104,31 +122,44 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     }
 
     @Override
-    public void toJson(final OutputStream out, final T object) {
+    public void to(final OutputStream out, final T object) {
         try (final StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
-            final String hjsonString = JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON);
-            IOUtils.write(hjsonString, out);
+            final String hjsonString = isJsonFormat() 
+                    ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
+                    : writer.toString();
+            
+            IOUtils.write(hjsonString, out, "UTF-8");
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
 
     @Override
-    public void toJson(final Writer out, final T object) {
+    public void to(final Writer out, final T object) {
         try (final StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
-            JsonValue.readHjson(writer.toString()).writeTo(out, Stringify.FORMATTED);
+            
+            if (isJsonFormat()) {
+                JsonValue.readHjson(writer.toString()).writeTo(out, Stringify.FORMATTED);
+            } else {
+                IOUtils.write(writer.toString(), out);
+            }
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
 
     @Override
-    public void toJson(final File out, final T object) {
+    public void to(final File out, final T object) {
         try (final StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
-            JsonValue.readHjson(writer.toString()).writeTo(new BufferedWriter(new FileWriter(out)));
+            
+            if (isJsonFormat()) {
+                JsonValue.readHjson(writer.toString()).writeTo(new BufferedWriter(new FileWriter(out)));
+            } else {
+                FileUtils.write(out, writer.toString());
+            }
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -140,7 +171,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
      * @return the object mapper
      */
     protected ObjectMapper initializeObjectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper(getJsonFactory());
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
@@ -150,6 +181,10 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
         return mapper;
     }
 
+    protected JsonFactory getJsonFactory() {
+        return null;
+    }
+    
     /**
      * Gets type to serialize.
      *
