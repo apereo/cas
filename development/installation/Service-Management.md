@@ -96,6 +96,10 @@ service registry data and the UI will not be used.
 
 [See this guide](JSON-Service-Management.html) for more info please.
 
+### YAML
+
+[See this guide](YAML-Service-Management.html) for more info please.
+
 ### Mongo
 
 [See this guide](Mongo-Service-Management.html) for more info please.
