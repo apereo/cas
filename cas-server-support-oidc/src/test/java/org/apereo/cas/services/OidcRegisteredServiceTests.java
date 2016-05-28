@@ -18,7 +18,7 @@ public class OidcRegisteredServiceTests {
     private ServiceRegistryDao dao;
 
     public OidcRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE);
+        this.dao = new JsonServiceRegistryDao(RESOURCE, false);
     }
 
     @BeforeClass
