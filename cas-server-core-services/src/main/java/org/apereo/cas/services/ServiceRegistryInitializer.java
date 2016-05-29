@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
@@ -18,11 +17,9 @@ import javax.annotation.PostConstruct;
 public class ServiceRegistryInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializer.class);
-
-    @Qualifier("jsonServiceRegistryDao")
+    
     private ServiceRegistryDao serviceRegistryDao;
-
-    @Qualifier("serviceRegistryDao")
+    
     private ServiceRegistryDao jsonServiceRegistryDao;
 
     @Value("${svcreg.database.from.json:true}")

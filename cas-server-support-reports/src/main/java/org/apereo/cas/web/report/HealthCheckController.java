@@ -4,9 +4,8 @@ import java.util.concurrent.Callable;
 
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
+import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.monitor.Status;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -31,11 +31,9 @@ public class HealthCheckController {
 
     @Value("${cas.async.request.timeout:5000}")
     private int asyncTimeout;
-
-
-    @Autowired
-    @Qualifier("healthCheckMonitor")
-    private HealthCheckMonitor healthCheckMonitor;
+    
+    @Resource(name="healthCheckMonitor")
+    private Monitor<HealthStatus> healthCheckMonitor;
 
     /**
      * Handle request.
