@@ -1,8 +1,6 @@
 package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.ticket.TicketState;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * AlwaysExpiresExpirationPolicy always answers true when asked if a Ticket is
@@ -11,8 +9,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("alwaysExpiresExpirationPolicy")
 public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serializable Unique ID. */

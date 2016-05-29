@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -21,8 +19,6 @@ import javax.annotation.PostConstruct;
  * @since 3.2.1
  *
  */
-@RefreshScope
-@Component("rememberMeDelegatingExpirationPolicy")
 public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */

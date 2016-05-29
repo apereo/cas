@@ -5,8 +5,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
@@ -17,8 +15,6 @@ import javax.annotation.Resource;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("defaultProxyGrantingTicketFactory")
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());

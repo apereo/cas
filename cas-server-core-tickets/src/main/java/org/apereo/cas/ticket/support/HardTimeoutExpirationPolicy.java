@@ -3,8 +3,6 @@ package org.apereo.cas.ticket.support;
 import org.apereo.cas.ticket.TicketState;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
@@ -19,8 +17,6 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Feller
  * @since 3.1.2
  */
-@RefreshScope
-@Component("hardTimeoutExpirationPolicy")
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -31,7 +27,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     private long timeToKillInMilliSeconds;
 
     /** No-arg constructor for serialization support. */
-    private HardTimeoutExpirationPolicy() {}
+    public HardTimeoutExpirationPolicy() {}
 
 
     /**

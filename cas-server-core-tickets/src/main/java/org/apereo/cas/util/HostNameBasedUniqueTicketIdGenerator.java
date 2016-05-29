@@ -2,10 +2,6 @@ package org.apereo.cas.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -73,8 +69,6 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
     /**
      * The type Ticket granting ticket id generator.
      */
-    @RefreshScope
-    @Component("ticketGrantingTicketUniqueIdGenerator")
     public static class TicketGrantingTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
 
         /**
@@ -83,10 +77,7 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
          * @param maxLength the max length
          * @param suffix    the suffix
          */
-        @Autowired
-        public TicketGrantingTicketIdGenerator(@Value("${tgt.ticket.maxlength:50}")
-                                               final int maxLength,
-                                               @Value("${host.name:cas01.example.org}")
+        public TicketGrantingTicketIdGenerator(final int maxLength,
                                                final String suffix) {
             super(maxLength, suffix);
         }
@@ -95,8 +86,6 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
     /**
      * The type Service ticket id generator.
      */
-    @RefreshScope
-    @Component("serviceTicketUniqueIdGenerator")
     public static class ServiceTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
 
         /**
@@ -105,10 +94,7 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
          * @param maxLength the max length
          * @param suffix    the suffix
          */
-        @Autowired
-        public ServiceTicketIdGenerator(@Value("${st.ticket.maxlength:20}")
-                                        final int maxLength,
-                                        @Value("${host.name:cas01.example.org}")
+        public ServiceTicketIdGenerator(final int maxLength,
                                         final String suffix) {
             super(maxLength, suffix);
         }
@@ -117,8 +103,6 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
     /**
      * The type Proxy ticket id generator.
      */
-    @RefreshScope
-    @Component("proxy20TicketUniqueIdGenerator")
     public static class ProxyTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
         /**
          * Instantiates a new Proxy ticket id generator.
@@ -126,34 +110,10 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
          * @param maxLength the max length
          * @param suffix    the suffix
          */
-        @Autowired
-        public ProxyTicketIdGenerator(@Value("${pgt.ticket.maxlength:50}")
-                                      final int maxLength,
-                                      @Value("${host.name:cas01.example.org}")
+        public ProxyTicketIdGenerator(final int maxLength,
                                       final String suffix) {
             super(maxLength, suffix);
         }
     }
-
-    /**
-     * The type Login ticket id generator.
-     */
-    @RefreshScope
-    @Component("loginTicketUniqueIdGenerator")
-    public static class LoginTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator {
-
-        /**
-         * Instantiates a new Login ticket id generator.
-         *
-         * @param maxLength the max length
-         * @param suffix    the suffix
-         */
-        @Autowired
-        public LoginTicketIdGenerator(@Value("${lt.ticket.maxlength:20}")
-                                      final int maxLength,
-                                      @Value("${host.name:cas01.example.org}")
-                                      final String suffix) {
-            super(maxLength, suffix);
-        }
-    }
+    
 }

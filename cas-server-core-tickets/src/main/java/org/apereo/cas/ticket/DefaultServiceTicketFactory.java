@@ -6,8 +6,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -18,9 +16,7 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 4.2
- */
-@RefreshScope
-@Component("defaultServiceTicketFactory")
+ */w
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
