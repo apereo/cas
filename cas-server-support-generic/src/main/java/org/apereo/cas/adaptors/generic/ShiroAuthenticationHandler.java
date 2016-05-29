@@ -24,9 +24,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
@@ -43,8 +41,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("shiroAuthenticationHandler")
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private Set<String> requiredRoles = new HashSet<>();

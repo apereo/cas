@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
@@ -27,8 +25,6 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("rejectUsersAuthenticationHandler")
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     @Value("${reject.authn.users:}")
