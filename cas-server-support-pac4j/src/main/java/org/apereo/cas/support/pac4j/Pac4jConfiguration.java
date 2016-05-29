@@ -49,8 +49,8 @@ public class Pac4jConfiguration {
      * @return the built clients.
      */
     @RefreshScope
-    @Bean(name = "builtClients")
-    public Clients clients() {
+    @Bean
+    public Clients builtClients() {
         final List<Client> allClients = new ArrayList<>();
 
         // turn the properties file into a map of properties

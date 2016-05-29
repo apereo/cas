@@ -96,7 +96,7 @@ public class CasApplicationContextConfiguration {
      * @return the default advisor auto proxy creator
      */
     @RefreshScope
-    @Bean(name = "advisorAutoProxyCreator")
+    @Bean
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
@@ -107,7 +107,7 @@ public class CasApplicationContextConfiguration {
      * @return the list
      */
     @RefreshScope
-    @Bean(name = "serviceFactoryList")
+    @Bean
     public List serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
         list.add(this.webApplicationServiceFactory);
@@ -120,7 +120,7 @@ public class CasApplicationContextConfiguration {
      * @return the list
      */
     @RefreshScope
-    @Bean(name = "argumentExtractors")
+    @Bean
     public List argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
         list.add(this.defaultArgumentExtractor);
@@ -133,7 +133,7 @@ public class CasApplicationContextConfiguration {
      * @return the map
      */
     @RefreshScope
-    @Bean(name = "uniqueIdGeneratorsMap")
+    @Bean
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
         map.put(SimpleWebApplicationServiceImpl.class.getName(), this.serviceTicketUniqueIdGenerator);
@@ -146,7 +146,7 @@ public class CasApplicationContextConfiguration {
      * @return the url filename view controller
      */
     @RefreshScope
-    @Bean(name = "passThroughController")
+    @Bean
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
     }
@@ -175,7 +175,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the factory bean
      */
-    @Bean(name = "scheduler")
+    @Bean
     public FactoryBean<Scheduler> scheduler() {
         final SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setWaitForJobsToCompleteOnShutdown(this.waitForJobsToCompleteOnShutdown);

@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -87,7 +86,7 @@ public class JpaServiceRegistryConfiguration {
      * @return the hibernate jpa vendor adapter
      */
     @RefreshScope
-    @Bean(name = "jpaServiceVendorAdapter")
+    
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
         jpaEventVendorAdapter.setGenerateDdl(this.generateDdl);
@@ -100,7 +99,7 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the string [ ]
      */
-    @Bean(name = "jpaServicePackagesToScan")
+    
     public String[] jpaServicePackagesToScan() {
         return new String[] {
                 "org.apereo.cas.services",
@@ -114,7 +113,7 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-    @Bean(name = "serviceEntityManagerFactory")
+    
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
@@ -137,7 +136,7 @@ public class JpaServiceRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    @Bean(name = "transactionManagerServiceReg")
+    
     public JpaTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
@@ -151,7 +150,7 @@ public class JpaServiceRegistryConfiguration {
      * @return the combo pooled data source
      */
     @RefreshScope
-    @Bean(name = "dataSourceService")
+    
     public DataSource dataSourceService() {
         try {
             final HikariDataSource bean = new HikariDataSource();

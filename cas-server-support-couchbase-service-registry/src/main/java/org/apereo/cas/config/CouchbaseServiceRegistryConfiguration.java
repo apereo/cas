@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
@@ -46,7 +45,7 @@ public class CouchbaseServiceRegistryConfiguration {
      * @return the couchbase client factory
      */
     @RefreshScope
-    @Bean(name = "serviceRegistryCouchbaseClientFactory")
+    
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
         factory.setNodes(StringUtils.commaDelimitedListToSet(this.nodeSet));

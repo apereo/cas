@@ -50,7 +50,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the local validator factory bean
      */
     @RefreshScope
-    @Bean(name = "credentialsValidator")
+    @Bean
     public LocalValidatorFactoryBean credentialsValidator() {
         final LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setMessageInterpolator(this.messageInterpolator);
@@ -63,7 +63,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the theme change interceptor
      */
     @RefreshScope
-    @Bean(name = "themeChangeInterceptor")
+    @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {
         final ThemeChangeInterceptor bean = new ThemeChangeInterceptor();
         bean.setParamName(this.themeParamName);
@@ -75,7 +75,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the cookie locale resolver
      */
-    @Bean(name = "localeResolver")
+    @Bean
     public CookieLocaleResolver localeResolver() {
         final CookieLocaleResolver bean = new CookieLocaleResolver() {
             @Override
@@ -96,7 +96,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the locale change interceptor
      */
     @RefreshScope
-    @Bean(name = "localeChangeInterceptor")
+    @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
         bean.setParamName(this.localeParamName);
@@ -108,7 +108,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the map
      */
-    @Bean(name = "serviceThemeResolverSupportedBrowsers")
+    @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
         map.put(".*iPhone.*", "iphone");
@@ -124,7 +124,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the servlet listener registration bean
      */
-    @Bean(name = "log4jServletContextListener")
+    @Bean
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
         bean.setEnabled(true);
@@ -138,7 +138,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the simple controller handler adapter
      */
-    @Bean(name = "simpleControllerHandlerAdapter")
+    @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }

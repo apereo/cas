@@ -124,7 +124,7 @@ public class RadiusMultifactorConfiguration {
      * @return the flow definition registry
      */
     @RefreshScope
-    @Bean(name = "radiusFlowRegistry")
+    @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");

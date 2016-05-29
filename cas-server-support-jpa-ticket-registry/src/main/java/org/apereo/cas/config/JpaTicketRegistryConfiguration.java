@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -88,7 +87,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the hibernate jpa vendor adapter
      */
-    @Bean(name = "ticketJpaVendorAdapter")
+    
     public HibernateJpaVendorAdapter ticketJpaVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
         jpaEventVendorAdapter.setGenerateDdl(this.generateDdl);
@@ -101,7 +100,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the string [ ]
      */
-    @Bean(name = "ticketPackagesToScan")
+    
     public String[] ticketPackagesToScan() {
         return new String[] {
                 "org.apereo.cas.ticket", 
@@ -114,7 +113,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-    @Bean(name = "ticketEntityManagerFactory")
+    
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
@@ -136,7 +135,7 @@ public class JpaTicketRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    @Bean(name = "ticketTransactionManager")
+    
     public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
@@ -150,7 +149,7 @@ public class JpaTicketRegistryConfiguration {
      * @return the combo pooled data source
      */
     @RefreshScope
-    @Bean(name = "dataSourceTicket")
+    
     public DataSource dataSourceTicket() {
         try {
             final HikariDataSource bean = new HikariDataSource();

@@ -67,7 +67,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      * @return the access token response generator
      */
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
-    @Bean(name = "accessTokenResponseGenerator", autowire = Autowire.BY_NAME)
+    @Bean(autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
@@ -79,7 +79,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      * @return the oauth cas client redirect action builder.
      */
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
-    @Bean(name = "oauthCasClientRedirectActionBuilder", autowire = Autowire.BY_NAME)
+    @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
@@ -89,7 +89,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the config
      */
-    @Bean(name = "oauthSecConfig")
+    @Bean
     public Config oauthSecConfig() {
         final CasClient oauthCasClient = new CasClient(this.casLoginUrl) {
             @Override
@@ -145,7 +145,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
-    @Bean(name = "requiresAuthenticationAuthorizeInterceptor")
+    @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
@@ -156,7 +156,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      * @return the consent approval view resolver
      */
     @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
-    @Bean(name = "consentApprovalViewResolver")
+    @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OAuth20ConsentApprovalViewResolver();
     }
@@ -177,7 +177,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the requires authentication interceptor
      */
-    @Bean(name = "requiresAuthenticationAccessTokenInterceptor")
+    @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationAccessTokenInterceptor() {
         return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
@@ -188,7 +188,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the handler interceptor adapter
      */
-    @Bean(name = "oauthInterceptor")
+    @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
         return new HandlerInterceptorAdapter() {
             @Override

@@ -2,8 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * We utilize the {@link AuthenticationMetaDataPopulator} to retrieve and store

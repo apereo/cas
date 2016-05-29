@@ -32,7 +32,7 @@ public class YubiKeyConfiguration {
      * @return the flow definition registry
      */
     @RefreshScope
-    @Bean(name = "yubikeyFlowRegistry")
+    @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");

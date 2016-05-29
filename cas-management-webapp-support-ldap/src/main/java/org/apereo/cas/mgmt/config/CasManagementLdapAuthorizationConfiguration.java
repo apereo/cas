@@ -38,7 +38,7 @@ public class CasManagementLdapAuthorizationConfiguration {
      * @return the authorization generator
      */
     @RefreshScope
-    @Bean(name = "authorizationGenerator")
+    @Bean
     public AuthorizationGenerator authorizationGenerator() {
         return this.authorizationGenerator;
     }
@@ -49,7 +49,7 @@ public class CasManagementLdapAuthorizationConfiguration {
      * @return the search executor
      */
     @RefreshScope
-    @Bean(name = "ldapAuthorizationGeneratorUserSearchExecutor")
+    @Bean
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final SearchExecutor executor = new SearchExecutor();
         executor.setBaseDn(this.baseDn);

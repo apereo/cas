@@ -63,7 +63,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the consent approval view resolver
      */
-    @Bean(name = "consentApprovalViewResolver")
+    @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OidcConsentApprovalViewResolver();
     }
@@ -97,7 +97,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the handler interceptor
      */
-    @Bean(name = "oidcInterceptor")
+    @Bean
     public HandlerInterceptor oidcInterceptor() {
         return this.oauthInterceptor;
     }
@@ -107,7 +107,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the o auth cas client redirect action builder
      */
-    @Bean(name = "oauthCasClientRedirectActionBuilder", autowire = Autowire.BY_NAME)
+    @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new OidcCasClientRedirectActionBuilder();
     }
@@ -117,7 +117,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the requires authentication interceptor
      */
-    @Bean(name = "requiresAuthenticationAuthorizeInterceptor")
+    @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
         final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
         return new RequiresAuthenticationInterceptor(oauthSecConfig, name) {

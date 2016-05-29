@@ -43,8 +43,8 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the metric registry
      */
-    @Bean(name = "metrics")
-    public MetricRegistry metricRegistry() {
+    @Bean
+    public MetricRegistry metrics() {
         final MetricRegistry metrics = new MetricRegistry();
         metrics.register("jvm.gc", new GarbageCollectorMetricSet());
         metrics.register("jvm.memory", new MemoryUsageGaugeSet());
@@ -73,14 +73,14 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the health check registry
      */
-    @Bean(name = "healthCheckMetrics")
+    @Bean 
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();
     }
 
     @Override
     public MetricRegistry getMetricRegistry() {
-        return metricRegistry();
+        return metrics();
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.mongodb.WriteConcern;
 import org.apereo.cas.services.convert.BaseConverters;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
@@ -75,7 +74,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
      *
      * @return the persistence exception translation post processor
      */
-    @Bean(name = "persistenceExceptionTranslationPostProcessor")
+    
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
@@ -99,7 +98,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
      * @return the mongo client options factory bean
      */
     @RefreshScope
-    @Bean(name = "mongoClientOptions")
+    
     public MongoClientOptions mongoClientOptions() {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();

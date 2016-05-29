@@ -37,7 +37,7 @@ public class GoogleAuthentiacatorConfiguration {
      * @return the flow definition registry
      */
     @RefreshScope
-    @Bean(name = "googleAuthenticatorFlowRegistry")
+    
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");

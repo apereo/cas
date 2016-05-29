@@ -69,7 +69,7 @@ public class CasAuditTrailConfiguration {
      * @return the audit trail management aspect
      */
     @Autowired
-    @Bean(name = "auditTrailManagementAspect")
+    @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect(final CentralAuthenticationService centralAuthenticationService) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(this.appCode,
                 auditablePrincipalResolver(centralAuthenticationService), ImmutableList.of(auditTrailManager()), auditActionResolverMap(),
@@ -83,7 +83,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the audit trail manager
      */
-    @Bean(name = "slf4jAuditTrailManager")
+    @Bean
     public AuditTrailManager auditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(this.useSingleLine);
@@ -98,7 +98,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the client info thread local filter
      */
-    @Bean(name = "casClientInfoLoggingFilter")
+    @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
@@ -112,7 +112,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
-    @Bean(name = "authenticationActionResolver")
+    @Bean
     public DefaultAuditActionResolver authenticationActionResolver() {
         return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
     }
@@ -122,7 +122,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
-    @Bean(name = "ticketCreationActionResolver")
+    @Bean
     public DefaultAuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
     }
@@ -132,7 +132,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the default audit action resolver
      */
-    @Bean(name = "ticketValidationActionResolver")
+    @Bean
     public DefaultAuditActionResolver ticketValidationActionResolver() {
         return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
     }
@@ -142,7 +142,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the return value as string resource resolver
      */
-    @Bean(name = "returnValueResourceResolver")
+    @Bean
     public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
     }
@@ -153,7 +153,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the map
      */
-    @Bean(name = "auditActionResolverMap")
+    @Bean
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOLVER", authenticationActionResolver());
@@ -173,7 +173,7 @@ public class CasAuditTrailConfiguration {
      *
      * @return the map
      */
-    @Bean(name = "auditResourceResolverMap")
+    @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
@@ -194,7 +194,7 @@ public class CasAuditTrailConfiguration {
      * @param centralAuthenticationService centralAuthenticationService
      * @return the principal resolver
      */
-    @Bean(name = "auditablePrincipalResolver")
+    @Bean
     public PrincipalResolver auditablePrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
         return new AssertionAsReturnValuePrincipalResolver(new TicketOrCredentialPrincipalResolver(centralAuthenticationService));
     }

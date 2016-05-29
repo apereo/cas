@@ -95,7 +95,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the web flow spring el expression parser
      */
-    @Bean(name = "expressionParser")
+    @Bean
     public WebFlowSpringELExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
                 new SpelExpressionParser(),
@@ -108,7 +108,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the conversion service
      */
-    @Bean(name = "logoutConversionService")
+    @Bean
     public ConversionService logoutConversionService() {
         return new LogoutConversionService();
     }
@@ -119,7 +119,7 @@ public class CasWebflowContextConfiguration {
      * @return the mvc view factory creator
      */
     @RefreshScope
-    @Bean(name = "viewFactoryCreator")
+    @Bean
     public MvcViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
         resolver.setViewResolvers(ImmutableList.of(this.registeredServiceViewResolver));
@@ -131,7 +131,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the cas default flow url handler
      */
-    @Bean(name = "loginFlowUrlHandler")
+    @Bean
     public CasDefaultFlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
     }
@@ -141,7 +141,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the cas default flow url handler
      */
-    @Bean(name = "logoutFlowUrlHandler")
+    @Bean
     public FlowUrlHandler logoutFlowUrlHandler() {
         final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
         handler.setFlowExecutionKeyParameter("RelayState");
@@ -154,7 +154,7 @@ public class CasWebflowContextConfiguration {
      * @return the selective flow handler adapter
      */
     @RefreshScope
-    @Bean(name = "logoutHandlerAdapter")
+    @Bean
     public SelectiveFlowHandlerAdapter logoutHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
         handler.setSupportedFlowId("logout");
@@ -169,7 +169,7 @@ public class CasWebflowContextConfiguration {
      * @return the buffered block cipher bean
      */
     @RefreshScope
-    @Bean(name = "loginFlowCipherBean")
+    @Bean
     public CipherBean loginFlowCipherBean() {
 
         try {
@@ -205,7 +205,7 @@ public class CasWebflowContextConfiguration {
      * @return the flow builder services
      */
     @RefreshScope
-    @Bean(name = "builder")
+    @Bean
     public FlowBuilderServices builder() {
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
         builder.setViewFactoryCreator(viewFactoryCreator());
@@ -219,7 +219,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the encrypted transcoder
      */
-    @Bean(name = "loginFlowStateTranscoder")
+    @Bean
     public EncryptedTranscoder loginFlowStateTranscoder() {
         try {
             return new EncryptedTranscoder(loginFlowCipherBean());
@@ -233,7 +233,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the selective flow handler adapter
      */
-    @Bean(name = "loginHandlerAdapter")
+    @Bean
     public SelectiveFlowHandlerAdapter loginHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
         handler.setSupportedFlowId("login");
@@ -247,7 +247,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the locale change interceptor
      */
-    @Bean(name = "localeChangeInterceptor")
+    @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         return new LocaleChangeInterceptor();
     }
@@ -257,7 +257,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow handler mapping
      */
-    @Bean(name = "logoutFlowHandlerMapping")
+    @Bean
     public FlowHandlerMapping logoutFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
@@ -272,7 +272,7 @@ public class CasWebflowContextConfiguration {
      *
      * @return the flow handler mapping
      */
-    @Bean(name = "loginFlowHandlerMapping")
+    @Bean
     public FlowHandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
@@ -288,7 +288,7 @@ public class CasWebflowContextConfiguration {
      * @return the flow executor
      */
     @RefreshScope
-    @Bean(name = "logoutFlowExecutor")
+    @Bean
     public FlowExecutor logoutFlowExecutor() {
         final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
         builder.setAlwaysRedirectOnPause(this.alwaysPauseOnRedirect);
@@ -302,7 +302,7 @@ public class CasWebflowContextConfiguration {
      * @return the flow definition registry
      */
     @RefreshScope
-    @Bean(name = "logoutFlowRegistry")
+    @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
         builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
@@ -316,7 +316,7 @@ public class CasWebflowContextConfiguration {
      * @return the flow definition registry
      */
     @RefreshScope
-    @Bean(name = "loginFlowRegistry")
+    @Bean
     public FlowDefinitionRegistry loginFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
         builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
@@ -330,8 +330,7 @@ public class CasWebflowContextConfiguration {
      * @return the flow executor
      */
     @RefreshScope
-    @Bean(name = "loginFlowExecutor")
-    
+    @Bean
     public FlowExecutorImpl loginFlowExecutor() {
         if (this.webflowSessionStorage) {
             final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();

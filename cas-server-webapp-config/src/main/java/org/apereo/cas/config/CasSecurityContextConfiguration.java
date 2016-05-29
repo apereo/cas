@@ -64,7 +64,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      * @return the web content interceptor
      */
     @RefreshScope
-    @Bean(name = "webContentInterceptor")
+    @Bean
     public WebContentInterceptor webContentInterceptor() {
         final WebContentInterceptor interceptor = new WebContentInterceptor();
         interceptor.setCacheSeconds(0);
@@ -78,7 +78,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @RefreshScope
-    @Bean(name = "requiresAuthenticationStatusInterceptor")
+    @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationStatusInterceptor() {
         return new RequiresAuthenticationInterceptor(new
                 Config(new IpClient(new IpRegexpAuthenticator(this.regexPattern))), "IpClient");
@@ -90,7 +90,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      * @return the config
      */
     @RefreshScope
-    @Bean(name = "config")
+    @Bean
     public Config config() {
         try {
             if (StringUtils.isNotBlank(this.loginUrl) && StringUtils.isNotBlank(this.callbackUrl)
@@ -118,7 +118,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @RefreshScope
-    @Bean(name = "requiresAuthenticationStatusAdminEndpointsInterceptor")
+    @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationStatusAdminEndpointsInterceptor() {
 
         final Config cfg = config();
@@ -148,7 +148,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the handler interceptor adapter
      */
-    @Bean(name = "statusInterceptor")
+    @Bean
     public HandlerInterceptorAdapter statusInterceptor() {
         return new HandlerInterceptorAdapter() {
             @Override
@@ -172,7 +172,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      * @return the endpoint handler mapping customizer
      */
     @RefreshScope
-    @Bean(name = "mappingCustomizer")
+    @Bean
     public EndpointHandlerMappingCustomizer mappingCustomizer() {
         return mapping -> mapping.setInterceptors(new Object[]{
                 statusInterceptor()

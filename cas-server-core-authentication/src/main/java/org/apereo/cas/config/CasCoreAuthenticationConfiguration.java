@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link CasCoreAuthenticationConfiguration}.

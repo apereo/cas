@@ -91,7 +91,7 @@ public class CasFiltersConfiguration {
      * @return the character encoding filter
      */
     @RefreshScope
-    @Bean(name = "characterEncodingFilter")
+    @Bean
     public FilterRegistrationBean characterEncodingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new CharacterEncodingFilter(this.encoding, this.forceEncoding));
@@ -106,7 +106,7 @@ public class CasFiltersConfiguration {
      * @return the response headers enforcement filter
      */
     @RefreshScope
-    @Bean(name = "responseHeadersSecurityFilter")
+    @Bean
     public FilterRegistrationBean responseHeadersSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
         initParams.put("enableCacheControl", BooleanUtils.toStringTrueFalse(this.headerCache));
@@ -129,7 +129,7 @@ public class CasFiltersConfiguration {
      * @return the request parameter policy enforcement filter
      */
     @RefreshScope
-    @Bean(name = "requestParameterSecurityFilter")
+    @Bean
     public FilterRegistrationBean requestParameterSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK, this.paramsToCheck);
