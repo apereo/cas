@@ -2,8 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.security.GeneralSecurityException;
@@ -47,8 +45,6 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("authenticationManager")
 public class PolicyBasedAuthenticationManager extends AbstractAuthenticationManager {
 
     /**

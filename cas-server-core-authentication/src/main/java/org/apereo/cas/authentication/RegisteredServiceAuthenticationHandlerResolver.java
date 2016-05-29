@@ -7,8 +7,6 @@ import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Iterator;
@@ -23,8 +21,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("registeredServiceAuthenticationHandlerResolver")
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 

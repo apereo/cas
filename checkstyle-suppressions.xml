@@ -3,7 +3,7 @@
 
 <suppressions>
     <suppress checks="JavadocStyleCheck" files="(.*Tests*|Mock.*|Test.*)\.java"/>
-    <suppress checks="JavadocMethod" files="(.*Tests*|Mock.*|Test.*)\.java"/>
+    <suppress checks="JavadocMethod" files="(.*Configuration|.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocType" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocVariable" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="MagicNumber" files="(.*Tests*|Mock.*|Test.*)\.java"/>

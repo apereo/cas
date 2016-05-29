@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -31,9 +29,6 @@ import org.springframework.stereotype.Component;
 
  * @since 3.0.0
  */
-
-@RefreshScope
-@Component("proxyAuthenticationHandler")
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /** Log instance. */

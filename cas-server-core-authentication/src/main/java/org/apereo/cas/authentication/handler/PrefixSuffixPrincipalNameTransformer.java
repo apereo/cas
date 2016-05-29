@@ -2,8 +2,6 @@ package org.apereo.cas.authentication.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Transform the user id by adding a prefix or suffix.
@@ -12,8 +10,6 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.3.6
  */
-@RefreshScope
-@Component("prefixSuffixPrincipalNameTransformer")
 public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private String prefix;

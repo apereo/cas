@@ -4,11 +4,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -34,14 +30,12 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RefreshScope
-@Component("trustStoreSslSocketFactory")
 public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileTrustStoreSslSocketFactory.class);
     
     private static final String ALG_NAME_PKIX = "PKIX";
-
+    
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
      * Defaults to {@code TLSv1} and {@link SSLConnectionSocketFactory#BROWSER_COMPATIBLE_HOSTNAME_VERIFIER}
@@ -49,11 +43,8 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      */
-    @Autowired
     public FileTrustStoreSslSocketFactory(
-            @Value("${http.client.truststore.file:classpath:truststore.jks}")
             final Resource trustStoreFile,
-            @Value("${http.client.truststore.psw:changeit}")
             final String trustStorePassword) {
         this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
     }
@@ -65,7 +56,8 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * @param trustStorePassword the trust store password
      * @param trustStoreType the trust store type
      */
-    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, final String trustStorePassword,
+    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, 
+                                          final String trustStorePassword,
                                           final String trustStoreType) {
         super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType));
     }

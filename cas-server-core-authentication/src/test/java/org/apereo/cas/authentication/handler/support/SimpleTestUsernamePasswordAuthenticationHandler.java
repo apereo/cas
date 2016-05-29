@@ -1,13 +1,5 @@
 package org.apereo.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-
 import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -22,9 +14,16 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import javax.annotation.PostConstruct;
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Simple test implementation of a AuthenticationHandler that returns true if
@@ -36,9 +35,9 @@ import org.springframework.util.StringUtils;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RefreshScope
 @Component("simpleTestUsernamePasswordAuthenticationHandler")
 public class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
+    
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
