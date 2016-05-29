@@ -2,10 +2,8 @@ package org.apereo.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -17,23 +15,24 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("serviceRegistryInitializer")
-class ServiceRegistryInitializer {
+public class ServiceRegistryInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializer.class);
 
-    private final ServiceRegistryDao serviceRegistryDao;
+    @Qualifier("jsonServiceRegistryDao")
+    private ServiceRegistryDao serviceRegistryDao;
 
-    private final ServiceRegistryDao jsonServiceRegistryDao;
+    @Qualifier("serviceRegistryDao")
+    private ServiceRegistryDao jsonServiceRegistryDao;
 
     @Value("${svcreg.database.from.json:true}")
     private boolean initFromJsonIfAvailable;
 
-    @Autowired
-    ServiceRegistryInitializer(@Qualifier("jsonServiceRegistryDao")
-                               final ServiceRegistryDao jsonServiceRegistryDao,
-                               @Qualifier("serviceRegistryDao")
-                               final ServiceRegistryDao serviceRegistryDao) {
+    public ServiceRegistryInitializer() {
+    }
+
+    public ServiceRegistryInitializer(final ServiceRegistryDao jsonServiceRegistryDao,
+                                      final ServiceRegistryDao serviceRegistryDao) {
         this.jsonServiceRegistryDao = jsonServiceRegistryDao;
         this.serviceRegistryDao = serviceRegistryDao;
     }

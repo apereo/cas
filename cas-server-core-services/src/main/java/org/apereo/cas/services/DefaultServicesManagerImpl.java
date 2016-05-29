@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
@@ -45,7 +44,6 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Component("servicesManager")
 public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);

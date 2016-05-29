@@ -2,14 +2,12 @@ package org.apereo.cas.authentication;
 
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +25,6 @@ import java.util.stream.StreamSupport;
  * @author Daniel Frett
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultMultifactorTriggerSelectionStrategy")
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
 

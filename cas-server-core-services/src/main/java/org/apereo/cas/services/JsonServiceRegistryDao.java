@@ -4,11 +4,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 
@@ -54,8 +50,6 @@ import java.nio.file.Path;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RefreshScope
-@Component("jsonServiceRegistryDao")
 public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
@@ -86,10 +80,7 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param enableWatcher   the enable watcher
      * @throws Exception the IO exception
      */
-    @Autowired
-    public JsonServiceRegistryDao(@Value("${service.registry.config.location:classpath:services}")
-                                  final Resource configDirectory,
-                                  @Value("${service.registry.watcher.enabled:true}")
+    public JsonServiceRegistryDao(final Resource configDirectory,
                                   final boolean enableWatcher) throws Exception {
         super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher);
     }

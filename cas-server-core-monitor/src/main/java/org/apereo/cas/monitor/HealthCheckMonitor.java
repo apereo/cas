@@ -1,8 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,8 +13,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RefreshScope
-@Component("healthCheckMonitor")
 public class HealthCheckMonitor implements Monitor<HealthStatus> {
     /** Individual monitors that comprise health check. */
     
