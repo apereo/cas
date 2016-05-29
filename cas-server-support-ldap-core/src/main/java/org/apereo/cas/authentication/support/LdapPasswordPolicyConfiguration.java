@@ -2,8 +2,6 @@ package org.apereo.cas.authentication.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * LDAP-specific password policy configuration container.
@@ -11,8 +9,6 @@ import org.springframework.stereotype.Component;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("ldapPasswordPolicyConfiguration")
 public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
     /** Directory-specific account state handler component. */

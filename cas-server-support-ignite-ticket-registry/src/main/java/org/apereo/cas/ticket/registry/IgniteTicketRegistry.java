@@ -16,8 +16,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -45,12 +43,8 @@ import static java.util.stream.Collectors.toList;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0`
  */
-@RefreshScope
-@Component("igniteTicketRegistry")
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
-    @Autowired
-    
     @Value("${ignite.ticketsCache.name:TicketsCache}")
     private String cacheName;
 

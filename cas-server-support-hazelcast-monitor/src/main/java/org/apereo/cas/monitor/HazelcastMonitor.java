@@ -7,8 +7,6 @@ import com.hazelcast.monitor.LocalMapStats;
 import org.apereo.cas.config.HazelcastProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;

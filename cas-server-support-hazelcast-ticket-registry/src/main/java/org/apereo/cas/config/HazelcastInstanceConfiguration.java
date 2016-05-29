@@ -11,9 +11,9 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -39,10 +39,17 @@ import java.util.Map;
 @Configuration("hazelcastInstanceConfiguration")
 public class HazelcastInstanceConfiguration {
 
-    @Autowired
-    @Qualifier("hazelcastProperties")
-    private HazelcastProperties hazelcastProperties;
-
+    @Bean
+    public TicketRegistry hazelcastTicketRegistry() {
+        return new HazelcastTicketRegistry();
+    }
+    
+    @RefreshScope
+    @Bean
+    public HazelcastProperties hazelcastProperties() {
+        return new HazelcastProperties();
+    }
+    
     /**
      * Create HazelcastInstance bean.
      *
@@ -52,21 +59,24 @@ public class HazelcastInstanceConfiguration {
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
     @Bean
-    public HazelcastInstance hazelcast(@Value("${hz.config.location:NO_CONFIG_PROVIDED}") final String hazelcastConfigLocation,
+    public HazelcastInstance hazelcast(@Value("${hz.config.location:NO_CONFIG_PROVIDED}") 
+                                       final String hazelcastConfigLocation,
                                        final ResourceLoader resourceLoader) throws IOException {
 
-        final Config hzConfig = getConfig(resourceLoader.getResource(hazelcastConfigLocation));
+        final Config hzConfig = getConfig(resourceLoader.getResource(hazelcastConfigLocation),
+                                          hazelcastProperties());
         return Hazelcast.newHazelcastInstance(hzConfig);
     }
 
     /**
      * Get Hazelcast <code>Config</code> instance.
      *
-     * @param configLocation config location for hazelcast xml
+     * @param configLocation      config location for hazelcast xml
+     * @param hazelcastProperties the hazelcast properties
      * @return Hazelcast Config
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
-    private Config getConfig(final Resource configLocation) throws IOException {
+    private Config getConfig(final Resource configLocation, final HazelcastProperties hazelcastProperties) throws IOException {
         final Config config;
         //We have a valid config location for hazelcast xml. Try to parse it and configure Hazelcast instance according to that source
         if (configLocation.exists()) {
@@ -78,12 +88,12 @@ public class HazelcastInstanceConfiguration {
             config = new Config();
             //TCP config
             final TcpIpConfig tcpIpConfig = new TcpIpConfig()
-                    .setEnabled(this.hazelcastProperties.isTcpipEnabled())
-                    .setMembers(this.hazelcastProperties.getMembers());
+                    .setEnabled(hazelcastProperties.isTcpipEnabled())
+                    .setMembers(hazelcastProperties.getMembers());
 
             //Multicast config
             final MulticastConfig multicastConfig = new MulticastConfig()
-                    .setEnabled(this.hazelcastProperties.isMulticastEnabled());
+                    .setEnabled(hazelcastProperties.isMulticastEnabled());
 
             //Join config
             final JoinConfig joinConfig = new JoinConfig()
@@ -92,18 +102,18 @@ public class HazelcastInstanceConfiguration {
 
             //Network config
             final NetworkConfig networkConfig = new NetworkConfig()
-                    .setPort(this.hazelcastProperties.getPort())
-                    .setPortAutoIncrement(this.hazelcastProperties.isPortAutoIncrement())
+                    .setPort(hazelcastProperties.getPort())
+                    .setPortAutoIncrement(hazelcastProperties.isPortAutoIncrement())
                     .setJoin(joinConfig);
 
             //Map config
-            final MapConfig mapConfig = new MapConfig().setName(this.hazelcastProperties.getMapName())
-                    .setMaxIdleSeconds(this.hazelcastProperties.getMaxIdleSeconds())
-                    .setEvictionPolicy(this.hazelcastProperties.getEvictionPolicy())
-                    .setEvictionPercentage(this.hazelcastProperties.getEvictionPercentage())
+            final MapConfig mapConfig = new MapConfig().setName(hazelcastProperties.getMapName())
+                    .setMaxIdleSeconds(hazelcastProperties.getMaxIdleSeconds())
+                    .setEvictionPolicy(hazelcastProperties.getEvictionPolicy())
+                    .setEvictionPercentage(hazelcastProperties.getEvictionPercentage())
                     .setMaxSizeConfig(new MaxSizeConfig()
-                            .setMaxSizePolicy(this.hazelcastProperties.getMaxSizePolicy())
-                            .setSize(this.hazelcastProperties.getMaxHeapSizePercentage()));
+                            .setMaxSizePolicy(hazelcastProperties.getMaxSizePolicy())
+                            .setSize(hazelcastProperties.getMaxHeapSizePercentage()));
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
             mapConfigs.put("tickets", mapConfig);
@@ -112,8 +122,8 @@ public class HazelcastInstanceConfiguration {
             config.setMapConfigs(mapConfigs).setNetworkConfig(networkConfig);
         }
         //Add additional default config properties regardless of the configuration source
-        return config.setInstanceName(this.hazelcastProperties.getInstanceName())
-                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, this.hazelcastProperties.getLoggingType())
-                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, this.hazelcastProperties.getMaxNoHeartbeatSeconds());
+        return config.setInstanceName(hazelcastProperties.getInstanceName())
+                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, hazelcastProperties.getLoggingType())
+                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, hazelcastProperties.getMaxNoHeartbeatSeconds());
     }
 }

@@ -1,6 +1,10 @@
 package org.apereo.cas.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.apereo.cas.ticket.registry.JpaTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
+import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -174,5 +178,16 @@ public class JpaTicketRegistryConfiguration {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    @Bean
+    @RefreshScope
+    public TicketRegistry jpaTicketRegistry() {
+        return new JpaTicketRegistry();
+    }
+    
+    @Bean
+    public LockingStrategy jpaLockingStrategy() {
+        return new JpaLockingStrategy();
     }
 }

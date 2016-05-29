@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
@@ -37,8 +35,6 @@ import javax.annotation.Nullable;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RefreshScope
-@Component("ldapAuthorizationGenerator")
 public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
     /**

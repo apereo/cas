@@ -1,11 +1,7 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -17,8 +13,6 @@ import java.sql.ResultSet;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@RefreshScope
-@Component("dataSourceMonitor")
 public class DataSourceMonitor extends AbstractPoolMonitor {
 
     
@@ -33,9 +27,7 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
      *
      * @param dataSource Data source to monitor.
      */
-    @Autowired
-
-    public DataSourceMonitor(@Qualifier("monitorDataSource") @Nullable final DataSource dataSource) {
+    public DataSourceMonitor(@Nullable final DataSource dataSource) {
         if (dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);
         } else {

@@ -14,8 +14,6 @@ import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -33,8 +31,6 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.2.1
  */
-@RefreshScope
-@Component("jpaTicketRegistry")
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired

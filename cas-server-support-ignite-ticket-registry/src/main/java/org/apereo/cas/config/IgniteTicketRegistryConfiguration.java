@@ -7,6 +7,8 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
+import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -90,5 +92,11 @@ public class IgniteTicketRegistryConfiguration {
         config.setCacheConfiguration(configurations.toArray(new CacheConfiguration[]{}));
         
         return config;
+    }
+    
+    @Bean
+    @RefreshScope
+    public TicketRegistry igniteTicketRegistry() {
+        return new IgniteTicketRegistry();
     }
 }

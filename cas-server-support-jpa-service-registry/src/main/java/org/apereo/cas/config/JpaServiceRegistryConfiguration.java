@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.apereo.cas.services.JpaServiceRegistryDaoImpl;
+import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -175,5 +177,10 @@ public class JpaServiceRegistryConfiguration {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    @Bean
+    public ServiceRegistryDao jpaServiceRegistryDao() {
+        return new JpaServiceRegistryDaoImpl();
     }
 }
