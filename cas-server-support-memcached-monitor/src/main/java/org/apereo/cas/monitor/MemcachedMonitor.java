@@ -3,8 +3,6 @@ package org.apereo.cas.monitor;
 import net.spy.memcached.MemcachedClientIF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
@@ -19,8 +17,6 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@RefreshScope
-@Component("memcachedMonitor")
 public class MemcachedMonitor extends AbstractCacheMonitor {
 
     @Nullable

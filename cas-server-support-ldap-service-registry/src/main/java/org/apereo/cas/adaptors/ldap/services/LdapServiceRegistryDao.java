@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -30,8 +28,6 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("ldapServiceRegistryDao")
 public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapServiceRegistryDao.class);

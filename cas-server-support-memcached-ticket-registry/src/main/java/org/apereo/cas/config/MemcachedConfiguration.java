@@ -4,9 +4,9 @@ import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
+import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +20,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedConfiguration")
 public class MemcachedConfiguration {
-
-    /**
-     * The Transcoder.
-     */
-    @Autowired
-    @Qualifier("kryoTranscoder")
-    private KryoTranscoder transcoder;
 
     /**
      * The Servers.
@@ -63,9 +56,19 @@ public class MemcachedConfiguration {
         final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
         bean.setServers(this.servers);
         bean.setLocatorType(this.locatorType);
-        bean.setTranscoder(this.transcoder);
+        bean.setTranscoder(kryoTranscoder());
         bean.setFailureMode(this.failureMode);
         bean.setHashAlg(this.hashAlgorithm);
         return bean;
+    }
+    
+    @Bean
+    public KryoTranscoder kryoTranscoder() {
+        return new KryoTranscoder();
+    }
+    
+    @Bean
+    public TicketRegistry memcachedTicketRegistry() {
+        return new MemCacheTicketRegistry();
     }
 }

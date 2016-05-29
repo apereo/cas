@@ -10,8 +10,6 @@ import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.StringWriter;
@@ -26,8 +24,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RefreshScope
-@Component("ldapServiceRegistryMapper")
 public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
