@@ -12,9 +12,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,8 +27,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("initialAuthenticationAttemptWebflowEventResolver")
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     @Autowired

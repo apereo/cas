@@ -16,14 +16,12 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.webflow.action.EvaluateAction;
@@ -68,8 +66,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("casWebflowConfigurer")
 public abstract class AbstractCasWebflowConfigurer {
     private static final String FLOW_ID_LOGIN = "login";
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());

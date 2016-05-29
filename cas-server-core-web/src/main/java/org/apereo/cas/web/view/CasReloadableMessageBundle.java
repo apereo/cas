@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -29,8 +27,6 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RefreshScope
-@Component("messageSource")
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
     private String[] basenames;

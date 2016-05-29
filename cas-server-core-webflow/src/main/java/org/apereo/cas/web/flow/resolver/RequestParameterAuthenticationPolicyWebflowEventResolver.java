@@ -7,8 +7,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,8 +22,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("requestParameterAuthenticationPolicyWebflowEventResolver")
 public class RequestParameterAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     @Value("${cas.mfa.request.parameter:authn_method}")

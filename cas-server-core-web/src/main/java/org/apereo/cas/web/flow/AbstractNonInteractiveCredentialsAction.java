@@ -17,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
@@ -33,8 +31,6 @@ import org.springframework.webflow.execution.RequestContext;
 
  * @since 3.0.0
  */
-@RefreshScope
-@Component
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
 
     /** The logger instance. */

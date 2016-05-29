@@ -11,10 +11,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +24,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component
 public abstract class BaseApplicationContextWrapper implements ApplicationContextAware {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
