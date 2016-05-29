@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("openIdValidateController")
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
     private static final String VIEW_MODEL_KEY_PARAMETERS = "parameters";

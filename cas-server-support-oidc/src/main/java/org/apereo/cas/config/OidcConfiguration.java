@@ -2,9 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -13,8 +15,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -39,17 +41,11 @@ import java.util.Set;
  */
 @Configuration("oidcConfiguration")
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
-
-    @Autowired
-    @Qualifier("oidcAuthorizationRequestSupport")
-    private OidcAuthorizationRequestSupport oidcAuthzRequestSupport;
-
-    @Autowired
-    @Qualifier("oauthInterceptor")
+    
+    @Resource(name="oauthInterceptor")
     private HandlerInterceptor oauthInterceptor;
 
-    @Autowired
-    @Qualifier("oauthSecConfig")
+    @Resource(name="oauthSecConfig")
     private Config oauthSecConfig;
 
     @Override
@@ -78,7 +74,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20CallbackAuthorizeViewResolver() {
             @Override
             public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-                final Set<String> prompts = oidcAuthzRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+                final Set<String> prompts = oidcAuthorizationRequestSupport().getOidcPromptFromAuthorizationRequest(url);
                 if (prompts.contains(OidcConstants.PROMPT_NONE)) {
                     if (manager.get(true) != null) {
                         return new ModelAndView(url);
@@ -130,17 +126,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 final ProfileManager manager = new ProfileManager(ctx);
                 
                 boolean clearCreds = false;
-                final Optional<UserProfile> auth = oidcAuthzRequestSupport.isAuthenticationProfileAvailable(ctx);
+                final Optional<UserProfile> auth = oidcAuthorizationRequestSupport().isAuthenticationProfileAvailable(ctx);
 
                 if (auth.isPresent()) {
-                    final Optional<Long> maxAge = oidcAuthzRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
+                    final Optional<Long> maxAge = oidcAuthorizationRequestSupport().getOidcMaxAgeFromAuthorizationRequest(ctx);
                     if (maxAge.isPresent()) {
-                        clearCreds = oidcAuthzRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
+                        clearCreds = oidcAuthorizationRequestSupport().isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
                     }
                 }
 
-
-                final Set<String> prompts = oidcAuthzRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
+                final Set<String> prompts = oidcAuthorizationRequestSupport().getOidcPromptFromAuthorizationRequest(ctx);
                 if (!clearCreds) {
                     clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
                 }
@@ -155,6 +150,22 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 return super.preHandle(request, response, handler);
             }
         };
+    }
+    
+    @Bean
+    public OAuthCasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
+        return new OidcCasClientRedirectActionBuilder();
+    }
+
+    @Bean
+    @RefreshScope
+    public AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
+        return new OidcAccessTokenResponseGenerator();
+    }
+
+    @Bean
+    public OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport() {
+        return new OidcAuthorizationRequestSupport();
     }
 }
 

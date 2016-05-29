@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -18,7 +17,6 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("openIdApplicationContextWrapper")
 public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired

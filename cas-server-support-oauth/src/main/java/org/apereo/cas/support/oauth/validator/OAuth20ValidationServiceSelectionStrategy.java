@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -21,7 +20,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("oauth20ValidationServiceSelectionStrategy")
 public class OAuth20ValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
     

@@ -13,14 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 
 /**
  * An authentication handler to verify credentials against a MongoDb instance.
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Repository("mongoAuthenticationHandler")
 public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoAuthenticationHandler.class);

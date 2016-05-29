@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +22,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Repository("mongoServiceRegistryDao")
 public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
@@ -36,7 +34,6 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     @Autowired
     @Qualifier("mongoTemplate")
-    
     private MongoOperations mongoTemplate;
 
     /**

@@ -5,8 +5,6 @@ import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -19,8 +17,6 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("accessTokenExpirationPolicy")
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -8383186650682727360L;
 
@@ -34,7 +30,7 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     @Value("#{${oauth.access.token.timeToKillInSeconds:7200}*1000L}")
     private long timeToKillInMilliSeconds;
 
-    private OAuthAccessTokenExpirationPolicy() {}
+    public OAuthAccessTokenExpirationPolicy() {}
 
     /**
      * Instantiates a new OAuth access token expiration policy.

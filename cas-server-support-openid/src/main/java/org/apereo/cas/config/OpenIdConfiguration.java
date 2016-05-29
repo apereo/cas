@@ -1,8 +1,20 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.support.openid.OpenIdApplicationContextWrapper;
+import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
+import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
+import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
+import org.apereo.cas.support.openid.web.OpenIdProviderController;
+import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
 import org.apereo.cas.support.openid.web.mvc.OpenIdValidateController;
 import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
+import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
+import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
+import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.web.AbstractDelegateController;
+import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.DelegatingController;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
@@ -11,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.webflow.execution.Action;
 
 import java.util.Arrays;
 
@@ -23,19 +36,19 @@ import java.util.Arrays;
 @Configuration("openidConfiguration")
 public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
-    
+
     /**
      * The Endpoint.
      */
     @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String endpoint;
-        
+
     /**
      * The Enforce rp id.
      */
     @Value("${cas.openid.enforce.rpid:false}")
     private boolean enforceRpId;
-    
+
     /**
      * Openid delegating controller delegating controller.
      *
@@ -86,4 +99,49 @@ public class OpenIdConfiguration {
         LOGGER.info("Creating openid server manager with OP endpoint {}", this.endpoint);
         return manager;
     }
+
+    @Bean
+    public BaseApplicationContextWrapper openIdApplicationContextWrapper() {
+        return new OpenIdApplicationContextWrapper();
+    }
+
+    @Bean
+    public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
+        return new OpenIdCredentialsAuthenticationHandler();
+    }
+
+    @Bean
+    public OpenIdPrincipalResolver openIdPrincipalResolver() {
+        return new OpenIdPrincipalResolver();
+    }
+
+    @Bean
+    @RefreshScope
+    public ServiceFactory openIdServiceFactory() {
+        return new OpenIdServiceFactory();
+    }
+
+    @Bean
+    @RefreshScope
+    public OpenIdProviderController openIdProviderController() {
+        return new OpenIdProviderController();
+    }
+
+
+    @Bean
+    public Action openIdSingleSignOnAction() {
+        return new OpenIdSingleSignOnAction();
+    }
+    
+    @Bean
+    public OpenIdUserNameExtractor defaultOpenIdUserNameExtractor() {
+        return new DefaultOpenIdUserNameExtractor();
+    }
+
+    @Bean
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
+        return new OpenIdPostUrlHandlerMapping();
+    }
+
+
 }

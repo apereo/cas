@@ -6,6 +6,8 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
+import org.apereo.cas.services.MongoServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -135,5 +137,9 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
         ));
     }
 
+    @Bean
+    public ServiceRegistryDao mongoServiceRegistryDao() {
+        return new MongoServiceRegistryDao();
+    }
 
 }

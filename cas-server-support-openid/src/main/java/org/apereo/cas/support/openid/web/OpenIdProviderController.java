@@ -1,8 +1,6 @@
 package org.apereo.cas.support.openid.web;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -16,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RefreshScope
-@Component("openIdProviderController")
 public class OpenIdProviderController extends AbstractController {
 
     

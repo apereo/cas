@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,8 +23,6 @@ import java.util.Map;
  * @author Frederic Esnault
  * @since 3.5
  */
-@RefreshScope
-@Component("smartOpenIdAssociationController")
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
 
     private static final long serialVersionUID = -594058549445950430L;

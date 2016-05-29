@@ -12,7 +12,6 @@ import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -25,7 +24,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("oauthApplicationContextWrapper")
 public class OAuthApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Value("${server.prefix:http://localhost:8080/cas}")

@@ -3,8 +3,6 @@ package org.apereo.cas.support.oauth.ticket.refreshtoken;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -16,8 +14,6 @@ import java.time.temporal.ChronoUnit;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@RefreshScope
-@Component("refreshTokenExpirationPolicy")
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -28,7 +24,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
     private long timeToKillInMilliSeconds;
 
     /** No-arg constructor for serialization support. */
-    private OAuthRefreshTokenExpirationPolicy() {}
+    public OAuthRefreshTokenExpirationPolicy() {}
 
     /**
      * Instantiates a new OAuth refresh token expiration policy.

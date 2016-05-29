@@ -1,11 +1,28 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.OAuthApplicationContextWrapper;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
+import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
+import org.apereo.cas.support.oauth.ticket.accesstoken.OAuthAccessTokenExpirationPolicy;
+import org.apereo.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
+import org.apereo.cas.support.oauth.ticket.code.OAuthCodeExpirationPolicy;
+import org.apereo.cas.support.oauth.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.DefaultRefreshTokenFactory;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshTokenFactory;
+import org.apereo.cas.support.oauth.validator.OAuth20ValidationServiceSelectionStrategy;
+import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
@@ -21,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -61,6 +79,13 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Value("${server.prefix:http://localhost:8080/cas}/oauth2.0/callbackAuthorize")
     private String callbackUrl;
 
+    @Value("${oauth.code.numberOfUses:1}")
+    private int numberOfUses;
+    
+    @Value("#{${oauth.code.timeToKillInSeconds:30}*1000L}")
+    private long timeToKillInMilliSeconds;
+    
+            
     /**
      * Access token response generator access token response generator.
      *
@@ -215,5 +240,73 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor())
                 .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat("*"));
+    }
+    
+    @Bean
+    @RefreshScope
+    public BaseApplicationContextWrapper oauthApplicationContextWrapper() {
+        return new OAuthApplicationContextWrapper();
+    }
+    
+    @Bean
+    public OAuthCasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
+        return new DefaultOAuthCasClientRedirectActionBuilder();
+    }
+    
+    @Bean
+    public UsernamePasswordAuthenticator oAuthClientAuthenticator() {
+        return new OAuthClientAuthenticator();
+    }
+
+    @Bean
+    public UsernamePasswordAuthenticator oAuthUserAuthenticator() {
+        return new OAuthUserAuthenticator();
+    }
+    
+    @Bean
+    public OAuthValidator oAuthValidator() {
+        return new OAuthValidator();
+    }
+    
+    @Bean
+    public AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
+        return new OAuth20AccessTokenResponseGenerator();
+    }
+    @Bean
+    public AccessTokenFactory defaultAccessTokenFactory() {
+        return new DefaultAccessTokenFactory();
+    }
+    
+    @Bean
+    @RefreshScope
+    public ExpirationPolicy accessTokenExpirationPolicy() {
+        return new OAuthAccessTokenExpirationPolicy();
+    }
+    
+    @Bean
+    @RefreshScope
+    public ExpirationPolicy oAuthCodeExpirationPolicy() {
+        return new OAuthCodeExpirationPolicy(this.numberOfUses, this.timeToKillInMilliSeconds);
+    }
+    
+    @Bean
+    public OAuthCodeFactory defaultOAuthCodeFactory() {
+        return new DefaultOAuthCodeFactory();
+    }
+
+    @Bean
+    public RefreshTokenFactory defaultRefreshTokenFactory() {
+        return new DefaultRefreshTokenFactory();
+    }
+    
+    @Bean
+    @RefreshScope
+    public ExpirationPolicy refreshTokenExpirationPolicy() {
+        return new OAuthRefreshTokenExpirationPolicy();
+    }
+
+    @Bean
+    public ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy() {
+        return new OAuth20ValidationServiceSelectionStrategy();
     }
 }

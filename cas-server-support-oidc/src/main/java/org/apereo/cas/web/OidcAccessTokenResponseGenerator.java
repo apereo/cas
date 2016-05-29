@@ -25,9 +25,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,8 +38,6 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("oidcAccessTokenResponseGenerator")
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
 
     @Value("${cas.oidc.issuer:http://localhost:8080/cas/oidc}")

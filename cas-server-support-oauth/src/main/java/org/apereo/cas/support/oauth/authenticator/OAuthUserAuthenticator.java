@@ -12,8 +12,6 @@ import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -23,8 +21,6 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@RefreshScope
-@Component("oAuthUserAuthenticator")
 public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
 
     
