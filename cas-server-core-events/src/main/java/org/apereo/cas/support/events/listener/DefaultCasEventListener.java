@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
@@ -23,8 +21,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultCasEventListener")
 public class DefaultCasEventListener {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
