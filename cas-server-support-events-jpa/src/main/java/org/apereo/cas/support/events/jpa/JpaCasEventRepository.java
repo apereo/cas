@@ -2,8 +2,6 @@ package org.apereo.cas.support.events.jpa;
 
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,10 +13,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Repository("casEventRepository")
-@Transactional
 public class JpaCasEventRepository extends AbstractCasEventRepository {
-
     
     @PersistenceContext(unitName = "eventsEntityManagerFactory")
     private EntityManager entityManager;

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -20,7 +19,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Repository("casEventRepository")
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
     private static final String MONGODB_COLLECTION_NAME = "MongoDbCasEventRepository";

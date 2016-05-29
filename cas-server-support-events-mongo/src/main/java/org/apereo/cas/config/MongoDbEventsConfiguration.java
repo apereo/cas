@@ -2,8 +2,11 @@ package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,7 +34,7 @@ public class MongoDbEventsConfiguration {
      * @return the mongo client uri
      */
     @RefreshScope
-    
+    @Bean
     public MongoClientURI clientUri() {
         if (StringUtils.isBlank(this.clientUri)) {
             throw new RuntimeException("MongoDb Client URI must be defined for CAS events");
@@ -46,7 +49,7 @@ public class MongoDbEventsConfiguration {
      * @return the persistence exception translation post processor
      */
     @RefreshScope
-    
+    @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
@@ -57,7 +60,7 @@ public class MongoDbEventsConfiguration {
      * @return the mongo template
      */
     @RefreshScope
-    
+    @Bean
     public MongoTemplate mongoEventsTemplate() {
         return new MongoTemplate(mongoAuthNEventsDbFactory());
     }
@@ -68,7 +71,7 @@ public class MongoDbEventsConfiguration {
      * @return the simple mongo db factory
      */
     @RefreshScope
-    
+    @Bean
     public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
 
         try {
@@ -78,4 +81,8 @@ public class MongoDbEventsConfiguration {
         }
     }
 
+    @Bean
+    public CasEventRepository casEventRepository() {
+        return new MongoDbCasEventRepository();
+    }
 }

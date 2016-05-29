@@ -4,11 +4,14 @@ import com.google.common.collect.ImmutableSet;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
+import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
@@ -153,7 +156,7 @@ public class EhcacheTicketRegistryConfiguration {
      * @return the rmi synchronous cache replicator
      */
     @RefreshScope
-    
+    @Bean
     public RMISynchronousCacheReplicator ticketRMISynchronousCacheReplicator() {
         return new RMISynchronousCacheReplicator(this.replicatePuts, this.replicatePutsViaCopy,
                 this.replicateUpdates, this.replicateUpdatesViaCopy, this.replicateRemovals);
@@ -165,7 +168,7 @@ public class EhcacheTicketRegistryConfiguration {
      * @return the rmi bootstrap cache loader
      */
     @RefreshScope
-    
+    @Bean
     public RMIBootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
         return new RMIBootstrapCacheLoader(this.loaderAsync, this.maxChunkSize);
     }
@@ -177,7 +180,7 @@ public class EhcacheTicketRegistryConfiguration {
      * @return the eh cache manager factory bean
      */
     @RefreshScope
-    
+    @Bean
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
         bean.setConfigLocation(ResourceUtils.prepareClasspathResourceIfNeeded(this.configLocation));
@@ -194,7 +197,7 @@ public class EhcacheTicketRegistryConfiguration {
      * @return the eh cache factory bean
      */
     @RefreshScope
-    
+    @Bean
     public EhCacheFactoryBean ehcacheTicketsCache(final CacheManager manager) {
         final EhCacheFactoryBean bean = new EhCacheFactoryBean();
         bean.setCacheName(this.cacheName);
@@ -216,5 +219,9 @@ public class EhcacheTicketRegistryConfiguration {
         return bean;
     }
     
-
+    @RefreshScope
+    @Bean
+    public TicketRegistry ehcacheTicketRegistry() {
+        return new EhCacheTicketRegistry();
+    }
 }

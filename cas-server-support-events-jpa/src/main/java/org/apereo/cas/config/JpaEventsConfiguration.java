@@ -1,9 +1,13 @@
 package org.apereo.cas.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -103,7 +107,7 @@ public class JpaEventsConfiguration {
      * @return the hibernate jpa vendor adapter
      */
     @RefreshScope
-    
+    @Bean
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
         jpaEventVendorAdapter.setGenerateDdl(this.generateDdl);
@@ -118,7 +122,7 @@ public class JpaEventsConfiguration {
      * @return the combo pooled data source
      */
     @RefreshScope
-    
+    @Bean
     public DataSource dataSourceEvent() {
         try {
             final HikariDataSource bean = new HikariDataSource();
@@ -155,7 +159,7 @@ public class JpaEventsConfiguration {
      * @return the local container entity manager factory bean
      */
     @RefreshScope
-    
+    @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
@@ -180,7 +184,8 @@ public class JpaEventsConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    
+    @Autowired
+    @Bean
     public JpaTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory")
                                                           final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
@@ -189,4 +194,8 @@ public class JpaEventsConfiguration {
     }
 
 
+    @Bean
+    public CasEventRepository casEventRepository() {
+        return new JpaCasEventRepository();
+    }
 }

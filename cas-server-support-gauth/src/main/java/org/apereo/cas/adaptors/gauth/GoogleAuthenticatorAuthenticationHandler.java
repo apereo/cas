@@ -7,8 +7,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -24,8 +22,6 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("googleAuthenticatorAuthenticationHandler")
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     @Autowired

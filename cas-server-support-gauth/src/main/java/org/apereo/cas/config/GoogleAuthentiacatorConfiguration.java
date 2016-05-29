@@ -1,6 +1,17 @@
 package org.apereo.cas.config;
 
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorApplicationContextWrapper;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationMetaDataPopulator;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.gauth.InMemoryGoogleAuthenticatorAccountRegistry;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,7 +48,7 @@ public class GoogleAuthentiacatorConfiguration {
      * @return the flow definition registry
      */
     @RefreshScope
-    
+    @Bean
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");
@@ -54,5 +65,38 @@ public class GoogleAuthentiacatorConfiguration {
     @Bean
     public GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry() {
         return this.googleAuthenticatorAccountRegistry;
+    }
+    
+    @Bean
+    public BaseApplicationContextWrapper googleAuthenticatorApplicationContextWrapper() {
+        return new GoogleAuthenticatorApplicationContextWrapper();
+    }
+    
+    @Bean
+    public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
+        return new GoogleAuthenticatorAuthenticationHandler();
+    }
+    
+    @Bean
+    @RefreshScope
+    public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
+        return new GoogleAuthenticatorAuthenticationMetaDataPopulator();
+    }
+    
+    @Bean
+    @RefreshScope
+    public IGoogleAuthenticator googleAuthenticatorInstance() {
+        return new GoogleAuthenticatorInstance();
+    }
+    
+    @Bean
+    @RefreshScope
+    public AbstractMultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
+        return new GoogleAuthenticatorMultifactorAuthenticationProvider();
+    }
+    
+    @Bean
+    public GoogleAuthenticatorAccountRegistry defaultGoogleAuthenticatorAccountRegistry() {
+        return new InMemoryGoogleAuthenticatorAccountRegistry();
     }
 }

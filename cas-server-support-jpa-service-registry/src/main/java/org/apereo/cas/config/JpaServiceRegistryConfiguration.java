@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -86,7 +87,7 @@ public class JpaServiceRegistryConfiguration {
      * @return the hibernate jpa vendor adapter
      */
     @RefreshScope
-    
+    @Bean
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
         jpaEventVendorAdapter.setGenerateDdl(this.generateDdl);
@@ -150,7 +151,7 @@ public class JpaServiceRegistryConfiguration {
      * @return the combo pooled data source
      */
     @RefreshScope
-    
+    @Bean
     public DataSource dataSourceService() {
         try {
             final HikariDataSource bean = new HikariDataSource();

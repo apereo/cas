@@ -7,8 +7,6 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -18,8 +16,6 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("googleAuthenticatorInstance")
 public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
 
     @Value("${cas.mfa.gauth.code.digits:6}")
