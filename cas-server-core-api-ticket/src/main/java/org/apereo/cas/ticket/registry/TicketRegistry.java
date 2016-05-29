@@ -18,7 +18,7 @@ import org.apereo.cas.ticket.Ticket;
  * This is a published and supported CAS Server 3 API.
  * </p>
  */
-public interface TicketRegistry {
+public interface TicketRegistry extends TicketRegistryState {
 
     /**
      * Add a ticket to the registry. Ticket storage is based on the ticket id.

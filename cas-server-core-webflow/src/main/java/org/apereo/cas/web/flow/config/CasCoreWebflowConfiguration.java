@@ -4,6 +4,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.InitialAuthenticationAttemptWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.PrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.RankedAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.RegisteredServiceAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
@@ -22,6 +23,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreWebflowConfiguration")
 public class CasCoreWebflowConfiguration {
+    
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
+        return new PrincipalAttributeAuthenticationPolicyWebflowEventResolver();
+    }
     
     @Bean
     public MultifactorAuthenticationProviderSelector firstMultifactorAuthenticationProviderSelector() {
@@ -50,6 +57,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver();
     }

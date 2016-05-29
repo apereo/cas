@@ -18,7 +18,7 @@ public class SessionMonitor implements Monitor<SessionStatus> {
     /** Ticket registry instance that exposes state info. */
     
     @Resource(name="ticketRegistry")
-    private TicketRegistryState registryState;
+    private TicketRegistry registryState;
 
     /** Threshold above which warnings are issued for session count. */
     @Value("${cas.monitor.tgt.warn.threshold:10000}")
@@ -33,7 +33,7 @@ public class SessionMonitor implements Monitor<SessionStatus> {
      * Sets the ticket registry that exposes state information that may be queried by this monitor.
      * @param state the ticket registry state instance
      */
-    public void setTicketRegistry(final TicketRegistryState state) {
+    public void setTicketRegistry(final TicketRegistry state) {
         this.registryState = state;
     }
 

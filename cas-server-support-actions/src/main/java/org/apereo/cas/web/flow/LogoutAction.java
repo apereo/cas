@@ -11,8 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,8 +28,6 @@ import java.util.List;
  * @author Jerome Leleu
  * @since 3.0.0
  */
-@RefreshScope
-@Component("logoutAction")
 public class LogoutAction extends AbstractLogoutAction {
 
     /** The services manager. */

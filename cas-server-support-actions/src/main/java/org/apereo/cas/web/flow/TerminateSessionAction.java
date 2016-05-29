@@ -13,8 +13,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,12 +24,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("terminateSessionAction")
-public class TerminateSessionAction {
+public class TerminateSessionAction extends AbstractAction {
 
     /** Webflow event helper component. */
-    private EventFactorySupport eventFactorySupport = new EventFactorySupport();
+    private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
 
     /** The CORE to which we delegate for all CAS functionality. */
     
@@ -59,6 +56,11 @@ public class TerminateSessionAction {
      * Creates a new instance with the given parameters.
      */
     public TerminateSessionAction() {}
+
+    @Override
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
+        return terminate(requestContext);
+    }
 
     /**
      * Terminates the CAS SSO session by destroying the TGT (if any) and removing cookies related to the SSO session.

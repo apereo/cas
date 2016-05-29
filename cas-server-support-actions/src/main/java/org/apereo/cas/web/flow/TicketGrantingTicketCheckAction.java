@@ -4,14 +4,12 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.annotation.Resource;
 
 /**
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
@@ -25,8 +23,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("ticketGrantingTicketCheckAction")
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
     /**
@@ -47,18 +43,18 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
     /**
      * The Central authentication service.
      */
-    
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
+    public TicketGrantingTicketCheckAction() {
+    }
 
     /**
      * Creates a new instance with the given ticket registry.
      *
      * @param centralAuthenticationService the central authentication service
      */
-    @Autowired
-    public TicketGrantingTicketCheckAction(@Qualifier("centralAuthenticationService")
-                                               final CentralAuthenticationService centralAuthenticationService) {
+    public TicketGrantingTicketCheckAction(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

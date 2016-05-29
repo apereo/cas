@@ -66,8 +66,8 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public abstract class AbstractCasWebflowConfigurer {
-    private static final String FLOW_ID_LOGIN = "login";
+public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
+    
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /**
@@ -94,6 +94,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * Initialize.
      */
     @PostConstruct
+    @Override
     public void initialize() {
         try {
             logger.debug("Initializing CAS webflow configuration...");
@@ -119,7 +120,8 @@ public abstract class AbstractCasWebflowConfigurer {
      *
      * @return the login flow
      */
-    protected Flow getLoginFlow() {
+    @Override
+    public Flow getLoginFlow() {
         final Flow flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         return flow;
     }
@@ -146,7 +148,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param flow the flow
      * @return the start state
      */
-    protected TransitionableState getStartState(final Flow flow) {
+    @Override
+    public TransitionableState getStartState(final Flow flow) {
         final TransitionableState currentStartState = TransitionableState.class.cast(flow.getStartState());
         return currentStartState;
     }
@@ -159,7 +162,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param actions the actions
      * @return the action state
      */
-    protected ActionState createActionState(final Flow flow, final String name, final Action... actions) {
+    @Override
+    public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
         final ActionState actionState = new ActionState(flow, name);
         logger.debug("Created action state {}", actionState.getId());
         actionState.getActionList().addAll(actions);
@@ -177,7 +181,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param elseStateId    the else state id
      * @return the decision state
      */
-    protected DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
+    @Override
+    public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                                 final String thenStateId, final String elseStateId) {
         final DecisionState decisionState = new DecisionState(flow, id);
 
@@ -198,7 +203,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param flow  the flow
      * @param state the state
      */
-    protected void setStartState(final Flow flow, final String state) {
+    @Override
+    public void setStartState(final Flow flow, final String state) {
         flow.setStartState(state);
         final TransitionableState startState = getStartState(flow);
         logger.debug("Start state is now set to {}", startState.getId());
@@ -210,7 +216,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param flow  the flow
      * @param state the state
      */
-    protected void setStartState(final Flow flow, final TransitionableState state) {
+    @Override
+    public void setStartState(final Flow flow, final TransitionableState state) {
         setStartState(flow, state.getId());
     }
 
@@ -277,7 +284,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param expression the expression
      * @return the evaluate action
      */
-    protected EvaluateAction createEvaluateAction(final String expression) {
+    @Override
+    public EvaluateAction createEvaluateAction(final String expression) {
         final ParserContext ctx = new FluentParserContext();
         final Expression action = this.flowBuilderServices.getExpressionParser()
                 .parseExpression(expression, ctx);
@@ -327,7 +335,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param targetState     the target state
      * @return the transition
      */
-    protected Transition createTransition(final String criteriaOutcome, final String targetState) {
+    @Override
+    public Transition createTransition(final String criteriaOutcome, final String targetState) {
         return createTransition(new LiteralExpression(criteriaOutcome), targetState);
     }
 
@@ -338,7 +347,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param targetState     the target state
      * @return the transition
      */
-    protected Transition createTransition(final String criteriaOutcome, final TransitionableState targetState) {
+    @Override
+    public Transition createTransition(final String criteriaOutcome, final TransitionableState targetState) {
         return createTransition(new LiteralExpression(criteriaOutcome), targetState.getId());
     }
 
@@ -349,7 +359,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param criteriaOutcomeExpression the criteria outcome expression
      * @return the transition
      */
-    protected Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
+    @Override
+    public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
         final TransitionCriteria criteria;
 
         if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
@@ -408,7 +419,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param targetState the target state
      * @return the transition
      */
-    protected Transition createTransition(final String targetState) {
+    @Override
+    public Transition createTransition(final String targetState) {
         final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
         return new Transition(resolver);
     }
@@ -420,7 +432,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param id     the id
      * @param viewId the view id
      */
-    protected void createEndState(final Flow flow, final String id, final String viewId) {
+    @Override
+    public void createEndState(final Flow flow, final String id, final String viewId) {
         createEndState(flow, id, new LiteralExpression(viewId));
     }
 
@@ -431,7 +444,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param id         the id
      * @param expression the expression
      */
-    protected void createEndState(final Flow flow, final String id, final Expression expression) {
+    @Override
+    public void createEndState(final Flow flow, final String id, final Expression expression) {
         final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
                 expression,
                 this.flowBuilderServices.getExpressionParser(),
@@ -450,7 +464,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param id          the id
      * @param viewFactory the view factory
      */
-    protected void createEndState(final Flow flow, final String id, final ViewFactory viewFactory) {
+    @Override
+    public void createEndState(final Flow flow, final String id, final ViewFactory viewFactory) {
         try {
             final EndState endState = new EndState(flow, id);
             final Action finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
@@ -483,7 +498,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param expression the expression
      * @return the view state
      */
-    protected ViewState createViewState(final Flow flow, final String id, final Expression expression) {
+    @Override
+    public ViewState createViewState(final Flow flow, final String id, final Expression expression) {
         try {
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
                     expression,
@@ -510,7 +526,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param viewId the view id
      * @return the view state
      */
-    protected ViewState createViewState(final Flow flow, final String id, final String viewId) {
+    @Override
+    public ViewState createViewState(final Flow flow, final String id, final String viewId) {
         return createViewState(flow, id, new LiteralExpression(viewId));
     }
 
@@ -523,8 +540,9 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param entryAction the entry action
      * @return the subflow state
      */
-    protected SubflowState createSubflowState(final Flow flow, final String id, final String subflow,
-                                              final Action entryAction) {
+    @Override
+    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow,
+                                           final Action entryAction) {
 
         final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.loginFlowDefinitionRegistry));
         if (entryAction != null) {
@@ -542,7 +560,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param subflow the subflow
      * @return the subflow state
      */
-    protected SubflowState createSubflowState(final Flow flow, final String id, final String subflow) {
+    @Override
+    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow) {
         return createSubflowState(flow, id, subflow, null);
     }
 

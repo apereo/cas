@@ -12,7 +12,6 @@ import org.ldaptive.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collections;
@@ -27,7 +26,6 @@ import java.util.Collections;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("ldapAcceptableUsagePolicyRepository")
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
 

@@ -82,5 +82,8 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         }
     }
 
-
+    @Override
+    public boolean isEnabled() {
+        return this.signingKey != null;
+    }
 }

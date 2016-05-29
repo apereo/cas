@@ -8,7 +8,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.registry.TicketRegistryState;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class SessionMonitorJpaTests {
     public void verifyObserveOkJpaTicketRegistry() throws Exception {
         addTicketsToRegistry(this.jpaRegistry, 5, 5);
         assertEquals(10, this.jpaRegistry.getTickets().size());
-        this.monitor.setTicketRegistry((TicketRegistryState) this.jpaRegistry);
+        this.monitor.setTicketRegistry(this.jpaRegistry);
         final SessionStatus status = this.monitor.observe();
         assertEquals(5, status.getSessionCount());
         assertEquals(5, status.getServiceTicketCount());
