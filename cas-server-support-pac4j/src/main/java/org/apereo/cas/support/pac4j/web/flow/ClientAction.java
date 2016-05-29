@@ -28,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.action.AbstractAction;
@@ -56,8 +54,6 @@ import java.util.Set;
  * @since 3.5.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@RefreshScope
-@Component("clientAction")
 public class ClientAction extends AbstractAction {
     /**
      * All the urls and names of the pac4j clients.

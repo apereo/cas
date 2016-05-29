@@ -1,7 +1,6 @@
 package org.apereo.cas.support.pac4j;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link Pac4jProperties}.
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("pac4jProperties")
 @ConfigurationProperties(
         prefix = Pac4jConfiguration.CAS_PAC4J_PREFIX
 )

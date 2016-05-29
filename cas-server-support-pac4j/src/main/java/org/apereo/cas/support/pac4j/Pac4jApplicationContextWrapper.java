@@ -5,7 +5,6 @@ import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -15,7 +14,6 @@ import javax.annotation.PostConstruct;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-@Component("pac4jApplicationContextWrapper")
 public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired

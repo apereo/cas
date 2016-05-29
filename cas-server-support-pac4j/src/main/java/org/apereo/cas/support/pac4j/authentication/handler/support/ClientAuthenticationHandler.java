@@ -14,8 +14,6 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,15 +26,12 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
-@Component("clientAuthenticationHandler")
 @SuppressWarnings("unchecked")
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
     /**
      * The clients for authentication.
      */
-    
     @Autowired
     @Qualifier("builtClients")
     private Clients clients;
