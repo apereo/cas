@@ -32,7 +32,7 @@ public class HazelcastSessionConfiguration {
      *
      * @return the hazelcast instance
      */
-    @Bean(name="hazelcastInstance")
+    @Bean
     public HazelcastInstance hazelcastInstance() {
         try {
             final URL configUrl = this.configLocation.getURL();

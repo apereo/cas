@@ -19,7 +19,7 @@ public class CasCoreAuditConfiguration {
      *
      * @return the ticket as first parameter resource resolver
      */
-    @Bean(name="ticketResourceResolver")
+    @Bean
     public TicketAsFirstParameterResourceResolver ticketResourceResolver() {
         return new TicketAsFirstParameterResourceResolver();
     }
@@ -29,7 +29,7 @@ public class CasCoreAuditConfiguration {
      *
      * @return the message bundle aware resource resolver
      */
-    @Bean(name="messageBundleAwareResourceResolver")
+    @Bean
     public MessageBundleAwareResourceResolver messageBundleAwareResourceResolver() {
         return new MessageBundleAwareResourceResolver();
     }

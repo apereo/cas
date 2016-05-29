@@ -20,7 +20,7 @@ public class MongoSessionConfiguration {
      *
      * @return the jdk mongo session converter
      */
-    @Bean(name="jdkMongoSessionConverter")
+    @Bean
     public JdkMongoSessionConverter jdkMongoSessionConverter() {
         return new JdkMongoSessionConverter();
     }

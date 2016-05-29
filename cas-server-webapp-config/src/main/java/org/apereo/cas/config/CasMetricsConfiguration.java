@@ -57,7 +57,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the servlet registration bean
      */
-    @Bean(name="metricsServlet")
+    @Bean
     public ServletRegistrationBean metricsServlet() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
         bean.setEnabled(true);

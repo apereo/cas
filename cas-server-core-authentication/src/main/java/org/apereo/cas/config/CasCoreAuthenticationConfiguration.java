@@ -26,44 +26,44 @@ import org.springframework.stereotype.Component;
 @Configuration("casCoreAuthenticationConfiguration")
 public class CasCoreAuthenticationConfiguration {
     
-    @Bean(name="authenticationExceptionHandler")
+    @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
         return new AuthenticationExceptionHandler();
     }
     
     @RefreshScope
-    @Bean(name="requiredHandlerAuthenticationPolicy")
+    @Bean
     public AuthenticationPolicy requiredHandlerAuthenticationPolicy() {
         return new RequiredHandlerAuthenticationPolicy();
     }
 
-    @Bean(name="anyAuthenticationPolicy")
+    @Bean
     public AuthenticationPolicy anyAuthenticationPolicy() {
         return new AnyAuthenticationPolicy();
     }
 
-    @Bean(name="acceptAnyAuthenticationPolicyFactory")
+    @Bean
     public ContextualAuthenticationPolicyFactory acceptAnyAuthenticationPolicyFactory() {
         return new AcceptAnyAuthenticationPolicyFactory();
     }
     
-    @Bean(name="acceptUsersAuthenticationHandler")
+    @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         return new AcceptUsersAuthenticationHandler();
     }
 
-    @Bean(name="allAuthenticationPolicy")
+    @Bean
     public AuthenticationPolicy allAuthenticationPolicy() {
         return new AllAuthenticationPolicy();
     }
 
     @RefreshScope
-    @Bean(name="authenticationContextValidator")
+    @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
         return new AuthenticationContextValidator();
     }
 
-    @Bean(name="cacheCredentialsMetaDataPopulator")
+    @Bean
     public AuthenticationMetaDataPopulator cacheCredentialsMetaDataPopulator() {
         return new CacheCredentialsMetaDataPopulator();
     }

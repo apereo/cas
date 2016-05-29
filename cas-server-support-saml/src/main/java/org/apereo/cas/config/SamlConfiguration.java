@@ -44,7 +44,7 @@ public class SamlConfiguration {
      * @return the saml 10 success response view
      */
     @RefreshScope
-    @Bean(name="casSamlServiceSuccessView")
+    @Bean
     public Saml10SuccessResponseView casSamlServiceSuccessView() {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
@@ -61,7 +61,7 @@ public class SamlConfiguration {
      * @return the saml 10 failure response view
      */
     @RefreshScope
-    @Bean(name="casSamlServiceFailureView")
+    @Bean
     public Saml10FailureResponseView casSamlServiceFailureView() {
         final Saml10FailureResponseView view = new Saml10FailureResponseView();
         view.setServicesManager(this.servicesManager);

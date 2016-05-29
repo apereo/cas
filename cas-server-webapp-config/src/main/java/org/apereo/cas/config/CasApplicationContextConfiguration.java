@@ -157,7 +157,7 @@ public class CasApplicationContextConfiguration {
      * @return the controller
      */
     @RefreshScope
-    @Bean(name="rootController")
+    @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
@@ -194,7 +194,7 @@ public class CasApplicationContextConfiguration {
      * @param factoryBean the factory bean
      * @return the person attribute dao
      */
-    @Bean(name="stubAttributeRepository")
+    @Bean
     public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
                                                    final FactoryBean<Properties> factoryBean) {
         try {
@@ -211,7 +211,7 @@ public class CasApplicationContextConfiguration {
      *
      * @return the factory bean
      */
-    @Bean(name="casAttributesToResolve")
+    @Bean
     public FactoryBean<Properties> casAttributesToResolve() {
         final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
         bean.setPrefix("cas.attrs.resolve.");

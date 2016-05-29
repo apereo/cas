@@ -139,7 +139,7 @@ public class RadiusMultifactorConfiguration {
      * @return the list
      */
     @RefreshScope
-    @Bean(name="radiusTokenServers")
+    @Bean
     public List radiusTokenServers() {
         final List<JRadiusServerImpl> list = new ArrayList<>();
 

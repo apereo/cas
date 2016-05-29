@@ -41,7 +41,7 @@ public class OpenIdConfiguration {
      *
      * @return the delegating controller
      */
-    @Bean(name="openidDelegatingController")
+    @Bean
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
         controller.setDelegates(Arrays.asList(
@@ -56,7 +56,7 @@ public class OpenIdConfiguration {
      *
      * @return the association controller
      */
-    @Bean(name="smartOpenIdAssociationController")
+    @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController();
     }
@@ -67,7 +67,7 @@ public class OpenIdConfiguration {
      *
      * @return the signature verification controller
      */
-    @Bean(name="openIdValidateController")
+    @Bean
     public AbstractDelegateController openIdValidateController() {
         return new OpenIdValidateController();
     }
@@ -78,7 +78,7 @@ public class OpenIdConfiguration {
      * @return the server manager
      */
     @RefreshScope
-    @Bean(name="serverManager")
+    @Bean
     public ServerManager serverManager() {
         final ServerManager manager = new ServerManager();
         manager.setOPEndpointUrl(this.endpoint);

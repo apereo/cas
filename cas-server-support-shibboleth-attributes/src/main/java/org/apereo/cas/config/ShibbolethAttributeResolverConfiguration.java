@@ -40,7 +40,7 @@ public class ShibbolethAttributeResolverConfiguration {
     private PlaceholderConfigurerSupport placeholderConfigurerSupport = new PropertyPlaceholderConfigurer();
 
     @RefreshScope
-    @Bean(name="attributeResolver")
+    @Bean
     @Scope("singleton")
     AttributeResolver attributeResolver() {
         final ApplicationContext tempApplicationContext = SpringSupport.newContext(

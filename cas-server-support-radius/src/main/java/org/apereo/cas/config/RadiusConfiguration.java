@@ -111,7 +111,7 @@ public class RadiusConfiguration {
      * @return the j radius server
      */
     @RefreshScope
-    @Bean(name="radiusServer")
+    @Bean
     public JRadiusServerImpl radiusServer() {
         final JRadiusServerImpl impl = new JRadiusServerImpl(this.protocol, radiusClientFactory());
         impl.setRetries(this.retries);
@@ -130,7 +130,7 @@ public class RadiusConfiguration {
      * @return the list
      */
     @RefreshScope
-    @Bean(name="radiusServers")
+    @Bean
     public List radiusServers() {
         final List<JRadiusServerImpl> list = new ArrayList<>();
         list.add(radiusServer());
@@ -143,7 +143,7 @@ public class RadiusConfiguration {
      * @return the radius client factory
      */
     @RefreshScope
-    @Bean(name="radiusClientFactory")
+    @Bean
     public RadiusClientFactory radiusClientFactory() {
         final RadiusClientFactory factory = new RadiusClientFactory();
         factory.setAccountingPort(this.accountingPort);

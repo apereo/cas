@@ -51,7 +51,7 @@ public class GoogleAuthentiacatorConfiguration {
      * @return the google authenticator account registry
      */
     @RefreshScope
-    @Bean(name="googleAuthenticatorAccountRegistry")
+    @Bean
     public GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry() {
         return this.googleAuthenticatorAccountRegistry;
     }

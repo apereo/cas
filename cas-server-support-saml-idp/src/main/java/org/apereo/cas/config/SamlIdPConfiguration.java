@@ -20,7 +20,7 @@ public class SamlIdPConfiguration {
      *
      * @return the resource
      */
-    @Bean(name="templateSpMetadata")
+    @Bean
     public Resource templateSpMetadata() {
         return new ClassPathResource("template-sp-metadata.xml");
     }

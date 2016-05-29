@@ -51,7 +51,7 @@ public class HazelcastInstanceConfiguration {
      * @return HazelcastInstance bean.
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
-    @Bean(name="hazelcast")
+    @Bean
     public HazelcastInstance hazelcast(@Value("${hz.config.location:NO_CONFIG_PROVIDED}") final String hazelcastConfigLocation,
                                        final ResourceLoader resourceLoader) throws IOException {
 

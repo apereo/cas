@@ -27,7 +27,7 @@ public class CasValidationConfiguration {
      *
      * @return the list
      */
-    @Bean(name="validationServiceSelectionStrategies")
+    @Bean
     public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
         final List<ValidationServiceSelectionStrategy> list = new ArrayList<>();
         list.add(this.defaultStrategy);

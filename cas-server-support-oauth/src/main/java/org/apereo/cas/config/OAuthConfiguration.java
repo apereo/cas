@@ -167,7 +167,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      * @return the oauth 20 callback authorize view resolver
      */
     @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
-    @Bean(name="callbackAuthorizeViewResolver")
+    @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {};
     }

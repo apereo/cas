@@ -19,7 +19,7 @@ public class CasCoreConfiguration {
      *
      * @return the central authentication service
      */
-    @Bean(name="centralAuthenticationService")
+    @Bean
     public CentralAuthenticationService centralAuthenticationService() {
         return new CentralAuthenticationServiceImpl();
     }

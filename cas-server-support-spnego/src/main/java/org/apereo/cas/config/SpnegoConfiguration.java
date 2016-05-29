@@ -20,7 +20,7 @@ public class SpnegoConfiguration {
      * @return the authentication
      */
     @RefreshScope
-    @Bean(name="spnegoAuthentication")
+    @Bean
     public Authentication spnegoAuthentication() {
         return new Authentication();
     }
