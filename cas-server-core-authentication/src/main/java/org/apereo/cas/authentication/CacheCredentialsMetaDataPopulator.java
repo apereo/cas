@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("cacheCredentialsMetaDataPopulator")
 public class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());

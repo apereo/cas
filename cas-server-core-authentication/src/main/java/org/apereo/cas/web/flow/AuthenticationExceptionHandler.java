@@ -1,20 +1,18 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.InvalidLoginLocationException;
 import org.apereo.cas.authentication.InvalidLoginTimeException;
+import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -26,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 
 /**
@@ -43,8 +41,6 @@ import static java.util.stream.Collectors.toList;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("authenticationExceptionHandler")
 public class AuthenticationExceptionHandler {
 
     /** State name when no matching exception is found. */

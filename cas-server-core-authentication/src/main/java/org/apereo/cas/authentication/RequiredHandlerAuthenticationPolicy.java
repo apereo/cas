@@ -3,8 +3,6 @@ package org.apereo.cas.authentication;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
@@ -13,25 +11,28 @@ import org.springframework.stereotype.Component;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("requiredHandlerAuthenticationPolicy")
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
     /** Authentication handler name that is required to satisfy policy. */
-    
+    @Value("${cas.authn.policy.req.handlername:handlerName}")
     private String requiredHandlerName;
 
     /** Flag to try all credentials before policy is satisfied. */
+    @Value("${cas.authn.policy.req.tryall:false}")
     private boolean tryAll;
+
+    /**
+     * Instantiates a new Required handler authentication policy.
+     */
+    public RequiredHandlerAuthenticationPolicy() {
+    }
 
     /**
      * Instantiates a new required handler authentication policy.
      *
      * @param requiredHandlerName the required handler name
      */
-    @Autowired
-    public RequiredHandlerAuthenticationPolicy(@Value("${cas.authn.policy.req.handlername:handlerName}")
-                                                   final String requiredHandlerName) {
+    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
         this.requiredHandlerName = requiredHandlerName;
     }
 
@@ -42,9 +43,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
      *
      * @param tryAll True to force all credentials to be authenticated, false otherwise.
      */
-    @Autowired
-    public void setTryAll(@Value("${cas.authn.policy.req.tryall:false}")
-                              final boolean tryAll) {
+    public void setTryAll(final boolean tryAll) {
         this.tryAll = tryAll;
     }
 

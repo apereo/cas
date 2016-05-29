@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
+import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
-
-import com.google.common.base.Predicate;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -21,11 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
@@ -47,8 +44,6 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RefreshScope
-@Component("servicesManager")
 public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);

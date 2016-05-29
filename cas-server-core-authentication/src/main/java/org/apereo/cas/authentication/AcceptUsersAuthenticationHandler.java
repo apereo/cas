@@ -35,8 +35,6 @@ import java.util.regex.Pattern;
  *
  * @since 3.0.0
  */
-@RefreshScope
-@Component("acceptUsersAuthenticationHandler")
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */

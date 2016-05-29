@@ -13,7 +13,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreConfiguration")
 public class CasCoreConfiguration {
-    
+
+    /**
+     * Central authentication service implementation.
+     *
+     * @return the central authentication service
+     */
     @Bean(name="centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService() {
         return new CentralAuthenticationServiceImpl();

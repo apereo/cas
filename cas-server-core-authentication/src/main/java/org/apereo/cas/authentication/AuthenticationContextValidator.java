@@ -29,8 +29,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 4.3
  */
-@RefreshScope
-@Component("authenticationContextValidator")
 public class AuthenticationContextValidator {
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
