@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author Misagh Moayyed
  * @since 4.2
- */w
+ */
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 

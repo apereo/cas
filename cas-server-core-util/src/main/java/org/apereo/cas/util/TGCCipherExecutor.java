@@ -1,9 +1,6 @@
 package org.apereo.cas.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link TGCCipherExecutor} that reads TGC keys from the CAS config
@@ -12,8 +9,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("tgcCipherExecutor")
 public class TGCCipherExecutor extends BaseStringCipherExecutor {
 
     /**
@@ -23,9 +18,7 @@ public class TGCCipherExecutor extends BaseStringCipherExecutor {
      * @param secretKeySigning    the secret key signing
      */
     @Autowired
-    public TGCCipherExecutor(@Value("${tgc.encryption.key:}")
-                             final String secretKeyEncryption,
-                             @Value("${tgc.signing.key:}")
+    public TGCCipherExecutor(final String secretKeyEncryption,
                              final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }

@@ -36,8 +36,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
@@ -431,15 +429,11 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * The type Default http client.
      */
-    @RefreshScope
-    @Component("httpClient")
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {}
 
     /**
      * The type No redirect http client.
      */
-    @RefreshScope
-    @Component("noRedirectHttpClient")
     public static class NoRedirectHttpClient extends SslTrustStoreAwareHttpClient {
         /**
          * Instantiates a new No redirect http client.
@@ -453,8 +447,6 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * The type Ssl trust store aware http client.
      */
-    @RefreshScope
-    @Component("supportsTrustStoreSslSocketFactoryHttpClient")
     public static class SslTrustStoreAwareHttpClient extends DefaultHttpClient {
         @Override
         @Autowired

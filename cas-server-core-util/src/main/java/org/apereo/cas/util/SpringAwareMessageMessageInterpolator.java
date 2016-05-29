@@ -1,11 +1,9 @@
 package org.apereo.cas.util;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.stereotype.Component;
 
 import javax.validation.MessageInterpolator;
 import javax.validation.Validation;
@@ -19,8 +17,6 @@ import java.util.Locale;
 
  * @since 3.4
  */
-@RefreshScope
-@Component("messageInterpolator")
 public class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 
     private MessageInterpolator defaultMessageInterpolator =
