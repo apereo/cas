@@ -72,7 +72,7 @@ public class CasAuditTrailConfiguration {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect(final CentralAuthenticationService centralAuthenticationService) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(this.appCode,
-                auditablePrincipalResolver(centralAuthenticationService), ImmutableList.of(auditTrailManager()), auditActionResolverMap(),
+                auditablePrincipalResolver(centralAuthenticationService), ImmutableList.of(slf4jAuditTrailManager()), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!this.ignoreAuditFailures);
         return aspect;
@@ -84,7 +84,7 @@ public class CasAuditTrailConfiguration {
      * @return the audit trail manager
      */
     @Bean
-    public AuditTrailManager auditTrailManager() {
+    public AuditTrailManager slf4jAuditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(this.useSingleLine);
         mgmr.setEntrySeparator(this.entrySeparator);
