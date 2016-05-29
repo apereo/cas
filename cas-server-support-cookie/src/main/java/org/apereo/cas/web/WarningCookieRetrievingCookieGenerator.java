@@ -3,16 +3,12 @@ package org.apereo.cas.web;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Generates the warning cookie.
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("warnCookieGenerator")
 public class WarningCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
 
     @Override

@@ -1,18 +1,13 @@
 package org.apereo.cas.web.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Generates the tgc cookie.
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("ticketGrantingTicketCookieGenerator")
 public class TGCCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
 
     /**
@@ -20,9 +15,7 @@ public class TGCCookieRetrievingCookieGenerator extends CookieRetrievingCookieGe
      *
      * @param casCookieValueManager the cas cookie value manager
      */
-    @Autowired
-    public TGCCookieRetrievingCookieGenerator(@Qualifier("cookieValueManager")
-        final CookieValueManager casCookieValueManager) {
+    public TGCCookieRetrievingCookieGenerator(final CookieValueManager casCookieValueManager) {
         super(casCookieValueManager);
     }
 

@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
@@ -46,7 +48,7 @@ public class CouchbaseTicketRegistryConfiguration {
      * @return the couchbase client factory
      */
     @RefreshScope
-    
+    @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
         factory.setNodes(StringUtils.commaDelimitedListToSet(this.nodeSet));
@@ -54,5 +56,11 @@ public class CouchbaseTicketRegistryConfiguration {
         factory.setBucketName(this.bucket);
         factory.setPassword(this.password);
         return factory;
+    }
+
+    @RefreshScope
+    @Bean
+    public CouchbaseTicketRegistry couchbaseTicketRegistry() {
+        return new CouchbaseTicketRegistry();
     }
 }

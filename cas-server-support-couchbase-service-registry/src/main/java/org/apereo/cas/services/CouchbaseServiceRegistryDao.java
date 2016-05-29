@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -37,8 +35,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("couchbaseServiceRegistryDao")
 public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     private static final View ALL_SERVICES_VIEW = DefaultView.create(
             "all_services",

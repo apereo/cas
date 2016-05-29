@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("defaultCookieValueManager")
 public class DefaultCasCookieValueManager implements CookieValueManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final char COOKIE_FIELD_SEPARATOR = '@';

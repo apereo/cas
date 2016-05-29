@@ -24,10 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -37,6 +35,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +43,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("groovyShellService")
 public class GroovyShellService {
     private static final String CONTEXT_KEY = "ctx";
 
@@ -63,7 +60,7 @@ public class GroovyShellService {
     @Value("${cas.console.socket.port:6789}")
     private int port;
 
-    private Map<String, Object> bindings;
+    private Map<String, Object> bindings = new HashMap<>();
     
     @Autowired
     private ApplicationContext context;
@@ -71,7 +68,7 @@ public class GroovyShellService {
     /**
      * Instantiates a new Groovy service.
      */
-    protected GroovyShellService() {
+    public GroovyShellService() {
     }
 
     /**
