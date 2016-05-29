@@ -23,7 +23,6 @@ import java.net.InetAddress;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Service("maxmindDatabaseGeoLocationService")
 public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 

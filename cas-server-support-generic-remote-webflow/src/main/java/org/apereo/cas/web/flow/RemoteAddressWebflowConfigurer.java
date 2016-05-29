@@ -11,7 +11,6 @@ import org.springframework.webflow.engine.Flow;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("remoteAddressWebflowConfigurer")
 public class RemoteAddressWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override

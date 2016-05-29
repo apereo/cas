@@ -19,8 +19,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("hazelcastMonitor")
 public class HazelcastMonitor extends AbstractCacheMonitor {
 
     @Autowired
