@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -17,7 +16,6 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("samlApplicationContextWrapper")
 public class SamlApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired

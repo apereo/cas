@@ -4,7 +4,6 @@ import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -16,7 +15,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("samlIdPApplicationContextWrapper")
 public class SamlIdPApplicationContextWrapper extends BaseApplicationContextWrapper {
 
     @Autowired

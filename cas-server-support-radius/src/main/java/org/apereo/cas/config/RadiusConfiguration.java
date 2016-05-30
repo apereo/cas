@@ -4,6 +4,10 @@ import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusServer;
+import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.web.RadiusApplicationContextWrapper;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -154,4 +158,13 @@ public class RadiusConfiguration {
         return factory;
     }
     
+    @Bean
+    public AuthenticationHandler radiusAuthenticationHandler() {
+        return new RadiusAuthenticationHandler();
+    }
+    
+    @Bean
+    public BaseApplicationContextWrapper radiusApplicationContextWrapper() {
+        return new RadiusApplicationContextWrapper();
+    }
 }

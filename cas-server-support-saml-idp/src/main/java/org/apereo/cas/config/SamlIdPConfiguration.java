@@ -1,6 +1,35 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.support.saml.SamlIdPApplicationContextWrapper;
+import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
+import org.apereo.cas.support.saml.web.idp.metadata.ShibbolethIdpMetadataAndCertificatesGenerationService;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthnContextClassRefBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.DefaultAuthnContextClassRefBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAssertionBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAttributeStatementBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAuthNStatementBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlConditionsBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlNameIdBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlSubjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Subject;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -36,4 +65,91 @@ public class SamlIdPConfiguration {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
     }
     
+    @Bean
+    public BaseApplicationContextWrapper samlIdPApplicationContextWrapper() {
+        return new SamlIdPApplicationContextWrapper();
+    }
+
+    @Bean
+    public ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
+        return new SamlIdPEntityIdValidationServiceSelectionStrategy();
+    }
+
+    @Bean
+    @RefreshScope
+    public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
+        return new ChainingMetadataResolverCacheLoader();
+    }
+
+    @Bean
+    @RefreshScope
+    public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
+        return new DefaultSamlRegisteredServiceCachingMetadataResolver();
+    }
+    
+
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder() {
+        return new SamlProfileSamlResponseBuilder();
+    }
+    
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder() {
+        return new SamlProfileSamlSubjectBuilder();
+    }
+    
+    @Bean
+    @RefreshScope
+    public SamlObjectEncrypter samlObjectEncrypter() {
+        return new SamlObjectEncrypter();
+    }
+    
+    @Bean
+    @RefreshScope
+    public SamlObjectSigner samlObjectSigner() {
+        return new SamlObjectSigner();
+    }
+    
+    @Bean
+    public SamlIdpMetadataAndCertificatesGenerationService shibbolethIdpMetadataAndCertificatesGenerationService() {
+        return new ShibbolethIdpMetadataAndCertificatesGenerationService();
+    }
+
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder() {
+        return new SamlProfileSamlNameIdBuilder();
+    }
+
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder() {
+        return new SamlProfileSamlConditionsBuilder();
+    }
+
+    @Bean
+    @RefreshScope
+    public AuthnContextClassRefBuilder defaultAuthnContextClassRefBuilder() {
+        return new DefaultAuthnContextClassRefBuilder();
+    }
+
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
+        return new SamlProfileSamlAssertionBuilder();
+    }
+
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder() {
+        return new SamlProfileSamlAuthNStatementBuilder();
+    }
+
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
+        return new SamlProfileSamlAttributeStatementBuilder();
+    }
 }

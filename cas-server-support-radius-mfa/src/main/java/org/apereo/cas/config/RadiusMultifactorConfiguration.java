@@ -1,9 +1,20 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
-import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
+import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
+import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.web.RadiusMultifactorApplicationContextWrapper;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,5 +173,37 @@ public class RadiusMultifactorConfiguration {
         
         list.add(impl);
         return list;
+    }
+    
+    @RefreshScope
+    @Bean
+    public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
+        return new RadiusMultifactorAuthenticationProvider();
+    }
+    
+    @RefreshScope
+    @Bean
+    public AuthenticationHandler radiusTokenAuthenticationHandler() {
+        return new RadiusTokenAuthenticationHandler();
+    }
+
+    @Bean
+    public BaseApplicationContextWrapper radiusMultifactorApplicationContextWrapper() {
+        return new RadiusMultifactorApplicationContextWrapper();
+    }
+
+    @Bean
+    public Action radiusAuthenticationWebflowAction() {
+        return new RadiusAuthenticationWebflowAction();
+    }
+
+    @Bean
+    public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
+        return new RadiusAuthenticationWebflowEventResolver();
+    }
+
+    @Bean
+    public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
+        return new RadiusMultifactorWebflowConfigurer();
     }
 }

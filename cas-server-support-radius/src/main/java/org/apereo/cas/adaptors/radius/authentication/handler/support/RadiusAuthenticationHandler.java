@@ -8,8 +8,6 @@ import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.Pair;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
@@ -25,8 +23,6 @@ import java.util.Optional;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("radiusAuthenticationHandler")
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */

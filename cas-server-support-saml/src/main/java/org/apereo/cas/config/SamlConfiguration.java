@@ -1,9 +1,18 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.SamlApplicationContextWrapper;
+import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
+import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
+import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,6 +76,31 @@ public class SamlConfiguration {
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
         return view;
+    }
+    
+    @Bean
+    public BaseApplicationContextWrapper samlApplicationContextWrapper() {
+        return new SamlApplicationContextWrapper();
+    }
+
+    @Bean
+    public AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator() {
+        return new SamlAuthenticationMetaDataPopulator();
+    }
+
+    @Bean
+    public ServiceFactory<SamlService> samlServiceFactory() {
+        return new SamlServiceFactory();
+    }
+
+    @Bean
+    public Saml10ObjectBuilder saml10ObjectBuilder() {
+        return new Saml10ObjectBuilder();
+    }
+
+    @Bean
+    public SamlCompliantUniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
+        return new SamlCompliantUniqueTicketIdGenerator();
     }
     
 }

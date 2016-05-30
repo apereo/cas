@@ -12,10 +12,8 @@ import org.jdom.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
@@ -29,8 +27,6 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("googleAccountsServiceFactory")
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
 
     @Autowired

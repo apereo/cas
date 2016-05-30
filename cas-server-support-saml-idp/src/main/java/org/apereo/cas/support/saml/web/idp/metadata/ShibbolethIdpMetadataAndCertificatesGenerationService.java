@@ -6,8 +6,6 @@ import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGener
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -24,8 +22,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("shibbolethIdpMetadataAndCertificatesGenerationService")
 public class ShibbolethIdpMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());

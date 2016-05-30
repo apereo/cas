@@ -18,10 +18,10 @@ javadoc {
 war {
     manifest {
         attributes("Implementation-Title": project.name,
-                "Implementation-Vendor": project.group,
-                "Created-By": project.group,
-                "Implementation-Date": java.time.ZonedDateTime.now(),
-                "Implementation-Version": project.version)
+                   "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Date": java.time.ZonedDateTime.now(),
+                    "Implementation-Version": project.version)
     }
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
 }
@@ -68,12 +68,12 @@ dependencies {
     compile project(':cas-server-support-validation')
 
     providedRuntime libraries.springboottomcat
-    compile libraries.pac4j
-    compile libraries.springcloud
-    compile libraries.springboot
-    compile libraries.thmyeleaf
+    runtime libraries.pac4j
+    runtime libraries.springcloud
+    runtime libraries.springboot
+    runtime libraries.thmyeleaf
     runtime libraries.groovy
-    compile libraries.spring
+    runtime libraries.spring
     runtime libraries.cassecurityfilter
     runtime libraries.metrics
     runtime libraries.hibernate

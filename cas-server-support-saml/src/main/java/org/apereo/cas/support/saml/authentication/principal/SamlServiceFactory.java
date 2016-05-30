@@ -3,8 +3,6 @@ package org.apereo.cas.support.saml.authentication.principal;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +14,6 @@ import java.io.BufferedReader;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("samlServiceFactory")
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     private static final int CONST_REQUEST_ID_LENGTH = 11;
