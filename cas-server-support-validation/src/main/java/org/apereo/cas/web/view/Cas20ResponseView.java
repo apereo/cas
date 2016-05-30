@@ -45,8 +45,7 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
         public Success() {
             super();
         }
-
-        @Autowired(required=false)
+        
         @Override
         public void setView(@Qualifier("cas2SuccessView") final View view) {
             super.setView(view);
