@@ -18,11 +18,11 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -58,8 +58,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     
     private ServicesManager servicesManager;
 
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Resource(name="webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     /**

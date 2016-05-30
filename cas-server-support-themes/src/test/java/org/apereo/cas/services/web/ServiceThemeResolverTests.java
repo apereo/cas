@@ -17,9 +17,9 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
+import static org.junit.Assert.*;
+        
 /**
  * @author Scott Battaglia
  * @since 3.1

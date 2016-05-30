@@ -12,7 +12,6 @@ import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,6 +25,7 @@ import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -52,30 +52,26 @@ public class CasApplicationContextConfiguration {
     /**
      * The Service ticket unique id generator.
      */
-    @Autowired
-    @Qualifier("serviceTicketUniqueIdGenerator")
+    @Resource(name="serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
     /**
      * The Web application service factory.
      */
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Resource(name="webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     /**
      * The Default argument extractor.
      */
     
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
+    @Resource(name="defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
 
     /**
      * The Cas spring bean job factory.
      */
-    @Autowired
-    @Qualifier("casSpringBeanJobFactory")
+    @Resource(name="casSpringBeanJobFactory")
     private SpringBeanJobFactory casSpringBeanJobFactory;
 
     /**

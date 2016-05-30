@@ -6,10 +6,9 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -19,20 +18,16 @@ import javax.annotation.PostConstruct;
  */
 public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Autowired
-    @Qualifier("serviceTicketUniqueIdGenerator")
+    @Resource(name="serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
-    @Autowired
-    @Qualifier("openIdCredentialsAuthenticationHandler")
+    @Resource(name="openIdCredentialsAuthenticationHandler")
     private AuthenticationHandler openIdCredentialsAuthenticationHandler;
 
-    @Autowired
-    @Qualifier("openIdPrincipalResolver")
+    @Resource(name="openIdPrincipalResolver")
     private PrincipalResolver openIdPrincipalResolver;
 
-    @Autowired
-    @Qualifier("openIdServiceFactory")
+    @Resource(name="openIdServiceFactory")
     private OpenIdServiceFactory openIdServiceFactory;
 
     /**

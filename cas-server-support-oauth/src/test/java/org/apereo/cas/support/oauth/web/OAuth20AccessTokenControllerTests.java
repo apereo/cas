@@ -32,8 +32,6 @@ import org.junit.runner.RunWith;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -41,6 +39,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,32 +93,25 @@ public class OAuth20AccessTokenControllerTests {
 
     private static final int DELTA = 2;
 
-    @Autowired
-    @Qualifier("defaultOAuthCodeFactory")
+    @Resource(name="defaultOAuthCodeFactory")
     private DefaultOAuthCodeFactory oAuthCodeFactory;
 
-    @Autowired
-    @Qualifier("defaultRefreshTokenFactory")
+    @Resource(name="defaultRefreshTokenFactory")
     private DefaultRefreshTokenFactory oAuthRefreshTokenFactory;
 
-    @Autowired
-    @Qualifier("accessTokenController")
+    @Resource(name="accessTokenController")
     private OAuth20AccessTokenController oAuth20AccessTokenController;
 
-    @Autowired
-    @Qualifier("oAuthValidator")
+    @Resource(name="oAuthValidator")
     private OAuthValidator validator;
 
-    @Autowired
-    @Qualifier("oauthSecConfig")
+    @Resource(name="oauthSecConfig")
     private Config oauthSecConfig;
 
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
-    @Autowired
-    @Qualifier("requiresAuthenticationAccessTokenInterceptor")
+    @Resource(name="requiresAuthenticationAccessTokenInterceptor")
     private RequiresAuthenticationInterceptor requiresAuthenticationInterceptor;
 
     @Before

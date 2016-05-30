@@ -23,6 +23,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
+
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
  * credential such as client certificates, NTLM, etc.
@@ -37,8 +39,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Principal factory instance. */
-    @Autowired
-    @Qualifier("principalFactory")
+    @Resource(name="principalFactory")
     protected PrincipalFactory principalFactory;
 
     
@@ -47,8 +48,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** Instance of warn cookie generator. */

@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
+
 import static org.junit.Assert.*;
 
 /**
@@ -43,8 +45,7 @@ public class MultifactorAuthenticationTests {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService cas;
 
     @Test

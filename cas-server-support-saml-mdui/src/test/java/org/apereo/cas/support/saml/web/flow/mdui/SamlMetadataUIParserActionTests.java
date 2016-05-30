@@ -3,13 +3,13 @@ package org.apereo.cas.support.saml.web.flow.mdui;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
 
@@ -21,12 +21,10 @@ import static org.junit.Assert.*;
  */
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
-    @Autowired
-    @Qualifier("samlMetadataUIParserAction")
+    @Resource(name="samlMetadataUIParserAction")
     private SamlMetadataUIParserAction samlMetadataUIParserAction;
 
-    @Autowired
-    @Qualifier("samlDynamicMetadataUIParserAction")
+    @Resource(name="samlDynamicMetadataUIParserAction")
     private SamlMetadataUIParserAction samlDynamicMetadataUIParserAction;
 
     @Test

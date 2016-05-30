@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.handler.support;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 
+import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
 
 import org.apereo.cas.authentication.HandlerResult;
@@ -13,8 +14,6 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -36,8 +35,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
 
     /** Instance of Apache Commons HttpClient. */
     
-    @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+    @Resource(name="supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     @Override

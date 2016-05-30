@@ -20,7 +20,6 @@ import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +28,8 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link GoogleAuthentiacatorConfiguration}.
@@ -42,12 +43,10 @@ public class GoogleAuthentiacatorConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
-    @Qualifier("builder")
+    @Resource(name="builder")
     private FlowBuilderServices builder;
 
-    @Autowired
-    @Qualifier("defaultGoogleAuthenticatorAccountRegistry")
+    @Resource(name="defaultGoogleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry;
     
     /**

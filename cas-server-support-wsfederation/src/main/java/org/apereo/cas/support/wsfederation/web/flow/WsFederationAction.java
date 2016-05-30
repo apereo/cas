@@ -20,6 +20,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -45,18 +46,15 @@ public class WsFederationAction extends AbstractAction {
     private transient Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
 
     
-    @Autowired
-    @Qualifier("wsFederationHelper")
+    @Resource(name="wsFederationHelper")
     private WsFederationHelper wsFederationHelper;
 
     
-    @Autowired
-    @Qualifier("wsFedConfig")
+    @Resource(name="wsFedConfig")
     private WsFederationConfiguration configuration;
 
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     

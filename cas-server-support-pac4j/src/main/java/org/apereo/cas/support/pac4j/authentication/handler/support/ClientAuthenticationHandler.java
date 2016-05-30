@@ -12,9 +12,8 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.GeneralSecurityException;
@@ -32,8 +31,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     /**
      * The clients for authentication.
      */
-    @Autowired
-    @Qualifier("builtClients")
+    @Resource(name="builtClients")
     private Clients clients;
 
     @Override

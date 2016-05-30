@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link GoogleAuthenticatorAuthenticationMetaDataPopulator} which inserts the
@@ -22,13 +22,11 @@ public class GoogleAuthenticatorAuthenticationMetaDataPopulator implements Authe
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
 
-    @Autowired
-    @Qualifier("googleAuthenticatorAuthenticationHandler")
+    @Resource(name="googleAuthenticatorAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
 
-    @Autowired
-    @Qualifier("googleAuthenticatorAuthenticationProvider")
+    @Resource(name="googleAuthenticatorAuthenticationProvider")
     private MultifactorAuthenticationProvider provider;
 
     @Override

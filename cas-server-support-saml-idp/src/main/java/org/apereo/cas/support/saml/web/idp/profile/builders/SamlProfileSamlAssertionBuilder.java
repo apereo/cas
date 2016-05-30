@@ -9,10 +9,9 @@ import org.apereo.cas.support.saml.SamlException;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Statement;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
@@ -33,24 +32,19 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     @Value("${cas.samlidp.entityid:}")
     private String entityId;
 
-    @Autowired
-    @Qualifier("samlProfileSamlAuthNStatementBuilder")
+    @Resource(name="samlProfileSamlAuthNStatementBuilder")
     private SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder;
 
-    @Autowired
-    @Qualifier("samlProfileSamlAttributeStatementBuilder")
+    @Resource(name="samlProfileSamlAttributeStatementBuilder")
     private SamlProfileSamlAttributeStatementBuilder samlProfileSamlAttributeStatementBuilder;
 
-    @Autowired
-    @Qualifier("samlProfileSamlSubjectBuilder")
+    @Resource(name="samlProfileSamlSubjectBuilder")
     private SamlProfileSamlSubjectBuilder samlProfileSamlSubjectBuilder;
 
-    @Autowired
-    @Qualifier("samlProfileSamlConditionsBuilder")
+    @Resource(name="samlProfileSamlConditionsBuilder")
     private SamlProfileSamlConditionsBuilder samlProfileSamlConditionsBuilder;
 
-    @Autowired
-    @Qualifier("samlObjectSigner")
+    @Resource(name="samlObjectSigner")
     private SamlObjectSigner samlObjectSigner;
 
 

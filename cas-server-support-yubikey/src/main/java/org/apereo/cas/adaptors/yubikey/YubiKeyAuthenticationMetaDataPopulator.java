@@ -6,9 +6,9 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link YubiKeyAuthenticationMetaDataPopulator} which inserts the
@@ -22,13 +22,11 @@ public class YubiKeyAuthenticationMetaDataPopulator implements AuthenticationMet
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
 
-    @Autowired
-    @Qualifier("yubikeyAuthenticationHandler")
+    @Resource(name="yubikeyAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
 
-    @Autowired
-    @Qualifier("yubikeyAuthenticationProvider")
+    @Resource(name="yubikeyAuthenticationProvider")
     private MultifactorAuthenticationProvider provider;
 
     @Override

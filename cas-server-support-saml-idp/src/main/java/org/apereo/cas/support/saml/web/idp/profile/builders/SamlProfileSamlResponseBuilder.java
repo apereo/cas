@@ -21,10 +21,10 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
@@ -44,8 +44,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     /**
      * The Saml object encoder.
      */
-    @Autowired
-    @Qualifier("samlObjectSigner")
+    @Resource(name="samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
@@ -57,12 +56,10 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     @Value("${cas.samlidp.entityid:}")
     private String entityId;
 
-    @Autowired
-    @Qualifier("samlProfileSamlAssertionBuilder")
+    @Resource(name="samlProfileSamlAssertionBuilder")
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
 
-    @Autowired
-    @Qualifier("samlObjectEncrypter")
+    @Resource(name="samlObjectEncrypter")
     private SamlObjectEncrypter samlObjectEncrypter;
 
     @Override

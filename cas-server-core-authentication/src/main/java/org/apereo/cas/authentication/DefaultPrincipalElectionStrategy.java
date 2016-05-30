@@ -5,9 +5,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.Map;
 
@@ -22,8 +21,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalElectionStrategy.class);
     private static final long serialVersionUID = 6704726217030836315L;
 
-    @Autowired
-    @Qualifier("principalFactory")
+    @Resource(name="principalFactory")
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Override

@@ -11,8 +11,6 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
@@ -35,8 +33,7 @@ public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapt
       **/
     private int refreshIntervalInMinutes = DEFAULT_METADATA_REFRESH_INTERNAL_MINS;
 
-    @Autowired
-    @Qualifier("scheduler")
+    @javax.annotation.Resource(name="scheduler")
     private Scheduler scheduler;
 
     /**

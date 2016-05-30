@@ -13,12 +13,11 @@ import org.apache.ignite.ssl.SslContextFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
@@ -72,9 +71,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     @Value("${ignite.trustStorePassword:}")
     private String trustStorePassword;
 
-    @Autowired
-    
-    @Qualifier("igniteConfiguration")
+    @Resource(name="igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
 
     private IgniteCache<String, Ticket> ticketIgniteCache;

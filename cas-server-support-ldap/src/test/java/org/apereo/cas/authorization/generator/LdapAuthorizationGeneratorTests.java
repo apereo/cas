@@ -6,10 +6,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.core.profile.CommonProfile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
 
@@ -27,8 +27,7 @@ public class LdapAuthorizationGeneratorTests extends AbstractLdapTests {
 
     private static final String CAS_SERVICE_DETAILS_OBJ_CLASS = "casServiceUserDetails";
 
-    @Autowired
-    @Qualifier("ldapAuthorizationGenerator")
+    @Resource(name="ldapAuthorizationGenerator")
     private LdapAuthorizationGenerator ldapAuthorizationGenerator;
 
     @BeforeClass

@@ -4,13 +4,13 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.pac4j.core.authorization.AuthorizationGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link CasManagementLdapAuthorizationConfiguration}.
@@ -28,8 +28,7 @@ public class CasManagementLdapAuthorizationConfiguration {
     @Value("${ldap.user.searchFilter:}")
     private String searchFilter;
 
-    @Autowired
-    @Qualifier("ldapAuthorizationGenerator")
+    @Resource(name="ldapAuthorizationGenerator")
     private AuthorizationGenerator authorizationGenerator;
 
     /**

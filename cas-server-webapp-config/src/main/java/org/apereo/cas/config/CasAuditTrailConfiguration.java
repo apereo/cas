@@ -16,14 +16,13 @@ import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,16 +41,13 @@ public class CasAuditTrailConfiguration {
     @Value("${cas.audit.appcode:CAS}")
     private String appCode;
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
     
-    @Autowired
-    @Qualifier("ticketResourceResolver")
+    @Resource(name="ticketResourceResolver")
     private AuditResourceResolver ticketResourceResolver;
 
-    @Autowired
-    @Qualifier("messageBundleAwareResourceResolver")
+    @Resource(name="messageBundleAwareResourceResolver")
     private AuditResourceResolver messageBundleAwareResourceResolver;
 
     @Value("${cas.audit.singleline.separator:|}")

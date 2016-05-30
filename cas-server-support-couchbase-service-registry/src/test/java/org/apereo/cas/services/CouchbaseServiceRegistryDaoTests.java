@@ -4,12 +4,11 @@ package org.apereo.cas.services;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,8 +32,7 @@ public class CouchbaseServiceRegistryDaoTests {
 
     private static final int LOAD_SIZE = 1;
 
-    @Autowired
-    @Qualifier("couchbaseServiceRegistryDao")
+    @Resource(name="couchbaseServiceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
     @Before

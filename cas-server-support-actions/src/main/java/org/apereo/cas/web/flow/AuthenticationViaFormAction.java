@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.annotation.Resource;
 
 /**
  * Action to authenticate credential and retrieve a TicketGrantingTicket for
@@ -17,12 +17,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class AuthenticationViaFormAction extends AbstractAction {
 
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    @Resource(name="serviceTicketRequestWebflowEventResolver")
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    @Resource(name="initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
 

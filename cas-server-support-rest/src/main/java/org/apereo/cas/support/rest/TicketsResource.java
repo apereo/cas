@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Formatter;
@@ -65,8 +66,7 @@ public class TicketsResource {
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     
@@ -77,12 +77,10 @@ public class TicketsResource {
     @Autowired(required = false)
     private CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Resource(name="webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Resource(name="defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
 
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper();

@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link RadiusMultifactorWebflowConfigurer}.
@@ -15,8 +15,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasWebflowConfig
     /** Radius Webflow event id. */
     public static final String MFA_RADIUS_EVENT_ID = "mfa-radius";
 
-    @Autowired
-    @Qualifier("radiusFlowRegistry")
+    @Resource(name="radiusFlowRegistry")
     private FlowDefinitionRegistry radiusFlowRegistry;
 
     @Override

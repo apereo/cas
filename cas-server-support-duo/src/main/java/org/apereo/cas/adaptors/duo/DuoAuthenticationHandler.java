@@ -5,9 +5,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -20,8 +19,7 @@ import java.util.ArrayList;
  */
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    @Autowired
-    @Qualifier("duoAuthenticationService")
+    @Resource(name="duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 
     /**

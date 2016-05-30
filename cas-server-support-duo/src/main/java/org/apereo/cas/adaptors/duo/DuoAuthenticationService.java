@@ -8,12 +8,11 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -31,8 +30,7 @@ public class DuoAuthenticationService {
     
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
         
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
+    @Resource(name="noRedirectHttpClient")
     private HttpClient httpClient;
 
     

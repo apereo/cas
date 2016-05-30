@@ -5,9 +5,8 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +21,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
 
     private transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
 
-    @Autowired
-    @Qualifier("wsFedConfig")
+    @Resource(name="wsFedConfig")
     private WsFederationConfiguration configuration;
 
     /**

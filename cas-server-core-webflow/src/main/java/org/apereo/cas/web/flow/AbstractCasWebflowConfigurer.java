@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
@@ -55,6 +54,7 @@ import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,15 +73,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * The Login flow definition registry.
      */
-    @Autowired
-    @Qualifier("loginFlowRegistry")
+    @Resource(name="loginFlowRegistry")
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @Autowired
-    @Qualifier("logoutFlowRegistry")
+    @Resource(name="logoutFlowRegistry")
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     @Autowired

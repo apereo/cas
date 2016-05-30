@@ -6,10 +6,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.Resource;
 import java.net.URL;
 
 /**
@@ -24,14 +23,12 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
 
     /** The services manager. */
     
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
     /** An HTTP client. */
     
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
+    @Resource(name="noRedirectHttpClient")
     private HttpClient httpClient;
 
     /**
@@ -42,12 +39,10 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     private boolean asynchronous = true;
 
     
-    @Autowired
-    @Qualifier("logoutBuilder")
+    @Resource(name="logoutBuilder")
     private LogoutMessageCreator logoutMessageBuilder;
 
-    @Autowired
-    @Qualifier("defaultSingleLogoutServiceLogoutUrlBuilder")
+    @Resource(name="defaultSingleLogoutServiceLogoutUrlBuilder")
     private SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     /**

@@ -2,10 +2,9 @@ package org.apereo.cas.adaptors.radius.web;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * This is {@link RadiusMultifactorApplicationContextWrapper}.
@@ -14,8 +13,7 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 public class RadiusMultifactorApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Autowired
-    @Qualifier("radiusTokenAuthenticationHandler")
+    @Resource(name="radiusTokenAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
     /**

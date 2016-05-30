@@ -3,10 +3,9 @@ package org.apereo.cas.adaptors.duo;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * This is {@link DuoApplicationContextWrapper}.
@@ -15,12 +14,10 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 public class DuoApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Autowired
-    @Qualifier("duoAuthenticationHandler")
+    @Resource(name="duoAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
-    @Autowired
-    @Qualifier("duoAuthenticationMetaDataPopulator")
+    @Resource(name="duoAuthenticationMetaDataPopulator")
     private AuthenticationMetaDataPopulator populator;
 
     /**

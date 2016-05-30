@@ -16,9 +16,8 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -34,12 +33,10 @@ public class OidcAuthorizationRequestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizationRequestSupport.class);
     
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Resource(name="ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Resource(name="defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
 

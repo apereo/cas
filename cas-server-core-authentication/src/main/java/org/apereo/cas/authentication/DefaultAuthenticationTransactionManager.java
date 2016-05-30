@@ -2,8 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link DefaultAuthenticationTransactionManager}.
@@ -14,10 +14,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
-
     
-    @Autowired
-    @Qualifier("authenticationManager")
+    @Resource(name="authenticationManager")
     private AuthenticationManager authenticationManager;
 
     @Override

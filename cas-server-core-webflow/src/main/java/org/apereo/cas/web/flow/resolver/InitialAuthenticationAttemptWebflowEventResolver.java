@@ -10,12 +10,11 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 
@@ -29,24 +28,19 @@ import java.util.Set;
  */
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Autowired
-    @Qualifier("requestParameterAuthenticationPolicyWebflowEventResolver")
+    @Resource(name="requestParameterAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("registeredServiceAuthenticationPolicyWebflowEventResolver")
+    @Resource(name="registeredServiceAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("principalAttributeAuthenticationPolicyWebflowEventResolver")
+    @Resource(name="principalAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
+    @Resource(name="registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+    @Resource(name="selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
 

@@ -11,12 +11,11 @@ import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -49,8 +48,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
 
     
-    @Autowired
-    @Qualifier("serviceRegistryCouchbaseClientFactory")
+    @Resource(name="serviceRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
 
     @Value("${svcreg.couchbase.query.enabled:true}")

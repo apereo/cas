@@ -34,8 +34,6 @@ import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -45,6 +43,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -61,16 +60,13 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
 
-    @Autowired
-    @Qualifier("oauthCasClientRedirectActionBuilder")
+    @Resource(name="oauthCasClientRedirectActionBuilder")
     private OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
     
-    @Autowired
-    @Qualifier("oAuthUserAuthenticator")
+    @Resource(name="oAuthUserAuthenticator")
     private UsernamePasswordAuthenticator oAuthUserAuthenticator;
 
-    @Autowired
-    @Qualifier("oAuthClientAuthenticator")
+    @Resource(name="oAuthClientAuthenticator")
     private UsernamePasswordAuthenticator oAuthClientAuthenticator;
 
     @Value("${server.prefix:http://localhost:8080/cas}/login")

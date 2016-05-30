@@ -4,11 +4,10 @@ package org.apereo.cas.support.wsfederation;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -18,12 +17,10 @@ import javax.annotation.PostConstruct;
  */
 public class WsFedApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Autowired
-    @Qualifier("adfsAuthNHandler")
+    @Resource(name="adfsAuthNHandler")
     private AuthenticationHandler adfsAuthNHandler;
 
-    @Autowired
-    @Qualifier("adfsPrincipalResolver")
+    @Resource(name="adfsPrincipalResolver")
     private PrincipalResolver adfsPrincipalResolver;
 
     @Value("${cas.wsfed.idp.attribute.resolver.enabled:true}")

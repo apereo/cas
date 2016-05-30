@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.util.StringUtils;
@@ -54,12 +53,10 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     @Autowired
     private ThymeleafProperties properties;
 
-    @Autowired
-    @Qualifier("thymeleafViewResolver")
+    @Resource(name="thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
 
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
     @Resource(name="argumentExtractors")

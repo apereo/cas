@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -17,6 +16,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
+
+import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
 
@@ -29,8 +30,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration("/ldap-context.xml")
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
 
-    @Autowired
-    @Qualifier("provisioningConnectionFactory")
+    @Resource(name="provisioningConnectionFactory")
     private ConnectionFactory connectionFactory;
 
     @Autowired

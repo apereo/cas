@@ -7,12 +7,12 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,8 +39,7 @@ public class Pac4jConfiguration {
     @Autowired(required = false)
     private IndirectClient[] clients;
 
-    @Autowired
-    @Qualifier("pac4jProperties")
+    @Resource(name="pac4jProperties")
     private Pac4jProperties pac4jProperties;
     
     /**

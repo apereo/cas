@@ -4,13 +4,13 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.annotation.Resource;
 
 /**
  * Webflow action to receive and record the AUP response.
@@ -28,8 +28,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    @Resource(name="acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository repository;
 
     /**

@@ -8,9 +8,8 @@ import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,15 +23,13 @@ import java.util.Map;
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
     
     /** The Services manager. */
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     protected ServicesManager servicesManager;
 
     /** The Logger. */
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    @Qualifier("registeredServiceCipherExecutor")
+    @Resource(name="registeredServiceCipherExecutor")
     private RegisteredServiceCipherExecutor cipherExecutor;
 
     /**

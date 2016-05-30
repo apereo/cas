@@ -9,10 +9,10 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
 
@@ -25,8 +25,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:/infinispan-springcache-tests.xml")
 public class InfinispanTicketRegistryTests {
 
-    @Autowired
-    @Qualifier("infinispanTicketRegistry")
+    @Resource(name="infinispanTicketRegistry")
     private TicketRegistry infinispanTicketRegistry;
 
     @Test

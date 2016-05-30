@@ -7,9 +7,8 @@ import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.context.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 /**
@@ -22,8 +21,7 @@ public class OidcCasClientRedirectActionBuilder extends DefaultOAuthCasClientRed
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcCasClientRedirectActionBuilder.class);
     
-    @Autowired
-    @Qualifier("oidcAuthorizationRequestSupport")
+    @Resource(name="oidcAuthorizationRequestSupport")
     private OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport;
 
     @Override

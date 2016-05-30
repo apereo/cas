@@ -5,14 +5,14 @@ import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link GoogleAccountCheckRegistrationAction}.
@@ -28,12 +28,10 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
     @Value("${cas.mfa.gauth.label:CAS}")
     private String label;
     
-    @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Resource(name="googleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry accountRegistry;
     
-    @Autowired
-    @Qualifier("googleAuthenticatorInstance")
+    @Resource(name="googleAuthenticatorInstance")
     private GoogleAuthenticatorInstance googleAuthenticatorInstance;
     
     @Override

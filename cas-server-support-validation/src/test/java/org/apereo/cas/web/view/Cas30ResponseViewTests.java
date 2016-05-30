@@ -10,8 +10,6 @@ import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.util.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
 
+import javax.annotation.Resource;
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,8 +38,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
         
     private Map<?, ?> renderView() throws Exception{

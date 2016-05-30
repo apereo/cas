@@ -40,6 +40,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
@@ -83,14 +84,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     /** Implementation of Service Manager. */
     
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
     
     /** The CORE which we will delegate all requests to. */
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The proxy handler we want to use with the controller. */
@@ -107,20 +106,17 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     /** Extracts parameters from Request object. */
     
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
+    @Resource(name="defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
 
     
-    @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+    @Resource(name="defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
 
-    @Autowired
-    @Qualifier("authenticationContextValidator")
+    @Resource(name="authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
 
     /**

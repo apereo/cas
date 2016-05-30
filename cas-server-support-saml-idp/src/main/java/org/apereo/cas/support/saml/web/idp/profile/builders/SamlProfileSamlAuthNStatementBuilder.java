@@ -11,10 +11,9 @@ import org.apereo.cas.support.saml.SamlException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
@@ -33,8 +32,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     @Value("${cas.samlidp.response.skewAllowance:0}")
     private int skewAllowance;
 
-    @Autowired
-    @Qualifier("defaultAuthnContextClassRefBuilder")
+    @Resource(name="defaultAuthnContextClassRefBuilder")
     private AuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     @Override

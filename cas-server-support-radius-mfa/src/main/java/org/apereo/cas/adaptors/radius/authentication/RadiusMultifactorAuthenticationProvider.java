@@ -2,9 +2,9 @@ package org.apereo.cas.adaptors.radius.authentication;
 
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
 
 /**
  * The authentication provider for yubikey.
@@ -18,8 +18,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     @Value("${cas.mfa.radius.rank:0}")
     private int rank;
 
-    @Autowired
-    @Qualifier("radiusTokenAuthenticationHandler")
+    @Resource(name="radiusTokenAuthenticationHandler")
     private RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
 
     @Override

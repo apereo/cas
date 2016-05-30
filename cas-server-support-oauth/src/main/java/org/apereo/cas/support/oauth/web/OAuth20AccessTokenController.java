@@ -18,8 +18,6 @@ import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -27,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,12 +41,10 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("accessTokenController")
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
-    @Autowired
-    @Qualifier("defaultRefreshTokenFactory")
+    @Resource(name="defaultRefreshTokenFactory")
     private RefreshTokenFactory refreshTokenFactory;
 
-    @Autowired
-    @Qualifier("accessTokenResponseGenerator")
+    @Resource(name="accessTokenResponseGenerator")
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     /**

@@ -31,13 +31,13 @@ import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngin
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.AbstractResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -66,8 +66,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * The Http client.
      */
     
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
+    @Resource(name="noRedirectHttpClient")
     protected HttpClient httpClient;
 
     @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")

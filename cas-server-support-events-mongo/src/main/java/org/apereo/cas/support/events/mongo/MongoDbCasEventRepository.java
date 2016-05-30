@@ -2,8 +2,6 @@ package org.apereo.cas.support.events.mongo;
 
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -11,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.Collection;
 
 /**
@@ -29,8 +28,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     @Value("${mongodb.events.dropcollection:false}")
     private boolean dropCollection;
 
-    @Autowired
-    @Qualifier("mongoEventsTemplate")
+    @Resource(name="mongoEventsTemplate")
     
     private MongoOperations mongoTemplate;
 

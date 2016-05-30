@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,20 +32,17 @@ public class TerminateSessionAction extends AbstractAction {
 
     /** The CORE to which we delegate for all CAS functionality. */
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** CookieGenerator for TGT Cookie. */
     
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Resource(name="ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** CookieGenerator for Warn Cookie. */
     
-    @Autowired
-    @Qualifier("warnCookieGenerator")
+    @Resource(name="warnCookieGenerator")
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     

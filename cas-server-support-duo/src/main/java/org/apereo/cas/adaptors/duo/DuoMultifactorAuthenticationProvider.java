@@ -2,9 +2,9 @@ package org.apereo.cas.adaptors.duo;
 
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link DuoMultifactorAuthenticationProvider}.
@@ -19,8 +19,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
     @Value("${cas.mfa.duo.rank:0}")
     private int rank;
 
-    @Autowired
-    @Qualifier("duoAuthenticationService")
+    @Resource(name="duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 
 

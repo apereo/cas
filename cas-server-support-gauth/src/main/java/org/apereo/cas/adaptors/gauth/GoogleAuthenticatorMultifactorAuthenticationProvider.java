@@ -4,9 +4,9 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebf
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.util.http.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
 
 /**
  * The authentication provider for google authenticator.
@@ -18,15 +18,13 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    @Autowired
-    @Qualifier("googleAuthenticatorAuthenticationHandler")
+    @Resource(name="googleAuthenticatorAuthenticationHandler")
     private AuthenticationHandler yubiKeyAuthenticationHandler;
 
     @Value("${cas.mfa.gauth.rank:0}")
     private int rank;
 
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
+    @Resource(name="noRedirectHttpClient")
     private HttpClient httpClient;
 
 

@@ -10,7 +10,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -19,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
@@ -39,8 +39,7 @@ import static org.junit.Assert.*;
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
                 AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
-    @Autowired
-    @Qualifier("inspektrIpAddressUsernameThrottle")
+    @Resource(name="inspektrIpAddressUsernameThrottle")
     private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
 
     @Autowired

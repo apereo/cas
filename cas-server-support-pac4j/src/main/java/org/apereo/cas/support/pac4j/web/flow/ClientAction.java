@@ -36,6 +36,7 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -75,8 +76,7 @@ public class ClientAction extends AbstractAction {
      * The clients used for authentication.
      */
     
-    @Autowired
-    @Qualifier("builtClients")
+    @Resource(name="builtClients")
     private Clients clients;
 
     

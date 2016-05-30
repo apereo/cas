@@ -10,9 +10,8 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.impl.SingleLogoutServiceBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.net.URL;
 
 /**
@@ -26,15 +25,13 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
     /**
      * The Services manager.
      */
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     protected ReloadableServicesManager servicesManager;
 
     /**
      * The Saml registered service caching metadata resolver.
      */
-    @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Resource(name="defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Override

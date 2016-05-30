@@ -9,7 +9,6 @@ import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
 import org.cryptacular.bean.CipherBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,6 +35,7 @@ import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionPars
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 
+import javax.annotation.Resource;
 import javax.naming.OperationNotSupportedException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,8 +53,7 @@ public class CasWebflowContextConfiguration {
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
     private static final String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
 
-    @Autowired
-    @Qualifier("registeredServiceViewResolver")
+    @Resource(name="registeredServiceViewResolver")
     private ViewResolver registeredServiceViewResolver;
 
     @Autowired
@@ -73,12 +72,10 @@ public class CasWebflowContextConfiguration {
     @Value("${webflow.session.storage:false}")
     private boolean webflowSessionStorage;
     
-    @Autowired
-    @Qualifier("webflowCipherExecutor")
+    @Resource(name="webflowCipherExecutor")
     private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
 
-    @Autowired
-    @Qualifier("authenticationThrottle")
+    @Resource(name="authenticationThrottle")
     private HandlerInterceptor authenticationThrottle;
 
     @Value("${webflow.session.lock.timeout:30}")

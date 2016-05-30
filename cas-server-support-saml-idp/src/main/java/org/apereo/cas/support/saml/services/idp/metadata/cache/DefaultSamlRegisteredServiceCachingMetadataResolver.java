@@ -6,11 +6,10 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,8 +26,7 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
     @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
     private long metadataCacheExpirationMinutes;
 
-    @Autowired
-    @Qualifier("chainingMetadataResolverCacheLoader")
+    @Resource(name="chainingMetadataResolverCacheLoader")
     private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
 
     private LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;

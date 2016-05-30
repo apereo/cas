@@ -10,12 +10,11 @@ import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -47,8 +46,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final String UTIL_DOCUMENT = "statistics";
 
     
-    @Autowired
-    @Qualifier("ticketRegistryCouchbaseClientFactory")
+    @Resource(name="ticketRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
 
 

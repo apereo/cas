@@ -7,11 +7,10 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -32,8 +31,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
     @Value("${cas.aup.attribute:acceptedUsagePolicy}")
     protected String aupAttributeName;
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Resource(name="defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override

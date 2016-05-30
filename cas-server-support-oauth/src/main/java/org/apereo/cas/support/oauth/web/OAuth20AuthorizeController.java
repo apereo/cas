@@ -18,12 +18,11 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,12 +39,10 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     /**
      * The code factory instance.
      */
-    @Autowired
-    @Qualifier("defaultOAuthCodeFactory")
+    @Resource(name="defaultOAuthCodeFactory")
     protected OAuthCodeFactory oAuthCodeFactory;
 
-    @Autowired
-    @Qualifier("consentApprovalViewResolver")
+    @Resource(name="consentApprovalViewResolver")
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
     /**

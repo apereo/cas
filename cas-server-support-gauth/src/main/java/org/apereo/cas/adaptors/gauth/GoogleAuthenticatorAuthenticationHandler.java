@@ -5,12 +5,11 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -24,12 +23,10 @@ import java.security.GeneralSecurityException;
  */
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Resource(name="googleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry accountRegistry;
 
-    @Autowired
-    @Qualifier("googleAuthenticatorInstance")
+    @Resource(name="googleAuthenticatorInstance")
     private GoogleAuthenticatorInstance googleAuthenticatorInstance;
 
     /**

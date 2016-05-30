@@ -5,12 +5,11 @@ import org.apereo.cas.web.view.Cas10ResponseView;
 import org.apereo.cas.web.view.Cas20ResponseView;
 import org.apereo.cas.web.view.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +22,7 @@ import java.util.List;
 @Configuration("casValidationConfiguration")
 public class CasValidationConfiguration {
     
-    @Autowired
-    @Qualifier("defaultValidationServiceSelectionStrategy")
+    @Resource(name="defaultValidationServiceSelectionStrategy")
     private ValidationServiceSelectionStrategy defaultStrategy;
 
     /**

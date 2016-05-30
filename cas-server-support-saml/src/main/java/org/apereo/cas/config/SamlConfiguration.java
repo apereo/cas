@@ -13,12 +13,12 @@ import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
@@ -38,13 +38,11 @@ public class SamlConfiguration {
     @Value("${server.name}") 
     private String serverName;
     
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
 
-    @Autowired
-    @Qualifier("casAttributeEncoder")
+    @Resource(name="casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
 
     @Value("${cas.saml.attribute.namespace:http://www.ja-sig.org/products/cas/}")

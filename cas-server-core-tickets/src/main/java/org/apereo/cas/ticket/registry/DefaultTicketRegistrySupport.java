@@ -3,9 +3,8 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -17,8 +16,7 @@ import java.util.Map;
  */
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
-    @Autowired
-    @Qualifier("ticketRegistry")
+    @Resource(name="ticketRegistry")
     private TicketRegistry ticketRegistry = new DefaultTicketRegistry();
 
     /**

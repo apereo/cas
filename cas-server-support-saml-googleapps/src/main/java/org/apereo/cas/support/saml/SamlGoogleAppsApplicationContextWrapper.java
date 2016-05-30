@@ -3,10 +3,9 @@ package org.apereo.cas.support.saml;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -16,8 +15,7 @@ import javax.annotation.PostConstruct;
  */
 public class SamlGoogleAppsApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Autowired
-    @Qualifier("googleAccountsServiceFactory")
+    @Resource(name="googleAccountsServiceFactory")
     private ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory;
 
     /**

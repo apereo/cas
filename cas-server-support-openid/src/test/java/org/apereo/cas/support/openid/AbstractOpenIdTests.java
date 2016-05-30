@@ -7,10 +7,10 @@ import org.junit.runner.RunWith;
 import org.openid4java.server.ServerAssociationStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 /**
  * Bootstrap context for openid tests.
@@ -23,20 +23,16 @@ public class AbstractOpenIdTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    @Qualifier("openIdServiceFactory")
+    @Resource(name="openIdServiceFactory")
     protected OpenIdServiceFactory openIdServiceFactory;
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     protected CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Resource(name="defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport;
 
-    @Autowired
-    @Qualifier("serverAssociations")
+    @Resource(name="serverAssociations")
     protected ServerAssociationStore sharedAssociations;
 
     public OpenIdServiceFactory getOpenIdServiceFactory() {

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -31,8 +32,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     private static final String VIEW_MODEL_KEY_PARAMETERS = "parameters";
     private transient Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
 
-    @Autowired
-    @Qualifier("serverManager")
+    @Resource(name="serverManager")
     private ServerManager serverManager;
 
     @Override

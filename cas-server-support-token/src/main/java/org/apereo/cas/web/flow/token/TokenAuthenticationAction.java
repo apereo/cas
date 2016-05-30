@@ -19,6 +19,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -34,8 +35,7 @@ public class TokenAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationAction.class);
 
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     

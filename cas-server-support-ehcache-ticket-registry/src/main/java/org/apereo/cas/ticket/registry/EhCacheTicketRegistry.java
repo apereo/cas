@@ -7,11 +7,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -27,8 +26,7 @@ import java.util.stream.Collectors;
  */
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
-    @Autowired
-    @Qualifier("ehcacheTicketsCache")
+    @Resource(name="ehcacheTicketsCache")
     private Cache ehcacheTicketsCache;
 
     private boolean supportRegistryState = true;

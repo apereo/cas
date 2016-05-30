@@ -9,9 +9,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 /**
@@ -23,12 +22,10 @@ import java.util.Optional;
 public class OAuth20ValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
     
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Resource(name="webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Override

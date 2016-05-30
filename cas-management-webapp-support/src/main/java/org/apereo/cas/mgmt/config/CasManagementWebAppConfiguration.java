@@ -38,8 +38,6 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
@@ -92,8 +90,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Value("${cas-management.securityContext.serviceProperties.service}")
     private String callbackUrl;
 
-    @Autowired
-    @Qualifier("auditablePrincipalResolver")
+    @javax.annotation.Resource(name="auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
 
     @javax.annotation.Resource(name = "auditResourceResolverMap")

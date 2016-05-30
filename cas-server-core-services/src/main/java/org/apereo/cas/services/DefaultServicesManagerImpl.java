@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -52,8 +53,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      * Instance of ServiceRegistryDao.
      */
     
-    @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Resource(name="serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
     /** Application event publisher. */
@@ -243,8 +243,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      */
     public static class ServiceRegistryReloaderJob implements Job {
 
-        @Autowired
-        @Qualifier("servicesManager")
+        @Resource(name="servicesManager")
         private ReloadableServicesManager servicesManager;
 
         @Override

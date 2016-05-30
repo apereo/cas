@@ -14,13 +14,13 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.annotation.Resource;
 
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and
@@ -32,17 +32,14 @@ import org.springframework.webflow.execution.RequestContext;
 public class GenerateServiceTicketAction extends AbstractAction {
     /** Instance of CentralAuthenticationService. */
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Resource(name="defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Resource(name="defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override

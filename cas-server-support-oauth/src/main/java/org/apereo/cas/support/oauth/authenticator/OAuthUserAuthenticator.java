@@ -10,9 +10,8 @@ import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -24,8 +23,7 @@ import java.util.Map;
 public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
 
     
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Resource(name="defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override

@@ -8,8 +8,8 @@ import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.annotation.Resource;
 
 /**
  * Authenticator for client credentials authentication.
@@ -21,14 +21,12 @@ public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
 
     /** The OAuth validator. */
     
-    @Autowired
-    @Qualifier("oAuthValidator")
+    @Resource(name="oAuthValidator")
     private OAuthValidator validator;
 
     /** The services manager. */
     
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
     @Override

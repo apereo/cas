@@ -9,9 +9,8 @@ import org.apereo.cas.support.saml.SamlException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
     private static final long serialVersionUID = 4782621942035583007L;
 
-    @Autowired
-    @Qualifier("samlProfileSamlNameIdBuilder")
+    @Resource(name="samlProfileSamlNameIdBuilder")
     private SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder;
 
     @Override

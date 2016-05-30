@@ -21,11 +21,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +44,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"/ldap-context.xml", "/ldap-regservice-test.xml"})
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
-    @Autowired
-    @Qualifier("ldapServiceRegistryDao")
+    @Resource(name="ldapServiceRegistryDao")
     private ServiceRegistryDao dao;
 
     @BeforeClass

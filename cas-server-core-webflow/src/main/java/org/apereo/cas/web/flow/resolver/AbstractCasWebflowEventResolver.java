@@ -39,6 +39,7 @@ import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -84,32 +85,28 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * Ticket registry support.
      */
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Resource(name="defaultTicketRegistrySupport")
     protected TicketRegistrySupport ticketRegistrySupport;
     
     /**
      * The Services manager.
      */
     
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     protected ServicesManager servicesManager;
 
     /**
      * The Central authentication service.
      */
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     protected CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Warn cookie generator.
      */
     
-    @Autowired
-    @Qualifier("warnCookieGenerator")
+    @Resource(name="warnCookieGenerator")
     protected CookieGenerator warnCookieGenerator;
 
     /**

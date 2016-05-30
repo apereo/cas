@@ -6,11 +6,10 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,20 +25,16 @@ public class DefaultTicketFactory implements TicketFactory {
 
     private Map<String, Object> factoryMap;
 
-    @Autowired
-    @Qualifier("defaultProxyTicketFactory")
+    @Resource(name="defaultProxyTicketFactory")
     private ProxyTicketFactory proxyTicketFactory;
 
-    @Autowired
-    @Qualifier("defaultServiceTicketFactory")
+    @Resource(name="defaultServiceTicketFactory")
     private ServiceTicketFactory serviceTicketFactory;
 
-    @Autowired
-    @Qualifier("defaultTicketGrantingTicketFactory")
+    @Resource(name="defaultTicketGrantingTicketFactory")
     private TicketGrantingTicketFactory ticketGrantingTicketFactory;
 
-    @Autowired
-    @Qualifier("defaultProxyGrantingTicketFactory")
+    @Resource(name="defaultProxyGrantingTicketFactory")
     private ProxyGrantingTicketFactory proxyGrantingTicketFactory;
 
     /**

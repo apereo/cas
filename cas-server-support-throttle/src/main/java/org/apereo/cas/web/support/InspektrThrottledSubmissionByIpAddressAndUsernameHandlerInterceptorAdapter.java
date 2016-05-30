@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
@@ -47,8 +48,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
         + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
 
-    @Autowired
-    @Qualifier("auditTrailManager")
+    @Resource(name="auditTrailManager")
     private AuditTrailManager auditTrailManager;
 
     @Nullable

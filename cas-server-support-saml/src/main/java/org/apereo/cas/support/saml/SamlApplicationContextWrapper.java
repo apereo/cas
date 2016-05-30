@@ -5,10 +5,9 @@ import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopu
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -18,16 +17,13 @@ import javax.annotation.PostConstruct;
  */
 public class SamlApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Autowired
-    @Qualifier("samlServiceFactory")
+    @Resource(name="samlServiceFactory")
     private SamlServiceFactory samlServiceFactory;
 
-    @Autowired
-    @Qualifier("samlServiceTicketUniqueIdGenerator")
+    @Resource(name="samlServiceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
     
-    @Autowired
-    @Qualifier("samlAuthenticationMetaDataPopulator")
+    @Resource(name="samlAuthenticationMetaDataPopulator")
     private SamlAuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator;
 
     /**

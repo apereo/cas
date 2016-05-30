@@ -7,8 +7,6 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,12 +33,10 @@ public class SamlMetadataController {
     
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    @Qualifier("templateSpMetadata")
+    @javax.annotation.Resource(name="templateSpMetadata")
     private Resource templateSpMetadata;
 
-    @Autowired
-    @Qualifier("shibbolethIdpMetadataAndCertificatesGenerationService")
+    @javax.annotation.Resource(name="shibbolethIdpMetadataAndCertificatesGenerationService")
     private SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
 
     /**

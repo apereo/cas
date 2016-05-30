@@ -35,10 +35,10 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -60,8 +60,7 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Saml object signer.
      */
-    @Autowired
-    @Qualifier("samlObjectSigner")
+    @Resource(name="samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
@@ -99,22 +98,19 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Services manager.
      */
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     protected ReloadableServicesManager servicesManager;
 
     /**
      * The Web application service factory.
      */
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Resource(name="webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     
     /**
      * The Saml registered service caching metadata resolver.
      */
-    @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Resource(name="defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     /**
@@ -126,8 +122,7 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Response builder.
      */
-    @Autowired
-    @Qualifier("samlProfileSamlResponseBuilder")
+    @Resource(name="samlProfileSamlResponseBuilder")
     protected SamlProfileSamlResponseBuilder responseBuilder;
 
     /**

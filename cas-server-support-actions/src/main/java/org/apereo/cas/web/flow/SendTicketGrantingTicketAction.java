@@ -18,6 +18,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Resource;
+
 /**
  * Action that handles the TicketGrantingTicket creation and destruction. If the
  * action is given a TicketGrantingTicket and one also already exists, the old
@@ -34,19 +36,16 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
 
     
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Resource(name="ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Instance of CentralAuthenticationService. */
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     
-    @Autowired
-    @Qualifier("servicesManager")
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
     

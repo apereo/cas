@@ -10,9 +10,8 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.net.URL;
 
 /**
@@ -39,14 +38,12 @@ public class Cas20ProxyHandler implements ProxyHandler {
 
     /** Generate unique ids. */
     
-    @Autowired
-    @Qualifier("proxy20TicketUniqueIdGenerator")
+    @Resource(name="proxy20TicketUniqueIdGenerator")
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     /** Instance of Apache Commons HttpClient. */
     
-    @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+    @Resource(name="supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     /**

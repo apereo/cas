@@ -4,10 +4,10 @@ import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
 
@@ -20,8 +20,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"/ldap-context.xml", "/ldap-poolmonitor-test.xml"})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
-    @Autowired
-    @Qualifier("pooledLdapConnectionFactoryMonitor")
+    @Resource(name="pooledLdapConnectionFactoryMonitor")
     private PooledConnectionFactoryMonitor monitor;
 
     @BeforeClass

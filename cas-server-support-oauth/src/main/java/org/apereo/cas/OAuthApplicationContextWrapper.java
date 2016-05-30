@@ -9,8 +9,6 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
@@ -29,12 +27,10 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
     @Value("${server.prefix:http://localhost:8080/cas}")
     private String casServerUrl;
 
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Resource(name="webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    @Autowired
-    @Qualifier("oauth20ValidationServiceSelectionStrategy")
+    @Resource(name="oauth20ValidationServiceSelectionStrategy")
     private ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy;
 
     @Resource(name = "validationServiceSelectionStrategies")

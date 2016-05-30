@@ -9,14 +9,13 @@ import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.PrivateKeyFactoryBean;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -29,8 +28,7 @@ import java.security.PublicKey;
  */
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
 
-    @Autowired
-    @Qualifier("googleSaml20ObjectBuilder")
+    @Resource(name="googleSaml20ObjectBuilder")
     private GoogleSaml20ObjectBuilder builder;
 
     private PublicKey publicKey;

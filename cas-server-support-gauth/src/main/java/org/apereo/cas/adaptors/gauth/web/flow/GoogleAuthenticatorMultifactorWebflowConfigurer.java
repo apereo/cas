@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.gauth.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link GoogleAuthenticatorMultifactorWebflowConfigurer}.
@@ -16,8 +16,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
     /** Webflow event id. */
     public static final String MFA_GAUTH_EVENT_ID = "mfa-gauth";
 
-    @Autowired
-    @Qualifier("googleAuthenticatorFlowRegistry")
+    @Resource(name="googleAuthenticatorFlowRegistry")
     private FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Override

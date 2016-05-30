@@ -2,8 +2,6 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -16,6 +14,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.MessageInterpolator;
 import java.util.HashMap;
@@ -31,8 +30,7 @@ import java.util.Map;
 @Configuration("casWebAppConfiguration")
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     
-    @Autowired
-    @Qualifier("messageInterpolator")
+    @Resource(name="messageInterpolator")
     private MessageInterpolator messageInterpolator;
     
     @Value("${cas.themeResolver.param.name:theme}")

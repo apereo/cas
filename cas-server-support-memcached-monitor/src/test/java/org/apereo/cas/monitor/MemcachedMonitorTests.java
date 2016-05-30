@@ -6,11 +6,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
@@ -23,12 +22,10 @@ import java.io.IOException;
 @ContextConfiguration("/monitor-test.xml")
 public class MemcachedMonitorTests extends AbstractMemcachedTests {
 
-    @Autowired
-    @Qualifier("memcachedMonitor")
+    @Resource(name="memcachedMonitor")
     private MemcachedMonitor monitor;
 
-    @Autowired
-    @Qualifier("memcachedClient")
+    @Resource(name="memcachedClient")
     private MemcachedClientIF memcachedClient;
 
 

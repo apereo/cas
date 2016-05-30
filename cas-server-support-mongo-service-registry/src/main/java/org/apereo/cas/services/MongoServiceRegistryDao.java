@@ -2,14 +2,13 @@ package org.apereo.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -32,8 +31,7 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     private boolean dropCollection;
 
-    @Autowired
-    @Qualifier("mongoTemplate")
+    @Resource(name="mongoTemplate")
     private MongoOperations mongoTemplate;
 
     /**

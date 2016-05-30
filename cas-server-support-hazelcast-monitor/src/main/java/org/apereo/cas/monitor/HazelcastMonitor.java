@@ -5,9 +5,8 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
 import org.apereo.cas.config.HazelcastProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +18,7 @@ import java.util.List;
  */
 public class HazelcastMonitor extends AbstractCacheMonitor {
 
-    @Autowired
-    @Qualifier("hazelcastProperties")
+    @Resource(name="hazelcastProperties")
     private HazelcastProperties hazelcastProperties;
 
     @Override

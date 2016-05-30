@@ -31,6 +31,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -73,8 +74,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
 
-    @Autowired
-    @Qualifier("logoutManager")
+    @Resource(name="logoutManager")
     private LogoutManager logoutManager;
 
     /**

@@ -2,12 +2,11 @@ package org.apereo.cas.support.openid.web.support;
 
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
@@ -18,8 +17,7 @@ import java.util.Properties;
  */
 public class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
-    @Autowired
-    @Qualifier("openidDelegatingController")
+    @Resource(name="openidDelegatingController")
     private Controller controller;
 
     @Override

@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
+
 /**
  * Default OAuth access token factory.
  *
@@ -30,8 +32,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     /** ExpirationPolicy for access tokens. */
     
-    @Autowired
-    @Qualifier("accessTokenExpirationPolicy")
+    @Resource(name="accessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link DuoMultifactorWebflowConfigurer}.
@@ -16,8 +16,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
     /** Duo Webflow event id. */
     public static final String MFA_DUO_EVENT_ID = "mfa-duo";
 
-    @Autowired
-    @Qualifier("duoFlowRegistry")
+    @Resource(name="duoFlowRegistry")
     private FlowDefinitionRegistry duoFlowRegistry;
 
     @Override
