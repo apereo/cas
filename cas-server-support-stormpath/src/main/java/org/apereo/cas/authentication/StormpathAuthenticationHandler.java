@@ -19,8 +19,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("stormpathAuthenticationHandler")
 public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
     @Value("${cas.authn.stormpath.api.key:}")
     private String apiKey;

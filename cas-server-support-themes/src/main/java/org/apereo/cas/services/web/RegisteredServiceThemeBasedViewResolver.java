@@ -50,8 +50,6 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RefreshScope
-@Component("registeredServiceViewResolver")
 public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
 
@@ -66,7 +64,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Resource(name = "argumentExtractors")
+    @Resource(name="argumentExtractors")
     private List argumentExtractors;
     
     /**
