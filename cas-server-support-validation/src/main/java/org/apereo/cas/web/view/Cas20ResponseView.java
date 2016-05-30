@@ -4,8 +4,6 @@ import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
 import org.apereo.cas.CasViewConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +38,6 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
     /**
      * The type Success.
      */
-    @RefreshScope
-    @Component("cas2ServiceSuccessView")
     public static class Success extends Cas20ResponseView {
         /**
          * Instantiates a new Success.

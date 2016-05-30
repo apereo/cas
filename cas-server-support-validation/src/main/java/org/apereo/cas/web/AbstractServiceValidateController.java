@@ -35,9 +35,7 @@ import org.apereo.cas.validation.ValidationSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -62,8 +60,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@RefreshScope
-@Component("serviceValidateController")
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     /** View if Service Ticket Validation Fails. */
     public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";

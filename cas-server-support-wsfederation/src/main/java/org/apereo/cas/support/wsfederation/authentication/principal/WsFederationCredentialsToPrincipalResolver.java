@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +18,6 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
-@RefreshScope
-@Component("adfsPrincipalResolver")
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     private transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);

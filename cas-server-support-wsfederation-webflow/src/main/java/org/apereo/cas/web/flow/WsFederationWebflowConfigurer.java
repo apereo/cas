@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -17,7 +16,6 @@ import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("wsFederationWebflowConfigurer")
 public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String WS_FEDERATION_ACTION = "wsFederationAction";
