@@ -14,8 +14,6 @@ import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -25,8 +23,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("tokenAuthenticationHandler")
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
     @Override
     protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {

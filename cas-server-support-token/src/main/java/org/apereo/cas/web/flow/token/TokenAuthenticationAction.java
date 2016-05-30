@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -32,8 +30,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("tokenAuthenticationAction")
 public class TokenAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationAction.class);
 

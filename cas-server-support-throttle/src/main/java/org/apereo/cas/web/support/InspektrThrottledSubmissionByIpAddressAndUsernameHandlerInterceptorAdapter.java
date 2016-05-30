@@ -10,9 +10,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -36,8 +34,6 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-@RefreshScope
-@Component("inspektrIpAddressUsernameThrottle")
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
             extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
