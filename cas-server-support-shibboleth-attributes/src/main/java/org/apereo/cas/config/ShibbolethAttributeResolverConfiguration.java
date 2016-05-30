@@ -5,6 +5,8 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import org.apereo.cas.persondir.support.ShibbolethPersonAttributeDao;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,7 @@ import java.util.List;
 @Configuration("shibbolethAttributeResolverConfiguration")
 @ComponentScan("org.apereo.cas.persondir.support")
 public class ShibbolethAttributeResolverConfiguration {
+    
     @Autowired(required = false)
     private ApplicationContext applicationContext;
 
@@ -58,5 +61,10 @@ public class ShibbolethAttributeResolverConfiguration {
                 BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, DataConnector.class).values(),
                 null
         );
+    }
+    
+    @Bean
+    public IPersonAttributeDao shibbolethPersonAttributeDao() {
+        return new ShibbolethPersonAttributeDao();
     }
 }

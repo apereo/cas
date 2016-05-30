@@ -10,7 +10,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -22,11 +21,11 @@ import java.util.stream.Collectors;
  * A {@link IPersonAttributeDao} implementation that can use a Shibboleth
  * {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} to resolve attributes.
  *
- * @author Jj
+ * @author Jonathan Johnson
  * @since 5.0.0
  */
-@Component("shibbolethPersonAttributeDao")
 public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
+    
     @Autowired
     private AttributeResolver attributeResolver;
 
@@ -67,81 +66,46 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
         }
     }
 
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
+
     @Override
     public Set<IPersonAttributes> getPeople(final Map<String, Object> query) {
         throw new UnsupportedOperationException();
     }
-
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
+    
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
+
     @Override
     public Set<String> getPossibleUserAttributeNames() {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
+
     @Override
     public Set<String> getAvailableQueryAttributes() {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
+
     @Override
     public Map<String, List<Object>> getMultivaluedUserAttributes(final Map<String, List<Object>> seed) {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
     @Override
     public Map<String, List<Object>> getMultivaluedUserAttributes(final String uid) {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
+
     @Override
     public Map<String, Object> getUserAttributes(final Map<String, Object> seed) {
         throw new UnsupportedOperationException();
     }
-
-    /**
-     * Does nothing. Look elsewhere.
-     * <p>
-     * {@inheritDoc}
-     */
+    
     @Override
     public Map<String, Object> getUserAttributes(final String uid) {
         throw new UnsupportedOperationException();

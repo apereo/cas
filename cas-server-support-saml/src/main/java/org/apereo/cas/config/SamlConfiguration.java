@@ -34,6 +34,9 @@ public class SamlConfiguration {
     
     @Value("${cas.saml.response.skewAllowance:0}")
     private int skewAllowance;
+
+    @Value("${server.name}") 
+    private String serverName;
     
     @Autowired
     @Qualifier("servicesManager")
@@ -100,7 +103,7 @@ public class SamlConfiguration {
 
     @Bean
     public SamlCompliantUniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
-        return new SamlCompliantUniqueTicketIdGenerator();
+        return new SamlCompliantUniqueTicketIdGenerator(this.serverName);
     }
     
 }

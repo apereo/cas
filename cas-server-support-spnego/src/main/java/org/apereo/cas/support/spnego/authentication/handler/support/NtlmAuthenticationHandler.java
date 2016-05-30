@@ -19,8 +19,6 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -33,8 +31,6 @@ import java.security.GeneralSecurityException;
  * @author Arnaud Lesueur
  * @since 3.1
  */
-@RefreshScope
-@Component("ntlmAuthenticationHandler")
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private static final int NBT_ADDRESS_TYPE = 0x1C;

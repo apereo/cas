@@ -15,8 +15,6 @@ import org.ldaptive.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Peek into an LDAP server and check for the existence of an attribute
@@ -25,8 +23,6 @@ import org.springframework.stereotype.Component;
  * @author Sean Baker
  * @since 4.1
  */
-@RefreshScope
-@Component("ldapSpnegoClientAction")
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
     /** Attribute name in LDAP to indicate spnego invocation. **/
     public static final String DEFAULT_SPNEGO_ATTRIBUTE = "distinguishedName";
@@ -45,7 +41,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     @Qualifier("spnegoClientActionSearchRequest")
     protected SearchRequest searchRequest;
 
-    private LdapSpnegoKnownClientSystemsFilterAction() {}
+    public LdapSpnegoKnownClientSystemsFilterAction() {}
 
     /**
      * Instantiates new action. Initializes the default attribute

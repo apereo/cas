@@ -43,8 +43,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      *
      * @param sourceId the source id
      */
-    @Autowired
-    public SamlCompliantUniqueTicketIdGenerator(@Value("${server.name}") final String sourceId) {
+    public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
         try {
             this.sourceIdDigest = DigestUtils.rawDigest("SHA", sourceId.getBytes("8859_1"));
         } catch (final Exception e) {

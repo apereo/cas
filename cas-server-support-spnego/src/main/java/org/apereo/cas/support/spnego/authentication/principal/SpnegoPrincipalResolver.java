@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
@@ -17,8 +15,6 @@ import java.util.Locale;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
-@RefreshScope
-@Component("spnegoPrincipalResolver")
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     /** Transformation types. **/
