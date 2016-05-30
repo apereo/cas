@@ -24,9 +24,6 @@ import java.util.regex.Pattern;
  * provide the list of additional users. The list of acceptable users is stored
  * in a map. The key of the map is the username and the password is the object
  * retrieved from doing map.get(KEY).
- * <p>
- * Note that this class makes an unmodifiable copy of whatever map is provided
- * to it.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison

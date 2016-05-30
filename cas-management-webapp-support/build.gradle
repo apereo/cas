@@ -15,5 +15,6 @@ dependencies {
     compile project(':cas-server-core-logging')
     compile project(':cas-server-core-audit')
     compile project(':cas-server-support-oauth-core')
-    testCompile project(':cas-server-support-cookie')
+    compile project(':cas-server-support-saml-idp-core')
+    compile project(':cas-server-support-grouper')
 }

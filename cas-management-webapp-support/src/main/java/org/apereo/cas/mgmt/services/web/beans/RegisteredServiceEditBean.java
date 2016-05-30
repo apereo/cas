@@ -112,6 +112,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceSupportAccessEditBean supportAccess = new RegisteredServiceSupportAccessEditBean();
         private String type = RegisteredServiceTypeEditBean.CAS.toString();
         private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
+        private RegisteredServiceSamlTypeEditBean saml = new RegisteredServiceSamlTypeEditBean();
         private String logoutType = RegisteredServiceLogoutTypeEditBean.BACK.toString();
         private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider =
                 new RegisteredServiceUsernameAttributeProviderEditBean();
@@ -120,6 +121,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
+        private Map<String, Set<String>> properties = new HashMap<>();
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
             return this.attrRelease;
@@ -133,6 +135,13 @@ public class RegisteredServiceEditBean implements Serializable {
             return this.publicKey;
         }
 
+        public Map<String, Set<String>> getProps() {
+            return this.properties;
+        }
+        
+        public void setProps(final Map<String, Set<String>> p) {
+            this.properties = p;
+        }
         public void setPublicKey(final RegisteredServicePublicKeyEditBean publicKey) {
             this.publicKey = publicKey;
         }
@@ -264,6 +273,14 @@ public class RegisteredServiceEditBean implements Serializable {
          */
         public Map<String, ? extends Map<String, ?>> getCustomComponent() {
             return this.customComponent;
+        }
+
+        public RegisteredServiceSamlTypeEditBean getSaml() {
+            return saml;
+        }
+
+        public void setSaml(final RegisteredServiceSamlTypeEditBean saml) {
+            this.saml = saml;
         }
 
         /**

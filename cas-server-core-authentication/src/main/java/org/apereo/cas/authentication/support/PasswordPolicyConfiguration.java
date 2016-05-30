@@ -15,48 +15,52 @@ import org.springframework.beans.factory.annotation.Value;
 public class PasswordPolicyConfiguration {
 
     private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
-
-    /** Logger instance. */
+    
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Disregard the warning period and warn all users of password expiration. */
+    /**
+     * Disregard the warning period and warn all users of password expiration.
+     */
+    @Value("${password.policy.warnAll:false}")
     private boolean alwaysDisplayPasswordExpirationWarning;
 
-    /** Threshold number of days till password expiration below which a warning is displayed. **/
+    /**
+     * Threshold number of days till password expiration below which a warning is displayed.
+     **/
+    @Value("${password.policy.warningDays:" + DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS + '}')
     private int passwordWarningNumberOfDays = DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS;
 
-    /** Url to the password policy application. **/
+    /**
+     * Url to the password policy application.
+     **/
+    @Value("${password.policy.url:https://password.example.edu/change}")
     private String passwordPolicyUrl;
 
+    public PasswordPolicyConfiguration() {
+    }
 
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.alwaysDisplayPasswordExpirationWarning;
     }
-
-
-    @Autowired
-    public void setAlwaysDisplayPasswordExpirationWarning(@Value("${password.policy.warnAll:false}")
-                                                              final boolean alwaysDisplayPasswordExpirationWarning) {
+    
+    public void setAlwaysDisplayPasswordExpirationWarning(
+            final boolean alwaysDisplayPasswordExpirationWarning) {
         this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
     }
 
     public String getPasswordPolicyUrl() {
         return this.passwordPolicyUrl;
     }
-
-    @Autowired
-    public void setPasswordPolicyUrl(@Value("${password.policy.url:https://password.example.edu/change}")
-                                         final String passwordPolicyUrl) {
+    
+    public void setPasswordPolicyUrl(final String passwordPolicyUrl) {
         this.passwordPolicyUrl = passwordPolicyUrl;
     }
 
     public int getPasswordWarningNumberOfDays() {
         return this.passwordWarningNumberOfDays;
     }
-
-    @Autowired
-    public void setPasswordWarningNumberOfDays(
-            @Value("${password.policy.warningDays:" + DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS + '}') final int days) {
+    
+    public void setPasswordWarningNumberOfDays(final int days) {
         this.passwordWarningNumberOfDays = days;
     }
 }
