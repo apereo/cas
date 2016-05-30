@@ -15,10 +15,8 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,8 +30,6 @@ import java.security.cert.X509CRL;
  * @author Daniel Fisher
  * @since 4.1
  */
-@RefreshScope
-@Component("ldaptiveResourceCRLFetcher")
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
     private static final String LDAP_PREFIX = "ldap";
@@ -45,7 +41,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     protected ConnectionConfig connectionConfig;
 
     /** Serialization support. */
-    protected LdaptiveResourceCRLFetcher() {}
+    public LdaptiveResourceCRLFetcher() {}
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.

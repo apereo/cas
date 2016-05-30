@@ -8,8 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -22,8 +20,6 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("googleAccountRegistrationAction")
 public class GoogleAccountCheckRegistrationAction extends AbstractAction {
 
     @Value("${cas.mfa.gauth.issuer:CAS}")

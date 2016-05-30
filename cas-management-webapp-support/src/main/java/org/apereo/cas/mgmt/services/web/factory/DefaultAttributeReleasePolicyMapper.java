@@ -17,9 +17,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleaseP
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -31,13 +29,11 @@ import java.util.Map;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component(DefaultAttributeReleasePolicyMapper.BEAN_NAME)
 public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePolicyMapper {
     /**
      * Name of this bean within the Spring context.
      */
-    public static final String BEAN_NAME = "defaultAttributeReleasePolicyMapper";
+    public static final String BEAN_NAME = "";
 
     @Autowired(required = false)
     private ApplicationContext applicationContext;
@@ -68,27 +64,6 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
      */
     @PostConstruct
     public void initializeDefaults() {
-        // use default mappers from spring context
-        if (this.applicationContext != null) {
-            if (this.attributeFilterMapper == null) {
-                this.attributeFilterMapper = this.applicationContext.getBean(
-                        DefaultAttributeFilterMapper.BEAN_NAME,
-                        AttributeFilterMapper.class);
-            }
-            if (this.principalAttributesRepositoryMapper == null) {
-                this.principalAttributesRepositoryMapper = this.applicationContext.getBean(
-                        DefaultPrincipalAttributesRepositoryMapper.BEAN_NAME,
-                        PrincipalAttributesRepositoryMapper.class);
-            }
-        }
-
-        // initialize default mappers if any are still missing
-        if (this.attributeFilterMapper == null) {
-            this.attributeFilterMapper = new DefaultAttributeFilterMapper();
-        }
-        if (this.principalAttributesRepositoryMapper == null) {
-            this.principalAttributesRepositoryMapper = new DefaultPrincipalAttributesRepositoryMapper();
-        }
     }
 
     @Override

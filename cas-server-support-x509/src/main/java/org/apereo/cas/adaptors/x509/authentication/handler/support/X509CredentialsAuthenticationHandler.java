@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
@@ -40,8 +38,6 @@ import javax.security.auth.login.FailedLoginException;
  * @author Jan Van der Velpen
  * @since 3.0.4
  */
-@RefreshScope
-@Component("x509CredentialsAuthenticationHandler")
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /** Default setting to limit the number of intermediate certificates. */

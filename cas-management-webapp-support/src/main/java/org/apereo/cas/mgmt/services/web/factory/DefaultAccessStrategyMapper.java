@@ -6,8 +6,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -19,13 +17,7 @@ import java.util.Set;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component(DefaultAccessStrategyMapper.BEAN_NAME)
 public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
-    /**
-     * Name of this bean within the Spring context.
-     */
-    public static final String BEAN_NAME = "defaultAccessStrategyMapper";
 
     @Override
     public void mapAccessStrategy(final RegisteredServiceAccessStrategy accessStrategy, final RegisteredServiceEditBean.ServiceData bean) {

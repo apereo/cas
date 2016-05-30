@@ -15,7 +15,6 @@ import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ByteArrayResource;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
@@ -26,7 +25,6 @@ import org.cryptacular.x509.ExtensionReader;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-import org.springframework.stereotype.Component;
 
 /**
  * Performs CRL-based revocation checking by consulting resources defined in
@@ -41,8 +39,6 @@ import org.springframework.stereotype.Component;
  * @since 3.4.6
  *
  */
-@RefreshScope
-@Component("crlDistributionPointRevocationChecker")
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
     /** CRL cache. */
@@ -58,7 +54,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private boolean throwOnFetchFailure;
 
     /** Used for serialization and auto wiring. */
-    private CRLDistributionPointRevocationChecker() {}
+    public CRLDistributionPointRevocationChecker() {}
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.

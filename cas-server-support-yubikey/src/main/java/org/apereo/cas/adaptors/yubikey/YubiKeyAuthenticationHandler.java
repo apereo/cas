@@ -12,9 +12,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -35,8 +32,6 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("yubikeyAuthenticationHandler")
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private YubiKeyAccountRegistry registry;
@@ -52,9 +47,8 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param clientId the client id
      * @param secretKey the secret key
      */
-    @Autowired
-    public YubiKeyAuthenticationHandler(@Value("${cas.mfa.yubikey.client.id:}") final Integer clientId,
-                                         @Value("${cas.mfa.yubikey.secret.key:}") final String secretKey) {
+    public YubiKeyAuthenticationHandler(final Integer clientId,
+                                        final String secretKey) {
         this.client = YubicoClient.getClient(clientId, secretKey);
     }
 

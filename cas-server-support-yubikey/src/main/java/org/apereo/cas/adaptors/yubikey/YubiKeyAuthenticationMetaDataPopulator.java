@@ -9,8 +9,6 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link YubiKeyAuthenticationMetaDataPopulator} which inserts the
@@ -19,8 +17,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("yubikeyAuthenticationMetaDataPopulator")
 public class YubiKeyAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")

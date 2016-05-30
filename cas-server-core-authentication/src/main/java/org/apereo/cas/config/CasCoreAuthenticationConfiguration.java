@@ -25,6 +25,7 @@ import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResol
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
+import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.DefaultPasswordEncoder;
 import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
@@ -58,15 +59,15 @@ public class CasCoreAuthenticationConfiguration {
 
     @Value("${http.client.truststore.file:classpath:truststore.jks}")
     private Resource trustStoreFile;
-    
+
     @Value("${http.client.truststore.psw:changeit}")
     private String trustStorePassword;
-            
+
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
         return new AuthenticationExceptionHandler();
     }
-    
+
     @RefreshScope
     @Bean
     public AuthenticationPolicy requiredHandlerAuthenticationPolicy() {
@@ -82,7 +83,7 @@ public class CasCoreAuthenticationConfiguration {
     public ContextualAuthenticationPolicyFactory acceptAnyAuthenticationPolicyFactory() {
         return new AcceptAnyAuthenticationPolicyFactory();
     }
-    
+
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         return new AcceptUsersAuthenticationHandler();
@@ -108,33 +109,33 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
         return new DefaultAuthenticationSystemSupport();
     }
-    
+
     @Bean
     public AuthenticationTransactionManager defaultAuthenticationTransactionManager() {
         return new DefaultAuthenticationTransactionManager();
     }
-    
+
     @Bean
     public PrincipalElectionStrategy defaultPrincipalElectionStrategy() {
         return new DefaultPrincipalElectionStrategy();
     }
-    
+
     @RefreshScope
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
         return new FileTrustStoreSslSocketFactory(this.trustStoreFile, this.trustStorePassword);
     }
-    
+
     @Bean
     public AuthenticationPolicy notPreventedAuthenticationPolicy() {
         return new NotPreventedAuthenticationPolicy();
     }
-    
+
     @Bean
     public AuthenticationManager authenticationManager() {
         return new PolicyBasedAuthenticationManager();
     }
-    
+
     @Bean
     public RegisteredServiceAuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         return new RegisteredServiceAuthenticationHandlerResolver();
@@ -144,67 +145,75 @@ public class CasCoreAuthenticationConfiguration {
     public ContextualAuthenticationPolicyFactory requiredHandlerAuthenticationPolicyFactory() {
         return new RequiredHandlerAuthenticationPolicyFactory();
     }
-    
+
     @Bean
     public AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator() {
         return new SuccessfulHandlerMetaDataPopulator();
     }
-    
-    @Bean 
+
+    @Bean
     public PasswordPolicyConfiguration defaultPasswordPolicyConfiguration() {
         return new PasswordPolicyConfiguration();
     }
-    
+
     @Bean
     public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator() {
         return new RememberMeAuthenticationMetaDataPopulator();
     }
-    
+
     @RefreshScope
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
         return new PersonDirectoryPrincipalResolver();
     }
-    
+
     @Bean
     public PrincipalFactory defaultPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     public PrincipalResolver proxyPrincipalResolver() {
         return new BasicPrincipalResolver();
     }
-    
+
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
         return new JaasAuthenticationHandler();
     }
-    
+
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler();
     }
-    
+
     @Bean
     public PrincipalNameTransformer prefixSuffixPrincipalNameTransformer() {
         return new PrefixSuffixPrincipalNameTransformer();
     }
-    
+
     @Bean
     public PasswordEncoder plainTextPasswordEncoder() {
         return new PlainTextPasswordEncoder();
     }
-    
+
     @Bean
     public PrincipalNameTransformer noOpPrincipalNameTransformer() {
         return new NoOpPrincipalNameTransformer();
     }
-    
+
     @RefreshScope
     @Bean
     public DefaultPasswordEncoder defaultPasswordEncoder() {
         return new DefaultPasswordEncoder();
     }
+
+    @Bean
+    @RefreshScope
+    public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
+        return new ConvertCasePrincipalNameTransformer();
+    }
+
+
 }

@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * The {@link ShibbolethAttributeResolverConfiguration}.
  *
- * @author Jj
+ * @author Jonathan Johnson
  * @since 5.0.0
  */
 @Configuration("shibbolethAttributeResolverConfiguration")

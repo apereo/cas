@@ -10,8 +10,6 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Default mapper for converting {@link RegisteredServiceProxyPolicy} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -19,14 +17,7 @@ import org.springframework.stereotype.Component;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component(DefaultProxyPolicyMapper.BEAN_NAME)
 public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
-    /**
-     * Name of this bean within the Spring context.
-     */
-    public static final String BEAN_NAME = "defaultProxyPolicyMapper";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProxyPolicyMapper.class);
 
     @Override

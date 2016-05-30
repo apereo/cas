@@ -9,8 +9,6 @@ import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
@@ -19,8 +17,6 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("yubikeyAuthenticationProvider")
 public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;

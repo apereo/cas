@@ -18,8 +18,6 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
@@ -29,14 +27,7 @@ import java.net.URL;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component(DefaultRegisteredServiceMapper.BEAN_NAME)
 public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
-    /**
-     * Name of this bean within the Spring context.
-     */
-    public static final String BEAN_NAME = "defaultRegisteredServiceMapper";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceMapper.class);
 
     @Override

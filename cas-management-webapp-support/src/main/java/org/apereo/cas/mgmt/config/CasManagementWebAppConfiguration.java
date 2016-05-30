@@ -4,6 +4,22 @@ import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
+import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
+import org.apereo.cas.mgmt.services.web.factory.AttributeFilterMapper;
+import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
+import org.apereo.cas.mgmt.services.web.factory.AttributeReleasePolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeFilterMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeReleasePolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesRepositoryMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.apereo.cas.mgmt.services.web.factory.FormDataPopulator;
+import org.apereo.cas.mgmt.services.web.factory.PrincipalAttributesRepositoryMapper;
+import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -352,4 +368,44 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
+    @Bean
+    public AccessStrategyMapper defaultAccessStrategyMapper() {
+        return new DefaultAccessStrategyMapper();
+    }
+
+    @Bean
+    public RegisteredServiceFactory registeredServiceFactory() {
+        return new DefaultRegisteredServiceFactory();
+    }
+    
+    
+    @Bean
+    public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
+        return new DefaultAttributeReleasePolicyMapper();
+    }
+    
+    @Bean
+    public FormDataPopulator attributeFormDataPopulator() {
+        return new AttributeFormDataPopulator();
+    }
+    
+    @Bean
+    public RegisteredServiceMapper defaultRegisteredServiceMapper() {
+        return new DefaultRegisteredServiceMapper();
+    }
+    
+    @Bean
+    public ProxyPolicyMapper defaultProxyPolicyMapper() {
+        return new DefaultProxyPolicyMapper();
+    }
+    
+    @Bean
+    public AttributeFilterMapper defaultAttributeFilterMapper() {
+        return new DefaultAttributeFilterMapper();
+    }
+    
+    @Bean
+    public PrincipalAttributesRepositoryMapper defaultPrincipalAttributesRepositoryMapper() {
+        return new DefaultPrincipalAttributesRepositoryMapper();
+    }
 }
