@@ -144,8 +144,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         public Success() {
             super();
         }
-
-        @Autowired(required=false)
+        
         @Override
         public void setView(@Qualifier("cas3SuccessView") final View view) {
             super.setView(view);
