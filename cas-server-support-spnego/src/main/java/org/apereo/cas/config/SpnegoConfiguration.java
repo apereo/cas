@@ -40,7 +40,7 @@ public class SpnegoConfiguration {
     }
     
     @Bean
-    @RefreshScope 
+    @RefreshScope
     public JcifsConfig jcifsConfig() {
         return new JcifsConfig();
     }

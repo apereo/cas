@@ -4,9 +4,9 @@ package org.apereo.cas;
  * Responsible to define operation that deal with encryption, signing
  * and verification of a value.
  *
+ * @author Misagh Moayyed
  * @param <T> the type parameter
  * @param <R> the type parameter
- * @author Misagh Moayyed
  * @since 4.1
  */
 public interface CipherExecutor<T, R> {

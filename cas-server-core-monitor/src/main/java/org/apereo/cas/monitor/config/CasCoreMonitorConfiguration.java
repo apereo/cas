@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casCoreMonitorConfiguration")
 public class CasCoreMonitorConfiguration {
     
-    @Bean   
+    @Bean
     public Monitor healthCheckMonitor() {
         return new HealthCheckMonitor();
     }

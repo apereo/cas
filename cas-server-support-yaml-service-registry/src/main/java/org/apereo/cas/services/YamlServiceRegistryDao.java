@@ -14,13 +14,13 @@ import java.nio.file.Path;
  * the directory structure to find relevant YAML files. Files are expected to have the
  * {@value YamlServiceRegistryDao#FILE_EXTENSION} extension. An example of the YAML file is included here:
  * <pre>
---- !<org.apereo.cas.services.RegexRegisteredService>
+--- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
 serviceId: "testId"
 name: "YAML"
 id: 1000
 description: "description"
-attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllAttributeReleasePolicy>
-accessStrategy: !<org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy>
+attributeReleasePolicy: !&lt;org.apereo.cas.services.ReturnAllAttributeReleasePolicy&gt;
+accessStrategy: !&lt;org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy&gt;
   enabled: true
   ssoEnabled: true
  * </pre>

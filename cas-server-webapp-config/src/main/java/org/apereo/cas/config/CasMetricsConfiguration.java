@@ -73,7 +73,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the health check registry
      */
-    @Bean 
+    @Bean
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();
     }

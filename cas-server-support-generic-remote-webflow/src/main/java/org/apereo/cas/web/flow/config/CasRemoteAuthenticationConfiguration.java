@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casRemoteAuthenticationConfiguration")
 public class CasRemoteAuthenticationConfiguration {
     
-    @Bean   
+    @Bean
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
         return new RemoteAddressWebflowConfigurer();
     }

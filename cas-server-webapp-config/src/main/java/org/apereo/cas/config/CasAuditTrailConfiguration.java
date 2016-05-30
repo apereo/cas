@@ -43,6 +43,10 @@ public class CasAuditTrailConfiguration {
     private String appCode;
 
     @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+    
+    @Autowired
     @Qualifier("ticketResourceResolver")
     private AuditResourceResolver ticketResourceResolver;
 
@@ -65,14 +69,13 @@ public class CasAuditTrailConfiguration {
     /**
      * Audit trail management aspect audit trail management aspect.
      *
-     * @param centralAuthenticationService centralAuthenticationService
      * @return the audit trail management aspect
      */
-    @Autowired
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect(final CentralAuthenticationService centralAuthenticationService) {
+    public AuditTrailManagementAspect auditTrailManagementAspect() {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(this.appCode,
-                auditablePrincipalResolver(centralAuthenticationService), ImmutableList.of(slf4jAuditTrailManager()), auditActionResolverMap(),
+                auditablePrincipalResolver(), 
+                ImmutableList.of(slf4jAuditTrailManager()), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!this.ignoreAuditFailures);
         return aspect;
@@ -191,12 +194,12 @@ public class CasAuditTrailConfiguration {
     /**
      * Principal resolver.
      *
-     * @param centralAuthenticationService centralAuthenticationService
      * @return the principal resolver
      */
     @Bean
-    public PrincipalResolver auditablePrincipalResolver(final CentralAuthenticationService centralAuthenticationService) {
-        return new AssertionAsReturnValuePrincipalResolver(new TicketOrCredentialPrincipalResolver(centralAuthenticationService));
+    public PrincipalResolver auditablePrincipalResolver() {
+        return new AssertionAsReturnValuePrincipalResolver(
+                new TicketOrCredentialPrincipalResolver(this.centralAuthenticationService));
     }
 }
 

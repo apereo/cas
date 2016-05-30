@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("ldapMonitorConfiguration")
 public class LdapMonitorConfiguration {
     
-    @Bean   
+    @Bean
     public Monitor pooledLdapConnectionFactoryMonitor() {
         return new PooledConnectionFactoryMonitor();
     }

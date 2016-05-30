@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casJdbcConfiguration")
 public class CasJdbcConfiguration {
     
-    @Bean   
+    @Bean
     @RefreshScope
     public AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler() {
         return new BindModeSearchDatabaseAuthenticationHandler();

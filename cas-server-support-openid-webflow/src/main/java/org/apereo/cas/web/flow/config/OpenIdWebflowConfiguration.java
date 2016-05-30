@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("openIdWebflowConfiguration")
 public class OpenIdWebflowConfiguration {
     
-    @Bean   
+    @Bean
     public CasWebflowConfigurer openidWebflowConfigurer() {
         return new OpenIdWebflowConfigurer();
     }

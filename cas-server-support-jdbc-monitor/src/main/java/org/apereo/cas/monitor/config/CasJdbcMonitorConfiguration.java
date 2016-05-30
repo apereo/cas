@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 public class CasJdbcMonitorConfiguration {
     
     @Autowired
-    @Bean   
+    @Bean
     @RefreshScope
     public Monitor dataSourceMonitor(@Qualifier("monitorDataSource") final DataSource dataSource) {
         return new DataSourceMonitor(dataSource);
