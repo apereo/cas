@@ -22,7 +22,33 @@
   width: 203px;
 }
 
-#sidebar {
+#pageContents {
+  padding: 10px;
+
+  h2 {
+    font-size: 1.25rem;
+    border-bottom: 1px solid #efefef;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+  }
+  ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0px;
+
+    li {
+      list-style: none;
+      margin-bottom: 5px;
+    }
+  }
+
+  a {
+    color: inherit;
+  }
+
+}
+
+#sidebar, .sidebar {
   padding: 0px;
   padding-top: 15px;
 
@@ -125,6 +151,15 @@
 @media (min-width: 48em) {
   .row-offcanvas-right.active .sidebar-offcanvas {
     width: 223px;
+  }
+  #sidebar {
+    .nav {
+      li {
+        > a {
+          padding: 5px 15px;
+        }
+      }
+    }
   }
 }
 

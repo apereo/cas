@@ -52,7 +52,11 @@
 
 
         <div class="row row-offcanvas row-offcanvas-right">
-            <div class="column col-sm-9 col-xs-11" id="main">
+            <div class="col-md-2 hidden-sm-down sidebar" id="pageContents">
+                <h2>Page Contents</h2>
+                <ul></ul>
+            </div>
+            <div class="column col-md-8 col-sm-9 col-xs-11" id="main">
                 <section>
                     <div id="mobile-nav" class="navbar navbar-cas navbar-static-top hidden-md-up" role="banner">
                         <!-- top nav -->
@@ -109,17 +113,17 @@
             </div>
 
             <!-- sidebar -->
-            <div class="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+            <div class="column col-md-2 col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
                 <ul class="nav hidden-sm-up">
                     <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
                             class="fa fa-chevron-left"></i></a></li>
                 </ul>
 
                 <ul class="nav hidden-xs-down" id="lg-menu">
-                    <li id="tableOfContents" class="active">
+                    <li id="tableOfContents" class="active hidden-md-up">
                         <a data-toggle="collapse" href="#sidebarTableofContents" data-parent="#lg-menu"
                            aria-expanded="true" class="collapsed">
-                            <i class="fa fa-list"></i> Table of Contents
+                            <i class="fa fa-list"></i> Page Contents
                             <i class="expand"></i>
                         </a>
                         <ul class="collapse nav" id="sidebarTableofContents" aria-expanded="false"
@@ -129,9 +133,9 @@
                         <a data-toggle="collapse"
                            href="#sidebarTopics"
                            data-parent="#lg-menu"
-                           aria-expanded="false"
-                           class="collapsed">
-                            <i class="fa fa-list-alt"></i> Topics
+                           aria-expanded="true"
+                           class="">
+                            <i class="fa fa-list-alt"></i> Table of Contents
                             <i class="expand"></i>
                         </a>
                     </li>

@@ -34,7 +34,8 @@ function loadSidebarForActiveVersion() {
 
         if ( menu.first().is('ul') ) {
 
-            menu.addClass('nav collapse').attr('id', 'sidebarTopics');
+            // menu.addClass('nav collapse').attr('id', 'sidebarTopics');
+            menu.addClass('nav').attr('id', 'sidebarTopics');
 
             var topLevel = menu.find('> li>a');
 
@@ -190,6 +191,7 @@ function generateToolbarIcons() {
 
 function generateTableOfContentsForPage() {
     var toc = $('#tableOfContents ul');
+    var page_contents = $('#pageContents ul');
     var arr = [];
 
     var headings = $('#cas-docs-container').find('h1, h2,h3');
@@ -233,6 +235,7 @@ function generateTableOfContentsForPage() {
     }
 
     toc.append(arr.join(''));
+    page_contents.append(arr.join(''));
 }
 
 function tocItem(id, text) {
