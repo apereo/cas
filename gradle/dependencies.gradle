@@ -900,7 +900,11 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        springbootremoteshell : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-remote-shell:$springBootVersion") {
+                    force = true
+                },
+        ],
         springcloud      : [
                 dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClientVersion") {
                     exclude(group: 'org.springframework', module: 'spring-web')
