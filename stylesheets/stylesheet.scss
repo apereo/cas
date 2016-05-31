@@ -159,9 +159,6 @@ footer {
     }
   }
 
-  .cas-docs-container {
-    margin-top: 0;
-  }
 }
 
 /* Medium devices (tablets, 48em and up)*/
@@ -204,6 +201,9 @@ footer {
         color: #000000;
       }
     }
+  }
+  .cas-docs-container {
+    margin-top: 0;
   }
 
   .cas-docs-sidebar {

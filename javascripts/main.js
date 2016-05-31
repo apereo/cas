@@ -289,7 +289,7 @@ $(function () {
         $(this).toggleClass('visible-xs-up text-center');
         $(this).find('i').toggleClass('fa-chevron-left fa-chevron-right');
         $('.row-offcanvas').toggleClass('active');
-        $('#lg-menu').toggleClass('hidden-sm-down');
+        $('#lg-menu').toggleClass('hidden-xs-down');
 
     });
 
