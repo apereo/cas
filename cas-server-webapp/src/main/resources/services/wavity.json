@@ -1,6 +1,6 @@
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "^http://.*.wavity.(com|net|info).*",
+  "serviceId" : "^http://.*.wavity.(com|net|info|local).*",
   "name" : "Wavity Web Services",
   "theme" : "wavity",
   "id" : 175854194241240,
