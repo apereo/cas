@@ -91,6 +91,9 @@ There are some additional handlers for small deployments and special cases:
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
 
+<div class="alert alert-info"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
+use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively.</p></div>
+
 ## Password Encoding
 Password encoders are responsible during the authentication event to convert and encode
 the credential password to a form that is acceptable by the authentication source.
