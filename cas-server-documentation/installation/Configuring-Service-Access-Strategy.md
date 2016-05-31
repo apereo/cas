@@ -250,7 +250,7 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
     "requireAllAttributes" : true,
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
-      "memberOf" : [ "java.util.HashSet", [ "admin" ] ]
+      "grouperAttributes" : [ "java.util.HashSet", [ "faculty" ] ]
     },
     "groupField" : "DISPLAY_EXTENSION"
   }
