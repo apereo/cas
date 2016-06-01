@@ -77,6 +77,9 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
+        <AsyncLogger name="org.springframework.boot.actuate.autoconfigure" level="info" additivity="false">
+            <AppenderRef ref="casConsole"/>
+        </AsyncLogger>
         <AsyncLogger name="org.springframework.webflow" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
