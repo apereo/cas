@@ -102,7 +102,7 @@
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
 
 * [Administration](#administration)
-    *   [Groovy Console](/$version/installation/Configuring-Groovy-Console.html)
+    *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
 
 * [Developer](#developer)
     *   [Javadocs](/$version/javadocs/index.html)
