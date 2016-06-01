@@ -41,7 +41,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
-import org.apereo.cas.configuration.model.CasConfigurationModel;
+import org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,11 +57,12 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  */
 @Configuration("casCoreAuthenticationConfiguration")
-@EnableConfigurationProperties(CasConfigurationModel.HttpClientTrustStoreConfigurationProperties.class)
+@EnableConfigurationProperties(HttpClientTrustStoreProperties.class)
 public class CasCoreAuthenticationConfiguration {
 
+    //TODO: constructor injection, which does not work at this time for some reason
     @Autowired
-    private CasConfigurationModel.HttpClientTrustStoreConfigurationProperties trustStoreProperties;
+    private HttpClientTrustStoreProperties trustStoreProperties;
 
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
