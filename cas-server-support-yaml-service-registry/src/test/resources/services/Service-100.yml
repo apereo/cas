@@ -1,0 +1,48 @@
+--- !<org.apereo.cas.services.RegexRegisteredService>
+serviceId: "^https://.+"
+name: "Service"
+id: 100
+logoutType: "BACK_CHANNEL"
+attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy>
+  principalAttributesRepository: !<org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository>
+    expiration: 2
+    timeUnit: "HOURS"
+  authorizedToReleaseCredentialPassword: false
+  authorizedToReleaseProxyGrantingTicket: false
+  allowedAttributes: !<java.util.ArrayList>
+  - "attr1"
+  - "attr2"
+  - "attr3"
+  attributeFilter: !<org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter>
+    pattern: "\\w+"
+multifactorPolicy: !<org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy>
+  failureMode: "CLOSED"
+accessStrategy: !<org.apereo.cas.services.RemoteEndpointServiceAccessStrategy>
+  enabled: true
+  ssoEnabled: true
+  unauthorizedRedirectUrl: "https://www.github.com"
+  requireAllAttributes: true
+  requiredAttributes: !<java.util.HashMap>
+      cn: !<java.util.HashSet>
+      - "val1, val2, val3"
+      memberOf: !<java.util.HashSet>
+      - "val4, val5, val6"
+  caseInsensitive: false
+  endpointUrl: "http://www.google.com?this=that"
+  acceptableResponseCodes: "200,405,403"
+properties: !<java.util.HashMap>
+    field1: !<org.apereo.cas.services.DefaultRegisteredServiceProperty>
+      values: !<java.util.HashSet>
+      - "value2"
+      - "value1"
+    field2: !<org.apereo.cas.services.DefaultRegisteredServiceProperty>
+      values: !<java.util.HashSet>
+      - "value22"
+      - "value12"
+usernameAttributeProvider: !<org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider>
+  usernameAttribute: "cn"  
+proxyPolicy: !<org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy>
+  pattern: "https://.+"
+requiredHandlers: !<java.util.HashSet>
+- "handler1"
+- "handler2"
