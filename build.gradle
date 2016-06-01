@@ -276,6 +276,9 @@ subprojects {
 			exclude group: 'com.google.guava'
 			exclude group: 'xml-security', module: 'xmlsec'
 			exclude group: 'org.springframework'
+			exclude group: 'wavity-ams'
+//			exclude group: 'wavity-cas-client'
+			exclude group: 'wavity-rest-client'
 		}
 
         if (!Boolean.getBoolean("skipAspectJ")) {
