@@ -66,6 +66,7 @@ dependencies {
     compile project(':cas-server-support-themes')
     compile project(':cas-server-webapp-config')
     compile project(':cas-server-support-validation')
+    compile project(':cas-server-support-infinispan-ticket-registry')
 
     providedRuntime libraries.springboottomcat
     compile libraries.pac4j
