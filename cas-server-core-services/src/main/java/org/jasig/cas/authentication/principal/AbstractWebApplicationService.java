@@ -6,6 +6,7 @@ import org.jasig.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,16 +123,35 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     @Override
     public boolean matches(final Service service) {
+    	boolean matched=false;
         try {
             final String thisUrl = URLDecoder.decode(this.id, "UTF-8");
             final String serviceUrl = URLDecoder.decode(service.getId(), "UTF-8");
 
             logger.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
-            return thisUrl.equalsIgnoreCase(serviceUrl);
+            matched = thisUrl.equalsIgnoreCase(serviceUrl);
+            /**
+             * Checking to see whether difference between serviceUrl and thisUrl is just differences in 
+             * highestLevelDomain and port number. If thisUrl contains .local we ignore the port number and
+             * highestLevelDomain.
+             */
+            
+            if(!matched && thisUrl.contains(".local".intern())){
+            	URL thisURL = new URL(thisUrl);
+        		URL serviceURL = new URL(serviceUrl);
+        		if(thisURL.getHost().endsWith(".local")){
+        			String hostName = thisURL.getHost().substring(0, thisURL.getHost().lastIndexOf(".local")-1);
+        			String serviceURLHost = serviceURL.getHost();
+        			if(serviceURLHost.startsWith(hostName)){
+        				matched = ( thisURL.getPath().equalsIgnoreCase(serviceURL.getPath()) &&
+        						thisURL.getProtocol().equalsIgnoreCase(serviceURL.getProtocol()));
+        			}
+        		}
+            }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return false;
+        return matched;
     }
 
     /**
