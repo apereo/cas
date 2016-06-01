@@ -2,196 +2,299 @@ var CONST_CURRENT_VER = "development";
 var CONST_SITE_TARGET_DIR = "/_site/";
 
 function isDocumentationSiteViewedLocally() {
-  return location.href.indexOf(CONST_SITE_TARGET_DIR) != -1;
+    return location.href.indexOf(CONST_SITE_TARGET_DIR) != -1;
 }
 
 function getActiveDocumentationVersionInView(returnBlankIfNoVersion) {
-  var currentVersion = CONST_CURRENT_VER;
-  var href = location.href;
-  var index = isDocumentationSiteViewedLocally() ? href.indexOf(CONST_SITE_TARGET_DIR) : -1;
+    var currentVersion = CONST_CURRENT_VER;
+    var href = location.href;
+    var index = isDocumentationSiteViewedLocally() ? href.indexOf(CONST_SITE_TARGET_DIR) : -1;
 
-  if (index == -1) {
-    var uri = new URI(document.location);
+    if (index == -1) {
+        var uri = new URI(document.location);
 
-    if (uri.filename() != uri.segment(1) && uri.segment(1) != "developer") {
-        currentVersion = uri.segment(1);
-    } else if (returnBlankIfNoVersion) {
-    	return "";
+        if (uri.filename() != uri.segment(1) && uri.segment(1) != "developer") {
+            currentVersion = uri.segment(1);
+        } else if (returnBlankIfNoVersion) {
+            return "";
+        }
+    } else {
+        href = href.substring(index + 7);
+        index = href.indexOf("/");
+        currentVersion = href.substring(0, index);
     }
-  } else {
-    href = href.substring(index + 7);
-    index = href.indexOf("/");
-    currentVersion = href.substring(0, index);
-  }
-  return currentVersion;
+    return currentVersion;
 }
 
 
 function loadSidebarForActiveVersion() {
-  $("#sidebartoc").load("/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html");
+    $.get( "/cas/" + getActiveDocumentationVersionInView() + "/sidebar.html", function( data ) {
+
+        var menu = $(data);
+
+        if ( menu.first().is('ul') ) {
+
+            // menu.addClass('nav collapse').attr('id', 'sidebarTopics');
+            menu.addClass('nav').attr('id', 'sidebarTopics');
+
+            var topLevel = menu.find('> li>a');
+
+            var subLevel = menu.find('> li ul');
+
+            var nestedMenu = menu.find("ul li" ).has( "ul" ).children('a');
+
+            topLevel.each(function() {
+                sidebarTopNav( $(this) );
+            });
+
+            subLevel.each( function() {
+                sidebarSubNav( $(this) );
+            });
+
+            nestedMenu.each(function() {
+                sidebarTopNav( $(this) );
+            });
+
+            $('#sidebartoc').append(menu);
+
+            generateSidebarLinksForActiveVersion();
+
+        } else {
+            $('#sidebartoc').hide();
+        }
+
+
+    });
+}
+
+function sidebarTopNav( el ) {
+    // If the link is an anchor, then wire up toggle functionality, otherwise leave it.
+    if ( el.attr('href').search(/(?:^|)#/g) >= 0 ) {
+        el.attr({
+            'data-toggle': "collapse",
+            'data-parent': "#" + $(this).closest('ul').attr('id'),
+            'aria-expanded': "false",
+            title: $(this)[0].innerText,
+            class: 'collapsed'
+        })
+        .append('<i class="expand"></i></a>');
+    } else {
+
+    }
+};
+
+
+function sidebarSubNav( el ) {
+    var prevId = $(el).prev('a').attr('href');
+
+    if ( prevId.search(/^#.*$/) >= 0) {
+        prevId = prevId.substr(1);
+    } else {
+        prevId = '';
+    }
+
+    if (!prevId == '') {
+        $(el).addClass('nav collapse').attr('id', prevId);
+    }
 }
 
 function hideDevelopmentVersionWarning() {
-  var formattedVersion = getActiveDocumentationVersionInView(true);
-  if (formattedVersion != CONST_CURRENT_VER) {
-    $("#dev-doc-info").hide();
-  }
+    var formattedVersion = getActiveDocumentationVersionInView(true);
+    if (formattedVersion != CONST_CURRENT_VER) {
+        $("#dev-doc-info").hide();
+    }
 }
 
 function generateSidebarLinksForActiveVersion() {
-  $('a').each(function() {
-    var href = this.href;
-    if (href.indexOf("$version") != -1) {
-      href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
-      $(this).attr('href', href);
-    }
-  });
+    $('#sidebar a').each(function () {
+        var href = this.href;
+
+        if (href.indexOf("$version") != -1) {
+            href = href.replace("$version", "cas/" + getActiveDocumentationVersionInView());
+            $(this).attr('href', href);
+        }
+    });
 }
 
 function generateToolbarIcons() {
-  var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
-  var activeVersion = getActiveDocumentationVersionInView(true);
-  
-  var uri = new URI(document.location);
-  var segments = uri.segment();
-  var page = "";
+    var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
+    var activeVersion = getActiveDocumentationVersionInView(true);
 
-  for (var i = 1; i < segments.length; i++) {
-    page += segments[i] + "/";    
-  }
-  editablePage = page.replace(".html", ".md");
-  editablePage = editablePage.replace(CONST_CURRENT_VER, "")
-  editablePage = editablePage.replace(activeVersion, "")
-  if (editablePage == "") {
-  	editablePage = "index.md";
-  }
+    var uri = new URI(document.location);
+    var segments = uri.segment();
+    var page = "";
 
-  var imagesPath = "/cas/images/";
-  if (isDocumentationSiteViewedLocally()) {
-  	var loc = location.href;
-  	var index = loc.indexOf(CONST_SITE_TARGET_DIR);
-  	var uri2 = loc.substring(0, index + CONST_SITE_TARGET_DIR.length);
-  	imagesPath = uri2 + "images/"
-  }
+    for (var i = 1; i < segments.length; i++) {
+        page += segments[i] + "/";
+    }
+    editablePage = page.replace(".html", ".md");
+    editablePage = editablePage.replace(CONST_CURRENT_VER, "")
+    editablePage = editablePage.replace(activeVersion, "")
+    if (editablePage == "") {
+        editablePage = "index.md";
+    }
 
-  
-  if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
-    var linkToDev = "/cas/" + page.replace(activeVersion, CONST_CURRENT_VER);
-    linkToDev = linkToDev.replace("html/", "html");
-    
-    $('#toolbarIcons').append("<a href='" + linkToDev +
-      "'><img src='/cas/images/indev.png' alt='See the latest version of this page' title='See the latest version of this page'></a>");
-  }
+    var imagesPath = "/cas/images/";
+    if (isDocumentationSiteViewedLocally()) {
+        var loc = location.href;
+        var index = loc.indexOf(CONST_SITE_TARGET_DIR);
+        var uri2 = loc.substring(0, index + CONST_SITE_TARGET_DIR.length);
+        imagesPath = uri2 + "images/"
+    }
 
-  var baseLink = CAS_REPO_URL_GITHUB;
-  var editLink = "";
-  var historyLink = "";
-  var deleteLink = "";
 
-  if (activeVersion == "") {
-  	editLink = baseLink + "/edit/gh-pages/";
-  	historyLink = baseLink + "/commits/gh-pages/";
-  	deleteLink = baseLink + "/delete/gh-pages/";
-  } else if (activeVersion != CONST_CURRENT_VER) {
-  	editLink = baseLink + "/edit/" + activeVersion + "/cas-server-documentation/";
-  	historyLink = baseLink + "/commits/" + activeVersion + "/cas-server-documentation/";
-  	deleteLink = baseLink + "/delete/" + activeVersion + "/cas-server-documentation/";
-  } else if (activeVersion == CONST_CURRENT_VER) {
-  	editLink = baseLink + "/edit/master/cas-server-documentation/";
-  	historyLink = baseLink + "/commits/master/cas-server-documentation/";
-  	deleteLink = baseLink + "/delete/master/cas-server-documentation/";
-  }
+    if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
+        var linkToDev = "/cas/" + page.replace(activeVersion, CONST_CURRENT_VER);
+        linkToDev = linkToDev.replace("html/", "html");
 
-  editLink += editablePage;
- 
+        $('#toolbarIcons').append("<a href='" + linkToDev +
+            "'><i class='fa fa-cogs' title='See the latest version of this page'></i></a>");
+    }
 
-  $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
-    "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
+    var baseLink = CAS_REPO_URL_GITHUB;
+    var editLink = "";
+    var historyLink = "";
+    var deleteLink = "";
 
-  historyLink += editablePage;
-  
-  
-  $('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
-    "'><img src='" + imagesPath + "history.png' alt='View commit history on Github' title='View commit history on Github'>");
+    if (activeVersion == "") {
+        editLink = baseLink + "/edit/gh-pages/";
+        historyLink = baseLink + "/commits/gh-pages/";
+        deleteLink = baseLink + "/delete/gh-pages/";
+    } else if (activeVersion != CONST_CURRENT_VER) {
+        editLink = baseLink + "/edit/" + activeVersion + "/cas-server-documentation/";
+        historyLink = baseLink + "/commits/" + activeVersion + "/cas-server-documentation/";
+        deleteLink = baseLink + "/delete/" + activeVersion + "/cas-server-documentation/";
+    } else if (activeVersion == CONST_CURRENT_VER) {
+        editLink = baseLink + "/edit/master/cas-server-documentation/";
+        historyLink = baseLink + "/commits/master/cas-server-documentation/";
+        deleteLink = baseLink + "/delete/master/cas-server-documentation/";
+    }
 
-  deleteLink += editablePage;
-  
-  
-  $('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
-    "'><img src='" + imagesPath + "delete.png' alt='Delete with Github' title='Delete with Github'>");
+    editLink += editablePage;
+
+
+    $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
+        "'><i class='fa fa-pencil' title='Edit with Github'></i></a>");
+
+    historyLink += editablePage;
+
+
+    $('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
+        "'><i class='fa fa-history' title='View commit history on Github'></i></a>");
+
+    deleteLink += editablePage;
+
+
+    $('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
+        "'><i class='fa fa-times' title='Delete with Github'></i></a>");
 }
 
 function generateTableOfContentsForPage() {
-  $('#tableOfContents').append("<strong>Table of Contents</strong>");
-  $('#tableOfContents').append("<ul>");
-  
-  $('h1, h2, h3').each(function() {
-    if (this.id != "project_tagline" && this.id != "") {
-      var tagName = $(this).prop("tagName").trim();
-      var currentIndex = parseInt(tagName.substring(1, 2));
-      
-      var alignment = "";
+    var toc = $('#tableOfContents ul');
+    var page_contents = $('#pageContents ul');
+    var arr = [];
 
-      switch (currentIndex) {
-        case 2:
-          for (var i = 0; i < 3; i++) { alignment += "&nbsp;" }
-          break;
-        case 3:
-          for (var i = 0; i < 6; i++) { alignment += "&nbsp;" }
-          break;
-      }
-      
-      $('#tableOfContents').append("<li><a href='#" + this.id + "'>" + alignment +
-          this.textContent + "</a></li>");
+    var headings = $('#cas-docs-container').find('h1, h2,h3');
+    var subMenu = false;
+    var subMenuId = null;
+
+    headings.each(function (idx) {
+        if ($(this).is('h1,h2')) {
+            // If it is a H2 and the submenu flag is NOT set, then arr.push('<li>h2 text')
+            if (!subMenu) {
+                arr.push( tocItem(this.id, this.textContent));
+            }
+
+            // If it is a H2 and the submenu flag is set, then arr.push('</ul><li>h2 text')
+            if (subMenu) {
+                subMenu = false;
+                arr.push('</ul></li>');
+                arr.push( tocItem(this.id, this.textContent));
+            }
+        }
+        ; // End H2
+
+        if ($(this).is('h3')) {
+            // If it is a H3 and the submenu flag is NOT set, then set the submenu flag then arr.push('<ul><li>h3 text</li>')
+            if (!subMenu) {
+                subMenu = true;
+                arr.push('<ul class="nav">');
+                arr.push( tocItem(this.id, this.textContent));
+            } else if (subMenu) {
+                arr.push( tocItem(this.id, this.textContent));
+            }
+        }
+        ; // End H2
+    });
+
+    //After the loop, close the last <li> tag
+    if (subMenu) {
+        arr.push('</ul></li>');
+    } else {
+        arr.push('</li>');
     }
-  });
-  $('#tableOfContents').append("</ul>");
+
+    toc.append(arr.join(''));
+    page_contents.append(arr.join(''));
 }
+
+function tocItem(id, text) {
+    return '<li><a href="#' + id + '">' + text + '</a>';
+}
+
 
 function guidGenerator() {
-    var S4 = function() {
-       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    var S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
-    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-}
-
-function collapseCodeBlocks() {
-	$(".highlight").each(function() {
-		var id = guidGenerator();
-		var showCodeButton = "<button type='button' class='btn btn-default' data-toggle='collapse' " +
-							 "data-target='#" + id + "' aria-expanded='true'>" +
-							 "<span class='glyphicon glyphicon-stats' aria-hidden='true'></span>" +
-							 "&nbsp;Show Code</button>";
-		$(this).attr("id", id);
-		$(this).before(showCodeButton);
-		$(this).addClass('collapse');
-		$(this).prepend('<br>');
-	});
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
 function ensureBootrapIsLoaded() {
-  if(typeof($.fn.modal) === 'undefined') {
-    // require a minimum version of bootstrap
-    $('head').prepend("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>");
-    $('head').append("<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'></script>");
-  }
+    if (typeof($.fn.modal) === 'undefined') {
+        // require a minimum version of bootstrap
+        $('head').prepend("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>");
+        $('head').append("<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'></script>");
+    }
 }
 
-$(function() {
-  ensureBootrapIsLoaded();
-  loadSidebarForActiveVersion();
-  generateTableOfContentsForPage();
-  generateToolbarIcons();
-  collapseCodeBlocks();
+function responsiveImages() {
+    $('img').each(function() {
+        $(this).addClass('img-fluid');
+    });
+}
 
-  var formattedVersion = getActiveDocumentationVersionInView();
-  if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
-	formattedVersion = " (" + formattedVersion + ")"
-  } else {
-	formattedVersion = "";
-  }
-  hideDevelopmentVersionWarning();
-  document.title = $("h1").first().text() + formattedVersion;
-  
+function responsiveTables() {
+    $('table').each(function() {
+        $(this).addClass('table table-responsive');
+    });
+}
+
+$(function () {
+    ensureBootrapIsLoaded();
+    loadSidebarForActiveVersion();
+    generateTableOfContentsForPage();
+
+    generateToolbarIcons();
+    responsiveImages();
+    responsiveTables();
+
+    var formattedVersion = getActiveDocumentationVersionInView();
+    if (formattedVersion != "" && formattedVersion.indexOf(CONST_CURRENT_VER) == -1) {
+        formattedVersion = " (" + formattedVersion + ")"
+    } else {
+        formattedVersion = "";
+    }
+    hideDevelopmentVersionWarning();
+    document.title = $("h1").first().text() + formattedVersion;
+
+    $('[data-toggle=offcanvas]').click(function () {
+        $(this).toggleClass('visible-xs-up text-center');
+        $(this).find('i').toggleClass('fa-chevron-left fa-chevron-right');
+        $('.row-offcanvas').toggleClass('active');
+        $('#lg-menu').toggleClass('hidden-xs-down');
+
+    });
+
 });
 

@@ -1,87 +1,167 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="CAS - Single Sign-On for the Web" />
-    
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="CAS - Single Sign-On for the Web"/>
+
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
 
-    <link rel="stylesheet"
-	  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/redmond/jquery-ui.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"
+          integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" media="screen"
-          href="{{ relative }}stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="print"
-          href="{{ relative }}stylesheets/print.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/redmond/jquery-ui.css"/>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ relative }}stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="print" href="{{ relative }}stylesheets/print.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
 
     <title>{{ page.title }}</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
-    <script src="{{ relative }}javascripts/URI.js"></script>
-    <script src="{{ relative }}javascripts/main.js"></script>
-  </head>
+</head>
 
-  <body>
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
-          <div id="project_title">
-            <a class="undecorated" href="{{ relative }}index.html">
-              <img class="undecorated" src="{{ relative }}images/cas_logo.png"/>
-            </a>
-          </div>
-          <h2 id="project_tagline">Single Sign-On for the Web</h2>
+<body>
+<div class="wrapper">
+    <div class="box">
+        <!-- HEADER -->
+        <header class="hidden-sm-down">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-4 col-md-2">
+                        <a href="{{ relative }}index.html">
+                            <img class="undecorated" src="{{ relative }}images/cas_logo.png"/>
+                        </a>
+                    </div>
+                    <div class="col-xs-8 col-md-6">
+                        <h1>Single Sign-On for the Web</h1>
+                    </div>
+                    <div class="hidden-sm-down col-md-4">
+                        <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
+                    </div>
+                </div>
+            </div>
         </header>
-    </div>
 
-    <!-- NAVBAR -->
-    <div id="navbar_wrap" class="outer">
-      <header id="navbar_content" class="inner">
+
+        <!-- NAVBAR -->
         {% include navbar.html %}
-        </header>
+
+
+        <div class="row row-offcanvas row-offcanvas-right">
+            <div class="col-md-2 hidden-sm-down sidebar" id="pageContents">
+                <h2>Page Contents</h2>
+                <ul></ul>
+            </div>
+            <div class="column col-md-8 col-sm-9 col-xs-11" id="main">
+                <section>
+                    <div id="mobile-nav" class="navbar navbar-cas navbar-static-top hidden-md-up" role="banner">
+                        <!-- top nav -->
+                        <div class="navbar-header clearfix">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                    data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle</span>
+                                <span class="fa fa-bars"></span>
+                            </button>
+                            <a href="{{ relative }}index.html" class="navbar-brand logo"><img
+                                    class="undecorated img-responsive" src="{{ relative }}images/cas_logo.png"/></a>
+                            <h1>Single Sign-On for the Web</h1>
+                        </div>
+                        <nav class="collapse navbar-collapse" role="navigation">
+                            <ul class="nav navbar-nav">
+                                <li class="nav-item active"><a href="{{ relative }}index.html" class="nav-link">Home</a>
+                                </li>
+                                <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="nav-link">Downloads</a>
+                                </li>
+                                <li class="nav-item"><a
+                                        href="https://www.google.com/cse/publicurl?cx=017040929083740828958:sqr2hwvrxmg"
+                                        class="nav-link">Search</a></li>
+                                <li class="nav-item"><a href="{{ relative }}Support.html" class="nav-link">Support</a>
+                                </li>
+                                <li class="nav-item"><a href="{{ relative }}Mailing-Lists.html" class="nav-link">Mailing
+                                    Lists</a></li>
+                                <li class="nav-item"><a href="{{ relative }}Older-Versions.html" class="nav-link">Versions</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- /top nav -->
+                    </div>
+
+                    <div id="cas-docs-container" class="container cas-docs-container">
+
+                        <div class="row">
+                            <!-- MAIN CONTENT -->
+                            <div id="dev-doc-info" class="alert alert-info"><strong>Work in progress</strong>
+                                <p>You are viewing the development documentation for the CAS server. <strong>The
+                                    functionality presented
+                                    here is not officially released yet and may be unstable</strong>.
+                                    This is a work in progress and will be continually updated as development makes
+                                    progress. To view
+                                    the documentation for a specific CAS server version, please <a
+                                            href="/cas/Older-Versions.html">choose
+                                        an appropriate version.</a></p>
+                            </div>
+
+                            <span id="toolbarIcons"></span>
+                            {{ content }}
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- sidebar -->
+            <div class="column col-md-2 col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+                <ul class="nav hidden-sm-up">
+                    <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
+                            class="fa fa-chevron-left"></i></a></li>
+                </ul>
+
+                <ul class="nav hidden-xs-down" id="lg-menu">
+                    <li id="tableOfContents" class="active hidden-md-up">
+                        <a data-toggle="collapse" href="#sidebarTableofContents" data-parent="#lg-menu"
+                           aria-expanded="true" class="collapsed">
+                            <i class="fa fa-list"></i> Page Contents
+                            <i class="expand"></i>
+                        </a>
+                        <ul class="collapse nav" id="sidebarTableofContents" aria-expanded="false"
+                            style="height: 0px;"></ul>
+                    </li>
+                    <li id="sidebartoc">
+                        <a data-toggle="collapse"
+                           href="#sidebarTopics"
+                           data-parent="#lg-menu"
+                           aria-expanded="true"
+                           class="">
+                            <i class="fa fa-list-alt"></i> Table of Contents
+                            <i class="expand"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- FOOTER  -->
+        <footer>
+            <div class="container">
+                CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a>.
+            </div>
+        </footer>
     </div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-      <!-- SIDEBAR -->
-      <div id="sidebar_wrap" class="outer">
-        <header id="sidebar_content" class="inner">
-          <span id="sidebartoc"></span>
-        </header >
-      </div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
 
-      <!-- PAGE TABLE OF CONTENTS -->
-      <div id="table_contents" class="outer">
-        <header id="sidebar_content" class="inner">
-          <span id="tableOfContents"></span>
-        </header>
-      </div>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"
+        integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7"
+        crossorigin="anonymous"></script>
 
-      <!-- MAIN CONTENT -->
-      <div id="main_content_wrap" class="outer">
-        <section id="main_content" class="inner">
-          <div id="dev-doc-info" class="alert alert-info"><strong>Work in progress</strong><p>You are viewing the development
-          	documentation for the CAS server. <strong>The functionality presented here is not officially released yet and may be unstable</strong>.
-          	This is a work in progress and will be continually updated
-          	as development makes progress. To view the documentation for a specific CAS server version,
-          	please <a href="/cas/Older-Versions.html">choose an appropriate version.</a></p>
-          </div>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+<script src="{{ relative }}javascripts/URI.js"></script>
+<script src="{{ relative }}javascripts/main.js"></script>
 
-          <span id="toolbarIcons" align="right" style="float:right"></span>
-          {{ content }}
-        </section>
-      </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p>CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a>.</p>
-      </footer>
-    </div>
-  </body>
+</body>
 </html>

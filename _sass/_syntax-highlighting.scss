@@ -1,0 +1,35 @@
+.highlight {
+  background-color: transparent;
+
+  pre {
+    padding: 10px;
+    background-color: #f8f8f4;
+    border: 1px solid #ececec;
+    overflow: auto;
+    margin-bottom: 0;
+  }
+
+  pre, code {
+    font-family: "Consolas", "Andale Mono", "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+    font-size: .8rem;
+  }
+
+  table {
+    td {
+      border-top: none;
+
+      &.gutter {
+        padding-right: 0;
+      }
+
+      &.code {
+        width: 100%;
+        padding-left: 0;
+
+        pre {
+          border-left-width: 0;
+        }
+      }
+    }
+  }
+}

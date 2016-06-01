@@ -19,3 +19,4 @@ _site
 .gradle/
 build/
 classes
+.sass-cache/
