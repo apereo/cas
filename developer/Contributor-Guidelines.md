@@ -14,6 +14,7 @@ a fork of the Apereo CAS repository:
 Refer to the GitHub [Fork a Repo](http://help.github.com/fork-a-repo/) page for help with forking.
 
 The following shell commands may be used to grab the source from a forked repository:
+
 ```bash
 git clone --recursive git@github.com:$USER/cas.git
 cd cas
