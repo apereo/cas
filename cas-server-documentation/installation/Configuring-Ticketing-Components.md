@@ -15,10 +15,12 @@ A cache-backed implementation is recommended for HA deployments, while the defau
 `DefaultTicketRegistry` in-memory component may be suitable for small deployments.
 
 ### Default (In-Memory) Ticket Registry
+
 `DefaultTicketRegistry` uses a `ConcurrentHashMap` for memory-backed ticket storage and retrieval.
 This component does not preserve ticket state across restarts.
 
 ### Cache-Based Ticket Registries
+
 Cached-based ticket registries provide a high-performance solution for ticket storage in high availability
 deployments. Components for the following caching technologies are provided:
 
@@ -27,15 +29,22 @@ deployments. Components for the following caching technologies are provided:
 * [Ignite](Ignite-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
 
-#### Secure Cache Replication
-A number of cache-based ticket registries support secure replication of ticket data across the wire,
-so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops.
-[See this guide](Ticket-Registry-Replication-Encryption.html) for more info.
-
 ### RDBMS Ticket Registries
+
 RDBMS-based ticket registries provide a distributed ticket store across multiple CAS nodes. Components for the following caching technologies are provided:
 
 * [JPA](JPA-Ticket-Registry.html)
+
+### NoSQL Ticket Registries
+
+CAS also provides support for a variety of other databases, including Redis, MongoDb and Apache Cassandra, for ticket storage and persistence, via the Infinispan data grid platform.
+
+* [Infinispan](Infinispan-Ticket-Registry.html)
+
+### Secure Cache Replication
+A number of cache-based ticket registries support secure replication of ticket data across the wire,
+so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops.
+[See this guide](Ticket-Registry-Replication-Encryption.html) for more info.
 
 ### Ticket Generators
 CAS presents a pluggable architecture for generating unique ticket ids for each ticket type.
