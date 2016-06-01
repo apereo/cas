@@ -3,7 +3,7 @@ layout: default
 title: CAS - Documentation Versions
 ---
 
-# Older Versions
+# Versions
 CAS documentation is available for the following versions:
 
 - [Development](development/index.html)
