@@ -9,7 +9,7 @@ title: CAS - Contributor Guidelines
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
 a fork of the Apereo CAS repository:
 
-[https://github.com/Jasig/CAS](https://github.com/Jasig/CAS)
+[https://github.com/apereo/CAS](https://github.com/apereo/CAS)
 
 Refer to the GitHub [Fork a Repo](http://help.github.com/fork-a-repo/) page for help with forking.
 
@@ -17,7 +17,7 @@ The following shell commands may be used to grab the source from a forked reposi
 ```bash
 git clone --recursive git@github.com:$USER/cas.git
 cd cas
-git remote add upstream git@github.com:Jasig/cas.git
+git remote add upstream git@github.com:apereo/cas.git
 git fetch --all
 ```
 
@@ -67,10 +67,10 @@ You must push your local branch to your forked repository to facilitate a pull r
 
 
 #### 4. Submit Pull Request
-Submit a pull request from your topic branch onto the target branch of Jasig CAS, typically _master_. See the GitHub
+Submit a pull request from your topic branch onto the target branch of CAS, typically _master_. See the GitHub
 [Using Pull Requests](https://help.github.com/articles/using-pull-requests) page for help.
 
-Be prepared to sync changes with the target branch of the Jasig CAS repository since the target branch may move during review and consideration of the pull request.
+Be prepared to sync changes with the target branch of the CAS repository since the target branch may move during review and consideration of the pull request.
 
 
 #### Creating Pull Requests
