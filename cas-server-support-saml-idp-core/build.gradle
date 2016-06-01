@@ -1,4 +1,4 @@
-description = 'Apereo CAS SAML Identity Provider Core Support'
+description = 'Apereo CAS SAML Identity Provider Core'
 dependencies {
     compile project(':cas-server-core-services')
     compile libraries.commons
