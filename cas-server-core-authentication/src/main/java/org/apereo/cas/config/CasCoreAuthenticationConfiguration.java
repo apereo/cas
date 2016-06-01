@@ -41,27 +41,27 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.configuration.model.CasConfigurationModel;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
 /**
  * This is {@link CasCoreAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("casCoreAuthenticationConfiguration")
+@EnableConfigurationProperties(CasConfigurationModel.HttpClientTrustStoreConfigurationProperties.class)
 public class CasCoreAuthenticationConfiguration {
 
-    @Value("${http.client.truststore.file:classpath:truststore.jks}")
-    private Resource trustStoreFile;
-
-    @Value("${http.client.truststore.psw:changeit}")
-    private String trustStorePassword;
+    @Autowired
+    private CasConfigurationModel.HttpClientTrustStoreConfigurationProperties trustStoreProperties;
 
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
@@ -123,7 +123,7 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
-        return new FileTrustStoreSslSocketFactory(this.trustStoreFile, this.trustStorePassword);
+        return new FileTrustStoreSslSocketFactory(this.trustStoreProperties.getFile(), this.trustStoreProperties.getPsw());
     }
 
     @Bean
@@ -214,6 +214,5 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
         return new ConvertCasePrincipalNameTransformer();
     }
-
 
 }
