@@ -17,10 +17,28 @@ The following strategies may be used to fully extend the CAS configuration model
 <div class="alert alert-info"><strong>YAML or Properties?</strong><p>CAS configuration allows for both
 YAML and Properties syntax in any of the below strategies used.</p></div>
 
+## Overview
+
+CAS allows you to externalize your configuration so you can work with the same CAS instance in different environments. You can use properties files, YAML files, environment variables and command-line arguments to externalize configuration.
+
+CAS uses a very particular order that is designed to allow sensible overriding of values, properties are considered in the following order:
+
+1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
+2. Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable/system property)
+3. JNDI attributes from `java:comp/env`.
+4. Java System properties.
+5. OS environment variables.
+6. Profile-specific application properties outside of your packaged jar (application-{profile}.properties and YAML variants)
+7. Profile-specific application properties packaged inside your jar (application-{profile}.properties and YAML variants)
+8. Application properties outside of your packaged jar (application.properties and YAML variants).
+9. Application properties packaged inside your jar (application.properties and YAML variants).
+
+All CAS settings can be overriden via the above outlined strategies.
+
 ## Embedded
 
 By default, all CAS settings and configuration is controlled via the `application.properties` file. This file
-serves as a reference and a placeholder for all settings that are available to CAS. 
+serves as a reference and a placeholder for all settings that are available to CAS.
 
 ## Native
 

@@ -11,20 +11,19 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <alias name="provisioningConnectionFactory" alias="ldapAuthorizationGeneratorConnectionFactory" />
+    <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
+
 
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="mail" />
     </bean>
-
-    <alias name="provisioningConnectionFactory" alias="ldapAuthorizationGeneratorConnectionFactory" />
-    <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
-    <alias name="searchExecutorRole" alias="ldapAuthorizationGeneratorRoleSearchExecutor" />
-
+    
     <ldaptive:search-executor id="searchExecutorUser" baseDn="${ldap.baseDn}"
-                              searchFilter="${ldap.user.searchFilter}" returnAttributes="mail" />
-    <ldaptive:search-executor id="searchExecutorRole" baseDn="${ldap.role.baseDn}"
-                              searchFilter="${ldap.role.searchFilter}" returnAttributes="uugid" />
+                              searchFilter="${ldap.user.searchFilter}" returnAttributes="*" />
 
+    
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />

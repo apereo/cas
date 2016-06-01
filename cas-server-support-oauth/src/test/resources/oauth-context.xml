@@ -28,7 +28,8 @@
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="false"/>
 
-    <context:component-scan base-package="org.apereo.cas"/>
+    <context:component-scan base-package="org.apereo.cas" />
+    <context:component-scan base-package="org.pac4j.springframework" />
     <context:annotation-config/>
 
     <!-- OAuth View -->
