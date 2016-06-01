@@ -11,13 +11,13 @@ Our premier support channel is community discussion mediated primarily via
 ## Free Support
 Please take the following steps to obtain support from the CAS user community.
 
-### Step 1: Search List Archives
+### Search Archives
 The [Google Groups mirror](https://groups.google.com/forum/#!forum/jasig-cas-user) of the community discussion list
 provides an excellent search interface for list archives.
 In countless cases a particular question has been asked and answered multiple times.
 Please search the archives before posting to the community discussion list.
 
-### Step 2: Post to the Community Discussion List
+### Post to the Mailing List
 The CAS community discussion mailing list is a moderate traffic list where questions are typically answered on the
 order of minutes and typically resolved within a couple days. CAS developers monitor the list and frequently
 participate in discussion. See the [Mailing Lists](Mailing-Lists.html) page for subscription and etiquette.
