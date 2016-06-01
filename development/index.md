@@ -6,8 +6,8 @@ title: CAS - Home
 # Enterprise Single Sign-On
 
 * Java (Spring Webflow/MVC servlet) server component
-* Pluggable authentication support (LDAP, database, X.509, 2-factor)
-* Support for multiple protocols (CAS, SAML, OAuth, OpenID)
+* Pluggable authentication support (LDAP, Database, X.509, MFA)
+* Support for multiple protocols (CAS, SAML, OAuth, OpenID, OIDC)
 * Cross-platform client support (Java, .Net, PHP, Perl, Apache, etc)
 * Integrates with uPortal, Liferay, BlueSocket, Moodle, and Google Apps to name a few
 
