@@ -73,7 +73,6 @@ it via its own private key. Since the attribute is base64 encoded by default, it
 decryption can occur. Here's a sample code snippet:
 
 ```java
-
 final Map<?, ?> attributes = ...
 final String encodedPsw = (String) attributes.get("credential");
 
@@ -84,5 +83,4 @@ final byte[] cred64 = decodeBase64(encodedPsw);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
-
 ```
