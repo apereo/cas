@@ -77,9 +77,10 @@ public class CasCoreServicesConfiguration {
         return new DefaultRegisteredServiceCipherExecutor();
     }
 
+    @Autowired
     @Bean
-    public ReloadableServicesManager servicesManager() {
-        return new DefaultServicesManagerImpl();
+    public ReloadableServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+        return new DefaultServicesManagerImpl(serviceRegistryDao);
     }
 
     @Bean

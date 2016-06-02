@@ -37,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.name;
+
 /**
  * Default implementation of the {@link ServicesManager} interface. If there are
  * no services registered with the server, it considers the ServicecsManager
@@ -52,8 +54,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
     /**
      * Instance of ServiceRegistryDao.
      */
-    
-    @Resource(name="serviceRegistryDao")
+
     private ServiceRegistryDao serviceRegistryDao;
 
     /** Application event publisher. */
@@ -78,22 +79,14 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
     @Qualifier("scheduler")
     private Scheduler scheduler;
 
-    /**
-     * Instantiates a new default services manager impl.
-     */
-    public DefaultServicesManagerImpl() {
-    }
 
     /**
      * Instantiates a new default services manager impl.
      *
      * @param serviceRegistryDao the service registry dao
      */
-
-    @Autowired
-    public DefaultServicesManagerImpl(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
-
         load();
     }
 
