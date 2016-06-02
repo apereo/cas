@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "password.policy.", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "password.policy", ignoreUnknownFields = false)
 public class PasswordPolicyProperties {
 
     private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
