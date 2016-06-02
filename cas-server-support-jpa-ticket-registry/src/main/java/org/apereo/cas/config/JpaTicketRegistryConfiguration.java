@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
@@ -21,6 +22,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
+
+import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
 
 /**
  * This this {@link JpaTicketRegistryConfiguration}.
@@ -107,28 +110,7 @@ public class JpaTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
-        try {
-            final HikariDataSource bean = new HikariDataSource();
-            bean.setDriverClassName(this.jpaTicketRegistryProperties.getDriverClass());
-            bean.setJdbcUrl(this.jpaTicketRegistryProperties.getUrl());
-            bean.setUsername(this.jpaTicketRegistryProperties.getUser());
-            bean.setPassword(this.jpaTicketRegistryProperties.getPassword());
-
-            bean.setMaximumPoolSize(this.jpaTicketRegistryProperties.getPool().getMaxSize());
-            bean.setMinimumIdle(this.jpaTicketRegistryProperties.getPool().getMaxIdleTime());
-            bean.setIdleTimeout(this.jpaTicketRegistryProperties.getIdleTimeout());
-            bean.setLeakDetectionThreshold(this.jpaTicketRegistryProperties.getLeakThreshold());
-            bean.setInitializationFailFast(this.jpaTicketRegistryProperties.isFailFast());
-            bean.setIsolateInternalQueries(this.jpaTicketRegistryProperties.isolateInternalQueries());
-            bean.setConnectionTestQuery(this.jpaTicketRegistryProperties.getHealthQuery());
-            bean.setAllowPoolSuspension(this.jpaTicketRegistryProperties.getPool().isSuspension());
-            bean.setAutoCommit(this.jpaTicketRegistryProperties.isAutocommit());
-            bean.setLoginTimeout(this.jpaTicketRegistryProperties.getPool().getMaxWait());
-            bean.setValidationTimeout(this.jpaTicketRegistryProperties.getPool().getMaxWait());
-            return bean;
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        return newHickariDataSource(this.jpaTicketRegistryProperties);
     }
     
     @Bean
