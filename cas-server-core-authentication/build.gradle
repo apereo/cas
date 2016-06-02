@@ -3,6 +3,7 @@ dependencies {
     compile project(':cas-server-core-api-services')
     compile project(':cas-server-core-api-ticket')
     compile project(':cas-server-core-util')
+    compile project(':cas-server-core-configuration')
     compile libraries.metrics
     compile libraries.inspektr
     compile libraries.persondirectory

@@ -107,3 +107,5 @@ include 'cas-server-webapp'
 include 'cas-management-webapp'
 include 'cas-management-webapp-support'
 include 'cas-management-webapp-support-ldap'
+include 'cas-server-core-configuration'
+
