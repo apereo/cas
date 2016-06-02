@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
  * Two searches are performed by this component for every user details lookup:
- * <p>
  * <ol>
  * <li>Search for an entry to resolve the username. In most cases the search should return exactly one result,
  * but the {@link #setAllowMultipleResults(boolean)} property may be toggled to change that behavior.</li>

@@ -5,6 +5,7 @@ ext['hibernate.version'] = "$hibernateVersion"
 ext['hazelcast.version'] = "$hazelcastVersion"
 ext['spring-session.version'] = "$springSessionVersion"
 ext['tomcat.version'] = "$springBootTomcatVersion"
+ext['infinispan.version'] = "$infinispanVersion"
 
 ext.libraries = [
         aspectj          : [
@@ -338,16 +339,19 @@ ext.libraries = [
                     exclude(group: 'org.iq80.leveldb', module: 'leveldb-api')
                     exclude(group: 'org.fusesource.leveldbjni', module: 'leveldbjni')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'commons-cli', module: 'commons-cli')
                     force = true
                 },
                 dependencies.create("org.infinispan:infinispan-commons:$infinispanVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'commons-cli', module: 'commons-cli')
                     force = true
                 },
                 dependencies.create("org.infinispan:infinispan-core:$infinispanVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'commons-cli', module: 'commons-cli')
                     force = true
                 },
                 dependencies.create("org.infinispan:infinispan-embedded:$infinispanVersion") {
@@ -355,6 +359,7 @@ ext.libraries = [
                     exclude(group: 'org.iq80.leveldb', module: 'leveldb-api')
                     exclude(group: 'org.fusesource.leveldbjni', module: 'leveldbjni')
                     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+                    exclude(group: 'commons-cli', module: 'commons-cli')
                     force = true
                 }
         ],
@@ -900,7 +905,19 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        springbootremoteshell : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-remote-shell:$springBootVersion") {
+                    exclude(group: 'org.springframework', module: 'spring-core')
+                    exclude(group: 'org.springframework', module: 'spring-context-support')
+                    exclude(group: 'org.springframework', module: 'spring-context')
+                    exclude(group: 'org.slf4j', module: 'slf4j-api')
+                    exclude(group: 'commons-logging', module: 'commons-logging')
+                    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+                    exclude(group: 'org.bouncycastle', module: 'bcpkix-jdk15on')
+                    exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-logging')
+                    force = true
+                }
+        ],
         springcloud      : [
                 dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClientVersion") {
                     exclude(group: 'org.springframework', module: 'spring-web')
