@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.AuthenticationViaFormAction;
 import org.apereo.cas.web.flow.FrontChannelLogoutAction;
@@ -15,6 +16,7 @@ import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.ServiceWarningAction;
 import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -40,8 +42,9 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
-    public Action serviceAuthorizationCheck() {
-        return new ServiceAuthorizationCheck();
+    @Autowired
+    public Action serviceAuthorizationCheck(final ServicesManager servicesManager) {
+        return new ServiceAuthorizationCheck(servicesManager);
     }
 
     @Bean

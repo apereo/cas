@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,49 +18,21 @@ public class PasswordPolicyConfiguration {
     
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * Disregard the warning period and warn all users of password expiration.
-     */
-    @Value("${password.policy.warnAll:false}")
-    private boolean alwaysDisplayPasswordExpirationWarning;
+    private PasswordPolicyProperties passwordPolicyProperties;
 
-    /**
-     * Threshold number of days till password expiration below which a warning is displayed.
-     **/
-    @Value("${password.policy.warningDays:" + DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS + '}')
-    private int passwordWarningNumberOfDays = DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS;
-
-    /**
-     * Url to the password policy application.
-     **/
-    @Value("${password.policy.url:https://password.example.edu/change}")
-    private String passwordPolicyUrl;
-
-    public PasswordPolicyConfiguration() {
+    public PasswordPolicyConfiguration(PasswordPolicyProperties passwordPolicyProperties) {
+        this.passwordPolicyProperties = passwordPolicyProperties;
     }
 
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
-        return this.alwaysDisplayPasswordExpirationWarning;
-    }
-    
-    public void setAlwaysDisplayPasswordExpirationWarning(
-            final boolean alwaysDisplayPasswordExpirationWarning) {
-        this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
+        return this.passwordPolicyProperties.getWarnAll();
     }
 
     public String getPasswordPolicyUrl() {
-        return this.passwordPolicyUrl;
-    }
-    
-    public void setPasswordPolicyUrl(final String passwordPolicyUrl) {
-        this.passwordPolicyUrl = passwordPolicyUrl;
+        return this.passwordPolicyProperties.getUrl();
     }
 
     public int getPasswordWarningNumberOfDays() {
-        return this.passwordWarningNumberOfDays;
-    }
-    
-    public void setPasswordWarningNumberOfDays(final int days) {
-        this.passwordWarningNumberOfDays = days;
+        return this.passwordPolicyProperties.getWarningDays();
     }
 }
