@@ -109,7 +109,7 @@ configurability in the revocation machinery built into the JSSE.
 The following configuration is shared by all components:
 
 | Field                             | Description
-|-----------------------------------+---------------------------------------------------------+
+|-----------------------------------+---------------------------------------------------------
 | `unavailableCRLPolicy`    | Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
 | `expiredCRLPolicy`        | Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
 
@@ -117,7 +117,7 @@ The following policies are available by default:
 
 | Policy                                  
 |--------------------------------------
-| `allowRevocationPolicy
+| `allowRevocationPolicy`
 | `denyRevocationPolicy`
 | `thresholdExpiredCRLRevocationPolicy`
 
