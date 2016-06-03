@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import org.apereo.cas.configuration.model.core.sso.SsoProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.AuthenticationViaFormAction;
@@ -17,6 +18,7 @@ import org.apereo.cas.web.flow.ServiceWarningAction;
 import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -29,7 +31,11 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @Configuration("casSupportActionsConfiguration")
+@EnableConfigurationProperties(SsoProperties.class)
 public class CasSupportActionsConfiguration {
+
+    @Autowired
+    private SsoProperties ssoProperties;
     
     @Bean
     public HandlerExceptionResolver errorHandlerResolver() {
@@ -49,7 +55,9 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action sendTicketGrantingTicketAction() {
-        return new SendTicketGrantingTicketAction();
+        final SendTicketGrantingTicketAction bean = new SendTicketGrantingTicketAction();
+        bean.setCreateSsoSessionCookieOnRenewAuthentications(this.ssoProperties.isRenewedAuthn());
+        return bean;
     }
 
     @Bean
@@ -64,7 +72,9 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action initialFlowSetupAction() {
-        return new InitialFlowSetupAction();
+        final InitialFlowSetupAction bean = new InitialFlowSetupAction();
+        bean.setEnableFlowOnAbsentServiceRequest(this.ssoProperties.isMissingService());
+        return bean;
     }
 
     @Bean

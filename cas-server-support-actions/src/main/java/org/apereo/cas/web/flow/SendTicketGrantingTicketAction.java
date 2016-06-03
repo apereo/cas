@@ -13,12 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.annotation.Resource;
 
 /**
  * Action that handles the TicketGrantingTicket creation and destruction. If the
@@ -32,20 +29,19 @@ import javax.annotation.Resource;
 public class SendTicketGrantingTicketAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
-    @Value("${create.sso.renewed.authn:true}")
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
 
-    
-    @Resource(name="ticketGrantingTicketCookieGenerator")
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Instance of CentralAuthenticationService. */
-    
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
     
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     

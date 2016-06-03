@@ -159,8 +159,7 @@ public class InitialFlowSetupAction extends AbstractAction {
      * @param enableFlowOnAbsentServiceRequest the enable flow on absent service request
      */
     @Autowired
-    public void setEnableFlowOnAbsentServiceRequest(@Value("${create.sso.missing.service:true}")
-                                                    final boolean enableFlowOnAbsentServiceRequest) {
+    public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
         this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
     }
 }
