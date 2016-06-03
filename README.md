@@ -1,6 +1,6 @@
-# Central Authentication Service (CAS) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
-[![](https://heroku-badge.herokuapp.com/?app=jasigcas)](http://jasigcas.heroku.com)
-[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)](http://jasigcasmgmt.heroku.com)
+# Central Authentication Service (CAS) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
+[![](https://heroku-badge.herokuapp.com/?app=jasigcas&root=/cas/login)](http://jasigcas.heroku.com/cas)
+[![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-services/login)](http://jasigcasmgmt.heroku.com/cas-services)
 
 ## Introduction
 
@@ -15,14 +15,14 @@ CAS provides enterprise single sign-on service:
 - Community documentation and implementation support
 - An extensive community of adopters
 
-## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png?branch=master)](http://travis-ci.org/Jasig/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
+## Build [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661) [![Issue Stats](http://www.issuestats.com/github/apereo/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/apereo/cas/badge/issue?style=flat)](http://www.issuestats.com/github/apereo/cas)
 
 It is recommended to build and deploy CAS locally using the [Maven War Overlay method][overlay]. 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
 rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
+## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 
 - Tagged source releases may be downloaded from [here][downloadcas].
 - CAS artifacts are published to the [Maven Central Repository][casmavencentral].
@@ -31,7 +31,7 @@ customizations to further ease future upgrades and maintenance.
 - Snapshot artifacts are also published through the [Sonatype snapashots repository][cassonatype] under the group id **`org.jasig.cas`**.
 - The codebase may also be *cloned* using a Git client via the following command:
 ```bash
-git clone git@github.com:Jasig/cas.git
+git clone git@github.com:apereo/cas.git
 ```
 
 **Note:** If building CAS from the source, running test cases currently requires an active Internet connection.
@@ -39,7 +39,7 @@ git clone git@github.com:Jasig/cas.git
 ## Documentation 
 - [Official Documentation][wiki]
 - [Release Notes][releasenotes]
-- [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+- [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Addons
 - [CAS Addons][casaddons] is an open source collection of useful CAS server extensions.
@@ -47,12 +47,12 @@ git clone git@github.com:Jasig/cas.git
 ## Contributions
 - [How to contribute][contribute]
 
-[wiki]: http://jasig.github.io/cas
-[overlay]: http://jasig.github.io/cas/development/installation/Maven-Overlay-Installation.html
-[contribute]: http://jasig.github.io/cas/developer/Contributor-Guidelines.html
+[wiki]: http://apereo.github.io/cas
+[overlay]: http://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
+[contribute]: http://apereo.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: http://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/
 [casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
-[downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
-[releasenotes]: https://github.com/Jasig/cas/releases
+[downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
+[releasenotes]: https://github.com/apereo/cas/releases
 [casaddons]: https://github.com/unicon-cas-addons
