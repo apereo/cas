@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 
 /**
- * A re-usable collection of utility methods for object instantiations used cross various
+ * A re-usable collection of utility methods for object instantiations and configurations used cross various
  * <code>@Bean creation methods</code> throughout CAS server.
  *
  * @author Dmitriy Kopylenko
