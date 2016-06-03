@@ -11,6 +11,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
@@ -32,15 +34,18 @@ import java.util.List;
  */
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
-    @Resource(name="jpaLockingStrategy")
+    @Autowired
+    @Qualifier("jpaLockingStrategy")
     private LockingStrategy jpaLockingStrategy;
 
-    @Value("${ticketreg.database.jpa.locking.tgt.enabled:true}")
     private boolean lockTgt = true;
-
     
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
+
+    public void setLockTgt(final boolean lockTgt) {
+        this.lockTgt = lockTgt;
+    }
 
     @Override
     public void updateTicket(final Ticket ticket) {

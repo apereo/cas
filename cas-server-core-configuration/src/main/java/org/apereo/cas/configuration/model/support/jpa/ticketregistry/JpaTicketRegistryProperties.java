@@ -11,4 +11,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "ticketreg.database", ignoreUnknownFields = false)
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
+
+    private boolean jpaLockingTgtEnabled = true;
+
+    public boolean isJpaLockingTgtEnabled() {
+        return jpaLockingTgtEnabled;
+    }
+
+    public void setJpaLockingTgtEnabled(final boolean jpaLockingTgtEnabled) {
+        this.jpaLockingTgtEnabled = jpaLockingTgtEnabled;
+    }
 }

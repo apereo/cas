@@ -94,7 +94,7 @@ public class JpaTicketRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    
+    @Autowired
     public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
@@ -116,7 +116,9 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     public TicketRegistry jpaTicketRegistry() {
-        return new JpaTicketRegistry();
+        final JpaTicketRegistry bean = new JpaTicketRegistry();
+        bean.setLockTgt(this.jpaTicketRegistryProperties.isJpaLockingTgtEnabled());
+        return bean;
     }
     
     @Bean
