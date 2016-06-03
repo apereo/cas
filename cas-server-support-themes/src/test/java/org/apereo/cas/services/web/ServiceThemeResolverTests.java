@@ -32,7 +32,7 @@ public class ServiceThemeResolverTests {
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl(), 15, 60);
         this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
         this.serviceThemeResolver = new ServiceThemeResolver();

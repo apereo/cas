@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -36,8 +35,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
-
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.name;
 
 /**
  * Default implementation of the {@link ServicesManager} interface. If there are
@@ -66,10 +63,8 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      */
     private ConcurrentMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
-    @Value("${service.registry.quartz.reloader.repeatInterval:60}")
     private int refreshInterval;
 
-    @Value("${service.registry.quartz.reloader.startDelay:15}")
     private int startDelay;
 
     @Autowired
@@ -85,8 +80,10 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      *
      * @param serviceRegistryDao the service registry dao
      */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao, final int startDelay, final int refreshInterval) {
         this.serviceRegistryDao = serviceRegistryDao;
+        this.startDelay = startDelay;
+        this.refreshInterval = refreshInterval;
         load();
     }
 
