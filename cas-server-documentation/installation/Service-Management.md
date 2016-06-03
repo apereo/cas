@@ -24,7 +24,7 @@ bean.
 ## Service Management Webapp
 
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
-to manage service registry data. The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com](https://jasigcasmgmt.herokuapp.com)
+to manage service registry data. The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
 
 The Services Management web application is a standalone application that helps one manage service registrations and 
 entries via a customizable user interface. The management web application *MUST* share the same registry configuration as
