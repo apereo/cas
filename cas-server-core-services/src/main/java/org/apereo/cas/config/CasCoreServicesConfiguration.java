@@ -40,12 +40,6 @@ import org.springframework.core.io.Resource;
 @EnableConfigurationProperties(ServiceRegistryProperties.class)
 public class CasCoreServicesConfiguration {
 
-    @Value("${service.registry.config.location:classpath:services}")
-    private Resource configDirectory;
-    
-    @Value("${service.registry.watcher.enabled:true}")
-    private boolean enableWatcher;
-
     @Autowired
     private ServiceRegistryProperties serviceRegistryProperties;
 
@@ -99,7 +93,8 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ServiceRegistryDao jsonServiceRegistryDao() {
         try {
-            return new JsonServiceRegistryDao(this.configDirectory, this.enableWatcher);
+            return new JsonServiceRegistryDao(this.serviceRegistryProperties.getConfig().getLocation(),
+                    this.serviceRegistryProperties.isWatcherEnabled());
         } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }

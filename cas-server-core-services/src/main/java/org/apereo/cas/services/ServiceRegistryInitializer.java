@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 
 
 /**
- * Initializes Jpa service registry database with available JSON service definitions if necessary (based on configuration flag).
+ * Initializes a given service registry data store with available JSON service definitions if necessary (based on configuration flag).
  *
  * @author Dmitriy Kopylenko
  * @author Misagh Moayyed
