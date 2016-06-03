@@ -56,19 +56,19 @@ Registered services present the following metadata:
 | `multifactorPolicy`           	| The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](Configuring-Multifactor-Authentication.html).
 
 
-### Configure Service Access Strategy
+### Service Access Strategy
 
 [See this guide](Configuring-Service-Access-Strategy.html) for more info please.
 
-### Configure Proxy Authentication Policy
+### Proxy Authentication Policy
 
 [See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
 
-### Configure Service Custom Properties
+### Service Custom Properties
 
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
-## Persisting Registered Service Data
+## Persisting Services
 
 ### Memory
 This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
