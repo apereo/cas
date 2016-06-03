@@ -31,7 +31,7 @@ We recommend reading the following documentation in order to plan and execute a 
 
 
 ## Demo
-The CAS web application is available for demo at [https://jasigcas.herokuapp.com](https://jasigcas.herokuapp.com)
+The CAS web application is available for demo at [https://jasigcas.herokuapp.com/cas](https://jasigcas.herokuapp.com/cas)
 
 ## Development
 CAS development is powered by: <br/>
