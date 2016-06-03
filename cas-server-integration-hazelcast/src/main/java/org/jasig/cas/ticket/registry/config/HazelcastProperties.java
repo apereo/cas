@@ -41,7 +41,7 @@ public class HazelcastProperties {
     /**
      * Max no of heartbeat seconds.
      */
-    @Value("${hz.cluster.max.heartbeat.seconds:5}")
+    @Value("${hz.cluster.max.heartbeat.seconds:300}")
     private String maxNoHeartbeatSeconds;
 
     /**
