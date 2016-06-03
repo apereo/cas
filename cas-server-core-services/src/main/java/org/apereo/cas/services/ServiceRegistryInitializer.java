@@ -22,16 +22,17 @@ public class ServiceRegistryInitializer {
     
     private ServiceRegistryDao jsonServiceRegistryDao;
 
-    @Value("${svcreg.database.from.json:true}")
-    private boolean initFromJsonIfAvailable;
+    private boolean initFromJson;
 
     public ServiceRegistryInitializer() {
     }
 
     public ServiceRegistryInitializer(final ServiceRegistryDao jsonServiceRegistryDao,
-                                      final ServiceRegistryDao serviceRegistryDao) {
+                                      final ServiceRegistryDao serviceRegistryDao,
+                                      final boolean initFromJson) {
         this.jsonServiceRegistryDao = jsonServiceRegistryDao;
         this.serviceRegistryDao = serviceRegistryDao;
+        this.initFromJson = initFromJson;
     }
 
     /**
@@ -47,7 +48,7 @@ public class ServiceRegistryInitializer {
         final long size = this.serviceRegistryDao.size();
 
         if (size == 0) {
-            if (this.initFromJsonIfAvailable) {
+            if (this.initFromJson) {
                 LOGGER.debug("Service registry database will be auto-initialized from default JSON services");
                 this.jsonServiceRegistryDao.load().forEach(r -> {
                     LOGGER.debug("Initializing DB with the {} JSON service definition...", r);

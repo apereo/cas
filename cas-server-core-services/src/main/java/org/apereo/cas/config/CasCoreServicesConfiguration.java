@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpCasAttributeEncoder;
+import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.JsonServiceRegistryDao;
@@ -22,6 +24,7 @@ import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +37,7 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 @Configuration("casCoreServicesConfiguration")
+@EnableConfigurationProperties(ServiceRegistryProperties.class)
 public class CasCoreServicesConfiguration {
 
     @Value("${service.registry.config.location:classpath:services}")
@@ -41,6 +45,10 @@ public class CasCoreServicesConfiguration {
     
     @Value("${service.registry.watcher.enabled:true}")
     private boolean enableWatcher;
+
+    @Autowired
+    private ServiceRegistryProperties serviceRegistryProperties;
+
             
     @RefreshScope
     @Bean
@@ -103,6 +111,6 @@ public class CasCoreServicesConfiguration {
                                                                  final ServiceRegistryDao serviceRegistryDao,
                                                                  @Qualifier("serviceRegistryDao")
                                                                  final ServiceRegistryDao jsonServiceRegistryDao) {
-        return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao);
+        return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao, this.serviceRegistryProperties.isInitFromJson());
     }
 }
