@@ -17,6 +17,26 @@ public class TicketGrantingCookieProperties extends AbstractCookieProperties {
 
     private int rememberMeMaxAge = 1209600;
 
+    private String encryptionKey = "";
+
+    private String signingKey = "";
+
+    public String getEncryptionKey() {
+        return encryptionKey;
+    }
+
+    public void setEncryptionKey(final String encryptionKey) {
+        this.encryptionKey = encryptionKey;
+    }
+
+    public String getSigningKey() {
+        return signingKey;
+    }
+
+    public void setSigningKey(final String signingKey) {
+        this.signingKey = signingKey;
+    }
+
     public int getRememberMeMaxAge() {
         return rememberMeMaxAge;
     }

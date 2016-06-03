@@ -3,6 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowCipherExecutor;
+import org.apereo.cas.configuration.model.core.util.TicketProperties;
+import org.apereo.cas.configuration.model.core.util.WebflowProperties;
+import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.CasSpringBeanJobFactory;
 import org.apereo.cas.util.NoOpCipherExecutor;
@@ -11,7 +14,8 @@ import org.apereo.cas.util.TGCCipherExecutor;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,56 +30,36 @@ import javax.validation.MessageInterpolator;
  * @since 5.0.0
  */
 @Configuration("casCoreUtilConfiguration")
+@EnableConfigurationProperties({TicketProperties.class, WebflowProperties.class, TicketGrantingCookieProperties.class})
 public class CasCoreUtilConfiguration {
 
-    @Value("${ticket.encryption.secretkey:}")
-    private String encryptionSecretKey;
-    
-    @Value("${ticket.signing.secretkey:}")
-    private String signingSecretKey;
-    
-    @Value("${ticket.secretkey.alg:AES}")
-    private String secretKeyAlg;
-    
-    @Value("${ticket.signing.key.size:512}")
-    private int signingKeySize;
-    
-    @Value("${ticket.encryption.key.size:16}")
-    private int encryptionKeySize;
+    @Autowired
+    TicketProperties ticketProperties;
 
+    @Autowired
+    WebflowProperties webflowProperties;
 
-    @Value("${webflow.encryption.key:}")
-    private String secretKeyEncryptionWebflow;
-    
-    @Value("${webflow.signing.key:}")
-    private String secretKeySigningWebflow;
-    
-    @Value("${webflow.secretkey.alg:AES}")
-    private String secretKeyAlgWebflow;
-    
-    @Value("${webflow.signing.key.size:512}")
-    private int signingKeySizeWebflow;
-    
-    @Value("${webflow.encryption.key.size:16}")
-    private int encryptionKeySizeWebflow;
-
-
-    @Value("${tgc.encryption.key:}")
-    private String secretKeyEncryptionTgc;
-    
-    @Value("${tgc.signing.key:}")
-    private String secretKeySigningTgc;
+    @Autowired
+    TicketGrantingCookieProperties tgcProperties;
             
     @Bean
     public CipherExecutor<byte[], byte[]> defaultTicketCipherExecutor() {
-        return new DefaultTicketCipherExecutor(this.encryptionSecretKey, this.signingSecretKey,
-                this.secretKeyAlg, this.signingKeySize, this.encryptionKeySize);
+        return new DefaultTicketCipherExecutor(
+                this.ticketProperties.getEncryption().getKey(),
+                this.ticketProperties.getSigning().getKey(),
+                this.ticketProperties.getSecretkey().getAlg(),
+                this.ticketProperties.getSigning().getKeySize(),
+                this.ticketProperties.getEncryption().getKeySize());
     }
 
     @Bean
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
-        return new WebflowCipherExecutor(this.secretKeyEncryptionWebflow, this.secretKeySigningWebflow,
-                this.secretKeyAlgWebflow, this.signingKeySizeWebflow, this.encryptionKeySizeWebflow);
+        return new WebflowCipherExecutor(
+                this.webflowProperties.getEncryption().getKey(),
+                this.webflowProperties.getSigning().getKey(),
+                this.webflowProperties.getSecretkey().getAlg(),
+                this.webflowProperties.getSigning().getKeySize(),
+                this.webflowProperties.getEncryption().getKeySize());
     }
     
     @Bean
@@ -107,7 +91,7 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     public CipherExecutor tgcCipherExecutor() {
-        return new TGCCipherExecutor(this.secretKeyEncryptionTgc, this.secretKeySigningTgc);
+        return new TGCCipherExecutor(this.tgcProperties.getEncryptionKey(), this.tgcProperties.getSigningKey());
     }
 
     @Bean
@@ -119,6 +103,4 @@ public class CasCoreUtilConfiguration {
     public static MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();
     }
-    
-    
 }
