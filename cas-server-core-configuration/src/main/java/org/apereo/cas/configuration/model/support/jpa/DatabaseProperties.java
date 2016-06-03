@@ -15,6 +15,16 @@ public class DatabaseProperties {
 
     private boolean genDdl = true;
 
+    private Cleaner cleaner = new Cleaner();
+
+    public Cleaner getCleaner() {
+        return cleaner;
+    }
+
+    public void setCleaner(final Cleaner cleaner) {
+        this.cleaner = cleaner;
+    }
+
     public boolean isShowSql() {
         return showSql;
     }
@@ -29,5 +39,17 @@ public class DatabaseProperties {
 
     public void setGenDdl(final boolean genDdl) {
         this.genDdl = genDdl;
+    }
+
+    public static class Cleaner {
+        private String appid = "cas-ticket-registry-cleaner";
+
+        public String getAppid() {
+            return appid;
+        }
+
+        public void setAppid(final String appid) {
+            this.appid = appid;
+        }
     }
 }

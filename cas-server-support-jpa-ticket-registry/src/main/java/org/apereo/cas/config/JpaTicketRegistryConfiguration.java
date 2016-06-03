@@ -1,16 +1,14 @@
 package org.apereo.cas.config;
 
-import com.zaxxer.hikari.HikariDataSource;
+import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +30,7 @@ import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
  * @since 5.0.0
  */
 @Configuration("jpaTicketRegistryConfiguration")
-@EnableConfigurationProperties({JpaTicketRegistryProperties.class, DatabaseProperties.class})
+@EnableConfigurationProperties({JpaTicketRegistryProperties.class, DatabaseProperties.class, HostProperties.class})
 public class JpaTicketRegistryConfiguration {
     
     @Autowired
@@ -40,6 +38,9 @@ public class JpaTicketRegistryConfiguration {
 
     @Autowired
     private JpaTicketRegistryProperties jpaTicketRegistryProperties;
+
+    @Autowired
+    private HostProperties hostProperties;
         
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.
@@ -123,6 +124,9 @@ public class JpaTicketRegistryConfiguration {
     
     @Bean
     public LockingStrategy jpaLockingStrategy() {
-        return new JpaLockingStrategy();
+        final JpaLockingStrategy bean = new JpaLockingStrategy();
+        bean.setApplicationId(this.databaseProperties.getCleaner().getAppid());
+        bean.setUniqueId(this.hostProperties.getName());
+        return bean;
     }
 }
