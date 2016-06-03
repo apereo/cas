@@ -20,7 +20,7 @@ to manage service registry data.
 
 
 ## Demo
-The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com](https://jasigcasmgmt.herokuapp.com)
+The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
 
 
 ## Considerations
