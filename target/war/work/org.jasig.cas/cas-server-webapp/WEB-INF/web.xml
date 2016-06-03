@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <display-name>Central Authentication System (CAS)</display-name>
+
+    <context-param>
+        <param-name>isLog4jAutoInitializationDisabled</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
+    </listener>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/spring-configuration/*.xml
+            /WEB-INF/deployerConfigContext.xml
+            <!-- this enables extensions and addons to contribute to overall CAS' application context
+                 by loading spring context files from classpath i.e. found in classpath jars, etc. -->
+            classpath*:/META-INF/spring/*.xml
+        </param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>characterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>characterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CAS Client Info Logging Filter</filter-name>
+        <filter-class>org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CAS Client Info Logging Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>requestParameterSecurityFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>requestParameterSecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>responseHeadersSecurityFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>responseHeadersSecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--
+      - Loads the CAS ApplicationContext.
+    -->
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+    <listener>
+        <listener-class>
+            org.jasig.cas.CasEnvironmentContextListener
+        </listener-class>
+    </listener>
+
+    <!--
+      - This is the Spring dispatcher servlet which delegates all requests to the
+      - Spring WebMVC controllers as configured in cas-servlet.xml.
+      - This configuration also provides a plugin mechanism which enables un-intrusive contributions to the DispatcherServlet
+      - child application context (via local Maven or Gradle war overlays for example)
+      - and thus an ability to override beans defined in cas-servlet.xml by means of including additional
+      - Spring XML config files with a naming convention pattern of /WEB-INF/cas-servlet-*.xml
+    -->
+    <servlet>
+        <servlet-name>cas</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <!-- Load the child application context. Start with the default, then modules, then overlays. -->
+            <param-value>/WEB-INF/cas-servlet.xml,classpath*:/META-INF/cas-servlet-*.xml,/WEB-INF/cas-servlet-*.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>publishContext</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>metrics-health</servlet-name>
+        <servlet-class>com.codahale.metrics.servlets.HealthCheckServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>metrics</servlet-name>
+        <servlet-class>com.codahale.metrics.servlets.MetricsServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>metrics-ping</servlet-name>
+        <servlet-class>com.codahale.metrics.servlets.PingServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>metrics-threads</servlet-name>
+        <servlet-class>com.codahale.metrics.servlets.ThreadDumpServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/validate</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/serviceValidate</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/p3/serviceValidate</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/proxy</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/proxyValidate</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/p3/proxyValidate</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/CentralAuthenticationService</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/status</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ssosessions/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ssosessions</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/status/config/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/status/config</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>metrics-ping</servlet-name>
+        <url-pattern>/statistics/ping</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>metrics</servlet-name>
+        <url-pattern>/statistics/metrics</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>metrics-threads</servlet-name>
+        <url-pattern>/statistics/threads</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>metrics-health</servlet-name>
+        <url-pattern>/statistics/healthcheck</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/authorizationFailure.html</url-pattern>
+    </servlet-mapping>
+    <!-- REST support if cas-server-support-rest is included -->
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/v1/*</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <!-- Default to 5 minute session timeouts -->
+        <session-timeout>5</session-timeout>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <error-page>
+        <error-code>401</error-code>
+        <location>/authorizationFailure.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/authorizationFailure.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/view/jsp/errors.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>501</error-code>
+        <location>/WEB-INF/view/jsp/errors.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>503</error-code>
+        <location>/WEB-INF/view/jsp/errors.jsp</location>
+    </error-page>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

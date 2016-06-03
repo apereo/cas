@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <description>
+        This file lets CAS know where you've stored the cas.properties file which details some of the configuration
+        options
+        that are specific to your environment. You can specify the location of the file here. You may wish to place the
+        file outside
+        of the Servlet context if you have options that are specific to a tier (i.e. test vs. production) so that the
+        WAR file
+        can be moved between tiers without modification.
+    </description>
+
+    <util:properties id="casProperties" location="${cas.properties.config.location:/WEB-INF/cas.properties}"/>
+
+    <context:property-placeholder properties-ref="casProperties"/>
+
+</beans>

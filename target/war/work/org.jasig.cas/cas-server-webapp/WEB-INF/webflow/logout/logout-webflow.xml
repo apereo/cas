@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+  <action-state id="terminateSession">
+    <evaluate expression="terminateSessionAction.terminate(flowRequestContext)" />
+    <transition to="doLogout" />
+  </action-state>
+
+  <action-state id="doLogout">
+    <evaluate expression="logoutAction" />
+    <transition on="finish" to="finishLogout" />
+    <transition on="front" to="frontLogout" />
+  </action-state>
+
+  <action-state id="frontLogout">
+    <evaluate expression="frontChannelLogoutAction" />
+    <transition on="finish" to="finishLogout" />
+    <transition on="redirectApp" to="redirectToFrontApp" />
+  </action-state>
+
+  <view-state id="redirectToFrontApp" view="externalRedirect:#{currentEvent.attributes.logoutUrl}&amp;RelayState=#{flowExecutionContext.key}">
+    <transition on="next" to="frontLogout" />
+  </view-state>
+
+  <decision-state id="finishLogout">
+    <if test="flowScope.logoutRedirectUrl != null" then="redirectView" else="logoutView" />
+  </decision-state>
+
+  <end-state id="redirectView" view="externalRedirect:#{flowScope.logoutRedirectUrl}" />
+
+  <end-state id="logoutView" view="casLogoutView" />
+
+</flow>

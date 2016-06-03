@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="60">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+        </Console>
+        <RollingFile name="file" fileName="cas.log" append="true"
+                     filePattern="cas-%d{yyyy-MM-dd-HH}-%i.log">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+        <RollingFile name="auditlogfile" fileName="cas_audit.log" append="true"
+                     filePattern="cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+        <RollingFile name="perfFileAppender" fileName="perfStats.log" append="true"
+                     filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
+            <PatternLayout pattern="%m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <AsyncLogger  name="org.jasig" level="info" additivity="false" includeLocation="true">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
+        <AsyncLogger  name="org.springframework" level="warn" />
+        <AsyncLogger name="org.springframework.webflow" level="warn" />
+        <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.pac4j" level="warn" />
+        <!--
+        <AsyncLogger name="org.opensaml" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.ldaptive" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
+        <AsyncLogger name="com.hazelcast" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
+        -->
+
+        <AsyncLogger name="perfStatsLogger" level="info" additivity="false" includeLocation="true">
+            <AppenderRef ref="perfFileAppender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="org.jasig.cas.web.flow" level="info" additivity="true" includeLocation="true">
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.jasig.inspektr.audit.support" level="info" includeLocation="true">
+            <AppenderRef ref="auditlogfile"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
+        <AsyncRoot level="error">
+            <AppenderRef ref="console"/>
+        </AsyncRoot>
+    </Loggers>
+</Configuration>
