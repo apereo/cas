@@ -15,7 +15,7 @@ messages related to Spring framework, etc. For debugging and diagnostic purposes
 these levels to  `DEBUG`.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though,
-you probably want to run them both as `WARN`.</p></div>
+you probably want to run them both as <code>WARN</code>.</p></div>
 
 ## Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
