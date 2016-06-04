@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
  */
 public final class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
     private static final long serialVersionUID = 403015306984610128L;
-    
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceRegexAttributeFilter.class);    
 
     @NotNull
     private Pattern pattern;
@@ -80,29 +80,29 @@ public final class RegisteredServiceRegexAttributeFilter implements RegisteredSe
             final String attributeName = entry.getKey();
             final Object attributeValue = entry.getValue();
 
-            logger.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
+            LOGGER.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             if (attributeValue != null) {
                 if (attributeValue instanceof Collection) {
-                    logger.trace("Attribute value {} is a collection", attributeValue);
+                    LOGGER.trace("Attribute value {} is a collection", attributeValue);
                     final String[] filteredAttributes = filterArrayAttributes(
                             ((Collection<String>) attributeValue).toArray(new String[] {}), attributeName);
                     if (filteredAttributes.length > 0) {
                         attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue.getClass().isArray()) {
-                    logger.trace("Attribute value {} is an array", attributeValue);
+                    LOGGER.trace("Attribute value {} is an array", attributeValue);
                     final String[] filteredAttributes = filterArrayAttributes((String[]) attributeValue, attributeName);
                     if (filteredAttributes.length > 0) {
                         attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue instanceof Map) {
-                    logger.trace("Attribute value {} is a map", attributeValue);
+                    LOGGER.trace("Attribute value {} is a map", attributeValue);
                     final Map<String, String> filteredAttributes = filterMapAttributes((Map<String, String>) attributeValue);
                     if (filteredAttributes.size() > 0) {
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
                 } else {
-                    logger.trace("Attribute value {} is a string", attributeValue);
+                    LOGGER.trace("Attribute value {} is a string", attributeValue);
                     final String attrValue = attributeValue.toString();
                     if (patternMatchesAttributeValue(attrValue)) {
                         logReleasedAttributeEntry(attributeName, attrValue);
@@ -112,7 +112,7 @@ public final class RegisteredServiceRegexAttributeFilter implements RegisteredSe
             }
         }
 
-        logger.debug("Received {} attributes. Filtered and released {}", givenAttributes.size(),
+        LOGGER.debug("Received {} attributes. Filtered and released {}", givenAttributes.size(),
                 attributesToRelease.size());
         return attributesToRelease;
     }
@@ -171,7 +171,7 @@ public final class RegisteredServiceRegexAttributeFilter implements RegisteredSe
      * @param attributeValue the attribute value
      */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        logger.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
+        LOGGER.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
     }
 
