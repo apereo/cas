@@ -4,8 +4,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -22,21 +20,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
 
-    private static final int DEFAULT_FAILURE_THRESHOLD = 100;
-
-    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
-
-    private static final String DEFAULT_USERNAME_PARAMETER = "username";
-
-    /** Logger object. **/
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;
+    private int failureThreshold;
     
-    private int failureRangeInSeconds = DEFAULT_FAILURE_RANGE_IN_SECONDS;
+    private int failureRangeInSeconds;
 
     
-    private String usernameParameter = DEFAULT_USERNAME_PARAMETER;
+    private String usernameParameter;
 
     private double thresholdRate;
 
@@ -86,24 +77,15 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         }
     }
 
-    @Autowired
-    public void setFailureThreshold(@Value("${cas.throttle.failure.threshold:"
-                                            + DEFAULT_FAILURE_THRESHOLD + '}')
-                                          final int failureThreshold) {
+    public void setFailureThreshold(final int failureThreshold) {
         this.failureThreshold = failureThreshold;
     }
 
-    @Autowired
-    public void setFailureRangeInSeconds(@Value("${cas.throttle.failure.range.seconds:"
-                                                        + DEFAULT_FAILURE_RANGE_IN_SECONDS + '}')
-                                               final int failureRangeInSeconds) {
+    public void setFailureRangeInSeconds(final int failureRangeInSeconds) {
         this.failureRangeInSeconds = failureRangeInSeconds;
     }
 
-    @Autowired
-    public void setUsernameParameter(@Value("${cas.throttle.username.parameter:"
-                                                + DEFAULT_USERNAME_PARAMETER + '}')
-                                               final String usernameParameter) {
+    public void setUsernameParameter(final String usernameParameter) {
         this.usernameParameter = usernameParameter;
     }
 

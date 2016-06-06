@@ -1,6 +1,8 @@
 package org.apereo.cas.web.support.config;
 
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
+import org.apereo.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter;
+import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
@@ -33,19 +35,20 @@ public class CasThrottlingConfiguration {
     @Qualifier("auditTrailManager")
     private AuditTrailManager auditTrailManager;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("inspektrAuditTrailDataSource")
     private DataSource dataSource;
 
     @Bean
     @RefreshScope
     public HandlerInterceptorAdapter inMemoryIpAddressUsernameThrottle() {
-        return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter();
+        return configureInMemoryInterceptorAdaptor(new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter());
+
     }
 
     @Bean
     public HandlerInterceptorAdapter inMemoryIpAddressThrottle() {
-        return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter();
+        return configureInMemoryInterceptorAdaptor(new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter());
     }
 
     @Bean
@@ -55,15 +58,27 @@ public class CasThrottlingConfiguration {
                 new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(this.auditTrailManager, this.dataSource);
         bean.setApplicationCode(this.throttleProperties.getAppcode());
         bean.setAuthenticationFailureCode(this.throttleProperties.getFailure().getCode());
-        bean.setUsernameParameter(this.throttleProperties.getUsernameParameter());
-        bean.setFailureThreshold(this.throttleProperties.getFailure().getThreshold());
-        bean.setFailureRangeInSeconds(this.throttleProperties.getFailure().getRangeSeconds());
         bean.setSqlQueryAudit(this.throttleProperties.getAuditQuery());
-        return bean;
+        return configureThrottleHandlerInterceptorAdaptor(bean);
     }
 
     @Bean
     public HandlerInterceptorAdapter neverThrottle() {
         return new NeverThrottledSubmissionHandlerInterceptorAdapter();
+    }
+
+    private AbstractThrottledSubmissionHandlerInterceptorAdapter
+    configureThrottleHandlerInterceptorAdaptor(final AbstractThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
+        interceptorAdapter.setUsernameParameter(this.throttleProperties.getUsernameParameter());
+        interceptorAdapter.setFailureThreshold(this.throttleProperties.getFailure().getThreshold());
+        interceptorAdapter.setFailureRangeInSeconds(this.throttleProperties.getFailure().getRangeSeconds());
+        return interceptorAdapter;
+    }
+
+    private HandlerInterceptorAdapter
+    configureInMemoryInterceptorAdaptor(final AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
+        interceptorAdapter.setRefreshInterval(this.throttleProperties.getInmemory().getCleaner().getRepeatInterval());
+        interceptorAdapter.setStartDelay(this.throttleProperties.getInmemory().getCleaner().getStartDelay());
+        return configureThrottleHandlerInterceptorAdaptor(interceptorAdapter);
     }
 }
