@@ -12,11 +12,12 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 
 /**
@@ -30,13 +31,16 @@ public class JpaTicketRegistryCleaner extends TransactionTemplate implements Job
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Resource(name = "logoutManager")
+    @Autowired
+    @Qualifier("logoutManager")
     private LogoutManager logoutManager;
 
-    @Resource(name = "ticketRegistry")
+    @Autowired
+    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    @Resource(name = "jpaLockingStrategy")
+    @Autowired
+    @Qualifier("jpaLockingStrategy")
     private LockingStrategy jpaLockingStrategy;
     
     @Override

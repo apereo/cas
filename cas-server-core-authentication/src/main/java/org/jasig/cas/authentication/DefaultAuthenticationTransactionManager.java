@@ -2,9 +2,9 @@ package org.jasig.cas.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link DefaultAuthenticationTransactionManager}.
@@ -17,13 +17,14 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
 
-    @Resource(name="authenticationManager")
+    @Autowired
+    @Qualifier("authenticationManager")
     private AuthenticationManager authenticationManager;
 
     @Override
     public AuthenticationTransactionManager handle(final AuthenticationTransaction authenticationTransaction,
                                                    final AuthenticationContextBuilder authenticationContext)
-                                                    throws AuthenticationException {
+            throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);

@@ -45,7 +45,7 @@ import java.util.UUID;
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
-    @Value("${ticket.registry.cleaner.repeatinterval:15}")
+    @Value("${ticket.registry.cleaner.repeatinterval:300}")
     private int refreshInterval;
 
     @Value("${ticket.registry.cleaner.startdelay:20}")
