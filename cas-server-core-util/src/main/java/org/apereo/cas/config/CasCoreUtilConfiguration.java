@@ -93,12 +93,7 @@ public class CasCoreUtilConfiguration {
     public CipherExecutor tgcCipherExecutor() {
         return new TGCCipherExecutor(this.tgcProperties.getEncryptionKey(), this.tgcProperties.getSigningKey());
     }
-
-    @Bean
-    public SpringBeanJobFactory casSpringBeanJobFactory() {
-        return new CasSpringBeanJobFactory();
-    }
-
+    
     @Bean
     public static MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();

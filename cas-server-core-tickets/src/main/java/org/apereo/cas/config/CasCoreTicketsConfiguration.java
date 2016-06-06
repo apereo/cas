@@ -13,9 +13,12 @@ import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
@@ -29,6 +32,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.transaction.PseudoTransactionManager;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * This is {@link CasCoreTicketsConfiguration}.
@@ -37,8 +44,14 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  */
 @Configuration("casCoreTicketsConfiguration")
+@EnableScheduling
+@EnableAsync
 public class CasCoreTicketsConfiguration {
 
+    @Value("${ticket.registry.cleaner.enabled:true}")
+    private boolean cleanerEnabled;
+    
+    
     @Value("${st.numberOfUses:1}")
     private int numberOfUses;
     
@@ -180,4 +193,27 @@ public class CasCoreTicketsConfiguration {
                                                                                      this.timeToKillInMilliSecondsPt);
     }
     
+    @Bean
+    public LockingStrategy lockingStrategy() {
+        return new LockingStrategy() {
+            @Override
+            public boolean acquire() {
+                return true;
+            }
+
+            @Override
+            public void release() {
+            }
+        };
+    }
+    
+    @Bean
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        return new DefaultTicketRegistryCleaner();
+    }
+    
+    @Bean
+    public PlatformTransactionManager ticketTransactionManager() {
+        return new PseudoTransactionManager();
+    }
 }

@@ -67,13 +67,7 @@ public class CasApplicationContextConfiguration {
     
     @Resource(name="defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
-
-    /**
-     * The Cas spring bean job factory.
-     */
-    @Resource(name="casSpringBeanJobFactory")
-    private SpringBeanJobFactory casSpringBeanJobFactory;
-
+    
     /**
      * The Wait for jobs to complete on shutdown.
      */
@@ -164,24 +158,6 @@ public class CasApplicationContextConfiguration {
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
         };
-    }
-
-    /**
-     * Scheduler factory bean.
-     *
-     * @return the factory bean
-     */
-    @Bean
-    public FactoryBean<Scheduler> scheduler() {
-        final SchedulerFactoryBean factory = new SchedulerFactoryBean();
-        factory.setWaitForJobsToCompleteOnShutdown(this.waitForJobsToCompleteOnShutdown);
-        factory.setJobFactory(this.casSpringBeanJobFactory);
-
-        final Properties properties = new Properties();
-        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, this.interruptJobs);        
-        properties.put(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, this.interruptJobs);
-        factory.setQuartzProperties(properties);
-        return factory;
     }
 
     /**

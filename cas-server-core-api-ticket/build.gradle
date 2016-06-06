@@ -1,7 +1,6 @@
 
 description = 'Apereo CAS Core Ticket APIs'
 dependencies {
-    compile libraries.quartz
     compile project(':cas-server-core-api-authentication')
 }
 

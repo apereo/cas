@@ -1,14 +1,11 @@
 package org.apereo.cas.config;
 
-import com.zaxxer.hikari.HikariDataSource;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.JpaServiceRegistryDaoImpl;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +56,7 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the string [ ]
      */
-    
+    @Bean
     public String[] jpaServicePackagesToScan() {
         return new String[] {
                 "org.apereo.cas.services",
@@ -73,7 +70,7 @@ public class JpaServiceRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-    
+    @Bean
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
@@ -96,7 +93,7 @@ public class JpaServiceRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    
+    @Bean
     public JpaTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();

@@ -47,7 +47,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the hibernate jpa vendor adapter
      */
-    
+    @Bean
     public HibernateJpaVendorAdapter ticketJpaVendorAdapter() {
         final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
         jpaEventVendorAdapter.setGenerateDdl(this.databaseProperties.isGenDdl());
@@ -60,7 +60,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the string [ ]
      */
-    
+    @Bean
     public String[] ticketPackagesToScan() {
         return new String[] {
                 "org.apereo.cas.ticket", 
@@ -73,7 +73,7 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-    
+    @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
@@ -95,7 +95,7 @@ public class JpaTicketRegistryConfiguration {
      * @param emf the emf
      * @return the jpa transaction manager
      */
-    @Autowired
+    @Bean
     public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") 
                                                           final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
