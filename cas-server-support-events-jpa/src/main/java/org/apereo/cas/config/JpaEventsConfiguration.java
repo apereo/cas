@@ -1,11 +1,13 @@
 package org.apereo.cas.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.apereo.cas.configuration.model.core.EventsProperties;
+import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,80 +27,14 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("jpaEventsConfiguration")
+@EnableConfigurationProperties({EventsProperties.class, DatabaseProperties.class})
 public class JpaEventsConfiguration {
 
-    /**
-     * The Show sql.
-     */
-    @Value("${database.show.sql:true}")
-    private boolean showSql;
+    @Autowired
+    DatabaseProperties databaseProperties;
 
-    /**
-     * The Generate ddl.
-     */
-    @Value("${database.gen.ddl:true}")
-    private boolean generateDdl;
-
-    /**
-     * The Hibernate dialect.
-     */
-    @Value("${events.jpa.database.dialect:org.hibernate.dialect.HSQLDialect}")
-    private String hibernateDialect;
-
-    /**
-     * The Hibernate hbm 2 ddl auto.
-     */
-    @Value("${events.jpa.database.ddl.auto:create-drop}")
-    private String hibernateHbm2DdlAuto;
-
-    /**
-     * The Hibernate batch size.
-     */
-    @Value("${events.jpa.database.batchSize:1}")
-    private String hibernateBatchSize;
-
-    /**
-     * The Driver class.
-     */
-    @Value("${events.jpa.database.driverClass:org.hsqldb.jdbcDriver}")
-    private String driverClass;
-
-    /**
-     * The Jdbc url.
-     */
-    @Value("${events.jpa.database.url:jdbc:hsqldb:mem:cas-events-registry}")
-    private String jdbcUrl;
-
-    /**
-     * The User.
-     */
-    @Value("${events.jpa.database.user:sa}")
-    private String user;
-
-    /**
-     * The Password.
-     */
-    @Value("${events.jpa.database.password:}")
-    private String password;
-    
-    /**
-     * The Max pool size.
-     */
-    @Value("${events.jpa.database.pool.maxSize:18}")
-    private int maxPoolSize;
-
-    /**
-     * The Max idle time excess connections.
-     */
-    @Value("${events.jpa.database.pool.maxIdleTime:1000}")
-    private int maxIdleTimeExcessConnections;
-
-    /**
-     * The Checkout timeout.
-     */
-    @Value("${events.jpa.database.pool.maxWait:2000}")
-    private int checkoutTimeout;
-    
+    @Autowired
+    EventsProperties eventsProperties;
 
 
     /**
@@ -130,15 +66,16 @@ public class JpaEventsConfiguration {
             bean.setJdbcUrl(this.jdbcUrl);
             bean.setUsername(this.user);
             bean.setPassword(this.password);
-            
+
             bean.setMaximumPoolSize(this.maxPoolSize);
             bean.setMinimumIdle(this.maxIdleTimeExcessConnections);
 
             bean.setLoginTimeout(this.checkoutTimeout);
             bean.setValidationTimeout(this.checkoutTimeout);
-            
+
             return bean;
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -148,9 +85,9 @@ public class JpaEventsConfiguration {
      *
      * @return the string [ ]
      */
-    
+
     public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.apereo.cas.support.events.dao"};
+        return new String[] {"org.apereo.cas.support.events.dao"};
     }
 
     /**
@@ -174,6 +111,8 @@ public class JpaEventsConfiguration {
         properties.put("hibernate.jdbc.batch_size", this.hibernateBatchSize);
         properties.put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         bean.setJpaProperties(properties);
+        //TODO
+        bean.getJpaPropertyMap();
         return bean;
     }
 
@@ -182,6 +121,7 @@ public class JpaEventsConfiguration {
      * Transaction manager events jpa transaction manager.
      *
      * @param emf the emf
+     *
      * @return the jpa transaction manager
      */
     @Autowired
