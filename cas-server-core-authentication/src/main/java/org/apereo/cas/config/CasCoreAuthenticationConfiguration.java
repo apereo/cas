@@ -43,14 +43,15 @@ import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataP
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static org.apache.coyote.http11.Constants.a;
 
 /**
  * This is {@link CasCoreAuthenticationConfiguration}.
@@ -60,7 +61,10 @@ import static org.apache.coyote.http11.Constants.a;
  * @since 5.0.0
  */
 @Configuration("casCoreAuthenticationConfiguration")
-@EnableConfigurationProperties({HttpClientTrustStoreProperties.class, PasswordPolicyProperties.class})
+@EnableConfigurationProperties(
+        {HttpClientTrustStoreProperties.class,
+        PasswordPolicyProperties.class,
+        PersonDirPrincipalResolverProperties.class})
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
@@ -68,6 +72,9 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     private PasswordPolicyProperties passwordPolicyProperties;
+
+    @Autowired
+    private PersonDirPrincipalResolverProperties principalResolverProperties;
 
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
@@ -169,8 +176,15 @@ public class CasCoreAuthenticationConfiguration {
 
     @RefreshScope
     @Bean
-    public PrincipalResolver personDirectoryPrincipalResolver() {
-        return new PersonDirectoryPrincipalResolver();
+    @Autowired
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") IPersonAttributeDao attributeRepository,
+                                                              @Qualifier("principalFactory") PrincipalFactory principalFactory) {
+        final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
+        bean.setAttributeRepository(attributeRepository);
+        bean.setPrincipalFactory(principalFactory);
+        bean.setPrincipalAttributeName(this.principalResolverProperties.getPrincipalAttribute());
+        bean.setReturnNullIfNoAttributes(this.principalResolverProperties.isReturnNull());
+        return bean;
     }
 
     @Bean
