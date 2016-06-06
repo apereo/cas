@@ -11,22 +11,17 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class MemoryMonitor implements Monitor<MemoryStatus> {
 
-    /** Default percent free memory warning threshold. */
-    public static final int DEFAULT_FREE_MEMORY_WARN_THRESHOLD = 10;
-    private static final int PERCENTAGE_VALUE = 100;
-
     /** Percent free memory warning threshold. */
-    private long freeMemoryWarnThreshold = DEFAULT_FREE_MEMORY_WARN_THRESHOLD;
+    private long freeMemoryWarnThreshold;
 
+    private static final int PERCENTAGE_VALUE = 100;
 
     /**
      * Sets the percent of free memory below which a warning is reported.
      *
      * @param threshold Percent free memory warning threshold.
      */
-    @Autowired
-    public void setFreeMemoryWarnThreshold(@Value("${cas.monitor.free.mem.threshold:10}")
-                                               final long threshold) {
+    public void setFreeMemoryWarnThreshold(final long threshold) {
         if (threshold < 0) {
             throw new IllegalArgumentException("Warning threshold must be non-negative.");
         }
