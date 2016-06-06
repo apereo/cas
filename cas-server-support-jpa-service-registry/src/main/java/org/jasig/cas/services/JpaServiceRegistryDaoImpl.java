@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
 public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
-    @NotNull
+
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 

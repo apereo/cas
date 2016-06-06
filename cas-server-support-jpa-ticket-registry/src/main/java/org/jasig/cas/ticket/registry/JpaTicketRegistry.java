@@ -25,7 +25,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -52,14 +51,12 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     private int startDelay;
 
     @Autowired
-    @NotNull
     private ApplicationContext applicationContext;
 
     @Autowired(required = false)
     @Qualifier("scheduler")
     private Scheduler scheduler;
-        
-    @NotNull
+    
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
     

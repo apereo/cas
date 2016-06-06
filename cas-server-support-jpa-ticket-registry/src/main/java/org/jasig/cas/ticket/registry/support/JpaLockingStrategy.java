@@ -17,7 +17,6 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -35,7 +34,6 @@ public class JpaLockingStrategy implements LockingStrategy {
     public static final int DEFAULT_LOCK_TIMEOUT = 3600;
 
     /** Transactional entity manager from Spring context. */
-    @NotNull
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     protected EntityManager entityManager;
 
@@ -47,12 +45,10 @@ public class JpaLockingStrategy implements LockingStrategy {
      * each one of which may be for a different application or usage within
      * a single application.
      */
-    @NotNull
     @Value("${database.cleaner.appid:cas-ticket-registry-cleaner}")
     private String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
-    @NotNull
     @Value("${host.name:cas01.example.org}")
     private String uniqueId;
 
