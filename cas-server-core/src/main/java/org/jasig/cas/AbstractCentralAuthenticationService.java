@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -157,6 +158,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
+    @Transactional(readOnly = true)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name="GET_TICKET_COUNTER", monotonic=true)
@@ -183,6 +185,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return (T) ticket;
     }
 
+    @Transactional(readOnly = true)
     @Timed(name = "GET_TICKETS_TIMER")
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name="GET_TICKETS_COUNTER", monotonic=true)

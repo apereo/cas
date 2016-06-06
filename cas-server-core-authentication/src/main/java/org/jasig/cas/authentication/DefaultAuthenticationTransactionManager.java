@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -15,13 +16,11 @@ import javax.validation.constraints.NotNull;
  * @since 4.2.0
  */
 @Component("defaultAuthenticationTransactionManager")
-public final class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
+public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
 
-    @NotNull
-    @Autowired
-    @Qualifier("authenticationManager")
+    @Resource(name="authenticationManager")
     private AuthenticationManager authenticationManager;
 
     @Override

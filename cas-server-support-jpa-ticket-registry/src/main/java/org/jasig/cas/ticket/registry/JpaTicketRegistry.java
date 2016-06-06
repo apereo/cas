@@ -1,21 +1,14 @@
 package org.jasig.cas.ticket.registry;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
-import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.joda.time.DateTime;
-import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
@@ -25,7 +18,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -47,9 +41,11 @@ import java.util.UUID;
  * @since 3.2.1
  */
 @Component("jpaTicketRegistry")
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
+@EnableTransactionManagement(proxyTargetClass = true)
+@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
-    @Value("${ticket.registry.cleaner.repeatinterval:300}")
+    @Value("${ticket.registry.cleaner.repeatinterval:15}")
     private int refreshInterval;
 
     @Value("${ticket.registry.cleaner.startdelay:20}")
@@ -62,25 +58,17 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @Autowired(required = false)
     @Qualifier("scheduler")
     private Scheduler scheduler;
-
-    @Autowired
-    @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
-
-    @Autowired
-    @Qualifier("jpaLockingStrategy")
-    private LockingStrategy jpaLockingStrategy;
-
+        
     @NotNull
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
-
+    
     @Override
     public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
-
+    
     @Override
     public void addTicket(final Ticket ticket) {
         entityManager.persist(ticket);
@@ -111,7 +99,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      *
      * @param ticket the ticket
      */
-    private void deleteTicketAndChildren(final Ticket ticket) {
+    public void deleteTicketAndChildren(final Ticket ticket) {
         final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
             .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id",
                     TicketGrantingTicketImpl.class)
@@ -140,7 +128,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      *
      * @param ticket the ticket
      */
-    private void removeTicket(final Ticket ticket) {
+    public void removeTicket(final Ticket ticket) {
         try {
             if (logger.isDebugEnabled()) {
                 final Date creationDate = new Date(ticket.getCreationTime());
@@ -163,7 +151,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      * @param ticketId the ticket id
      * @return the raw ticket
      */
-    private Ticket getRawTicket(final String ticketId) {
+    public Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
                     || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
@@ -177,7 +165,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         }
         return null;
     }
-
+    
     @Override
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = entityManager
@@ -239,7 +227,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
             if (shouldScheduleCleanerJob()) {
                 logger.info("Preparing to schedule cleaner job");
 
-                final JobDetail job = JobBuilder.newJob(this.getClass())
+                final JobDetail job = JobBuilder.newJob(JpaTicketRegistryCleaner.class)
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .build();
 
@@ -251,6 +239,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
                         .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
+                scheduler.getContext().put(getClass().getSimpleName(), this);
                 scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
@@ -258,51 +247,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
             }
         } catch (final Exception e){
             logger.warn(e.getMessage(), e);
-        }
-
-    }
-
-    @Override
-    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-
-        try {
-
-            logger.info("Beginning ticket cleanup.");
-            logger.debug("Attempting to acquire ticket cleanup lock.");
-            if (!this.jpaLockingStrategy.acquire()) {
-                logger.info("Could not obtain lock.  Aborting cleanup.");
-                return;
-            }
-            logger.debug("Acquired lock.  Proceeding with cleanup.");
-
-            logger.info("Beginning ticket cleanup...");
-            final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
-                @Override
-                public boolean apply(final Ticket ticket) {
-                    if (ticket.isExpired()) {
-                        if (ticket instanceof TicketGrantingTicket) {
-                            logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                            logoutManager.performLogout((TicketGrantingTicket) ticket);
-                            deleteTicket(ticket.getId());
-                        } else if (ticket instanceof ServiceTicket) {
-                            logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                            deleteTicket(ticket.getId());
-                        } else {
-                            logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            logger.info("{} expired tickets found and removed.", ticketsToRemove.size());
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            logger.debug("Releasing ticket cleanup lock.");
-            this.jpaLockingStrategy.release();
-            logger.info("Finished ticket cleanup.");
         }
 
     }

@@ -64,16 +64,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** An array of AuthenticationAttributesPopulators. */
-    @NotNull
-    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
-            new ArrayList<>();
+    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<>();
 
     /** Authentication security policy. */
-    @NotNull
     private AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy();
 
     /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
-    @NotNull
     @Resource(name="authenticationHandlersResolvers")
     private Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 

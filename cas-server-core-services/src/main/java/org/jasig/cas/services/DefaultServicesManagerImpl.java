@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,16 +42,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.1
  */
 @Component("servicesManager")
-public final class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
+public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
     /**
      * Instance of ServiceRegistryDao.
      */
-    @NotNull
-    @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Resource(name="serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
     /** Application event publisher. */

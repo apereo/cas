@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import java.util.Date;
  * @since 3.0.0
  */
 @Component("jpaLockingStrategy")
+@Transactional(readOnly = true)
 public class JpaLockingStrategy implements LockingStrategy {
 
     /** Default lock timeout is 1 hour. */
@@ -46,12 +48,12 @@ public class JpaLockingStrategy implements LockingStrategy {
      * a single application.
      */
     @NotNull
-    @Value(("${database.cleaner.appid:cas-ticket-registry-cleaner}"))
+    @Value("${database.cleaner.appid:cas-ticket-registry-cleaner}")
     private String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
     @NotNull
-    @Value(("${host.name:cas01.example.org}"))
+    @Value("${host.name:cas01.example.org}")
     private String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
@@ -148,6 +150,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      *
      * @return  Current lock owner or null if no one presently owns lock.
      */
+    @Transactional(readOnly = false)
     public String getOwner() {
         final Lock lock = entityManager.find(Lock.class, applicationId);
         if (lock != null) {

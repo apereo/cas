@@ -108,14 +108,22 @@ subprojects {
     javadoc {
         classpath += configurations.provided
     }
+    
+    ext.buildDate = null
+    compileJava.doLast {
+        buildDate = new Date()
+        jar.manifest {
+            attributes("Implementation-Date": project.buildDate)
+        }
+    }
+    tasks.jar.onlyIf { return project.buildDate != null}
 
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Date": new Date(),
-                    "Implementation-Version": project.version)
+                       "Implementation-Vendor": project.group,
+                       "Created-By": project.group,
+                       "Implementation-Version": project.version)
         }
     }
 
