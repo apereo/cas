@@ -31,10 +31,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,22 +62,18 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected ApplicationEventPublisher eventPublisher;
 
     /** {@link TicketRegistry}  for storing and retrieving tickets as needed. */
-    @NotNull
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /** Implementation of Service Manager. */
-    @NotNull
     @Resource(name="servicesManager")
     protected ServicesManager servicesManager;
 
     /** The logout manager. **/
-    @NotNull
     @Resource(name="logoutManager")
     protected LogoutManager logoutManager;
 
     /** The ticket factory. **/
-    @NotNull
     @Resource(name="defaultTicketFactory")
     protected TicketFactory ticketFactory;
 
@@ -85,13 +81,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    @NotNull
     @Resource(name="authenticationPolicyFactory")
     protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
     /** Factory to create the principal type. **/
-    @NotNull
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
@@ -157,6 +151,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
+    @Transactional(readOnly = true)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name="GET_TICKET_COUNTER", monotonic=true)
@@ -183,6 +178,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return (T) ticket;
     }
 
+    @Transactional(readOnly = true)
     @Timed(name = "GET_TICKETS_TIMER")
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name="GET_TICKETS_COUNTER", monotonic=true)

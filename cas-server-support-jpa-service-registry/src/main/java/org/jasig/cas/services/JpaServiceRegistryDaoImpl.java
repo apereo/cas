@@ -1,10 +1,11 @@
 package org.jasig.cas.services;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -14,8 +15,10 @@ import java.util.List;
  * @since 3.1
  */
 @Component("jpaServiceRegistryDao")
-public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
-    @NotNull
+@EnableTransactionManagement(proxyTargetClass = true)
+@Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
+public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
+
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 

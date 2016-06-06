@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This provides a wrapper for {@link ProxyGrantingTicket} so they can transparently reference the
@@ -28,6 +29,7 @@ public final class ProxyGrantingTicketDelegator extends TicketGrantingTicketDele
         super(ticketRegistry, ticketGrantingTicket, callback);
     }
 
+    @Transactional(readOnly=false)
     @Override
     public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                         final boolean onlyTrackMostRecentSession) {
