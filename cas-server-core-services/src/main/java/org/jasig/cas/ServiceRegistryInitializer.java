@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author Dmitriy Kopylenko
  * @author Misagh Moayyed
- * @since 4.2.2
+ * @since 4.2.3
  */
 @Component("serviceRegistryInitializer")
 class ServiceRegistryInitializer {
