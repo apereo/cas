@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;

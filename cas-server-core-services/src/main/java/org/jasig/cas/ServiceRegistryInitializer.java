@@ -29,7 +29,7 @@ class ServiceRegistryInitializer {
 
     private final ServiceRegistryDao jsonServiceRegistryDao;
 
-    @Value("${svcreg.database.from.json:true}")
+    @Value("${svcreg.database.from.json:false}")
     private boolean initFromJsonIfAvailable;
 
     @Autowired
