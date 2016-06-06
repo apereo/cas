@@ -39,7 +39,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         final TransitionableState initLoginState = flow.getTransitionableState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         for (final Transition transition : initLoginState.getTransitionSet()) {
             if (transition.getId().equals(CasWebflowConstants.TRANSITION_ID_GENERATED)) {
-                final TargetStateResolver targetStateResolver = (TargetStateResolver) fromStringTo(TargetStateResolver.class)
+                final TargetStateResolver targetStateResolver = (TargetStateResolver) convertClassToTargetType(TargetStateResolver.class)
                         .execute(WS_FEDERATION_REDIRECT);
                 transition.setTargetStateResolver(targetStateResolver);
                 break;
