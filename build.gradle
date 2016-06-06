@@ -334,13 +334,17 @@ subprojects {
     }
 
     ext.buildDate = null
+    ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
+    
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
             attributes("Implementation-Date": project.buildDate)
         }
     }
-    tasks.jar.onlyIf { return project.buildDate != null}
+    tasks.jar.onlyIf {
+        project.buildDate != null || !project.buildJarFile.exists()
+    }
     
     jar {
         manifest {
