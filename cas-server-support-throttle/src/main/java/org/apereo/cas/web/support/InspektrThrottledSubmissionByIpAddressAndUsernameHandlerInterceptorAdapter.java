@@ -7,14 +7,9 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
@@ -38,34 +33,21 @@ import java.util.List;
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
             extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
-    private static final String DEFAULT_APPLICATION_CODE = "CAS";
-
-    private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
-
-    private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
-    private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
-
-    private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
-        + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
-
-    @Resource(name="auditTrailManager")
     private AuditTrailManager auditTrailManager;
 
-    @Nullable
-    @Autowired(required=false)
-    @Qualifier("inspektrAuditTrailDataSource")
     private DataSource dataSource;
 
-    @Value("${cas.throttle.appcode:" + DEFAULT_APPLICATION_CODE + '}')
-    private String applicationCode = DEFAULT_APPLICATION_CODE;
+    private String applicationCode;
 
-    @Value("${cas.throttle.authn.failurecode:" + DEFAULT_AUTHN_FAILED_ACTION + '}')
-    private String authenticationFailureCode = DEFAULT_AUTHN_FAILED_ACTION;
+    private String authenticationFailureCode;
 
-    @Value("${cas.throttle.audit.query:" + SQL_AUDIT_QUERY + '}')
     private String sqlQueryAudit;
 
     private JdbcTemplate jdbcTemplate;
+
+    private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
+
+    private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
 
 
     /**
@@ -80,8 +62,9 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @param dataSource the data source
      */
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
-            final DataSource dataSource) {
+                                                                                      final DataSource dataSource) {
         this.auditTrailManager = auditTrailManager;
+        this.dataSource = dataSource;
         init();
     }
 
@@ -90,7 +73,6 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      */
     @PostConstruct
     public void init() {
-
         if (this.dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(this.dataSource);
         } else {
@@ -168,6 +150,10 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     public void setAuthenticationFailureCode(final String authenticationFailureCode) {
         this.authenticationFailureCode = authenticationFailureCode;
+    }
+
+    public void setSqlQueryAudit(final String sqlQueryAudit) {
+        this.sqlQueryAudit = sqlQueryAudit;
     }
 
     /**
