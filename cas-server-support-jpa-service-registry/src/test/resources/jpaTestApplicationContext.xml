@@ -54,12 +54,12 @@
   <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
         abstract="true"/>
 
-  <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
-        p:dataSource-ref="dataSource" />
+  <bean id="serviceEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
+        p:dataSource-ref="dataSourceService" />
 
 
   <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
-        id="dataSource"
+        id="dataSourceService"
         p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
         p:username="${database.user:sa}"
         p:password="${database.password:}"
