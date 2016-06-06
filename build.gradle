@@ -109,15 +109,6 @@ subprojects {
         classpath += configurations.provided
     }
     
-    ext.buildDate = null
-    compileJava.doLast {
-        buildDate = new Date()
-        jar.manifest {
-            attributes("Implementation-Date": project.buildDate)
-        }
-    }
-    tasks.jar.onlyIf { return project.buildDate != null}
-
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
