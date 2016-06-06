@@ -120,7 +120,6 @@ The following settings are available:
 </util:list>
 
 <alias name="myDataSource" alias="monitorDataSource" />
-
 ```
 
 - `PooledConnectionFactoryMonitor`
@@ -158,7 +157,6 @@ The following settings are available:
 />
 
 <bean id="pooledConnectionFactoryMonitorValidator" class="org.ldaptive.pool.SearchValidator" />
-
 ```
 
 ## Internal Configuration Report
