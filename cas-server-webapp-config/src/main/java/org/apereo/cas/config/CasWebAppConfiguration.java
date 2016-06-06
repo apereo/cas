@@ -2,8 +2,12 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
+import org.apereo.cas.configuration.model.webapp.LocaleProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +18,6 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.MessageInterpolator;
 import java.util.HashMap;
@@ -28,19 +31,18 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casWebAppConfiguration")
+@EnableConfigurationProperties(LocaleProperties.class)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     
-    @Resource(name="messageInterpolator")
+    @Autowired
+    @Qualifier("messageInterpolator")
     private MessageInterpolator messageInterpolator;
-    
+
+    @Autowired
+    LocaleProperties localeProperties;
+
     @Value("${cas.themeResolver.param.name:theme}")
     private String themeParamName;
-    
-    @Value("${locale.default:}")
-    private String defaultLocale;
-    
-    @Value("${locale.param.name:locale}")
-    private String localeParamName;
 
     /**
      * Credentials validator local validator factory bean.
@@ -79,10 +81,11 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 final Locale locale = request.getLocale();
-                if (StringUtils.isBlank(defaultLocale) || locale.getLanguage().equals(defaultLocale)) {
+                if (StringUtils.isBlank(localeProperties.getDefaultValue())
+                        || locale.getLanguage().equals(localeProperties.getDefaultValue())) {
                     return locale;
                 }
-                return new Locale(defaultLocale);
+                return new Locale(localeProperties.getDefaultValue());
             }
         };
         return bean;
@@ -97,7 +100,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
-        bean.setParamName(this.localeParamName);
+        bean.setParamName(this.localeProperties.getParamName());
         return bean;
     }
 

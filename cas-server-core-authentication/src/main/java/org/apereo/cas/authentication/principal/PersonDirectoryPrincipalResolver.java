@@ -10,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +43,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * return null if no attributes are found.
      */
-    @Value("${cas.principal.resolver.persondir.return.null:false}")
     protected boolean returnNullIfNoAttributes;
 
     /**
@@ -53,9 +50,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected String principalAttributeName;
 
-    @Autowired
-    public void setAttributeRepository(@Qualifier("attributeRepository")
-                                             final IPersonAttributeDao attributeRepository) {
+    public void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
     }
 
@@ -69,8 +64,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @param attribute Name of attribute containing principal ID.
      */
     @Autowired
-    public void setPrincipalAttributeName(@Value("${cas.principal.resolver.persondir.principal.attribute:}")
-                                          final String attribute) {
+    public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
     }
 
@@ -80,7 +74,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @param principalFactory the principal factory
      */
     @Autowired
-    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 

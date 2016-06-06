@@ -27,7 +27,7 @@
                                   ignore-unresolvable="false"/>
 
     <util:properties id="propertiesMfa">
-        <prop key="cas.authn.policy.any.tryall">true</prop>
+        <prop key="cas.authn.policy.any.tryAll">true</prop>
     </util:properties>
 
     <util:map id="authenticationHandlersResolvers">
