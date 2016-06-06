@@ -65,9 +65,9 @@ public class Beans {
         bean.setDataSource(config.getDataSource());
 
         final Properties properties = new Properties();
-        properties.put("hibernate.dialect", this.jpaServiceRegistryProperties.getDialect());
-        properties.put("hibernate.hbm2ddl.auto", this.jpaServiceRegistryProperties.getDdlAuto());
-        properties.put("hibernate.jdbc.batch_size", this.jpaServiceRegistryProperties.getBatchSize());
+        properties.put("hibernate.dialect", jpaProperties.getDialect());
+        properties.put("hibernate.hbm2ddl.auto", jpaProperties.getDdlAuto());
+        properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
         bean.setJpaProperties(properties);
         return bean;
     }
