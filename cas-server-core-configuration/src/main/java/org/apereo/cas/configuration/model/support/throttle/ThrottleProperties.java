@@ -69,7 +69,7 @@ public class ThrottleProperties {
      */
     public static class Failure {
         private String code = DEFAULT_AUTHN_FAILED_ACTION;
-        private int threshold = DEFAULT_FAILURE_THRESHOLD
+        private int threshold = DEFAULT_FAILURE_THRESHOLD;
         private int rangeSeconds = DEFAULT_FAILURE_RANGE_IN_SECONDS;
 
         public String getCode() {
