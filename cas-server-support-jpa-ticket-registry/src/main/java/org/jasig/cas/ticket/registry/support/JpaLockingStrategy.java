@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,6 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,13 +27,13 @@ import java.util.Date;
  * @since 3.0.0
  */
 @Component("jpaLockingStrategy")
+@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
 public class JpaLockingStrategy implements LockingStrategy {
 
     /** Default lock timeout is 1 hour. */
     public static final int DEFAULT_LOCK_TIMEOUT = 3600;
 
     /** Transactional entity manager from Spring context. */
-    @NotNull
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     protected EntityManager entityManager;
 
@@ -45,13 +45,11 @@ public class JpaLockingStrategy implements LockingStrategy {
      * each one of which may be for a different application or usage within
      * a single application.
      */
-    @NotNull
-    @Value(("${database.cleaner.appid:cas-ticket-registry-cleaner}"))
+    @Value("${database.cleaner.appid:cas-ticket-registry-cleaner}")
     private String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
-    @NotNull
-    @Value(("${host.name:cas01.example.org}"))
+    @Value("${host.name:cas01.example.org}")
     private String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
@@ -148,6 +146,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      *
      * @return  Current lock owner or null if no one presently owns lock.
      */
+    @Transactional(readOnly = false)
     public String getOwner() {
         final Lock lock = entityManager.find(Lock.class, applicationId);
         if (lock != null) {

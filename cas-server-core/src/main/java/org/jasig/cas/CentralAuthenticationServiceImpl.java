@@ -43,6 +43,7 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
@@ -63,7 +64,8 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Component("centralAuthenticationService")
-public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
+@Transactional(readOnly = false)
+public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
     private static final long serialVersionUID = -8943828074939533986L;
 

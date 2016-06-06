@@ -57,30 +57,13 @@
             p:idleConnectionTestPeriod="${svcreg.database.pool.idleConnectionTestPeriod:30}"
             p:preferredTestQuery="${svcreg.database.pool.connectionHealthQuery:select 1}"/>
 
-    <bean id="abstractTicketTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+    <bean id="abstractServiceTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
             abstract="true"/>
 
     <bean id="serviceEntityManagerFactory" parent="abstractServiceJpaEntityManagerFactory"
           p:dataSource-ref="dataSourceService"/>
 
-    <bean id="transactionManagerServiceReg" parent="abstractTicketTransactionManager"
+    <bean id="transactionManagerServiceReg" parent="abstractServiceTransactionManager"
           p:entityManagerFactory-ref="serviceEntityManagerFactory" />
-
-    <tx:advice id="txAdviceServiceReg" transaction-manager="transactionManagerServiceReg">
-        <tx:attributes>
-            <tx:method name="delete*" read-only="false"/>
-            <tx:method name="save*" read-only="false"/>
-            <tx:method name="update*" read-only="false"/>
-            <tx:method name="*" />
-        </tx:attributes>
-    </tx:advice>
-
-
-    <aop:config>
-        <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
-        <aop:advisor advice-ref="txAdviceServiceReg" pointcut-ref="servicesManagerOperations"/>
-    </aop:config>
-
-
-
+    
 </beans>

@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is {@link ServiceTicketDelegator}.
@@ -46,6 +47,7 @@ public class ServiceTicketDelegator<T extends ServiceTicket> extends AbstractTic
         return b;
     }
 
+    @Transactional(readOnly=false)
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
                                                         final Authentication authentication,
