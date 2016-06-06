@@ -332,14 +332,22 @@ subprojects {
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
     }
+
+    ext.buildDate = null
+    compileJava.doLast {
+        buildDate = java.time.ZonedDateTime.now()
+        jar.manifest {
+            attributes("Implementation-Date": project.buildDate)
+        }
+    }
+    tasks.jar.onlyIf { return project.buildDate != null}
     
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Date": java.time.ZonedDateTime.now(),
-                    "Implementation-Version": project.version)
+                       "Implementation-Vendor": project.group,
+                       "Created-By": project.group,
+                       "Implementation-Version": project.version)
         }
     }
 
