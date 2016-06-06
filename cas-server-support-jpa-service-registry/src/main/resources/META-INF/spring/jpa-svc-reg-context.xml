@@ -43,7 +43,7 @@
             id="dataSourceService"
             class="com.mchange.v2.c3p0.ComboPooledDataSource"
             p:driverClass="${svcreg.database.driverClass:org.hsqldb.jdbcDriver}"
-            p:jdbcUrl="${svcreg.database.url:jdbc:hsqldb:mem:cas-service-registry}"
+            p:jdbcUrl="${svcreg.database.url:jdbc:hsqldb:hsql://localhost:9001/}"
             p:user="${svcreg.database.user:sa}"
             p:password="${svcreg.database.password:}"
             p:initialPoolSize="${svcreg.database.pool.minSize:6}"
@@ -65,22 +65,5 @@
 
     <bean id="transactionManagerServiceReg" parent="abstractTicketTransactionManager"
           p:entityManagerFactory-ref="serviceEntityManagerFactory" />
-
-    <tx:advice id="txAdviceServiceReg" transaction-manager="transactionManagerServiceReg">
-        <tx:attributes>
-            <tx:method name="delete*" read-only="false"/>
-            <tx:method name="save*" read-only="false"/>
-            <tx:method name="update*" read-only="false"/>
-            <tx:method name="*" />
-        </tx:attributes>
-    </tx:advice>
-
-
-    <aop:config>
-        <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
-        <aop:advisor advice-ref="txAdviceServiceReg" pointcut-ref="servicesManagerOperations"/>
-    </aop:config>
-
-
-
+    
 </beans>

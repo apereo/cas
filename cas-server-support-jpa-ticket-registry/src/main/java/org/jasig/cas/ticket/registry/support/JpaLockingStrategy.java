@@ -28,7 +28,7 @@ import java.util.Date;
  * @since 3.0.0
  */
 @Component("jpaLockingStrategy")
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
 public class JpaLockingStrategy implements LockingStrategy {
 
     /** Default lock timeout is 1 hour. */

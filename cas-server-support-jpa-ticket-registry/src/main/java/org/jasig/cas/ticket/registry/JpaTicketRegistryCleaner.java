@@ -23,7 +23,7 @@ import java.util.Collection;
  * This is {@link JpaTicketRegistryCleaner}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 4.2.3
  */
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = true)
 public class JpaTicketRegistryCleaner extends TransactionTemplate implements Job {
