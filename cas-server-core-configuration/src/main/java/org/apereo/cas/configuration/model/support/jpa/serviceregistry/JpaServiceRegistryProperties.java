@@ -11,4 +11,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "svcreg.database", ignoreUnknownFields = false)
 public class JpaServiceRegistryProperties extends AbstractJpaProperties {
+
+    public JpaServiceRegistryProperties() {
+        super.setUrl("jdbc:hsqldb:mem:cas-service-registry");
+    }
 }
