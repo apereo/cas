@@ -25,7 +25,6 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
@@ -41,19 +40,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.1
  */
 @Component("servicesManager")
-public final class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
+public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
     /**
      * Instance of ServiceRegistryDao.
      */
-    @NotNull
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
-    /** Application event publisher. */
+    /**
+     * Application event publisher.
+     */
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
@@ -95,7 +95,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
@@ -155,7 +155,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
@@ -175,7 +175,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      */
     public void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices =
-            new ConcurrentHashMap<>();
+                new ConcurrentHashMap<>();
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
             LOGGER.debug("Adding registered service {}", r.getServiceId());
@@ -184,7 +184,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
         this.services = localServices;
         LOGGER.info("Loaded {} services from {}.", this.services.size(),
-            this.serviceRegistryDao);
+                this.serviceRegistryDao);
 
     }
 
@@ -198,20 +198,20 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
                 LOGGER.debug("Preparing to schedule reloader job");
 
                 final JobDetail job = JobBuilder.newJob(ServiceRegistryReloaderJob.class)
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .build();
+                        .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                        .build();
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(this.refreshInterval)
-                        .repeatForever()).build();
+                        .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                        .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
+                        .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                                .withIntervalInSeconds(this.refreshInterval)
+                                .repeatForever()).build();
 
                 LOGGER.debug("Scheduling {} job", this.getClass().getName());
                 scheduler.scheduleJob(job, trigger);
                 LOGGER.info("Services manager will reload service definitions every {} seconds",
-                    this.refreshInterval);
+                        this.refreshInterval);
             }
 
         } catch (final Exception e) {

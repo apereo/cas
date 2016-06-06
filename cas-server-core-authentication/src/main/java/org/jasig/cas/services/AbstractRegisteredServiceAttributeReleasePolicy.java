@@ -20,9 +20,9 @@ import java.util.Map;
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
     
     private static final long serialVersionUID = 5325460875620586503L;
-
-    /** The LOGGER. */
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredServiceAttributeReleasePolicy.class);
+    
     /** The attribute filter. */
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
 

@@ -108,14 +108,13 @@ subprojects {
     javadoc {
         classpath += configurations.provided
     }
-
+    
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Date": new Date(),
-                    "Implementation-Version": project.version)
+                       "Implementation-Vendor": project.group,
+                       "Created-By": project.group,
+                       "Implementation-Version": project.version)
         }
     }
 

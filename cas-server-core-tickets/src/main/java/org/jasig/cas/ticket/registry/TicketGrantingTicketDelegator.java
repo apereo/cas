@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
         return getTicket().getSupplementalAuthentications();
     }
 
+    @Transactional(readOnly=false)
     @Override
     public ServiceTicket grantServiceTicket(final String id, final Service service,
                                             final ExpirationPolicy expirationPolicy, final boolean credentialsProvided,
@@ -57,6 +59,7 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
         return t;
     }
 
+    @Transactional(readOnly=false)
     @Override
     public void markTicketExpired() {
         this.getTicket().markTicketExpired();

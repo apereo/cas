@@ -8,6 +8,7 @@ dependencies {
     exclude(group: 'xml-apis', module: 'xml-apis')  
   }
   compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
+  compile group: 'org.springframework', name: 'spring-tx', version:springVersion
   compile project(':cas-server-core-authentication')
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-web')
