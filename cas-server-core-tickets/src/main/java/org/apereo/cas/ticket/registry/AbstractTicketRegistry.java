@@ -12,11 +12,8 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.SerializationUtils;
-import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
@@ -27,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -47,13 +43,10 @@ import java.util.stream.Collectors;
  * This is a published and supported CAS Server API.
  * </p>
  */
-public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState, Job {
+public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
-
-    /**
-     * The Slf4j logger instance.
-     */
+    
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${ticket.registry.cleaner.enabled:true}")
@@ -77,6 +70,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     @Resource(name="logoutManager")
     private LogoutManager logoutManager;
 
+    @Autowired
+    @Qualifier("ticketRegistryCleaner")
+    private TicketRegistryCleaner ticketRegistryCleaner;
+    
     /**
      * Default constructor.
      */
@@ -158,7 +155,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      *
      * @param ticket the ticket
      */
-    private void deleteChildren(final TicketGrantingTicket ticket) {
+    public void deleteChildren(final TicketGrantingTicket ticket) {
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
@@ -353,7 +350,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             }
 
             logger.info("Preparing to schedule job to clean up after tickets...");
-            final JobDetail job = JobBuilder.newJob(getClass())
+            final JobDetail job = JobBuilder.newJob(this.ticketRegistryCleaner.getClass())
                     .withIdentity(getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .build();
 
@@ -375,19 +372,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
     }
-
-    @Override
-    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        try {
-            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            final AbstractTicketRegistry registry = (AbstractTicketRegistry)
-                    jobExecutionContext.getScheduler().getContext().get(getClass().getSimpleName());
-            registry.cleanupTickets();
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
+    
     /**
      * Indicates whether the registry supports automatic ticket cleanup.
      * Generally, a registry that is able to return a collection of available

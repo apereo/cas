@@ -26,9 +26,8 @@ import java.util.stream.Collectors;
  */
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
     private static final long serialVersionUID = 403015306984610128L;
-    
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceRegexAttributeFilter.class);
     
     private Pattern pattern;
 
@@ -79,33 +78,33 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         givenAttributes.entrySet().stream().filter(entry -> {
             final String attributeName = entry.getKey();
             final Object attributeValue = entry.getValue();
-            logger.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
+            LOGGER.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             return attributeValue != null;
         }).forEach(entry -> {
             final String attributeName = entry.getKey();
             final Object attributeValue = entry.getValue();
 
             if (attributeValue instanceof Collection) {
-                logger.trace("Attribute value {} is a collection", attributeValue);
+                LOGGER.trace("Attribute value {} is a collection", attributeValue);
                 final List filteredAttributes = filterAttributes(
                         (Collection<String>) attributeValue, attributeName);
-                if (filteredAttributes.size() > 0) {
+                if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue.getClass().isArray()) {
-                logger.trace("Attribute value {} is an array", attributeValue);
+                LOGGER.trace("Attribute value {} is an array", attributeValue);
                 final List filteredAttributes = filterAttributes(Arrays.asList((String[]) attributeValue), attributeName);
-                if (filteredAttributes.size() > 0) {
+                if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue instanceof Map) {
-                logger.trace("Attribute value {} is a map", attributeValue);
+                LOGGER.trace("Attribute value {} is a map", attributeValue);
                 final Map<String, String> filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
-                if (filteredAttributes.size() > 0) {
+                if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else {
-                logger.trace("Attribute value {} is a string", attributeValue);
+                LOGGER.trace("Attribute value {} is a string", attributeValue);
                 final String attrValue = attributeValue.toString();
                 if (patternMatchesAttributeValue(attrValue)) {
                     logReleasedAttributeEntry(attributeName, attrValue);
@@ -114,7 +113,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             }
         });
 
-        logger.debug("Received {} attributes. Filtered and released {}", givenAttributes.size(),
+        LOGGER.debug("Received {} attributes. Filtered and released {}", givenAttributes.size(),
                 attributesToRelease.size());
         return attributesToRelease;
     }
@@ -163,7 +162,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeValue the attribute value
      */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        logger.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
+        LOGGER.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
     }
 

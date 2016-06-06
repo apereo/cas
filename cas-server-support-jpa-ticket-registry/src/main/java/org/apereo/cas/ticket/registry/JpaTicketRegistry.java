@@ -14,6 +14,8 @@ import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -32,8 +34,14 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.2.1
  */
+@EnableTransactionManagement(proxyTargetClass = true)
+@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
+    private static final String TABLE_OAUTH_TICKETS = OAuthCodeImpl.class.getSimpleName();
+    private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
+    private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
+    
     @Autowired
     @Qualifier("jpaLockingStrategy")
     private LockingStrategy jpaLockingStrategy;
@@ -108,10 +116,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = this.entityManager
-                .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
+                .createQuery("select t from " + TABLE_TICKET_GRANTING_TICKETS + " t", 
+                        TicketGrantingTicketImpl.class)
                 .getResultList();
         final List<ServiceTicketImpl> sts = this.entityManager
-                .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
+                .createQuery("select s from " + TABLE_SERVICE_TICKETS + " s", ServiceTicketImpl.class)
                 .getResultList();
 
         final List<Ticket> tickets = new ArrayList<>(tgts);
@@ -128,12 +137,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long sessionCount() {
         return countToLong(this.entityManager.createQuery(
-                "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
+                "select count(t) from " + TABLE_TICKET_GRANTING_TICKETS + " t").getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        return countToLong(this.entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+        return countToLong(this.entityManager.createQuery("select count(t) from " 
+                + TABLE_SERVICE_TICKETS + " t").getSingleResult());
     }
 
     @Override
@@ -153,25 +163,26 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return failureCount == 0;
     }
 
-    <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, final Class<T> clazz) {
+    public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, 
+                                                               final Class<T> clazz) {
         return this.entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
                 .getResultList();
     }
 
-    private int deleteOAuthTokens(final String ticketId) {
+    public int deleteOAuthTokens(final String ticketId) {
         final List<OAuthCodeImpl> oAuthCodeImpls = getTicketQueryResultList(ticketId,
-                "select o from OAuthCodeImpl o where o.id = :id", OAuthCodeImpl.class);
+                "select o from " + TABLE_OAUTH_TICKETS + " o where o.id = :id", OAuthCodeImpl.class);
         return deleteTicketsFromResultList(oAuthCodeImpls);
     }
 
-    private int deleteServiceTickets(final String ticketId) {
+    public int deleteServiceTickets(final String ticketId) {
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
-                "select s from ServiceTicketImpl s where s.id = :id", ServiceTicketImpl.class);
+                "select s from " + TABLE_SERVICE_TICKETS +  " s where s.id = :id", ServiceTicketImpl.class);
         return deleteTicketsFromResultList(serviceTicketImpls);
     }
 
-    private int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
+    public int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
         int failureCount = 0;
         for (final Ticket serviceTicketImpl : serviceTicketImpls) {
             if (!removeTicket(serviceTicketImpl)) {
@@ -181,19 +192,22 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return failureCount;
     }
 
-    private int deleteTicketGrantingTickets(final String ticketId) {
+    public int deleteTicketGrantingTickets(final String ticketId) {
         int failureCount = 0;
 
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
-                "select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
+                "select s from " + TABLE_SERVICE_TICKETS +
+                        " s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
         failureCount += deleteTicketsFromResultList(serviceTicketImpls);
 
         List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
-                "select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
+                "select t from " + TABLE_TICKET_GRANTING_TICKETS +
+                        " t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
         failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
 
         ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
-                "select t from TicketGrantingTicketImpl t where t.id = :id", TicketGrantingTicketImpl.class);
+                "select t from " + TABLE_TICKET_GRANTING_TICKETS +
+                        " t where t.id = :id", TicketGrantingTicketImpl.class);
         failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
 
         return failureCount;

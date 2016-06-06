@@ -43,6 +43,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Transactional(readOnly = false)
 public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
     private static final long serialVersionUID = -8943828074939533986L;

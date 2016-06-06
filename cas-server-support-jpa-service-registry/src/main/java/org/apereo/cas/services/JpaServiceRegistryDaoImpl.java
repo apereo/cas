@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,6 +16,8 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 3.1
  */
+@EnableTransactionManagement(proxyTargetClass = true)
+@Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
 public class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaServiceRegistryDaoImpl.class);
