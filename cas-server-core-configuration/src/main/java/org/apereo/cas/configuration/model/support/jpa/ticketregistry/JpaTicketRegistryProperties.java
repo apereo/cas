@@ -12,6 +12,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "ticketreg.database", ignoreUnknownFields = false)
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
+    public JpaTicketRegistryProperties() {
+        super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
+    }
+
     private boolean jpaLockingTgtEnabled = true;
 
     public boolean isJpaLockingTgtEnabled() {

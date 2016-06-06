@@ -2,9 +2,6 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryState;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
 
 /**
  * Monitors the status of a {@link TicketRegistry}
@@ -15,17 +12,14 @@ import javax.annotation.Resource;
  * @since 3.5.0
  */
 public class SessionMonitor implements Monitor<SessionStatus> {
+
     /** Ticket registry instance that exposes state info. */
-    
-    @Resource(name="ticketRegistry")
     private TicketRegistry registryState;
 
     /** Threshold above which warnings are issued for session count. */
-    @Value("${cas.monitor.tgt.warn.threshold:10000}")
     private int sessionCountWarnThreshold = -1;
 
     /** Threshold above which warnings are issued for service ticket count. */
-    @Value("${cas.monitor.st.warn.threshold:5000}")
     private int serviceTicketCountWarnThreshold = -1;
 
 

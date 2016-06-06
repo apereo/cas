@@ -13,7 +13,6 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -45,10 +44,8 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    @Value("${cas.throttle.inmemory.cleaner.repeatinterval:5000}")
     private int refreshInterval;
 
-    @Value("${cas.throttle.inmemory.cleaner.startdelay:5000}")
     private int startDelay;
 
     @Autowired
@@ -165,4 +162,19 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         }
     }
 
+    public int getRefreshInterval() {
+        return refreshInterval;
+    }
+
+    public void setRefreshInterval(final int refreshInterval) {
+        this.refreshInterval = refreshInterval;
+    }
+
+    public int getStartDelay() {
+        return startDelay;
+    }
+
+    public void setStartDelay(final int startDelay) {
+        this.startDelay = startDelay;
+    }
 }

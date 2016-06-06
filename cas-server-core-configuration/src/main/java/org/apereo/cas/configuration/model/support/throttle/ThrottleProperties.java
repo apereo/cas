@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Configuration properties class for cas.throttle.
@@ -31,6 +32,8 @@ public class ThrottleProperties {
     private String appcode = DEFAULT_APPLICATION_CODE;
 
     private String auditQuery = SQL_AUDIT_QUERY;
+
+    private Inmemory inmemory = new Inmemory();
 
     public Failure getFailure() {
         return failure;
@@ -64,6 +67,14 @@ public class ThrottleProperties {
         this.auditQuery = auditQuery;
     }
 
+    public Inmemory getInmemory() {
+        return inmemory;
+    }
+
+    public void setInmemory(final Inmemory inmemory) {
+        this.inmemory = inmemory;
+    }
+
     /**
      * Failure.
      */
@@ -94,6 +105,40 @@ public class ThrottleProperties {
 
         public void setRangeSeconds(final int rangeSeconds) {
             this.rangeSeconds = rangeSeconds;
+        }
+    }
+
+    public static class Inmemory {
+        @NestedConfigurationProperty
+        private Cleaner cleaner = new Cleaner();
+
+        public Cleaner getCleaner() {
+            return cleaner;
+        }
+
+        public void setCleaner(final Cleaner cleaner) {
+            this.cleaner = cleaner;
+        }
+    }
+
+    public static class Cleaner {
+        private int repeatInterval = 5000;
+        private int startDelay = 5000;
+
+        public int getRepeatInterval() {
+            return repeatInterval;
+        }
+
+        public void setRepeatInterval(final int repeatInterval) {
+            this.repeatInterval = repeatInterval;
+        }
+
+        public int getStartDelay() {
+            return startDelay;
+        }
+
+        public void setStartDelay(final int startDelay) {
+            this.startDelay = startDelay;
         }
     }
 }
