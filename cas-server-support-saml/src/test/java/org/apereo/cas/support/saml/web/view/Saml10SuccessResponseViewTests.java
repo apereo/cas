@@ -49,7 +49,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(list);
         this.response = new Saml10SuccessResponseView();
-        this.response.setServicesManager(new DefaultServicesManagerImpl(dao));
+        this.response.setServicesManager(new DefaultServicesManagerImpl(dao, 10, 30));
         this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.response.getServicesManager()));
         
         final Saml10ObjectBuilder builder = new Saml10ObjectBuilder();

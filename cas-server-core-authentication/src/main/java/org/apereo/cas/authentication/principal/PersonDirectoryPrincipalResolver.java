@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +62,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      *
      * @param attribute Name of attribute containing principal ID.
      */
-    @Autowired
     public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
     }

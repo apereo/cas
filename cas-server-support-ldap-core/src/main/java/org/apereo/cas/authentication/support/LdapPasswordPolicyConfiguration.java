@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -12,8 +13,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
     /** Directory-specific account state handler component. */
-    
     private AccountStateHandler accountStateHandler;
+
+    public LdapPasswordPolicyConfiguration(final PasswordPolicyProperties passwordPolicyProperties) {
+        super(passwordPolicyProperties);
+    }
 
     /**
      * @return  Account state handler component.

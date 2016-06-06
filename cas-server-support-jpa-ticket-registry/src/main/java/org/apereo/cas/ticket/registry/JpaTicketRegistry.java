@@ -13,11 +13,9 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
@@ -222,22 +220,5 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static long countToLong(final Object result) {
         return ((Number) result).longValue();
     }
-
-    @Override
-    protected void postCleanupTickets() {
-        logger.debug("Releasing ticket cleanup lock.");
-        this.jpaLockingStrategy.release();
-        logger.info("Finished ticket cleanup.");
-    }
-
-    @Override
-    protected boolean preCleanupTickets() {
-        logger.debug("Attempting to acquire ticket cleanup lock.");
-        if (!this.jpaLockingStrategy.acquire()) {
-            logger.warn("Could not obtain lock. Aborting cleanup.");
-            return false;
-        }
-        logger.debug("Acquired lock. Proceeding with cleanup.");
-        return super.preCleanupTickets();
-    }
+    
 }

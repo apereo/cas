@@ -160,13 +160,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         }
         this.client.shutdown();
     }
-
-    @Override
-    protected boolean isCleanerSupported() {
-        logger.info("{} does not support automatic ticket clean up processes", this.getClass().getName());
-        return false;
-    }
-
+    
     @Override
     protected boolean needsCallback() {
         return true;

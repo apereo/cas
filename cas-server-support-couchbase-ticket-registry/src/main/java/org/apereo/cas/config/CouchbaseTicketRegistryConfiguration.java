@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -62,5 +64,15 @@ public class CouchbaseTicketRegistryConfiguration {
     @Bean
     public CouchbaseTicketRegistry couchbaseTicketRegistry() {
         return new CouchbaseTicketRegistry();
+    }
+
+    @Bean
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        return new DefaultTicketRegistryCleaner() {
+            @Override
+            protected boolean isCleanerSupported() {
+                return false;
+            }
+        };
     }
 }

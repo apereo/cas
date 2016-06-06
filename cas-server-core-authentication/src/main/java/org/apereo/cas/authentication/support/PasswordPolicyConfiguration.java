@@ -20,7 +20,7 @@ public class PasswordPolicyConfiguration {
 
     private PasswordPolicyProperties passwordPolicyProperties;
 
-    public PasswordPolicyConfiguration(PasswordPolicyProperties passwordPolicyProperties) {
+    public PasswordPolicyConfiguration(final PasswordPolicyProperties passwordPolicyProperties) {
         this.passwordPolicyProperties = passwordPolicyProperties;
     }
 

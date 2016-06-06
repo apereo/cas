@@ -158,7 +158,6 @@ public class InitialFlowSetupAction extends AbstractAction {
      *
      * @param enableFlowOnAbsentServiceRequest the enable flow on absent service request
      */
-    @Autowired
     public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
         this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
     }

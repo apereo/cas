@@ -4,8 +4,10 @@ import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -70,5 +72,15 @@ public class MemcachedConfiguration {
     @Bean
     public TicketRegistry memcachedTicketRegistry() {
         return new MemCacheTicketRegistry();
+    }
+
+    @Bean
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        return new DefaultTicketRegistryCleaner() {
+            @Override
+            protected boolean isCleanerSupported() {
+                return false;
+            }
+        };
     }
 }

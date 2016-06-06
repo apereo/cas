@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
 public class JpaLockingStrategy implements LockingStrategy {
 
     /** Default lock timeout is 1 hour. */
@@ -138,6 +140,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      *
      * @return  Current lock owner or null if no one presently owns lock.
      */
+    @Transactional(readOnly = false)
     public String getOwner() {
         final Lock lock = this.entityManager.find(Lock.class, this.applicationId);
         if (lock != null) {

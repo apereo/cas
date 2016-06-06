@@ -63,10 +63,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreAuthenticationConfiguration")
 @EnableConfigurationProperties(
-                    {HttpClientTrustStoreProperties.class,
-                    PasswordPolicyProperties.class,
-                    PersonDirPrincipalResolverProperties.class,
-                    AuthenticationPolicyProperties.class})
+        {HttpClientTrustStoreProperties.class,
+                PasswordPolicyProperties.class,
+                PersonDirPrincipalResolverProperties.class,
+                AuthenticationPolicyProperties.class})
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
@@ -187,8 +187,8 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") IPersonAttributeDao attributeRepository,
-                                                              @Qualifier("principalFactory") PrincipalFactory principalFactory) {
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
+                                                              @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
         bean.setAttributeRepository(attributeRepository);
         bean.setPrincipalFactory(principalFactory);
