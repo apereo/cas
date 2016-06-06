@@ -43,7 +43,7 @@
             id="dataSourceService"
             class="com.mchange.v2.c3p0.ComboPooledDataSource"
             p:driverClass="${svcreg.database.driverClass:org.hsqldb.jdbcDriver}"
-            p:jdbcUrl="${svcreg.database.url:jdbc:hsqldb:hsql://localhost:9001/}"
+            p:jdbcUrl="${svcreg.database.url:jdbc:hsqldb:mem:cas-service-registry}"
             p:user="${svcreg.database.user:sa}"
             p:password="${svcreg.database.password:}"
             p:initialPoolSize="${svcreg.database.pool.minSize:6}"
