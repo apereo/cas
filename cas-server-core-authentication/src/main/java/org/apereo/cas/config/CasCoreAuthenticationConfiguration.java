@@ -41,6 +41,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
@@ -62,9 +63,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreAuthenticationConfiguration")
 @EnableConfigurationProperties(
-        {HttpClientTrustStoreProperties.class,
-        PasswordPolicyProperties.class,
-        PersonDirPrincipalResolverProperties.class})
+                    {HttpClientTrustStoreProperties.class,
+                    PasswordPolicyProperties.class,
+                    PersonDirPrincipalResolverProperties.class,
+                    AuthenticationPolicyProperties.class})
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
@@ -76,6 +78,9 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     private PersonDirPrincipalResolverProperties principalResolverProperties;
 
+    @Autowired
+    private AuthenticationPolicyProperties authenticationPolicyProperties;
+
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
         return new AuthenticationExceptionHandler();
@@ -84,12 +89,17 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationPolicy requiredHandlerAuthenticationPolicy() {
-        return new RequiredHandlerAuthenticationPolicy();
+        final RequiredHandlerAuthenticationPolicy bean =
+                new RequiredHandlerAuthenticationPolicy(this.authenticationPolicyProperties.getReq().getHandlerName());
+        bean.setTryAll(this.authenticationPolicyProperties.getReq().isTryAll());
+        return bean;
     }
 
     @Bean
     public AuthenticationPolicy anyAuthenticationPolicy() {
-        return new AnyAuthenticationPolicy();
+        final AnyAuthenticationPolicy bean = new AnyAuthenticationPolicy();
+        bean.setTryAll(this.authenticationPolicyProperties.getAny().isTryAll());
+        return bean;
     }
 
     @Bean

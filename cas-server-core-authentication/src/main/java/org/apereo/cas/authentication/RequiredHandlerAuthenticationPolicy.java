@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
@@ -13,11 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
     /** Authentication handler name that is required to satisfy policy. */
-    @Value("${cas.authn.policy.req.handlername:handlerName}")
     private String requiredHandlerName;
 
     /** Flag to try all credentials before policy is satisfied. */
-    @Value("${cas.authn.policy.req.tryall:false}")
     private boolean tryAll;
 
     /**
