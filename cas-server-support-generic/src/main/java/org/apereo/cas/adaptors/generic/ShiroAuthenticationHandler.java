@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.DisabledAccountException;
@@ -16,17 +17,14 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -44,26 +42,8 @@ import java.util.Set;
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private Set<String> requiredRoles = new HashSet<>();
+
     private Set<String> requiredPermissions = new HashSet<>();
-
-    @Value("${shiro.authn.requiredRoles:}")
-    private String requiredRolesConfig;
-
-    @Value("${shiro.authn.requiredPermissions:}")
-    private String requiredPermissionsConfig;
-
-    /**
-     * Initialize roles and permissions.
-     */
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isNotBlank(this.requiredPermissionsConfig)) {
-            setRequiredPermissions(org.springframework.util.StringUtils.commaDelimitedListToSet(this.requiredPermissionsConfig));
-        }
-        if (StringUtils.isNotBlank(this.requiredRolesConfig)) {
-            setRequiredRoles(org.springframework.util.StringUtils.commaDelimitedListToSet(this.requiredRolesConfig));
-        }
-    }
 
 
     public void setRequiredRoles(final Set<String> requiredRoles) {
@@ -81,7 +61,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      * @param resource the resource
      */
     @Autowired
-    public void setShiroConfiguration(@Value("${shiro.authn.config.file:classpath:shiro.ini}") final Resource resource) {
+    public void setShiroConfiguration(final Resource resource) {
         try {
             final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
             if (shiroResource.exists()) {
