@@ -5,11 +5,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import com.mongodb.WriteConcern;
+import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegustryProperties;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,46 +31,15 @@ import java.util.Collections;
  * @since 5.0.0
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
+@EnableConfigurationProperties(MongoServiceRegustryProperties.class)
 public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfiguration {
 
-    @Value("${cas.service.registry.mongo.db:cas-service-registry}")
-    private String databaseName;
+    @Autowired
+    private MongoServiceRegustryProperties mongoServiceRegistryProperties;
 
-    @Value("${mongodb.userId:}")
-    private String username;
 
-    @Value("${mongodb.userPassword:}")
-    private String password;
 
-    @Value("${mongodb.host:localhost}")
-    private String host;
 
-    @Value("${mongodb.port:27017}")
-    private int port;
-
-    @Value("${mongodb.writeconcern:NORMAL}")
-    private WriteConcern writeConcern;
-
-    @Value("${mongodb.timeout:5000}")
-    private int heartBeatConnectionTimeout;
-
-    @Value("${mongodb.timeout:5000}")
-    private int heartBeatSocketTimeout;
-
-    @Value("${mongodb.conns.lifetime:60000}")
-    private int maxConnectionsLifeTime;
-
-    @Value("${mongodb.socket.keepalive:false}")
-    private boolean socketKeepAlive;
-
-    @Value("${mongodb.idle.timeout:30000}")
-    private int idleTime;
-
-    @Value("${mongodb.timeout:5000}")
-    private int connectTimeout;
-
-    @Value("${mongodb.timeout:5000}")
-    private int socketTimeout;
 
     @Value("${mongodb.conns.per.host:10}")
     private int connectionsPerHost;
@@ -84,14 +56,18 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Override
     protected String getDatabaseName() {
-        return this.databaseName;
+        return this.mongoServiceRegistryProperties.getServiceRegistryCollection();
     }
 
     @Override
     public Mongo mongo() throws Exception {
-        return new MongoClient(new ServerAddress(this.host, this.port),
-                Collections.singletonList(MongoCredential.createCredential(this.username,
-                        this.databaseName, this.password.toCharArray())),
+        return new MongoClient(new ServerAddress(
+                this.mongoServiceRegistryProperties.getHost(),
+                this.mongoServiceRegistryProperties.getPort()),
+                Collections.singletonList(
+                        MongoCredential.createCredential(this.mongoServiceRegistryProperties.getUserId(),
+                                getDatabaseName(),
+                                this.mongoServiceRegistryProperties.getUserPassword().toCharArray())),
                 mongoClientOptions());
     }
 
@@ -105,19 +81,19 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     public MongoClientOptions mongoClientOptions() {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setWriteConcern(this.writeConcern);
-            bean.setHeartbeatConnectTimeout(this.heartBeatConnectionTimeout);
-            bean.setHeartbeatSocketTimeout(this.heartBeatSocketTimeout);
-            bean.setMaxConnectionLifeTime(this.maxConnectionsLifeTime);
-            bean.setSocketKeepAlive(this.socketKeepAlive);
-            bean.setMaxConnectionIdleTime(this.idleTime);
-            bean.setConnectionsPerHost(this.connectionsPerHost);
-            bean.setSocketTimeout(this.socketTimeout);
-            bean.setConnectTimeout(this.connectTimeout);
+            bean.setWriteConcern(this.mongoServiceRegistryProperties.getWriteConcern());
+            bean.setHeartbeatConnectTimeout(this.mongoServiceRegistryProperties.getTimeout());
+            bean.setHeartbeatSocketTimeout(this.mongoServiceRegistryProperties.getTimeout());
+            bean.setMaxConnectionLifeTime(this.mongoServiceRegistryProperties.getConns().getLifetime());
+            bean.setSocketKeepAlive(this.mongoServiceRegistryProperties.isSocketKeepAlive());
+            bean.setMaxConnectionIdleTime(this.mongoServiceRegistryProperties.getIdleTimeout());
+            bean.setConnectionsPerHost(this.mongoServiceRegistryProperties.getConns().getPerHost());
+            bean.setSocketTimeout(this.mongoServiceRegistryProperties.getTimeout());
+            bean.setConnectTimeout(this.mongoServiceRegistryProperties.getTimeout());
             bean.afterPropertiesSet();
             return bean.getObject();
         } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
+            throw new BeanCreationException(e.getMessage(), e);
         }
     }
 
@@ -138,8 +114,10 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     }
 
     @Bean
-    public ServiceRegistryDao mongoServiceRegistryDao() {
-        return new MongoServiceRegistryDao();
+    public ServiceRegistryDao mongoServiceRegistryDao() throws Exception {
+        return new MongoServiceRegistryDao(
+                mongoTemplate(),
+                this.mongoServiceRegistryProperties.getServiceRegistryCollection(),
+                this.mongoServiceRegistryProperties.isDropCollection());
     }
-
 }
