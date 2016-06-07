@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.core;
+package org.apereo.cas.configuration.model.core.events;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,6 +15,16 @@ public class EventsProperties {
     private boolean trackGeolocation = false;
 
     private Jpa jpa = new Jpa();
+
+    private Mongodb mongodb = new Mongodb();
+
+    public Mongodb getMongodb() {
+        return mongodb;
+    }
+
+    public void setMongodb(final Mongodb mongodb) {
+        this.mongodb = mongodb;
+    }
 
     public boolean isTrackGeolocation() {
         return trackGeolocation;
@@ -49,9 +59,35 @@ public class EventsProperties {
                 super.setUrl("jdbc:hsqldb:mem:cas-events");
             }
         }
-
     }
 
+    public static class Mongodb {
+        private String clientUri = "";
+        private String collection = "MongoDbCasEventRepository";
+        private boolean dropCollection = false;
 
+        public String getClientUri() {
+            return clientUri;
+        }
 
+        public void setClientUri(final String clientUri) {
+            this.clientUri = clientUri;
+        }
+
+        public String getCollection() {
+            return collection;
+        }
+
+        public void setCollection(final String collection) {
+            this.collection = collection;
+        }
+
+        public boolean isDropCollection() {
+            return dropCollection;
+        }
+
+        public void setDropCollection(final boolean dropCollection) {
+            this.dropCollection = dropCollection;
+        }
+    }
 }

@@ -2,14 +2,11 @@ package org.apereo.cas.support.events.mongo;
 
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.Collection;
 
 /**
@@ -20,32 +17,22 @@ import java.util.Collection;
  */
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
-    private static final String MONGODB_COLLECTION_NAME = "MongoDbCasEventRepository";
-
-    @Value("${mongodb.events.collection:" + MONGODB_COLLECTION_NAME + '}')
     private String collectionName;
 
-    @Value("${mongodb.events.dropcollection:false}")
     private boolean dropCollection;
 
-    @Resource(name="mongoEventsTemplate")
-    
     private MongoOperations mongoTemplate;
 
-    /**
-     * Initialized registry post construction.
-     * Will decide if the configured collection should
-     * be dropped and recreated.
-     */
-    @PostConstruct
-    public void init() {
-        Assert.notNull(this.mongoTemplate);
+    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
+        this.mongoTemplate = mongoTemplate;
+        this.collectionName = collectionName;
+        this.dropCollection = dropCollection;
 
+        Assert.notNull(this.mongoTemplate);
         if (this.dropCollection) {
             logger.debug("Dropping database collection: {}", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
-
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
             logger.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
@@ -55,27 +42,6 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     @Override
     public String toString() {
         return getClass().getSimpleName();
-    }
-
-    /**
-     * Optionally, specify the name of the mongodb collection where events are to be kept.
-     * By default, the name of the collection is specified by the constant {@link #MONGODB_COLLECTION_NAME}
-     * @param name the name
-     */
-    public void setCollectionName(final String name) {
-        this.collectionName = name;
-    }
-
-    /**
-     * When set to true, the collection will be dropped first before proceeding with other operations.
-     * @param dropCollection the drop collection
-     */
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
-    }
-
-    public void setMongoTemplate(final MongoOperations mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -90,7 +56,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
-        final Query query= new Query();
+        final Query query = new Query();
         query.addCriteria(Criteria.where("principalId").is(id));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }

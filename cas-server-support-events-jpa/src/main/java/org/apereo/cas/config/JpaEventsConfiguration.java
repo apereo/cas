@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.model.core.EventsProperties;
+import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.support.events.dao.CasEventRepository;
