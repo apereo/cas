@@ -4,34 +4,19 @@ import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.quartz.Job;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -51,39 +36,23 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
     /**
      * Instance of ServiceRegistryDao.
      */
-
     private ServiceRegistryDao serviceRegistryDao;
 
-    /** Application event publisher. */
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    /**
-     * Map to store all services.
-     */
-    private ConcurrentMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
-
-    private int refreshInterval;
-
-    private int startDelay;
-
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired(required = false)
-    @Qualifier("scheduler")
-    private Scheduler scheduler;
-
-
+    
+    private ConcurrentMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
+    
     /**
      * Instantiates a new default services manager impl.
      *
      * @param serviceRegistryDao the service registry dao
      */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao, final int startDelay, final int refreshInterval) {
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
-        this.startDelay = startDelay;
-        this.refreshInterval = refreshInterval;
         load();
     }
 
@@ -161,7 +130,9 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
         this.eventPublisher.publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
     }
-
+    
+    @Scheduled(initialDelayString="${service.registry.startDelay:10000}",
+               fixedDelayString = "${service.registry.repeatInterval:60000}")
     @Override
     public void reload() {
         LOGGER.debug("Reloading registered services.");
@@ -182,68 +153,10 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
             this.serviceRegistryDao);
 
     }
-
-    /**
-     * Schedule reloader job.
-     */
-    @PostConstruct
-    public void scheduleReloaderJob() {
-        try {
-            if (shouldScheduleLoaderJob()) {
-                LOGGER.debug("Preparing to schedule reloader job");
-
-                final JobDetail job = JobBuilder.newJob(ServiceRegistryReloaderJob.class)
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .build();
-
-                final Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.startDelay)))
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(this.refreshInterval)
-                        .repeatForever()).build();
-
-                LOGGER.debug("Scheduling {} job", this.getClass().getName());
-                this.scheduler.scheduleJob(job, trigger);
-                LOGGER.info("Services manager will reload service definitions every {} seconds",
-                    this.refreshInterval);
-            }
-
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-    }
-
-    private boolean shouldScheduleLoaderJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null && this.scheduler != null) {
-            LOGGER.debug("Found CAS servlet application context for service management");
-            return true;
-        }
-
-        return false;
-    }
-
+    
+    
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
-    }
-
-    /**
-     * The Service registry reloader job.
-     */
-    public static class ServiceRegistryReloaderJob implements Job {
-
-        @Resource(name="servicesManager")
-        private ReloadableServicesManager servicesManager;
-
-        @Override
-        public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
-            try {
-                this.servicesManager.reload();
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-
-        }
     }
 }

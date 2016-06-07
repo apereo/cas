@@ -51,7 +51,7 @@ public class SamlRegisteredServiceTests {
 
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(Collections.singletonList(service));
-        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao, 15, 60);
+        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao);
 
         final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()
                 .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));

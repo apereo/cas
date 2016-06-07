@@ -78,10 +78,9 @@ public class CasCoreServicesConfiguration {
 
     @Autowired
     @Bean
-    public ReloadableServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DefaultServicesManagerImpl(serviceRegistryDao,
-                this.serviceRegistryProperties.getQuartzReloader().getStartDelay(),
-                this.serviceRegistryProperties.getQuartzReloader().getRepeatInterval());
+    public ReloadableServicesManager servicesManager(@Qualifier("serviceRegistryDao") 
+                                                     final ServiceRegistryDao serviceRegistryDao) {
+        return new DefaultServicesManagerImpl(serviceRegistryDao);
     }
 
     @Bean

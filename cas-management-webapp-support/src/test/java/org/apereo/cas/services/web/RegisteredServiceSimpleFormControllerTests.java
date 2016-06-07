@@ -65,8 +65,7 @@ public class RegisteredServiceSimpleFormControllerTests {
                 .repository)));
         this.registeredServiceFactory.initializeDefaults();
 
-        this.manager = new DefaultServicesManagerImpl(
-                new InMemoryServiceRegistryDaoImpl(), 15, 60);
+        this.manager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
         this.manager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
     }
