@@ -85,7 +85,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Value("${webflow.autoconfigure:true}")
+    @Value("${webflow.autoConfigure:true}")
     private boolean autoconfigureWebflow;
     
     /**
