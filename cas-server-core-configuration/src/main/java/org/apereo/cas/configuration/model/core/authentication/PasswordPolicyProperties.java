@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for password.policy.
+ * Configuration properties class for password.policy.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

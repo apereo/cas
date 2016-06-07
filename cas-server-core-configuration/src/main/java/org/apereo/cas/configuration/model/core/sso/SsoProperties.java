@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.core.util.AbstractCryptographyProperti
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for create.sso.
+ * Configuration properties class for create.sso.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.generic;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for remote.authn.
+ * Configuration properties class for remote.authn.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

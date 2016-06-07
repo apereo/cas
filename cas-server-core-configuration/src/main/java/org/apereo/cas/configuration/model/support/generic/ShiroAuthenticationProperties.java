@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Configuration properties class for shiro.authn.
+ * Configuration properties class for shiro.authn.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

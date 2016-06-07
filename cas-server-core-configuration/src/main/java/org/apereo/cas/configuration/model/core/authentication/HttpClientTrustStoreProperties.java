@@ -5,7 +5,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
- * Configuration properties class for http.client.truststore.
+ * Configuration properties class for http.client.truststore.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

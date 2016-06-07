@@ -6,7 +6,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
- * Configuration properties class for webflow.
+ * Configuration properties class for webflow.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

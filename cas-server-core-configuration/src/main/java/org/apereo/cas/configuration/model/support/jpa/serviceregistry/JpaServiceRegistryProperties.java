@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for svcreg.database.
+ * Configuration properties class for svcreg.database.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

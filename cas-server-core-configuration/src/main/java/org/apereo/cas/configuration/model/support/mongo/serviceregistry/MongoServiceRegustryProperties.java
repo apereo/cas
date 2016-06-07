@@ -4,7 +4,7 @@ import com.mongodb.WriteConcern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for svcreg.mongodb.
+ * Configuration properties class for svcreg.mongodb.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

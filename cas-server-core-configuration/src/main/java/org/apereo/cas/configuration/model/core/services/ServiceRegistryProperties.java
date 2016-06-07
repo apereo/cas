@@ -6,7 +6,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
- * Configuration properties class for service.registry.
+ * Configuration properties class for service.registry.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
