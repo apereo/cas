@@ -9,12 +9,16 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEven
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -33,18 +37,17 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 @Configuration("yubikeyConfiguration")
+@EnableConfigurationProperties(MfaProperties.class)
 public class YubiKeyConfiguration {
 
-    @Value("${cas.mfa.yubikey.client.id:}") 
-    private Integer clientId;
-    
-    @Value("${cas.mfa.yubikey.secret.key:}") 
-    private String secretKey;
+    @Autowired
+    MfaProperties mfaProperties;
     
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Resource(name="builder")
+    @Autowired
+    @Qualifier("builder")
     private FlowBuilderServices builder;
     
     @Bean
@@ -62,8 +65,10 @@ public class YubiKeyConfiguration {
 
     @Bean
     @RefreshScope
-    public AuthenticationHandler yubikeyAuthenticationHandler() {
-        return new YubiKeyAuthenticationHandler(this.clientId, this.secretKey);
+    public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
+        return new YubiKeyAuthenticationHandler(
+                this.mfaProperties.getYubikey().getClientId(),
+                this.mfaProperties.getYubikey().getSecretKey());
     }
 
     @Bean
@@ -72,10 +77,14 @@ public class YubiKeyConfiguration {
         return new YubiKeyAuthenticationMetaDataPopulator();
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
-        return new YubiKeyMultifactorAuthenticationProvider();
+    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider(@Qualifier("noRedirectHttpClient") HttpClient httpClient) {
+        return new YubiKeyMultifactorAuthenticationProvider(
+                yubikeyAuthenticationHandler(),
+                this.mfaProperties.getYubikey().getRank(),
+                httpClient);
     }
 
     @Bean

@@ -6,9 +6,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.util.http.HttpMessage;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Resource;
 import java.net.URL;
 
 /**
@@ -20,19 +18,22 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    @Resource(name="yubikeyAuthenticationHandler")
     private YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
 
-    @Value("${cas.mfa.yubikey.rank:0}")
     private int rank;
 
-    /**
-     * The Http client.
-     */
-    
-    @Resource(name="noRedirectHttpClient")
     private HttpClient httpClient;
 
+    public YubiKeyMultifactorAuthenticationProvider() {
+    }
+
+    public YubiKeyMultifactorAuthenticationProvider(final YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler,
+                                                    final int rank,
+                                                    final HttpClient httpClient) {
+        this.yubiKeyAuthenticationHandler = yubiKeyAuthenticationHandler;
+        this.rank = rank;
+        this.httpClient = httpClient;
+    }
 
     @Override
     public String getId() {
