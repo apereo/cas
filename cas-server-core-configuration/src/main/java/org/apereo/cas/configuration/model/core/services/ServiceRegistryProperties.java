@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -11,11 +12,9 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 @ConfigurationProperties(prefix = "service.registry", ignoreUnknownFields = false)
-public class ServiceRegistryProperties {
+public class ServiceRegistryProperties extends AbstractConfigProperties {
 
     private boolean initFromJson = true;
-
-    private Config config = new Config();
 
     private QuartzReloader quartzReloader = new QuartzReloader();
 
@@ -27,14 +26,6 @@ public class ServiceRegistryProperties {
 
     public void setInitFromJson(final boolean initFromJson) {
         this.initFromJson = initFromJson;
-    }
-
-    public Config getConfig() {
-        return config;
-    }
-
-    public void setConfig(final Config config) {
-        this.config = config;
     }
 
     public QuartzReloader getQuartzReloader() {
@@ -53,19 +44,8 @@ public class ServiceRegistryProperties {
         this.watcherEnabled = watcherEnabled;
     }
 
-    /**
-     * Config.
-     */
-    public static class Config {
-        private Resource location = new ClassPathResource("services");
-
-        public Resource getLocation() {
-            return location;
-        }
-
-        public void setLocation(final Resource location) {
-            this.location = location;
-        }
+    public ServiceRegistryProperties() {
+        super.getConfig().setLocation(new ClassPathResource("services"));
     }
 
     /**

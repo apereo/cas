@@ -31,7 +31,7 @@ public class CasGenericConfiguration {
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler();
-        bean.setIpNetworkRange(this.remoteAuthnProps.getRange());
+        bean.setIpNetworkRange(this.remoteAuthnProps.getIpAddressRange());
         return bean;
     }
     
