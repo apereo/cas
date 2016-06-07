@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
 public class JpaLockingStrategy implements LockingStrategy {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaLockingStrategy.class);
@@ -80,7 +82,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     public boolean acquire() {
         final Lock lock;
         try {
-            lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.PESSIMISTIC_WRITE);
+            lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
         } catch (final Exception e) {
             LOGGER.debug("{} failed querying for {} lock.", this.uniqueId, this.applicationId, e);
             return false;
@@ -92,32 +94,36 @@ public class JpaLockingStrategy implements LockingStrategy {
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
                 LOGGER.debug("{} trying to acquire {} lock.", this.uniqueId, this.applicationId);
-                result = acquire(this.entityManager, lock);
+                result = acquire(lock);
             } else if (expDate == null || ZonedDateTime.now(ZoneOffset.UTC).isAfter(expDate)) {
                 // Acquire expired lock regardless of who formerly owned it
                 LOGGER.debug("{} trying to acquire expired {} lock.", this.uniqueId, this.applicationId);
-                result = acquire(this.entityManager, lock);
+                result = acquire(lock);
             }
+        } else {
+            // First acquisition attempt for this applicationId
+            LOGGER.debug("Creating {} lock initially held by {}.", applicationId, uniqueId);
+            result = acquire(new Lock());
         }
         return result;
     }
 
     @Override
     public void release() {
-        final Lock lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.PESSIMISTIC_WRITE);
+        final Lock lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
 
         if (lock == null) {
             return;
         }
         // Only the current owner can release the lock
         final String owner = lock.getUniqueId();
-        if (this.uniqueId.equals(owner)) {
-            lock.setUniqueId(null);
-            lock.setExpirationDate(null);
-            LOGGER.debug("Releasing {} lock held by {}.", this.applicationId, this.uniqueId);
-            this.entityManager.persist(lock);
+        if (!this.uniqueId.equals(owner)) {
+            throw new IllegalStateException("Cannot release lock owned by " + owner);
         }
-        throw new IllegalStateException("Cannot release lock owned by " + owner);
+        lock.setUniqueId(null);
+        lock.setExpirationDate(null);
+        LOGGER.debug("Releasing {} lock held by {}.", this.applicationId, this.uniqueId);
+        this.entityManager.persist(lock);
     }
     
     @Override
@@ -128,11 +134,10 @@ public class JpaLockingStrategy implements LockingStrategy {
     /**
      * Acquire the lock object.
      *
-     * @param em the em
      * @param lock the lock
      * @return true, if successful
      */
-    public boolean acquire(final EntityManager em, final Lock lock) {
+    public boolean acquire(final Lock lock) {
         lock.setUniqueId(this.uniqueId);
         if (this.lockTimeout > 0) {
             lock.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.lockTimeout));
@@ -142,10 +147,10 @@ public class JpaLockingStrategy implements LockingStrategy {
         boolean success;
         try {
             if (lock.getApplicationId() != null) {
-                em.merge(lock);
+                this.entityManager.merge(lock);
             } else {
                 lock.setApplicationId(this.applicationId);
-                em.persist(lock);
+                this.entityManager.persist(lock);
             }
             success = true;
         } catch (final Exception e) {
