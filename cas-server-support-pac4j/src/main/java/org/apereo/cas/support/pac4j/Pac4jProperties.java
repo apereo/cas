@@ -8,9 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(
-        prefix = Pac4jConfiguration.CAS_PAC4J_PREFIX
-)
+@ConfigurationProperties(prefix = Pac4jConfiguration.CAS_PAC4J_PREFIX)
 public class Pac4jProperties {
 
     private Facebook facebook = new Facebook();

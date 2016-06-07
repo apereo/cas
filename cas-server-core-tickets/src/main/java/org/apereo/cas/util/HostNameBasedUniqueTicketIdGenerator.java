@@ -3,9 +3,6 @@ package org.apereo.cas.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 /**
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
  * the suffix based on the underlying host name.

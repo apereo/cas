@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Transactional(transactionManager = "ticketTransactionManager", readOnly = true)
+@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
@@ -46,8 +45,8 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     public DefaultTicketRegistryCleaner() {
     }
     
-    @Scheduled(initialDelayString="${ticket.registry.cleaner.startdelay:10000}",
-               fixedDelayString = "${ticket.registry.cleaner.repeatinterval:10000}")
+    @Scheduled(initialDelayString="${ticket.registry.cleaner.startDelay:20000}",
+               fixedDelayString = "${ticket.registry.cleaner.repeatInterval:60000}")
     @Override
     public void clean() {
         try {

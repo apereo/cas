@@ -15,7 +15,7 @@ public class MessageBundleProperties {
 
     private int cacheSeconds = 180;
 
-    private boolean fallbackSystemLocale = false;
+    private boolean fallbackSystemLocale;
 
     private boolean useCodeMessage = true;
 

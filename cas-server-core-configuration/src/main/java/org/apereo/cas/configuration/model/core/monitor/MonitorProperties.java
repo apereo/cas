@@ -69,15 +69,15 @@ public class MonitorProperties {
     }
 
     public static class Warn {
+        private int threshold;
+
         public Warn() {
         }
 
         public Warn(final int threshold) {
             this.threshold = threshold;
         }
-
-        private int threshold;
-
+        
         public int getThreshold() {
             return threshold;
         }

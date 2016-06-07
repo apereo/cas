@@ -10,9 +10,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.registry.support.LockingStrategy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -157,6 +154,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return failureCount == 0;
     }
 
+    /**
+     * Gets ticket query result list.
+     *
+     * @param <T>      the type parameter
+     * @param ticketId the ticket id
+     * @param query    the query
+     * @param clazz    the clazz
+     * @return the ticket query result list
+     */
     public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, 
                                                                final Class<T> clazz) {
         return this.entityManager.createQuery(query, clazz)
@@ -164,18 +170,36 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 .getResultList();
     }
 
+    /**
+     * Delete o auth tokens int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
     public int deleteOAuthTokens(final String ticketId) {
         final List<OAuthCodeImpl> oAuthCodeImpls = getTicketQueryResultList(ticketId,
                 "select o from " + TABLE_OAUTH_TICKETS + " o where o.id = :id", OAuthCodeImpl.class);
         return deleteTicketsFromResultList(oAuthCodeImpls);
     }
 
+    /**
+     * Delete service tickets int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
     public int deleteServiceTickets(final String ticketId) {
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
                 "select s from " + TABLE_SERVICE_TICKETS +  " s where s.id = :id", ServiceTicketImpl.class);
         return deleteTicketsFromResultList(serviceTicketImpls);
     }
 
+    /**
+     * Delete tickets from result list int.
+     *
+     * @param serviceTicketImpls the service ticket impls
+     * @return the int
+     */
     public int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
         int failureCount = 0;
         for (final Ticket serviceTicketImpl : serviceTicketImpls) {
@@ -186,6 +210,12 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return failureCount;
     }
 
+    /**
+     * Delete ticket granting tickets int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
     public int deleteTicketGrantingTickets(final String ticketId) {
         int failureCount = 0;
 
