@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.services.JpaServiceRegistryDaoImpl;
 import org.apereo.cas.services.ServiceRegistryDao;
@@ -18,6 +19,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import static org.apereo.cas.configuration.support.Beans.newEntityManagerFactoryBean;
+import static org.apereo.cas.configuration.support.Beans.newHibernateJpaVendorAdapter;
 import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
 
 /**
@@ -45,10 +48,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
-        final HibernateJpaVendorAdapter jpaEventVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaEventVendorAdapter.setGenerateDdl(this.databaseProperties.isGenDdl());
-        jpaEventVendorAdapter.setShowSql(this.databaseProperties.isShowSql());
-        return jpaEventVendorAdapter;
+        return newHibernateJpaVendorAdapter(this.databaseProperties);
     }
 
     /**
@@ -72,19 +72,13 @@ public class JpaServiceRegistryConfiguration {
      */
     @Bean
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-
-        bean.setJpaVendorAdapter(jpaServiceVendorAdapter());
-        bean.setPersistenceUnitName("jpaServiceRegistryContext");
-        bean.setPackagesToScan(jpaServicePackagesToScan());
-        bean.setDataSource(dataSourceService());
-
-        final Properties properties = new Properties();
-        properties.put("hibernate.dialect", this.jpaServiceRegistryProperties.getDialect());
-        properties.put("hibernate.hbm2ddl.auto", this.jpaServiceRegistryProperties.getDdlAuto());
-        properties.put("hibernate.jdbc.batch_size", this.jpaServiceRegistryProperties.getBatchSize());
-        bean.setJpaProperties(properties);
-        return bean;
+        return newEntityManagerFactoryBean(
+                new JpaConfigDataHolder(
+                        jpaServiceVendorAdapter(),
+                        "jpaServiceRegistryContext",
+                        jpaServicePackagesToScan(),
+                        dataSourceService()),
+                this.jpaServiceRegistryProperties);
     }
 
     /**
