@@ -15,8 +15,6 @@ It is possible to designate CAS to serve as the authentication provider for the 
 
 ### Configuration
 
-#### Include CAS Client Libraries in IdP Deployable
-
 Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are 
 included in the `./lib` installer folder, then redeploy the Idp with these files:
 
@@ -27,6 +25,7 @@ cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
 #### Modify `$SHIB_HOME/conf/handler.xml`
 
 Define the `RemoteUser` authentication method to be used with CAS authentication.
+
 ```xml
 <!-- Remote User handler for CAS support -->
 <LoginHandler xsi:type="RemoteUser">
