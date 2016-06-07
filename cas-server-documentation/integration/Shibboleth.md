@@ -132,7 +132,7 @@ The entity ID is passed in form of a url parameter to the CAS server as such:
 https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<relying-party-entity-id>
 ```
 
-### Displaying SAML MDUI
+## Displaying SAML MDUI
 The CAS server is able to recognize the `entityId` parameter and display SAML MDUI on the login page,
 that is provided by the metadata associated with the relying party. This means that CAS will also need to know
 about metadata sources that the identity provider uses.
