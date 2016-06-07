@@ -112,21 +112,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new CharacterEncodingFilter("UTF-8", true);
     }
 
-    /**
-     * Require any role authorizer require any role authorizer.
-     *
-     * @return the require any role authorizer
-     */
+
     @Bean
     public RequireAnyRoleAuthorizer requireAnyRoleAuthorizer() {
         return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(this.roles));
     }
-
-    /**
-     * Cas client cas client.
-     *
-     * @return the cas client
-     */
+    
     @Bean
     public CasClient casClient() {
         final CasClient client = new CasClient(this.loginUrl);
@@ -163,12 +154,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
         };
     }
-
-    /**
-     * Handler mapping c simple url handler mapping.
-     *
-     * @return the simple url handler mapping
-     */
+    
     @Bean
     public SimpleUrlHandlerMapping handlerMappingC() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
@@ -181,12 +167,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         mapping.setMappings(properties);
         return mapping;
     }
-
-    /**
-     * Cas management security interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
+    
     @Bean
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
         final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(config(), "CasClient",
@@ -215,7 +196,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the service management resource resolver
      */
-    
+    @Bean
     public ServiceManagementResourceResolver deleteServiceResourceResolver() {
         return new ServiceManagementResourceResolver();
     }
@@ -225,7 +206,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the default audit action resolver
      */
-    
+    @Bean
     public DefaultAuditActionResolver saveServiceActionResolver() {
         return new DefaultAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
@@ -235,7 +216,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the object creation audit action resolver
      */
-    
+    @Bean
     public ObjectCreationAuditActionResolver deleteServiceActionResolver() {
         return new ObjectCreationAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
@@ -245,7 +226,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the pac 4 j auditable principal resolver
      */
-    
+    @Bean
     public Pac4jAuditablePrincipalResolver auditablePrincipalResolver() {
         return new Pac4jAuditablePrincipalResolver();
     }
@@ -255,7 +236,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the audit trail management aspect
      */
-    
+    @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
                 this.principalResolver, ImmutableList.of(auditTrailManager()),
@@ -268,7 +249,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the audit trail management
      */
-    
+    @Bean
     public AuditTrailManager auditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
@@ -279,7 +260,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the properties
      */
-    
+    @Bean
     public Properties userProperties() {
         try {
             final Properties properties = new Properties();
@@ -296,7 +277,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the authorization generator
      */
     @ConditionalOnBean(name = "authorizationGenerator")
-    
+    @Bean
     public AuthorizationGenerator authorizationGenerator() {
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
@@ -306,7 +287,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the cookie locale resolver
      */
-    
+    @Bean
     public CookieLocaleResolver localeResolver() {
         final CookieLocaleResolver resolver = new CookieLocaleResolver();
         resolver.setDefaultLocale(Locale.ENGLISH);
@@ -318,7 +299,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the map
      */
-    
+    @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_RESOURCE_RESOLVER", deleteServiceResourceResolver());
@@ -331,7 +312,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      *
      * @return the map
      */
-    
+    @Bean
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_ACTION_RESOLVER", deleteServiceActionResolver());

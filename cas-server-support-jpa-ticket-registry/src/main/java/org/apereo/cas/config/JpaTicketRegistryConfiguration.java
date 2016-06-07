@@ -16,11 +16,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Properties;
 
 import static org.apereo.cas.configuration.support.Beans.newEntityManagerFactoryBean;
 import static org.apereo.cas.configuration.support.Beans.newHibernateJpaVendorAdapter;
@@ -44,23 +42,13 @@ public class JpaTicketRegistryConfiguration {
 
     @Autowired
     private HostProperties hostProperties;
-
-    /**
-     * Jpa vendor adapter hibernate jpa vendor adapter.
-     *
-     * @return the hibernate jpa vendor adapter
-     */
-
-    public HibernateJpaVendorAdapter ticketJpaVendorAdapter() {
-        return newHibernateJpaVendorAdapter(this.databaseProperties);
-    }
-
+    
     /**
      * Jpa packages to scan string [].
      *
      * @return the string [ ]
      */
-
+    @Bean
     public String[] ticketPackagesToScan() {
         return new String[] {
                 "org.apereo.cas.ticket",
@@ -73,11 +61,11 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
-
+    @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         return newEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
-                        ticketJpaVendorAdapter(),
+                        newHibernateJpaVendorAdapter(this.databaseProperties),
                         "jpaTicketRegistryContext",
                         ticketPackagesToScan(),
                         dataSourceTicket()),
@@ -119,7 +107,7 @@ public class JpaTicketRegistryConfiguration {
     }
 
     @Bean
-    public LockingStrategy jpaLockingStrategy() {
+    public LockingStrategy lockingStrategy() {
         final JpaLockingStrategy bean = new JpaLockingStrategy();
         bean.setApplicationId(this.databaseProperties.getCleaner().getAppid());
         bean.setUniqueId(this.hostProperties.getName());

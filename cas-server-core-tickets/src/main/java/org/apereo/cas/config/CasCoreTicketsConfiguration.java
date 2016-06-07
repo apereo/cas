@@ -29,6 +29,7 @@ import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,7 +52,6 @@ public class CasCoreTicketsConfiguration {
     @Value("${ticket.registry.cleaner.enabled:true}")
     private boolean cleanerEnabled;
     
-    
     @Value("${st.numberOfUses:1}")
     private int numberOfUses;
     
@@ -63,8 +63,7 @@ public class CasCoreTicketsConfiguration {
     
     @Value("#{${pt.timeToKillInSeconds:10}*1000}")
     private long timeToKillInMilliSecondsPt;
-            
-            
+    
     @Value("${tgt.ticket.maxlength:50}")
     private int maxLengthTgt;
 
@@ -140,25 +139,21 @@ public class CasCoreTicketsConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public ExpirationPolicy timeoutExpirationPolicy() {
         return new TimeoutExpirationPolicy();
     }
 
     @Bean
-    @RefreshScope
     public ExpirationPolicy ticketGrantingTicketExpirationPolicy() {
         return new TicketGrantingTicketExpirationPolicy();
     }
 
     @Bean
-    @RefreshScope
     public ExpirationPolicy throttledUseAndTimeoutExpirationPolicy() {
         return new ThrottledUseAndTimeoutExpirationPolicy();
     }
 
     @Bean
-    @RefreshScope
     public ExpirationPolicy rememberMeDelegatingExpirationPolicy() {
         return new RememberMeDelegatingExpirationPolicy();
     }
@@ -174,25 +169,23 @@ public class CasCoreTicketsConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public ExpirationPolicy hardTimeoutExpirationPolicy() {
         return new HardTimeoutExpirationPolicy();
     }
 
     @Bean
-    @RefreshScope
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(this.numberOfUses, 
                                                                                        this.timeToKillInMilliSeconds);
     }
 
     @Bean
-    @RefreshScope
     public ExpirationPolicy proxyTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(this.numberOfUsesPt, 
                                                                                      this.timeToKillInMilliSecondsPt);
     }
     
+    @ConditionalOnBean(name="lockingStrategy")
     @Bean
     public LockingStrategy lockingStrategy() {
         return new LockingStrategy() {

@@ -30,11 +30,11 @@ public abstract class AbstractJpaProperties {
 
     private boolean failFast = true;
 
-    private boolean isolateInternalQueries = false;
+    private boolean isolateInternalQueries;
 
     private String healthQuery = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
 
-    private boolean autocommit = false;
+    private boolean autocommit;
 
     public String getDialect() {
         return dialect;
@@ -112,7 +112,7 @@ public abstract class AbstractJpaProperties {
         return leakThreshold;
     }
 
-    public void setLeakThreshold(int leakThreshold) {
+    public void setLeakThreshold(final int leakThreshold) {
         this.leakThreshold = leakThreshold;
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractJpaProperties {
         this.failFast = failFast;
     }
 
-    public boolean isolateInternalQueries() {
+    public boolean isIsolateInternalQueries() {
         return isolateInternalQueries;
     }
 
@@ -156,7 +156,7 @@ public abstract class AbstractJpaProperties {
         private int maxSize = 18;
         private int maxIdleTime = 1000;
         private int maxWait = 2000;
-        private boolean suspension = false;
+        private boolean suspension;
 
         public boolean isSuspension() {
             return suspension;

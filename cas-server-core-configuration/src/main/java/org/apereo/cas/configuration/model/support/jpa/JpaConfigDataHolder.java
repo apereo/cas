@@ -13,13 +13,13 @@ import javax.sql.DataSource;
  */
 public class JpaConfigDataHolder {
 
-    final private JpaVendorAdapter jpaVendorAdapter;
+    private final JpaVendorAdapter jpaVendorAdapter;
 
-    final private String persistenceUnitName;
+    private final String persistenceUnitName;
 
-    final private String[] packagesToScan;
+    private final String[] packagesToScan;
 
-    final private DataSource dataSource;
+    private final DataSource dataSource;
 
     public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter,
                                final String persistenceUnitName,

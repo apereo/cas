@@ -16,7 +16,7 @@ import java.util.Properties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class Beans {
+public final class Beans {
 
     //non-instatiable
     private Beans() {
@@ -35,7 +35,7 @@ public class Beans {
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
             bean.setInitializationFailFast(jpaProperties.isFailFast());
-            bean.setIsolateInternalQueries(jpaProperties.isolateInternalQueries());
+            bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
