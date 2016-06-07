@@ -66,7 +66,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      *
      * @param ticket the ticket
      */
-    private boolean removeTicket(final Ticket ticket) {
+    public boolean removeTicket(final Ticket ticket) {
         try {
             final ZonedDateTime creationDate = ticket.getCreationTime();
             logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
@@ -89,7 +89,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @param ticketId the ticket id
      * @return the raw ticket
      */
-    private Ticket getRawTicket(final String ticketId) {
+    public Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
                     || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {

@@ -29,7 +29,7 @@ import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -185,7 +185,7 @@ public class CasCoreTicketsConfiguration {
                                                                                      this.timeToKillInMilliSecondsPt);
     }
     
-    @ConditionalOnBean(name="lockingStrategy")
+    @ConditionalOnMissingBean(name="lockingStrategy")
     @Bean
     public LockingStrategy lockingStrategy() {
         return new LockingStrategy() {

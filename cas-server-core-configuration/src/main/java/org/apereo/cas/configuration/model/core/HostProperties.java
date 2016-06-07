@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class HostProperties {
 
     private String name;
-
+    
     public String getName() {
         return name;
     }

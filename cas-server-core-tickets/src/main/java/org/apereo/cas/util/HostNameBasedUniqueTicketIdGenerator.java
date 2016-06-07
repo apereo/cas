@@ -50,22 +50,12 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
      * @since 4.1.0
      */
     private static String determineTicketSuffixByHostName(final String suffix) {
-        try {
-            if (StringUtils.isNotBlank(suffix)) {
-                return suffix;
-            }
-
-            final String hostName = InetAddress.getLocalHost().getCanonicalHostName();
-            final int index = hostName.indexOf('.');
-            if (index > 0) {
-                return hostName.substring(0, index);
-            }
-            return hostName;
-        } catch (final UnknownHostException e) {
-            throw new RuntimeException("Host name could not be determined automatically for the ticket suffix.", e);
+        if (StringUtils.isNotBlank(suffix)) {
+            return suffix;
         }
+        return InetAddressUtils.getCasServerHostName();
     }
-
+    
     /**
      * The type Ticket granting ticket id generator.
      */

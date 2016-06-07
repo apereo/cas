@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.support;
 
+import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class JpaLockingStrategyTests {
     public void verifyAcquireAndRelease() throws Exception {
         final String appId = "basic";
         final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
+        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
         try {
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
@@ -112,7 +113,7 @@ public class JpaLockingStrategyTests {
     public void verifyNonReentrantBehavior() {
         final String appId = "reentrant";
         final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
+        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
         try {
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
@@ -163,7 +164,7 @@ public class JpaLockingStrategyTests {
     private LockingStrategy[] getConcurrentLocks(final String appId) {
         final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
         for (int i = 1; i <= locks.length; i++) {
-            locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
+            locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
         }
         return locks;
     }

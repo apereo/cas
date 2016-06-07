@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -8,6 +9,7 @@ import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.apereo.cas.util.InetAddressUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -110,7 +112,9 @@ public class JpaTicketRegistryConfiguration {
     public LockingStrategy lockingStrategy() {
         final JpaLockingStrategy bean = new JpaLockingStrategy();
         bean.setApplicationId(this.databaseProperties.getCleaner().getAppid());
-        bean.setUniqueId(this.hostProperties.getName());
+        bean.setUniqueId(StringUtils.defaultIfEmpty(this.hostProperties.getName(), 
+                InetAddressUtils.getCasServerHostName()));
+        bean.setLockTimeout(this.jpaTicketRegistryProperties.getJpaLockingTimeout());
         return bean;
     }
 }

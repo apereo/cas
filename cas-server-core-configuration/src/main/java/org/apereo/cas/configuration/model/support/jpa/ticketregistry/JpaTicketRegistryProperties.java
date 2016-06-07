@@ -12,7 +12,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "ticketreg.database", ignoreUnknownFields = false)
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
+    /** Default lock timeout is 1 hour. */
+    public static final int DEFAULT_LOCK_TIMEOUT = 3600;
+    
     private boolean jpaLockingTgtEnabled = true;
+    
+    private int jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
     
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
@@ -24,5 +29,13 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     public void setJpaLockingTgtEnabled(final boolean jpaLockingTgtEnabled) {
         this.jpaLockingTgtEnabled = jpaLockingTgtEnabled;
+    }
+
+    public int getJpaLockingTimeout() {
+        return jpaLockingTimeout;
+    }
+
+    public void setJpaLockingTimeout(final int jpaLockingTimeout) {
+        this.jpaLockingTimeout = jpaLockingTimeout;
     }
 }
