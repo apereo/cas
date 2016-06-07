@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.util.WebflowProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
-import org.apereo.cas.util.CasSpringBeanJobFactory;
 import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
 import org.apereo.cas.util.TGCCipherExecutor;
@@ -19,7 +18,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 import javax.validation.MessageInterpolator;
 

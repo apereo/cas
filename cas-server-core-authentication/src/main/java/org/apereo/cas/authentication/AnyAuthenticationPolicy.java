@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.springframework.beans.factory.annotation.Value;
-
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
  *

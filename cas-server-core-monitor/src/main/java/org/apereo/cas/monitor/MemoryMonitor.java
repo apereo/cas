@@ -1,8 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 /**
  * Monitors JVM memory usage.
  *

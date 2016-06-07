@@ -40,10 +40,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
     private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
     
-    @Autowired
-    @Qualifier("jpaLockingStrategy")
-    private LockingStrategy jpaLockingStrategy;
-
     private boolean lockTgt = true;
     
     @PersistenceContext(unitName = "ticketEntityManagerFactory")

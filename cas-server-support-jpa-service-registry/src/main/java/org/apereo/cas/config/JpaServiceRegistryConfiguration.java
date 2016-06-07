@@ -17,7 +17,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Properties;
 
 import static org.apereo.cas.configuration.support.Beans.newEntityManagerFactoryBean;
 import static org.apereo.cas.configuration.support.Beans.newHibernateJpaVendorAdapter;

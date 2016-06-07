@@ -5,7 +5,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.View;

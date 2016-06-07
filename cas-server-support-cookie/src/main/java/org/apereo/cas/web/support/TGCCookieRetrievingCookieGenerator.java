@@ -1,8 +1,5 @@
 package org.apereo.cas.web.support;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 /**
  * Generates the tgc cookie.
  * @author Misagh Moayyed

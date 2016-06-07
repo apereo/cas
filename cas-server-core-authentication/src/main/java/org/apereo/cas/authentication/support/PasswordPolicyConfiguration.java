@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.support;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Container for password policy configuration.

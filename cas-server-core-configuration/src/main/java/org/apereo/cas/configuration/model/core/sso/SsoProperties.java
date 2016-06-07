@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.sso;
 
-import org.apereo.cas.configuration.model.core.util.AbstractCryptographyProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

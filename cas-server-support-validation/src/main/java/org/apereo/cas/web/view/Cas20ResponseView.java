@@ -2,7 +2,6 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
 import org.apereo.cas.CasViewConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.View;
 
