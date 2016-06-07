@@ -12,13 +12,19 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.MessageInterpolator;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,7 +39,7 @@ import java.util.Map;
 @Configuration("casWebAppConfiguration")
 @EnableConfigurationProperties(LocaleProperties.class)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
-    
+
     @Autowired
     @Qualifier("messageInterpolator")
     private MessageInterpolator messageInterpolator;
@@ -69,7 +75,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setParamName(this.themeParamName);
         return bean;
     }
-    
+
     /**
      * Locale resolver cookie locale resolver.
      *
@@ -121,6 +127,26 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     /**
+     * Root controller controller.
+     *
+     * @return the controller
+     */
+    @Bean
+    protected Controller rootController() {
+        return new ParameterizableViewController() {
+            @Override
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                         final HttpServletResponse response)
+                    throws Exception {
+                final String queryString = request.getQueryString();
+                final String url = request.getContextPath() + "/login" + (queryString != null ? '?' + queryString : "");
+                return new ModelAndView(new RedirectView(response.encodeURL(url)));
+            }
+
+        };
+    }
+
+    /**
      * Log4j servlet context listener servlet listener registration bean.
      *
      * @return the servlet listener registration bean
@@ -135,7 +161,21 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     /**
-     * Simple controller handler adapter simple controller handler adapter.
+     * Handler mapping c simple url handler mapping.
+     *
+     * @return the simple url handler mapping
+     */
+    @Bean
+    public SimpleUrlHandlerMapping handlerMapping() {
+        final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        mapping.setOrder(1);
+        mapping.setAlwaysUseFullPath(true);
+        mapping.setRootHandler(rootController());
+        return mapping;
+    }
+
+    /**
+     * Simple controller handler adapter.
      *
      * @return the simple controller handler adapter
      */

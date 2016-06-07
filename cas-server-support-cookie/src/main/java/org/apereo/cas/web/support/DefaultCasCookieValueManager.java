@@ -26,7 +26,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
     /** The cipher exec that is responsible for encryption and signing of the cookie. */
-    private CipherExecutor<String, String> cipherExecutor;
+    private CipherExecutor<String, String> cipherExecutor = new NoOpCipherExecutor();
 
     /**
      * Instantiates a new Cas cookie value manager.
@@ -41,9 +41,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
      *
      * @param cipherExecutor the cipher executor
      */
-    @Autowired
-    public DefaultCasCookieValueManager(@Qualifier("cookieCipherExecutor")
-                                        final CipherExecutor<String, String> cipherExecutor) {
+    public DefaultCasCookieValueManager(final CipherExecutor<String, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
                 this.cipherExecutor.getClass());

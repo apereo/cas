@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.cookie.AbstractCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
@@ -9,6 +10,7 @@ import org.apereo.cas.web.support.CookieValueManager;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +31,10 @@ public class CasCookieConfiguration {
 
     @Autowired
     TicketGrantingCookieProperties tgcProperties;
+
+    @Autowired
+    @Qualifier("cookieCipherExecutor")
+    private CipherExecutor<String, String> cookieCipherExecutor;
     
     @Bean
     @RefreshScope
@@ -38,13 +44,13 @@ public class CasCookieConfiguration {
     
     @Bean
     public CookieValueManager defaultCookieValueManager() {
-        return new DefaultCasCookieValueManager();
+        return new DefaultCasCookieValueManager(this.cookieCipherExecutor);
     }
     
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
-        CookieRetrievingCookieGenerator bean =
+        final CookieRetrievingCookieGenerator bean =
                 configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager()), this.tgcProperties);
         bean.setCookieDomain(this.tgcProperties.getDomain());
         bean.setRememberMeMaxAge(this.tgcProperties.getRememberMeMaxAge());
