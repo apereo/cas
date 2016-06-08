@@ -27,6 +27,7 @@ cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
 #### Modify `$SHIB_HOME/conf/handler.xml`
 
 Define the `RemoteUser` authentication method to be used with CAS authentication.
+
 ```xml
 <!-- Remote User handler for CAS support -->
 <LoginHandler xsi:type="RemoteUser">
@@ -42,6 +43,7 @@ Define the `RemoteUser` authentication method to be used with CAS authentication
 
 #### Modify IdP Deployable `web.xml`
 Add the following XML blocks to the `web.xml` file for the IdP war deployable.
+
 ```xml
 <!-- For CAS client support -->
 <context-param>
