@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for cas.principal.resolver.persondir.*
+ * Configuration properties class for cas.principal.resolver.persondir.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
@@ -13,7 +13,7 @@ public class PersonDirPrincipalResolverProperties {
 
     private String principalAttribute;
 
-    private boolean returnNull = false;
+    private boolean returnNull;
 
     public String getPrincipalAttribute() {
         return principalAttribute;

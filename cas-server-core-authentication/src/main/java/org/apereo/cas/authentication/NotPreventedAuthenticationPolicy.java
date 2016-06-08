@@ -12,7 +12,7 @@ public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) {
-        final boolean fail  = authentication.getFailures().values().stream()
+        final boolean fail = authentication.getFailures().values().stream()
                 .anyMatch(failure -> failure.isAssignableFrom(PreventedException.class));
         if (fail) {
             return false;

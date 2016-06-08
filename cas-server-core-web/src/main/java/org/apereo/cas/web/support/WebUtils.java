@@ -188,7 +188,7 @@ public final class WebUtils {
      * @param ticket  the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-            final RequestContext context,  final TicketGrantingTicket ticket) {
+            final RequestContext context, final TicketGrantingTicket ticket) {
         final String ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
@@ -200,7 +200,7 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-            final RequestContext context,  final String ticketValue) {
+            final RequestContext context, final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }

@@ -55,10 +55,9 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
-        final ZonedDateTime killTime  = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
 
-        if (ticketState.getCountOfUses() == 0
-            && (currentTime.isBefore(killTime))) {
+        if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
             LOGGER.debug("Ticket is not expired due to a count of zero and the time being less "
                     + "than the timeToKillInMilliseconds");
             return false;

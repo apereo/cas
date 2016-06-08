@@ -44,7 +44,7 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
         final String encodedId = EncodingUtils.urlEncode(entityId);
         final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
 
-        final HttpURLConnection httpcon = (HttpURLConnection) (url.openConnection());
+        final HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
         httpcon.setDoOutput(true);
         httpcon.addRequestProperty("Accept", "*/*");
         httpcon.setRequestMethod("GET");

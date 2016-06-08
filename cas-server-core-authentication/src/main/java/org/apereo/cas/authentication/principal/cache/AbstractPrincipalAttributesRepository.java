@@ -223,7 +223,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map
      */
     private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p,
-                                                        final Map<String, List<Object>>  sourceAttributes) {
+                                                        final Map<String, List<Object>> sourceAttributes) {
         final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;

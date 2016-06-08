@@ -27,10 +27,10 @@ import org.springframework.context.annotation.Configuration;
 public class CasCookieConfiguration {
 
     @Autowired
-    WarningCookieProperties warningCookieProperties;
+    private WarningCookieProperties warningCookieProperties;
 
     @Autowired
-    TicketGrantingCookieProperties tgcProperties;
+    private TicketGrantingCookieProperties tgcProperties;
 
     @Autowired
     @Qualifier("cookieCipherExecutor")

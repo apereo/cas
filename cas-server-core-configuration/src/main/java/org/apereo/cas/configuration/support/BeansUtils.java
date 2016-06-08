@@ -17,7 +17,7 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public final class BeansUtils {
-    
+
     private BeansUtils() {
     }
 
@@ -47,9 +47,8 @@ public final class BeansUtils {
             bean.setLoginTimeout(jpaProperties.getPool().getMaxWait());
             bean.setValidationTimeout(jpaProperties.getPool().getMaxWait());
             return bean;
-        }
-        catch (final Exception e) {
-            throw new RuntimeException(e);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
         }
     }
 

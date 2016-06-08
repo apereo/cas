@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.jpa;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for database.*
+ * Configuration properties class for database.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

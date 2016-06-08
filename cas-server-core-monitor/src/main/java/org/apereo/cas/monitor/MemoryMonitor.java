@@ -8,10 +8,11 @@ package org.apereo.cas.monitor;
  */
 public class MemoryMonitor implements Monitor<MemoryStatus> {
 
+    private static final int PERCENTAGE_VALUE = 100;
+
+    
     /** Percent free memory warning threshold. */
     private long freeMemoryWarnThreshold;
-
-    private static final int PERCENTAGE_VALUE = 100;
 
     /**
      * Sets the percent of free memory below which a warning is reported.

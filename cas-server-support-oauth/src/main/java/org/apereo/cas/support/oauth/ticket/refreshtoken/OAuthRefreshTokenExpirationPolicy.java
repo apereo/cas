@@ -37,7 +37,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        return (ticketState == null) || ticketState.getCreationTime()
+        return ticketState == null || ticketState.getCreationTime()
                 .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 

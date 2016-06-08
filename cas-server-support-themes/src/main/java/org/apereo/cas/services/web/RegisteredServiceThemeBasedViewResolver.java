@@ -123,7 +123,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
                 public void writeNode(final Arguments arguments, final Writer writer, final Node node)
                         throws IOException {
                     super.writeNode(arguments, writer, node);
-                    if ((node instanceof Element) || (node instanceof Comment) || (node instanceof Macro)) {
+                    if (node instanceof Element || node instanceof Comment || node instanceof Macro) {
                         writer.write("\n");
                     }
                 }

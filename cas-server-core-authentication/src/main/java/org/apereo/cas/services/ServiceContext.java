@@ -24,7 +24,7 @@ public class ServiceContext {
      * @param service Service principal.
      * @param registeredService Registered service corresponding to given service.
      */
-    public ServiceContext(final Service service,  final RegisteredService registeredService) {
+    public ServiceContext(final Service service, final RegisteredService registeredService) {
         this.service = service;
         this.registeredService = registeredService;
         if (!registeredService.matches(service)) {

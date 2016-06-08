@@ -183,7 +183,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         }
 
         @Override
-        public  String[] getServerAliases(final String keyType, final Principal[] issuers) {
+        public String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
             this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getServerAliases(keyType, issuers))));
             return (String[]) aliases.toArray();

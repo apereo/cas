@@ -94,6 +94,9 @@
         <module name="PackageName">
             <property name="severity" value="error"/>
         </module>
+        <module name="UnnecessaryParentheses">
+            <property name="severity" value="error"/>
+        </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
             <property name="ignoreOverridden" value="true" />
@@ -101,6 +104,10 @@
         <module name="StaticVariableName">
             <property name="severity" value="error"/>
             <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
+        </module>
+        <module name="SingleSpaceSeparator">
+            <property name="validateComments" value="true"/>
+            <property name="severity" value="error"/>
         </module>
         <module name="AbbreviationAsWordInName"/>
         <module name="TypeName">

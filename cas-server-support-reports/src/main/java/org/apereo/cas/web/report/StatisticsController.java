@@ -49,7 +49,7 @@ public class StatisticsController implements ServletContextAware {
 
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
 
-    private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
+    private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 

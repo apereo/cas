@@ -28,10 +28,10 @@ import org.springframework.webflow.execution.Action;
 public class CasGenericConfiguration {
 
     @Autowired
-    RemoteAddressAuthenticationProperties remoteAuthnProps;
+    private RemoteAddressAuthenticationProperties remoteAuthnProps;
 
     @Autowired
-    ShiroAuthenticationProperties shiroAuthnProps;
+    private ShiroAuthenticationProperties shiroAuthnProps;
 
     @Bean
     @RefreshScope

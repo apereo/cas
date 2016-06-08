@@ -187,8 +187,10 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
-                                                              @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") 
+                                                             final IPersonAttributeDao attributeRepository,
+                                                             @Qualifier("principalFactory") 
+                                                             final PrincipalFactory principalFactory) {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
         bean.setAttributeRepository(attributeRepository);
         bean.setPrincipalFactory(principalFactory);

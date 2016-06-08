@@ -234,7 +234,7 @@ public class SingleSignOnSessionsReportController {
      */
     @RequestMapping(value = "/destroySsoSession", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
+    public Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -257,7 +257,7 @@ public class SingleSignOnSessionsReportController {
      */
     @RequestMapping(value = "/destroySsoSessions", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
+    public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();
 

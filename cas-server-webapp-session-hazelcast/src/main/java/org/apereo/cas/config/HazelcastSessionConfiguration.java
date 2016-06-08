@@ -26,7 +26,7 @@ import java.net.URL;
 public class HazelcastSessionConfiguration {
     
     @Autowired
-    WebflowProperties webflowProperties;
+    private WebflowProperties webflowProperties;
 
     /**
      * Hazelcast instance that is used by the spring session

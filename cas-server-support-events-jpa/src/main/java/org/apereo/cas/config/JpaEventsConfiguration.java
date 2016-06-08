@@ -32,11 +32,10 @@ import static org.apereo.cas.configuration.support.BeansUtils.*;
 public class JpaEventsConfiguration {
 
     @Autowired
-    DatabaseProperties databaseProperties;
+    private DatabaseProperties databaseProperties;
 
     @Autowired
-    EventsProperties eventsProperties;
-
+    private EventsProperties eventsProperties;
 
     /**
      * Jpa event vendor adapter hibernate jpa vendor adapter.

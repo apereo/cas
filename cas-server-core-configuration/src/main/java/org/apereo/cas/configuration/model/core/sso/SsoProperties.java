@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.core.sso;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for create.sso.*
+ * Configuration properties class for <code>create.sso</code>.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

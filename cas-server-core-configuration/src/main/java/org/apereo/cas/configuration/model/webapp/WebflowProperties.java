@@ -57,7 +57,7 @@ public class WebflowProperties extends AbstractCryptographyProperties {
     public static class Session {
         private int lockTimeout = 30;
         private int maxConversations = 5;
-        private boolean compress = false;
+        private boolean compress;
         private boolean storage = true;
         private Resource hzLocation = new ClassPathResource("hazelcast.xml");
 

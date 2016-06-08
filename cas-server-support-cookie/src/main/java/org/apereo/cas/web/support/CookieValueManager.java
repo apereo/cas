@@ -21,7 +21,7 @@ public interface CookieValueManager {
      * @param request the request
      * @return the original cookie value
      */
-    String buildCookieValue(String givenCookieValue,  HttpServletRequest request);
+    String buildCookieValue(String givenCookieValue, HttpServletRequest request);
 
     /**
      * Obtain cookie value.

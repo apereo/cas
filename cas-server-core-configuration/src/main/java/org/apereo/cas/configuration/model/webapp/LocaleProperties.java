@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.webapp;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for locale.*
+ * Configuration properties class for locale.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

@@ -42,7 +42,7 @@ public final class SerializationUtils {
      * @param outputStream The stream to receive the object
      * @since 5.0.0
      */
-    public static void serialize(final Serializable object,  final OutputStream outputStream) {
+    public static void serialize(final Serializable object, final OutputStream outputStream) {
         ObjectOutputStream out = null;
         try {
             out = new ObjectOutputStream(outputStream);

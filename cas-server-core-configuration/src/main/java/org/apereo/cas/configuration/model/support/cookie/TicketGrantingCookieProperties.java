@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.cookie;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for tgc.*
+ * Configuration properties class for tgc.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
@@ -11,16 +11,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "tgc", ignoreUnknownFields = false)
 public class TicketGrantingCookieProperties extends AbstractCookieProperties {
 
-    public TicketGrantingCookieProperties() {
-        super.setName("TGC");
-    }
-
     private int rememberMeMaxAge = 1209600;
 
     private String encryptionKey = "";
 
     private String signingKey = "";
-
+    
+    public TicketGrantingCookieProperties() {
+        super.setName("TGC");
+    }
+    
     public String getEncryptionKey() {
         return encryptionKey;
     }
