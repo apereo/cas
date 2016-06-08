@@ -5,6 +5,7 @@ argfile*
 .settings
 test-output/
 bin/
+target
 *.ipr
 *.iml
 *.iws
