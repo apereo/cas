@@ -150,11 +150,11 @@ release `uid`, `affiliation` and `group` to the web application configured.
 ```
 
 
-### Attribute Filters
+## Attribute Filters
 While each policy defines what attributes may be allowed for a given service,
 there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**.
 
-##### Regex
+#### Regex
 The regex filter that is responsible to make sure only attributes whose value
 matches a certain regex pattern are released.
 
@@ -189,6 +189,7 @@ is 3 characters. Therefor, out of the above list, only `groupMembership` is rele
 ```
 
 ## Caching/Updating Attributes
+
 By default, [resolved attributes](Attribute-Resolution.html) are cached to the
 length of the SSO session. If there are any attribute value changes since the
 commencement of SSO session, the changes are not reflected and returned back
