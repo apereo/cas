@@ -7,8 +7,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.security.auth.login.FailedLoginException;
 import java.net.InetAddress;
@@ -101,8 +99,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      *
      * @param ipAddressRange the IP address range that should be allowed trusted logins
      */
-    @Autowired
-    public void setIpNetworkRange(@Value("${ip.address.range:}") final String ipAddressRange) {
+    public void setIpNetworkRange(final String ipAddressRange) {
 
         if (StringUtils.isNotBlank(ipAddressRange)) {
 

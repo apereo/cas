@@ -44,7 +44,7 @@ the following properties:
 ```properties
 # webflow.session.storage=true
 # webflow.session.lock.timeout=30
-# webflow.session.max.conversations=5
+# webflow.session.max.maxConversations=5
 # webflow.session.compress=false
 ```
 

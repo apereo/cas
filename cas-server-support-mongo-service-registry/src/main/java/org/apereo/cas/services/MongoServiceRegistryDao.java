@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,14 +24,26 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
 
-    private static final String MONGODB_COLLECTION_NAME = RegisteredService.class.getSimpleName();
-
-    private String collectionName = MONGODB_COLLECTION_NAME;
+    private String collectionName;
 
     private boolean dropCollection;
 
-    @Resource(name="mongoTemplate")
     private MongoOperations mongoTemplate;
+
+    /**
+     * Ctor.
+     * @param mongoTemplate mongoTemplate
+     * @param collectionName collectionName
+     * @param dropCollection dropCollection
+     */
+    public MongoServiceRegistryDao(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
+        this.mongoTemplate = mongoTemplate;
+        this.collectionName = collectionName;
+        this.dropCollection = dropCollection;
+    }
+
+    public MongoServiceRegistryDao() {
+    }
 
     /**
      * Initialized registry post construction.

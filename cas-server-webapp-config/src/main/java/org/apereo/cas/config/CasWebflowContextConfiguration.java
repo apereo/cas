@@ -2,15 +2,18 @@ package org.apereo.cas.config;
 
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.LogoutConversionService;
 import org.apereo.cas.web.flow.SelectiveFlowHandlerAdapter;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
 import org.cryptacular.bean.CipherBean;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +38,6 @@ import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionPars
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
 import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 
-import javax.annotation.Resource;
 import javax.naming.OperationNotSupportedException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,44 +50,30 @@ import java.io.OutputStream;
  * @since 5.0.0
  */
 @Configuration("casWebflowContextConfiguration")
+@EnableConfigurationProperties(WebflowProperties.class)
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
+
     private static final String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
 
-    @Resource(name="registeredServiceViewResolver")
+    @Autowired
+    WebflowProperties webflowProperties;
+
+    @Autowired
+    @Qualifier("registeredServiceViewResolver")
     private ViewResolver registeredServiceViewResolver;
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Value("${webflow.refresh:true}")
-    private boolean webflowDevelopment;
-    
-    @Value("${webflow.always.pause.redirect:false}")
-    private boolean alwaysPauseOnRedirect;
-
-    @Value("${webflow.redirect.same.state:false}")
-    private boolean redirectSameState;
-
-
-    @Value("${webflow.session.storage:false}")
-    private boolean webflowSessionStorage;
-    
-    @Resource(name="webflowCipherExecutor")
+    @Autowired
+    @Qualifier("webflowCipherExecutor")
     private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
 
-    @Resource(name="authenticationThrottle")
+    @Autowired
+    @Qualifier("authenticationThrottle")
     private HandlerInterceptor authenticationThrottle;
-
-    @Value("${webflow.session.lock.timeout:30}")
-    private int webflowSessionLockTimeout;
-
-    @Value("${webflow.session.max.conversations:5}")
-    private int webflowSessionMaxConversations;
-
-    @Value("${webflow.session.compress:false}")
-    private boolean webflowSessionCompress;
 
     /**
      * Expression parser web flow spring el expression parser.
@@ -207,7 +195,7 @@ public class CasWebflowContextConfiguration {
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
-        builder.setDevelopmentMode(this.webflowDevelopment);
+        builder.setDevelopmentMode(this.webflowProperties.isRefresh());
         return builder.build();
     }
 
@@ -221,7 +209,7 @@ public class CasWebflowContextConfiguration {
         try {
             return new EncryptedTranscoder(loginFlowCipherBean());
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new BeanCreationException(e.getMessage(), e);
         }
     }
 
@@ -288,8 +276,8 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowExecutor logoutFlowExecutor() {
         final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
-        builder.setAlwaysRedirectOnPause(this.alwaysPauseOnRedirect);
-        builder.setRedirectInSameState(this.redirectSameState);
+        builder.setAlwaysRedirectOnPause(this.webflowProperties.isAlwaysPauseRedirect());
+        builder.setRedirectInSameState(this.webflowProperties.isRedirectSameState());
         return builder.build();
     }
 
@@ -329,16 +317,16 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowExecutorImpl loginFlowExecutor() {
-        if (this.webflowSessionStorage) {
+        if (this.webflowProperties.getSession().isStorage()) {
             final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-            conversationManager.setLockTimeoutSeconds(this.webflowSessionLockTimeout);
-            conversationManager.setMaxConversations(this.webflowSessionMaxConversations);
+            conversationManager.setLockTimeoutSeconds(this.webflowProperties.getSession().getLockTimeout());
+            conversationManager.setMaxConversations(this.webflowProperties.getSession().getMaxConversations());
             
             final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
             
             final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
                     new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
-            flowExecutionSnapshotFactory.setCompress(this.webflowSessionCompress);
+            flowExecutionSnapshotFactory.setCompress(this.webflowProperties.getSession().isCompress());
             
             final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
                     flowExecutionSnapshotFactory);

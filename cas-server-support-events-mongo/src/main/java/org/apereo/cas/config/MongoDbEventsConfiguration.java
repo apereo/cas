@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,28 +22,11 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  * @since 5.0.0
  */
 @Configuration("mongoDbEventsConfiguration")
+@EnableConfigurationProperties(EventsProperties.class)
 public class MongoDbEventsConfiguration {
 
-    /**
-     * The Client uri.
-     */
-    @Value("${mongodb.events.clienturi:}")
-    private String clientUri;
-
-    /**
-     * Client uri mongo client uri.
-     *
-     * @return the mongo client uri
-     */
-    @RefreshScope
-    @Bean
-    public MongoClientURI clientUri() {
-        if (StringUtils.isBlank(this.clientUri)) {
-            throw new RuntimeException("MongoDb Client URI must be defined for CAS events");
-        }
-        return new MongoClientURI(this.clientUri);
-    }
-
+    @Autowired
+    private EventsProperties eventsProperties;
 
     /**
      * Persistence exception translation post processor persistence exception translation post processor.
@@ -73,16 +58,19 @@ public class MongoDbEventsConfiguration {
     @RefreshScope
     @Bean
     public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
-
         try {
-            return new SimpleMongoDbFactory(clientUri());
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+            return new SimpleMongoDbFactory(new MongoClientURI(this.eventsProperties.getMongodb().getClientUri()));
+        }
+        catch (final Exception e) {
+            throw new BeanCreationException(e.getMessage(), e);
         }
     }
 
     @Bean
     public CasEventRepository casEventRepository() {
-        return new MongoDbCasEventRepository();
+        return new MongoDbCasEventRepository(
+                mongoEventsTemplate(),
+                this.eventsProperties.getMongodb().getCollection(),
+                this.eventsProperties.getMongodb().isDropCollection());
     }
 }

@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for ticketreg.database.
+ * Configuration properties class for ticketreg.database.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * Configuration properties class for cas.throttle.
+ * Configuration properties class for cas.throttle.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

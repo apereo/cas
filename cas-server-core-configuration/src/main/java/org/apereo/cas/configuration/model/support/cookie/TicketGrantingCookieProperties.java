@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.cookie;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for tgc.
+ * Configuration properties class for tgc.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

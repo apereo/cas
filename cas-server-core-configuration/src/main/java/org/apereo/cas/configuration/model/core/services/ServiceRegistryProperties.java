@@ -1,17 +1,18 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
- * Configuration properties class for service.registry.
+ * Configuration properties class for service.registry.*
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @ConfigurationProperties(prefix = "service.registry", ignoreUnknownFields = false)
-public class ServiceRegistryProperties {
+public class ServiceRegistryProperties extends AbstractConfigProperties {
 
     private boolean initFromJson = true;
 
@@ -28,14 +29,6 @@ public class ServiceRegistryProperties {
 
     public void setInitFromJson(final boolean initFromJson) {
         this.initFromJson = initFromJson;
-    }
-
-    public Config getConfig() {
-        return config;
-    }
-
-    public void setConfig(final Config config) {
-        this.config = config;
     }
 
     public boolean isWatcherEnabled() {

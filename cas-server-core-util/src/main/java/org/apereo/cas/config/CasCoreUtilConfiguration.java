@@ -4,7 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowCipherExecutor;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
-import org.apereo.cas.configuration.model.core.util.WebflowProperties;
+import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.NoOpCipherExecutor;

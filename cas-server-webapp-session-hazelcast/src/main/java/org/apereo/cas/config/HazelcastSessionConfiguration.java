@@ -4,7 +4,9 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -20,10 +22,11 @@ import java.net.URL;
  */
 @Configuration("hazelcastSessionConfiguration")
 @EnableHazelcastHttpSession
+@EnableConfigurationProperties(WebflowProperties.class)
 public class HazelcastSessionConfiguration {
     
-    @Value("${webflow.session.hz.location:}")
-    private Resource configLocation;
+    @Autowired
+    WebflowProperties webflowProperties;
 
     /**
      * Hazelcast instance that is used by the spring session
@@ -34,13 +37,14 @@ public class HazelcastSessionConfiguration {
      */
     @Bean
     public HazelcastInstance hazelcastInstance() {
+        final Resource hzConfigResource = this.webflowProperties.getSession().getHzLocation();
         try {
-            final URL configUrl = this.configLocation.getURL();
-            final Config config = new XmlConfigBuilder(this.configLocation.getInputStream()).build();
+            final URL configUrl = hzConfigResource.getURL();
+            final Config config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
             config.setConfigurationUrl(configUrl);
             config.setInstanceName(this.getClass().getSimpleName())
                     .setProperty("hazelcast.logging.type", "slf4j")
-                    .setProperty("hazelcast.max.no.heartbeat.seconds", "5");
+                    .setProperty("hazelcast.max.no.heartbeat.seconds", "300");
             return Hazelcast.newHazelcastInstance(config);
         } catch (final Exception e) {
             throw new RuntimeException(e);
