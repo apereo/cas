@@ -43,9 +43,9 @@ Adjust the following settings in your `application.properties`:
 ##
 # Google Apps public/private key
 #
-# cas.saml.googleapps.publickey.file=file:/etc/cas/public.key
-# cas.saml.googleapps.privatekey.file=file:/etc/cas/private.p8
-# cas.saml.googleapps.key.alg=RSA
+# cas.saml.googleapps.publicKeyLocation=file:/etc/cas/public.key
+# cas.saml.googleapps.privateKeyLocation=file:/etc/cas/private.p8
+# cas.saml.googleapps.keyAlgorithm=RSA
 # cas.saml.response.skewAllowance=0
 ```
 

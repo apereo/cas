@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.core.saml.mdui;
+package org.apereo.cas.configuration.model.support.saml.mdui;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

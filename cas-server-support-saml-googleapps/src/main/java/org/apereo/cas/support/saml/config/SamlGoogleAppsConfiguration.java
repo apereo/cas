@@ -1,11 +1,15 @@
 package org.apereo.cas.support.saml.config;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.model.support.saml.SamlResponseProperties;
+import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.support.saml.SamlGoogleAppsApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +22,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlGoogleAppsConfiguration")
 public class SamlGoogleAppsConfiguration {
-    
+
+    @Autowired
+    private GoogleAppsProperties googleAppsProperties;
+
+    @Autowired
+    private SamlResponseProperties samlResponseProperties;
+
+    @Autowired
+    @Qualifier("googleSaml20ObjectBuilder")
+    private GoogleSaml20ObjectBuilder builder;
+
     @Bean
     public BaseApplicationContextWrapper samlGoogleAppsApplicationContextWrapper() {
         return new SamlGoogleAppsApplicationContextWrapper();
@@ -27,7 +41,13 @@ public class SamlGoogleAppsConfiguration {
     @Bean
     @RefreshScope
     public ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory() {
-        return new GoogleAccountsServiceFactory();
+        final GoogleAccountsServiceFactory factory = new GoogleAccountsServiceFactory();
+        factory.setKeyAlgorithm(googleAppsProperties.getKeyAlgorithm());
+        factory.setPrivateKeyLocation(googleAppsProperties.getPrivateKeyLocation());
+        factory.setPublicKeyLocation(googleAppsProperties.getPublicKeyLocation());
+        factory.setSkewAllowance(samlResponseProperties.getSkewAllowance());
+        factory.setBuilder(this.builder);
+        return factory;
     }
 
     @Bean

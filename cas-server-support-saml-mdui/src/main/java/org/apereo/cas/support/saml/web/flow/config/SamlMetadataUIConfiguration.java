@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.flow.config;
 import com.google.common.collect.ImmutableList;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.core.saml.mdui.SamlMetadataUIProperties;
+import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIWebConfigurer;
