@@ -97,7 +97,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request, final HttpServletResponse response)
             throws SamlException {
-        final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
+        final String id = "_" + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
