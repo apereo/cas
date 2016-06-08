@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -10,6 +11,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,13 +43,10 @@ public class RegisteredServiceResource {
 
     @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Value("${cas.rest.services.attributename:}")
-    private String attributeName;
-
-    @Value("${cas.rest.services.attributevalue:}")
-    private String attributeValue;
-
+    
+    @Autowired
+    private RegisteredServiceRestProperties properties;
+    
     /**
      * Create new service.
      *
@@ -61,7 +60,8 @@ public class RegisteredServiceResource {
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
 
-            if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
+            if (StringUtils.isBlank(properties.getAttributeName()) 
+                    || StringUtils.isBlank(properties.getAttributeValue())) {
                 throw new IllegalArgumentException("Attribute name and/or value must be configured");
             }
 
@@ -71,16 +71,16 @@ public class RegisteredServiceResource {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
             final Map<String, Object> attributes = ticket.getAuthentication().getPrincipal().getAttributes();
-            if (attributes.containsKey(this.attributeName)) {
+            if (attributes.containsKey(properties.getAttributeName())) {
                 final Collection<String> attributeValuesToCompare = new HashSet<>();
-                final Object value = attributes.get(this.attributeName);
+                final Object value = attributes.get(properties.getAttributeName());
                 if (value instanceof Collection) {
                     attributeValuesToCompare.addAll((Collection<String>) value);
                 } else {
                     attributeValuesToCompare.add(value.toString());
                 }
 
-                if (attributeValuesToCompare.contains(this.attributeValue)) {
+                if (attributeValuesToCompare.contains(properties.getAttributeValue())) {
                     final RegisteredService service = serviceDataHolder.getRegisteredService();
                     final RegisteredService savedService = this.servicesManager.save(service);
                     return new ResponseEntity<>(String.valueOf(savedService.getId()), HttpStatus.OK);
@@ -95,16 +95,7 @@ public class RegisteredServiceResource {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-
-    public void setAttributeName(final String attributeName) {
-        this.attributeName = attributeName;
-    }
-
-    public void setAttributeValue(final String attributeValue) {
-        this.attributeValue = attributeValue;
-    }
-
+    
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
