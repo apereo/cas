@@ -77,8 +77,6 @@ public class CasThrottlingConfiguration {
 
     private HandlerInterceptorAdapter
     configureInMemoryInterceptorAdaptor(final AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
-        interceptorAdapter.setRefreshInterval(this.throttleProperties.getInmemory().getCleaner().getRepeatInterval());
-        interceptorAdapter.setStartDelay(this.throttleProperties.getInmemory().getCleaner().getStartDelay());
         return configureThrottleHandlerInterceptorAdaptor(interceptorAdapter);
     }
 }
