@@ -4,6 +4,7 @@ title: CAS - Configuring Authentication Throttling
 ---
 
 # Throttling Authentication Attempts
+
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
 A couple strategies are provided for tracking failed attempts:
 
@@ -36,7 +37,8 @@ would be split across N systems. However, since the source varies, accurate acco
 throttling components themselves assume a constant source IP for tracking purposes. The login throttling components
 are simply not sufficient for detecting or preventing a distributed password brute force attack.
 
-For stateless CAS clusters where there is no session affinity, the in-memory components may afford some protection but
+For stateless CAS clusters where there is no session affinity, the in-memory 
+components may afford some protection but
 they cannot apply the rate strictly since requests to CAS hosts would be split across N systems.
 The _inspektr_ components, on the other hand, fully support stateless clusters.
 
@@ -53,7 +55,8 @@ authenticationThrottle=inMemoryIpAddressThrottle
 
 
 ### IP Address and Username
-Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address. In `application.properties`:
+Uses a memory map to prevent successive failed login attempts for 
+a particular username from the same IP address. In `application.properties`:
 
 ```properties
 #CAS components mappings
@@ -81,13 +84,16 @@ For additional instructions on how to configure auditing via Inspektr,
 please [review the following guide](Logging.html).
 
 ### Configuration
+
 Login throttling configuration consists of:
 
 ```properties
-#cas.throttle.failure.threshold=
-#cas.throttle.failure.range.seconds=
-#cas.throttle.username.parameter=
-#cas.throttle.appcode=
-#cas.throttle.authn.failurecode=
-#cas.throttle.audit.query=
+# cas.throttle.failure.threshold=
+# cas.throttle.failure.range.seconds=
+# cas.throttle.username.parameter=
+# cas.throttle.appcode=
+# cas.throttle.authn.failurecode=
+# cas.throttle.audit.query=
+# cas.throttle.startDelay=20000
+# cas.throttle.repeatInterval=30000
 ```
