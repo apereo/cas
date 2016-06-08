@@ -80,7 +80,8 @@ The metrics reporting interval can be configured via the `application.properties
 
 ```properties
 # Define how often should metric data be reported. Default is 30 seconds.
-# metrics.refresh.interval=30
+# metrics.refreshInternal=30
+# metrics.loggerName=perfStatsLogger
 ```
 
 ### Loggers
