@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.Action;
 public class YubiKeyConfiguration {
 
     @Autowired
-    MfaProperties mfaProperties;
+    private MfaProperties mfaProperties;
     
     @Autowired
     private ApplicationContext applicationContext;

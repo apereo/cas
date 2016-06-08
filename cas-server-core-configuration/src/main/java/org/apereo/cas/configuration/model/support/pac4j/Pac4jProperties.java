@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j;
+package org.apereo.cas.configuration.model.support.pac4j;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = Pac4jConfiguration.CAS_PAC4J_PREFIX)
+@ConfigurationProperties(prefix = "cas.pac4j")
 public class Pac4jProperties {
 
     private Facebook facebook = new Facebook();
@@ -36,10 +36,7 @@ public class Pac4jProperties {
     public Twitter getTwitter() {
         return this.twitter;
     }
-
-    /**
-     * The type Facebook.
-     */
+    
     public static class Facebook {
         private String id;
         private String secret;
@@ -78,10 +75,7 @@ public class Pac4jProperties {
             this.fields = fields;
         }
     }
-
-    /**
-     * The type Twitter.
-     */
+    
     public static class Twitter {
         private String id;
         private String secret;
@@ -102,10 +96,7 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
-
-    /**
-     * The type Saml.
-     */
+    
     public static class Saml {
         private String keystorePassword;
         private String privateKeyPassword;
@@ -162,10 +153,7 @@ public class Pac4jProperties {
             this.serviceProviderEntityId = serviceProviderEntityId;
         }
     }
-
-    /**
-     * The type Cas.
-     */
+    
     public static class Cas {
         private String loginUrl;
         private String protocol;
@@ -186,10 +174,7 @@ public class Pac4jProperties {
             this.protocol = protocol;
         }
     }
-
-    /**
-     * The type Oidc.
-     */
+    
     public static class Oidc {
         private String id;
         private String secret;

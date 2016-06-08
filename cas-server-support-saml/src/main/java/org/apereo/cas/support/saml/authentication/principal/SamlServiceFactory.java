@@ -90,7 +90,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
             final int nextPosition = requestBody.indexOf('"', position);
 
-            return requestBody.substring(position,  nextPosition);
+            return requestBody.substring(position, nextPosition);
         } catch (final Exception e) {
             logger.debug("Exception parsing RequestID from request.", e);
             return null;

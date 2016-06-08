@@ -58,7 +58,7 @@ public class CasWebflowContextConfiguration {
     private static final String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
 
     @Autowired
-    WebflowProperties webflowProperties;
+    private WebflowProperties webflowProperties;
 
     @Autowired
     @Qualifier("registeredServiceViewResolver")

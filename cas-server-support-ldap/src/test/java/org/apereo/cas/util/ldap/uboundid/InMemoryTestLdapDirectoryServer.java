@@ -138,7 +138,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
         return this.directoryServer.getBaseDNs().get(0).toNormalizedString();
     }
 
-    public  Collection<LdapEntry> getLdapEntries() {
+    public Collection<LdapEntry> getLdapEntries() {
         return this.ldapEntries;
     }
 

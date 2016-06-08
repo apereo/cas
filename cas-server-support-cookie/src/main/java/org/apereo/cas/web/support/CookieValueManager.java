@@ -30,5 +30,5 @@ public interface CookieValueManager {
      * @param request the request
      * @return the cookie value or null
      */
-    String obtainCookieValue(Cookie cookie,  HttpServletRequest request);
+    String obtainCookieValue(Cookie cookie, HttpServletRequest request);
 }

@@ -45,7 +45,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     private MessageInterpolator messageInterpolator;
 
     @Autowired
-    LocaleProperties localeProperties;
+    private LocaleProperties localeProperties;
 
     @Value("${cas.themeResolver.param.name:theme}")
     private String themeParamName;

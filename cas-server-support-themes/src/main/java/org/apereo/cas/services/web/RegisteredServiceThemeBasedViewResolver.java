@@ -159,7 +159,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null) {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-            if (StringUtils.hasText(registeredService.getTheme())  && view instanceof AbstractThymeleafView) {
+            if (StringUtils.hasText(registeredService.getTheme()) && view instanceof AbstractThymeleafView) {
                 LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
                         registeredService.getServiceId(), registeredService.getTheme());
 

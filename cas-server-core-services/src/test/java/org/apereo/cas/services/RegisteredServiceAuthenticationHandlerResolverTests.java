@@ -66,7 +66,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService("serviceid1"),
                 TestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-        final Set<AuthenticationHandler> handlers =  resolver.resolve(this.handlers, transaction);
+        final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), 2);
     }
 
@@ -77,7 +77,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         resolver.setServicesManager(this.defaultServicesManagerImpl);
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService("serviceid2"),
                 TestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        final Set<AuthenticationHandler> handlers =  resolver.resolve(this.handlers, transaction);
+        final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), this.handlers.size());
     }
 }

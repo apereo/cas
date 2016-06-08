@@ -88,7 +88,7 @@ public final class TestUtils {
     }
 
     public static IPersonAttributeDao getAttributeRepository() {
-        final Map<String, List<Object>>  attributes = new HashMap<>();
+        final Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("uid", (List) ImmutableList.of(CONST_USERNAME));
         attributes.put("cn", (List) ImmutableList.of(CONST_USERNAME.toUpperCase()));
         attributes.put("givenName", (List) ImmutableList.of(CONST_USERNAME));

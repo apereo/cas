@@ -239,7 +239,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setEvaluationOrder(1000);
 
         final RegisteredService r2 = this.dao.save(r);
-        assertTrue(r2 instanceof  RegexRegisteredService);
+        assertTrue(r2 instanceof RegexRegisteredService);
     }
 
     @Test(expected=RuntimeException.class)
@@ -249,7 +249,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
 
-        final RegisteredService r2 = this.dao.save(r);
+        this.dao.save(r);
     }
     
     @Test

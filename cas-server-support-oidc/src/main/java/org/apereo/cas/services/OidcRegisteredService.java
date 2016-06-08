@@ -62,7 +62,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         }
         final OidcRegisteredService rhs = (OidcRegisteredService) obj;
         final EqualsBuilder builder = new EqualsBuilder();
-        return  builder
+        return builder
                 .appendSuper(super.equals(obj))
                 .append(this.jwks, rhs.jwks)
                 .append(this.signIdToken, rhs.signIdToken)

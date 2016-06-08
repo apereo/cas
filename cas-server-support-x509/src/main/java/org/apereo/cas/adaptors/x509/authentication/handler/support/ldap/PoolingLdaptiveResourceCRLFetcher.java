@@ -112,7 +112,8 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     }
 
     @Autowired(required=false)
-    public void setConnectionPool(@Qualifier("poolingLdaptiveConnectionPool")  final BlockingConnectionPool connectionPool) {
+    public void setConnectionPool(@Qualifier("poolingLdaptiveConnectionPool")
+                                 final BlockingConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 

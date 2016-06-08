@@ -499,7 +499,7 @@ public class OAuth20AuthorizeControllerTests {
     }
 
     private void clearAllServices() {
-        final Collection<RegisteredService> col  = oAuth20AuthorizeController.getServicesManager().getAllServices();
+        final Collection<RegisteredService> col = oAuth20AuthorizeController.getServicesManager().getAllServices();
 
         for (final RegisteredService r : col) {
             oAuth20AuthorizeController.getServicesManager().delete(r.getId());

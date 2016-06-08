@@ -21,9 +21,9 @@ import static org.junit.Assert.*;
  * @author battags
  * @since 3.1.0
  */
-public class JpaServiceRegistryDaoImplTests  {
+public class JpaServiceRegistryDaoImplTests {
 
-    private ServiceRegistryDao  dao;
+    private ServiceRegistryDao dao;
 
     @Before
     public void setUp() {

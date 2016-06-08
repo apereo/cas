@@ -200,7 +200,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof  MockRegisteredService));
+        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
     }
 
     @Test

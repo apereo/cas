@@ -130,7 +130,8 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
      * @param domainController the domain controller
      */
     @Autowired
-    public void setDomainController(@Value("${ntlm.authn.domain.controller:}")  final String domainController) {
+    public void setDomainController(@Value("${ntlm.authn.domain.controller:}") 
+                                    final String domainController) {
         if (StringUtils.isBlank(domainController)) {
             this.domainController = DEFAULT_DOMAIN_CONTROLLER;
         } else {

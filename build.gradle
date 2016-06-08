@@ -36,55 +36,55 @@ def projectMavenDeployer = {
         }
 
         scm {
-            url 'scm:git@github.com:apereo/cas.git'
-            connection 'scm:git@github.com:apereo/cas.git'
-            developerConnection 'scm:git@github.com:apereo/cas.git'
+            url "scm:git@github.com:apereo/cas.git"
+            connection "scm:git@github.com:apereo/cas.git"
+            developerConnection "scm:git@github.com:apereo/cas.git"
         }
 
         licenses {
             license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
+                name "The Apache Software License, Version 2.0"
+                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution "repo"
             }
         }
 
         developers {
             developer {
-                id 'leleuj'
-                name 'Jérôme Leleu'
+                id "leleuj"
+                name "Jérôme Leleu"
             }
             developer {
-                id 'apetro'
-                name 'Andrew Petro'
+                id "apetro"
+                name "Andrew Petro"
             }
             developer {
-                id 'wgthom'
-                name 'William G. Thompson'
+                id "wgthom"
+                name "William G. Thompson"
             }
             developer {
-                id 'serac'
-                name 'Marvin S. Addison'
+                id "serac"
+                name "Marvin S. Addison"
             }
             developer {
-                id 'battags'
-                name 'Scott Battaglia'
+                id "battags"
+                name "Scott Battaglia"
             }
             developer {
-                id 'mmoayyed'
-                name 'Misagh Moayyed'
+                id "mmoayyed"
+                name "Misagh Moayyed"
             }
             developer {
-                id 'robertoschwald'
-                name 'Robert Oschwald'
+                id "robertoschwald"
+                name "Robert Oschwald"
             }
             developer {
-                id 'frett'
-                name 'Daniel Frett'
+                id "frett"
+                name "Daniel Frett"
             }
             developer {
-                id 'dima767'
-                name 'Dmitriy Kopylenko'
+                id "dima767"
+                name "Dmitriy Kopylenko"
             }
         }
 

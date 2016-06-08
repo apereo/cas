@@ -48,7 +48,7 @@ public class TokenAuthenticationAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
-        final Service service =  WebUtils.getService(context);
+        final Service service = WebUtils.getService(context);
 
         if (StringUtils.isNotBlank(authTokenValue) && service != null) {
             try {

@@ -225,7 +225,7 @@ public class JpaTicketRegistryTests {
         });
     }
 
-    private ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent)  {
+    private ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent) {
         return new TransactionTemplate(txManager).execute(status -> {
             final ProxyGrantingTicket pgt = newPGT(parent);
             jpaTicketRegistry.addTicket(pgt);

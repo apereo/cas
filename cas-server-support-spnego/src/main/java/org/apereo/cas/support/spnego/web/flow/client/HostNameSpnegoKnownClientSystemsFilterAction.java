@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
 
-    private  Pattern hostNamePatternString;
+    private Pattern hostNamePatternString;
 
     /**
      * Instantiates a new Host name spnego known client systems filter action.

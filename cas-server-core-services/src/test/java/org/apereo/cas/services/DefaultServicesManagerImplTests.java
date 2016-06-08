@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  *
  */
-public class DefaultServicesManagerImplTests  {
+public class DefaultServicesManagerImplTests {
 
     private DefaultServicesManagerImpl defaultServicesManagerImpl;
 

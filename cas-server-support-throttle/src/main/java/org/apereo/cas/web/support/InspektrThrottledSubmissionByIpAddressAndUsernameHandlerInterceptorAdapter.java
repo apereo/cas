@@ -33,6 +33,10 @@ import java.util.List;
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
             extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
+    private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
+
+    private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
+    
     private AuditTrailManager auditTrailManager;
 
     private DataSource dataSource;
@@ -44,12 +48,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private String sqlQueryAudit;
 
     private JdbcTemplate jdbcTemplate;
-
-    private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
-
-    private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
-
-
+    
     /**
      * Instantiates a new Inspektr throttled submission by ip address and username handler interceptor adapter.
      */

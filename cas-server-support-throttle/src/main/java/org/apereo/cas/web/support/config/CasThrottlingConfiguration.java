@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 public class CasThrottlingConfiguration {
 
     @Autowired
-    ThrottleProperties throttleProperties;
+    private ThrottleProperties throttleProperties;
 
     @Autowired
     @Qualifier("auditTrailManager")

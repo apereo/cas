@@ -77,7 +77,8 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         request.addParameter("pgt", ticket.getId());
         request.addParameter("targetService", "service");
 
-        final Map<String, Object> map = this.proxyController.handleRequestInternal(request,  new MockHttpServletResponse()).getModel();
+        final Map<String, Object> map = this.proxyController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getModel();
         assertTrue(!map.containsKey("ticket"));
     }
 }

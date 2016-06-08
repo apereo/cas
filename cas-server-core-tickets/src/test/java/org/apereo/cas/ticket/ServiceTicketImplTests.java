@@ -110,7 +110,7 @@ public class ServiceTicketImplTests {
     }
 
     @Test
-    public void verifyTicketGrantingTicketGrantedTwice() throws AbstractTicketException  {
+    public void verifyTicketGrantingTicketGrantedTwice() throws AbstractTicketException {
         final Authentication a = TestUtils.getAuthentication();
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
                 TestUtils.getAuthentication(),

@@ -29,7 +29,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class RegisteredServiceSerializer  extends Serializer<RegisteredService> {
+public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
 
     /**
      * In case the url object is null in the service,

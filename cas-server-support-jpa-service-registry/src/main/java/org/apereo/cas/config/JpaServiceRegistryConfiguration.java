@@ -34,10 +34,10 @@ import static org.apereo.cas.configuration.support.BeansUtils.newHickariDataSour
 public class JpaServiceRegistryConfiguration {
     
     @Autowired
-    DatabaseProperties databaseProperties;
+    private DatabaseProperties databaseProperties;
     
     @Autowired
-    JpaServiceRegistryProperties jpaServiceRegistryProperties;
+    private JpaServiceRegistryProperties jpaServiceRegistryProperties;
 
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.

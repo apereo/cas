@@ -182,7 +182,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     private static RegisteredService getRegexRegisteredService() {
-        final AbstractRegisteredService rs  = new RegexRegisteredService();
+        final AbstractRegisteredService rs = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(

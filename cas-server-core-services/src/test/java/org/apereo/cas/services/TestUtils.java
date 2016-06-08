@@ -81,7 +81,7 @@ public final class TestUtils {
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
-        final Map<String, Set<String>>  attributes = new HashMap<>();
+        final Map<String, Set<String>> attributes = new HashMap<>();
         Set<String> attributeValues = new HashSet<>();
         attributeValues.add("uid");
 
@@ -102,7 +102,7 @@ public final class TestUtils {
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        try  {
+        try {
             final RegexRegisteredService s = new RegexRegisteredService();
             s.setServiceId(id);
             s.setEvaluationOrder(1);

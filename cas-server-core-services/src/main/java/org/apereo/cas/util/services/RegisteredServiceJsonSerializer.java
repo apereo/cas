@@ -73,7 +73,8 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
 
         @JsonIgnore
         @Override
-        public  boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
+        public boolean doPrincipalAttributesAllowServiceAccess(final String principal, 
+                                                               final Map<String, Object> principalAttributes) {
             return false;
         }
 

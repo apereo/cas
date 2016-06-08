@@ -65,7 +65,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
             return success();
         }
 
-        if (WebUtils.isAuthenticatingAtPublicWorkstation(context))  {
+        if (WebUtils.isAuthenticatingAtPublicWorkstation(context)) {
             LOGGER.info("Authentication is at a public workstation. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
         } else if (!this.createSsoSessionCookieOnRenewAuthentications && isAuthenticationRenewed(context)) {

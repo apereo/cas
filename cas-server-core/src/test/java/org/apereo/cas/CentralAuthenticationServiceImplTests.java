@@ -98,7 +98,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final Service mockService = mock(Service.class);
         when(mockService.getId()).thenReturn("testDefault");
 
-        final AuthenticationResult ctx =  TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
+        final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
@@ -116,7 +116,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = PrincipalException.class)
     public void verifyGrantServiceTicketFailsAuthzRule() throws Exception {
-        final AuthenticationResult ctx =  TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
+        final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 getService("TestServiceAttributeForAuthzFails"));
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(ctx);
@@ -141,7 +141,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService(), ctx);
 
-        final AuthenticationResult ctx2 =  TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), 
+        final AuthenticationResult ctx2 = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), 
                 org.apereo.cas.services.TestUtils.getHttpBasedServiceCredentials());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), ctx2);
@@ -153,7 +153,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = AbstractTicketException.class)
     public void verifyGrantServiceTicketWithInvalidTicketGrantingTicket() throws Exception {
-        final AuthenticationResult ctx =  TestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+        final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(ctx);
@@ -427,7 +427,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final CentralAuthenticationService cas = getCentralAuthenticationService();
         final Service svc = getService("testDefault");
         final UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationResult ctx =  TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
+        final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         final TicketGrantingTicket tgtId = cas.createTicketGrantingTicket(ctx);
         cas.grantServiceTicket(tgtId.getId(), svc, ctx);
         // simulate renew with new good same credentials

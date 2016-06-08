@@ -168,7 +168,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param writer the writer
      * @return the xml string
      */
-    public String marshalSamlXmlObject(final XMLObject object, final StringWriter writer)  {
+    public String marshalSamlXmlObject(final XMLObject object, final StringWriter writer) {
         try {
             final MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
             final Marshaller marshaller = marshallerFactory.getMarshaller(object);
@@ -372,7 +372,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the element
      */
     private static org.jdom.Element toJdom(final org.w3c.dom.Element e) {
-        return  new DOMBuilder().build(e);
+        return new DOMBuilder().build(e);
     }
     
 }

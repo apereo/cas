@@ -60,8 +60,7 @@ public class MongoDbEventsConfiguration {
     public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
         try {
             return new SimpleMongoDbFactory(new MongoClientURI(this.eventsProperties.getMongodb().getClientUri()));
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
         }
     }

@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  *
  */
-public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  {
+public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     /** Default refresh interval is 1 hour. */
     public static final int DEFAULT_REFRESH_INTERVAL = 3600;
@@ -121,7 +121,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
      */
     @PostConstruct
     @Override
-    public void init()  {
+    public void init() {
         super.init();
 
         initializeResourcesFromContext();

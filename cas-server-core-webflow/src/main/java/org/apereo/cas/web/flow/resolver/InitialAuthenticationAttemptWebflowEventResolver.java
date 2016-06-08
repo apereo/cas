@@ -103,7 +103,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
                                                               final RegisteredService registeredService) {
         logger.debug("Evaluating authentication policy for {} based on principal attribute requirements only when accessing {}",
-               registeredService.getServiceId(),  service);
+               registeredService.getServiceId(), service);
         final Event serviceAttributeEvent =
                 this.registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
 

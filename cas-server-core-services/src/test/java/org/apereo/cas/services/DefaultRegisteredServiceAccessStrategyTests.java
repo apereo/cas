@@ -105,7 +105,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        final Map<String, Set<String>> reqs = this.getRequiredAttributes();
         reqs.remove("phone");
         authz.setRequiredAttributes(reqs);
         authz.setRequireAllAttributes(false);
@@ -120,7 +120,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
 
-        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        final Map<String, Set<String>> reqs = this.getRequiredAttributes();
         reqs.remove("phone");
         authz.setRequiredAttributes(reqs);
 
@@ -135,7 +135,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
 
-        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        final Map<String, Set<String>> reqs = this.getRequiredAttributes();
         authz.setRequiredAttributes(reqs);
         final Map<String, Set<String>> rejectedAttributes = this.getRejectedAttributes();
         authz.setRejectedAttributes(rejectedAttributes);
@@ -203,7 +203,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
 
-        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        final Map<String, Set<String>> reqs = this.getRequiredAttributes();
         authz.setRequiredAttributes(reqs);
 
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
