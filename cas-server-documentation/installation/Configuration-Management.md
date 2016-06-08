@@ -36,7 +36,7 @@ properties are considered in the following order:
 8. Application properties outside of your packaged jar (application.properties and YAML variants).
 9. Application properties packaged inside your jar (application.properties and YAML variants).
 
-All CAS settings can be overriden via the above outlined strategies.
+All CAS settings can be overridden via the above outlined strategies.
 
 <div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage 
 the CAS configuration, you should configure access 
