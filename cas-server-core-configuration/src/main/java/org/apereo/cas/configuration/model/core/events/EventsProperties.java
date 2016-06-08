@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for events.*
+ * Configuration properties class for events.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "events", ignoreUnknownFields = false)
 public class EventsProperties {
 
-    private boolean trackGeolocation = false;
+    private boolean trackGeolocation;
 
     private Jpa jpa = new Jpa();
 
@@ -64,7 +64,7 @@ public class EventsProperties {
     public static class Mongodb {
         private String clientUri = "";
         private String collection = "MongoDbCasEventRepository";
-        private boolean dropCollection = false;
+        private boolean dropCollection;
 
         public String getClientUri() {
             return clientUri;

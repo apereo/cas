@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for cas.mfa.*
+ * Configuration properties class for cas.mfa.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
@@ -24,7 +24,7 @@ public class MfaProperties {
     public static class Yubikey {
         private Integer clientId;
         private String secretKey = "";
-        private int rank = 0;
+        private int rank;
 
         public Integer getClientId() {
             return clientId;

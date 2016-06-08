@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Configuration properties class for cas.throttle.*

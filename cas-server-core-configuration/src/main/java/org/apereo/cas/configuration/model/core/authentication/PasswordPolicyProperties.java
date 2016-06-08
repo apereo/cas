@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for password.policy.*
+ * Configuration properties class for password.policy.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
@@ -13,7 +13,7 @@ public class PasswordPolicyProperties {
 
     private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
 
-    private boolean warnAll = false;
+    private boolean warnAll;
 
     private int warningDays = DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS;
 

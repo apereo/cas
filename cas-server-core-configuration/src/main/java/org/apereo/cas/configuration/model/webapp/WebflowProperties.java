@@ -6,7 +6,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
- * Configuration properties class for webflow.*
+ * Configuration properties class for webflow.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
@@ -16,9 +16,9 @@ public class WebflowProperties extends AbstractCryptographyProperties {
 
     private boolean refresh = true;
 
-    private boolean alwaysPauseRedirect = false;
+    private boolean alwaysPauseRedirect;
 
-    private boolean redirectSameState = false;
+    private boolean redirectSameState;
 
     private Session session = new Session();
 

@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for cas.authn.policy.*
+ * Configuration properties class for cas.authn.policy.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
@@ -35,7 +35,7 @@ public class AuthenticationPolicyProperties {
      * Any.
      */
     public static class Any {
-        private boolean tryAll = false;
+        private boolean tryAll;
 
         public boolean isTryAll() {
             return tryAll;
@@ -50,7 +50,7 @@ public class AuthenticationPolicyProperties {
      * Req.
      */
     public static class Req {
-        private boolean tryAll = false;
+        private boolean tryAll;
         private String handlerName = "handlerName";
 
         public boolean isTryAll() {

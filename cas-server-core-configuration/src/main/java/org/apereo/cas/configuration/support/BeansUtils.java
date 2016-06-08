@@ -11,17 +11,22 @@ import java.util.Properties;
 
 /**
  * A re-usable collection of utility methods for object instantiations and configurations used cross various
- * <code>@Bean creation methods</code> throughout CAS server.
+ * <code>@Bean</code> creation methods throughout CAS server.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public final class Beans {
-
-    //non-instatiable
-    private Beans() {
+public final class BeansUtils {
+    
+    private BeansUtils() {
     }
 
+    /**
+     * New hickari data source.
+     *
+     * @param jpaProperties the jpa properties
+     * @return the hikari data source
+     */
     public static HikariDataSource newHickariDataSource(final AbstractJpaProperties jpaProperties) {
         try {
             final HikariDataSource bean = new HikariDataSource();
@@ -48,6 +53,12 @@ public final class Beans {
         }
     }
 
+    /**
+     * New hibernate jpa vendor adapter.
+     *
+     * @param databaseProperties the database properties
+     * @return the hibernate jpa vendor adapter
+     */
     public static HibernateJpaVendorAdapter newHibernateJpaVendorAdapter(final DatabaseProperties databaseProperties) {
         final HibernateJpaVendorAdapter bean = new HibernateJpaVendorAdapter();
         bean.setGenerateDdl(databaseProperties.isGenDdl());
@@ -55,6 +66,13 @@ public final class Beans {
         return bean;
     }
 
+    /**
+     * New entity manager factory bean.
+     *
+     * @param config        the config
+     * @param jpaProperties the jpa properties
+     * @return the local container entity manager factory bean
+     */
     public static LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigDataHolder config,
                                                                                      final AbstractJpaProperties jpaProperties) {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();

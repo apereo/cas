@@ -32,13 +32,13 @@ import javax.validation.MessageInterpolator;
 public class CasCoreUtilConfiguration {
 
     @Autowired
-    TicketProperties ticketProperties;
+    private TicketProperties ticketProperties;
 
     @Autowired
-    WebflowProperties webflowProperties;
+    private WebflowProperties webflowProperties;
 
     @Autowired
-    TicketGrantingCookieProperties tgcProperties;
+    private TicketGrantingCookieProperties tgcProperties;
             
     @Bean
     public CipherExecutor<byte[], byte[]> defaultTicketCipherExecutor() {

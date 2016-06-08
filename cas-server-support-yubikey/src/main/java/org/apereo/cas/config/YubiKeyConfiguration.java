@@ -7,7 +7,6 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -17,7 +16,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -27,8 +25,6 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link YubiKeyConfiguration}.

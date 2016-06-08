@@ -18,7 +18,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import static org.apereo.cas.configuration.support.Beans.*;
+import static org.apereo.cas.configuration.support.BeansUtils.*;
 
 /**
  * This is {@link JpaEventsConfiguration}, defines certain beans via configuration
