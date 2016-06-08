@@ -13,8 +13,6 @@ It is possible to designate CAS to serve as the authentication provider for the 
 
 ## SSO for Shibboleth IdP (RemoteUser)
 
-### Configuration
-
 Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are 
 included in the `./lib` installer folder, then redeploy the Idp with these files:
 
@@ -22,7 +20,7 @@ included in the `./lib` installer folder, then redeploy the Idp with these files
 cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
 ```
 
-#### Modify `$SHIB_HOME/conf/handler.xml`
+### Modify `$SHIB_HOME/conf/handler.xml`
 
 Define the `RemoteUser` authentication method to be used with CAS authentication.
 
@@ -39,8 +37,10 @@ Define the `RemoteUser` authentication method to be used with CAS authentication
 ```
 
 
-#### Modify IdP Deployable `web.xml`
+### Modify IdP Deployable `web.xml`
+
 Add the following XML blocks to the `web.xml` file for the IdP war deployable.
+
 ```xml
 <!-- For CAS client support -->
 <context-param>
@@ -99,7 +99,7 @@ CAS Filters
 ```
 
 
-#### Enable `RemoteUserHandler` in Idp Deployable `web.xml`
+### Enable `RemoteUserHandler` in Idp Deployable `web.xml`
 Ensure the following is defined:
 
 ```xml
@@ -117,6 +117,7 @@ Ensure the following is defined:
 
 
 ## SSO for Shibboleth IdP (External)
+
 This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using 
 this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`.
 
