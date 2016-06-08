@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
+import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,14 +48,9 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     private LocaleProperties localeProperties;
 
-    @Value("${cas.themeResolver.param.name:theme}")
-    private String themeParamName;
-
-    /**
-     * Credentials validator local validator factory bean.
-     *
-     * @return the local validator factory bean
-     */
+    @Autowired
+    private ThemeProperties themeProperties;
+    
     @RefreshScope
     @Bean
     public LocalValidatorFactoryBean credentialsValidator() {
@@ -62,25 +58,15 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setMessageInterpolator(this.messageInterpolator);
         return bean;
     }
-
-    /**
-     * Theme change interceptor theme change interceptor.
-     *
-     * @return the theme change interceptor
-     */
+    
     @RefreshScope
     @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {
         final ThemeChangeInterceptor bean = new ThemeChangeInterceptor();
-        bean.setParamName(this.themeParamName);
+        bean.setParamName(this.themeProperties.getParamName());
         return bean;
     }
-
-    /**
-     * Locale resolver cookie locale resolver.
-     *
-     * @return the cookie locale resolver
-     */
+    
     @Bean
     public CookieLocaleResolver localeResolver() {
         final CookieLocaleResolver bean = new CookieLocaleResolver() {
@@ -96,12 +82,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         };
         return bean;
     }
-
-    /**
-     * Locale change interceptor locale change interceptor.
-     *
-     * @return the locale change interceptor
-     */
+    
     @RefreshScope
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -109,12 +90,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setParamName(this.localeProperties.getParamName());
         return bean;
     }
-
-    /**
-     * Service theme resolver supported browsers map.
-     *
-     * @return the map
-     */
+    
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
@@ -125,12 +101,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
         return map;
     }
-
-    /**
-     * Root controller controller.
-     *
-     * @return the controller
-     */
+    
     @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {
@@ -145,12 +116,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
         };
     }
-
-    /**
-     * Log4j servlet context listener servlet listener registration bean.
-     *
-     * @return the servlet listener registration bean
-     */
+    
     @Bean
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
@@ -159,12 +125,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setListener(new Log4jServletContextListener());
         return bean;
     }
-
-    /**
-     * Handler mapping c simple url handler mapping.
-     *
-     * @return the simple url handler mapping
-     */
+    
     @Bean
     public SimpleUrlHandlerMapping handlerMapping() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
@@ -173,12 +134,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         mapping.setRootHandler(rootController());
         return mapping;
     }
-
-    /**
-     * Simple controller handler adapter.
-     *
-     * @return the simple controller handler adapter
-     */
+    
     @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();

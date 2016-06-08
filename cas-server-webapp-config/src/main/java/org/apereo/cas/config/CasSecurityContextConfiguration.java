@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
+import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
@@ -15,12 +16,11 @@ import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCustomizer;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -43,27 +43,9 @@ import java.util.regex.Pattern;
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasSecurityContextConfiguration.class);
 
-    @Value("${cas.securityContext.adminpages.ip:127\\.0\\.0\\.1}")
-    private String regexPattern;
+    @Autowired
+    private AdminPagesSecurityProperties securityProperties;
 
-    @Value("${cas.securityContext.adminpages.adminRoles:}")
-    private String roles;
-
-    @Value("${cas.securityContext.adminpages.loginUrl:}")
-    private String loginUrl;
-
-    @Value("${cas.securityContext.adminpages.service:}")
-    private String callbackUrl;
-
-    @Value("${cas.securityContext.adminpages.users:}")
-    private Resource userPropertiesFile;
-
-    /**
-     * Web content interceptor web content interceptor.
-     *
-     * @return the web content interceptor
-     */
-    @RefreshScope
     @Bean
     public WebContentInterceptor webContentInterceptor() {
         final WebContentInterceptor interceptor = new WebContentInterceptor();
@@ -72,37 +54,32 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         return interceptor;
     }
 
-    /**
-     * Requires authentication interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
     @RefreshScope
     @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationStatusInterceptor() {
         return new RequiresAuthenticationInterceptor(new
-                Config(new IpClient(new IpRegexpAuthenticator(this.regexPattern))), "IpClient");
+                Config(new IpClient(new IpRegexpAuthenticator(securityProperties.getIp()))), "IpClient");
     }
 
-    /**
-     * Config config.
-     *
-     * @return the config
-     */
     @RefreshScope
     @Bean
     public Config config() {
         try {
-            if (StringUtils.isNotBlank(this.loginUrl) && StringUtils.isNotBlank(this.callbackUrl)
-                    && StringUtils.isNotBlank(this.roles)) {
-                final IndirectClient client = new CasClient(this.loginUrl);
+            if (StringUtils.isNotBlank(securityProperties.getLoginUrl())
+                    && StringUtils.isNotBlank(securityProperties.getService())
+                    && StringUtils.isNotBlank(securityProperties.getAdminRoles())) {
+                
+                final IndirectClient client = new CasClient(securityProperties.getLoginUrl());
                 final Properties properties = new Properties();
-                properties.load(this.userPropertiesFile.getInputStream());
-                client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
+                properties.load(this.securityProperties.getUsers().getInputStream());
+                client.setAuthorizationGenerator(
+                        new SpringSecurityPropertiesAuthorizationGenerator(properties));
 
-                final Config cfg = new Config(this.callbackUrl, client);
+                final Config cfg = new Config(securityProperties.getService(), client);
                 cfg.setAuthorizer(
-                        new RequireAnyRoleAuthorizer(org.springframework.util.StringUtils.commaDelimitedListToSet(this.roles)));
+                        new RequireAnyRoleAuthorizer(
+                                org.springframework.util.StringUtils.commaDelimitedListToSet(
+                                        securityProperties.getAdminRoles())));
 
                 return cfg;
             }
@@ -112,11 +89,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         return new Config();
     }
 
-    /**
-     * Requires authentication status admin endpoints interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
     @RefreshScope
     @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationStatusAdminEndpointsInterceptor() {
@@ -143,11 +115,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(webContentInterceptor()).addPathPatterns("/*");
     }
 
-    /**
-     * Status interceptor handler interceptor adapter.
-     *
-     * @return the handler interceptor adapter
-     */
     @Bean
     public HandlerInterceptorAdapter statusInterceptor() {
         return new HandlerInterceptorAdapter() {
@@ -166,11 +133,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
-    /**
-     * Mapping customizer endpoint handler mapping customizer.
-     *
-     * @return the endpoint handler mapping customizer
-     */
     @RefreshScope
     @Bean
     public EndpointHandlerMappingCustomizer mappingCustomizer() {

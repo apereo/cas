@@ -6,23 +6,23 @@ import org.apereo.cas.audit.spi.AssertionAsReturnValuePrincipalResolver;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
 import org.apereo.cas.audit.spi.TicketOrCredentialPrincipalResolver;
+import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
-import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,42 +38,28 @@ import java.util.Map;
 public class CasAuditTrailConfiguration {
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
 
-    @Value("${cas.audit.appcode:CAS}")
-    private String appCode;
+    @Autowired
+    private AuditProperties auditProperties;
 
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-    
-    @Resource(name="ticketResourceResolver")
+
+    @Autowired
+    @Qualifier("ticketResourceResolver")
     private AuditResourceResolver ticketResourceResolver;
 
-    @Resource(name="messageBundleAwareResourceResolver")
+    @Autowired
+    @Qualifier("messageBundleAwareResourceResolver")
     private AuditResourceResolver messageBundleAwareResourceResolver;
-
-    @Value("${cas.audit.singleline.separator:|}")
-    private String entrySeparator;
-
-    @Value("${cas.audit.singleline:false}")
-    private boolean useSingleLine;
-
-    @Value("${cas.audit.format:DEFAULT}")
-    private AbstractStringAuditTrailManager.AuditFormats auditFormat;
-
-    @Value("${cas.audit.ignore.failures:true}")
-    private boolean ignoreAuditFailures;
     
-    /**
-     * Audit trail management aspect audit trail management aspect.
-     *
-     * @return the audit trail management aspect
-     */
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
-        final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(this.appCode,
-                auditablePrincipalResolver(), 
+        final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(auditProperties.getAppCode(),
+                auditablePrincipalResolver(),
                 ImmutableList.of(slf4jAuditTrailManager()), auditActionResolverMap(),
                 auditResourceResolverMap());
-        aspect.setFailOnAuditFailures(!this.ignoreAuditFailures);
+        aspect.setFailOnAuditFailures(!auditProperties.isIgnoreAuditFailures());
         return aspect;
     }
 
@@ -85,18 +71,12 @@ public class CasAuditTrailConfiguration {
     @Bean
     public AuditTrailManager slf4jAuditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
-        mgmr.setUseSingleLine(this.useSingleLine);
-        mgmr.setEntrySeparator(this.entrySeparator);
-        mgmr.setAuditFormat(this.auditFormat);
+        mgmr.setUseSingleLine(auditProperties.isUseSingleLine());
+        mgmr.setEntrySeparator(auditProperties.getSinglelineSeparator());
+        mgmr.setAuditFormat(auditProperties.getAuditFormat());
         return mgmr;
     }
 
-
-    /**
-     * Cas client info logging filter client info thread local filter.
-     *
-     * @return the client info thread local filter
-     */
     @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
@@ -106,52 +86,26 @@ public class CasAuditTrailConfiguration {
         return bean;
     }
 
-    /**
-     * Authentication action resolver default audit action resolver.
-     *
-     * @return the default audit action resolver
-     */
     @Bean
     public DefaultAuditActionResolver authenticationActionResolver() {
         return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
-    /**
-     * Ticket creation action resolver default audit action resolver.
-     *
-     * @return the default audit action resolver
-     */
     @Bean
     public DefaultAuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
     }
 
-    /**
-     * Ticket validation action resolver default audit action resolver.
-     *
-     * @return the default audit action resolver
-     */
     @Bean
     public DefaultAuditActionResolver ticketValidationActionResolver() {
         return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
-    /**
-     * Return value resource resolver return value as string resource resolver.
-     *
-     * @return the return value as string resource resolver
-     */
     @Bean
     public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
     }
 
-
-    /**
-     * Audit action resolver map map.
-     *
-     * @return the map
-     */
     @Bean
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
@@ -167,11 +121,6 @@ public class CasAuditTrailConfiguration {
         return map;
     }
 
-    /**
-     * Audit resource resolver map map.
-     *
-     * @return the map
-     */
     @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
@@ -187,11 +136,6 @@ public class CasAuditTrailConfiguration {
         return map;
     }
 
-    /**
-     * Principal resolver.
-     *
-     * @return the principal resolver
-     */
     @Bean
     public PrincipalResolver auditablePrincipalResolver() {
         return new AssertionAsReturnValuePrincipalResolver(

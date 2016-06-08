@@ -9,7 +9,7 @@
 
     <bean id="auditCleanupCriteria"
           class="org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria"
-          c:maxAgeDays="${cas.audit.max.agedays:180}" />
+          c:maxAgeDays="${cas.audit.database.max.agedays:180}" />
 
     <bean id="jdbcAuditTrailManager"
           class="org.apereo.inspektr.audit.support.JdbcAuditTrailManager"

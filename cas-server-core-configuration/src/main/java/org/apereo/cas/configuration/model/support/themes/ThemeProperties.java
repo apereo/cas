@@ -12,6 +12,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ThemeProperties {
 
     private String defaultThemeName = "cas-theme-default";
+    private String paramName = "theme";
+
+    public String getParamName() {
+        return paramName;
+    }
+
+    public void setParamName(final String paramName) {
+        this.paramName = paramName;
+    }
 
     public String getDefaultThemeName() {
         return defaultThemeName;
