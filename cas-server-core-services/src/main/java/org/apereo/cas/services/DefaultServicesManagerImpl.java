@@ -32,10 +32,7 @@ import java.util.stream.Collectors;
 public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
-
-    /**
-     * Instance of ServiceRegistryDao.
-     */
+    
     private ServiceRegistryDao serviceRegistryDao;
 
     @Autowired
@@ -131,7 +128,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
         return r;
     }
     
-    @Scheduled(initialDelayString="${service.registry.startDelay:10000}",
+    @Scheduled(initialDelayString="${service.registry.startDelay:20000}",
                fixedDelayString = "${service.registry.repeatInterval:60000}")
     @Override
     public void reload() {

@@ -1,6 +1,10 @@
 package org.apereo.cas.logging.web;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.MDC;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -56,9 +60,14 @@ public class ThreadContextMDCServletFilter implements Filter {
             final Map<String, String[]> params = request.getParameterMap();
             params.keySet().forEach(k -> {
                 final String[] values = params.get(k);
-                MDC.put("requestParameter" + k, Arrays.toString(values));
+                MDC.put("requestParameter-" + k, Arrays.toString(values));
             });
 
+            final RequestContext context = RequestContextHolder.getRequestContext();
+            if (context != null) {
+                final Authentication authN = WebUtils.getAuthentication(context);
+                MDC.put("principal", authN.getPrincipal().getId());
+            }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.clear();

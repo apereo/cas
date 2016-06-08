@@ -7,7 +7,8 @@ import javax.annotation.PostConstruct;
 
 
 /**
- * Initializes a given service registry data store with available JSON service definitions if necessary (based on configuration flag).
+ * Initializes a given service registry data store with available
+ * JSON service definitions if necessary (based on configuration flag).
  *
  * @author Dmitriy Kopylenko
  * @author Misagh Moayyed
@@ -21,6 +22,8 @@ public class ServiceRegistryInitializer {
     
     private ServiceRegistryDao jsonServiceRegistryDao;
 
+    private ReloadableServicesManager servicesManager;
+    
     private boolean initFromJson;
 
     public ServiceRegistryInitializer() {
@@ -28,9 +31,11 @@ public class ServiceRegistryInitializer {
 
     public ServiceRegistryInitializer(final ServiceRegistryDao jsonServiceRegistryDao,
                                       final ServiceRegistryDao serviceRegistryDao,
+                                      final ReloadableServicesManager servicesManager,
                                       final boolean initFromJson) {
         this.jsonServiceRegistryDao = jsonServiceRegistryDao;
         this.serviceRegistryDao = serviceRegistryDao;
+        this.servicesManager = servicesManager;
         this.initFromJson = initFromJson;
     }
 
@@ -50,10 +55,10 @@ public class ServiceRegistryInitializer {
             if (this.initFromJson) {
                 LOGGER.debug("Service registry database will be auto-initialized from default JSON services");
                 this.jsonServiceRegistryDao.load().forEach(r -> {
-                    LOGGER.debug("Initializing DB with the {} JSON service definition...", r);
+                    LOGGER.debug("Initializing service registry database with the {} JSON service definition...", r);
                     this.serviceRegistryDao.save(r);
                 });
-                this.serviceRegistryDao.load();
+                this.servicesManager.reload();
             } else {
                 LOGGER.info("The service registry database will not be initialized from default JSON services. "
                         + "Since the service registry database is empty, CAS will refuse to authenticate services "

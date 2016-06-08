@@ -88,7 +88,7 @@ public class JpaServiceRegistryConfiguration {
      */
     @Bean
     public JpaTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") 
-                                                          final EntityManagerFactory emf) {
+                                                              final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;

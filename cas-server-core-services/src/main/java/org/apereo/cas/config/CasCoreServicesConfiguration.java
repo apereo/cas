@@ -100,10 +100,13 @@ public class CasCoreServicesConfiguration {
     
     @Autowired
     @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("jsonServiceRegistryDao")
+    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("serviceRegistryDao")
                                                                  final ServiceRegistryDao serviceRegistryDao,
-                                                                 @Qualifier("serviceRegistryDao")
-                                                                 final ServiceRegistryDao jsonServiceRegistryDao) {
-        return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao, this.serviceRegistryProperties.isInitFromJson());
+                                                                 @Qualifier("jsonServiceRegistryDao")
+                                                                 final ServiceRegistryDao jsonServiceRegistryDao,
+                                                                 @Qualifier("servicesManager")
+                                                                 final ReloadableServicesManager servicesManager) {
+        return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao, servicesManager, 
+                this.serviceRegistryProperties.isInitFromJson());
     }
 }
