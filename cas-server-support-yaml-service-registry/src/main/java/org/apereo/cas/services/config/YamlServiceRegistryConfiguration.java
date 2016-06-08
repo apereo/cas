@@ -1,13 +1,13 @@
 package org.apereo.cas.services.config;
 
 import com.google.common.base.Throwables;
+import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.YamlServiceRegistryDao;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
 /**
  * This is {@link YamlServiceRegistryConfiguration}.
@@ -18,17 +18,15 @@ import org.springframework.core.io.Resource;
 @Configuration("yamlServiceRegistryConfiguration")
 public class YamlServiceRegistryConfiguration {
 
-    @Value("${service.registry.config.location:classpath:services}")
-    private Resource configDirectory;
-
-    @Value("${service.registry.watcher.enabled:true}")
-    private boolean enableWatcher;
+    @Autowired
+    private ServiceRegistryProperties serviceRegistryProperties;
 
     @Bean
     @RefreshScope
     public ServiceRegistryDao yamlServiceRegistryDao() {
         try {
-            return new YamlServiceRegistryDao(this.configDirectory, this.enableWatcher);
+            return new YamlServiceRegistryDao(serviceRegistryProperties.getConfig().getLocation(),
+                    serviceRegistryProperties.isWatcherEnabled());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

@@ -94,9 +94,7 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
     }
 
     @Override
-    @Autowired
-    public void setDefaultThemeName(@Value("${cas.themeResolver.defaultThemeName:cas-theme-default}")
-                                        final String defaultThemeName) {
+    public void setDefaultThemeName(final String defaultThemeName) {
         super.setDefaultThemeName(defaultThemeName);
     }
 
