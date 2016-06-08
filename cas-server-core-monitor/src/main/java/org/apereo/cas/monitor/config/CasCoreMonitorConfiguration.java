@@ -52,7 +52,7 @@ public class CasCoreMonitorConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public Monitor sessionMonitor(@Qualifier("ticketRegistry") TicketRegistry ticketRegistry) {
+    public Monitor sessionMonitor(@Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
         final SessionMonitor bean = new SessionMonitor();
         bean.setTicketRegistry(ticketRegistry);
         bean.setServiceTicketCountWarnThreshold(this.monitorProperties.getSt().getWarn().getThreshold());

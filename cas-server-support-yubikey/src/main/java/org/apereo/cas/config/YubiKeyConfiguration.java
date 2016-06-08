@@ -80,7 +80,7 @@ public class YubiKeyConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider(@Qualifier("noRedirectHttpClient") HttpClient httpClient) {
+    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider(@Qualifier("noRedirectHttpClient") final HttpClient httpClient) {
         return new YubiKeyMultifactorAuthenticationProvider(
                 yubikeyAuthenticationHandler(),
                 this.mfaProperties.getYubikey().getRank(),

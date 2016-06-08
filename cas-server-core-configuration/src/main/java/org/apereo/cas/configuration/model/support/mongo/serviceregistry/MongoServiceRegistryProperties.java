@@ -4,13 +4,13 @@ import com.mongodb.WriteConcern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Configuration properties class for svcreg.mongodb.*
+ * Configuration properties class for svcreg.mongodb.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @ConfigurationProperties(prefix = "svcreg.mongodb", ignoreUnknownFields = false)
-public class MongoServiceRegustryProperties {
+public class MongoServiceRegistryProperties {
 
     private String host = "localhost";
 
@@ -22,7 +22,7 @@ public class MongoServiceRegustryProperties {
 
     private String serviceRegistryCollection = "cas-service-registry";
 
-    private boolean dropCollection = false;
+    private boolean dropCollection;
 
     private int timeout = 5000;
 
@@ -30,7 +30,7 @@ public class MongoServiceRegustryProperties {
 
     private WriteConcern writeConcern = WriteConcern.NORMAL;
 
-    private boolean socketKeepAlive = false;
+    private boolean socketKeepAlive;
 
     private Conns conns = new Conns();
 

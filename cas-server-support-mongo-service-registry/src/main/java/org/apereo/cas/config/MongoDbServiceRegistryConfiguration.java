@@ -5,7 +5,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegustryProperties;
+import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
@@ -31,11 +31,11 @@ import java.util.Collections;
  * @since 5.0.0
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
-@EnableConfigurationProperties(MongoServiceRegustryProperties.class)
+@EnableConfigurationProperties(MongoServiceRegistryProperties.class)
 public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfiguration {
 
     @Autowired
-    private MongoServiceRegustryProperties mongoServiceRegistryProperties;
+    private MongoServiceRegistryProperties mongoServiceRegistryProperties;
 
 
 
