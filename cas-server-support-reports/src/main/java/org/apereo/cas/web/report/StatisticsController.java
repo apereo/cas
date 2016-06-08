@@ -24,8 +24,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,14 +43,6 @@ import java.util.Queue;
 @Controller("statisticsController")
 @RequestMapping("/status/stats")
 public class StatisticsController implements ServletContextAware {
-
-    private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
-
-    private static final int NUMBER_OF_MILLISECONDS_IN_AN_HOUR = 3600000;
-
-    private static final int NUMBER_OF_MILLISECONDS_IN_A_MINUTE = 60000;
-
-    private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
 
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
 
@@ -84,14 +78,8 @@ public class StatisticsController implements ServletContextAware {
     public Map<String, Object> getAvailability(final HttpServletRequest httpServletRequest,
                                               final HttpServletResponse httpServletResponse) {
         final Map<String, Object> model = new HashMap<>();
-        model.put("startTime", this.upTimeStartDate);
-        final double difference = this.upTimeStartDate.until(ZonedDateTime.now(ZoneOffset.UTC), 
-                ChronoUnit.MILLIS);
-
-        model.put("upTime", calculateUptime(difference, new LinkedList<>(
-                        Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
-                                NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
-                new LinkedList<>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
+        final Duration diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
+        model.put("upTime", diff.getSeconds());
         return model;
     }
 
@@ -110,7 +98,6 @@ public class StatisticsController implements ServletContextAware {
         model.put("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
         model.put("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
         model.put("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
-        model.put("availableProcessors", Runtime.getRuntime().availableProcessors());
         return model;
     }
 
@@ -132,34 +119,30 @@ public class StatisticsController implements ServletContextAware {
         int expiredTgts = 0;
         int expiredSts = 0;
 
-        try {
-            final Collection<Ticket> tickets = 
-                    this.centralAuthenticationService.getTickets(Predicates.<Ticket>alwaysTrue());
+        final Collection<Ticket> tickets =
+                this.centralAuthenticationService.getTickets(Predicates.<Ticket>alwaysTrue());
 
-            for (final Ticket ticket : tickets) {
-                if (ticket instanceof ServiceTicket) {
-                    if (ticket.isExpired()) {
-                        expiredSts++;
-                    } else {
-                        unexpiredSts++;
-                    }
+        for (final Ticket ticket : tickets) {
+            if (ticket instanceof ServiceTicket) {
+                if (ticket.isExpired()) {
+                    expiredSts++;
                 } else {
-                    if (ticket.isExpired()) {
-                        expiredTgts++;
-                    } else {
-                        unexpiredTgts++;
-                    }
+                    unexpiredSts++;
+                }
+            } else {
+                if (ticket.isExpired()) {
+                    expiredTgts++;
+                } else {
+                    unexpiredTgts++;
                 }
             }
-        } catch (final UnsupportedOperationException e) {
-            logger.trace("The ticket registry doesn't support this information.");
         }
 
         model.put("unexpiredTgts", unexpiredTgts);
         model.put("unexpiredSts", unexpiredSts);
         model.put("expiredTgts", expiredTgts);
         model.put("expiredSts", expiredSts);
-        model.put("casTicketSuffix", this.casTicketSuffix);
+        
         return model;
     }
     
@@ -178,6 +161,14 @@ public class StatisticsController implements ServletContextAware {
                 throws Exception {
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
+        modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
+        modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
+        modelAndView.addObject("upTime", 
+                getAvailability(httpServletRequest, httpServletResponse).get("upTime"));
+        
+        modelAndView.addObject("startTime",
+                this.upTimeStartDate.toEpochSecond());
+                
         return modelAndView;
     }
 
@@ -190,30 +181,6 @@ public class StatisticsController implements ServletContextAware {
         return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
     }
     
-    /**
-     * Calculates the up time.
-     *
-     * @param difference the difference
-     * @param calculations the calculations
-     * @param labels the labels
-     * @return the uptime as a string.
-     */
-    protected String calculateUptime(final double difference, final Queue<Integer> calculations, 
-                                     final Queue<String> labels) {
-        if (calculations.isEmpty()) {
-            return "";
-        }
-
-        final int value = calculations.remove();
-        final double time = Math.floor(difference / value);
-        final double newDifference = difference - time * value;
-        final String currentLabel = labels.remove();
-        final String label = time == 0 || time > 1 ? currentLabel + 's' : currentLabel;
-
-        return Integer.toString((int) time) + ' ' + label + ' ' 
-                + calculateUptime(newDifference, calculations, labels);
-    }
-
     @Override
     public void setServletContext(final ServletContext servletContext) {
         servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, this.metricsRegistry);
