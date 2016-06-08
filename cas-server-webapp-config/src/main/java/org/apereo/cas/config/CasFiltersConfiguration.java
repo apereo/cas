@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.configuration.model.support.security.HttpWebRequestProperties;
+import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.springframework.beans.factory.annotation.Autowired;
