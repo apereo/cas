@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.saml;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

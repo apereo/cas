@@ -5,6 +5,7 @@ import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.model.core.ServerProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -35,10 +36,9 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -56,11 +56,18 @@ import java.security.SecureRandom;
  */
 public abstract class AbstractSamlProfileHandlerController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
+    /**
+     * The server properties.
+     */
+    @Autowired
+    protected ServerProperties serverProperties;
+    
     /**
      * The Saml object signer.
      */
-    @Resource(name="samlObjectSigner")
+    @Autowired
+    @Qualifier("samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
@@ -75,42 +82,24 @@ public abstract class AbstractSamlProfileHandlerController {
     protected Service callbackService;
 
     /**
-     * The Cas server name.
-     */
-    
-    @Value("${server.name}")
-    protected String casServerName;
-
-    /**
-     * The Cas server prefix.
-     */
-    
-    @Value("${server.prefix}")
-    protected String casServerPrefix;
-
-    /**
-     * The Cas server login url.
-     */
-    
-    @Value("${server.prefix}/login")
-    protected String casServerLoginUrl;
-
-    /**
      * The Services manager.
      */
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ReloadableServicesManager servicesManager;
 
     /**
      * The Web application service factory.
      */
-    @Resource(name="webApplicationServiceFactory")
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     
     /**
      * The Saml registered service caching metadata resolver.
      */
-    @Resource(name="defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Autowired
+    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     /**
@@ -122,7 +111,8 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Response builder.
      */
-    @Resource(name="samlProfileSamlResponseBuilder")
+    @Autowired
+    @Qualifier("samlProfileSamlResponseBuilder")
     protected SamlProfileSamlResponseBuilder responseBuilder;
 
     /**
@@ -147,8 +137,7 @@ public abstract class AbstractSamlProfileHandlerController {
         return SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
     }
-
-
+    
     /**
      * Gets registered service and verify.
      *
@@ -186,7 +175,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the service
      */
     protected Service registerCallback(final String callbackUrl) {
-        final Service callbackService = this.webApplicationServiceFactory.createService(this.casServerPrefix.concat(callbackUrl));
+        final Service callbackService = this.webApplicationServiceFactory.createService(serverProperties.getPrefix().concat(callbackUrl));
         logger.debug("Initialized callback service [{}]", callbackService);
 
         if (!this.servicesManager.matchesExistingService(callbackService)) {
@@ -285,7 +274,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url [{}]", serviceUrl);
 
-        final String urlToRedirectTo = CommonUtils.constructRedirectUrl(this.casServerLoginUrl,
+        final String urlToRedirectTo = CommonUtils.constructRedirectUrl(serverProperties.getLoginUrl(),
                 CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
                 authnRequest.isPassive());
 
@@ -319,7 +308,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
             logger.debug("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                    url, this.casServerName,
+                    url, serverProperties.getName(),
                     CasProtocolConstants.PARAMETER_SERVICE,
                     CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {

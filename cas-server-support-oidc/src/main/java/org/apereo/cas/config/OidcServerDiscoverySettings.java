@@ -6,12 +6,12 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import java.util.List;
 
 /**
- * This is {@link OidcServerDiscoveryProperties}.
+ * This is {@link OidcServerDiscoverySettings}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcServerDiscoveryProperties {
+public class OidcServerDiscoverySettings {
     
     private List<String> supportedScopes;
     private List<String> supportedResponseTypes;
@@ -23,7 +23,7 @@ public class OidcServerDiscoveryProperties {
     private final String issuer;
     private final String serverPrefix;
 
-    public OidcServerDiscoveryProperties(final String serverPrefix, final String issuer) {
+    public OidcServerDiscoverySettings(final String serverPrefix, final String issuer) {
         this.issuer = issuer;
         this.serverPrefix = serverPrefix;
     }

@@ -5,7 +5,6 @@ import org.apereo.cas.util.DigestUtils;
 
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

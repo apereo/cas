@@ -29,4 +29,12 @@ public class ServerProperties {
     public void setPrefix(final String prefix) {
         this.prefix = prefix;
     }
+    
+    public String getLoginUrl() {
+        return getPrefix().concat("/login");
+    }
+
+    public String getLogoutUrl() {
+        return getPrefix().concat("/logout");
+    }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 
@@ -55,9 +56,9 @@ public class StatisticsController implements ServletContextAware {
 
     private ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    @Value("${host.name:cas01.example.org}")
-    private String casTicketSuffix;
-
+    @Autowired
+    private HostProperties hostProperties;
+    
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -91,7 +92,7 @@ public class StatisticsController implements ServletContextAware {
         modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
         modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
+        modelAndView.addObject("casTicketSuffix", hostProperties.getName());
 
         int unexpiredTgts = 0;
         int unexpiredSts = 0;

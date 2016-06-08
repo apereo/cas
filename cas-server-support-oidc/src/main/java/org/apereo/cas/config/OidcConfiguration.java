@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
@@ -41,11 +42,14 @@ import java.util.Set;
  */
 @Configuration("oidcConfiguration")
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
-    
-    @Resource(name="oauthInterceptor")
+
+    @Resource
+    private OidcProperties properties;
+
+    @Resource(name = "oauthInterceptor")
     private HandlerInterceptor oauthInterceptor;
 
-    @Resource(name="oauthSecConfig")
+    @Resource(name = "oauthSecConfig")
     private Config oauthSecConfig;
 
     @Override
@@ -63,7 +67,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OidcConsentApprovalViewResolver();
     }
-    
+
     /**
      * Callback authorize view resolver.
      *
@@ -87,7 +91,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
             }
         };
     }
-    
+
     /**
      * Oidc interceptor handler interceptor.
      *
@@ -117,14 +121,14 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
         final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
         return new RequiresAuthenticationInterceptor(oauthSecConfig, name) {
-            
+
             @Override
             public boolean preHandle(final HttpServletRequest request,
                                      final HttpServletResponse response,
                                      final Object handler) throws Exception {
                 final J2EContext ctx = new J2EContext(request, response);
                 final ProfileManager manager = new ProfileManager(ctx);
-                
+
                 boolean clearCreds = false;
                 final Optional<UserProfile> auth = oidcAuthorizationRequestSupport().isAuthenticationProfileAvailable(ctx);
 
@@ -143,7 +147,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
                 if (clearCreds) {
                     clearCreds = !prompts.contains(OidcConstants.PROMPT_NONE);
                 }
-                
+
                 if (clearCreds) {
                     manager.remove(true);
                 }
@@ -151,7 +155,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
             }
         };
     }
-    
+
     @Bean
     public OAuthCasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
         return new OidcCasClientRedirectActionBuilder();
@@ -160,7 +164,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
-        return new OidcAccessTokenResponseGenerator();
+        final OidcAccessTokenResponseGenerator gen = new OidcAccessTokenResponseGenerator();
+
+        gen.setIssuer(properties.getIssuer());
+        gen.setJwksFile(properties.getJwksFile());
+        gen.setSkew(properties.getSkew());
+        
+        return gen;
     }
 
     @Bean

@@ -55,7 +55,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
             return;
         }
 
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.casServerPrefix);
+        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(serverProperties.getPrefix());
         validator.setRenew(authnRequest.isForceAuthn());
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url for validation: [{}]", serviceUrl);

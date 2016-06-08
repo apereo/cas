@@ -40,8 +40,7 @@ public class OidcJwksController {
      */
     @Autowired
     protected ResourceLoader resourceLoader;
-
-    @Value("${cas.oidc.jwks:}")
+    
     private Resource jwksFile;
 
     @javax.annotation.Resource(name="servicesManager")

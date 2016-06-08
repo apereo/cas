@@ -17,8 +17,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;

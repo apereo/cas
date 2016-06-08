@@ -26,15 +26,10 @@ public class LogoutManagerImpl implements LogoutManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
     
     /** Whether single sign out is disabled or not. */
-    @Value("${slo.callbacks.disabled:false}")
     private boolean singleLogoutCallbacksDisabled;
-
     
-    @Resource(name="logoutBuilder")
     private LogoutMessageCreator logoutMessageBuilder;
-
     
-    @Resource(name="defaultSingleLogoutServiceMessageHandler")
     private SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
     /**

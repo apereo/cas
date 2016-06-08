@@ -20,29 +20,15 @@ import java.net.URL;
  */
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceMessageHandler.class);
-
-    /** The services manager. */
     
-    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
-
-    /** An HTTP client. */
     
-    @Resource(name="noRedirectHttpClient")
     private HttpClient httpClient;
-
-    /**
-     * Whether messages to endpoints would be sent in an asynchronous fashion.
-     * True by default.
-     **/
-    @Value("${slo.callbacks.asynchronous:true}")
-    private boolean asynchronous = true;
-
     
-    @Resource(name="logoutBuilder")
+    private boolean asynchronous = true;
+    
     private LogoutMessageCreator logoutMessageBuilder;
-
-    @Resource(name="defaultSingleLogoutServiceLogoutUrlBuilder")
+    
     private SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     /**

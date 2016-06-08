@@ -39,14 +39,11 @@ import java.util.UUID;
  * @since 5.0.0
  */
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
-
-    @Value("${cas.oidc.issuer:http://localhost:8080/cas/oidc}")
+    
     private String issuer;
-
-    @Value("${cas.oidc.skew:5}")
+    
     private int skew;
 
-    @Value("${cas.oidc.jwks:}")
     private Resource jwksFile;
 
     @Override
@@ -180,6 +177,18 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
             }
         }
         return jsonWebKeySet != null ? Optional.of(jsonWebKeySet) : Optional.empty();
+    }
+
+    public void setIssuer(final String issuer) {
+        this.issuer = issuer;
+    }
+
+    public void setSkew(final int skew) {
+        this.skew = skew;
+    }
+
+    public void setJwksFile(final Resource jwksFile) {
+        this.jwksFile = jwksFile;
     }
 }
 

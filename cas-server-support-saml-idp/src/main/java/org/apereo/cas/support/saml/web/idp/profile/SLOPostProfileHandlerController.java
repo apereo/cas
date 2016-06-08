@@ -77,7 +77,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             this.samlObjectSigner.verifySamlProfileRequestIfNeeded(logoutRequest, resolver);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);
-        response.sendRedirect(this.casServerPrefix.concat("/logout"));
+        response.sendRedirect(serverProperties.getLogoutUrl());
     }
 
 }

@@ -5,6 +5,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import org.apereo.cas.configuration.model.support.saml.shibboleth.AttributeResolverProperties;
 import org.apereo.cas.persondir.support.ShibbolethPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -35,20 +36,20 @@ public class ShibbolethAttributeResolverConfiguration {
     
     @Autowired(required = false)
     private ApplicationContext applicationContext;
-
-    @Value("${shibboleth.attributeResolver.resources}")
-    private List<Resource> attributeResolverResources;
-
+    
     @Autowired(required = false)
     private PlaceholderConfigurerSupport placeholderConfigurerSupport = new PropertyPlaceholderConfigurer();
 
+    @Autowired
+    private AttributeResolverProperties properties;
+    
     @RefreshScope
     @Bean
     @Scope("singleton")
     AttributeResolver attributeResolver() {
         final ApplicationContext tempApplicationContext = SpringSupport.newContext(
                 "shibbolethAttributeResolverContext",
-                this.attributeResolverResources,
+                properties.getResources(),
                 Collections.singletonList(this.placeholderConfigurerSupport),
                 Collections.emptyList(),
                 Collections.emptyList(),

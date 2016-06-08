@@ -1,6 +1,7 @@
 package org.apereo.cas.support.rest;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.TestUtils;
@@ -54,9 +55,11 @@ public class RegisteredServiceResourceTests {
     public void checkRegisteredServiceNotAuthorized() throws Exception {
         configureCasMockToCreateValidTGT();
 
-
-        this.registeredServiceResource.setAttributeName("memberOf");
-        this.registeredServiceResource.setAttributeValue("staff");
+        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
+        props.setAttributeName("memberOf");
+        props.setAttributeValue("staff");
+        this.registeredServiceResource.setProperties(props);
+        
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-1")
             .param("serviceId", "serviceId")
             .param("name", "name")
@@ -72,8 +75,11 @@ public class RegisteredServiceResourceTests {
         configureCasMockToCreateValidTGT();
 
 
-        this.registeredServiceResource.setAttributeName("memberOf");
-        this.registeredServiceResource.setAttributeValue("cas");
+        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
+        props.setAttributeName("memberOf");
+        props.setAttributeValue("cas");
+        this.registeredServiceResource.setProperties(props);
+        
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-1")
             .param("serviceId", "serviceId")
             .param("name", "name")
@@ -87,8 +93,11 @@ public class RegisteredServiceResourceTests {
     @Test
     public void checkRegisteredServiceNoTgt() throws Exception {
 
-        this.registeredServiceResource.setAttributeName("memberOf");
-        this.registeredServiceResource.setAttributeValue("staff");
+        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
+        props.setAttributeName("memberOf");
+        props.setAttributeValue("staff");
+        this.registeredServiceResource.setProperties(props);
+        
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-1")
                     .param("serviceId", "serviceId")
                     .param("name", "name")
@@ -101,15 +110,21 @@ public class RegisteredServiceResourceTests {
 
     @Test
     public void checkRegisteredServiceNoAttributeValue() throws Exception {
-        this.registeredServiceResource.setAttributeName("Test");
-        this.registeredServiceResource.setAttributeValue("");
+        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
+        props.setAttributeName("Test");
+        props.setAttributeValue("");
+        this.registeredServiceResource.setProperties(props);
+        
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     public void checkRegisteredServiceNoAttributeName() throws Exception {
-        this.registeredServiceResource.setAttributeValue("Test");
+        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
+        props.setAttributeValue("Test");
+        this.registeredServiceResource.setProperties(props);
+        
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
             .andExpect(status().isBadRequest());
     }
