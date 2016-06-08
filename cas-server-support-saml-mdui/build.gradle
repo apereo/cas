@@ -2,6 +2,7 @@ description = 'Apereo CAS SAML Server MDUI Support'
 dependencies {
     compile libraries.quartz
     compile project(':cas-server-support-saml')
+    compile project(':cas-server-core-configuration')
     compile libraries.opensaml
     runtime libraries.hibernate
     testCompile libraries.log4j

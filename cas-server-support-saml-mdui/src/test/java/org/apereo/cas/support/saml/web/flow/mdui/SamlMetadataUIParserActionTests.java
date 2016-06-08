@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.flow.mdui;
 
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;

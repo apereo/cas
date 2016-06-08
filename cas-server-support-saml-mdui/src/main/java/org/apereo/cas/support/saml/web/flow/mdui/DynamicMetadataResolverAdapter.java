@@ -30,6 +30,9 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
         super(metadataResources);
     }
 
+    public DynamicMetadataResolverAdapter() {
+    }
+
     @Override
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
         buildMetadataResolverAggregate(entityId);

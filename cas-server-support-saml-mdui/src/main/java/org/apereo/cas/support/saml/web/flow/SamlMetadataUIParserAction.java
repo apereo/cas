@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.flow.mdui;
+package org.apereo.cas.support.saml.web.flow;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -6,6 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.web.flow.mdui.MetadataResolverAdapter;
+import org.apereo.cas.support.saml.web.flow.mdui.SimpleMetadataUIInfo;
 import org.apereo.cas.web.support.WebUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -84,7 +86,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         final String entityId = request.getParameter(this.entityIdParameterName);
         if (StringUtils.isBlank(entityId)) {

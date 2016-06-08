@@ -82,7 +82,7 @@
           class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
 
     <!-- Dynamic metadata retrieval -->
-    <bean id="samlDynamicMetadataUIParserAction" class="org.apereo.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+    <bean id="samlDynamicMetadataUIParserAction" class="org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction"
           c:entityIdParameterName="entityId"
           c:metadataAdapter-ref="dynamicMetadataResolverAdapter"/>
 
@@ -101,7 +101,7 @@
     </util:map>
 
 
-    <bean id="samlMetadataUIParserAction" class="org.apereo.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+    <bean id="samlMetadataUIParserAction" class="org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction"
           c:entityIdParameterName="entityId"
           c:metadataAdapter-ref="staticMetadataResolverAdapter"/>
 

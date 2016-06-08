@@ -38,7 +38,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Metadata resources along with filters to perform validation. */
-    
     protected Map<Resource, MetadataFilterChain> metadataResources;
 
     /** Whether the metadata resolver should require valid metadata. Default is true. */
@@ -46,7 +45,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
     /** The openSAML config bean. **/
     @Autowired
-    
     protected OpenSamlConfigBean configBean;
 
     private ChainingMetadataResolver metadataResolver;
@@ -188,5 +186,9 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         }
         resolvers.add(metadataProvider);
         return resolvers;
+    }
+
+    public void setMetadataResources(final Map<Resource, MetadataFilterChain> metadataResources) {
+        this.metadataResources = metadataResources;
     }
 }
