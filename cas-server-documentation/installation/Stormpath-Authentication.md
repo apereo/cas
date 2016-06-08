@@ -26,7 +26,7 @@ primaryAuthenticationHandler=stormpathAuthenticationHandler
 The following settings are applicable:
 
 ```properties
-cas.authn.stormpath.api.key=
-cas.authn.stormpath.app.id=
-cas.authn.stormpath.secret.key=
+# cas.authn.stormpath.apiKey=
+# cas.authn.stormpath.applicationId=
+# cas.authn.stormpath.secretkey=
 ```
