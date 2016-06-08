@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,31 +49,19 @@ public class WsFederationConfiguration implements Serializable {
          */
         BOTH
     }
-
     
-    @Value("${cas.wsfed.idp.idattribute:upn}")
     private String identityAttribute;
-
     
-    @Value("${cas.wsfed.idp.id:https://adfs.example.org/adfs/services/trust}")
     private String identityProviderIdentifier;
 
-    
-    @Value("${cas.wsfed.idp.url:https://adfs.example.org/adfs/ls/}")
     private String identityProviderUrl;
-
     
-    @Value("#{'${cas.wsfed.idp.signingcerts:classpath:adfs-signing.crt}'.split(',')}")
-    private List<Resource> signingCertificateResources;
-
+    private List<Resource> signingCertificateResources = new ArrayList<>();
     
-    @Value("${cas.wsfed.rp.id:urn:cas:localhost}")
     private String relyingPartyIdentifier;
-
-    @Value("${cas.wsfed.idp.tolerance:10000}")
+    
     private int tolerance;
-
-    @Value("${cas.wsfed.idp.attribute.resolver.type:WSFED}")
+    
     private WsFedPrincipalResolutionAttributesType attributesType;
 
     @Autowired(required=false)
@@ -232,6 +221,10 @@ public class WsFederationConfiguration implements Serializable {
 
     public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {
         this.attributesType = attributesType;
+    }
+    
+    public void setSigningCertificateResources(final List<Resource> signingCertificateResources) {
+        this.signingCertificateResources = signingCertificateResources;
     }
 
     /**

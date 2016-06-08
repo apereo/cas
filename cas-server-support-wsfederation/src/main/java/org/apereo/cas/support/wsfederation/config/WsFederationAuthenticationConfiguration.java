@@ -2,6 +2,7 @@ package org.apereo.cas.support.wsfederation.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.support.wsfederation.WsFedApplicationContextWrapper;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
@@ -9,9 +10,13 @@ import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFede
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.flow.WsFederationAction;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -22,15 +27,43 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("wsFederationConfiguration")
 public class WsFederationAuthenticationConfiguration {
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+    
+    @Autowired
+    private WsFederationProperties wsFederationProperties;
+
+    @Autowired
+    @Qualifier("adfsAuthNHandler")
+    private AuthenticationHandler adfsAuthNHandler;
+
+    @Autowired
+    @Qualifier("adfsPrincipalResolver")
+    private PrincipalResolver adfsPrincipalResolver;
+    
     @Bean
     public BaseApplicationContextWrapper wsFedApplicationContextWrapper() {
-        return new WsFedApplicationContextWrapper();
+        return new WsFedApplicationContextWrapper(this.adfsAuthNHandler, this.adfsPrincipalResolver, 
+                wsFederationProperties.isAttributeResolverEnabled());
     }
     
     @Bean
     @RefreshScope
     public WsFederationConfiguration wsFedConfig() {
-        return new WsFederationConfiguration();
+        final WsFederationConfiguration config = new WsFederationConfiguration();
+        
+        config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType
+                .valueOf(wsFederationProperties.getAttributesType()));
+        config.setIdentityAttribute(wsFederationProperties.getIdentityAttribute());
+        config.setIdentityProviderIdentifier(wsFederationProperties.getIdentityProviderIdentifier());
+        config.setIdentityProviderUrl(wsFederationProperties.getIdentityProviderUrl());
+        config.setTolerance(wsFederationProperties.getTolerance());
+        config.setRelyingPartyIdentifier(wsFederationProperties.getRelyingPartyIdentifier());
+        StringUtils.commaDelimitedListToSet(wsFederationProperties.getSigningCertificateResources())
+                   .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
+        
+        return config;
     }
     
     @Bean

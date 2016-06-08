@@ -4,7 +4,9 @@ title: CAS - ADFS Integration
 ---
 
 # Overview
-The integration between the CAS Server and ADFS delegates user authentication from CAS Server to ADFS, making CAS Server a WS-Federation client. 
+
+The integration between the CAS Server and ADFS delegates user authentication from CAS Server 
+to ADFS, making CAS Server a WS-Federation client. 
 Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -26,32 +28,34 @@ and made it available to CAS at a location that can be resolved at runtime.
 
 ```properties
 # The claim from ADFS that should be used as the user's identifier.
-# cas.wsfed.idp.idattribute=upn
+# cas.wsfed.identityAttribute=upn
 #
 # Federation Service identifier
-cas.wsfed.idp.id=
+# cas.wsfed.identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
 #
 # The ADFS login url.
-cas.wsfed.idp.url=
+# cas.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
 #
 # Identifies resource(s) that point to ADFS's signing certificates.
 # These are used verify the WS Federation token that is returned by ADFS.
 # Multiple certificates may be separated by comma.
-cas.wsfed.idp.signingcerts=classpath:adfs-signing.crt
+# cas.wsfed.signingCertificateResources=classpath:adfs-signing.crt
 #
 # Unique identifier that will be set in the ADFS configuration.
-# cas.wsfed.rp.id=urn:cas:localhost
+# cas.wsfed.relyingPartyIdentifier=urn:cas:localhost
 #
 # Slack dealing with time-drift between the ADFS Server and the CAS Server.
-# cas.wsfed.idp.tolerance=10000
-
-# cas.wsfed.idp.attribute.resolver.enabled=true
-# cas.wsfed.idp.attribute.resolver.type=WSFED
+# cas.wsfed.tolerance=10000
+#
+# Decides which bundle of attributes should be resolved during WS-FED authentication.
+# cas.wsfed.attributeResolverEnabled=true
+# cas.wsfed.attributesType=WSFED
 ```
 
 
 ### Modifying ADFS Claims
-The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but before they are inserted into the CAS user principal. For this to happen, you need
+The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but 
+before they are inserted into the CAS user principal. For this to happen, you need
 to put together an implementation of `WsFederationAttributeMutator` that changes and manipulates ADFS claims:
 
 ```java
