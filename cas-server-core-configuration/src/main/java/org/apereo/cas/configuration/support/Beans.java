@@ -16,9 +16,9 @@ import java.util.Properties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public final class BeansUtils {
+public class Beans {
 
-    private BeansUtils() {
+    protected Beans() {
     }
 
     /**

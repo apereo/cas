@@ -22,9 +22,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import static org.apereo.cas.configuration.support.BeansUtils.newEntityManagerFactoryBean;
-import static org.apereo.cas.configuration.support.BeansUtils.newHibernateJpaVendorAdapter;
-import static org.apereo.cas.configuration.support.BeansUtils.newHickariDataSource;
+import static org.apereo.cas.configuration.support.Beans.newEntityManagerFactoryBean;
+import static org.apereo.cas.configuration.support.Beans.newHibernateJpaVendorAdapter;
+import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
 
 /**
  * This this {@link JpaTicketRegistryConfiguration}.

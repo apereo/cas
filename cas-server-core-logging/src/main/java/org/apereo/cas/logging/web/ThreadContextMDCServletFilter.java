@@ -1,6 +1,10 @@
 package org.apereo.cas.logging.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.MDC;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,8 +19,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link ThreadContextMDCServletFilter}.
@@ -26,6 +32,15 @@ import java.util.TimeZone;
  */
 public class ThreadContextMDCServletFilter implements Filter {
     private FilterConfig filterConfig;
+
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private TicketRegistrySupport ticketRegistrySupport;
+    
+    public ThreadContextMDCServletFilter(final TicketRegistrySupport ticketRegistrySupport, 
+                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.ticketRegistrySupport = ticketRegistrySupport;
+    }
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -60,13 +75,19 @@ public class ThreadContextMDCServletFilter implements Filter {
             final Map<String, String[]> params = request.getParameterMap();
             params.keySet().forEach(k -> {
                 final String[] values = params.get(k);
-                MDC.put("requestParameter-" + k, Arrays.toString(values));
+                MDC.put(k, Arrays.toString(values));
             });
-
-            final RequestContext context = RequestContextHolder.getRequestContext();
-            if (context != null) {
-                final Authentication authN = WebUtils.getAuthentication(context);
-                MDC.put("principal", authN.getPrincipal().getId());
+            
+            Collections.list(request.getAttributeNames())
+                    .forEach(a -> MDC.put(a, request.getAttribute(a).toString()));
+            
+            final String cookieValue = 
+                this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+            if (StringUtils.isNotEmpty(cookieValue)) {
+                final Principal p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(cookieValue);
+                if (p != null) {
+                    MDC.put("principal", p.getId());
+                }
             }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {

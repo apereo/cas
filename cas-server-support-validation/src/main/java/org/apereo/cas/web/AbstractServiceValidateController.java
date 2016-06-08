@@ -249,7 +249,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @return the model and view
      */
-    protected ModelAndView handleTicketValidation(final HttpServletRequest request, final WebApplicationService service, 
+    protected ModelAndView handleTicketValidation(final HttpServletRequest request, 
+                                                  final WebApplicationService service, 
                                                   final String serviceTicketId) {
         TicketGrantingTicket proxyGrantingTicketId = null;
         final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);

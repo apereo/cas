@@ -341,8 +341,7 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-
-    compileJava.dependsOn(processResources)
+    
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
@@ -413,8 +412,6 @@ subprojects {
         compile libraries.inspektr
                 
         compileOnly libraries.javax
-        
-        optional libraries.springbootprocessor
         
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektraspects

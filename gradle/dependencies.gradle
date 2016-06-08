@@ -920,11 +920,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springbootprocessor  : [
-                dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
-                    
-                }
-        ],
         springcloud          : [
                 dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClientVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
