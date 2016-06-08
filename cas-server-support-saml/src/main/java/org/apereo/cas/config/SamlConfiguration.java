@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
+import org.apereo.cas.configuration.model.core.ServerProperties;
+import org.apereo.cas.configuration.model.support.saml.SamlResponseProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
@@ -13,12 +15,11 @@ import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
@@ -28,25 +29,20 @@ import javax.annotation.Resource;
  */
 @Configuration("samlConfiguration")
 public class SamlConfiguration {
-    
-    @Value("${cas.saml.response.issuer:localhost}")
-    private String issuer;
-    
-    @Value("${cas.saml.response.skewAllowance:0}")
-    private int skewAllowance;
 
-    @Value("${server.name}") 
-    private String serverName;
-    
-    @Resource(name="servicesManager")
+    @Autowired
+    private SamlResponseProperties samlResponseProperties;
+
+    @Autowired
+    private ServerProperties serverProperties;
+
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-
-    @Resource(name="casAttributeEncoder")
+    @Autowired
+    @Qualifier("casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
-
-    @Value("${cas.saml.attribute.namespace:http://www.ja-sig.org/products/cas/}")
-    private String defaultAttributeNamespace;
 
     /**
      * Cas saml service success view saml 10 success response view.
@@ -59,9 +55,9 @@ public class SamlConfiguration {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
-        view.setIssuer(this.issuer);
-        view.setSkewAllowance(this.skewAllowance);
-        view.setDefaultAttributeNamespace(this.defaultAttributeNamespace);
+        view.setIssuer(samlResponseProperties.getIssuer());
+        view.setSkewAllowance(samlResponseProperties.getSkewAllowance());
+        view.setDefaultAttributeNamespace(samlResponseProperties.getAttributeNamespace());
         return view;
     }
 
@@ -78,7 +74,7 @@ public class SamlConfiguration {
         view.setCasAttributeEncoder(this.casAttributeEncoder);
         return view;
     }
-    
+
     @Bean
     public BaseApplicationContextWrapper samlApplicationContextWrapper() {
         return new SamlApplicationContextWrapper();
@@ -101,7 +97,10 @@ public class SamlConfiguration {
 
     @Bean
     public SamlCompliantUniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
-        return new SamlCompliantUniqueTicketIdGenerator(this.serverName);
+        final SamlCompliantUniqueTicketIdGenerator gen =
+                new SamlCompliantUniqueTicketIdGenerator(serverProperties.getName());
+        gen.setSaml2compliant(samlResponseProperties.isTicketidSaml2());
+        return gen;
     }
-    
+
 }

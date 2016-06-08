@@ -134,7 +134,7 @@ SAML configuration in CAS is contained within the `application.properties` file.
 # cas.saml.response.skewAllowance=0
 # 
 # Indicates the default namespace used for SAML attributes
-# cas.saml.attribute.namespace=http://www.ja-sig.org/products/cas/
+# cas.saml.attributeNamespace=http://www.ja-sig.org/products/cas/
 ```
 
 You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:

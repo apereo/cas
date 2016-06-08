@@ -31,7 +31,6 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
     private byte[] sourceIdDigest;
 
     /** Flag to indicate SAML2 compliance. Default is SAML1.1. */
-    @Value("${cas.saml.ticketid.saml2:false}")
     private boolean saml2compliant;
 
     /** Random generator to construct the AssertionHandle. */
