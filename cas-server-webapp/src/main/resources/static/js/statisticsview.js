@@ -116,3 +116,106 @@ function upTime(countTo, el) {
 
     }
 }
+
+var analytics = document.getElementById('expiredSts');
+
+
+// (function poll(){
+//     $.ajax({ url: "server", success: function(data){
+//         analytics.innerHTML = data;
+//     }, dataType: "json", complete: poll, timeout: 30000 });
+// })();
+
+
+var casStatistics = (function () {
+    var urls = {
+        availability: '/cas/status/stats/getAvailability',
+        memory: '/cas/status/stats/getMemStats',
+        tickets: '/cas/status/stats/getTicketStats'
+    };
+
+    var timers = {
+        memory: 15000,
+        availability: 30000,
+        tickets: 15000
+    };
+
+    var memoryGauage;
+
+    var getRemoteJSON = function(url) {
+        return $.getJSON( url);
+    };
+
+    var tickets = function() {
+        var data = getRemoteJSON(urls.tickets);
+        data.done(function( data ) {
+            updateElementValue( 'unexpiredTgts', data.unexpiredTgts );
+            updateElementValue( 'unexpiredSts', data.unexpiredSts );
+            updateElementValue( 'expiredTgts', data.expiredTgts );
+            updateElementValue( 'expiredSts', data.expiredSts );
+            setTimeout( tickets, timers.tickets );
+        });
+    };
+
+    var updateElementValue = function(el, val) {
+        $( '#' + el ).text( val );
+    };
+
+    var memory = function() {
+        var data = getRemoteJSON(urls.memory);
+        data.done(function( data ) {
+            updateElementValue('freeMemory', data.freeMemory.toFixed(2));
+            updateElementValue('totalMemory', data.totalMemory);
+            updateElementValue('maxMemory', data.maxMemory);
+            updateElementValue('availableProcessors', data.availableProcessors);
+
+            var memCalc = (data.totalMemory / data.maxMemory).toFixed(2);
+
+            if ( !memoryGauage ) {
+                memoryGauage = new Gauge('#maxMemoryGauge', memCalc, {width: 200, height: 200,
+                    label: 'maxMemory',
+                    textClass: 'runtimeStatistics'});
+            } else {
+                memoryGauage.update( memCalc );
+            }
+
+            setTimeout( memory, timers.memory );
+        });
+
+    };
+    var availability = function() {
+        var data = getRemoteJSON(urls.availability);
+        data.done(function( data ) {
+            updateElementValue('upTime', data.upTime);
+            setTimeout( availability, timers.availability );
+        });
+    };
+
+    // initialization *******
+    ( function init () {
+        $('#loading, .statisticsView').toggle();
+        tickets();
+        memory();
+        availability();
+    })();
+
+    // Public Methods
+    return {
+        getTickets: function() {
+            return tickets();
+        },
+        getMemory: function() {
+            return memory();
+        },
+        getAvailability: function() {
+            return availability();
+        },
+        updateGauge: function(val){
+            if (memoryGauage) {
+                memoryGauage.update( val );
+            } else {
+                return 'unable to update';
+            }
+        }
+    };
+})();

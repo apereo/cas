@@ -10,32 +10,9 @@
 <body id="cas">
     <div layout:fragment="content">
             <script type="text/javascript" th:inline="javascript">
-
-
                 function jqueryReady() {
                     head.load(
-//                            "//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
-//                            "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
-                            "/cas/js/statisticsview.js",
-                            function() {
-                                /*<![CDATA[*/
-                                    var memoryAvail = /*[[(${totalMemory} - ${freeMemory}) / ${totalMemory}]]*/ ;
-
-                                    var memory = new Gauge('#memoryGauge', memoryAvail, {width: 200, height: 200,
-                                        label: /*[[#{cas.statistics.section.serverstatistics.freememorygauge.label}]]*/,
-                                        textClass: 'runtimeStatistics'});
-
-                                    var memoryMax = /*[[${totalMemory} / ${maxMemory}]]*/ ;
-                                    var maxMemory = new Gauge('#maxMemoryGauge', memoryMax, {width: 200, height: 200,
-                                        label: /*[[#{cas.statistics.section.serverstatistics.maxmemorygauge.label}]]*/,
-                                        textClass: 'runtimeStatistics'});
-
-                                    var server_uptime = upTime(/*[[${startTime}]]*/, 'uptime');
-
-                                    $('#loading, .statisticsView').toggle();
-                                /*]]>*/
-                            }
-
+                        "/cas/js/statisticsview.js"
                     );
                 };
 
@@ -55,7 +32,9 @@
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
                                             <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.unexpiredtgts.title}"></div>
-                                            <div class="huge" id="totalUsers" th:text="${unexpiredTgts}"></div>
+                                            <div class="huge" id="unexpiredTgts">
+                                                --
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -67,7 +46,9 @@
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
                                             <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.unexpiredsts.title}" />
-                                            <div class="huge" id="totalUsageSessions" th:text="${unexpiredSts}"/>
+                                            <div class="huge" id="unexpiredSts">
+                                                --
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -79,7 +60,9 @@
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
                                             <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.expiredtgts.title}" />
-                                            <div class="huge" th:text="${expiredTgts}"></div>
+                                            <div class="huge" id="expiredTgts">
+                                                --
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +74,9 @@
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
                                             <div class="semi-huge" th:text="#{cas.statistics.section.ticket.panel.expiredsts.title}" />
-                                            <div class="huge">0</div>
+                                            <div class="huge" id="expiredSts">
+                                                --
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -163,26 +148,26 @@
                                     </tr>
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.uptime.label}" />
-                                        <td th:text="${upTime}" />
+                                        <td id="upTime" th:text="${upTime}" />
                                     </tr>
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.memory.label}" />
-                                        <td><span th:text="${freeMemory}" /> MB 
+                                        <td><span id="freeMemory" th:text="${freeMemory}" /> MB
                                             <span th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.free}" />
                                             <br/>
-                                            <span th:text="${totalMemory}" /> MB
+                                            <span id="totalMemory" th:text="${totalMemory}" /> MB
                                             <span th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.total}" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.maxmemory.label}" />
                                         <td>
-                                            <span th:text="${maxMemory}" /> MB
+                                            <span id="maxMemory" th:text="${maxMemory}" /> MB
                                         </td>
                                     </tr>
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.availprocessors.label}" />
-                                        <td th:text="${availableProcessors}" />
+                                        <td id="availableProcessors" th:text="${availableProcessors}" />
                                     </tr>
                                     </tbody>
                                 </table>
