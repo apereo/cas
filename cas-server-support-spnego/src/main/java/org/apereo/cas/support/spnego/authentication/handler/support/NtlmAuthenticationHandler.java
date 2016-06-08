@@ -118,9 +118,8 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     public boolean supports(final Credential credential) {
         return credential instanceof SpnegoCredential;
     }
-
-    @Autowired
-    public void setLoadBalance(@Value("${ntlm.authn.load.balance:true}") final boolean loadBalance) {
+    
+    public void setLoadBalance(final boolean loadBalance) {
         this.loadBalance = loadBalance;
     }
 
@@ -129,18 +128,15 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
      *
      * @param domainController the domain controller
      */
-    @Autowired
-    public void setDomainController(@Value("${ntlm.authn.domain.controller:}") 
-                                    final String domainController) {
+    public void setDomainController(final String domainController) {
         if (StringUtils.isBlank(domainController)) {
             this.domainController = DEFAULT_DOMAIN_CONTROLLER;
         } else {
             this.domainController = domainController;
         }
     }
-
-    @Autowired
-    public void setIncludePattern(@Value("${ntlm.authn.include.pattern:}") final String includePattern) {
+    
+    public void setIncludePattern(final String includePattern) {
         this.includePattern = includePattern;
     }
 

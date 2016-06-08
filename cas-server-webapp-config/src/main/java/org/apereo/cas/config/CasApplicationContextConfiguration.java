@@ -65,18 +65,6 @@ public class CasApplicationContextConfiguration {
     private ArgumentExtractor defaultArgumentExtractor;
     
     /**
-     * The Wait for jobs to complete on shutdown.
-     */
-    @Value("${scheduler.shutdown.wait:true}")
-    private boolean waitForJobsToCompleteOnShutdown;
-
-    /**
-     * The Interrupt jobs.
-     */
-    @Value("${scheduler.shutdown.interruptJobs:true}")
-    private boolean interruptJobs;
-
-    /**
      * Advisor auto proxy creator default advisor auto proxy creator.
      *
      * @return the default advisor auto proxy creator
