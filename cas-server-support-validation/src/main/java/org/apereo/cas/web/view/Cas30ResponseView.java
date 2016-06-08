@@ -30,9 +30,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
     @Value("${cas.attrs.protocol.release:true}")
     private boolean releaseProtocolAttributes = true;
-
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    
     private String authenticationContextAttribute;
 
     /**
@@ -131,6 +129,14 @@ public class Cas30ResponseView extends Cas20ResponseView {
         super.putIntoModel(model,
                 CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES,
                 formattedAttributes);
+    }
+
+    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
+    }
+
+    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
     }
 
     /**

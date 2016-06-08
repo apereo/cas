@@ -6,9 +6,6 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link DuoAuthenticationMetaDataPopulator} which inserts the
@@ -19,14 +16,10 @@ import javax.annotation.Resource;
  */
 public class DuoAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
-
-    @Resource(name="duoAuthenticationHandler")
+    
     private AuthenticationHandler authenticationHandler;
-
-
-    @Resource(name="duoAuthenticationProvider")
+    
     private MultifactorAuthenticationProvider provider;
 
     @Override
@@ -40,5 +33,18 @@ public class DuoAuthenticationMetaDataPopulator implements AuthenticationMetaDat
     @Override
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);
+    }
+
+
+    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
+    }
+
+    public void setAuthenticationHandler(final AuthenticationHandler authenticationHandler) {
+        this.authenticationHandler = authenticationHandler;
+    }
+
+    public void setProvider(final MultifactorAuthenticationProvider provider) {
+        this.provider = provider;
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyApplicationContextWrapper;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationMetaDataPopulator;
@@ -38,22 +39,27 @@ public class YubiKeyConfiguration {
 
     @Autowired
     private MfaProperties mfaProperties;
-    
+
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("builder")
     private FlowBuilderServices builder;
+
+    @Autowired(required = false)
+    @Qualifier("yubiKeyAccountRegistry")
+    private YubiKeyAccountRegistry registry;
     
     @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
+        final FlowDefinitionRegistryBuilder builder = 
+                new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
     }
-    
+
     @Bean
     public BaseApplicationContextWrapper yubiKeyApplicationContextWrapper() {
         return new YubiKeyApplicationContextWrapper();
@@ -62,21 +68,36 @@ public class YubiKeyConfiguration {
     @Bean
     @RefreshScope
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
-        return new YubiKeyAuthenticationHandler(
+
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(
                 this.mfaProperties.getYubikey().getClientId(),
                 this.mfaProperties.getYubikey().getSecretKey());
-    }
 
-    @Bean
-    @RefreshScope
-    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
-        return new YubiKeyAuthenticationMetaDataPopulator();
+        if (registry != null) {
+            handler.setRegistry(this.registry);
+        }
+        return handler;
     }
 
     @Autowired
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider(@Qualifier("noRedirectHttpClient") final HttpClient httpClient) {
+    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator(@Qualifier("noRedirectHttpClient")
+                                                                                  final HttpClient httpClient) {
+        final YubiKeyAuthenticationMetaDataPopulator pop = 
+                new YubiKeyAuthenticationMetaDataPopulator();
+        
+        pop.setAuthenticationContextAttribute(mfaProperties.getAuthenticationContextAttribute());
+        pop.setAuthenticationHandler(yubikeyAuthenticationHandler());
+        pop.setProvider(yubikeyAuthenticationProvider(httpClient));
+        return pop;
+    }
+
+    @Autowired
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider(@Qualifier("noRedirectHttpClient") 
+                                                                           final HttpClient httpClient) {
         return new YubiKeyMultifactorAuthenticationProvider(
                 yubikeyAuthenticationHandler(),
                 this.mfaProperties.getYubikey().getRank(),

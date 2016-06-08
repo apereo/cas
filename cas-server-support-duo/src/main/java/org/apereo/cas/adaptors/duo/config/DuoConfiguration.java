@@ -10,11 +10,14 @@ import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolve
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,11 +39,18 @@ import javax.annotation.Resource;
 public class DuoConfiguration {
 
     @Autowired
+    private MfaProperties mfaProperties;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
-    @Resource(name="builder")
+    @Resource(name = "builder")
     private FlowBuilderServices builder;
-    
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
     @Bean
     public FlowDefinitionRegistry duoFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
@@ -48,21 +58,27 @@ public class DuoConfiguration {
         builder.addFlowLocationPattern("/mfa-duo/*-webflow.xml");
         return builder.build();
     }
-    
+
     @Bean
     public BaseApplicationContextWrapper duoApplicationContextWrapper() {
         return new DuoApplicationContextWrapper();
     }
-    
+
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
         return new DuoAuthenticationHandler();
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
-        return new DuoAuthenticationMetaDataPopulator();
+        final DuoAuthenticationMetaDataPopulator pop = new DuoAuthenticationMetaDataPopulator();
+
+        pop.setAuthenticationContextAttribute(mfaProperties.getAuthenticationContextAttribute());
+        pop.setAuthenticationHandler(duoAuthenticationHandler());
+        pop.setProvider(duoAuthenticationProvider());
+        
+        return pop;
     }
 
     @Bean
@@ -91,5 +107,5 @@ public class DuoConfiguration {
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         return new DuoMultifactorWebflowConfigurer();
     }
-    
+
 }

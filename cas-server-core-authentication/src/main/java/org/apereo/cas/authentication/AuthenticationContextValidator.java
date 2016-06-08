@@ -10,11 +10,9 @@ import org.apereo.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -30,15 +28,11 @@ import java.util.Optional;
 public class AuthenticationContextValidator {
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    
     private String authenticationContextAttribute;
-
-    @Resource(name = "servicesManager")
+    
     private ServicesManager servicesManager;
-
-
-    @Value("${cas.mfa.failure.mode:CLOSED}")
+    
     private String globalFailureMode;
 
     @Autowired
@@ -186,4 +180,11 @@ public class AuthenticationContextValidator {
         return policy.getFailureMode();
     }
 
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setGlobalFailureMode(final String globalFailureMode) {
+        this.globalFailureMode = globalFailureMode;
+    }
 }

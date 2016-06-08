@@ -10,7 +10,6 @@ import org.apereo.cas.persondir.support.ShibbolethPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -19,10 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.Resource;
 
 import java.util.Collections;
-import java.util.List;
 
 /**
  * The {@link ShibbolethAttributeResolverConfiguration}.

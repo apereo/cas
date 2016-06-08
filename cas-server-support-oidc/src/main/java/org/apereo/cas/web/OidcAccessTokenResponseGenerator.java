@@ -24,7 +24,6 @@ import org.jose4j.lang.JoseException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
 import javax.servlet.http.HttpServletRequest;

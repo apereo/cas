@@ -10,8 +10,6 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -99,10 +97,8 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
     }
-
-    @Autowired(required=false)
-    public void setRegistry(@Qualifier("yubiKeyAccountRegistry")
-                                final YubiKeyAccountRegistry registry) {
+    
+    public void setRegistry(final YubiKeyAccountRegistry registry) {
         this.registry = registry;
     }
 

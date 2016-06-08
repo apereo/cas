@@ -11,7 +11,28 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "cas.mfa", ignoreUnknownFields = false)
 public class MfaProperties {
 
+    private String authenticationContextAttribute = "authnContextClass";
+    private String globalFailureMode = "CLOSED";
+
     private Yubikey yubikey = new Yubikey();
+
+    
+    public String getGlobalFailureMode() {
+        return globalFailureMode;
+    }
+
+    public void setGlobalFailureMode(final String globalFailureMode) {
+        this.globalFailureMode = globalFailureMode;
+    }
+
+    public String getAuthenticationContextAttribute() {
+        return authenticationContextAttribute;
+    }
+
+    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
+    }
+
 
     public Yubikey getYubikey() {
         return yubikey;

@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -29,41 +29,11 @@ public class CasProtocolViewsConfiguration {
     @Autowired
     private SpringTemplateEngine springTemplateEngine;
 
-    @Value("${view.cas2.success:protocol/2.0/casServiceValidationSuccess}")
-    private String cas2SuccessView;
-
     @Autowired
     private ThymeleafProperties properties;
 
-    /**
-     * The Cas 2 failure view.
-     */
-    @Value("${view.cas2.failure:protocol/2.0/casServiceValidationFailure}")
-    private String cas2FailureView;
-
-    /**
-     * The Cas 2 proxy success view.
-     */
-    @Value("${view.cas2.proxy.success:protocol/2.0/casProxySuccessView}")
-    private String cas2ProxySuccessView;
-
-    /**
-     * The Cas 2 proxy failure view.
-     */
-    @Value("${view.cas2.proxy.failure:protocol/2.0/casProxyFailureView}")
-    private String cas2ProxyFailureView;
-
-    /**
-     * The Cas 3 success view.
-     */
-    @Value("${view.cas3.success:protocol/3.0/casServiceValidationSuccess}")
-    private String cas3SuccessView;
-
-    /**
-     * The Cas 3 failure view.
-     */
-    @Value("${view.cas3.failure:protocol/3.0/casServiceValidationFailure}")
-    private String cas3FailureView;
+    @Autowired
+    private ViewProperties viewProperties;
 
     /**
      * Cas 2  success view.
@@ -73,7 +43,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2SuccessView() {
-        return new CasProtocolView(this.cas2SuccessView, 
+        return new CasProtocolView(viewProperties.getCas2().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -85,7 +55,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ServiceFailureView() {
-        return new CasProtocolView(this.cas2FailureView, 
+        return new CasProtocolView(viewProperties.getCas2().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -97,7 +67,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ProxyFailureView() {
-        return new CasProtocolView(this.cas2ProxyFailureView, 
+        return new CasProtocolView(viewProperties.getCas2().getProxy().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -109,7 +79,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ProxySuccessView() {
-        return new CasProtocolView(this.cas2ProxySuccessView, 
+        return new CasProtocolView(viewProperties.getCas2().getProxy().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -121,7 +91,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas3SuccessView() {
-        return new CasProtocolView(this.cas3SuccessView, 
+        return new CasProtocolView(viewProperties.getCas3().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -133,7 +103,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas3ServiceFailureView() {
-        return new CasProtocolView(this.cas3FailureView, 
+        return new CasProtocolView(viewProperties.getCas3().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -145,7 +115,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View oauthConfirmView() {
-        return new CasProtocolView("protocol/oauth/confirm", 
+        return new CasProtocolView("protocol/oauth/confirm",
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -158,7 +128,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View casOpenIdServiceFailureView() {
-        return new CasProtocolView("protocol/openid/casOpenIdServiceFailureView", 
+        return new CasProtocolView("protocol/openid/casOpenIdServiceFailureView",
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -170,7 +140,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View casOpenIdServiceSuccessView() {
-        return new CasProtocolView("protocol/openid/casOpenIdServiceSuccessView", 
+        return new CasProtocolView("protocol/openid/casOpenIdServiceSuccessView",
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -182,7 +152,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View casOpenIdAssociationFailureView() {
-        return new CasProtocolView("protocol/openid/casOpenIdAssociationFailureView", 
+        return new CasProtocolView("protocol/openid/casOpenIdAssociationFailureView",
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -194,7 +164,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View casOpenIdAssociationSuccessView() {
-        return new CasProtocolView("protocol/openid/casOpenIdAssociationSuccessView", 
+        return new CasProtocolView("protocol/openid/casOpenIdAssociationSuccessView",
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -209,7 +179,7 @@ public class CasProtocolViewsConfiguration {
         return new CasProtocolView("protocol/openid/user", this.applicationContext, this.springTemplateEngine,
                 this.properties);
     }
-    
+
 
     private static class CasProtocolView extends ThymeleafView {
         /**

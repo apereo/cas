@@ -45,6 +45,8 @@ import org.apereo.cas.configuration.model.core.authentication.AuthenticationPoli
 import org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +71,10 @@ import org.springframework.context.annotation.Configuration;
                 AuthenticationPolicyProperties.class})
 public class CasCoreAuthenticationConfiguration {
 
+
+    @Autowired
+    private MfaProperties mfaProperties;
+    
     @Autowired
     private HttpClientTrustStoreProperties trustStoreProperties;
 
@@ -81,6 +87,10 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     private AuthenticationPolicyProperties authenticationPolicyProperties;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
         return new AuthenticationExceptionHandler();
@@ -120,7 +130,11 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
-        return new AuthenticationContextValidator();
+        final AuthenticationContextValidator val = new AuthenticationContextValidator();
+        val.setAuthenticationContextAttribute(mfaProperties.getAuthenticationContextAttribute());
+        val.setServicesManager(this.servicesManager);
+        val.setGlobalFailureMode(mfaProperties.getGlobalFailureMode());
+        return val;
     }
 
     @Bean

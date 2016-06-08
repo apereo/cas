@@ -1,10 +1,12 @@
 package org.apereo.cas.web.config;
 
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.web.view.Cas10ResponseView;
 import org.apereo.cas.web.view.Cas20ResponseView;
 import org.apereo.cas.web.view.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
@@ -25,6 +27,9 @@ public class CasValidationConfiguration {
     @Resource(name="defaultValidationServiceSelectionStrategy")
     private ValidationServiceSelectionStrategy defaultStrategy;
 
+    @Autowired
+    private MfaProperties properties;
+    
     /**
      * Validation service selection strategies list.
      *
@@ -59,6 +64,8 @@ public class CasValidationConfiguration {
     
     @Bean
     public View cas3ServiceSuccessView() {
-        return new Cas30ResponseView.Success();
+        final Cas30ResponseView.Success s = new Cas30ResponseView.Success();
+        s.setAuthenticationContextAttribute(properties.getAuthenticationContextAttribute());
+        return s;
     }
 }
