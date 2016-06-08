@@ -227,6 +227,7 @@ buildscript {
         jcenter()
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "http://repo.spring.io/plugins-release" }
     }
 
     dependencies {
@@ -234,6 +235,7 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:0.27.0"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
+        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
     }
 }
 
@@ -244,7 +246,8 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-    gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
+    
+    gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
 
     signing {
         required = (publishReleases && sonatypeUsername != null && sonatypePassword != null)
@@ -256,18 +259,22 @@ subprojects {
     task allDepInsight(type: DependencyInsightReportTask) << {}
     task allDeps(type: DependencyReportTask) {}
 
-    apply plugin: 'java'
-    apply plugin: 'checkstyle'
-    apply plugin: 'findbugs'
-    apply plugin: 'aspectj'
-    apply plugin: 'project-report'
+    apply plugin: "java"
+    apply plugin: "checkstyle"
+    apply plugin: "findbugs"
+    apply plugin: "aspectj"
+    apply plugin: "project-report"
+    apply plugin: "propdeps"
+    apply plugin: "propdeps-maven"
+    apply plugin: "propdeps-idea"
+    apply plugin: "propdeps-eclipse"
     
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;
 
     /*
-    Don't publish test dependencies into the final POM.
+        Don't publish test dependencies into the final POM.
     */
     conf2ScopeMappings.mappings.remove(configurations.findByName("testCompile"))
     conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntime"))
@@ -291,18 +298,17 @@ subprojects {
         enabled = !Boolean.getBoolean("skipTests")
         maxParallelForks = 1
         useJUnit()
-        scanForTestClasses false
+        scanForTestClasses = false
 
-        ignoreFailures Boolean.getBoolean("ignoreTestFailures")
-        include '**/*Tests.*'
-        exclude '**/*Abstract*.*'
+        ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
+        include "**/*Tests.*"
+        exclude "**/*Abstract*.*"
         classpath = it.classpath + files("${projectDir}/src/main/resources") +
                 files("${projectDir}/src/test/resources")
         testLogging {
             events "failed", "standardError"
             exceptionFormat "full"
         }
-
     }
 
     configurations {
@@ -335,7 +341,8 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-    
+
+    compileJava.dependsOn(processResources)
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
@@ -354,7 +361,6 @@ subprojects {
                        "Implementation-Version": project.version)
         }
     }
-
 
     checkstyle {
         configFile new File(rootDir, "checkstyle-rules.xml")
@@ -408,6 +414,8 @@ subprojects {
                 
         compileOnly libraries.javax
         
+        optional libraries.springbootprocessor
+        
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektraspects
             aspectpath libraries.inspektraspects
@@ -441,12 +449,12 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc) {
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
 
-task rootSourcesJar(type: Jar) {
+task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
     baseName = "${project.archivesBaseName}"
     from rootProject.file("src")
 }

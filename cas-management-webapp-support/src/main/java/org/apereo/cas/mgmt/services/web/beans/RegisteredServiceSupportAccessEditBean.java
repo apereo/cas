@@ -15,8 +15,18 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
 
     private static final long serialVersionUID = 2995938566845586064L;
 
+    /**
+     * The enum Types.
+     */
     public enum Types {
-        DEFAULT, TIME, GROUPER, REMOTE
+        /** Default type. */
+        DEFAULT,
+        /** Time based access. */
+        TIME,
+        /** Grouper-based access. */
+        GROUPER,
+        /** Remote endpoint access. */
+        REMOTE
     }
     
     private String startingTime;

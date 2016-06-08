@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.support.BeansUtils;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
-import static org.apereo.cas.configuration.support.BeansUtils.*;
 
 /**
  * This is {@link JpaEventsConfiguration}, defines certain beans via configuration
@@ -45,7 +44,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
-        return newHibernateJpaVendorAdapter(this.databaseProperties);
+        return BeansUtils.newHibernateJpaVendorAdapter(this.databaseProperties);
     }
 
 
@@ -57,7 +56,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceEvent() {
-        return newHickariDataSource(this.eventsProperties.getJpa().getDatabase());
+        return BeansUtils.newHickariDataSource(this.eventsProperties.getJpa().getDatabase());
     }
 
     /**
@@ -67,7 +66,7 @@ public class JpaEventsConfiguration {
      */
 
     public String[] jpaEventPackagesToScan() {
-        return new String[] {"org.apereo.cas.support.events.dao"};
+        return new String[]{"org.apereo.cas.support.events.dao"};
     }
 
     /**
@@ -79,7 +78,7 @@ public class JpaEventsConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                newEntityManagerFactoryBean(
+                BeansUtils.newEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaEventVendorAdapter(),
                                 "jpaEventRegistryContext",
@@ -96,7 +95,6 @@ public class JpaEventsConfiguration {
      * Transaction manager events jpa transaction manager.
      *
      * @param emf the emf
-     *
      * @return the jpa transaction manager
      */
     @Autowired

@@ -87,7 +87,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter("service", "test");
 
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), request,  response));
+                new MockServletContext(), request, response));
         final Credential c = org.apereo.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
@@ -194,7 +194,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
      * @param c the credential
      */
     private static void putCredentialInRequestScope(
-            final RequestContext context,  final Credential c) {
+            final RequestContext context, final Credential c) {
         context.getRequestScope().put("credential", c);
     }
 }

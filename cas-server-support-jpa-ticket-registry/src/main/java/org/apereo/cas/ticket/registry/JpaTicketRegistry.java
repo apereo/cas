@@ -191,7 +191,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      */
     public int deleteServiceTickets(final String ticketId) {
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
-                "select s from " + TABLE_SERVICE_TICKETS +  " s where s.id = :id", ServiceTicketImpl.class);
+                "select s from " + TABLE_SERVICE_TICKETS + " s where s.id = :id", ServiceTicketImpl.class);
         return deleteTicketsFromResultList(serviceTicketImpls);
     }
 
@@ -221,7 +221,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         int failureCount = 0;
 
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
-                "select s from " + TABLE_SERVICE_TICKETS 
+                "select s from " 
+                + TABLE_SERVICE_TICKETS
                 + " s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
         failureCount += deleteTicketsFromResultList(serviceTicketImpls);
 

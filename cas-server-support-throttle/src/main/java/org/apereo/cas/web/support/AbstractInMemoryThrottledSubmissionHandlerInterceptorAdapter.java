@@ -16,9 +16,6 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Implementation of a HandlerInterceptorAdapter that keeps track of a mapping
  * of IP Addresses to number of failures to authenticate.
- * <p>
- * Note, this class relies on an external method for decrementing the counts
- * (i.e. a Quartz Job) and runs independent of the threshold of the parent.
  *
  * @author Scott Battaglia
  * @since 3.0.0
@@ -69,7 +66,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext(); ) {
+        for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext();) {
             final Entry<String, ZonedDateTime> entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
                 logger.trace("Removing entry for key {}", entry.getKey());
