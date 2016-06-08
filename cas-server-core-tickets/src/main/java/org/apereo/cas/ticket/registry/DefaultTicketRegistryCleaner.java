@@ -78,7 +78,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                     .stream()
                     .filter(t -> t.isExpired())
                     .collect(Collectors.toSet());
-            LOGGER.info("{} expired tickets found.", ticketsToRemove.size());
+            LOGGER.debug("{} expired tickets found.", ticketsToRemove.size());
 
             for (final Ticket ticket : ticketsToRemove) {
                 if (ticket instanceof TicketGrantingTicket) {
