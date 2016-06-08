@@ -19,9 +19,12 @@ YAML and Properties syntax in any of the below strategies used.</p></div>
 
 ## Overview
 
-CAS allows you to externalize your configuration so you can work with the same CAS instance in different environments. You can use properties files, YAML files, environment variables and command-line arguments to externalize configuration.
+CAS allows you to externalize your configuration so you can work with the same CAS instance in 
+different environments. You can use properties files, YAML files, environment variables and 
+command-line arguments to externalize configuration.
 
-CAS uses a very particular order that is designed to allow sensible overriding of values, properties are considered in the following order:
+CAS uses a very particular order that is designed to allow sensible overriding of values, 
+properties are considered in the following order:
 
 1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
 2. Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable/system property)
@@ -35,6 +38,10 @@ CAS uses a very particular order that is designed to allow sensible overriding o
 
 All CAS settings can be overriden via the above outlined strategies.
 
+<div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage 
+the CAS configuration, you should configure access 
+to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+
 ## Embedded
 
 By default, all CAS settings and configuration is controlled via the `application.properties` file. This file
@@ -42,9 +49,12 @@ serves as a reference and a placeholder for all settings that are available to C
 
 ## Native
 
-CAS is also configured to load `*.properties` files from an external location that is `/etc/cas/config`. This location is constantly
-monitored by CAS to detect external changes. Note that this location simply needs to exist, and does not require any special permissions
-or structure. The names of the configuration files that go inside this directory also do not matter, and there can be many. 
+CAS is also configured to load `*.properties` files from an external location that is `/etc/cas/config`. 
+This location is constantly
+monitored by CAS to detect external changes. Note that this location simply needs to 
+exist, and does not require any special permissions
+or structure. The names of the configuration files that go inside this directory also do
+ not matter, and there can be many. 
 
 The configuration of this behavior is controlled via the `bootstrap.properties` file:
 
@@ -65,9 +75,12 @@ You could have just as well used a `cas.yml` file to host the changes.
 
 ## Default
 
-CAS is also able to handle git-based repositories that host CAS configuration. Such repositories can either be local to the CAS
-deployment, or they could be on the cloud in form of GitHub/Bitbucket. Access to cloud-based repositories can either be in form of a
-username/password, or via SSH so as long the appropriate keys are configured in the CAS deployment environment which is really no different
+CAS is also able to handle git-based repositories that host CAS configuration. 
+Such repositories can either be local to the CAS
+deployment, or they could be on the cloud in form of GitHub/Bitbucket. Access to 
+cloud-based repositories can either be in form of a
+username/password, or via SSH so as long the appropriate keys are configured in the 
+CAS deployment environment which is really no different
 than how one would normally access a git repository via SSH. 
 
 ```properties
@@ -89,13 +102,18 @@ as a default.</p></div>
 ## Reloading Changes
 
 CAS contains an embedded configuration server that is able to consume properties and settings
-via the above strategies. The server is constantly monitoring changes automatically, but has no way to broadcast those changes
-to the rest of the CAS application, which would act as a client of the configuration server expecting change notifications
+via the above strategies. The server is constantly monitoring changes automatically, 
+but has no way to broadcast those changes
+to the rest of the CAS application, which would act as a client of the configuration 
+server expecting change notifications
 to quietly reload its configuration. 
 
-Therefor, in order to broadcast such `change` events CAS presents [various endpoints](Monitoring-Statistics.html) that allow the adopter
-to **refresh** the configuration as needed. This means that an adopter would simply change a required CAS settings and then would submit
-a request to CAS to refresh its current state. All CAS internal components that are affected by the external change are quietly reloaded
+Therefor, in order to broadcast such `change` events CAS 
+presents [various endpoints](Monitoring-Statistics.html) that allow the adopter
+to **refresh** the configuration as needed. This means that an adopter would simply 
+change a required CAS settings and then would submit
+a request to CAS to refresh its current state. All CAS internal components that are affected 
+by the external change are quietly reloaded
 and the setting takes immediate effect, completely removing the need for container restarts or CAS redeployments.
 
 <div class="alert alert-info"><strong>Do Not Discriminate!</strong><p>Most if not all CAS settings are eligible candidates
@@ -105,9 +123,14 @@ relevant settings is completely and utterly reloadable. </p></div>
 
 ## Clustered Deployments
 
-CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a distributed system with a lightweight message broker. This can then be used to broadcast state changes (e.g. configuration changes) or other management instructions.
+CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) 
+to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a 
+distributed system with a lightweight message broker. This can then be used to broadcast state 
+changes (e.g. configuration changes) or other management instructions.
 
-The bus supports sending messages to all nodes listening or all nodes for a particular service (as defined by Eureka). Broadcasted events will attempt to update, refreshh and reload each application’s configuration.
+The bus supports sending messages to all nodes listening or all nodes for a particular 
+service (as defined by Eureka). Broadcasted events will attempt to update, refreshh and 
+reload each application’s configuration.
 
 The following properties need to be adjusted, in order to turn on the bus configuration:
 
