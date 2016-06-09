@@ -36,9 +36,9 @@ primaryAuthenticationHandler=shiroAuthenticationHandler
 The following settings are applicable:
 
 ```properties
-# shiro.authn.requiredRoles=role1,role2
-# shiro.authn.requiredPermissions=perm1,perm2
-# shiro.authn.config.file=classpath:shiro.ini
+# shiro.authn.requiredRoles=
+# shiro.authn.requiredPermissions=
+# shiro.authn.config.location=classpath:shiro.ini
 ```
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:

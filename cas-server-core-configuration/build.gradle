@@ -3,5 +3,4 @@ dependencies {
     compile libraries.springboot
     compile libraries.spring
     compile libraries.hibernate
-    compile libraries.mongo
 }

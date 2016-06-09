@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -73,13 +72,13 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     @Override
     @Autowired
-    public void setFailureView(@Value("casOpenIdServiceFailureView") final String failureView) {
+    public void setFailureView(@Qualifier("casOpenIdServiceFailureView") final String failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Value("casOpenIdServiceSuccessView") final String successView) {
+    public void setSuccessView(@Qualifier("casOpenIdServiceSuccessView") final String successView) {
         super.setSuccessView(successView);
     }
 

@@ -10,10 +10,11 @@ import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.ssl.SslContextFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,13 +31,13 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * <a href="https://ignite.apache.org">Ignite</a> based distributed ticket registry.
  * </p>
- *
+ * <p>
  * <p>
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
  * </p>
  * <ul>
- *   <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
- *   <li>Monitoring : follow separately the number of TGT and ST.</li>
+ * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
+ * <li>Monitoring : follow separately the number of TGT and ST.</li>
  * </ul>
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
@@ -44,38 +45,14 @@ import static java.util.stream.Collectors.toList;
  */
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
-    @Value("${ignite.ticketsCache.name:TicketsCache}")
-    private String cacheName;
+    @Autowired
+    private IgniteProperties igniteProperties;
 
-    @Value("${ignite.keyStoreType:}")
-    private String keyStoreType;
-
-    @Value("${ignite.keyStoreFilePath:}")
-    private String keyStoreFilePath;
-
-    @Value("${ignite.keyStorePassword:}")
-    private String keyStorePassword;
-
-    @Value("${ignite.trustStoreType:}")
-    private String trustStoreType;
-
-    @Value("${ignite.protocol:}")
-    private String protocol;
-
-    @Value("${ignite.keyAlgorithm:}")
-    private String keyAlgorithm;
-
-    @Value("${ignite.trustStoreFilePath:}")
-    private String trustStoreFilePath;
-
-    @Value("${ignite.trustStorePassword:}")
-    private String trustStorePassword;
-
-    @Resource(name="igniteConfiguration")
+    @Resource(name = "igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
 
     private IgniteCache<String, Ticket> ticketIgniteCache;
-    
+
     private Ignite ignite;
 
     /**
@@ -146,14 +123,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         this.ticketIgniteCache = ticketIgniteCache;
     }
 
-    public void setIgniteConfiguration(final IgniteConfiguration igniteConfiguration){
+    public void setIgniteConfiguration(final IgniteConfiguration igniteConfiguration) {
         this.igniteConfiguration = igniteConfiguration;
     }
 
-    public IgniteConfiguration getIgniteConfiguration(){
+    public IgniteConfiguration getIgniteConfiguration() {
         return this.igniteConfiguration;
     }
-    
+
 
     @Override
     public void updateTicket(final Ticket ticket) {
@@ -168,7 +145,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     /**
      * Flag to indicate whether this registry instance should participate in reporting its state with
      * default value set to {@code true}.
-     *
+     * <p>
      * <p>Therefore, the flag provides a level of flexibility such that depending on the cache and environment
      * settings, reporting statistics
      * can be set to false and disabled.</p>
@@ -183,30 +160,30 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     private void configureSecureTransport() {
         final String nullKey = "NULL";
-        
-        if (StringUtils.isNotBlank(this.keyStoreFilePath) && StringUtils.isNotBlank(this.keyStorePassword)
-            && StringUtils.isNotBlank(this.trustStoreFilePath) && StringUtils.isNotBlank(this.trustStorePassword)) {
+
+        if (StringUtils.isNotBlank(igniteProperties.getKeyStoreFilePath()) && StringUtils.isNotBlank(igniteProperties.getKeyStorePassword())
+                && StringUtils.isNotBlank(igniteProperties.getTrustStoreFilePath()) && StringUtils.isNotBlank(igniteProperties.getTrustStorePassword())) {
             final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStoreFilePath(this.keyStoreFilePath);
-            sslContextFactory.setKeyStorePassword(this.keyStorePassword.toCharArray());
-            if (nullKey.equals(this.trustStoreFilePath) && nullKey.equals(this.trustStorePassword)){
+            sslContextFactory.setKeyStoreFilePath(igniteProperties.getKeyStoreFilePath());
+            sslContextFactory.setKeyStorePassword(igniteProperties.getKeyStorePassword().toCharArray());
+            if (nullKey.equals(igniteProperties.getTrustStoreFilePath()) && nullKey.equals(igniteProperties.getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
-                sslContextFactory.setTrustStoreFilePath(this.trustStoreFilePath);
-                sslContextFactory.setTrustStorePassword(this.trustStorePassword.toCharArray());
+                sslContextFactory.setTrustStoreFilePath(igniteProperties.getTrustStoreFilePath());
+                sslContextFactory.setTrustStorePassword(igniteProperties.getKeyStorePassword().toCharArray());
             }
 
-            if (StringUtils.isNotBlank(this.keyAlgorithm)){
-                sslContextFactory.setKeyAlgorithm(this.keyAlgorithm);
+            if (StringUtils.isNotBlank(igniteProperties.getKeyAlgorithm())) {
+                sslContextFactory.setKeyAlgorithm(igniteProperties.getKeyAlgorithm());
             }
-            if (StringUtils.isNotBlank(this.protocol)){
-                sslContextFactory.setProtocol(this.protocol);
+            if (StringUtils.isNotBlank(igniteProperties.getProtocol())) {
+                sslContextFactory.setProtocol(igniteProperties.getProtocol());
             }
-            if (StringUtils.isNotBlank(this.trustStoreType)){
-                sslContextFactory.setTrustStoreType(this.trustStoreType);
+            if (StringUtils.isNotBlank(igniteProperties.getTrustStoreType())) {
+                sslContextFactory.setTrustStoreType(igniteProperties.getTrustStoreType());
             }
-            if (StringUtils.isNotBlank(this.keyStoreType)){
-                sslContextFactory.setKeyStoreType(this.keyStoreType);
+            if (StringUtils.isNotBlank(igniteProperties.getKeyStoreType())) {
+                sslContextFactory.setKeyStoreType(igniteProperties.getKeyStoreType());
             }
             this.igniteConfiguration.setSslContextFactory(sslContextFactory);
         }
@@ -233,8 +210,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
             this.ignite = Ignition.ignite();
         }
 
-        this.ticketIgniteCache = this.ignite.getOrCreateCache(this.cacheName);
-        
+        this.ticketIgniteCache = this.ignite.getOrCreateCache(igniteProperties.getTicketsCache().getCacheName());
+
     }
 
     @Override
@@ -255,27 +232,11 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         Ignition.stopAll(true);
     }
 
-    public String getCacheName() {
-        return this.cacheName;
-    }
-
-    public void setCacheName(final String cacheName) {
-        this.cacheName = cacheName;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("cacheName", this.cacheName)
-                .append("keyStoreType", this.keyStoreType)
-                .append("keyStoreFilePath", this.keyStoreFilePath)
-                .append("keyStorePassword", this.keyStorePassword)
-                .append("trustStoreType", this.trustStoreType)
-                .append("protocol", this.protocol)
-                .append("keyAlgorithm", this.keyAlgorithm)
-                .append("trustStoreFilePath", this.trustStoreFilePath)
-                .append("trustStorePassword", this.trustStorePassword)
+                .append("igniteConfiguration", igniteProperties)
                 .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }

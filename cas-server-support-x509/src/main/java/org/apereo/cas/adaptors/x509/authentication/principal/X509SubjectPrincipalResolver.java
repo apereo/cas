@@ -14,8 +14,6 @@ import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDN;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 
 /**
@@ -78,8 +76,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      *          For a complete list of supported attributes, see
      *          {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
-    @Autowired
-    public void setDescriptor(@Value("${cas.x509.authn.principal.descriptor:}") final String s) {
+    public void setDescriptor(final String s) {
         this.descriptor = s;
     }
 

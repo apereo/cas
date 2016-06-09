@@ -3,6 +3,7 @@ package org.apereo.cas.mgmt.config;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
+import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
 import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFilterMapper;
@@ -38,12 +39,11 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.ModelAndView;
@@ -58,6 +58,7 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -78,29 +79,17 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
     private static final String AUDIT_ACTION_SUFFIX_SUCCESS = "_SUCCESS";
 
-    @Value("${user.details.file.location:classpath:user-details.properties}")
-    private Resource userPropertiesFile;
-
-    @Value("${cas-management.securityContext.serviceProperties.adminRoles}")
-    private String roles;
-
-    @Value("${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}")
-    private String loginUrl;
-
-    @Value("${cas-management.securityContext.serviceProperties.service}")
-    private String callbackUrl;
-
-    @javax.annotation.Resource(name="auditablePrincipalResolver")
+    @Resource(name = "auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
 
-    @javax.annotation.Resource(name = "auditResourceResolverMap")
+    @Resource(name = "auditResourceResolverMap")
     private Map auditResourceResolverMap;
 
-    @javax.annotation.Resource(name = "auditActionResolverMap")
+    @Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
-
-    @Value("${cas-management.viewResolver.basename:default_views}")
-    private String baseName;
+    
+    @Autowired
+    private ManagementWebappProperties properties;
 
     /**
      * A character encoding filter.
@@ -115,12 +104,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public RequireAnyRoleAuthorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(this.roles));
+        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(properties.getAdminRoles()));
     }
-    
+
     @Bean
     public CasClient casClient() {
-        final CasClient client = new CasClient(this.loginUrl);
+        final CasClient client = new CasClient(properties.getLoginUrl());
         client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }
@@ -132,7 +121,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean
     public Config config() {
-        final Config cfg = new Config(this.callbackUrl, casClient());
+        final Config cfg = new Config(properties.getDefaultServiceUrl(), casClient());
         cfg.setAuthorizer(requireAnyRoleAuthorizer());
         return cfg;
     }
@@ -154,7 +143,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
         };
     }
-    
+
     @Bean
     public SimpleUrlHandlerMapping handlerMappingC() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
@@ -167,7 +156,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         mapping.setMappings(properties);
         return mapping;
     }
-    
+
     @Bean
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
         final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(config(), "CasClient",
@@ -263,9 +252,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public Properties userProperties() {
         try {
-            final Properties properties = new Properties();
-            properties.load(this.userPropertiesFile.getInputStream());
-            return properties;
+            final Properties p = new Properties();
+            p.load(properties.getUserPropertiesFile().getInputStream());
+            return p;
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -355,33 +344,33 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public RegisteredServiceFactory registeredServiceFactory() {
         return new DefaultRegisteredServiceFactory();
     }
-    
-    
+
+
     @Bean
     public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
         return new DefaultAttributeReleasePolicyMapper();
     }
-    
+
     @Bean
     public FormDataPopulator attributeFormDataPopulator() {
         return new AttributeFormDataPopulator();
     }
-    
+
     @Bean
     public RegisteredServiceMapper defaultRegisteredServiceMapper() {
         return new DefaultRegisteredServiceMapper();
     }
-    
+
     @Bean
     public ProxyPolicyMapper defaultProxyPolicyMapper() {
         return new DefaultProxyPolicyMapper();
     }
-    
+
     @Bean
     public AttributeFilterMapper defaultAttributeFilterMapper() {
         return new DefaultAttributeFilterMapper();
     }
-    
+
     @Bean
     public PrincipalAttributesRepositoryMapper defaultPrincipalAttributesRepositoryMapper() {
         return new DefaultPrincipalAttributesRepositoryMapper();

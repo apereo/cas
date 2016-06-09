@@ -1,9 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,30 +18,9 @@ import org.springframework.util.StringUtils;
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
 public class CouchbaseServiceRegistryConfiguration {
-
-    /**
-     * The Node set.
-     */
-    @Value("${svcreg.couchbase.nodes:localhost:8091}")
-    private String nodeSet;
-
-    /**
-     * The Timeout.
-     */
-    @Value("${svcreg.couchbase.timeout:10}")
-    private int timeout;
-
-    /**
-     * The Password.
-     */
-    @Value("${svcreg.couchbase.password:}")
-    private String password;
-
-    /**
-     * The Bucket.
-     */
-    @Value("${svcreg.couchbase.bucket:default}")
-    private String bucket;
+    
+    @Autowired
+    private CouchbaseServiceRegistryProperties properties;
 
     /**
      * Service registry couchbase client factory couchbase client factory.
@@ -51,10 +31,10 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(this.nodeSet));
-        factory.setTimeout(this.timeout);
-        factory.setBucketName(this.bucket);
-        factory.setPassword(this.password);
+        factory.setNodes(StringUtils.commaDelimitedListToSet(properties.getNodeSet()));
+        factory.setTimeout(properties.getTimeout());
+        factory.setBucketName(properties.getBucket());
+        factory.setPassword(properties.getPassword());
         return factory;
     }
     

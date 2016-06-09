@@ -23,7 +23,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
 import java.time.ZonedDateTime;
@@ -51,14 +50,7 @@ public abstract class BaseOAuthWrapperController {
      */
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
-
-    /**
-     * The access token timeout.
-     */
-
-    @Value("${tgt.timeToKillInSeconds:7200}")
-    protected long timeout;
-
+    
     /**
      * The OAuth validator.
      */
@@ -149,15 +141,7 @@ public abstract class BaseOAuthWrapperController {
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
     }
-
-    public long getTimeout() {
-        return this.timeout;
-    }
-
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
-    }
-
+    
     public AccessTokenFactory getAccessTokenFactory() {
         return this.accessTokenFactory;
     }

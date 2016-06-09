@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
@@ -295,8 +294,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         return this.connectionTimeout;
     }
 
-    @Autowired
-    public void setConnectionTimeout(@Value("${http.client.connection.timeout:5000}")
+    
+    public void setConnectionTimeout( 
                                      final int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -305,8 +304,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         return this.readTimeout;
     }
 
-    @Autowired
-    public void setReadTimeout(@Value("${http.client.read.timeout:5000}")
+     
+    public void setReadTimeout( 
                                final int readTimeout) {
         this.readTimeout = readTimeout;
     }

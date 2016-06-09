@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.ticket.TicketState;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -24,7 +23,6 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -7636642464326939536L;
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.timeout.maxTimeToLiveInSeconds:28800}*1000}")
     private long timeToKillInMilliSeconds;
 
 

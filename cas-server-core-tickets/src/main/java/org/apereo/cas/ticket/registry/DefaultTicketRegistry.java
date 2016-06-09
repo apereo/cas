@@ -3,8 +3,6 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -45,12 +43,8 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
      *                         threads. The implementation performs internal sizing to try to
      *                         accommodate this many threads.
      */
-    @Autowired
-    public DefaultTicketRegistry(@Value("${default.ticket.registry.initialcapacity:1000}")
-                                 final int initialCapacity,
-                                 @Value("${default.ticket.registry.loadfactor:1}")
+    public DefaultTicketRegistry(final int initialCapacity,
                                  final float loadFactor,
-                                 @Value("${default.ticket.registry.concurrency:20}")
                                  final int concurrencyLevel) {
         this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }

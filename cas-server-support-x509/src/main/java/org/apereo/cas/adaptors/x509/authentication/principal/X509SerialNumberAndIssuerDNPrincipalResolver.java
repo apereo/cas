@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.security.cert.X509Certificate;
 
 /**
@@ -23,12 +20,16 @@ import java.security.cert.X509Certificate;
  */
 public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
-    /** Prefix for Certificate Serial Number. */
-    
+    /**
+     * Prefix for Certificate Serial Number.
+     */
+
     private String serialNumberPrefix = "SERIALNUMBER=";
 
-    /** Prefix for Value Delimiter. */
-    
+    /**
+     * Prefix for Value Delimiter.
+     */
+
     private String valueDelimiter = ", ";
 
     /**
@@ -36,9 +37,8 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
      *
      * @param serialNumberPrefix The serialNumberPrefix to set.
      */
-    @Autowired
-    public void setSerialNumberPrefix(@Value("${cas.x509.authn.principal.serial.no.prefix:SERIALNUMBER=}")
-                                          final String serialNumberPrefix) {
+    public void setSerialNumberPrefix(
+            final String serialNumberPrefix) {
         this.serialNumberPrefix = serialNumberPrefix;
     }
 
@@ -48,9 +48,8 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
      *
      * @param valueDelimiter The valueDelimiter to set.
      */
-    @Autowired
-    public void setValueDelimiter(@Value("${cas.x509.authn.principal.value.delim:, }")
-                                      final String valueDelimiter) {
+    public void setValueDelimiter(
+            final String valueDelimiter) {
         this.valueDelimiter = valueDelimiter;
     }
 

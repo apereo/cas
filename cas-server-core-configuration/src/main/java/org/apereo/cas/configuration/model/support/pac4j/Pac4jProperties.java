@@ -11,6 +11,36 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "cas.pac4j")
 public class Pac4jProperties {
 
+    private boolean typedIdUsed;
+
+    public boolean isTypedIdUsed() {
+        return typedIdUsed;
+    }
+
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.typedIdUsed = typedIdUsed;
+    }
+
+    public void setFacebook(final Facebook facebook) {
+        this.facebook = facebook;
+    }
+
+    public void setTwitter(final Twitter twitter) {
+        this.twitter = twitter;
+    }
+
+    public void setSaml(final Saml saml) {
+        this.saml = saml;
+    }
+
+    public void setOidc(final Oidc oidc) {
+        this.oidc = oidc;
+    }
+
+    public void setCas(final Cas cas) {
+        this.cas = cas;
+    }
+
     private Facebook facebook = new Facebook();
     private Twitter twitter = new Twitter();
     private Saml saml = new Saml();

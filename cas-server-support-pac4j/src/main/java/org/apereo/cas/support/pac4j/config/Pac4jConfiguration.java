@@ -2,8 +2,9 @@ package org.apereo.cas.support.pac4j.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.support.pac4j.Pac4jApplicationContextWrapper;
+import org.apereo.cas.configuration.model.core.ServerProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
+import org.apereo.cas.support.pac4j.Pac4jApplicationContextWrapper;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.ClientAction;
@@ -15,7 +16,6 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,31 +35,31 @@ import java.util.Map;
  */
 @Configuration("pac4jConfiguration")
 public class Pac4jConfiguration {
-    
-    @Value("${server.prefix:http://localhost:8080/cas}/login")
-    private String serverLoginUrl;
+
+    @Autowired
+    private ServerProperties serverProperties;
 
     @Autowired(required = false)
     private IndirectClient[] clients;
 
     @Autowired
     private Pac4jProperties pac4jProperties;
-    
+
     @Bean
     public Pac4jProperties pac4jProperties() {
         return new Pac4jProperties();
     }
-    
+
     @Bean
     public BaseApplicationContextWrapper pac4jApplicationContextWrapper() {
         return new Pac4jApplicationContextWrapper();
     }
-    
+
     @Bean
     public AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator() {
         return new ClientAuthenticationMetaDataPopulator();
     }
-    
+
     @Bean
     public AuthenticationHandler clientAuthenticationHandler() {
         return new ClientAuthenticationHandler();
@@ -134,6 +134,6 @@ public class Pac4jConfiguration {
         if (allClients.isEmpty()) {
             throw new IllegalArgumentException("At least one pac4j client must be defined");
         }
-        return new Clients(this.serverLoginUrl, allClients);
+        return new Clients(serverProperties.getLoginUrl(), allClients);
     }
 }

@@ -6,9 +6,6 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link GoogleAuthenticatorAuthenticationMetaDataPopulator} which inserts the
@@ -19,15 +16,17 @@ import javax.annotation.Resource;
  */
 public class GoogleAuthenticatorAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
-
-    @Resource(name="googleAuthenticatorAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
-
-
-    @Resource(name="googleAuthenticatorAuthenticationProvider")
     private MultifactorAuthenticationProvider provider;
+
+    public GoogleAuthenticatorAuthenticationMetaDataPopulator(final String authenticationContextAttribute, 
+                                                              final AuthenticationHandler authenticationHandler, 
+                                                              final MultifactorAuthenticationProvider provider) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
+        this.authenticationHandler = authenticationHandler;
+        this.provider = provider;
+    }
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {

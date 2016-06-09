@@ -1,10 +1,7 @@
 package org.apereo.cas.authentication;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -12,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -31,33 +26,10 @@ import java.util.regex.Pattern;
  * @since 3.0.0
  */
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-    /** The default separator in the file. */
-    private static final String DEFAULT_SEPARATOR = "::";
-    private static final Pattern USERS_PASSWORDS_SPLITTER_PATTERN = Pattern.compile(DEFAULT_SEPARATOR);
-
+    
     /** The list of users we will accept. */
     private Map<String, String> users;
-
-    @Value("${accept.authn.users:}")
-    private String acceptedUsers;
-
-    /**
-     * Initialize map of accepted users.
-     */
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isNotBlank(this.acceptedUsers) && this.users == null) {
-            final Set<String> usersPasswords = org.springframework.util.StringUtils.commaDelimitedListToSet(this.acceptedUsers);
-            final Map<String, String> parsedUsers = new HashMap<>();
-            usersPasswords.stream().forEach(usersPassword -> {
-                final String[] splitArray = USERS_PASSWORDS_SPLITTER_PATTERN.split(usersPassword);
-                parsedUsers.put(splitArray[0], splitArray[1]);
-            });
-            setUsers(parsedUsers);
-        }
-    }
-
+    
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {

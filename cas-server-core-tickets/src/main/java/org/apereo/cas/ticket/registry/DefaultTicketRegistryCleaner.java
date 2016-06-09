@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
-    @Value("${ticket.registry.cleaner.enabled:true}")
-    private boolean cleanerEnabled;
+    @Autowired
+    private TicketRegistryProperties ticketRegistryProperties;
     
     @Autowired
     @Qualifier("logoutManager")
@@ -53,7 +53,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             
-            if (!this.cleanerEnabled) {
+            if (!ticketRegistryProperties.getCleaner().isEnabled()) {
                 LOGGER.info("Ticket registry cleaner is disabled for {}. No cleaner processes will be scheduled.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;

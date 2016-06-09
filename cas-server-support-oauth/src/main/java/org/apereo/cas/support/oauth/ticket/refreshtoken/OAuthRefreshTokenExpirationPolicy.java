@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -20,7 +19,6 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
     private static final long serialVersionUID = -7144233906843566234L;
 
     /** The time to kill in milliseconds. */
-    @Value("#{${oauth.refresh.token.timeToKillInSeconds:2592000}*1000L}")
     private long timeToKillInMilliSeconds;
 
     /** No-arg constructor for serialization support. */

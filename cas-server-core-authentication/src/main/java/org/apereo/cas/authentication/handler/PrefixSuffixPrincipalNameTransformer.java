@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.handler;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 /**
  * Transform the user id by adding a prefix or suffix.
  *
@@ -13,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private String prefix;
-
     private String suffix;
 
     /**
@@ -24,17 +20,9 @@ public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransf
         this.suffix = null;
     }
 
-    /**
-     * Instantiates a new Prefix suffix principal name transformer.
-     *
-     * @param prefix the prefix
-     * @param suffix the suffix
-     */
-    @Autowired
-    public PrefixSuffixPrincipalNameTransformer(@Value("${cas.principal.transform.prefix:}") final String prefix,
-                                                @Value("${cas.principal.transform.suffix:}") final String suffix) {
-        setPrefix(prefix);
-        setSuffix(suffix);
+    public PrefixSuffixPrincipalNameTransformer(final String prefix, final String suffix) {
+        this.prefix = prefix;
+        this.suffix = suffix;
     }
 
     @Override

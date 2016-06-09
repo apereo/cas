@@ -1,6 +1,9 @@
 package org.apereo.cas.web.config;
 
+import org.apereo.cas.configuration.model.core.events.EventsProperties;
+import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.sso.SsoProperties;
+import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.AuthenticationViaFormAction;
@@ -17,12 +20,18 @@ import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.ServiceWarningAction;
 import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
+import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * This is {@link CasSupportActionsConfiguration}.
@@ -34,22 +43,46 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(SsoProperties.class)
 public class CasSupportActionsConfiguration {
 
+
+    @Resource(name = "servicesManager")
+    private ServicesManager servicesManager;
+
+    @Resource(name = "argumentExtractors")
+    private List<ArgumentExtractor> argumentExtractors;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieRetrievingCookieGenerator warnCookieGenerator;
+
+    @Autowired
+    private LogoutProperties logoutProperties;
+
     @Autowired
     private SsoProperties ssoProperties;
-    
+
+    @Autowired
+    private EventsProperties eventsProperties;
+
+    @Autowired
+    private GoogleAnalyticsProperties googleAnalyticsProperties;
+
+
     @Bean
     public HandlerExceptionResolver errorHandlerResolver() {
         return new FlowExecutionExceptionResolver();
     }
-    
+
     @Bean
     public Action authenticationViaFormAction() {
         return new AuthenticationViaFormAction();
     }
 
     @Bean
-    @Autowired
-    public Action serviceAuthorizationCheck(final ServicesManager servicesManager) {
+    public Action serviceAuthorizationCheck() {
         return new ServiceAuthorizationCheck(servicesManager);
     }
 
@@ -62,7 +95,11 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action logoutAction() {
-        return new LogoutAction();
+        final LogoutAction a = new LogoutAction();
+
+        a.setFollowServiceRedirects(logoutProperties.isFollowServiceRedirects());
+        a.setServicesManager(this.servicesManager);
+        return a;
     }
 
     @Bean
@@ -74,6 +111,12 @@ public class CasSupportActionsConfiguration {
     public Action initialFlowSetupAction() {
         final InitialFlowSetupAction bean = new InitialFlowSetupAction();
         bean.setEnableFlowOnAbsentServiceRequest(this.ssoProperties.isMissingService());
+        bean.setArgumentExtractors(this.argumentExtractors);
+        bean.setServicesManager(this.servicesManager);
+        bean.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
+        bean.setWarnCookieGenerator(this.warnCookieGenerator);
+        bean.setGoogleAnalyticsTrackingId(googleAnalyticsProperties.getGoogleAnalyticsTrackingId());
+        bean.setTrackGeoLocation(eventsProperties.isTrackGeolocation());
         return bean;
     }
 
@@ -101,7 +144,7 @@ public class CasSupportActionsConfiguration {
     public Action frontChannelLogoutAction() {
         return new FrontChannelLogoutAction();
     }
-    
+
     @Bean
     public Action ticketGrantingTicketCheckAction() {
         return new TicketGrantingTicketCheckAction();

@@ -21,6 +21,9 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipa
 import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.configuration.model.support.x509.X509Properties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +37,31 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("x509AuthenticationConfiguration")
 public class X509AuthenticationConfiguration {
-    
+
+    @Autowired(required = false)
+    @Qualifier("x509ResourceUnavailableRevocationPolicy")
+    private RevocationPolicy x509ResourceUnavailableRevocationPolicy;
+
+    @Autowired(required = false)
+    @Qualifier("x509ResourceExpiredRevocationPolicy")
+    private RevocationPolicy x509ResourceExpiredRevocationPolicy;
+
+
+    @Autowired(required = false)
+    @Qualifier("x509CrlUnavailableRevocationPolicy")
+    private RevocationPolicy x509CrlUnavailableRevocationPolicy;
+
+    @Autowired(required = false)
+    @Qualifier("x509CrlExpiredRevocationPolicy")
+    private RevocationPolicy x509CrlExpiredRevocationPolicy;
+
+    @Autowired(required = false)
+    @Qualifier("x509RevocationChecker")
+    private RevocationChecker revocationChecker;
+
+    @Autowired
+    private X509Properties properties;
+
     @Bean
     public RevocationPolicy allowRevocationPolicy() {
         return new AllowRevocationPolicy();
@@ -43,17 +70,24 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public RevocationPolicy thresholdExpiredCRLRevocationPolicy() {
-        return new ThresholdExpiredCRLRevocationPolicy();
+        final ThresholdExpiredCRLRevocationPolicy p = new ThresholdExpiredCRLRevocationPolicy();
+        p.setThreshold(properties.getRevocationPolicyThreshold());
+        return p;
     }
-    
+
     @Bean
     public RevocationPolicy denyRevocationPolicy() {
         return new DenyRevocationPolicy();
     }
-    
+
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
-        return new CRLDistributionPointRevocationChecker();
+        final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker();
+        c.setCheckAll(properties.isCheckAll());
+        c.setThrowOnFetchFailure(properties.isThrowOnFetchFailure());
+        c.setUnavailableCRLPolicy(x509CrlUnavailableRevocationPolicy);
+        c.setExpiredCRLPolicy(x509CrlExpiredRevocationPolicy);
+        return c;
     }
 
     @Bean
@@ -68,13 +102,29 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker resourceCrlRevocationChecker() {
-        return new ResourceCRLRevocationChecker();
+        final ResourceCRLRevocationChecker c = new ResourceCRLRevocationChecker();
+
+        c.setRefreshInterval(properties.getRefreshIntervalSeconds());
+        c.setCheckAll(properties.isCheckAll());
+        c.setExpiredCRLPolicy(this.x509ResourceExpiredRevocationPolicy);
+        c.setUnavailableCRLPolicy(this.x509ResourceUnavailableRevocationPolicy);
+        return c;
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
-        return new X509CredentialsAuthenticationHandler();
+        final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler();
+
+        h.setCheckKeyUsage(properties.isCheckKeyUsage());
+        h.setMaxPathLength(properties.getMaxPathLength());
+        h.setMaxPathLengthAllowUnspecified(properties.isMaxPathLengthAllowUnspecified());
+        h.setRequireKeyUsage(properties.isRequireKeyUsage());
+        h.setRevocationChecker(this.revocationChecker);
+        h.setSubjectDnPattern(properties.getRegExSubjectDnPattern());
+        h.setTrustedIssuerDnPattern(properties.getRegExTrustedIssuerDnPattern());
+
+        return h;
     }
 
     @Bean
@@ -95,7 +145,9 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
-        return new X509SubjectPrincipalResolver();
+        final X509SubjectPrincipalResolver p = new X509SubjectPrincipalResolver();
+        p.setDescriptor(properties.getPrincipalDescriptor());
+        return p;
     }
 
     @Bean
@@ -109,7 +161,7 @@ public class X509AuthenticationConfiguration {
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
         return new X509SubjectAlternativeNameUPNPrincipalResolver();
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
@@ -119,6 +171,12 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {
-        return new X509SerialNumberAndIssuerDNPrincipalResolver();
+        final X509SerialNumberAndIssuerDNPrincipalResolver r =
+                new X509SerialNumberAndIssuerDNPrincipalResolver();
+
+        r.setSerialNumberPrefix(properties.getSerialNumberPrefix());
+        r.setValueDelimiter(properties.getValueDelimiter());
+
+        return r;
     }
 }

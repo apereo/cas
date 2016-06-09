@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
@@ -126,9 +125,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         return createHandlerResult(credential, principal, null);
     }
-
-    @Autowired
-    public void setRealm(@Value("${cas.authn.jaas.realm:" + DEFAULT_REALM + '}') final String realm) {
+    
+    public void setRealm(final String realm) {
         this.realm = realm;
     }
 
@@ -148,9 +146,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      *      Oracle documentation</a>
      * @since 4.1.0
      */
-    @Autowired
-    public void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
-                                                         final String kerberosRealmSystemProperty) {
+    public void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
     }
 
@@ -171,8 +167,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @since 4.1.0
      */
     @Autowired
-    public void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
-                                                       final String kerberosKdcSystemProperty) {
+    public void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }
     

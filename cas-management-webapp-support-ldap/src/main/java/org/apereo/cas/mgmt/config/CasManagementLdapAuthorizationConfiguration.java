@@ -1,10 +1,11 @@
 package org.apereo.cas.mgmt.config;
 
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.pac4j.core.authorization.AuthorizationGenerator;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,14 +23,11 @@ import javax.annotation.Resource;
 @ComponentScan(basePackages = {"org.apereo.cas.authorization"})
 public class CasManagementLdapAuthorizationConfiguration {
 
-    @Value("${ldap.baseDn:}")
-    private String baseDn;
-
-    @Value("${ldap.user.searchFilter:}")
-    private String searchFilter;
-
-    @Resource(name="ldapAuthorizationGenerator")
+    @Resource(name = "ldapAuthorizationGenerator")
     private AuthorizationGenerator authorizationGenerator;
+
+    @Autowired
+    private LdapAuthorizationProperties properties;
 
     /**
      * Authorization generator for ldap access.
@@ -51,8 +49,8 @@ public class CasManagementLdapAuthorizationConfiguration {
     @Bean
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final SearchExecutor executor = new SearchExecutor();
-        executor.setBaseDn(this.baseDn);
-        executor.setSearchFilter(new SearchFilter(this.searchFilter));
+        executor.setBaseDn(properties.getBaseDn());
+        executor.setSearchFilter(new SearchFilter(properties.getSearchFilter()));
         executor.setReturnAttributes(ReturnAttributes.ALL.value());
         return executor;
     }

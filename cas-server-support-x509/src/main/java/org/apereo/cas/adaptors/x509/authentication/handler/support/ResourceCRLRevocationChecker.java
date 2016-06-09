@@ -5,14 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.security.auth.x500.X500Principal;
-import javax.validation.constraints.Min;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -35,15 +33,12 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
-
-    /** Default refresh interval is 1 hour. */
-    public static final int DEFAULT_REFRESH_INTERVAL = 3600;
-
+    
     /** Executor responsible for refreshing CRL data. */
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /** CRL refresh interval in seconds. */
-    private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
+    private int refreshInterval;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -100,9 +95,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      *
      * @param seconds Refresh interval in seconds; MUST be positive integer.
      */
-    @Autowired
-    public void setRefreshInterval(@Min(1) @Value("${cas.x509.authn.crl.refresh.interval:" + DEFAULT_REFRESH_INTERVAL + '}')
-                                   final int seconds) {
+    public void setRefreshInterval(final int seconds) {
         this.refreshInterval = seconds;
     }
 
@@ -222,17 +215,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     public void shutdown() {
         this.scheduler.shutdown();
     }
-
-    @Autowired(required=false)
-    @Override
-    public void setUnavailableCRLPolicy(@Qualifier("x509ResourceUnavailableRevocationPolicy") final RevocationPolicy policy) {
-        super.setUnavailableCRLPolicy(policy);
-    }
-
-    @Autowired(required=false)
-    @Override
-    public void setExpiredCRLPolicy(@Qualifier("x509ResourceExpiredRevocationPolicy") final RevocationPolicy policy) {
-        super.setExpiredCRLPolicy(policy);
-    }
+    
 
 }

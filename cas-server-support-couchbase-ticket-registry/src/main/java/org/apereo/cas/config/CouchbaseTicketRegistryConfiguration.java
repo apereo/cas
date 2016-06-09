@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,44 +20,18 @@ import org.springframework.util.StringUtils;
 @Configuration("couchbaseTicketRegistryConfiguration")
 public class CouchbaseTicketRegistryConfiguration {
 
-    /**
-     * The Node set.
-     */
-    @Value("${ticketreg.couchbase.nodes:localhost:8091}")
-    private String nodeSet;
-
-    /**
-     * The Timeout.
-     */
-    @Value("${ticketreg.couchbase.timeout:10}")
-    private int timeout;
-
-    /**
-     * The Password.
-     */
-    @Value("${ticketreg.couchbase.password:}")
-    private String password;
-
-    /**
-     * The Bucket.
-     */
-    @Value("${ticketreg.couchbase.bucket:default}")
-    private String bucket;
+    @Autowired
+    private CouchbaseTicketRegistryProperties properties;
 
 
-    /**
-     * Ticket registry couchbase client factory couchbase client factory.
-     *
-     * @return the couchbase client factory
-     */
     @RefreshScope
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(this.nodeSet));
-        factory.setTimeout(this.timeout);
-        factory.setBucketName(this.bucket);
-        factory.setPassword(this.password);
+        factory.setNodes(StringUtils.commaDelimitedListToSet(properties.getNodeSet()));
+        factory.setTimeout(properties.getTimeout());
+        factory.setBucketName(properties.getBucket());
+        factory.setPassword(properties.getPassword());
         return factory;
     }
 

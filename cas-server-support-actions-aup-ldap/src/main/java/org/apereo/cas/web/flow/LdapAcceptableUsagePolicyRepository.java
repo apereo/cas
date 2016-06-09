@@ -9,10 +9,8 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 
 /**
@@ -27,14 +25,9 @@ import java.util.Collections;
  */
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
-
-    @Resource(name="ldapUsagePolicyConnectionFactory")
+    
     private ConnectionFactory connectionFactory;
-
-    @Value("${cas.aup.ldap.search.filter:}")
     private String searchFilter;
-
-    @Value("${cas.aup.ldap.basedn:}")
     private String baseDn;
 
     @Override
@@ -73,5 +66,29 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         final SearchFilter filter = new SearchFilter(this.searchFilter);
         filter.setParameter(0, id);
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
+    }
+
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    public void setConnectionFactory(final ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public void setSearchFilter(final String searchFilter) {
+        this.searchFilter = searchFilter;
+    }
+
+    public String getBaseDn() {
+        return baseDn;
+    }
+
+    public void setBaseDn(final String baseDn) {
+        this.baseDn = baseDn;
     }
 }

@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -85,8 +85,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Value("${webflow.autoConfigure:true}")
-    private boolean autoconfigureWebflow;
+    @Autowired
+    private WebflowProperties webflowProperties;
     
     /**
      * Initialize.
@@ -96,7 +96,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void initialize() {
         try {
             logger.debug("Initializing CAS webflow configuration...");
-            if (this.autoconfigureWebflow) {
+            if (webflowProperties.isAutoconfigure()) {
                 doInitialize();
             } else {
                 logger.warn("Webflow auto-configuration is disabled. CAS will not modify the webflow via {}", getClass().getName());

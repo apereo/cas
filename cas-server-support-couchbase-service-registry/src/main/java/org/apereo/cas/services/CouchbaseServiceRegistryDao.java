@@ -6,12 +6,13 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -47,12 +48,12 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
 
-    
-    @Resource(name="serviceRegistryCouchbaseClientFactory")
+    @Autowired
+    private CouchbaseServiceRegistryProperties properties;
+
+    @Resource(name = "serviceRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
 
-    @Value("${svcreg.couchbase.query.enabled:true}")
-    private boolean queryEnabled;
 
     private StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
@@ -147,7 +148,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
      */
     @PostConstruct
     public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(properties.isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }

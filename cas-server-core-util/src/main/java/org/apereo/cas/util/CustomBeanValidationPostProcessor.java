@@ -1,7 +1,5 @@
 package org.apereo.cas.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
 import java.lang.annotation.ElementType;
@@ -27,6 +25,7 @@ public class CustomBeanValidationPostProcessor extends BeanValidationPostProcess
      * Instantiates a new custom bean validation post processor.
      */
     public CustomBeanValidationPostProcessor() {
+        setAfterInitialization(true);
         final Configuration<?> configuration = Validation.byDefaultProvider().configure();
         configuration.traversableResolver(new TraversableResolver() {
 
@@ -47,13 +46,6 @@ public class CustomBeanValidationPostProcessor extends BeanValidationPostProcess
 
         final Validator validator = configuration.buildValidatorFactory().getValidator();
         setValidator(validator);
-    }
-
-    @Override
-    @Autowired
-    public void setAfterInitialization(
-            @Value("${validation.processing.afterinit:true}")
-            final boolean afterInitialization) {
-        super.setAfterInitialization(afterInitialization);
+        
     }
 }

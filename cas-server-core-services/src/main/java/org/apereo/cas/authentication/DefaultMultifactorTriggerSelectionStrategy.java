@@ -3,11 +3,12 @@ package org.apereo.cas.authentication;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,21 +28,10 @@ import java.util.stream.StreamSupport;
  */
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
-
-    @Value("${cas.mfa.request.parameter:authn_method}")
-    private String requestParameter;
-
-    @Value("${cas.mfa.principal.attributes:}")
-    private String principalAttribute;
-
-    public void setRequestParameter(final String parameter) {
-        this.requestParameter = parameter;
-    }
-
-    public void setPrincipalAttribute(final String attribute) {
-        this.principalAttribute = attribute;
-    }
-
+    
+    @Autowired
+    private MfaProperties mfaProperties;
+    
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                     final HttpServletRequest request, final RegisteredService service, final Principal principal) {
@@ -57,7 +47,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
         if (!provider.isPresent() && request != null) {
-            provider = Optional.ofNullable(request.getParameter(this.requestParameter)).filter(validProviderIds::contains);
+            provider = Optional.ofNullable(request.getParameter(mfaProperties.getRequestParameter()))
+                    .filter(validProviderIds::contains);
         }
 
         // check for a RegisteredService configured trigger
@@ -71,8 +62,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null && StringUtils.hasText(this.principalAttribute)) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(this.principalAttribute).spliterator(), false)
+        if (!provider.isPresent() && principal != null && StringUtils.hasText(mfaProperties.getPrincipalAttributes())) {
+            provider = StreamSupport.stream(ATTR_NAMES.split(mfaProperties.getPrincipalAttributes()).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
@@ -108,5 +99,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 // value =~ /attrValue/
                 .filter(String.class::isInstance).map(String.class::cast)
                 .anyMatch(Predicates.containsPattern(attrValue)::apply);
+    }
+
+    public void setMfaProperties(final MfaProperties mfaProperties) {
+        this.mfaProperties = mfaProperties;
     }
 }

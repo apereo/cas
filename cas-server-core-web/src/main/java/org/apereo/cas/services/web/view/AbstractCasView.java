@@ -1,22 +1,22 @@
 package org.apereo.cas.services.web.view;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.support.CasAttributeEncoder;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.AbstractView;
 
 import javax.annotation.Resource;
@@ -46,21 +46,26 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected boolean successResponse;
 
-    /** The attribute encoder instance. */
-    
-    @Resource(name="casAttributeEncoder")
+    /**
+     * The attribute encoder instance.
+     */
+
+    @Resource(name = "casAttributeEncoder")
     protected CasAttributeEncoder casAttributeEncoder;
 
-    /** The Services manager. */
-    
-    @Resource(name="servicesManager")
+    /**
+     * The Services manager.
+     */
+    @Resource(name = "servicesManager")
     protected ServicesManager servicesManager;
 
-    /** Logger instance. **/
+    /**
+     * Logger instance.
+     **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
-    private String authenticationContextAttribute;
+    @Autowired
+    private MfaProperties mfaProperties;
 
     /**
      * Gets the assertion from the model.
@@ -101,6 +106,7 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getProxyGrantingTicketId(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
     }
+
     /**
      * Gets the PGT-IOU from the model.
      *
@@ -110,7 +116,6 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getProxyGrantingTicketIou(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
     }
-
 
 
     /**
@@ -148,7 +153,7 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Gets an authentication attribute from the primary authentication object.
      *
-     * @param model the model
+     * @param model         the model
      * @param attributeName the attribute name
      * @return the authentication attribute
      */
@@ -156,6 +161,7 @@ public abstract class AbstractCasView extends AbstractView {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
         return (String) authn.getAttributes().get(attributeName);
     }
+
     /**
      * Gets the principal from the model.
      *
@@ -171,6 +177,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Gets principal attributes.
      * Single-valued attributes are converted to a collection
      * so the review can easily loop through all.
+     *
      * @param model the model
      * @return the attributes
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
@@ -184,6 +191,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Gets authentication attributes.
      * Single-valued attributes are converted to a collection
      * so the review can easily loop through all.
+     *
      * @param model the model
      * @return the attributes
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
@@ -197,6 +205,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Is remember me authentication?
      * looks at the authentication object to find {@link RememberMeCredential#AUTHENTICATION_ATTRIBUTE_REMEMBER_ME}
      * and expects the assertion to also note a new login session.
+     *
      * @param model the model
      * @return true if remember-me, false if otherwise.
      */
@@ -215,9 +224,9 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(
             final Map<String, Object> model) {
-        if (model.containsKey(this.authenticationContextAttribute)) {
+        if (model.containsKey(mfaProperties.getAuthenticationContextAttribute())) {
             final Optional<MultifactorAuthenticationProvider> result =
-                    (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
+                    (Optional<MultifactorAuthenticationProvider>) model.get(mfaProperties.getAuthenticationContextAttribute());
             return result;
         }
         return Optional.empty();
@@ -303,8 +312,8 @@ public abstract class AbstractCasView extends AbstractView {
      * attribute.
      *
      * @param attributes the attributes
-     * @param model the model
-     * @param service the service
+     * @param model      the model
+     * @param service    the service
      */
     protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
                                                                          final Map<String, Object> model,
@@ -326,8 +335,8 @@ public abstract class AbstractCasView extends AbstractView {
      * attribute.
      *
      * @param attributes the attributes
-     * @param model the model
-     * @param service the service
+     * @param model      the model
+     * @param service    the service
      */
     protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
                                                                           final Map<String, Object> model,
@@ -344,10 +353,10 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Decide attribute release based on service attribute policy.
      *
-     * @param attributes the attributes
-     * @param attributeValue the attribute value
-     * @param attributeName the attribute name
-     * @param service the service
+     * @param attributes               the attributes
+     * @param attributeValue           the attribute value
+     * @param attributeName            the attribute name
+     * @param service                  the service
      * @param doesAttributePolicyAllow does attribute policy allow release of this attribute?
      */
     protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes,
@@ -376,20 +385,20 @@ public abstract class AbstractCasView extends AbstractView {
      * Put into model.
      *
      * @param model the model
-     * @param key the key
+     * @param key   the key
      * @param value the value
      */
-    protected void putIntoModel(final Map<String, Object> model, final String key, final Object value){
+    protected void putIntoModel(final Map<String, Object> model, final String key, final Object value) {
         model.put(key, value);
     }
 
     /**
      * Put all into model.
      *
-     * @param model the model
+     * @param model  the model
      * @param values the values
      */
-    protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values){
+    protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values) {
         model.putAll(values);
     }
 

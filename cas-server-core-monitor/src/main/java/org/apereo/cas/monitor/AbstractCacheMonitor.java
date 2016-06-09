@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 
@@ -12,39 +13,8 @@ import java.util.Arrays;
  */
 public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheStatus> {
 
-    /** Default free capacity threshold is 10%. */
-    public static final int DEFAULT_WARN_FREE_THRESHOLD = 10;
-
-    /** Default eviction threshold is 0. */
-    public static final long DEFAULT_EVICTION_THRESHOLD = 0;
-
-    /** Percent free capacity threshold below which a warning is issued.*/
-    @Value("${cache.monitor.warn.free.threshold:" + DEFAULT_WARN_FREE_THRESHOLD + '}')
-    private int warnFreeThreshold = DEFAULT_WARN_FREE_THRESHOLD;
-
-    /** Threshold for number of acceptable evictions above which an error is issued. */
-    @Value("${cache.monitor.eviction.threshold:" + DEFAULT_EVICTION_THRESHOLD + '}')
-    private long evictionThreshold = DEFAULT_EVICTION_THRESHOLD;
-
-
-    /**
-     * Sets the percent free capacity threshold below which a warning is issued.
-     *
-     * @param percent Warning threshold percent.
-     */
-    public void setWarnFreeThreshold(final int percent) {
-        this.warnFreeThreshold = percent;
-    }
-
-
-    /**
-     * Sets the eviction threshold count above which an error is issued.
-     *
-     * @param count Threshold for number of cache evictions.
-     */
-    public void setEvictionThreshold(final long count) {
-        this.evictionThreshold = count;
-    }
+    @Autowired
+    private MonitorProperties properties;
 
     @Override
     public CacheStatus observe() {
@@ -78,21 +48,20 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
      * Computes the status code for a given set of cache statistics.
      *
      * @param statistics Cache statistics.
-     *
      * @return {@link StatusCode#WARN} if eviction count is above threshold or if
      * percent free space is below threshold, otherwise {@link StatusCode#OK}.
      */
     protected StatusCode status(final CacheStatistics statistics) {
         final StatusCode code;
-        if (statistics.getEvictions() > this.evictionThreshold) {
+        if (statistics.getEvictions() > properties.getWarn().getEvictionThreshold()) {
             code = StatusCode.WARN;
-        } else if (statistics.getPercentFree() < this.warnFreeThreshold) {
+        } else if (statistics.getPercentFree() < properties.getWarn().getThreshold()) {
             code = StatusCode.WARN;
         } else {
             code = StatusCode.OK;
         }
         return code;
     }
-    
-    
+
+
 }

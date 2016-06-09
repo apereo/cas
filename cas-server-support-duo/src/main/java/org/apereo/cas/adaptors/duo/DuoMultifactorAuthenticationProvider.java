@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.duo;
 
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 
@@ -15,11 +16,11 @@ import javax.annotation.Resource;
 public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
+    
+    @Autowired
+    private MfaProperties mfaProperties;
 
-    @Value("${cas.mfa.duo.rank:0}")
-    private int rank;
-
-    @Resource(name="duoAuthenticationService")
+    @Resource(name = "duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 
 
@@ -30,7 +31,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     @Override
     public int getOrder() {
-        return this.rank;
+        return mfaProperties.getDuo().getRank();
     }
 
 

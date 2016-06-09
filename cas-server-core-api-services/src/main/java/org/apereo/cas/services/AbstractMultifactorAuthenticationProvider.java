@@ -4,9 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 
@@ -23,8 +24,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${cas.mfa.failure.mode:CLOSED}")
-    private String globalFailureMode;
+    @Autowired
+    private MfaProperties mfaProperties;
 
     @Override
     public boolean verify(final RegisteredService service) throws AuthenticationException {
@@ -33,8 +34,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         if (policy != null) {
             failureMode = policy.getFailureMode();
             logger.debug("Multifactor failure mode for {} is defined as {}", service.getServiceId(), failureMode);
-        } else if (StringUtils.isNotBlank(this.globalFailureMode)) {
-            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
+        } else if (StringUtils.isNotBlank(mfaProperties.getGlobalFailureMode())) {
+            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(mfaProperties.getGlobalFailureMode());
             logger.debug("Using global multifactor failure mode for {} defined as {}", service.getServiceId(), failureMode);
         }
         

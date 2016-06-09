@@ -4,8 +4,9 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -22,18 +23,15 @@ import javax.annotation.Resource;
  */
 public class GoogleAccountCheckRegistrationAction extends AbstractAction {
 
-    @Value("${cas.mfa.gauth.issuer:CAS}")
-    private String issuer;
+    @Autowired
+    private MfaProperties mfaProperties;
 
-    @Value("${cas.mfa.gauth.label:CAS}")
-    private String label;
-    
-    @Resource(name="googleAuthenticatorAccountRegistry")
+    @Resource(name = "googleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry accountRegistry;
-    
-    @Resource(name="googleAuthenticatorInstance")
+
+    @Resource(name = "googleAuthenticatorInstance")
     private GoogleAuthenticatorInstance googleAuthenticatorInstance;
-    
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final RequestContext context = RequestContextHolder.getRequestContext();
@@ -41,15 +39,15 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
 
         if (!this.accountRegistry.contains(uid)) {
             final GoogleAuthenticatorKey key = this.googleAuthenticatorInstance.createCredentials();
-            
+
             final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
                     key.getVerificationCode(), key.getScratchCodes());
-            
-            final String keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" 
-                    + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
+
+            final String keyUri = "otpauth://totp/" + mfaProperties.getGauth().getLabel() + ':' + uid + "?secret="
+                    + keyAccount.getSecretKey() + "&issuer=" + mfaProperties.getGauth().getIssuer();
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
-            
+
             return new EventFactorySupport().event(this, "register");
         }
 

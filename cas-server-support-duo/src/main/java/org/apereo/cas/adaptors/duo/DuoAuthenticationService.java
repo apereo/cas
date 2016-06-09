@@ -4,11 +4,12 @@ import com.duosecurity.duoweb.DuoWeb;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +19,7 @@ import java.net.URLDecoder;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
+ *
  * @author Michael Kennedy
  * @author Misagh Moayyed
  * @author Eric Pierce
@@ -27,68 +29,45 @@ import java.net.URLDecoder;
 public class DuoAuthenticationService {
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
-    
+
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-        
-    @Resource(name="noRedirectHttpClient")
+
+    @Resource(name = "noRedirectHttpClient")
     private HttpClient httpClient;
 
-    
-    @Value("${cas.mfa.duo.integration.key:}")
-    private String duoIntegrationKey;
-
-    
-    @Value("${cas.mfa.duo.secret.key:}")
-    private String duoSecretKey;
-
-    
-    @Value("${cas.mfa.duo.application.key:}")
-    private String duoApplicationKey;
-
-    
-    @Value("${cas.mfa.duo.api.host:}")
-    private String duoApiHost;
+    @Autowired
+    private MfaProperties mfaProperties;
 
     /**
      * Creates the duo authentication service.
      */
-    public DuoAuthenticationService() {}
+    public DuoAuthenticationService() {
+    }
 
     @PostConstruct
     private void initialize() {
-        Assert.hasLength(this.duoApiHost, "Duo API host cannot be blank");
-        Assert.hasLength(this.duoIntegrationKey, "Duo integration key cannot be blank");
-        Assert.hasLength(this.duoSecretKey, "Duo secret key cannot be blank");
-        Assert.hasLength(this.duoApplicationKey, "Duo application key cannot be blank");
+        Assert.hasLength(mfaProperties.getDuo().getDuoApiHost(), "Duo API host cannot be blank");
+        Assert.hasLength(mfaProperties.getDuo().getDuoIntegrationKey(), "Duo integration key cannot be blank");
+        Assert.hasLength(mfaProperties.getDuo().getDuoSecretKey(), "Duo secret key cannot be blank");
+        Assert.hasLength(mfaProperties.getDuo().getDuoApplicationKey(), "Duo application key cannot be blank");
     }
 
-    public String getDuoApiHost() {
-        return this.duoApiHost;
-    }
-
-    public String getDuoIntegrationKey() {
-        return this.duoIntegrationKey;
-    }
-
-    public String getDuoSecretKey() {
-        return this.duoSecretKey;
-    }
-
-    public String getDuoApplicationKey() {
-        return this.duoApplicationKey;
-    }
 
     /**
      * Sign the authentication request.
+     *
      * @param username username requesting authentication
      * @return signed response
      */
     public String generateSignedRequestToken(final String username) {
-        return DuoWeb.signRequest(this.duoIntegrationKey, this.duoSecretKey, this.duoApplicationKey, username);
+        return DuoWeb.signRequest(mfaProperties.getDuo().getDuoIntegrationKey(),
+                mfaProperties.getDuo().getDuoSecretKey(),
+                mfaProperties.getDuo().getDuoApplicationKey(), username);
     }
 
     /**
      * Verify the authentication response from Duo.
+     *
      * @param signedRequestToken signed request token
      * @return authenticated user
      * @throws Exception if response verification fails
@@ -99,7 +78,9 @@ public class DuoAuthenticationService {
         }
 
         logger.debug("Calling DuoWeb.verifyResponse with signed request token '{}'", signedRequestToken);
-        return DuoWeb.verifyResponse(this.duoIntegrationKey, this.duoSecretKey, this.duoApplicationKey, signedRequestToken);
+        return DuoWeb.verifyResponse(mfaProperties.getDuo().getDuoIntegrationKey(),
+                mfaProperties.getDuo().getDuoSecretKey(),
+                mfaProperties.getDuo().getDuoApplicationKey(), signedRequestToken);
     }
 
     /**
@@ -109,7 +90,7 @@ public class DuoAuthenticationService {
      */
     public boolean canPing() {
         try {
-            String url = this.duoApiHost.concat("/rest/v1/ping");
+            String url = mfaProperties.getDuo().getDuoApiHost().concat("/rest/v1/ping");
             if (!url.startsWith("http")) {
                 url = "https://" + url;
             }

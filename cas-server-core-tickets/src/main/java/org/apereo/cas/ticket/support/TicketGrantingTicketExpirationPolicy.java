@@ -4,7 +4,6 @@ import org.apereo.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -32,11 +31,9 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
     /** Maximum time this ticket is valid.  */
-    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
     private long maxTimeToLiveInMilliSeconds;
 
     /** Time to kill in milliseconds. */
-    @Value("#{${tgt.timeToKillInSeconds:7200}*1000}")
     private long timeToKillInMilliSeconds;
 
     public TicketGrantingTicketExpirationPolicy() {}

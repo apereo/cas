@@ -1,6 +1,19 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.cryptacular.x509.ExtensionReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -10,21 +23,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.apereo.cas.adaptors.x509.util.CertUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.x509.DistributionPoint;
-import org.bouncycastle.asn1.x509.DistributionPointName;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.cryptacular.x509.ExtensionReader;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
 
 /**
  * Performs CRL-based revocation checking by consulting resources defined in
@@ -37,24 +35,30 @@ import net.sf.ehcache.Element;
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
-    /** CRL cache. */
+    /**
+     * CRL cache.
+     */
     @Autowired(required = false)
     @Qualifier("x509CrlCache")
     private Cache crlCache;
 
-    /** The CRL fetcher instance. **/
+    /**
+     * The CRL fetcher instance.
+     **/
     @Autowired(required = false)
     @Qualifier("x509CrlFetcher")
     private CRLFetcher fetcher;
 
     private boolean throwOnFetchFailure;
 
-    /** Used for serialization and auto wiring. */
-    public CRLDistributionPointRevocationChecker() {}
+    /**
+     * Used for serialization and auto wiring.
+     */
+    public CRLDistributionPointRevocationChecker() {
+    }
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
@@ -68,7 +72,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
      *
-     * @param crlCache Cache for CRL data.
+     * @param crlCache            Cache for CRL data.
      * @param throwOnFetchFailure the throw on fetch failure
      */
     public CRLDistributionPointRevocationChecker(final Cache crlCache,
@@ -81,12 +85,12 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * Instantiates a new CRL distribution point revocation checker.
      *
      * @param crlCache the crl cache
-     * @param fetcher the fetcher
+     * @param fetcher  the fetcher
      */
     public CRLDistributionPointRevocationChecker(
-                                                 final Cache crlCache,
-                                                 
-                                                 final CRLFetcher fetcher) {
+            final Cache crlCache,
+
+            final CRLFetcher fetcher) {
         this.crlCache = crlCache;
         this.fetcher = fetcher;
     }
@@ -97,14 +101,13 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      *
      * @param throwOnFetchFailure the throw on fetch failure
      */
-    @Autowired
-    public void setThrowOnFetchFailure(@Value("${cas.x509.authn.crl.throw.failure:false}")
-                                           final boolean throwOnFetchFailure) {
+    public void setThrowOnFetchFailure(final boolean throwOnFetchFailure) {
         this.throwOnFetchFailure = throwOnFetchFailure;
     }
 
     /**
      * {@inheritDoc}
+     *
      * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
      */
     @Override
@@ -207,11 +210,11 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
 
         final List<URI> urls = new ArrayList<>();
-        
-        if(points != null){
+
+        if (points != null) {
             for (final DistributionPoint point : points) {
                 final DistributionPointName pointName = point.getDistributionPoint();
-                if(pointName != null){
+                if (pointName != null) {
                     final ASN1Sequence nameSequence = ASN1Sequence.getInstance(pointName.getName());
                     for (int i = 0; i < nameSequence.size(); i++) {
                         final GeneralName name = GeneralName.getInstance(nameSequence.getObjectAt(i));
@@ -233,15 +236,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * Adds the url to the list.
      * Build URI by components to facilitate proper encoding of querystring.
      * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
-     *
+     * <p>
      * <p>If {@code uriString} is encoded, it will be decoded with {@code UTF-8}
      * first before it's added to the list.</p>
-     * @param list the list
+     *
+     * @param list      the list
      * @param uriString the uri string
      */
     private void addURL(final List<URI> list, final String uriString) {
         try {
-            URI uri = null;
+            URI uri;
             try {
                 final URL url = new URL(URLDecoder.decode(uriString, "UTF-8"));
                 uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
@@ -254,18 +258,5 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
     }
 
-
-
-    @Autowired(required=false)
-    @Override
-    public void setUnavailableCRLPolicy(@Qualifier("x509CrlUnavailableRevocationPolicy") final RevocationPolicy policy) {
-        super.setUnavailableCRLPolicy(policy);
-    }
-
-    @Autowired(required=false)
-    @Override
-    public void setExpiredCRLPolicy(@Qualifier("x509CrlExpiredRevocationPolicy") final RevocationPolicy policy) {
-        super.setExpiredCRLPolicy(policy);
-    }
 
 }

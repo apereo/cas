@@ -3,10 +3,6 @@ package org.apereo.cas.monitor;
 import org.ldaptive.Connection;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.annotation.Nullable;
 
 /**
  * Monitors an ldaptive {@link PooledConnectionFactory}.
@@ -17,15 +13,9 @@ import javax.annotation.Nullable;
 public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
 
     /** Source of connections to validate. */
-    @Nullable
-    @Autowired(required=false)
-    @Qualifier("pooledConnectionFactoryMonitorConnectionFactory")
     private PooledConnectionFactory connectionFactory;
 
     /** Connection validator. */
-    @Nullable
-    @Autowired(required=false)
-    @Qualifier("pooledConnectionFactoryMonitorValidator")
     private Validator<Connection> validator;
 
 

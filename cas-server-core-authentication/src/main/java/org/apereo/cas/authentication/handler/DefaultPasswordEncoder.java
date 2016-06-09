@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -21,13 +20,10 @@ import java.nio.charset.Charset;
 public class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
-
-    @Value("${cas.authn.password.encoding.alg:}")
+    
     private String encodingAlgorithm;
-
-    @Value("${cas.authn.password.encoding.char:}")
     private String characterEncoding;
-
+    
     public DefaultPasswordEncoder() {
     }
 
@@ -71,5 +67,9 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
 
     public void setCharacterEncoding(final String characterEncoding) {
         this.characterEncoding = characterEncoding;
+    }
+
+    public void setEncodingAlgorithm(final String encodingAlgorithm) {
+        this.encodingAlgorithm = encodingAlgorithm;
     }
 }

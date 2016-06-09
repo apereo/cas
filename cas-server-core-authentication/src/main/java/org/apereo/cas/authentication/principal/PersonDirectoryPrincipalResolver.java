@@ -2,6 +2,8 @@ package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -45,6 +47,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected boolean returnNullIfNoAttributes;
 
     /**
+     * Transform principal name;
+     */
+    protected PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
+
+    /**
      * Optional principal attribute name.
      */
     protected String principalAttributeName;
@@ -85,13 +92,17 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public Principal resolve(final Credential credential) {
         logger.debug("Attempting to resolve a principal...");
 
-        final String principalId = extractPrincipalId(credential);
+        String principalId = extractPrincipalId(credential);
 
         if (StringUtils.isBlank(principalId)) {
             logger.debug("Principal id [{}] could not be found", principalId);
             return null;
         }
 
+        if (principalNameTransformer != null) {
+            principalId = principalNameTransformer.transform(principalId);
+        }
+        
         logger.debug("Creating SimplePrincipal for [{}]", principalId);
         final Map<String, List<Object>> attributes = retrievePersonAttributes(principalId, credential);
 
@@ -167,6 +178,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return attributes;
     }
 
+    public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
+        this.principalNameTransformer = principalNameTransformer;
+    }
 
     /**
      * Extracts the id of the user from the provided credential. This method should be overridden by subclasses to

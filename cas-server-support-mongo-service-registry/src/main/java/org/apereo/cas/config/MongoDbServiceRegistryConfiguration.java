@@ -5,13 +5,13 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -36,20 +36,12 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Autowired
     private MongoServiceRegistryProperties mongoServiceRegistryProperties;
-
-
-
-
-
-    @Value("${mongodb.conns.per.host:10}")
-    private int connectionsPerHost;
-
+    
     /**
      * Persistence exception translation post processor persistence exception translation post processor.
      *
      * @return the persistence exception translation post processor
      */
-    
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
@@ -81,7 +73,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     public MongoClientOptions mongoClientOptions() {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setWriteConcern(this.mongoServiceRegistryProperties.getWriteConcern());
+            bean.setWriteConcern(WriteConcern.valueOf(this.mongoServiceRegistryProperties.getWriteConcern()));
             bean.setHeartbeatConnectTimeout(this.mongoServiceRegistryProperties.getTimeout());
             bean.setHeartbeatSocketTimeout(this.mongoServiceRegistryProperties.getTimeout());
             bean.setMaxConnectionLifeTime(this.mongoServiceRegistryProperties.getConns().getLifetime());

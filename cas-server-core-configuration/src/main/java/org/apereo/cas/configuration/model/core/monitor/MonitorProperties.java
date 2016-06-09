@@ -15,8 +15,39 @@ public class MonitorProperties {
     private int freeMemThreshold = 10;
 
     private Tgt tgt = new Tgt();
-
+    
     private St st = new St();
+
+    private Warn warn = new Warn();
+
+    private DataSource dataSource = new DataSource();
+
+    private int maxWait;
+
+    public int getMaxWait() {
+        return maxWait;
+    }
+
+    public void setMaxWait(final int maxWait) {
+        this.maxWait = maxWait;
+    }
+
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(final DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public Warn getWarn() {
+        return warn;
+    }
+
+    public void setWarn(final Warn warn) {
+        this.warn = warn;
+    }
 
     public int getFreeMemThreshold() {
         return freeMemThreshold;
@@ -69,7 +100,9 @@ public class MonitorProperties {
     }
 
     public static class Warn {
-        private int threshold;
+        private int threshold = 10;
+        private long evictionThreshold;
+
 
         public Warn() {
         }
@@ -77,7 +110,7 @@ public class MonitorProperties {
         public Warn(final int threshold) {
             this.threshold = threshold;
         }
-        
+
         public int getThreshold() {
             return threshold;
         }
@@ -85,5 +118,27 @@ public class MonitorProperties {
         public void setThreshold(final int threshold) {
             this.threshold = threshold;
         }
+
+        public long getEvictionThreshold() {
+            return evictionThreshold;
+        }
+
+        public void setEvictionThreshold(final long evictionThreshold) {
+            this.evictionThreshold = evictionThreshold;
+        }
     }
+
+    public static class DataSource {
+        private String validationQuery = "SELECT 1";
+
+        public String getValidationQuery() {
+            return validationQuery;
+        }
+
+        public void setValidationQuery(final String validationQuery) {
+            this.validationQuery = validationQuery;
+        }
+    }
+
+
 }

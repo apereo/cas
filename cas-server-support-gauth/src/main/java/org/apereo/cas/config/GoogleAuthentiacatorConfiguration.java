@@ -15,6 +15,7 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationW
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -41,14 +42,17 @@ import javax.annotation.Resource;
 public class GoogleAuthentiacatorConfiguration {
 
     @Autowired
+    private MfaProperties mfaProperties;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
-    @Resource(name="builder")
+    @Resource(name = "builder")
     private FlowBuilderServices builder;
 
-    @Resource(name="defaultGoogleAuthenticatorAccountRegistry")
+    @Resource(name = "defaultGoogleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry;
-    
+
     /**
      * Yubikey flow registry flow definition registry.
      *
@@ -73,45 +77,51 @@ public class GoogleAuthentiacatorConfiguration {
     public GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry() {
         return this.googleAuthenticatorAccountRegistry;
     }
-    
+
     @Bean
     public BaseApplicationContextWrapper googleAuthenticatorApplicationContextWrapper() {
         return new GoogleAuthenticatorApplicationContextWrapper();
     }
-    
+
     @Bean
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         return new GoogleAuthenticatorAuthenticationHandler();
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
-        return new GoogleAuthenticatorAuthenticationMetaDataPopulator();
+        final GoogleAuthenticatorAuthenticationMetaDataPopulator g =
+                new GoogleAuthenticatorAuthenticationMetaDataPopulator(
+                        mfaProperties.getAuthenticationContextAttribute(),
+                        googleAuthenticatorAuthenticationHandler(),
+                        googleAuthenticatorAuthenticationProvider()
+                );
+        return g;
     }
-    
+
     @Bean
     @RefreshScope
     public IGoogleAuthenticator googleAuthenticatorInstance() {
         return new GoogleAuthenticatorInstance();
     }
-    
+
     @Bean
     @RefreshScope
     public AbstractMultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
         return new GoogleAuthenticatorMultifactorAuthenticationProvider();
     }
-    
+
     @Bean
     public GoogleAuthenticatorAccountRegistry defaultGoogleAuthenticatorAccountRegistry() {
         return new InMemoryGoogleAuthenticatorAccountRegistry();
     }
-    
+
     @Bean
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
         return new GoogleAuthenticatorAuthenticationWebflowEventResolver();
     }
-    
+
     @Bean
     public Action saveAccountRegistrationAction() {
         return new GoogleAccountSaveRegistrationAction();
@@ -121,12 +131,12 @@ public class GoogleAuthentiacatorConfiguration {
     public Action googleAuthenticatorAuthenticationWebflowAction() {
         return new GoogleAuthenticatorAuthenticationWebflowAction();
     }
-    
+
     @Bean
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
         return new GoogleAuthenticatorMultifactorWebflowConfigurer();
     }
-    
+
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {

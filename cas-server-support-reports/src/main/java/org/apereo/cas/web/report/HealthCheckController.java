@@ -2,11 +2,12 @@ package org.apereo.cas.web.report;
 
 import java.util.concurrent.Callable;
 
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.monitor.Status;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,8 +30,8 @@ import java.util.Map;
 @RequestMapping("/status")
 public class HealthCheckController {
 
-    @Value("${cas.async.request.timeout:5000}")
-    private int asyncTimeout;
+    @Autowired
+    private HttpClientProperties properties;
     
     @Resource(name="healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
@@ -74,6 +75,6 @@ public class HealthCheckController {
             return null;
         };
 
-        return new WebAsyncTask<>(this.asyncTimeout, asyncTask);
+        return new WebAsyncTask<>(properties.getAsyncTimeout(), asyncTask);
     }
 }

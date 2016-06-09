@@ -4,7 +4,6 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -48,13 +47,13 @@ public class ProxyValidateController extends AbstractServiceValidateController {
 
     @Override
     @Autowired
-    public void setFailureView(@Value("cas2ServiceFailureView") final String failureView) {
+    public void setFailureView(@Qualifier("cas2ServiceFailureView") final String failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Value("cas2ServiceSuccessView") final String successView) {
+    public void setSuccessView(@Qualifier("cas2ServiceSuccessView") final String successView) {
         super.setSuccessView(successView);
     }
 

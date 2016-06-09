@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.ClearpassApplicationContextWrapper;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -24,19 +25,25 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 public class CasCoreWebConfiguration {
 
     @Autowired
+    private ClearpassProperties properties;
+
+    @Autowired
     private MessageBundleProperties messageBundleProperties;
-    
+
     @Bean
     @RefreshScope
     public BaseApplicationContextWrapper clearpassApplicationContextWrapper() {
-        return new ClearpassApplicationContextWrapper();
+        final ClearpassApplicationContextWrapper w =
+                new ClearpassApplicationContextWrapper();
+        w.setCacheCredential(properties.isCacheCredential());
+        return w;
     }
-    
+
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {
         return new DefaultArgumentExtractor();
     }
-    
+
     @RefreshScope
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {

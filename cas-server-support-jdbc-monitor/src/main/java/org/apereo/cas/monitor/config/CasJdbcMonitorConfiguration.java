@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor.config;
 
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.monitor.DataSourceMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,17 @@ import javax.sql.DataSource;
  */
 @Configuration("casJdbcMonitorConfiguration")
 public class CasJdbcMonitorConfiguration {
-    
+
+    @Autowired
+    private MonitorProperties properties;
+
     @Autowired
     @Bean
     @RefreshScope
     public Monitor dataSourceMonitor(@Qualifier("monitorDataSource") final DataSource dataSource) {
-        return new DataSourceMonitor(dataSource);
+        final DataSourceMonitor m = new DataSourceMonitor(dataSource);
+        m.setValidationQuery(properties.getDataSource().getValidationQuery());
+        m.setMaxWait(properties.getMaxWait());
+        return m;
     }
 }

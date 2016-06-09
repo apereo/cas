@@ -2,9 +2,9 @@ package org.apereo.cas.adaptors.gauth;
 
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.util.http.HttpClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 
@@ -20,13 +20,9 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     @Resource(name="googleAuthenticatorAuthenticationHandler")
     private AuthenticationHandler yubiKeyAuthenticationHandler;
-
-    @Value("${cas.mfa.gauth.rank:0}")
-    private int rank;
-
-    @Resource(name="noRedirectHttpClient")
-    private HttpClient httpClient;
-
+    
+    @Autowired
+    private MfaProperties mfaProperties;
 
     @Override
     public String getId() {
@@ -35,7 +31,7 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     @Override
     public int getOrder() {
-        return this.rank;
+        return mfaProperties.getGauth().getRank();
     }
 
 

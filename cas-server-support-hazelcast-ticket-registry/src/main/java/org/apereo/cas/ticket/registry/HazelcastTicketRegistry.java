@@ -6,9 +6,6 @@ import com.hazelcast.query.PagingPredicate;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -32,7 +29,7 @@ import java.util.stream.Collectors;
 public class HazelcastTicketRegistry extends AbstractTicketRegistry {
 
     private IMap<String, Ticket> registry;
-    
+
     private HazelcastInstance hazelcastInstance;
 
     private int pageSize;
@@ -40,8 +37,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     /**
      * Instantiates a new Hazelcast ticket registry.
      */
-    public HazelcastTicketRegistry() {}
-    
+    public HazelcastTicketRegistry() {
+    }
+
     /**
      * Instantiates a new Hazelcast ticket registry.
      *
@@ -49,14 +47,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
      * @param mapName  Name of map to use
      * @param pageSize the page size
      */
-    @Autowired
     public HazelcastTicketRegistry(
-        @Qualifier("hazelcast")
-        final HazelcastInstance hz,
-        @Value("${hz.mapname:tickets}")
-        final String mapName,
-        @Value("${hz.page.size:500}")
-        final int pageSize) {
+            final HazelcastInstance hz,
+            final String mapName,
+            final int pageSize) {
 
         this.registry = hz.getMap(mapName);
         this.hazelcastInstance = hz;
@@ -81,7 +75,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     protected boolean needsCallback() {
         return false;
     }
-    
+
     @Override
     public void addTicket(final Ticket ticket) {
         logger.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
@@ -95,12 +89,12 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         final String encTicketId = encodeTicketId(ticketId);
         return decodeTicket(this.registry.get(encTicketId));
     }
-    
+
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         return this.registry.remove(ticketId) != null;
     }
-    
+
     @Override
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> collection = new HashSet<>();
@@ -119,7 +113,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         }
         return collection;
     }
-    
+
     @Override
     public long sessionCount() {
         return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
@@ -138,7 +132,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
         this.hazelcastInstance.shutdown();
     }
-    
+
     public void setRegistry(final IMap<String, Ticket> registry) {
         this.registry = registry;
     }

@@ -11,7 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -39,13 +38,10 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegociateCredentialsAction.class);
 
     /** Whether this is using the NTLM protocol or not. */
-    @Value("${cas.spnego.ntlm:false}")
     private boolean ntlm;
-
-    @Value("${cas.spnego.mixed.mode.authn:false}")
+    
     private boolean mixedModeAuthentication;
-
-    @Value("#{T(java.util.Arrays).asList('${cas.spnego.supportedBrowsers:MSIE,Trident,Firefox,AppleWebKit}')}")
+    
     private List<String> supportedBrowser;
 
     private String messageBeginPrefix = constructMessagePrefix();
@@ -135,7 +131,7 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
      *
      * @param supportedBrowser the supported browsers list
      */
-    public void setSupportedBrowser(final List<String> supportedBrowser) {
+    public void setSupportedBrowsers(final List<String> supportedBrowser) {
         this.supportedBrowser = supportedBrowser;
     }
 

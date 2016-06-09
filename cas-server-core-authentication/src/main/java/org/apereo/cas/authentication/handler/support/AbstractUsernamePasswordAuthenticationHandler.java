@@ -48,7 +48,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
             throw new AccountNotFoundException("Username is null.");
         }
         
-        final String transformedUsername= this.principalNameTransformer.transform(userPass.getUsername());
+        final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (transformedUsername == null) {
             throw new AccountNotFoundException("Transformed username is null.");
         }

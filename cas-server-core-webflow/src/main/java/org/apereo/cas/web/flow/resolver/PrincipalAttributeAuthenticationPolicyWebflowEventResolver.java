@@ -2,11 +2,12 @@ package org.apereo.cas.web.flow.resolver;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,8 +25,8 @@ import java.util.Set;
  */
 public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Value("${cas.mfa.principal.attributes:}")
-    private String attributeName;
+    @Autowired
+    private MfaProperties mfaProperties;
 
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
@@ -38,7 +39,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(this.attributeName)) {
+        if (StringUtils.isBlank(mfaProperties.getPrincipalAttributes())) {
             logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
             return null;
         }
@@ -52,7 +53,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
 
         final Collection<MultifactorAuthenticationProvider> providers = providerMap.values();
         return resolveEventViaPrincipalAttribute(principal,
-                org.springframework.util.StringUtils.commaDelimitedListToSet(this.attributeName),
+                org.springframework.util.StringUtils.commaDelimitedListToSet(mfaProperties.getPrincipalAttributes()),
                 service, context, providers,
                 input -> providers.stream()
                         .filter(provider -> provider.getId().equals(input))

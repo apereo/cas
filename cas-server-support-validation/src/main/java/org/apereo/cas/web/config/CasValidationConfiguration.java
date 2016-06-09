@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.web.view.Cas10ResponseView;
@@ -23,13 +24,16 @@ import java.util.List;
  */
 @Configuration("casValidationConfiguration")
 public class CasValidationConfiguration {
-    
-    @Resource(name="defaultValidationServiceSelectionStrategy")
+
+    @Resource(name = "defaultValidationServiceSelectionStrategy")
     private ValidationServiceSelectionStrategy defaultStrategy;
 
     @Autowired
     private MfaProperties properties;
-    
+
+    @Autowired
+    private ViewProperties viewProperties;
+
     /**
      * Validation service selection strategies list.
      *
@@ -41,7 +45,7 @@ public class CasValidationConfiguration {
         list.add(this.defaultStrategy);
         return list;
     }
-    
+
     @Bean
     public View cas1ServiceSuccessView() {
         return new Cas10ResponseView.Success();
@@ -59,13 +63,17 @@ public class CasValidationConfiguration {
 
     @Bean
     public View cas3ServiceJsonView() {
-        return new Cas30JsonResponseView();
+        final Cas30JsonResponseView jsonResponseView = new Cas30JsonResponseView();
+        jsonResponseView.setAuthenticationContextAttribute(properties.getAuthenticationContextAttribute());
+        jsonResponseView.setReleaseProtocolAttributes(viewProperties.getCas3().isReleaseProtocolAttributes());
+        return jsonResponseView;
     }
-    
+
     @Bean
     public View cas3ServiceSuccessView() {
         final Cas30ResponseView.Success s = new Cas30ResponseView.Success();
         s.setAuthenticationContextAttribute(properties.getAuthenticationContextAttribute());
+        s.setReleaseProtocolAttributes(viewProperties.getCas3().isReleaseProtocolAttributes());
         return s;
     }
 }

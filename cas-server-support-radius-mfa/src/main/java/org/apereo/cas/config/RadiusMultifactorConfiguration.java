@@ -3,20 +3,18 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
-import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.web.RadiusMultifactorApplicationContextWrapper;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
-import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -39,94 +37,13 @@ import java.util.List;
 @Configuration("radiusMfaConfiguration")
 public class RadiusMultifactorConfiguration {
 
-    /**
-     * The Protocol.
-     */
-    @Value("${cas.mfa.radius.server.protocol:EAP_MSCHAPv2}")
-    private RadiusProtocol protocol;
-
-    /**
-     * The Retries.
-     */
-    @Value("${cas.mfa.radius.server.retries:3}")
-    private int retries;
-
-    /**
-     * The Nas identifier.
-     */
-    @Value("${cas.mfa.radius.server.nasIdentifier:-1}")
-    private long nasIdentifier;
-
-    /**
-     * The Nas port.
-     */
-    @Value("${cas.mfa.radius.server.nasPort:-1}")
-    private long nasPort;
-
-    /**
-     * The Nas port id.
-     */
-    @Value("${cas.mfa.radius.server.nasPortId:-1}")
-    private long nasPortId;
-
-    /**
-     * The Nas real port.
-     */
-    @Value("${cas.mfa.radius.server.nasRealPort:-1}")
-    private long nasRealPort;
-
-    /**
-     * The Nas port type.
-     */
-    @Value("${cas.mfa.radius.server.nasPortType:-1}")
-    private int nasPortType;
-
-    /**
-     * The Nas ip.
-     */
-    @Value("${cas.mfa.radius.server.nasIpAddress:}")
-    private String nasIp;
-
-    /**
-     * The Nas ipv 6.
-     */
-    @Value("${cas.mfa.radius.server.nasIpv6Address:}")
-    private String nasIpv6;
-
-    /**
-     * The Inet address.
-     */
-    @Value("${cas.mfa.radius.client.inetaddr:localhost}")
-    private String inetAddress;
-
-    /**
-     * The Accounting port.
-     */
-    @Value("${cas.mfa.radius.client.port.acct:" + RadiusServer.DEFAULT_PORT_ACCOUNTING + "}")
-    private int accountingPort;
-
-    /**
-     * The Authentication port.
-     */
-    @Value("${cas.mfa.radius.client.port.authn:" + RadiusServer.DEFAULT_PORT_AUTHENTICATION + "}")
-    private int authenticationPort;
-
-    /**
-     * The Socket timeout.
-     */
-    @Value("${cas.mfa.radius.client.socket.timeout:5}")
-    private int socketTimeout;
-
-    /**
-     * The Shared secret.
-     */
-    @Value("${cas.mfa.radius.client.sharedsecret:N0Sh@ar3d$ecReT}")
-    private String sharedSecret;
+    @Autowired
+    private MfaProperties mfaProperties;
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Resource(name="builder")
+    @Resource(name = "builder")
     private FlowBuilderServices builder;
 
     /**
@@ -142,7 +59,7 @@ public class RadiusMultifactorConfiguration {
         builder.addFlowLocationPattern("/mfa-radius/*-webflow.xml");
         return builder.build();
     }
-    
+
 
     /**
      * Radius servers list.
@@ -155,35 +72,43 @@ public class RadiusMultifactorConfiguration {
         final List<JRadiusServerImpl> list = new ArrayList<>();
 
         final RadiusClientFactory factory = new RadiusClientFactory();
-        factory.setAccountingPort(this.accountingPort);
-        factory.setAuthenticationPort(this.authenticationPort);
-        factory.setInetAddress(this.inetAddress);
-        factory.setSharedSecret(this.sharedSecret);
-        factory.setSocketTimeout(this.socketTimeout);
+        factory.setAccountingPort(mfaProperties.getRadius().getClient().getAccountingPort());
+        factory.setAuthenticationPort(mfaProperties.getRadius().getClient().getAuthenticationPort());
+        factory.setInetAddress(mfaProperties.getRadius().getClient().getInetAddress());
+        factory.setSharedSecret(mfaProperties.getRadius().getClient().getSharedSecret());
+        factory.setSocketTimeout(mfaProperties.getRadius().getClient().getSocketTimeout());
 
-        final JRadiusServerImpl impl = new JRadiusServerImpl(this.protocol, factory);
-        impl.setRetries(this.retries);
-        impl.setNasIdentifier(this.nasIdentifier);
-        impl.setNasPort(this.nasPort);
-        impl.setNasPortId(this.nasPortId);
-        impl.setNasRealPort(this.nasRealPort);
-        impl.setNasIpAddress(this.nasIp);
-        impl.setNasIpv6Address(this.nasIpv6);
-        
+        final RadiusProtocol protocol = RadiusProtocol.valueOf(mfaProperties.getRadius().getServer().getProtocol());
+
+        final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory);
+        impl.setRetries(mfaProperties.getRadius().getServer().getRetries());
+        impl.setNasIdentifier(mfaProperties.getRadius().getServer().getNasIdentifier());
+        impl.setNasPort(mfaProperties.getRadius().getServer().getNasPort());
+        impl.setNasPortId(mfaProperties.getRadius().getServer().getNasPortId());
+        impl.setNasRealPort(mfaProperties.getRadius().getServer().getNasRealPort());
+        impl.setNasIpAddress(mfaProperties.getRadius().getServer().getNasIpAddress());
+        impl.setNasIpv6Address(mfaProperties.getRadius().getServer().getNasIpv6Address());
+
         list.add(impl);
         return list;
     }
-    
+
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
         return new RadiusMultifactorAuthenticationProvider();
     }
-    
+
     @RefreshScope
     @Bean
-    public AuthenticationHandler radiusTokenAuthenticationHandler() {
-        return new RadiusTokenAuthenticationHandler();
+    public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
+        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler();
+
+        a.setServers(radiusTokenServers());
+        a.setFailoverOnAuthenticationFailure(mfaProperties.getRadius().isFailoverOnAuthenticationFailure());
+        a.setFailoverOnException(mfaProperties.getRadius().isFailoverOnException());
+        
+        return a;
     }
 
     @Bean

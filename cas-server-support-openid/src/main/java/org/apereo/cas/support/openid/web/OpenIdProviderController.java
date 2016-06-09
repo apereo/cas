@@ -1,6 +1,7 @@
 package org.apereo.cas.support.openid.web;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.configuration.model.core.ServerProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -15,18 +16,13 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.1
  */
 public class OpenIdProviderController extends AbstractController {
-
     
-    @Value("${server.prefix}")
-    private String serverPrefix;
-
+    @Autowired
+    private ServerProperties serverProperties;
+    
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
-        return new ModelAndView("openIdProviderView", "openid_server", this.serverPrefix);
-    }
-
-    public void setServerPrefix(final String serverPrefix) {
-        this.serverPrefix = serverPrefix;
+        return new ModelAndView("openIdProviderView", "openid_server", serverProperties.getPrefix());
     }
 }

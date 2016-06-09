@@ -6,11 +6,12 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -46,12 +47,11 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final String UTIL_DOCUMENT = "statistics";
 
     
+    @Autowired
+    private CouchbaseTicketRegistryProperties properties;
+    
     @Resource(name="ticketRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
-
-
-    @Value("${ticketreg.couchbase.query.enabled:true}")
-    private boolean queryEnabled;
 
     /**
      * Default constructor.
@@ -113,7 +113,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(properties.isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }

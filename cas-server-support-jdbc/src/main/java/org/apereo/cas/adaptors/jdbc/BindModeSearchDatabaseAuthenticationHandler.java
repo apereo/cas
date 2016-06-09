@@ -3,12 +3,9 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -52,9 +49,5 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
         }
     }
 
-    @Autowired(required = false)
-    @Override
-    public void setDataSource(@Qualifier("bindSearchDatabaseDataSource") final DataSource dataSource) {
-        super.setDataSource(dataSource);
-    }
+
 }

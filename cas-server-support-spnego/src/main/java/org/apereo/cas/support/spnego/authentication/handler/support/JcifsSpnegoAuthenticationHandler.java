@@ -9,9 +9,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.regex.Pattern;
@@ -27,20 +25,9 @@ import java.util.regex.Pattern;
  * @since 3.1
  */
 public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
-    @Resource(name="spnegoAuthentication")
+    
     private Authentication authentication;
-
-    /**
-     * Principal contains the DomainName ? (true by default).
-     */
-    @Value("${cas.spengo.use.principal.domain:false}")
-    private boolean principalWithDomainName = true;
-
-    /**
-     * Allow SPNEGO/NTLM Token as valid credentials. (false by default)
-     */
-    @Value("${cas.spnego.ntlm.allowed:true}")
+    private boolean principalWithDomainName;
     private boolean isNTLMallowed;
 
     @Override

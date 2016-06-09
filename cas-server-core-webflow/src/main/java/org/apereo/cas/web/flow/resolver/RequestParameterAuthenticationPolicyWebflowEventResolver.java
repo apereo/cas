@@ -3,10 +3,11 @@ package org.apereo.cas.web.flow.resolver;
 import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,8 +25,9 @@ import java.util.Set;
  */
 public class RequestParameterAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Value("${cas.mfa.request.parameter:authn_method}")
-    private String parameterName;
+    @Autowired
+    private MfaProperties mfaProperties;
+
 
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
@@ -37,9 +39,9 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             return null;
         }
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final String[] values = request.getParameterValues(this.parameterName);
+        final String[] values = request.getParameterValues(mfaProperties.getRequestParameter());
         if (values != null && values.length > 0) {
-            logger.debug("Received request parameter {} as {}", this.parameterName, values);
+            logger.debug("Received request parameter {} as {}", mfaProperties.getRequestParameter(), values);
 
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     getAllMultifactorAuthenticationProvidersFromApplicationContext();
@@ -68,7 +70,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             }
 
         }
-        logger.debug("No value could be found for request parameter {}", this.parameterName);
+        logger.debug("No value could be found for request parameter {}", mfaProperties.getRequestParameter());
         return null;
     }
 }

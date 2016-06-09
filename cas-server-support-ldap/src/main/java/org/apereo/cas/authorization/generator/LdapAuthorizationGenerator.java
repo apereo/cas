@@ -12,9 +12,6 @@ import org.pac4j.core.exception.AccountNotFoundException;
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
@@ -35,34 +32,21 @@ import javax.annotation.Nullable;
  * @since 4.0.0
  */
 public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
-
-    /**
-     * Default role prefix.
-     */
-    public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-
+    
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ldapAuthorizationGeneratorConnectionFactory")
-    private ConnectionFactory connectionFactory;
 
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ldapAuthorizationGeneratorUserSearchExecutor")
+    private ConnectionFactory connectionFactory;
+    
     private SearchExecutor userSearchExecutor;
 
-    @Value("${ldap.authorizationgenerator.role.attribute:}")
     private String roleAttribute;
 
-    @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + '}')
     private String rolePrefix;
 
     /**
      * Flag that indicates whether multiple search results are allowed for a given credential.
      */
-    @Value("${ldap.authorizationgenerator.allow.multiple:false}")
     private boolean allowMultipleResults;
 
     /**

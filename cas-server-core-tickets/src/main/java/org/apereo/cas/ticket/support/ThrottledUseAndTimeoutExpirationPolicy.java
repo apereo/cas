@@ -4,7 +4,6 @@ import org.apereo.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -30,11 +29,8 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.throttled.maxTimeToLiveInSeconds:28800}*1000}")
     private long timeToKillInMilliSeconds;
 
-    /** Time time between which a ticket must wait to be used again. */
-    @Value("#{${tgt.throttled.timeInBetweenUsesInSeconds:5}*1000}")
     private long timeInBetweenUsesInMilliSeconds;
 
     /**

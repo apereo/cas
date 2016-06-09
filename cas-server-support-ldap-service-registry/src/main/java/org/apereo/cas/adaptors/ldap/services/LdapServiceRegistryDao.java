@@ -12,11 +12,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,18 +27,10 @@ import java.util.List;
 public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapServiceRegistryDao.class);
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ldapServiceRegistryConnectionFactory")
+    
     private ConnectionFactory connectionFactory;
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ldapServiceRegistryMapper")
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapRegisteredServiceMapper();
-
-    @Value("${svcreg.ldap.baseDn:}")
+    
     private String baseDn;
 
     private String searchFilter;
@@ -202,6 +190,9 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 
+    public void setBaseDn(final String baseDn) {
+        this.baseDn = baseDn;
+    }
 
     public void setConnectionFactory(final ConnectionFactory factory) {
         this.connectionFactory = factory;

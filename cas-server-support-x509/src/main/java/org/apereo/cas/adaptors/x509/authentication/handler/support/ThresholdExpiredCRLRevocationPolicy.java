@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.security.cert.X509CRL;
 import java.time.ZoneOffset;
@@ -20,16 +18,12 @@ import java.time.ZonedDateTime;
  *
  */
 public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
-    /** Default threshold is 48 hours. */
-    private static final int DEFAULT_THRESHOLD = 172800;
 
     /** Logger instance. */
     private transient Logger logger = LoggerFactory.getLogger(getClass());
-
-
-    /** Expired threshold period in seconds. */
     
-    private int threshold = DEFAULT_THRESHOLD;
+    /** Expired threshold period in seconds. */
+    private int threshold;
 
 
     /**
@@ -60,9 +54,7 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
      *
      * @param threshold Number of seconds; MUST be non-negative integer.
      */
-    @Autowired
-    public void setThreshold(@Value("${cas.x509.authn.revocation.policy.threshold:" + DEFAULT_THRESHOLD + '}')
-                                 final int threshold) {
+    public void setThreshold(final int threshold) {
         this.threshold = threshold;
     }
 }

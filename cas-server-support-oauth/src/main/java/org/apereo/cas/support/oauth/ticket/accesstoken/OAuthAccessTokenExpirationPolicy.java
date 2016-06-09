@@ -4,7 +4,6 @@ import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -23,11 +22,9 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthAccessTokenExpirationPolicy.class);
 
     /** Maximum time this token is valid.  */
-    @Value("#{${oauth.access.token.maxTimeToLiveInSeconds:28800}*1000L}")
     private long maxTimeToLiveInMilliSeconds;
 
     /** Time to kill in milliseconds. */
-    @Value("#{${oauth.access.token.timeToKillInSeconds:7200}*1000L}")
     private long timeToKillInMilliSeconds;
 
     public OAuthAccessTokenExpirationPolicy() {}

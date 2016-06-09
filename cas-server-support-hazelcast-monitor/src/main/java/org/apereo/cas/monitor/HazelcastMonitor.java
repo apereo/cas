@@ -4,9 +4,9 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
-import org.apereo.cas.config.HazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,14 +18,15 @@ import java.util.List;
  */
 public class HazelcastMonitor extends AbstractCacheMonitor {
 
-    @Resource(name="hazelcastProperties")
+    @Autowired
     private HazelcastProperties hazelcastProperties;
 
     @Override
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
 
-        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(this.hazelcastProperties.getInstanceName());
+        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(
+                this.hazelcastProperties.getCluster().getInstanceName());
         final IMap map = instance.getMap(this.hazelcastProperties.getMapName());
         statsList.add(new HazelcastStatistics(map));
 

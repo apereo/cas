@@ -2,7 +2,6 @@ package org.apereo.cas.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
@@ -18,13 +17,9 @@ import java.util.concurrent.TimeoutException;
  * @since 3.5.0
  */
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
-
-    /** Default maximum wait time for asynchronous pool validation. */
-    public static final int DEFAULT_MAX_WAIT = 3000;
-
+    
     /** Maximum amount of time in ms to wait while validating pool resources. */
-    @Value("${ldap.pool.monitor.maxwait:3000}")
-    private int maxWait = DEFAULT_MAX_WAIT;
+    private int maxWait;
 
     /** Executor that performs pool resource validation. */
     @Nullable

@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +26,8 @@ import java.util.Set;
  * @since 4.1.0
  */
 public class Cas30ResponseView extends Cas20ResponseView {
-
-    @Value("${cas.attrs.protocol.release:true}")
-    private boolean releaseProtocolAttributes = true;
+    
+    private boolean releaseProtocolAttributes;
     
     private String authenticationContextAttribute;
 

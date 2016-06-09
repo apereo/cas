@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -36,11 +37,11 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     private static final String RS_ATTR_1 = "rs_attr1";
     private static final String RS_ATTR_2 = "rs_attr2";
     private static final String RS_ATTR_3 = "rs_attr3";
-    private static final String RS_ATTRS_12 = RS_ATTR_1 + "," + RS_ATTR_2;
+    private static final String RS_ATTRS_12 = RS_ATTR_1 + ',' + RS_ATTR_2;
     private static final String P_ATTR_1 = "principal_attr_1";
     private static final String P_ATTR_2 = "principal_attr_2";
     private static final String P_ATTR_3 = "principal_attr_3";
-    private static final String P_ATTRS_12 = P_ATTR_1 + "," + P_ATTR_2;
+    private static final String P_ATTRS_12 = P_ATTR_1 + ',' + P_ATTR_2;
 
     private static final String VALUE_1 = "enforce_1";
     private static final String VALUE_2 = "enforce_2";
@@ -54,9 +55,13 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     @Before
     public void setUp() {
         strategy = new DefaultMultifactorTriggerSelectionStrategy();
-        strategy.setRequestParameter(REQUEST_PARAM);
-        strategy.setPrincipalAttribute(P_ATTRS_12);
+        
+        final MfaProperties p = new MfaProperties();
+        p.setRequestParameter(REQUEST_PARAM);
+        p.setPrincipalAttributes(P_ATTRS_12);
 
+        strategy.setMfaProperties(p);
+        
         when(MFA_PROVIDER_1.getId()).thenReturn(MFA_PROVIDER_ID_1);
         when(MFA_PROVIDER_2.getId()).thenReturn(MFA_PROVIDER_ID_2);
     }

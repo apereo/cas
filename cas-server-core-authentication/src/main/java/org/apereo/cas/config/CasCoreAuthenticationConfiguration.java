@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
@@ -41,10 +42,15 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationExceptionsProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.HttpClientTrustStoreProperties;
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
@@ -56,6 +62,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 /**
  * This is {@link CasCoreAuthenticationConfiguration}.
  *
@@ -65,18 +76,23 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreAuthenticationConfiguration")
 @EnableConfigurationProperties(
-        {HttpClientTrustStoreProperties.class,
+        {HttpClientProperties.class,
                 PasswordPolicyProperties.class,
                 PersonDirPrincipalResolverProperties.class,
                 AuthenticationPolicyProperties.class})
 public class CasCoreAuthenticationConfiguration {
 
+    @Autowired
+    private JaasAuthenticationProperties jaasAuthenticationProperties;
+
+    @Autowired
+    private PrincipalTransformationProperties principalTransformationProperties;
 
     @Autowired
     private MfaProperties mfaProperties;
-    
+
     @Autowired
-    private HttpClientTrustStoreProperties trustStoreProperties;
+    private HttpClientProperties trustStoreProperties;
 
     @Autowired
     private PasswordPolicyProperties passwordPolicyProperties;
@@ -88,12 +104,28 @@ public class CasCoreAuthenticationConfiguration {
     private AuthenticationPolicyProperties authenticationPolicyProperties;
 
     @Autowired
+    private PasswordEncoderProperties passwordEncoderProperties;
+
+    @Autowired
+    private AcceptAuthenticationProperties acceptAuthenticationProperties;
+
+    @Autowired
+    private AuthenticationExceptionsProperties exceptionsProperties;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
+    @Autowired(required = false)
+    @Qualifier("delegateTransformer")
+    private PrincipalNameTransformer delegate;
+
+
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
-        return new AuthenticationExceptionHandler();
+        final AuthenticationExceptionHandler h = new AuthenticationExceptionHandler();
+        h.setErrors(exceptionsProperties.getExceptions());
+        return h;
     }
 
     @RefreshScope
@@ -119,7 +151,19 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        return new AcceptUsersAuthenticationHandler();
+        final Pattern pattern = Pattern.compile("::");
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
+        if (StringUtils.isNotBlank(acceptAuthenticationProperties.getUsers())) {
+            final Set<String> usersPasswords =
+                    org.springframework.util.StringUtils.commaDelimitedListToSet(acceptAuthenticationProperties.getUsers());
+            final Map<String, String> parsedUsers = new HashMap<>();
+            usersPasswords.stream().forEach(usersPassword -> {
+                final String[] splitArray = pattern.split(usersPassword);
+                parsedUsers.put(splitArray[0], splitArray[1]);
+            });
+            h.setUsers(parsedUsers);
+        }
+        return h;
     }
 
     @Bean
@@ -160,7 +204,8 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
-        return new FileTrustStoreSslSocketFactory(this.trustStoreProperties.getFile(), this.trustStoreProperties.getPsw());
+        return new FileTrustStoreSslSocketFactory(this.trustStoreProperties.getTruststore().getFile(),
+                this.trustStoreProperties.getTruststore().getPsw());
     }
 
     @Bean
@@ -201,10 +246,10 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") 
-                                                             final IPersonAttributeDao attributeRepository,
-                                                             @Qualifier("principalFactory") 
-                                                             final PrincipalFactory principalFactory) {
+    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository")
+                                                              final IPersonAttributeDao attributeRepository,
+                                                              @Qualifier("principalFactory")
+                                                              final PrincipalFactory principalFactory) {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
         bean.setAttributeRepository(attributeRepository);
         bean.setPrincipalFactory(principalFactory);
@@ -226,7 +271,13 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
-        return new JaasAuthenticationHandler();
+        final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
+
+        h.setKerberosKdcSystemProperty(jaasAuthenticationProperties.getKerberosKdcSystemProperty());
+        h.setKerberosRealmSystemProperty(jaasAuthenticationProperties.getKerberosRealmSystemProperty());
+        h.setRealm(jaasAuthenticationProperties.getRealm());
+
+        return h;
     }
 
     @Bean
@@ -236,7 +287,12 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public PrincipalNameTransformer prefixSuffixPrincipalNameTransformer() {
-        return new PrefixSuffixPrincipalNameTransformer();
+        final PrefixSuffixPrincipalNameTransformer p = new PrefixSuffixPrincipalNameTransformer();
+
+        p.setPrefix(principalTransformationProperties.getPrefix());
+        p.setSuffix(principalTransformationProperties.getSuffix());
+
+        return p;
     }
 
     @Bean
@@ -252,13 +308,19 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public DefaultPasswordEncoder defaultPasswordEncoder() {
-        return new DefaultPasswordEncoder();
+        final DefaultPasswordEncoder e = new DefaultPasswordEncoder();
+        e.setCharacterEncoding(passwordEncoderProperties.getCharacterEncoding());
+        e.setEncodingAlgorithm(passwordEncoderProperties.getEncodingAlgorithm());
+        return e;
     }
 
     @Bean
     @RefreshScope
     public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
-        return new ConvertCasePrincipalNameTransformer();
+        final ConvertCasePrincipalNameTransformer t =
+                new ConvertCasePrincipalNameTransformer(this.delegate);
+        t.setToUpperCase(principalTransformationProperties.isUppercase());
+        return t;
     }
 
 }

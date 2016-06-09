@@ -11,8 +11,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -47,16 +45,6 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         this.salt = RandomStringUtils.randomAlphanumeric(CONST_DEFAULT_SALT_COUNT);
     }
     
-    /**
-     * Instantiates a new shibboleth compatible persistent id generator.
-     *
-     * @param salt the the salt
-     */
-    @Autowired
-    public ShibbolethCompatiblePersistentIdGenerator(@Value("${shib.id.gen.salt:casrox}") final String salt) {
-        this.salt = salt;
-    }
-
     private byte[] convertSaltToByteArray() {
         return this.salt.getBytes(Charset.defaultCharset());
     }

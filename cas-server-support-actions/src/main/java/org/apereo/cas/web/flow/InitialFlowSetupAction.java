@@ -11,15 +11,11 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -50,11 +46,9 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     /** Extractors for finding the service. */
     private List<ArgumentExtractor> argumentExtractors;
-
-    @Value("${events.track.geolocation:false}")
+    
     private boolean trackGeoLocation;
 
-    @Value("${cas.google.analytics.id:}")
     private String googleAnalyticsTrackingId;
 
 
@@ -121,21 +115,18 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putService(context, service);
         return result("success");
     }
-
-    @Autowired
+    
     public void setTicketGrantingTicketCookieGenerator(
-            @Qualifier("ticketGrantingTicketCookieGenerator")
             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
-    @Autowired
-    public void setWarnCookieGenerator(@Qualifier("warnCookieGenerator")
-                                       final CookieRetrievingCookieGenerator warnCookieGenerator) {
+
+    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    @Resource(name="argumentExtractors")
+    
     public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
@@ -147,8 +138,7 @@ public class InitialFlowSetupAction extends AbstractAction {
      * Since 4.1
      * @param servicesManager the services manager
      */
-    @Autowired
-    public void setServicesManager(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
@@ -160,5 +150,13 @@ public class InitialFlowSetupAction extends AbstractAction {
      */
     public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
         this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
+    }
+
+    public void setTrackGeoLocation(final boolean trackGeoLocation) {
+        this.trackGeoLocation = trackGeoLocation;
+    }
+
+    public void setGoogleAnalyticsTrackingId(final String googleAnalyticsTrackingId) {
+        this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
 }

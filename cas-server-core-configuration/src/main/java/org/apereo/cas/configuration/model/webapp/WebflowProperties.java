@@ -14,6 +14,8 @@ import org.springframework.core.io.Resource;
 @ConfigurationProperties(prefix = "webflow", ignoreUnknownFields = false)
 public class WebflowProperties extends AbstractCryptographyProperties {
 
+    private boolean autoconfigure = true;
+    
     private boolean refresh = true;
 
     private boolean alwaysPauseRedirect;
@@ -21,6 +23,14 @@ public class WebflowProperties extends AbstractCryptographyProperties {
     private boolean redirectSameState;
 
     private Session session = new Session();
+
+    public boolean isAutoconfigure() {
+        return autoconfigure;
+    }
+
+    public void setAutoconfigure(final boolean autoconfigure) {
+        this.autoconfigure = autoconfigure;
+    }
 
     public boolean isRefresh() {
         return refresh;

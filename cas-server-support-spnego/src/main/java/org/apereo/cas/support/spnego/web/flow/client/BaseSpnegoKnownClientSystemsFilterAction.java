@@ -6,7 +6,6 @@ import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,21 +26,17 @@ import java.util.regex.Pattern;
  * @since 4.1
  */
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
-    private static final int DEFAULT_TIMEOUT = 2000;
-
     /** Logger instance. **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Pattern of ip addresses to check. **/
-    @Value("${cas.spnego.ip.pattern:127.+}")
     private Pattern ipsToCheckPattern;
 
     /** Alternative remote host attribute. **/
-    @Value("${cas.spnego.alt.remote.host.attribute:alternateRemoteHeader}")
     private String alternativeRemoteHostAttribute;
 
     /** Timeout for DNS Requests. **/
-    private long timeout = DEFAULT_TIMEOUT;
+    private long timeout;
     
     /**
      * Instantiates a new Base.

@@ -1,14 +1,14 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
-import org.apereo.cas.adaptors.radius.RadiusServer;
+import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.web.RadiusApplicationContextWrapper;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,89 +25,8 @@ import java.util.List;
 @Configuration("radiusConfiguration")
 public class RadiusConfiguration {
 
-    /**
-     * The Protocol.
-     */
-    @Value("${cas.radius.server.protocol:EAP_MSCHAPv2}")
-    private RadiusProtocol protocol;
-
-    /**
-     * The Retries.
-     */
-    @Value("${cas.radius.server.retries:3}")
-    private int retries;
-
-    /**
-     * The Nas identifier.
-     */
-    @Value("${cas.radius.server.nasIdentifier:-1}")
-    private long nasIdentifier;
-
-    /**
-     * The Nas port.
-     */
-    @Value("${cas.radius.server.nasPort:-1}")
-    private long nasPort;
-
-    /**
-     * The Nas port id.
-     */
-    @Value("${cas.radius.server.nasPortId:-1}")
-    private long nasPortId;
-
-    /**
-     * The Nas real port.
-     */
-    @Value("${cas.radius.server.nasRealPort:-1}")
-    private long nasRealPort;
-
-    /**
-     * The Nas port type.
-     */
-    @Value("${cas.radius.server.nasPortType:-1}")
-    private int nasPortType;
-
-    /**
-     * The Nas ip.
-     */
-    @Value("${cas.radius.server.nasIpAddress:}")
-    private String nasIp;
-
-    /**
-     * The Nas ipv 6.
-     */
-    @Value("${cas.radius.server.nasIpv6Address:}")
-    private String nasIpv6;
-
-    /**
-     * The Inet address.
-     */
-    @Value("${cas.radius.client.inetaddr:localhost}")
-    private String inetAddress;
-
-    /**
-     * The Accounting port.
-     */
-    @Value("${cas.radius.client.port.acct:" + RadiusServer.DEFAULT_PORT_ACCOUNTING + "}")
-    private int accountingPort;
-
-    /**
-     * The Authentication port.
-     */
-    @Value("${cas.radius.client.port.authn:" + RadiusServer.DEFAULT_PORT_AUTHENTICATION + "}")
-    private int authenticationPort;
-
-    /**
-     * The Socket timeout.
-     */
-    @Value("${cas.radius.client.socket.timeout:5}")
-    private int socketTimeout;
-
-    /**
-     * The Shared secret.
-     */
-    @Value("${cas.radius.client.sharedsecret:N0Sh@ar3d$ecReT}")
-    private String sharedSecret;
+    @Autowired
+    private RadiusProperties properties;
 
     /**
      * Radius server j radius server.
@@ -117,14 +36,24 @@ public class RadiusConfiguration {
     @RefreshScope
     @Bean
     public JRadiusServerImpl radiusServer() {
-        final JRadiusServerImpl impl = new JRadiusServerImpl(this.protocol, radiusClientFactory());
-        impl.setRetries(this.retries);
-        impl.setNasIdentifier(this.nasIdentifier);
-        impl.setNasPort(this.nasPort);
-        impl.setNasPortId(this.nasPortId);
-        impl.setNasRealPort(this.nasRealPort);
-        impl.setNasIpAddress(this.nasIp);
-        impl.setNasIpv6Address(this.nasIpv6);
+        final RadiusClientFactory factory = new RadiusClientFactory();
+        factory.setAccountingPort(properties.getClient().getAccountingPort());
+        factory.setAuthenticationPort(properties.getClient().getAuthenticationPort());
+        factory.setInetAddress(properties.getClient().getInetAddress());
+        factory.setSharedSecret(properties.getClient().getSharedSecret());
+        factory.setSocketTimeout(properties.getClient().getSocketTimeout());
+
+        final RadiusProtocol protocol = RadiusProtocol.valueOf(properties.getServer().getProtocol());
+
+        final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory);
+        impl.setRetries(properties.getServer().getRetries());
+        impl.setNasIdentifier(properties.getServer().getNasIdentifier());
+        impl.setNasPort(properties.getServer().getNasPort());
+        impl.setNasPortId(properties.getServer().getNasPortId());
+        impl.setNasRealPort(properties.getServer().getNasRealPort());
+        impl.setNasIpAddress(properties.getServer().getNasIpAddress());
+        impl.setNasIpv6Address(properties.getServer().getNasIpv6Address());
+
         return impl;
     }
 
@@ -141,28 +70,16 @@ public class RadiusConfiguration {
         return list;
     }
 
-    /**
-     * Radius client factory radius client factory.
-     *
-     * @return the radius client factory
-     */
-    @RefreshScope
-    @Bean
-    public RadiusClientFactory radiusClientFactory() {
-        final RadiusClientFactory factory = new RadiusClientFactory();
-        factory.setAccountingPort(this.accountingPort);
-        factory.setAuthenticationPort(this.authenticationPort);
-        factory.setInetAddress(this.inetAddress);
-        factory.setSharedSecret(this.sharedSecret);
-        factory.setSocketTimeout(this.socketTimeout);
-        return factory;
-    }
-    
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
-        return new RadiusAuthenticationHandler();
+        final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler();
+        
+        h.setFailoverOnAuthenticationFailure(properties.isFailoverOnAuthenticationFailure());
+        h.setFailoverOnException(properties.isFailoverOnException());
+        h.setServers(radiusServers());
+        return h;
     }
-    
+
     @Bean
     public BaseApplicationContextWrapper radiusApplicationContextWrapper() {
         return new RadiusApplicationContextWrapper();

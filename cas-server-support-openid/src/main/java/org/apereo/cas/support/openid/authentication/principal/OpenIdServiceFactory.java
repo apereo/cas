@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.openid4java.message.ParameterList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
@@ -17,14 +16,9 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.2
  */
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
-
-    /**
-     * The prefix url for OpenID (without the trailing slash).
-     */
     
-    @Value("${server.prefix}/openid")
     private String openIdPrefixUrl;
-
+    
     @Autowired
     private ApplicationContext applicationContext;
 

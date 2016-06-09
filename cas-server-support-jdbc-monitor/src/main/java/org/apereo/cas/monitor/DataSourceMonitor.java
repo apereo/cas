@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Nullable;
@@ -14,12 +13,9 @@ import java.sql.ResultSet;
  * @since 3.5.1
  */
 public class DataSourceMonitor extends AbstractPoolMonitor {
-
     
     private JdbcTemplate jdbcTemplate;
-
     
-    @Value("${datasource.monitor.validation.query:SELECT 1}")
     private String validationQuery;
 
     /**

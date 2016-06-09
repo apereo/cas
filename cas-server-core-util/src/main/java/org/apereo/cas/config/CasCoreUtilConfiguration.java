@@ -3,9 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowCipherExecutor;
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
-import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
+import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
@@ -32,6 +33,9 @@ import javax.validation.MessageInterpolator;
 public class CasCoreUtilConfiguration {
 
     @Autowired
+    private HttpClientProperties httpClientProperties;
+
+    @Autowired
     private TicketProperties ticketProperties;
 
     @Autowired
@@ -39,7 +43,7 @@ public class CasCoreUtilConfiguration {
 
     @Autowired
     private TicketGrantingCookieProperties tgcProperties;
-            
+
     @Bean
     public CipherExecutor<byte[], byte[]> defaultTicketCipherExecutor() {
         return new DefaultTicketCipherExecutor(
@@ -59,28 +63,40 @@ public class CasCoreUtilConfiguration {
                 this.webflowProperties.getSigning().getKeySize(),
                 this.webflowProperties.getEncryption().getKeySize());
     }
-    
+
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
-        return new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
+                new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        c.setConnectionTimeout(httpClientProperties.getConnectionTimeout());
+        c.setReadTimeout(httpClientProperties.getReadTimeout());
+        return c;
     }
 
 
     @Bean
     public FactoryBean<SimpleHttpClient> noRedirectHttpClient() {
-        return new SimpleHttpClientFactoryBean.NoRedirectHttpClient();
+        final SimpleHttpClientFactoryBean.NoRedirectHttpClient c =
+                new SimpleHttpClientFactoryBean.NoRedirectHttpClient();
+        c.setConnectionTimeout(httpClientProperties.getConnectionTimeout());
+        c.setReadTimeout(httpClientProperties.getReadTimeout());
+        return c;
     }
-    
+
     @Bean
     public FactoryBean<SimpleHttpClient> supportsTrustStoreSslSocketFactoryHttpClient() {
-        return new SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient();
+        final SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient c =
+                new SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient();
+        c.setConnectionTimeout(httpClientProperties.getConnectionTimeout());
+        c.setReadTimeout(httpClientProperties.getReadTimeout());
+        return c;
     }
-    
+
     @Bean
     public ApplicationContextAware applicationContextProvider() {
         return new ApplicationContextProvider();
     }
-    
+
     @Bean
     public CipherExecutor noOpCipherExecutor() {
         return new NoOpCipherExecutor();
@@ -91,7 +107,7 @@ public class CasCoreUtilConfiguration {
     public CipherExecutor tgcCipherExecutor() {
         return new TGCCipherExecutor(this.tgcProperties.getEncryptionKey(), this.tgcProperties.getSigningKey());
     }
-    
+
     @Bean
     public static MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();

@@ -5,7 +5,6 @@ import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -53,13 +52,13 @@ public class SamlValidateController extends AbstractServiceValidateController {
 
     @Override
     @Autowired
-    public void setFailureView(@Value("casSamlServiceFailureView") final String failureView) {
+    public void setFailureView(@Qualifier("casSamlServiceFailureView") final String failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Value("casSamlServiceSuccessView") final String successView) {
+    public void setSuccessView(@Qualifier("casSamlServiceSuccessView") final String successView) {
         super.setSuccessView(successView);
     }
 

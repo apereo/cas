@@ -3,7 +3,6 @@ package org.apereo.cas.web;
 import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 
@@ -18,9 +17,12 @@ public class ClearpassApplicationContextWrapper extends BaseApplicationContextWr
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    @Value("${cas.clearpass.cache.credential:false}")
     private boolean cacheCredential;
-    
+
+    public void setCacheCredential(final boolean cacheCredential) {
+        this.cacheCredential = cacheCredential;
+    }
+
     /**
      * Initialize application context.
      */

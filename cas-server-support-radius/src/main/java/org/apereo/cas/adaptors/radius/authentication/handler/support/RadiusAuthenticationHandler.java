@@ -7,9 +7,7 @@ import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.Pair;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -26,23 +24,18 @@ import java.util.Optional;
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
-    
-    
-    @Resource(name="radiusServers")
     private List<RadiusServer> servers;
 
     /**
      * Determines whether to fail over to the next configured RadiusServer if
      * there was an exception.
      */
-    @Value("${cas.radius.failover.authn:false}")
     private boolean failoverOnException;
 
     /**
      * Determines whether to fail over to the next configured RadiusServer if
      * there was an authentication failure.
      */
-    @Value("${cas.radius.failover.exception:false}")
     private boolean failoverOnAuthenticationFailure;
 
     /**

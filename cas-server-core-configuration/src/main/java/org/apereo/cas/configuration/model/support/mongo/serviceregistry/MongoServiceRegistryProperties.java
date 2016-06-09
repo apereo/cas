@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.mongo.serviceregistry;
 
-import com.mongodb.WriteConcern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +27,7 @@ public class MongoServiceRegistryProperties {
 
     private int idleTimeout = 30000;
 
-    private WriteConcern writeConcern = WriteConcern.NORMAL;
+    private String writeConcern = "NORMAL";
 
     private boolean socketKeepAlive;
 
@@ -98,11 +97,11 @@ public class MongoServiceRegistryProperties {
         this.idleTimeout = idleTimeout;
     }
 
-    public WriteConcern getWriteConcern() {
+    public String getWriteConcern() {
         return writeConcern;
     }
 
-    public void setWriteConcern(final WriteConcern writeConcern) {
+    public void setWriteConcern(final String writeConcern) {
         this.writeConcern = writeConcern;
     }
 

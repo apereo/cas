@@ -41,12 +41,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     /** Principal factory instance. */
     @Resource(name="principalFactory")
     protected PrincipalFactory principalFactory;
-
     
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
     
     @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;

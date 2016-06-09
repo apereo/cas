@@ -5,7 +5,6 @@ import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -48,13 +47,13 @@ public class V3ServiceValidateController extends AbstractServiceValidateControll
 
     @Override
     @Autowired
-    public void setFailureView(@Value("cas3ServiceFailureView") final String failureView) {
+    public void setFailureView(@Qualifier("cas3ServiceFailureView") final String failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Value("cas3ServiceSuccessView") final String successView) {
+    public void setSuccessView(@Qualifier("cas3ServiceSuccessView") final String successView) {
         super.setSuccessView(successView);
     }
 

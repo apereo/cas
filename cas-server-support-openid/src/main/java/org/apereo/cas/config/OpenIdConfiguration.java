@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.model.core.ServerProperties;
+import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.support.openid.OpenIdApplicationContextWrapper;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
@@ -19,7 +21,7 @@ import org.apereo.cas.web.DelegatingController;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,17 +39,12 @@ import java.util.Arrays;
 public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
-    /**
-     * The Endpoint.
-     */
-    @Value("${server.prefix:http://localhost:8080/cas}/login")
-    private String endpoint;
-
-    /**
-     * The Enforce rp id.
-     */
-    @Value("${cas.openid.enforce.rpid:false}")
-    private boolean enforceRpId;
+    @Autowired
+    private OpenIdProperties openIdProperties;
+    
+    @Autowired
+    private ServerProperties serverProperties;
+    
 
     /**
      * Openid delegating controller delegating controller.
@@ -94,9 +91,9 @@ public class OpenIdConfiguration {
     @Bean
     public ServerManager serverManager() {
         final ServerManager manager = new ServerManager();
-        manager.setOPEndpointUrl(this.endpoint);
-        manager.setEnforceRpId(this.enforceRpId);
-        LOGGER.info("Creating openid server manager with OP endpoint {}", this.endpoint);
+        manager.setOPEndpointUrl(serverProperties.getLoginUrl());
+        manager.setEnforceRpId(openIdProperties.isEnforceRpId());
+        LOGGER.info("Creating openid server manager with OP endpoint {}", serverProperties.getLoginUrl());
         return manager;
     }
 
@@ -118,7 +115,9 @@ public class OpenIdConfiguration {
     @Bean
     @RefreshScope
     public ServiceFactory openIdServiceFactory() {
-        return new OpenIdServiceFactory();
+        final OpenIdServiceFactory f = new OpenIdServiceFactory();
+        f.setOpenIdPrefixUrl(serverProperties.getPrefix().concat("/openid"));
+        return f;
     }
 
     @Bean

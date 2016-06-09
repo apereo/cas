@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
@@ -100,7 +99,6 @@ public class AuthenticationExceptionHandler {
      *
      * @param errors List of errors in order of descending precedence.
      */
-    @Value("#{'${cas.custom.authentication.exceptions:}'.split(',')}")
     public void setErrors(final List<Class<? extends Exception>> errors) {
         /*
             The specifics of the default empty value: this results in the list with one null element. 

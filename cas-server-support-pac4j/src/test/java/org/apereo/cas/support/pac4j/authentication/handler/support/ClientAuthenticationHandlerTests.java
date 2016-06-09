@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +46,10 @@ public class ClientAuthenticationHandlerTests {
         final Clients clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new ClientAuthenticationHandler();
         this.handler.setClients(clients);
+
+        final Pac4jProperties props = new Pac4jProperties();
+        props.setTypedIdUsed(true);
+        this.handler.setProperties(props);
         final Credentials credentials = new OAuthCredentials(null, MockFacebookClient.CLIENT_NAME);
         this.clientCredential = new ClientCredential(credentials);
         ExternalContextHolder.setExternalContext(mock(ServletExternalContext.class));
@@ -62,7 +67,10 @@ public class ClientAuthenticationHandlerTests {
 
     @Test
     public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
-        this.handler.setTypedIdUsed(false);
+        final Pac4jProperties props = new Pac4jProperties();
+        props.setTypedIdUsed(false);
+        this.handler.setProperties(props);
+        
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setFacebookProfile(facebookProfile);

@@ -1,9 +1,17 @@
 package org.apereo.cas.monitor.config;
 
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.monitor.PooledConnectionFactoryMonitor;
+import org.ldaptive.Connection;
+import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.pool.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Nullable;
 
 /**
  * This is {@link LdapMonitorConfiguration}.
@@ -13,9 +21,26 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapMonitorConfiguration")
 public class LdapMonitorConfiguration {
+
+    /** Source of connections to validate. */
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("pooledConnectionFactoryMonitorConnectionFactory")
+    private PooledConnectionFactory connectionFactory;
+
+    /** Connection validator. */
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("pooledConnectionFactoryMonitorValidator")
+    private Validator<Connection> validator;
+    
+    @Autowired
+    private MonitorProperties properties;
     
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor() {
-        return new PooledConnectionFactoryMonitor();
+        final PooledConnectionFactoryMonitor m = new PooledConnectionFactoryMonitor(connectionFactory, validator);
+        m.setMaxWait(properties.getMaxWait());
+        return m;
     }
 }
