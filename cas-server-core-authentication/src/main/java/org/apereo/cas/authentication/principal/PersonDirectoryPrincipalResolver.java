@@ -47,7 +47,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected boolean returnNullIfNoAttributes;
 
     /**
-     * Transform principal name;
+     * Transform principal name.
      */
     protected PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 

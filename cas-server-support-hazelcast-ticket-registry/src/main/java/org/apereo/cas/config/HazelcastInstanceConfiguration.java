@@ -32,7 +32,7 @@ import java.util.Map;
  * <p>
  * This configuration class has the smarts to choose the configuration source for the {@link HazelcastInstance}
  * that it produces by either loading the native hazelcast XML config file from a resource location indicated by
- * <code>hz.config.location</code> property or if that property is 
+ * <code>hz.config.location</code> property or if that property is
  * not set nor a valid location, creates HazelcastInstance programmatically
  * with a handful properties and their defaults (if not set) that it exposes to CAS deployers.
  *
@@ -74,7 +74,7 @@ public class HazelcastInstanceConfiguration {
      */
     private Config getConfig() {
         final Config config;
-        if (hazelcastProperties.getConfigLocation() != null 
+        if (hazelcastProperties.getConfigLocation() != null
                 && hazelcastProperties.getConfigLocation().exists()) { 
             
             try {

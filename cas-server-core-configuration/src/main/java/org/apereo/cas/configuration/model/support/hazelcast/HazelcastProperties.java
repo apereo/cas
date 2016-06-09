@@ -57,7 +57,7 @@ public class HazelcastProperties {
 
     public static class Cluster {
         private String loggingType = "slf4j";
-        private int maxNoHeartbeatSeconds = 5;
+        private int maxNoHeartbeatSeconds = 300;
         private String instanceName = "localhost";
         private boolean portAutoIncrement = true;
         private int port = 5701;

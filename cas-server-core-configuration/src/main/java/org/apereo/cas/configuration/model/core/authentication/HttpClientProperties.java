@@ -16,6 +16,8 @@ public class HttpClientProperties {
     private int readTimeout = 5000;
     private int asyncTimeout = 5000;
 
+    private Truststore truststore = new Truststore();
+    
     public int getAsyncTimeout() {
         return asyncTimeout;
     }
@@ -23,9 +25,7 @@ public class HttpClientProperties {
     public void setAsyncTimeout(final int asyncTimeout) {
         this.asyncTimeout = asyncTimeout;
     }
-
-    private Truststore truststore = new Truststore();
-
+    
     public Truststore getTruststore() {
         return truststore;
     }

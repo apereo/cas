@@ -44,7 +44,11 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     public ShibbolethCompatiblePersistentIdGenerator() {
         this.salt = RandomStringUtils.randomAlphanumeric(CONST_DEFAULT_SALT_COUNT);
     }
-    
+
+    public ShibbolethCompatiblePersistentIdGenerator(final String salt) {
+        this.salt = salt;
+    }
+
     private byte[] convertSaltToByteArray() {
         return this.salt.getBytes(Charset.defaultCharset());
     }

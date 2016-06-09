@@ -56,7 +56,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient> {
 
-    /** Max connections per route. */
+    /**
+     * Max connections per route.
+     */
     public static final int MAX_CONNECTIONS_PER_ROUTE = 50;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClientFactoryBean.class);
@@ -67,28 +69,42 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
     private static final int DEFAULT_TIMEOUT = 5000;
 
-    /** The default status codes we accept. */
-    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
-        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
-        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-        HttpURLConnection.HTTP_ACCEPTED};
+    /**
+     * The default status codes we accept.
+     */
+    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[]{
+            HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
+            HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
+            HttpURLConnection.HTTP_ACCEPTED};
 
-    /** 20% of the total of threads in the pool to handle overhead. */
+    /**
+     * 20% of the total of threads in the pool to handle overhead.
+     */
     private static final int DEFAULT_QUEUE_SIZE = (int) (DEFAULT_THREADS_NUMBER * 0.2);
 
-    /** The number of threads used to build the pool of threads (if no executorService provided). */
+    /**
+     * The number of threads used to build the pool of threads (if no executorService provided).
+     */
     private int threadsNumber = DEFAULT_THREADS_NUMBER;
 
-    /** The queue size to absorb additional tasks when the threads pool is saturated (if no executorService provided). */ 
+    /**
+     * The queue size to absorb additional tasks when the threads pool is saturated (if no executorService provided).
+     */
     private int queueSize = DEFAULT_QUEUE_SIZE;
 
-    /** The Max pooled connections.  */
+    /**
+     * The Max pooled connections.
+     */
     private int maxPooledConnections = MAX_POOLED_CONNECTIONS;
 
-    /** The Max connections per each route connections.  */
+    /**
+     * The Max connections per each route connections.
+     */
     private int maxConnectionsPerRoute = MAX_CONNECTIONS_PER_ROUTE;
 
-    /** List of HTTP status codes considered valid by the caller. */
+    /**
+     * List of HTTP status codes considered valid by the caller.
+     */
     private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
 
     private int connectionTimeout = DEFAULT_TIMEOUT;
@@ -107,13 +123,19 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     private HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
 
-    /** The credentials provider for endpoints that require authentication. */
+    /**
+     * The credentials provider for endpoints that require authentication.
+     */
     private CredentialsProvider credentialsProvider;
 
-    /** The cookie store for authentication. */
+    /**
+     * The cookie store for authentication.
+     */
     private CookieStore cookieStore;
 
-    /** Interface for deciding whether a connection can be re-used for subsequent requests and should be kept alive. **/
+    /**
+     * Interface for deciding whether a connection can be re-used for subsequent requests and should be kept alive.
+     **/
     private ConnectionReuseStrategy connectionReuseStrategy = new DefaultConnectionReuseStrategy();
 
     /**
@@ -124,24 +146,35 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     private ConnectionBackoffStrategy connectionBackoffStrategy = new DefaultBackoffStrategy();
 
-    /** Strategy interface that allows API users to plug in their own logic to control whether or not a retry
+    /**
+     * Strategy interface that allows API users to plug in their own logic to control whether or not a retry
      * should automatically be done, how many times it should be retried and so on.
      */
     private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = new DefaultServiceUnavailableRetryStrategy();
 
-    /** Default headers to be sent. **/
+    /**
+     * Default headers to be sent.
+     **/
     private Collection<? extends Header> defaultHeaders = Collections.emptyList();
 
-    /** Default strategy implementation for proxy host authentication.**/
+    /**
+     * Default strategy implementation for proxy host authentication.
+     **/
     private AuthenticationStrategy proxyAuthenticationStrategy = new ProxyAuthenticationStrategy();
 
-    /** Determines whether circular redirects (redirects to the same location) should be allowed. **/
+    /**
+     * Determines whether circular redirects (redirects to the same location) should be allowed.
+     **/
     private boolean circularRedirectsAllowed = true;
 
-    /** Determines whether authentication should be handled automatically. **/
+    /**
+     * Determines whether authentication should be handled automatically.
+     **/
     private boolean authenticationEnabled;
 
-    /** Determines whether redirects should be handled automatically. **/
+    /**
+     * Determines whether redirects should be handled automatically.
+     **/
     private boolean redirectsEnabled = true;
 
     /**
@@ -193,7 +226,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
             final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
             final HttpRoute httpRoute = new HttpRoute(httpHost);
             connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
-    
+
             final RequestConfig requestConfig = RequestConfig.custom()
                     .setSocketTimeout(this.readTimeout)
                     .setConnectTimeout(this.connectionTimeout)
@@ -294,9 +327,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         return this.connectionTimeout;
     }
 
-    
-    public void setConnectionTimeout( 
-                                     final int connectionTimeout) {
+
+    public void setConnectionTimeout(final int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
@@ -304,9 +336,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         return this.readTimeout;
     }
 
-     
-    public void setReadTimeout( 
-                               final int readTimeout) {
+
+    public void setReadTimeout(
+            final int readTimeout) {
         this.readTimeout = readTimeout;
     }
 
@@ -428,7 +460,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * The type Default http client.
      */
-    public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {}
+    public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
+    }
 
     /**
      * The type No redirect http client.

@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This controller returns an access token according to the given 
+ * This controller returns an access token according to the given
  * OAuth code and client credentials (authorization code grant type)
- * or according to the refresh token and client credentials 
+ * or according to the refresh token and client credentials
  * (refresh token grant type) or according to the user identity
  * (resource owner password grant type).
  *

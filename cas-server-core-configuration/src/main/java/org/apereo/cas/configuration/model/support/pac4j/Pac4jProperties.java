@@ -13,6 +13,12 @@ public class Pac4jProperties {
 
     private boolean typedIdUsed;
 
+    private Facebook facebook = new Facebook();
+    private Twitter twitter = new Twitter();
+    private Saml saml = new Saml();
+    private Oidc oidc = new Oidc();
+    private Cas cas = new Cas();
+    
     public boolean isTypedIdUsed() {
         return typedIdUsed;
     }
@@ -41,11 +47,7 @@ public class Pac4jProperties {
         this.cas = cas;
     }
 
-    private Facebook facebook = new Facebook();
-    private Twitter twitter = new Twitter();
-    private Saml saml = new Saml();
-    private Oidc oidc = new Oidc();
-    private Cas cas = new Cas();
+
 
     public Cas getCas() {
         return this.cas;

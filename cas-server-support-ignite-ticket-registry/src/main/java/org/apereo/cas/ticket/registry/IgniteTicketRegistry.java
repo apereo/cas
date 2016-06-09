@@ -161,12 +161,17 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     private void configureSecureTransport() {
         final String nullKey = "NULL";
 
-        if (StringUtils.isNotBlank(igniteProperties.getKeyStoreFilePath()) && StringUtils.isNotBlank(igniteProperties.getKeyStorePassword())
-                && StringUtils.isNotBlank(igniteProperties.getTrustStoreFilePath()) && StringUtils.isNotBlank(igniteProperties.getTrustStorePassword())) {
+        if (StringUtils.isNotBlank(igniteProperties.getKeyStoreFilePath()) 
+                && StringUtils.isNotBlank(igniteProperties.getKeyStorePassword())
+                && StringUtils.isNotBlank(igniteProperties.getTrustStoreFilePath()) 
+                && StringUtils.isNotBlank(igniteProperties.getTrustStorePassword())) {
+            
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(igniteProperties.getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(igniteProperties.getKeyStorePassword().toCharArray());
-            if (nullKey.equals(igniteProperties.getTrustStoreFilePath()) && nullKey.equals(igniteProperties.getTrustStorePassword())) {
+            
+            if (nullKey.equals(igniteProperties.getTrustStoreFilePath()) 
+                    && nullKey.equals(igniteProperties.getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
                 sslContextFactory.setTrustStoreFilePath(igniteProperties.getTrustStoreFilePath());
