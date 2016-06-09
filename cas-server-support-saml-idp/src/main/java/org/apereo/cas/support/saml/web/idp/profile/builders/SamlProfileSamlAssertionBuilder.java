@@ -1,15 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-import org.apereo.cas.support.saml.SamlException;
-
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Statement;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +29,9 @@ import java.util.List;
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
 
-    @Value("${cas.samlidp.entityid:}")
-    private String entityId;
-
+    @Autowired
+    private SamlIdPProperties properties;
+    
     @Resource(name="samlProfileSamlAuthNStatementBuilder")
     private SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder;
 
@@ -59,7 +59,8 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                 request, response, casAssertion, service, adaptor));
 
         final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
-        final Assertion assertion = newAssertion(statements, this.entityId, ZonedDateTime.now(ZoneOffset.UTC), id);
+        final Assertion assertion = newAssertion(statements, properties.getEntityId(), 
+                                                ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest, 
                 request, response, casAssertion, service, adaptor));

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -47,19 +48,7 @@ import java.util.List;
  */
 public class SamlObjectEncrypter {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * The encryption cert file.
-     */
-    @Value("${cas.samlidp.metadata.location:}/idp-encryption.crt")
-    protected File encryptionCertFile;
-
-    /**
-     * The encryption key file.
-     */
-    @Value("${cas.samlidp.metadata.location:}/idp-encryption.key")
-    protected File encryptionKeyFile;
-
+        
     /**
      * The Override data encryption algorithms.
      */
@@ -88,9 +77,9 @@ public class SamlObjectEncrypter {
     @Qualifier("overrideWhiteListedEncryptionAlgorithms")
     protected List overrideWhiteListedAlgorithms;
 
-    @Value("${cas.samlidp.key.private.alg:RSA}")
-    private String privateKeyAlgName;
-
+    @Autowired
+    private SamlIdPProperties properties;
+    
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
@@ -248,8 +237,8 @@ public class SamlObjectEncrypter {
      * @return the encryption certificate
      */
     protected X509Certificate getEncryptionCertificate() {
-        logger.debug("Locating encryption certificate file from [{}]", this.encryptionCertFile);
-        return SamlUtils.readCertificate(new FileSystemResource(this.encryptionCertFile));
+        logger.debug("Locating encryption certificate file from [{}]", properties.getMetadata().getEncryptionCertFile());
+        return SamlUtils.readCertificate(new FileSystemResource(properties.getMetadata().getEncryptionCertFile()));
     }
 
     /**
@@ -260,10 +249,10 @@ public class SamlObjectEncrypter {
      */
     protected PrivateKey getEncryptionPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(this.encryptionKeyFile));
-        privateKeyFactoryBean.setAlgorithm(this.privateKeyAlgName);
+        privateKeyFactoryBean.setLocation(new FileSystemResource(properties.getMetadata().getEncryptionKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(properties.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating encryption key file from [{}]", this.encryptionKeyFile);
+        logger.debug("Locating encryption key file from [{}]", properties.getMetadata().getEncryptionKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 }

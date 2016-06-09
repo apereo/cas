@@ -32,17 +32,13 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
 
     private File encryptionCertFile;
     private File encryptionCertKeyFile;
-
-    @Value("${cas.samlidp.metadata.location:}")
+    
     private File metadataLocation;
-
-    @Value("${cas.samlidp.entityid:}")
+    
     private String entityId;
-
-    @Value("${cas.samlidp.hostname:}")
+    
     private String hostName;
-
-    @Value("${cas.samlidp.scope:}")
+    
     private String scope;
 
     /**
@@ -186,5 +182,21 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setSAML2LogoutCommented(false);
 
         generator.generate();
+    }
+
+    public void setMetadataLocation(final File metadataLocation) {
+        this.metadataLocation = metadataLocation;
+    }
+
+    public void setEntityId(final String entityId) {
+        this.entityId = entityId;
+    }
+
+    public void setHostName(final String hostName) {
+        this.hostName = hostName;
+    }
+
+    public void setScope(final String scope) {
+        this.scope = scope;
     }
 }

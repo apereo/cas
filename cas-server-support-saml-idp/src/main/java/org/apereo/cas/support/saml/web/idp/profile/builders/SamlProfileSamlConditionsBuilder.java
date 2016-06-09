@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -8,6 +9,7 @@ import org.jasig.cas.client.validation.Assertion;
 
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Conditions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +26,9 @@ import java.time.ZonedDateTime;
 public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Conditions> {
     private static final long serialVersionUID = 126393045912318783L;
 
-    @Value("${cas.samlidp.response.skewAllowance:0}")
-    private int skewAllowance;
-
+    @Autowired
+    private SamlIdPProperties properties;
+            
     @Override
     public Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                                   final Assertion assertion, final SamlRegisteredService service,
@@ -41,7 +43,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         final Conditions conditions = newConditions(currentDateTime,
-                currentDateTime.plusSeconds(this.skewAllowance),
+                currentDateTime.plusSeconds(properties.getResponse().getSkewAllowance()),
                 adaptor.getEntityId());
         return conditions;
     }

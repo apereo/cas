@@ -4,6 +4,7 @@ title: CAS - SAML2 Authentication
 ---
 
 # SAML2 Authentication
+
 CAS can act as a SAML2 identity provider accepting authentication requests and producing SAML assertions.
 
 ## Overview
@@ -96,20 +97,21 @@ Support is enabled by including the following dependency in the WAR overlay:
 ## Configuration
 
 ### Settings
+
 The following settings are applicable:
 
 ```properties
 # cas.samlidp.metadata.location=file:/etc/cas/saml
-# cas.samlidp.hostname=cas.example.org
-# cas.samlidp.scope=example.org
-# cas.samlidp.entityid=cas.example.org
+# cas.samlidp.hostName=mmoayyed.unicon.net
+# cas.samlidp.scope=unicon.net
+# cas.samlidp.entityId=mmoayyed.unicon.net
+# cas.samlidp.metadata.cacheExpirationMinutes=30
+# cas.samlidp.metadata.failFast=true
+# cas.samlidp.metadata.requireValidMetadata=true
 # cas.samlidp.response.skewAllowance=0
-# cas.samlidp.metadata.cache.exp.minutes=30
-# cas.samlidp.metadata.failfast.init=true
-# cas.samlidp.metadata.require.valid=true
-# cas.samlidp.logout.request.force.signed=true
-# cas.samlidp.logout.slo.callbacks.disabled=false
-# cas.samlidp.attribute.friendly.name=true
+# cas.samlidp.logout.forceSignedLogoutRequests=true
+# cas.samlidp.logout.singleLogoutCallbacksDisabled=false
+# cas.samlidp.useAttributeFriendlyName=true
 ```
 
 

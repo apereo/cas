@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlIdPApplicationContextWrapper;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
@@ -29,6 +30,7 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,11 +46,9 @@ import org.springframework.core.io.Resource;
 @Configuration("samlIdPConfiguration")
 public class SamlIdPConfiguration {
     
-    /**
-     * Template sp metadata resource.
-     *
-     * @return the resource
-     */
+    @Autowired
+    private SamlIdPProperties properties;
+    
     @Bean
     public Resource templateSpMetadata() {
         return new ClassPathResource("template-sp-metadata.xml");
@@ -78,16 +78,25 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
-        return new ChainingMetadataResolverCacheLoader();
+        final ChainingMetadataResolverCacheLoader c = new ChainingMetadataResolverCacheLoader();
+        
+        c.setFailFastInitialization(properties.getMetadata().isFailFast());
+        c.setMetadataCacheExpirationMinutes(properties.getMetadata().getCacheExpirationMinutes());
+        c.setRequireValidMetadata(properties.getMetadata().isRequireValidMetadata());
+        
+        return c;
     }
 
     @Bean
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
-        return new DefaultSamlRegisteredServiceCachingMetadataResolver();
+        final DefaultSamlRegisteredServiceCachingMetadataResolver r =
+                new DefaultSamlRegisteredServiceCachingMetadataResolver();
+        r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
+        r.setMetadataCacheExpirationMinutes(properties.getMetadata().getCacheExpirationMinutes());
+        return r;
     }
     
-
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder() {
@@ -114,7 +123,15 @@ public class SamlIdPConfiguration {
     
     @Bean
     public SamlIdpMetadataAndCertificatesGenerationService shibbolethIdpMetadataAndCertificatesGenerationService() {
-        return new ShibbolethIdpMetadataAndCertificatesGenerationService();
+        final ShibbolethIdpMetadataAndCertificatesGenerationService s =
+                new ShibbolethIdpMetadataAndCertificatesGenerationService();
+        
+        s.setEntityId(properties.getEntityId());
+        s.setHostName(properties.getHostName());
+        s.setMetadataLocation(properties.getMetadata().getLocation());
+        s.setScope(properties.getScope());
+        
+        return s;
     }
 
     @Bean

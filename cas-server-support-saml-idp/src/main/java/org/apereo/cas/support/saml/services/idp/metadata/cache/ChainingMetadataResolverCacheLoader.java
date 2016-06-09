@@ -68,16 +68,13 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     
     @Resource(name="noRedirectHttpClient")
     protected HttpClient httpClient;
-
-    @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
+    
     private long metadataCacheExpirationMinutes;
 
     private transient Object lock = new Object();
 
-    @Value("${cas.samlidp.metadata.failfast.init:true}")
     private boolean failFastInitialization = true;
-
-    @Value("${cas.samlidp.metadata.require.valid:true}")
+    
     private boolean requireValidMetadata = true;
 
     /**
@@ -287,6 +284,18 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             logger.debug("No metadata maximum validity criteria is defined for {}, so RequiredValidUntilFilter will not be invoked",
                     service.getMetadataLocation());
         }
+    }
+
+    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
+        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
+    }
+
+    public void setFailFastInitialization(final boolean failFastInitialization) {
+        this.failFastInitialization = failFastInitialization;
+    }
+
+    public void setRequireValidMetadata(final boolean requireValidMetadata) {
+        this.requireValidMetadata = requireValidMetadata;
     }
 }
 

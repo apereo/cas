@@ -2,11 +2,12 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.util.PrivateKeyFactoryBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
@@ -43,12 +44,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -63,11 +62,6 @@ import java.util.List;
 public class SamlObjectSigner {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * The Override signature canonicalization algorithm.
-     */
-    @Value("${cas.samlidp.response.override.sig.can.alg:}")
-    protected String overrideSignatureCanonicalizationAlgorithm;
 
     /**
      * The Override signature reference digest methods.
@@ -97,27 +91,9 @@ public class SamlObjectSigner {
     @Qualifier("overrideWhiteListedSignatureSigningAlgorithms")
     protected List overrideWhiteListedAlgorithms;
 
-    /**
-     * The Signing cert file.
-     */
-    @Value("${cas.samlidp.metadata.location:}/idp-signing.crt")
-    protected File signingCertFile;
 
-    /**
-     * The Signing key file.
-     */
-    @Value("${cas.samlidp.metadata.location:}/idp-signing.key")
-    protected File signingKeyFile;
-
-    /**
-     * The Sign error response.
-     */
-    @Value("${cas.samlidp.response.error.sign:false}")
-    protected boolean signErrorResponse;
-
-
-    @Value("${cas.samlidp.key.private.alg:RSA}")
-    private String privateKeyAlgName;
+    @Autowired
+    private SamlIdPProperties properties;
 
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
@@ -132,10 +108,10 @@ public class SamlObjectSigner {
      * @throws SamlException the saml exception
      */
     public <T extends SAMLObject> T encode(final T samlObject,
-                                                 final SamlRegisteredService service,
-                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                 final HttpServletResponse response,
-                                                 final HttpServletRequest request) throws SamlException {
+                                           final SamlRegisteredService service,
+                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                           final HttpServletResponse response,
+                                           final HttpServletRequest request) throws SamlException {
         try {
             logger.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final MessageContext<T> outboundContext = new MessageContext<>();
@@ -161,7 +137,7 @@ public class SamlObjectSigner {
             throws Exception {
         logger.debug("Attempting to sign the outbound SAML message...");
         final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
-        handler.setSignErrorResponses(this.signErrorResponse);
+        handler.setSignErrorResponses(properties.getResponse().isSignError());
         handler.invoke(outboundContext);
         logger.debug("Signed SAML message successfully");
     }
@@ -274,7 +250,8 @@ public class SamlObjectSigner {
                 DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
 
 
-        if (this.overrideBlackListedSignatureSigningAlgorithms != null && !this.overrideSignatureCanonicalizationAlgorithm.isEmpty()) {
+        if (this.overrideBlackListedSignatureSigningAlgorithms != null
+                && !properties.getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureSigningAlgorithms);
         }
 
@@ -290,8 +267,8 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(this.overrideSignatureCanonicalizationAlgorithm)) {
-            config.setSignatureCanonicalizationAlgorithm(this.overrideSignatureCanonicalizationAlgorithm);
+        if (StringUtils.isNotBlank(properties.getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(properties.getResponse().getOverrideSignatureCanonicalizationAlgorithm());
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
@@ -316,8 +293,9 @@ public class SamlObjectSigner {
      * @return the signing certificate
      */
     protected X509Certificate getSigningCertificate() {
-        logger.debug("Locating signature signing certificate file from [{}]", this.signingCertFile);
-        return SamlUtils.readCertificate(new FileSystemResource(this.signingCertFile));
+        logger.debug("Locating signature signing certificate file from [{}]",
+                properties.getMetadata().getSigningCertFile());
+        return SamlUtils.readCertificate(new FileSystemResource(properties.getMetadata().getSigningCertFile()));
     }
 
     /**
@@ -328,18 +306,18 @@ public class SamlObjectSigner {
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(this.signingKeyFile));
-        privateKeyFactoryBean.setAlgorithm(this.privateKeyAlgName);
+        privateKeyFactoryBean.setLocation(new FileSystemResource(properties.getMetadata().getSigningKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(properties.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from [{}]", this.signingKeyFile);
+        logger.debug("Locating signature signing key file from [{}]", properties.getMetadata().getSigningKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 
     /**
      * Validate authn request signature.
      *
-     * @param profileRequest    the authn request
-     * @param metadataResolver  the metadata resolver
+     * @param profileRequest   the authn request
+     * @param metadataResolver the metadata resolver
      * @throws Exception the exception
      */
     public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,

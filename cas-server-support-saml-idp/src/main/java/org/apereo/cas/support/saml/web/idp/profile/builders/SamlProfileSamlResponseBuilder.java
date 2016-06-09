@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -40,7 +41,8 @@ import java.time.ZonedDateTime;
  */
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;
-
+    
+    
     /**
      * The Saml object encoder.
      */
@@ -53,9 +55,9 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     @Autowired
     protected VelocityEngineFactory velocityEngineFactory;
 
-    @Value("${cas.samlidp.entityid:}")
-    private String entityId;
-
+    @Autowired
+    private SamlIdPProperties properties;
+    
     @Resource(name="samlProfileSamlAssertionBuilder")
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
 
@@ -126,7 +128,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @return the issuer
      */
     protected Issuer buildEntityIssuer() {
-        final Issuer issuer = newIssuer(this.entityId);
+        final Issuer issuer = newIssuer(properties.getEntityId());
         issuer.setFormat(Issuer.ENTITY);
         return issuer;
     }

@@ -22,8 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
-
-    @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
+    
     private long metadataCacheExpirationMinutes;
 
     @Resource(name="chainingMetadataResolverCacheLoader")
@@ -35,6 +34,7 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
      * Instantiates a new Saml registered service caching metadata resolver.
      */
     public DefaultSamlRegisteredServiceCachingMetadataResolver() {}
+    
 
     @PostConstruct
     private void init() {
@@ -50,7 +50,8 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
             resolver = this.cache.get(service);
             return resolver;
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Metadata resolver could not be located from metadata " + service.getMetadataLocation(), e);
+            throw new IllegalArgumentException("Metadata resolver could not be located from metadata " 
+                    + service.getMetadataLocation(), e);
         } finally {
             if (resolver != null) {
                 LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}] for [{}] minute(s)",
@@ -59,5 +60,13 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
                         this.metadataCacheExpirationMinutes);
             }
         }
+    }
+
+    public void setChainingMetadataResolverCacheLoader(final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
+        this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
+    }
+
+    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
+        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
     }
 }

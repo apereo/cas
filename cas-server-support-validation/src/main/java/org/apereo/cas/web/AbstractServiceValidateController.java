@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -73,16 +74,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     @Autowired
     private ApplicationContext context;
-
     
     private ValidationSpecification validationSpecification;
-
     
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
-    /** Implementation of Service Manager. */
     
     @Resource(name="servicesManager")
     private ServicesManager servicesManager;
@@ -93,28 +90,23 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The proxy handler we want to use with the controller. */
-    
     private ProxyHandler proxyHandler;
 
     /** The view to redirect to on a successful validation. */
-    
     private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
 
     /** The view to redirect to on a validation failure. */
-    
     private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
 
     /** Extracts parameters from Request object. */
-    
     @Resource(name="defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
-
     
     @Resource(name="defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
-    private String authenticationContextAttribute;
+    @Autowired
+    private MfaProperties mfaProperties;
 
     @Resource(name="authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -410,7 +402,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         if (contextProvider.isPresent()) {
-            modelAndView.addObject(this.authenticationContextAttribute, contextProvider);
+            modelAndView.addObject(mfaProperties.getAuthenticationContextAttribute(), contextProvider);
         }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {

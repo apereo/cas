@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -7,6 +8,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +26,8 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
-    @Value("${cas.samlidp.attribute.friendly.name:true}")
-    private boolean samlAttributeFriendlyName;
+    @Autowired
+    private SamlIdPProperties properties;
     
     @Override
     public AttributeStatement build(final AuthnRequest authnRequest,
@@ -40,6 +42,6 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             throws SamlException {
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
-        return newAttributeStatement(attributes, this.samlAttributeFriendlyName);
+        return newAttributeStatement(attributes, properties.getResponse().isUseAttributeFriendlyName());
     }
 }
