@@ -17,11 +17,11 @@ when you use the above ticket registries. It requires explicit configuration bef
 
 ## Configuration
 
-Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. A typical cipher configuration 
-may be the following, placed into the configuration:
+Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. 
 
-```xml
-<alias name="defaultTicketCipherExecutor" alias="ticketCipherExecutor" />
+```properties
+#CAS components mappings
+ticketCipherExecutor=defaultTicketCipherExecutor
 ```
 
 The settings, algorithms and secret keys used for the cipher may be controlled via `application.properties`:

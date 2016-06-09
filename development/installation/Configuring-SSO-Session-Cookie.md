@@ -74,20 +74,15 @@ You should then grab each generated key for encryption and signing, and put them
 
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
+### Disable Encryption
 
 If you wish to turn off cookie encryption, adjust your configuration to be the following:
-
-In local `deployerConfigContext.xml`:
-
-```xml
-<bean id="noOpCipherExecutor" class="org.apereo.cas.util.NoOpCipherExecutor" />
-```
 
 In `application.properties`:
 
 ```properties
 #CAS components mappings
-defaultCookieCipherExecutor=noOpCipherExecutor
+cookieCipherExecutor=noOpCipherExecutor
 ```
 
 ## Cookie Generation for Renewed Authentications

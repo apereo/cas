@@ -12,8 +12,8 @@ various attributes in terms of access roles for the application and define rules
 validated when an authentication request from the application arrives.
 
 ## Default Strategy
+
 The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
-### Default
 
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
@@ -31,7 +31,7 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-### Time-Based
+## Time-Based
 The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
@@ -40,7 +40,7 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
-### Remote Endpoint
+## Remote Endpoint
 The `RemoteEndpointServiceAccessStrategy` is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
@@ -53,7 +53,7 @@ The objective of this policy is to ensure a remote endpoint can make service acc
 receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
 the endpoint returns is then compared against the policy setting and if a match is found, access is granted.
 
-### Grouper
+## Grouper
 The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the WAR overlay:
 
 ```xml

@@ -6,7 +6,6 @@ kramdown:
   input: GFM
   syntax_highlighter: rouge
   hard_wrap: false
-
   syntax_highlighter_opts:
     # Rouge Options › https://github.com/jneen/rouge#full-options
     css_class: 'highlight'

@@ -67,7 +67,7 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 {% highlight bash %}
 
 # Define how often should metric data be reported. Default is 30 seconds.
-# metrics.refresh.internal=30s
+# metrics.refresh.interval=30s
 
 {% endhighlight %}
 

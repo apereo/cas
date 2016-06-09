@@ -41,3 +41,13 @@ redundancy and replication as per normal Couchbase configuration.
 The only truly mandatory setting is the list of nodes.
 The other settings are optional, but this is designed to store data in buckets
 so in reality the bucket property must also be set.
+
+## Auto Initialization
+
+Upon startup and if the services registry database is blank, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS. This behavior can be controlled via:
+
+```properties
+# svcreg.database.from.json=false
+```
