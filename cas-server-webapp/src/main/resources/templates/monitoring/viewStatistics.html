@@ -10,9 +10,22 @@
 <body id="cas">
     <div layout:fragment="content">
             <script type="text/javascript" th:inline="javascript">
+                var messages = {
+                    memoryGaugeTitle: /*[[#{cas.statistics.section.serverstatistics.freememorygauge.label}]]*/
+                };
+                var urls = {
+                    availability: '/cas/status/stats/getAvailability',
+                    memory: '/cas/status/stats/getMemStats',
+                    tickets: '/cas/status/stats/getTicketStats'
+                };
                 function jqueryReady() {
                     head.load(
-                        "/cas/js/statisticsview.js"
+                        "/cas/js/statisticsview.js",
+                        function() {
+                            var server_uptime = upTime([[${upTime}]], 'uptime');
+
+                            casStatistics(urls, messages);
+                        }
                     );
                 };
 
