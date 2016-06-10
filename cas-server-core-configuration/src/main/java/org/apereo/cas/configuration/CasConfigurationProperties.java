@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.ServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationExceptionsProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
@@ -86,7 +87,18 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @ConfigurationProperties(prefix = "cas")
 public class CasConfigurationProperties {
-    
+
+    @NestedConfigurationProperty
+    private AuthenticationProperties authn = new AuthenticationProperties();
+
+    public AuthenticationProperties getAuthn() {
+        return authn;
+    }
+
+    public void setAuthn(final AuthenticationProperties authn) {
+        this.authn = authn;
+    }
+
     @NestedConfigurationProperty
     private AuditProperties audit = new AuditProperties();
 
