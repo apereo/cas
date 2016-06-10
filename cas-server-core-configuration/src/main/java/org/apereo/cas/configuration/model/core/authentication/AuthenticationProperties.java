@@ -18,6 +18,7 @@ import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
+import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -30,6 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private ThrottleProperties throttle = new ThrottleProperties();
+    
     @NestedConfigurationProperty
     private SamlIdPProperties samlIdp = new SamlIdPProperties();
     
@@ -294,5 +298,13 @@ public class AuthenticationProperties {
 
     public void setSamlIdp(final SamlIdPProperties samlIdp) {
         this.samlIdp = samlIdp;
+    }
+
+    public ThrottleProperties getThrottle() {
+        return throttle;
+    }
+
+    public void setThrottle(final ThrottleProperties throttle) {
+        this.throttle = throttle;
     }
 }

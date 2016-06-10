@@ -128,8 +128,8 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
         return r;
     }
     
-    @Scheduled(initialDelayString="${service.registry.startDelay:20000}",
-               fixedDelayString = "${service.registry.repeatInterval:60000}")
+    @Scheduled(initialDelayString="${cas.serviceRegistry.startDelay:20000}",
+               fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
     @Override
     public void reload() {
         LOGGER.debug("Reloading registered services.");

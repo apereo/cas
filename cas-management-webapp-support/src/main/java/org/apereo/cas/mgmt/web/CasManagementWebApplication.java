@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.ImportResource;
                 VelocityAutoConfiguration.class})
 @ImportResource(locations = {"classpath*:/META-INF/spring/*.xml", "classpath:/managementConfigContext.xml"})
 @Import(AopAutoConfiguration.class)
+@EnableConfigurationProperties
 public class CasManagementWebApplication {
     /**
      * Instantiates a new web application.

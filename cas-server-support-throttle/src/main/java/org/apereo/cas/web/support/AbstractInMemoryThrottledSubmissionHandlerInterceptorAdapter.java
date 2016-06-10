@@ -57,9 +57,10 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      * This class relies on an external configuration to clean it up.
      * It ignores the threshold data in the parent class.
      */
-    @Scheduled(initialDelayString = "${cas.throttle.startDelay:10000}",
-            fixedDelayString = "${cas.throttle.repeatInterval:300000}")
+    @Scheduled(initialDelayString = "${cas.authn.throttle.startDelay:10000}",
+               fixedDelayString = "${cas.authn.throttle.repeatInterval:300000}")
     public void decrementCounts() {
+        
         logger.info("Beginning audit cleanup...");
 
         final Set<Entry<String, ZonedDateTime>> keys = this.ipMap.entrySet();

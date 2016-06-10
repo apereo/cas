@@ -150,8 +150,6 @@ public class CasConfigurationProperties {
     @NestedConfigurationProperty
     private ThemeProperties theme = new ThemeProperties();
 
-    @NestedConfigurationProperty
-    private ThrottleProperties throttle = new ThrottleProperties();
 
     @NestedConfigurationProperty
     private LocaleProperties locale = new LocaleProperties();
@@ -417,15 +415,7 @@ public class CasConfigurationProperties {
     public void setTheme(final ThemeProperties theme) {
         this.theme = theme;
     }
-
-    public ThrottleProperties getThrottle() {
-        return throttle;
-    }
-
-    public void setThrottle(final ThrottleProperties throttle) {
-        this.throttle = throttle;
-    }
-
+    
     public LocaleProperties getLocale() {
         return locale;
     }
