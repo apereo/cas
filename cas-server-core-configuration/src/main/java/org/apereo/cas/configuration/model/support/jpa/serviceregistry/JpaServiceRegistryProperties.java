@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa.serviceregistry;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Configuration properties class for svcreg.database.

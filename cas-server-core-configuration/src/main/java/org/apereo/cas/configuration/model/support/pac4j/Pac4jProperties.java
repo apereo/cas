@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * This is {@link Pac4jProperties}.
  *

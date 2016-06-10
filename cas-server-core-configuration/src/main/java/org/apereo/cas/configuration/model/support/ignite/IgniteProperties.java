@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * This is {@link IgniteProperties}.

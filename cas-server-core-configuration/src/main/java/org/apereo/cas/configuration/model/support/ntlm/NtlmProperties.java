@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.ntlm;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * This is {@link NtlmProperties}.
  *

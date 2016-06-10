@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * This is {@link LdapServiceRegistryProperties}.
  *
