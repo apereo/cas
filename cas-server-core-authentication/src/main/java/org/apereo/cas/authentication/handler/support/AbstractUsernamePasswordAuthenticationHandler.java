@@ -9,8 +9,6 @@ import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;

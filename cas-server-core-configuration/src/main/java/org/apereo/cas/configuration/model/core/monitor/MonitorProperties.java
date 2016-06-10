@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**

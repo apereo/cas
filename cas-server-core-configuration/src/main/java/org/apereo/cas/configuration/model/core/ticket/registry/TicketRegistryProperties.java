@@ -31,7 +31,7 @@ public class TicketRegistryProperties {
     private IgniteProperties ignite = new IgniteProperties();
 
     @NestedConfigurationProperty
-    private JpaTicketRegistryProperties jpaTicketRegistry = new JpaTicketRegistryProperties();
+    private JpaTicketRegistryProperties jpa = new JpaTicketRegistryProperties();
 
     @NestedConfigurationProperty
     private MemcachedProperties memcached = new MemcachedProperties();
@@ -53,6 +53,54 @@ public class TicketRegistryProperties {
 
     public void setCleaner(final Cleaner cleaner) {
         this.cleaner = cleaner;
+    }
+
+    public CouchbaseTicketRegistryProperties getCouchbase() {
+        return couchbase;
+    }
+
+    public void setCouchbase(final CouchbaseTicketRegistryProperties couchbase) {
+        this.couchbase = couchbase;
+    }
+
+    public EhcacheProperties getEhcache() {
+        return ehcache;
+    }
+
+    public void setEhcache(final EhcacheProperties ehcache) {
+        this.ehcache = ehcache;
+    }
+
+    public HazelcastProperties getHazelcast() {
+        return hazelcast;
+    }
+
+    public void setHazelcast(final HazelcastProperties hazelcast) {
+        this.hazelcast = hazelcast;
+    }
+
+    public IgniteProperties getIgnite() {
+        return ignite;
+    }
+
+    public void setIgnite(final IgniteProperties ignite) {
+        this.ignite = ignite;
+    }
+
+    public JpaTicketRegistryProperties getJpa() {
+        return jpa;
+    }
+
+    public void setJpa(final JpaTicketRegistryProperties jpa) {
+        this.jpa = jpa;
+    }
+
+    public MemcachedProperties getMemcached() {
+        return memcached;
+    }
+
+    public void setMemcached(final MemcachedProperties memcached) {
+        this.memcached = memcached;
     }
 
     public static class InMemory {

@@ -13,7 +13,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 public class TicketProperties extends AbstractCryptographyProperties {
 
     @NestedConfigurationProperty
@@ -23,7 +22,7 @@ public class TicketProperties extends AbstractCryptographyProperties {
     private ProxyTicketProperties pt = new ProxyTicketProperties();
 
     @NestedConfigurationProperty
-    private TicketRegistryProperties ticketRegistry = new TicketRegistryProperties();
+    private TicketRegistryProperties registry = new TicketRegistryProperties();
 
     @NestedConfigurationProperty
     private ServiceTicketProperties st = new ServiceTicketProperties();
@@ -31,16 +30,6 @@ public class TicketProperties extends AbstractCryptographyProperties {
     @NestedConfigurationProperty
     private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
     
-    private Registry registry = new Registry();
-
-    public Registry getRegistry() {
-        return registry;
-    }
-
-    public void setRegistry(final Registry registry) {
-        this.registry = registry;
-    }
-
     public ProxyGrantingTicketProperties getPgt() {
         return pgt;
     }
@@ -57,12 +46,12 @@ public class TicketProperties extends AbstractCryptographyProperties {
         this.pt = pt;
     }
 
-    public TicketRegistryProperties getTicketRegistry() {
-        return ticketRegistry;
+    public TicketRegistryProperties getRegistry() {
+        return registry;
     }
 
-    public void setTicketRegistry(final TicketRegistryProperties ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+    public void setRegistry(final TicketRegistryProperties registry) {
+        this.registry = registry;
     }
 
     public ServiceTicketProperties getSt() {
@@ -80,53 +69,5 @@ public class TicketProperties extends AbstractCryptographyProperties {
     public void setTgt(final TicketGrantingTicketProperties tgt) {
         this.tgt = tgt;
     }
-
-    public static class Registry {
-        private Cleaner cleaner = new Cleaner();
-        
-        public Registry() {
-        }
-
-        public Cleaner getCleaner() {
-            return cleaner;
-        }
-
-        public void setCleaner(final Cleaner cleaner) {
-            this.cleaner = cleaner;
-        }
-
-        public static class Cleaner {
-            private boolean enabled;
-            private int startDelay;
-            private int repeatInterval;
-            
-            public Cleaner() {
-            }
-
-
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(final boolean enabled) {
-                this.enabled = enabled;
-            }
-
-            public int getStartDelay() {
-                return startDelay;
-            }
-
-            public void setStartDelay(final int startDelay) {
-                this.startDelay = startDelay;
-            }
-
-            public int getRepeatInterval() {
-                return repeatInterval;
-            }
-
-            public void setRepeatInterval(final int repeatInterval) {
-                this.repeatInterval = repeatInterval;
-            }
-        }
-    }
+    
 }

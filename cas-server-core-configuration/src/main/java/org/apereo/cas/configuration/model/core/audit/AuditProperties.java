@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.audit;
 
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * This is {@link AuditProperties}.

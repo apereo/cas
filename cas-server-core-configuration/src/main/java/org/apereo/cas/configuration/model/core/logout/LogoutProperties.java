@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.core.logout;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * This is {@link LogoutProperties}.
  *

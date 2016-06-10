@@ -34,8 +34,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         if (policy != null) {
             failureMode = policy.getFailureMode();
             logger.debug("Multifactor failure mode for {} is defined as {}", service.getServiceId(), failureMode);
-        } else if (StringUtils.isNotBlank(casProperties.getMfa().getGlobalFailureMode())) {
-            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(casProperties.getMfa().getGlobalFailureMode());
+        } else if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGlobalFailureMode())) {
+            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());
             logger.debug("Using global multifactor failure mode for {} defined as {}", service.getServiceId(), failureMode);
         }
         

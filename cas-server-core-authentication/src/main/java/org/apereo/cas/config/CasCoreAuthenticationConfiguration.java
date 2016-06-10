@@ -106,7 +106,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
         final AuthenticationExceptionHandler h = new AuthenticationExceptionHandler();
-        h.setErrors(casProperties.getAuthnExceptions().getExceptions());
+        h.setErrors(casProperties.getAuthn().getExceptions().getExceptions());
         return h;
     }
 
@@ -114,15 +114,15 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationPolicy requiredHandlerAuthenticationPolicy() {
         final RequiredHandlerAuthenticationPolicy bean =
-                new RequiredHandlerAuthenticationPolicy(casProperties.getAuthnPolicy().getReq().getHandlerName());
-        bean.setTryAll(casProperties.getAuthnPolicy().getReq().isTryAll());
+                new RequiredHandlerAuthenticationPolicy(casProperties.getAuthn().getPolicy().getReq().getHandlerName());
+        bean.setTryAll(casProperties.getAuthn().getPolicy().getReq().isTryAll());
         return bean;
     }
 
     @Bean
     public AuthenticationPolicy anyAuthenticationPolicy() {
         final AnyAuthenticationPolicy bean = new AnyAuthenticationPolicy();
-        bean.setTryAll(casProperties.getAuthnPolicy().getAny().isTryAll());
+        bean.setTryAll(casProperties.getAuthn().getPolicy().getAny().isTryAll());
         return bean;
     }
 
@@ -135,11 +135,11 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final Pattern pattern = Pattern.compile("::");
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
-        if (StringUtils.isNotBlank(casProperties.getAcceptAuthn().getUsers())
-                && casProperties.getAcceptAuthn().getUsers().contains(pattern.pattern())) {
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
+                && casProperties.getAuthn().getAccept().getUsers().contains(pattern.pattern())) {
             final Set<String> usersPasswords =
                     org.springframework.util.StringUtils.commaDelimitedListToSet(
-                            casProperties.getAcceptAuthn().getUsers());
+                            casProperties.getAuthn().getAccept().getUsers());
             final Map<String, String> parsedUsers = new HashMap<>();
             usersPasswords.stream().forEach(usersPassword -> {
                 final String[] splitArray = pattern.split(usersPassword);
@@ -168,9 +168,9 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
         final AuthenticationContextValidator val = new AuthenticationContextValidator();
-        val.setAuthenticationContextAttribute(casProperties.getMfa().getAuthenticationContextAttribute());
+        val.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         val.setServicesManager(this.servicesManager);
-        val.setGlobalFailureMode(casProperties.getMfa().getGlobalFailureMode());
+        val.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         return val;
     }
 
@@ -228,7 +228,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public PasswordPolicyConfiguration defaultPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration(casProperties.getPasswordPolicy());
+        return new PasswordPolicyConfiguration(casProperties.getAuthn().getPasswordPolicy());
     }
 
     @Bean
@@ -266,9 +266,9 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationHandler jaasAuthenticationHandler() {
         final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
 
-        h.setKerberosKdcSystemProperty(casProperties.getJaas().getKerberosKdcSystemProperty());
-        h.setKerberosRealmSystemProperty(casProperties.getJaas().getKerberosRealmSystemProperty());
-        h.setRealm(casProperties.getJaas().getRealm());
+        h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
+        h.setKerberosRealmSystemProperty(casProperties.getAuthn().getJaas().getKerberosRealmSystemProperty());
+        h.setRealm(casProperties.getAuthn().getJaas().getRealm());
         
         if (passwordEncoder != null) {
             h.setPasswordEncoder(passwordEncoder);
@@ -312,8 +312,8 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public DefaultPasswordEncoder defaultPasswordEncoder() {
         final DefaultPasswordEncoder e = new DefaultPasswordEncoder();
-        e.setCharacterEncoding(casProperties.getPasswordEncoder().getCharacterEncoding());
-        e.setEncodingAlgorithm(casProperties.getPasswordEncoder().getEncodingAlgorithm());
+        e.setCharacterEncoding(casProperties.getAuthn().getPasswordEncoder().getCharacterEncoding());
+        e.setEncodingAlgorithm(casProperties.getAuthn().getPasswordEncoder().getEncodingAlgorithm());
         return e;
     }
 

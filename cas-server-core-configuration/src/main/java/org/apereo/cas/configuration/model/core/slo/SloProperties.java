@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.core.slo;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * This is {@link SloProperties}.
  *
