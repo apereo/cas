@@ -29,7 +29,7 @@ public class CasCoreWebConfiguration {
     public BaseApplicationContextWrapper clearpassApplicationContextWrapper() {
         final ClearpassApplicationContextWrapper w =
                 new ClearpassApplicationContextWrapper();
-        w.setCacheCredential(casProperties.getClearpassProperties().isCacheCredential());
+        w.setCacheCredential(casProperties.getClearpass().isCacheCredential());
         return w;
     }
 
@@ -42,11 +42,11 @@ public class CasCoreWebConfiguration {
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         final CasReloadableMessageBundle bean = new CasReloadableMessageBundle();
-        bean.setDefaultEncoding(casProperties.getMessageBundleProperties().getEncoding());
-        bean.setCacheSeconds(casProperties.getMessageBundleProperties().getCacheSeconds());
-        bean.setFallbackToSystemLocale(casProperties.getMessageBundleProperties().isFallbackSystemLocale());
-        bean.setUseCodeAsDefaultMessage(casProperties.getMessageBundleProperties().isUseCodeMessage());
-        bean.setBasenames(casProperties.getMessageBundleProperties().getBaseNames());
+        bean.setDefaultEncoding(casProperties.getMessageBundle().getEncoding());
+        bean.setCacheSeconds(casProperties.getMessageBundle().getCacheSeconds());
+        bean.setFallbackToSystemLocale(casProperties.getMessageBundle().isFallbackSystemLocale());
+        bean.setUseCodeAsDefaultMessage(casProperties.getMessageBundle().isUseCodeMessage());
+        bean.setBasenames(casProperties.getMessageBundle().getBaseNames());
         return bean;
     }
 }

@@ -57,11 +57,11 @@ public class JpaTicketRegistryConfiguration {
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         return newEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
-                        newHibernateJpaVendorAdapter(casProperties.getDatabaseProperties()),
+                        newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaTicketRegistryContext",
                         ticketPackagesToScan(),
                         dataSourceTicket()),
-                        casProperties.getJpaTicketRegistryProperties());
+                        casProperties.getJpaTicketRegistry());
     }
 
     /**
@@ -87,24 +87,24 @@ public class JpaTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
-        return newHickariDataSource(casProperties.getJpaTicketRegistryProperties());
+        return newHickariDataSource(casProperties.getJpaTicketRegistry());
     }
 
     @Bean
     @RefreshScope
     public TicketRegistry jpaTicketRegistry() {
         final JpaTicketRegistry bean = new JpaTicketRegistry();
-        bean.setLockTgt(casProperties.getJpaTicketRegistryProperties().isJpaLockingTgtEnabled());
+        bean.setLockTgt(casProperties.getJpaTicketRegistry().isJpaLockingTgtEnabled());
         return bean;
     }
 
     @Bean
     public LockingStrategy lockingStrategy() {
         final JpaLockingStrategy bean = new JpaLockingStrategy();
-        bean.setApplicationId(casProperties.getDatabaseProperties().getCleaner().getAppid());
-        bean.setUniqueId(StringUtils.defaultIfEmpty(casProperties.getHostProperties().getName(), 
+        bean.setApplicationId(casProperties.getJdbc().getCleaner().getAppid());
+        bean.setUniqueId(StringUtils.defaultIfEmpty(casProperties.getHost().getName(), 
                 InetAddressUtils.getCasServerHostName()));
-        bean.setLockTimeout(casProperties.getJpaTicketRegistryProperties().getJpaLockingTimeout());
+        bean.setLockTimeout(casProperties.getJpaTicketRegistry().getJpaLockingTimeout());
         return bean;
     }
 }

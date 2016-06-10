@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "view", ignoreUnknownFields = false)
+
 public class ViewProperties {
     
     private Cas2 cas2 = new Cas2();

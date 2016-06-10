@@ -57,7 +57,7 @@ public class MongoDbEventsConfiguration {
     @Bean
     public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
         try {
-            return new SimpleMongoDbFactory(new MongoClientURI(casProperties.getEventsProperties().getMongodb().getClientUri()));
+            return new SimpleMongoDbFactory(new MongoClientURI(casProperties.getEvents().getMongodb().getClientUri()));
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
         }
@@ -67,7 +67,7 @@ public class MongoDbEventsConfiguration {
     public CasEventRepository casEventRepository() {
         return new MongoDbCasEventRepository(
                 mongoEventsTemplate(),
-                casProperties.getEventsProperties().getMongodb().getCollection(),
-                casProperties.getEventsProperties().getMongodb().isDropCollection());
+                casProperties.getEvents().getMongodb().getCollection(),
+                casProperties.getEvents().getMongodb().isDropCollection());
     }
 }

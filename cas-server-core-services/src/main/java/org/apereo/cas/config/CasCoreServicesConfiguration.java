@@ -89,8 +89,8 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ServiceRegistryDao jsonServiceRegistryDao() {
         try {
-            return new JsonServiceRegistryDao(casProperties.getServiceRegistryProperties().getConfig().getLocation(),
-                    casProperties.getServiceRegistryProperties().isWatcherEnabled());
+            return new JsonServiceRegistryDao(casProperties.getServiceRegistry().getConfig().getLocation(),
+                    casProperties.getServiceRegistry().isWatcherEnabled());
         } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }
@@ -105,6 +105,6 @@ public class CasCoreServicesConfiguration {
                                                                  @Qualifier("servicesManager")
                                                                  final ReloadableServicesManager servicesManager) {
         return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao, servicesManager,
-                casProperties.getServiceRegistryProperties().isInitFromJson());
+                casProperties.getServiceRegistry().isInitFromJson());
     }
 }

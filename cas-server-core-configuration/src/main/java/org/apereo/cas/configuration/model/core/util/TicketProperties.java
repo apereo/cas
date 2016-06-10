@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "ticket", ignoreUnknownFields = false)
+
 public class TicketProperties extends AbstractCryptographyProperties {
     
     private Registry registry;

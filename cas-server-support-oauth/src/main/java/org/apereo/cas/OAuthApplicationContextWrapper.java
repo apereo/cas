@@ -42,7 +42,7 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
      */
     @PostConstruct
     public void initializeServletApplicationContext() {
-        final String oAuthCallbackUrl = casProperties.getServerProperties().getPrefix() + OAuthConstants.BASE_OAUTH20_URL + '/'
+        final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + OAuthConstants.BASE_OAUTH20_URL + '/'
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         final ReloadableServicesManager servicesManager = getServicesManager();
         final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);

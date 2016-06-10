@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.monitor", ignoreUnknownFields = false)
+
 public class MonitorProperties {
 
     private int freeMemThreshold = 10;

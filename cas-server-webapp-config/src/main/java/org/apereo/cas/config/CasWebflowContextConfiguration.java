@@ -194,7 +194,7 @@ public class CasWebflowContextConfiguration {
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
-        builder.setDevelopmentMode(casProperties.getWebflowProperties().isRefresh());
+        builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
         return builder.build();
     }
 
@@ -275,8 +275,8 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowExecutor logoutFlowExecutor() {
         final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
-        builder.setAlwaysRedirectOnPause(casProperties.getWebflowProperties().isAlwaysPauseRedirect());
-        builder.setRedirectInSameState(casProperties.getWebflowProperties().isRedirectSameState());
+        builder.setAlwaysRedirectOnPause(casProperties.getWebflow().isAlwaysPauseRedirect());
+        builder.setRedirectInSameState(casProperties.getWebflow().isRedirectSameState());
         return builder.build();
     }
 
@@ -316,16 +316,16 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowExecutorImpl loginFlowExecutor() {
-        if (casProperties.getWebflowProperties().getSession().isStorage()) {
+        if (casProperties.getWebflow().getSession().isStorage()) {
             final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-            conversationManager.setLockTimeoutSeconds(casProperties.getWebflowProperties().getSession().getLockTimeout());
-            conversationManager.setMaxConversations(casProperties.getWebflowProperties().getSession().getMaxConversations());
+            conversationManager.setLockTimeoutSeconds(casProperties.getWebflow().getSession().getLockTimeout());
+            conversationManager.setMaxConversations(casProperties.getWebflow().getSession().getMaxConversations());
             
             final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
             
             final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
                     new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
-            flowExecutionSnapshotFactory.setCompress(casProperties.getWebflowProperties().getSession().isCompress());
+            flowExecutionSnapshotFactory.setCompress(casProperties.getWebflow().getSession().isCompress());
             
             final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
                     flowExecutionSnapshotFactory);

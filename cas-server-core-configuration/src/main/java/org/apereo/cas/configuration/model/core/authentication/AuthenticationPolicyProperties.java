@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.authn.policy", ignoreUnknownFields = false)
+
 public class AuthenticationPolicyProperties {
 
     private Any any = new Any();

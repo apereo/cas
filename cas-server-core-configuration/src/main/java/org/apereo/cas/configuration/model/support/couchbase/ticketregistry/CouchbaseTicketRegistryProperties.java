@@ -9,7 +9,7 @@ package org.apereo.cas.configuration.model.support.couchbase.ticketregistry;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "ticketreg.couchbase", ignoreUnknownFields = false)
+
 public class CouchbaseTicketRegistryProperties {
 
     private boolean queryEnabled = true;

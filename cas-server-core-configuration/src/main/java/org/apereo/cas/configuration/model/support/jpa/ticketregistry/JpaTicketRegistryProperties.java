@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "ticketreg.database", ignoreUnknownFields = false)
+
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /** Default lock timeout is 1 hour. */

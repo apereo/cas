@@ -52,9 +52,9 @@ public class SamlConfiguration {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
-        view.setIssuer(casProperties.getSamlResponseProperties().getIssuer());
-        view.setSkewAllowance(casProperties.getSamlResponseProperties().getSkewAllowance());
-        view.setDefaultAttributeNamespace(casProperties.getSamlResponseProperties().getAttributeNamespace());
+        view.setIssuer(casProperties.getSamlResponse().getIssuer());
+        view.setSkewAllowance(casProperties.getSamlResponse().getSkewAllowance());
+        view.setDefaultAttributeNamespace(casProperties.getSamlResponse().getAttributeNamespace());
         return view;
     }
 
@@ -95,8 +95,8 @@ public class SamlConfiguration {
     @Bean
     public SamlCompliantUniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
         final SamlCompliantUniqueTicketIdGenerator gen =
-                new SamlCompliantUniqueTicketIdGenerator(casProperties.getServerProperties().getName());
-        gen.setSaml2compliant(casProperties.getSamlResponseProperties().isTicketidSaml2());
+                new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
+        gen.setSaml2compliant(casProperties.getSamlResponse().isTicketidSaml2());
         return gen;
     }
 

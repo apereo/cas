@@ -397,7 +397,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         if (contextProvider.isPresent()) {
-            modelAndView.addObject(casProperties.getMfaProperties().getAuthenticationContextAttribute(), contextProvider);
+            modelAndView.addObject(casProperties.getMfa().getAuthenticationContextAttribute(), contextProvider);
         }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {

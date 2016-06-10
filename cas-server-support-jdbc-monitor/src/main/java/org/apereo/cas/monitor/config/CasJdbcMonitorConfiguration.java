@@ -28,8 +28,8 @@ public class CasJdbcMonitorConfiguration {
     @RefreshScope
     public Monitor dataSourceMonitor(@Qualifier("monitorDataSource") final DataSource dataSource) {
         final DataSourceMonitor m = new DataSourceMonitor(dataSource);
-        m.setValidationQuery(casProperties.getMonitorProperties().getDataSource().getValidationQuery());
-        m.setMaxWait(casProperties.getMonitorProperties().getMaxWait());
+        m.setValidationQuery(casProperties.getMonitor().getDataSource().getValidationQuery());
+        m.setMaxWait(casProperties.getMonitor().getMaxWait());
         return m;
     }
 }

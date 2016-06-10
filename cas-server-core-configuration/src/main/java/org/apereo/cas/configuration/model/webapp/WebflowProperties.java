@@ -11,7 +11,7 @@ import org.springframework.core.io.Resource;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "webflow", ignoreUnknownFields = false)
+
 public class WebflowProperties extends AbstractCryptographyProperties {
 
     private boolean autoconfigure = true;

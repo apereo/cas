@@ -68,21 +68,21 @@ public class SpnegoConfiguration {
         final JcifsConfig c = new JcifsConfig();
 
         
-        c.setJcifsDomain(casProperties.getSpnegoProperties().getJcifsDomain());
-        c.setJcifsDomainController(casProperties.getSpnegoProperties().getJcifsDomainController());
-        c.setJcifsNetbiosCachePolicy(casProperties.getSpnegoProperties().getCachePolicy());
-        c.setJcifsNetbiosWins(casProperties.getSpnegoProperties().getJcifsNetbiosWins());
-        c.setJcifsPassword(casProperties.getSpnegoProperties().getJcifsPassword());
-        c.setJcifsServicePassword(casProperties.getSpnegoProperties().getJcifsServicePassword());
-        c.setJcifsServicePrincipal(casProperties.getSpnegoProperties().getJcifsServicePrincipal());
-        c.setJcifsSocketTimeout(casProperties.getSpnegoProperties().getTimeout());
-        c.setJcifsUsername(casProperties.getSpnegoProperties().getJcifsUsername());
-        c.setKerberosConf(casProperties.getSpnegoProperties().getKerberosConf());
-        c.setKerberosDebug(casProperties.getSpnegoProperties().getKerberosDebug());
-        c.setKerberosKdc(casProperties.getSpnegoProperties().getKerberosKdc());
-        c.setKerberosRealm(casProperties.getSpnegoProperties().getKerberosRealm());
-        c.setLoginConf(casProperties.getSpnegoProperties().getLoginConf());
-        c.setUseSubjectCredsOnly(casProperties.getSpnegoProperties().isUseSubjectCredsOnly());
+        c.setJcifsDomain(casProperties.getSpnego().getJcifsDomain());
+        c.setJcifsDomainController(casProperties.getSpnego().getJcifsDomainController());
+        c.setJcifsNetbiosCachePolicy(casProperties.getSpnego().getCachePolicy());
+        c.setJcifsNetbiosWins(casProperties.getSpnego().getJcifsNetbiosWins());
+        c.setJcifsPassword(casProperties.getSpnego().getJcifsPassword());
+        c.setJcifsServicePassword(casProperties.getSpnego().getJcifsServicePassword());
+        c.setJcifsServicePrincipal(casProperties.getSpnego().getJcifsServicePrincipal());
+        c.setJcifsSocketTimeout(casProperties.getSpnego().getTimeout());
+        c.setJcifsUsername(casProperties.getSpnego().getJcifsUsername());
+        c.setKerberosConf(casProperties.getSpnego().getKerberosConf());
+        c.setKerberosDebug(casProperties.getSpnego().getKerberosDebug());
+        c.setKerberosKdc(casProperties.getSpnego().getKerberosKdc());
+        c.setKerberosRealm(casProperties.getSpnego().getKerberosRealm());
+        c.setLoginConf(casProperties.getSpnego().getLoginConf());
+        c.setUseSubjectCredsOnly(casProperties.getSpnego().isUseSubjectCredsOnly());
 
         
         return c;
@@ -94,8 +94,8 @@ public class SpnegoConfiguration {
         final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler();
 
         h.setAuthentication(spnegoAuthentication());
-        h.setPrincipalWithDomainName(casProperties.getSpnegoProperties().isPrincipalWithDomainName());
-        h.setNTLMallowed(casProperties.getSpnegoProperties().isNtlmAllowed());
+        h.setPrincipalWithDomainName(casProperties.getSpnego().isPrincipalWithDomainName());
+        h.setNTLMallowed(casProperties.getSpnego().isNtlmAllowed());
         return h;
     }
 
@@ -104,9 +104,9 @@ public class SpnegoConfiguration {
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
         final NtlmAuthenticationHandler ntlm = new NtlmAuthenticationHandler();
-        ntlm.setDomainController(casProperties.getNtlmProperties().getDomainController());
-        ntlm.setIncludePattern(casProperties.getNtlmProperties().getIncludePattern());
-        ntlm.setLoadBalance(casProperties.getNtlmProperties().isLoadBalance());
+        ntlm.setDomainController(casProperties.getNtlm().getDomainController());
+        ntlm.setIncludePattern(casProperties.getNtlm().getIncludePattern());
+        ntlm.setLoadBalance(casProperties.getNtlm().isLoadBalance());
         return ntlm;
     }
 
@@ -124,8 +124,8 @@ public class SpnegoConfiguration {
     @RefreshScope
     public SpnegoCredentialsAction spnego() {
         final SpnegoCredentialsAction a = new SpnegoCredentialsAction();
-        a.setNtlm(casProperties.getSpnegoProperties().isNtlm());
-        a.setSend401OnAuthenticationFailure(casProperties.getSpnegoProperties().isSend401OnAuthenticationFailure());
+        a.setNtlm(casProperties.getSpnego().isNtlm());
+        a.setSend401OnAuthenticationFailure(casProperties.getSpnego().isSend401OnAuthenticationFailure());
         return a;
     }
 
@@ -134,9 +134,9 @@ public class SpnegoConfiguration {
     public Action negociateSpnego() {
         final SpnegoNegociateCredentialsAction a =
                 new SpnegoNegociateCredentialsAction();
-        a.setMixedModeAuthentication(casProperties.getSpnegoProperties().isMixedModeAuthentication());
-        a.setNtlm(casProperties.getSpnegoProperties().isNtlm());
-        a.setSupportedBrowsers(Arrays.asList(casProperties.getSpnegoProperties().getSupportedBrowsers()));
+        a.setMixedModeAuthentication(casProperties.getSpnego().isMixedModeAuthentication());
+        a.setNtlm(casProperties.getSpnego().isNtlm());
+        a.setSupportedBrowsers(Arrays.asList(casProperties.getSpnego().getSupportedBrowsers()));
         return a;
     }
 
@@ -146,9 +146,9 @@ public class SpnegoConfiguration {
         final BaseSpnegoKnownClientSystemsFilterAction a =
                 new BaseSpnegoKnownClientSystemsFilterAction();
 
-        a.setIpsToCheckPattern(casProperties.getSpnegoProperties().getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(casProperties.getSpnegoProperties().getAlternativeRemoteHostAttribute());
-        a.setTimeout(casProperties.getSpnegoProperties().getDnsTimeout());
+        a.setIpsToCheckPattern(casProperties.getSpnego().getIpsToCheckPattern());
+        a.setAlternativeRemoteHostAttribute(casProperties.getSpnego().getAlternativeRemoteHostAttribute());
+        a.setTimeout(casProperties.getSpnego().getDnsTimeout());
         return a;
     }
 
@@ -156,10 +156,10 @@ public class SpnegoConfiguration {
     @RefreshScope
     public Action hostnameSpnegoClientAction() {
         final HostNameSpnegoKnownClientSystemsFilterAction a =
-                new HostNameSpnegoKnownClientSystemsFilterAction(casProperties.getSpnegoProperties().getHostNamePatternString());
-        a.setIpsToCheckPattern(casProperties.getSpnegoProperties().getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(casProperties.getSpnegoProperties().getAlternativeRemoteHostAttribute());
-        a.setTimeout(casProperties.getSpnegoProperties().getDnsTimeout());
+                new HostNameSpnegoKnownClientSystemsFilterAction(casProperties.getSpnego().getHostNamePatternString());
+        a.setIpsToCheckPattern(casProperties.getSpnego().getIpsToCheckPattern());
+        a.setAlternativeRemoteHostAttribute(casProperties.getSpnego().getAlternativeRemoteHostAttribute());
+        a.setTimeout(casProperties.getSpnego().getDnsTimeout());
         return a;
     }
 
@@ -168,11 +168,11 @@ public class SpnegoConfiguration {
     public Action ldapSpnegoClientAction() {
         final LdapSpnegoKnownClientSystemsFilterAction l =
                 new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory,
-                        this.searchRequest, casProperties.getSpnegoProperties().getSpnegoAttributeName());
+                        this.searchRequest, casProperties.getSpnego().getSpnegoAttributeName());
 
-        l.setIpsToCheckPattern(casProperties.getSpnegoProperties().getIpsToCheckPattern());
-        l.setAlternativeRemoteHostAttribute(casProperties.getSpnegoProperties().getAlternativeRemoteHostAttribute());
-        l.setTimeout(casProperties.getSpnegoProperties().getDnsTimeout());
+        l.setIpsToCheckPattern(casProperties.getSpnego().getIpsToCheckPattern());
+        l.setAlternativeRemoteHostAttribute(casProperties.getSpnego().getAlternativeRemoteHostAttribute());
+        l.setTimeout(casProperties.getSpnego().getDnsTimeout());
         return l;
     }
 }

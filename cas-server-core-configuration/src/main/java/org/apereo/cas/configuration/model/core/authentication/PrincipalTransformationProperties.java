@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.principal.transform", ignoreUnknownFields = false)
+
 public class PrincipalTransformationProperties {
     private String prefix;
     private String suffix;

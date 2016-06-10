@@ -37,15 +37,15 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     @PostConstruct
     public void init() {
         try {
-            if (casProperties.getMaxmindProperties().getCityDatabase().exists()) {
+            if (casProperties.getMaxmind().getCityDatabase().exists()) {
                 this.cityDatabaseReader =
-                        new DatabaseReader.Builder(casProperties.getMaxmindProperties().getCityDatabase().getFile())
+                        new DatabaseReader.Builder(casProperties.getMaxmind().getCityDatabase().getFile())
                                 .withCache(new CHMCache()).build();
             }
 
-            if (casProperties.getMaxmindProperties().getCountryDatabase().exists()) {
+            if (casProperties.getMaxmind().getCountryDatabase().exists()) {
                 this.countryDatabaseReader =
-                        new DatabaseReader.Builder(casProperties.getMaxmindProperties().getCountryDatabase().getFile())
+                        new DatabaseReader.Builder(casProperties.getMaxmind().getCountryDatabase().getFile())
                                 .withCache(new CHMCache()).build();
             }
         } catch (final Exception e) {

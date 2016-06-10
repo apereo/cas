@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.throttle", ignoreUnknownFields = false)
+
 public class ThrottleProperties {
 
     private static final String DEFAULT_APPLICATION_CODE = "CAS";

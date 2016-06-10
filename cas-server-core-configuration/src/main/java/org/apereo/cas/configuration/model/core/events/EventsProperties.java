@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "events", ignoreUnknownFields = false)
+
 public class EventsProperties {
 
     private boolean trackGeolocation;

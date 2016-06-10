@@ -8,7 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "accept.authn", ignoreUnknownFields = false)
 public class AcceptAuthenticationProperties {
     
     private String users;

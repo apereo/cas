@@ -41,7 +41,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
-        return newHibernateJpaVendorAdapter(casProperties.getDatabaseProperties());
+        return newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
     /**
@@ -71,7 +71,7 @@ public class JpaServiceRegistryConfiguration {
                         "jpaServiceRegistryContext",
                         jpaServicePackagesToScan(),
                         dataSourceService()),
-                casProperties.getJpaServiceRegistryProperties());
+                casProperties.getJpaServiceRegistry());
     }
 
     /**
@@ -96,7 +96,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceService() {
-        return newHickariDataSource(casProperties.getJpaServiceRegistryProperties());
+        return newHickariDataSource(casProperties.getJpaServiceRegistry());
     }
 
     @Bean

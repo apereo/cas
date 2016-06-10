@@ -90,7 +90,7 @@ public class StatisticsController implements ServletContextAware {
         modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
         modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("casTicketSuffix", casProperties.getHostProperties().getName());
+        modelAndView.addObject("casTicketSuffix", casProperties.getHost().getName());
 
         int unexpiredTgts = 0;
         int unexpiredSts = 0;

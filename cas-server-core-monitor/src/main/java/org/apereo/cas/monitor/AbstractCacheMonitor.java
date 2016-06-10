@@ -53,9 +53,9 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
      */
     protected StatusCode status(final CacheStatistics statistics) {
         final StatusCode code;
-        if (statistics.getEvictions() > casProperties.getMonitorProperties().getWarn().getEvictionThreshold()) {
+        if (statistics.getEvictions() > casProperties.getMonitor().getWarn().getEvictionThreshold()) {
             code = StatusCode.WARN;
-        } else if (statistics.getPercentFree() < casProperties.getMonitorProperties().getWarn().getThreshold()) {
+        } else if (statistics.getPercentFree() < casProperties.getMonitor().getWarn().getThreshold()) {
             code = StatusCode.WARN;
         } else {
             code = StatusCode.OK;

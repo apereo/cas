@@ -59,28 +59,28 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationStatusInterceptor() {
         return new RequiresAuthenticationInterceptor(new
-                Config(new IpClient(new IpRegexpAuthenticator(casProperties.getAdminPagesSecurityProperties().getIp()))), "IpClient");
+                Config(new IpClient(new IpRegexpAuthenticator(casProperties.getAdminPagesSecurity().getIp()))), "IpClient");
     }
 
     @RefreshScope
     @Bean
     public Config config() {
         try {
-            if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurityProperties().getLoginUrl())
-                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurityProperties().getService())
-                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurityProperties().getAdminRoles())) {
+            if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLoginUrl())
+                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getService())
+                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getAdminRoles())) {
                 
-                final IndirectClient client = new CasClient(casProperties.getAdminPagesSecurityProperties().getLoginUrl());
+                final IndirectClient client = new CasClient(casProperties.getAdminPagesSecurity().getLoginUrl());
                 final Properties properties = new Properties();
-                properties.load(this.casProperties.getAdminPagesSecurityProperties().getUsers().getInputStream());
+                properties.load(this.casProperties.getAdminPagesSecurity().getUsers().getInputStream());
                 client.setAuthorizationGenerator(
                         new SpringSecurityPropertiesAuthorizationGenerator(properties));
 
-                final Config cfg = new Config(casProperties.getAdminPagesSecurityProperties().getService(), client);
+                final Config cfg = new Config(casProperties.getAdminPagesSecurity().getService(), client);
                 cfg.setAuthorizer(
                         new RequireAnyRoleAuthorizer(
                                 org.springframework.util.StringUtils.commaDelimitedListToSet(
-                                        casProperties.getAdminPagesSecurityProperties().getAdminRoles())));
+                                        casProperties.getAdminPagesSecurity().getAdminRoles())));
 
                 return cfg;
             }

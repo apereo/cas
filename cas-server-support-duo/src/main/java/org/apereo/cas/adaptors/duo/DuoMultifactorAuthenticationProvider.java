@@ -31,7 +31,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     @Override
     public int getOrder() {
-        return casProperties.getMfaProperties().getDuo().getRank();
+        return casProperties.getMfa().getDuo().getRank();
     }
 
 

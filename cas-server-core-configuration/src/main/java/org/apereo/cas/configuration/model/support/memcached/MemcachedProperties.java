@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "memcached", ignoreUnknownFields = false)
+
 public class MemcachedProperties {
     
     private String servers = "localhost:11211}";

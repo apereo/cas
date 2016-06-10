@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "http.client", ignoreUnknownFields = false)
+
 public class HttpClientProperties {
     private int connectionTimeout = 5000;
     private int readTimeout = 5000;

@@ -10,7 +10,7 @@ import org.springframework.core.io.ClassPathResource;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "service.registry", ignoreUnknownFields = false)
+
 public class ServiceRegistryProperties extends AbstractConfigProperties {
 
     private boolean initFromJson = true;

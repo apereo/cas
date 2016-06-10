@@ -96,7 +96,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void initialize() {
         try {
             logger.debug("Initializing CAS webflow configuration...");
-            if (casProperties.getWebflowProperties().isAutoconfigure()) {
+            if (casProperties.getWebflow().isAutoconfigure()) {
                 doInitialize();
             } else {
                 logger.warn("Webflow auto-configuration is disabled. CAS will not modify the webflow via {}", getClass().getName());

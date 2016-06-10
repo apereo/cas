@@ -80,42 +80,42 @@ public class Pac4jConfiguration {
         // turn the properties file into a map of properties
         final Map<String, String> properties = new HashMap<>();
 
-        properties.put(PropertiesConfigFactory.FACEBOOK_ID, casProperties.getPac4jProperties().getFacebook().getId());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, casProperties.getPac4jProperties().getFacebook().getSecret());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, casProperties.getPac4jProperties().getFacebook().getScope());
-        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, casProperties.getPac4jProperties().getFacebook().getFields());
+        properties.put(PropertiesConfigFactory.FACEBOOK_ID, casProperties.getPac4j().getFacebook().getId());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, casProperties.getPac4j().getFacebook().getSecret());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, casProperties.getPac4j().getFacebook().getScope());
+        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, casProperties.getPac4j().getFacebook().getFields());
 
-        properties.put(PropertiesConfigFactory.TWITTER_ID, casProperties.getPac4jProperties().getTwitter().getId());
-        properties.put(PropertiesConfigFactory.TWITTER_SECRET, casProperties.getPac4jProperties().getTwitter().getSecret());
+        properties.put(PropertiesConfigFactory.TWITTER_ID, casProperties.getPac4j().getTwitter().getId());
+        properties.put(PropertiesConfigFactory.TWITTER_SECRET, casProperties.getPac4j().getTwitter().getSecret());
 
-        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, casProperties.getPac4jProperties().getCas().getLoginUrl());
-        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, casProperties.getPac4jProperties().getCas().getProtocol());
+        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, casProperties.getPac4j().getCas().getLoginUrl());
+        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, casProperties.getPac4j().getCas().getProtocol());
 
         properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH,
-                casProperties.getPac4jProperties().getSaml().getIdentityProviderMetadataPath());
+                casProperties.getPac4j().getSaml().getIdentityProviderMetadataPath());
         properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD,
-                casProperties.getPac4jProperties().getSaml().getKeystorePassword());
+                casProperties.getPac4j().getSaml().getKeystorePassword());
         properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH,
-                casProperties.getPac4jProperties().getSaml().getKeystorePath());
+                casProperties.getPac4j().getSaml().getKeystorePath());
         properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME,
-                casProperties.getPac4jProperties().getSaml().getMaximumAuthenticationLifetime());
+                casProperties.getPac4j().getSaml().getMaximumAuthenticationLifetime());
         properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD,
-                casProperties.getPac4jProperties().getSaml().getPrivateKeyPassword());
+                casProperties.getPac4j().getSaml().getPrivateKeyPassword());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
-                casProperties.getPac4jProperties().getSaml().getServiceProviderEntityId());
+                casProperties.getPac4j().getSaml().getServiceProviderEntityId());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
-                casProperties.getPac4jProperties().getSaml().getServiceProviderEntityId());
+                casProperties.getPac4j().getSaml().getServiceProviderEntityId());
 
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, casProperties.getPac4jProperties().getOidc().getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, casProperties.getPac4jProperties().getOidc().getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, casProperties.getPac4jProperties().getOidc().getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, casProperties.getPac4jProperties().getOidc().getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, casProperties.getPac4jProperties().getOidc().getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID, casProperties.getPac4jProperties().getOidc().getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, casProperties.getPac4jProperties().getOidc().getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, casProperties.getPac4jProperties().getOidc().getPreferredJwsAlgorithm());
-        properties.put(PropertiesConfigFactory.OIDC_SECRET, casProperties.getPac4jProperties().getOidc().getSecret());
-        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, casProperties.getPac4jProperties().getOidc().getUseNonce());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, casProperties.getPac4j().getOidc().getCustomParamKey1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, casProperties.getPac4j().getOidc().getCustomParamKey2());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, casProperties.getPac4j().getOidc().getCustomParamValue1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, casProperties.getPac4j().getOidc().getCustomParamValue2());
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, casProperties.getPac4j().getOidc().getDiscoveryUri());
+        properties.put(PropertiesConfigFactory.OIDC_ID, casProperties.getPac4j().getOidc().getId());
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, casProperties.getPac4j().getOidc().getMaxClockSkew());
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, casProperties.getPac4j().getOidc().getPreferredJwsAlgorithm());
+        properties.put(PropertiesConfigFactory.OIDC_SECRET, casProperties.getPac4j().getOidc().getSecret());
+        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, casProperties.getPac4j().getOidc().getUseNonce());
 
         // add the new clients found via properties first
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
@@ -131,6 +131,6 @@ public class Pac4jConfiguration {
         if (allClients.isEmpty()) {
             throw new IllegalArgumentException("At least one pac4j client must be defined");
         }
-        return new Clients(casProperties.getServerProperties().getLoginUrl(), allClients);
+        return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
 }

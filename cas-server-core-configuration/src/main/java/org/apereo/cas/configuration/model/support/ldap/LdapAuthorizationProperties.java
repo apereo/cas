@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "ldap.authorizationgenerator", ignoreUnknownFields = false)
+
 public class LdapAuthorizationProperties {
     /** Default role prefix. */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";

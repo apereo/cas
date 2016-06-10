@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "ehcache", ignoreUnknownFields = false)
+
 public class EhcacheProperties {
     
     private boolean loaderAsync = true;

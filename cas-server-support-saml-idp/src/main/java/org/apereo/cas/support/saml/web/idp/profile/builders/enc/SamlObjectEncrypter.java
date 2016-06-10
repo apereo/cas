@@ -235,8 +235,8 @@ public class SamlObjectEncrypter {
      * @return the encryption certificate
      */
     protected X509Certificate getEncryptionCertificate() {
-        logger.debug("Locating encryption certificate file from [{}]", casProperties.getSamlIdPProperties().getMetadata().getEncryptionCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getEncryptionCertFile()));
+        logger.debug("Locating encryption certificate file from [{}]", casProperties.getSamlIdp().getMetadata().getEncryptionCertFile());
+        return SamlUtils.readCertificate(new FileSystemResource(casProperties.getSamlIdp().getMetadata().getEncryptionCertFile()));
     }
 
     /**
@@ -247,10 +247,10 @@ public class SamlObjectEncrypter {
      */
     protected PrivateKey getEncryptionPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getEncryptionKeyFile()));
-        privateKeyFactoryBean.setAlgorithm(casProperties.getSamlIdPProperties().getMetadata().getPrivateKeyAlgName());
+        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getSamlIdp().getMetadata().getEncryptionKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(casProperties.getSamlIdp().getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating encryption key file from [{}]", casProperties.getSamlIdPProperties().getMetadata().getEncryptionKeyFile());
+        logger.debug("Locating encryption key file from [{}]", casProperties.getSamlIdp().getMetadata().getEncryptionKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 }

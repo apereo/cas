@@ -31,7 +31,7 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     @Override
     public int getOrder() {
-        return casProperties.getMfaProperties().getGauth().getRank();
+        return casProperties.getMfa().getGauth().getRank();
     }
 
 

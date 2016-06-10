@@ -33,9 +33,9 @@ public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
         final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr =
                 new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
-        bldr.setCodeDigits(casProperties.getMfaProperties().getGauth().getCodeDigits());
-        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(casProperties.getMfaProperties().getGauth().getTimeStepSize()));
-        bldr.setWindowSize(casProperties.getMfaProperties().getGauth().getWindowSize());
+        bldr.setCodeDigits(casProperties.getMfa().getGauth().getCodeDigits());
+        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(casProperties.getMfa().getGauth().getTimeStepSize()));
+        bldr.setWindowSize(casProperties.getMfa().getGauth().getWindowSize());
         bldr.setKeyRepresentation(KeyRepresentation.BASE32);
 
         this.googleAuthenticator = new GoogleAuthenticator(bldr.build());

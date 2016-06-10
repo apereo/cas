@@ -37,9 +37,9 @@ public class LdapAuthenticationConfiguration {
     public AuthorizationGenerator ldapAuthorizationGenerator() {
         final LdapAuthorizationGenerator gen = 
                 new LdapAuthorizationGenerator(this.connectionFactory, this.userSearchExecutor);
-        gen.setAllowMultipleResults(casProperties.getLdapAuthorizationProperties().isAllowMultipleResults());
-        gen.setRoleAttribute(casProperties.getLdapAuthorizationProperties().getRoleAttribute());
-        gen.setRolePrefix(casProperties.getLdapAuthorizationProperties().getRolePrefix());
+        gen.setAllowMultipleResults(casProperties.getLdapAuthz().isAllowMultipleResults());
+        gen.setRoleAttribute(casProperties.getLdapAuthz().getRoleAttribute());
+        gen.setRolePrefix(casProperties.getLdapAuthz().getRolePrefix());
         
         return gen;
     }

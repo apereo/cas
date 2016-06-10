@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "svcreg.mongodb", ignoreUnknownFields = false)
+
 public class MongoServiceRegistryProperties {
 
     private String host = "localhost";

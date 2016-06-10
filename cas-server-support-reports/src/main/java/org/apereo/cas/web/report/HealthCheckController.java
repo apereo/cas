@@ -75,6 +75,6 @@ public class HealthCheckController {
             return null;
         };
 
-        return new WebAsyncTask<>(casProperties.getHttpClientProperties().getAsyncTimeout(), asyncTask);
+        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
     }
 }

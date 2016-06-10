@@ -33,29 +33,29 @@ public class CasCoreUtilConfiguration {
     @Bean
     public CipherExecutor<byte[], byte[]> defaultTicketCipherExecutor() {
         return new DefaultTicketCipherExecutor(
-                casProperties.getTicketProperties().getEncryption().getKey(),
-                casProperties.getTicketProperties().getSigning().getKey(),
-                casProperties.getTicketProperties().getSecretkey().getAlg(),
-                casProperties.getTicketProperties().getSigning().getKeySize(),
-                casProperties.getTicketProperties().getEncryption().getKeySize());
+                casProperties.getTicket().getEncryption().getKey(),
+                casProperties.getTicket().getSigning().getKey(),
+                casProperties.getTicket().getSecretkey().getAlg(),
+                casProperties.getTicket().getSigning().getKeySize(),
+                casProperties.getTicket().getEncryption().getKeySize());
     }
 
     @Bean
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
         return new WebflowCipherExecutor(
-                casProperties.getWebflowProperties().getEncryption().getKey(),
-                casProperties.getWebflowProperties().getSigning().getKey(),
-                casProperties.getWebflowProperties().getSecretkey().getAlg(),
-                casProperties.getWebflowProperties().getSigning().getKeySize(),
-                casProperties.getWebflowProperties().getEncryption().getKeySize());
+                casProperties.getWebflow().getEncryption().getKey(),
+                casProperties.getWebflow().getSigning().getKey(),
+                casProperties.getWebflow().getSecretkey().getAlg(),
+                casProperties.getWebflow().getSigning().getKeySize(),
+                casProperties.getWebflow().getEncryption().getKeySize());
     }
 
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c =
                 new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClientProperties().getConnectionTimeout());
-        c.setReadTimeout(casProperties.getHttpClientProperties().getReadTimeout());
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
         return c;
     }
 
@@ -64,8 +64,8 @@ public class CasCoreUtilConfiguration {
     public FactoryBean<SimpleHttpClient> noRedirectHttpClient() {
         final SimpleHttpClientFactoryBean.NoRedirectHttpClient c =
                 new SimpleHttpClientFactoryBean.NoRedirectHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClientProperties().getConnectionTimeout());
-        c.setReadTimeout(casProperties.getHttpClientProperties().getReadTimeout());
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
         return c;
     }
 
@@ -73,8 +73,8 @@ public class CasCoreUtilConfiguration {
     public FactoryBean<SimpleHttpClient> supportsTrustStoreSslSocketFactoryHttpClient() {
         final SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient c =
                 new SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClientProperties().getConnectionTimeout());
-        c.setReadTimeout(casProperties.getHttpClientProperties().getReadTimeout());
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
         return c;
     }
 
@@ -91,8 +91,8 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     public CipherExecutor tgcCipherExecutor() {
-        return new TGCCipherExecutor(casProperties.getTicketGrantingCookieProperties().getEncryptionKey(),
-                casProperties.getTicketGrantingCookieProperties().getSigningKey());
+        return new TGCCipherExecutor(casProperties.getTgc().getEncryptionKey(),
+                casProperties.getTgc().getSigningKey());
     }
 
     @Bean

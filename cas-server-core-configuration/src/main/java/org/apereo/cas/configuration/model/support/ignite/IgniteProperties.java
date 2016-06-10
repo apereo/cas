@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "ignite", ignoreUnknownFields = false)
+
 public class IgniteProperties {
     private String igniteAddresses = "localhost:47500";
     private TicketsCache ticketsCache = new TicketsCache();

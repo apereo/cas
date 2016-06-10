@@ -148,7 +148,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
      */
     @PostConstruct
     public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(casProperties.getCouchbaseServiceRegistryProperties().isQueryEnabled()));
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(casProperties.getCouchbaseServiceRegistry().isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }

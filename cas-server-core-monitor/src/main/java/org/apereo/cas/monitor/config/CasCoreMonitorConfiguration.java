@@ -43,7 +43,7 @@ public class CasCoreMonitorConfiguration {
     @Bean
     public Monitor memoryMonitor() {
         final MemoryMonitor bean = new MemoryMonitor();
-        bean.setFreeMemoryWarnThreshold(casProperties.getMonitorProperties().getFreeMemThreshold());
+        bean.setFreeMemoryWarnThreshold(casProperties.getMonitor().getFreeMemThreshold());
         return bean;
     }
 
@@ -53,8 +53,8 @@ public class CasCoreMonitorConfiguration {
     public Monitor sessionMonitor(@Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
         final SessionMonitor bean = new SessionMonitor();
         bean.setTicketRegistry(ticketRegistry);
-        bean.setServiceTicketCountWarnThreshold(casProperties.getMonitorProperties().getSt().getWarn().getThreshold());
-        bean.setSessionCountWarnThreshold(casProperties.getMonitorProperties().getTgt().getWarn().getThreshold());
+        bean.setServiceTicketCountWarnThreshold(casProperties.getMonitor().getSt().getWarn().getThreshold());
+        bean.setSessionCountWarnThreshold(casProperties.getMonitor().getTgt().getWarn().getThreshold());
         return bean;
     }
 }

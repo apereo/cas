@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "shiro.authn", ignoreUnknownFields = false)
+
 public class ShiroAuthenticationProperties extends AbstractConfigProperties {
 
     private Set<String> requiredRoles = new HashSet<>();

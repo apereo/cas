@@ -86,9 +86,9 @@ public class OpenIdConfiguration {
     @Bean
     public ServerManager serverManager() {
         final ServerManager manager = new ServerManager();
-        manager.setOPEndpointUrl(casProperties.getServerProperties().getLoginUrl());
-        manager.setEnforceRpId(casProperties.getOpenIdProperties().isEnforceRpId());
-        LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServerProperties().getLoginUrl());
+        manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
+        manager.setEnforceRpId(casProperties.getOpenid().isEnforceRpId());
+        LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServer().getLoginUrl());
         return manager;
     }
 
@@ -111,7 +111,7 @@ public class OpenIdConfiguration {
     @RefreshScope
     public ServiceFactory openIdServiceFactory() {
         final OpenIdServiceFactory f = new OpenIdServiceFactory();
-        f.setOpenIdPrefixUrl(casProperties.getServerProperties().getPrefix().concat("/openid"));
+        f.setOpenIdPrefixUrl(casProperties.getServer().getPrefix().concat("/openid"));
         return f;
     }
 

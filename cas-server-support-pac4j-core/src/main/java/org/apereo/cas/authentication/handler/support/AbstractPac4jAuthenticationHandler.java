@@ -39,14 +39,14 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
 
         if (profile != null) {
             final String id;
-            if (casProperties.getPac4jProperties().isTypedIdUsed()) {
+            if (casProperties.getPac4j().isTypedIdUsed()) {
                 id = profile.getTypedId();
             } else {
                 id = profile.getId();
             }
             if (StringUtils.isNotBlank(id)) {
                 credentials.setUserProfile(profile);
-                credentials.setTypedIdUsed(casProperties.getPac4jProperties().isTypedIdUsed());
+                credentials.setTypedIdUsed(casProperties.getPac4j().isTypedIdUsed());
                 return new DefaultHandlerResult(
                         this,
                         new BasicCredentialMetaData(credentials),
@@ -65,6 +65,6 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @param properties the properties
      */
     public void setProperties(final Pac4jProperties properties) {
-        casProperties.setPac4jProperties(properties);
+        casProperties.setPac4j(properties);
     }
 }

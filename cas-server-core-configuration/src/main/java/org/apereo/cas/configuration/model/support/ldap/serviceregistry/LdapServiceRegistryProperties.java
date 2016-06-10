@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "svcreg.ldap", ignoreUnknownFields = false)
+
 public class LdapServiceRegistryProperties {
     
     private String baseDn;

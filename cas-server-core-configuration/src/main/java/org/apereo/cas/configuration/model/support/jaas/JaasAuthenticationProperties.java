@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.authn.jaas", ignoreUnknownFields = false)
+
 public class JaasAuthenticationProperties {
     private String realm = "CAS";
     private String kerberosRealmSystemProperty;

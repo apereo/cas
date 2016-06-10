@@ -39,9 +39,9 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             return null;
         }
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final String[] values = request.getParameterValues(casProperties.getMfaProperties().getRequestParameter());
+        final String[] values = request.getParameterValues(casProperties.getMfa().getRequestParameter());
         if (values != null && values.length > 0) {
-            logger.debug("Received request parameter {} as {}", casProperties.getMfaProperties().getRequestParameter(), values);
+            logger.debug("Received request parameter {} as {}", casProperties.getMfa().getRequestParameter(), values);
 
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     getAllMultifactorAuthenticationProvidersFromApplicationContext();
@@ -70,7 +70,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             }
 
         }
-        logger.debug("No value could be found for request parameter {}", casProperties.getMfaProperties().getRequestParameter());
+        logger.debug("No value could be found for request parameter {}", casProperties.getMfa().getRequestParameter());
         return null;
     }
 }

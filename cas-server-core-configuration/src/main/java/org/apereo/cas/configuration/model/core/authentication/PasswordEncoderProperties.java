@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.authn.password", ignoreUnknownFields = false)
+
 public class PasswordEncoderProperties {
     private String encodingAlgorithm;
     private String characterEncoding;

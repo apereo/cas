@@ -38,8 +38,8 @@ public class CasFiltersConfiguration {
     public FilterRegistrationBean characterEncodingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new CharacterEncodingFilter(
-                casProperties.getHttpWebRequestProperties().getWeb().getEncoding(),
-                casProperties.getHttpWebRequestProperties().getWeb().isForceEncoding()));
+                casProperties.getHttpWebRequest().getWeb().getEncoding(),
+                casProperties.getHttpWebRequest().getWeb().isForceEncoding()));
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("characterEncodingFilter");
         return bean;
@@ -55,15 +55,15 @@ public class CasFiltersConfiguration {
     public FilterRegistrationBean responseHeadersSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
         initParams.put("enableCacheControl",
-                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isCache()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().getHeader().isCache()));
         initParams.put("enableXContentTypeOptions",
-                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isXcontent()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().getHeader().isXcontent()));
         initParams.put("enableStrictTransportSecurity",
-                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isHsts()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().getHeader().isHsts()));
         initParams.put("enableXFrameOptions",
-                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isXframe()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().getHeader().isXframe()));
         initParams.put("enableXSSProtection",
-                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isXss()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().getHeader().isXss()));
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ResponseHeadersEnforcementFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
@@ -83,12 +83,12 @@ public class CasFiltersConfiguration {
     public FilterRegistrationBean requestParameterSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
-                casProperties.getHttpWebRequestProperties().getParamsToCheck());
+                casProperties.getHttpWebRequest().getParamsToCheck());
         initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
         initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS,
-                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().isAllowMultiValueParameters()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequest().isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
-                casProperties.getHttpWebRequestProperties().getOnlyPostParams());
+                casProperties.getHttpWebRequest().getOnlyPostParams());
 
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new RequestParameterPolicyEnforcementFilter());

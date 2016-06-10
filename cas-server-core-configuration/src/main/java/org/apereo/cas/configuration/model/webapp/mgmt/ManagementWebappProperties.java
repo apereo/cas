@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas-management", ignoreUnknownFields = false)
+
 public class ManagementWebappProperties {
     private String defaultServiceUrl;
     private String adminRoles;

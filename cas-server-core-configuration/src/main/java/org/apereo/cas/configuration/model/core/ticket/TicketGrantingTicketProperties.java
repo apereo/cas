@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "tgt", ignoreUnknownFields = false)
+
 public class TicketGrantingTicketProperties {
     private int maxLength = 50;
     private int maxTimeToLiveInSeconds = 28800;

@@ -40,7 +40,7 @@ public class LdapMonitorConfiguration {
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor() {
         final PooledConnectionFactoryMonitor m = new PooledConnectionFactoryMonitor(connectionFactory, validator);
-        m.setMaxWait(casProperties.getMonitorProperties().getMaxWait());
+        m.setMaxWait(casProperties.getMonitor().getMaxWait());
         return m;
     }
 }

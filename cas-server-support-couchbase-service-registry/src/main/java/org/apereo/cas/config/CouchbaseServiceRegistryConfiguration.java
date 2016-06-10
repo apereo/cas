@@ -31,10 +31,10 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(casProperties.getCouchbaseServiceRegistryProperties().getNodeSet()));
-        factory.setTimeout(casProperties.getCouchbaseServiceRegistryProperties().getTimeout());
-        factory.setBucketName(casProperties.getCouchbaseServiceRegistryProperties().getBucket());
-        factory.setPassword(casProperties.getCouchbaseServiceRegistryProperties().getPassword());
+        factory.setNodes(StringUtils.commaDelimitedListToSet(casProperties.getCouchbaseServiceRegistry().getNodeSet()));
+        factory.setTimeout(casProperties.getCouchbaseServiceRegistry().getTimeout());
+        factory.setBucketName(casProperties.getCouchbaseServiceRegistry().getBucket());
+        factory.setPassword(casProperties.getCouchbaseServiceRegistry().getPassword());
         return factory;
     }
     

@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "create.sso", ignoreUnknownFields = false)
+
 public class SsoProperties {
 
     private boolean renewedAuthn = true;

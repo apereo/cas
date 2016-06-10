@@ -11,7 +11,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "shibboleth.attributeResolver", ignoreUnknownFields = false)
+
 public class AttributeResolverProperties {
     
     private List<Resource> resources;

@@ -137,7 +137,7 @@ public class SamlObjectSigner {
             throws Exception {
         logger.debug("Attempting to sign the outbound SAML message...");
         final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
-        handler.setSignErrorResponses(casProperties.getSamlIdPProperties().getResponse().isSignError());
+        handler.setSignErrorResponses(casProperties.getSamlIdp().getResponse().isSignError());
         handler.invoke(outboundContext);
         logger.debug("Signed SAML message successfully");
     }
@@ -251,7 +251,7 @@ public class SamlObjectSigner {
 
 
         if (this.overrideBlackListedSignatureSigningAlgorithms != null
-                && !casProperties.getSamlIdPProperties().getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
+                && !casProperties.getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureSigningAlgorithms);
         }
 
@@ -267,8 +267,8 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(casProperties.getSamlIdPProperties().getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
-            config.setSignatureCanonicalizationAlgorithm(casProperties.getSamlIdPProperties().getResponse().getOverrideSignatureCanonicalizationAlgorithm());
+        if (StringUtils.isNotBlank(casProperties.getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(casProperties.getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm());
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
@@ -294,9 +294,9 @@ public class SamlObjectSigner {
      */
     protected X509Certificate getSigningCertificate() {
         logger.debug("Locating signature signing certificate file from [{}]",
-                casProperties.getSamlIdPProperties().getMetadata().getSigningCertFile());
+                casProperties.getSamlIdp().getMetadata().getSigningCertFile());
         return SamlUtils.readCertificate(
-                new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getSigningCertFile()));
+                new FileSystemResource(casProperties.getSamlIdp().getMetadata().getSigningCertFile()));
     }
 
     /**
@@ -307,10 +307,10 @@ public class SamlObjectSigner {
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getSigningKeyFile()));
-        privateKeyFactoryBean.setAlgorithm(casProperties.getSamlIdPProperties().getMetadata().getPrivateKeyAlgName());
+        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getSamlIdp().getMetadata().getSigningKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(casProperties.getSamlIdp().getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from [{}]", casProperties.getSamlIdPProperties().getMetadata().getSigningKeyFile());
+        logger.debug("Locating signature signing key file from [{}]", casProperties.getSamlIdp().getMetadata().getSigningKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 

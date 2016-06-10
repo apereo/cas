@@ -34,7 +34,7 @@ public class CasCookieConfiguration {
     @RefreshScope
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
         return configureCookieGenerator(new WarningCookieRetrievingCookieGenerator(),
-                casProperties.getWarningCookieProperties());
+                casProperties.getWarningCookie());
     }
 
     @Bean
@@ -47,9 +47,9 @@ public class CasCookieConfiguration {
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
         final CookieRetrievingCookieGenerator bean =
                 configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager()),
-                        casProperties.getTicketGrantingCookieProperties());
-        bean.setCookieDomain(casProperties.getTicketGrantingCookieProperties().getDomain());
-        bean.setRememberMeMaxAge(casProperties.getTicketGrantingCookieProperties().getRememberMeMaxAge());
+                        casProperties.getTgc());
+        bean.setCookieDomain(casProperties.getTgc().getDomain());
+        bean.setRememberMeMaxAge(casProperties.getTgc().getRememberMeMaxAge());
         return bean;
     }
 

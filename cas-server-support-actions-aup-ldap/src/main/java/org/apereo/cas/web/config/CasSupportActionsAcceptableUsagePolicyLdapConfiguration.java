@@ -31,10 +31,10 @@ public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
     public AcceptableUsagePolicyRepository ldapAcceptableUsagePolicyRepository() {
         final LdapAcceptableUsagePolicyRepository r =
                 new LdapAcceptableUsagePolicyRepository();
-        r.setBaseDn(casProperties.getAcceptableUsagePolicyProperties().getLdap().getBaseDn());
+        r.setBaseDn(casProperties.getAcceptableUsagePolicy().getLdap().getBaseDn());
         r.setConnectionFactory(this.connectionFactory);
-        r.setSearchFilter(casProperties.getAcceptableUsagePolicyProperties().getLdap().getSearchFilter());
-        r.setAupAttributeName(casProperties.getAcceptableUsagePolicyProperties().getAupAttributeName());
+        r.setSearchFilter(casProperties.getAcceptableUsagePolicy().getLdap().getSearchFilter());
+        r.setAupAttributeName(casProperties.getAcceptableUsagePolicy().getAupAttributeName());
         return r;
     }
 }

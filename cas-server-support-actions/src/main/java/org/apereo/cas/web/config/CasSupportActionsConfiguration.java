@@ -74,7 +74,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action sendTicketGrantingTicketAction() {
         final SendTicketGrantingTicketAction bean = new SendTicketGrantingTicketAction();
-        bean.setCreateSsoSessionCookieOnRenewAuthentications(casProperties.getSsoProperties().isRenewedAuthn());
+        bean.setCreateSsoSessionCookieOnRenewAuthentications(casProperties.getSso().isRenewedAuthn());
         return bean;
     }
 
@@ -82,7 +82,7 @@ public class CasSupportActionsConfiguration {
     public Action logoutAction() {
         final LogoutAction a = new LogoutAction();
 
-        a.setFollowServiceRedirects(casProperties.getLogoutProperties().isFollowServiceRedirects());
+        a.setFollowServiceRedirects(casProperties.getLogout().isFollowServiceRedirects());
         a.setServicesManager(this.servicesManager);
         return a;
     }
@@ -95,13 +95,13 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action initialFlowSetupAction() {
         final InitialFlowSetupAction bean = new InitialFlowSetupAction();
-        bean.setEnableFlowOnAbsentServiceRequest(casProperties.getSsoProperties().isMissingService());
+        bean.setEnableFlowOnAbsentServiceRequest(casProperties.getSso().isMissingService());
         bean.setArgumentExtractors(this.argumentExtractors);
         bean.setServicesManager(this.servicesManager);
         bean.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
         bean.setWarnCookieGenerator(this.warnCookieGenerator);
-        bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalyticsProperties().getGoogleAnalyticsTrackingId());
-        bean.setTrackGeoLocation(casProperties.getEventsProperties().isTrackGeolocation());
+        bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
+        bean.setTrackGeoLocation(casProperties.getEvents().isTrackGeolocation());
         return bean;
     }
 

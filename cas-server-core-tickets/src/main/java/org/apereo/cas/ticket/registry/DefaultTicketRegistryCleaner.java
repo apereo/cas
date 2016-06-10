@@ -53,7 +53,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             
-            if (!casProperties.getTicketRegistryProperties().getCleaner().isEnabled()) {
+            if (!casProperties.getTicketRegistry().getCleaner().isEnabled()) {
                 LOGGER.info("Ticket registry cleaner is disabled for {}. No cleaner processes will be scheduled.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;

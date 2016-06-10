@@ -34,7 +34,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
         spnego.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow)));
 
         final ActionState evaluateClientRequest = createActionState(flow, "evaluateClientRequest",
-                createEvaluateAction(casProperties.getSpnegoProperties().getHostNameClientActionStrategy()));
+                createEvaluateAction(casProperties.getSpnego().getHostNameClientActionStrategy()));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_YES, START_SPNEGO_AUTHENTICATE));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_NO, getStartState(flow)));
 

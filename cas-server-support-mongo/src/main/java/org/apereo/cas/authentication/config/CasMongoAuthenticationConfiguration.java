@@ -40,11 +40,11 @@ public class CasMongoAuthenticationConfiguration {
     public AuthenticationHandler mongoAuthenticationHandler() {
         final MongoAuthenticationHandler mongo = new MongoAuthenticationHandler();
 
-        mongo.setAttributes(casProperties.getMongoAuthenticationProperties().getAttributes());
-        mongo.setCollectionName(casProperties.getMongoAuthenticationProperties().getCollectionName());
-        mongo.setMongoHostUri(casProperties.getMongoAuthenticationProperties().getMongoHostUri());
-        mongo.setPasswordAttribute(casProperties.getMongoAuthenticationProperties().getPasswordAttribute());
-        mongo.setUsernameAttribute(casProperties.getMongoAuthenticationProperties().getUsernameAttribute());
+        mongo.setAttributes(casProperties.getMongoAuthn().getAttributes());
+        mongo.setCollectionName(casProperties.getMongoAuthn().getCollectionName());
+        mongo.setMongoHostUri(casProperties.getMongoAuthn().getMongoHostUri());
+        mongo.setPasswordAttribute(casProperties.getMongoAuthn().getPasswordAttribute());
+        mongo.setUsernameAttribute(casProperties.getMongoAuthn().getUsernameAttribute());
 
         if (principalNameTransformer != null) {
             mongo.setPrincipalNameTransformer(principalNameTransformer);

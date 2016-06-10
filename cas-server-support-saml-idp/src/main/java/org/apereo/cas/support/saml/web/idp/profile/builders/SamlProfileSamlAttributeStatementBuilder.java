@@ -41,6 +41,6 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             throws SamlException {
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
-        return newAttributeStatement(attributes, casProperties.getSamlIdPProperties().getResponse().isUseAttributeFriendlyName());
+        return newAttributeStatement(attributes, casProperties.getSamlIdp().getResponse().isUseAttributeFriendlyName());
     }
 }

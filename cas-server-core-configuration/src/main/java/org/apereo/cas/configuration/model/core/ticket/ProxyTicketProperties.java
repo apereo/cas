@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "pt", ignoreUnknownFields = false)
+
 public class ProxyTicketProperties {
     private int numberOfUses = 1;
     private int timeToKillInSeconds = 10;

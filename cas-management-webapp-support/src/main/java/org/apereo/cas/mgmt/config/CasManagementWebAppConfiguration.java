@@ -104,12 +104,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public RequireAnyRoleAuthorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getManagementWebappProperties().getAdminRoles()));
+        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles()));
     }
 
     @Bean
     public CasClient casClient() {
-        final CasClient client = new CasClient(casProperties.getManagementWebappProperties().getLoginUrl());
+        final CasClient client = new CasClient(casProperties.getMgmt().getLoginUrl());
         client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }
@@ -121,7 +121,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean
     public Config config() {
-        final Config cfg = new Config(casProperties.getManagementWebappProperties().getDefaultServiceUrl(), casClient());
+        final Config cfg = new Config(casProperties.getMgmt().getDefaultServiceUrl(), casClient());
         cfg.setAuthorizer(requireAnyRoleAuthorizer());
         return cfg;
     }
@@ -253,7 +253,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public Properties userProperties() {
         try {
             final Properties p = new Properties();
-            p.load(casProperties.getManagementWebappProperties().getUserPropertiesFile().getInputStream());
+            p.load(casProperties.getMgmt().getUserPropertiesFile().getInputStream());
             return p;
         } catch (final Exception e) {
             throw new RuntimeException(e);

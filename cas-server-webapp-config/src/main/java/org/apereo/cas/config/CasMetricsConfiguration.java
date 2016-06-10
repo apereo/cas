@@ -88,14 +88,14 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
 
     @Override
     public void configureReporters(final MetricRegistry metricRegistry) {
-        final Logger perfStatsLogger = LoggerFactory.getLogger(casProperties.getMetricsProperties().getLoggerName());
+        final Logger perfStatsLogger = LoggerFactory.getLogger(casProperties.getMetrics().getLoggerName());
         registerReporter(Slf4jReporter
                 .forRegistry(metricRegistry)
                 .outputTo(perfStatsLogger)
                 .convertRatesTo(TimeUnit.MILLISECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build())
-                .start(casProperties.getMetricsProperties().getRefreshInterval(), TimeUnit.SECONDS);
+                .start(casProperties.getMetrics().getRefreshInterval(), TimeUnit.SECONDS);
 
         registerReporter(JmxReporter
                 .forRegistry(metricRegistry)

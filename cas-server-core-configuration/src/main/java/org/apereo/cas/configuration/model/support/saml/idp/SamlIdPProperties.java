@@ -10,7 +10,7 @@ import java.io.File;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.samlidp", ignoreUnknownFields = false)
+
 public class SamlIdPProperties {
     
     private String entityId;

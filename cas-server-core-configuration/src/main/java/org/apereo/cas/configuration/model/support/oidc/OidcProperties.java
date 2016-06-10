@@ -9,7 +9,7 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.oidc", ignoreUnknownFields = false)
+
 public class OidcProperties {
     
     private String issuer = "http://localhost:8080/cas/oidc";

@@ -29,7 +29,7 @@ public class CasThemesConfiguration {
     @Bean
     public ThemeResolver serviceThemeResolver() {
         final ServiceThemeResolver resolver = new ServiceThemeResolver();
-        resolver.setDefaultThemeName(casProperties.getThemeProperties().getDefaultThemeName());
+        resolver.setDefaultThemeName(casProperties.getTheme().getDefaultThemeName());
         return resolver;
     }
 }

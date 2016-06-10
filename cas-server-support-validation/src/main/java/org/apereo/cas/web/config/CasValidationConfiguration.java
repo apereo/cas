@@ -60,16 +60,16 @@ public class CasValidationConfiguration {
     @Bean
     public View cas3ServiceJsonView() {
         final Cas30JsonResponseView jsonResponseView = new Cas30JsonResponseView();
-        jsonResponseView.setAuthenticationContextAttribute(casProperties.getMfaProperties().getAuthenticationContextAttribute());
-        jsonResponseView.setReleaseProtocolAttributes(casProperties.getViewProperties().getCas3().isReleaseProtocolAttributes());
+        jsonResponseView.setAuthenticationContextAttribute(casProperties.getMfa().getAuthenticationContextAttribute());
+        jsonResponseView.setReleaseProtocolAttributes(casProperties.getView().getCas3().isReleaseProtocolAttributes());
         return jsonResponseView;
     }
 
     @Bean
     public View cas3ServiceSuccessView() {
         final Cas30ResponseView.Success s = new Cas30ResponseView.Success();
-        s.setAuthenticationContextAttribute(casProperties.getMfaProperties().getAuthenticationContextAttribute());
-        s.setReleaseProtocolAttributes(casProperties.getViewProperties().getCas3().isReleaseProtocolAttributes());
+        s.setAuthenticationContextAttribute(casProperties.getMfa().getAuthenticationContextAttribute());
+        s.setReleaseProtocolAttributes(casProperties.getView().getCas3().isReleaseProtocolAttributes());
         return s;
     }
 }

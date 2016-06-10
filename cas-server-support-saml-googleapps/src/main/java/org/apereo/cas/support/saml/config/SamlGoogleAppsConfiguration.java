@@ -38,10 +38,10 @@ public class SamlGoogleAppsConfiguration {
     @RefreshScope
     public ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory() {
         final GoogleAccountsServiceFactory factory = new GoogleAccountsServiceFactory();
-        factory.setKeyAlgorithm(casProperties.getGoogleAppsProperties().getKeyAlgorithm());
-        factory.setPrivateKeyLocation(casProperties.getGoogleAppsProperties().getPrivateKeyLocation());
-        factory.setPublicKeyLocation(casProperties.getGoogleAppsProperties().getPublicKeyLocation());
-        factory.setSkewAllowance(casProperties.getSamlResponseProperties().getSkewAllowance());
+        factory.setKeyAlgorithm(casProperties.getGoogleApps().getKeyAlgorithm());
+        factory.setPrivateKeyLocation(casProperties.getGoogleApps().getPrivateKeyLocation());
+        factory.setPublicKeyLocation(casProperties.getGoogleApps().getPublicKeyLocation());
+        factory.setSkewAllowance(casProperties.getSamlResponse().getSkewAllowance());
         factory.setBuilder(this.builder);
         return factory;
     }

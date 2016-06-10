@@ -60,8 +60,8 @@ public class RegisteredServiceResource {
                                                 @PathVariable("tgtId") final String tgtId) {
         try {
 
-            if (StringUtils.isBlank(casProperties.getRegisteredServiceRestProperties().getAttributeName()) 
-                    || StringUtils.isBlank(casProperties.getRegisteredServiceRestProperties().getAttributeValue())) {
+            if (StringUtils.isBlank(casProperties.getRestServices().getAttributeName()) 
+                    || StringUtils.isBlank(casProperties.getRestServices().getAttributeValue())) {
                 throw new IllegalArgumentException("Attribute name and/or value must be configured");
             }
 
@@ -71,16 +71,16 @@ public class RegisteredServiceResource {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
             final Map<String, Object> attributes = ticket.getAuthentication().getPrincipal().getAttributes();
-            if (attributes.containsKey(casProperties.getRegisteredServiceRestProperties().getAttributeName())) {
+            if (attributes.containsKey(casProperties.getRestServices().getAttributeName())) {
                 final Collection<String> attributeValuesToCompare = new HashSet<>();
-                final Object value = attributes.get(casProperties.getRegisteredServiceRestProperties().getAttributeName());
+                final Object value = attributes.get(casProperties.getRestServices().getAttributeName());
                 if (value instanceof Collection) {
                     attributeValuesToCompare.addAll((Collection<String>) value);
                 } else {
                     attributeValuesToCompare.add(value.toString());
                 }
 
-                if (attributeValuesToCompare.contains(casProperties.getRegisteredServiceRestProperties().getAttributeValue())) {
+                if (attributeValuesToCompare.contains(casProperties.getRestServices().getAttributeValue())) {
                     final RegisteredService service = serviceDataHolder.getRegisteredService();
                     final RegisteredService savedService = this.servicesManager.save(service);
                     return new ResponseEntity<>(String.valueOf(savedService.getId()), HttpStatus.OK);
@@ -154,6 +154,6 @@ public class RegisteredServiceResource {
     }
 
     public void setProperties(final RegisteredServiceRestProperties properties) {
-        this.casProperties.setRegisteredServiceRestProperties(properties);
+        this.casProperties.setRestServices(properties);
     }
 }

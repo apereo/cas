@@ -62,7 +62,7 @@ public class SamlMetadataUIConfiguration {
 
     @Bean
     public Action samlMetadataUIParserAction() {
-        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUIProperties().getParameter(),
+        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
                 SamlProtocolConstants.PARAMETER_ENTITY_ID);
         return new SamlMetadataUIParserAction(parameter, metadataAdapter());
     }
@@ -78,8 +78,8 @@ public class SamlMetadataUIConfiguration {
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
         final Map<Resource, MetadataFilterChain> resources = new HashMap<>();
         final MetadataFilterChain chain = new MetadataFilterChain();
-        casProperties.getSamlMetadataUIProperties().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
-        adapter.setRequireValidMetadata(casProperties.getSamlMetadataUIProperties().isRequireValidMetadata());
+        casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
+        adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
 
         return adapter;
@@ -95,8 +95,8 @@ public class SamlMetadataUIConfiguration {
             final String signingKey = entry.split(DEFAULT_SEPARATOR)[1];
 
             final List<MetadataFilter> filters = new ArrayList<>();
-            if (casProperties.getSamlMetadataUIProperties().getMaxValidity() > 0) {
-                filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUIProperties().getMaxValidity()));
+            if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
+                filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUi().getMaxValidity()));
             }
 
             if (StringUtils.isNotEmpty(signingKey)) {
@@ -119,7 +119,7 @@ public class SamlMetadataUIConfiguration {
                         new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoResolver);
 
                 final SignatureValidationFilter sigFilter = new SignatureValidationFilter(engine);
-                sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUIProperties().isRequireSignedRoot());
+                sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
                 filters.add(sigFilter);
             }
             chain.setFilters(filters);

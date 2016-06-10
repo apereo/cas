@@ -76,7 +76,6 @@ import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -86,834 +85,837 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 @ConfigurationProperties(prefix = "cas")
-@EnableConfigurationProperties(AcceptAuthenticationProperties.class)
 public class CasConfigurationProperties {
     
     @NestedConfigurationProperty
-    private AuditProperties auditProperties = new AuditProperties();
+    private AuditProperties audit = new AuditProperties();
 
     @NestedConfigurationProperty
-    private AuthenticationExceptionsProperties authenticationExceptionsProperties = new AuthenticationExceptionsProperties();
+    private AuthenticationExceptionsProperties authnExceptions = 
+            new AuthenticationExceptionsProperties();
 
     @NestedConfigurationProperty
-    private AuthenticationPolicyProperties authenticationPolicyProperties = new AuthenticationPolicyProperties();
+    private AuthenticationPolicyProperties authnPolicy = 
+            new AuthenticationPolicyProperties();
 
     @NestedConfigurationProperty
-    private HttpClientProperties httpClientProperties = new HttpClientProperties();
+    private HttpClientProperties httpClient = new HttpClientProperties();
 
     @NestedConfigurationProperty
-    private PasswordEncoderProperties passwordEncoderProperties = new PasswordEncoderProperties();
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     @NestedConfigurationProperty
-    private PasswordPolicyProperties passwordPolicyProperties = new PasswordPolicyProperties();
+    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
     @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties personDirPrincipalResolverProperties = new PersonDirPrincipalResolverProperties();
+    private PersonDirPrincipalResolverProperties personDirectory = 
+            new PersonDirPrincipalResolverProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformationProperties = new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = 
+            new PrincipalTransformationProperties();
 
     @NestedConfigurationProperty
-    private EventsProperties eventsProperties = new EventsProperties();
+    private EventsProperties events = new EventsProperties();
 
     @NestedConfigurationProperty
-    private HostProperties hostProperties = new HostProperties();
+    private HostProperties host = new HostProperties();
 
     @NestedConfigurationProperty
-    private LogoutProperties logoutProperties = new LogoutProperties();
+    private LogoutProperties logout = new LogoutProperties();
 
     @NestedConfigurationProperty
-    private MetricsProperties metricsProperties = new MetricsProperties();
+    private MetricsProperties metrics = new MetricsProperties();
 
     @NestedConfigurationProperty
-    private MonitorProperties monitorProperties = new MonitorProperties();
+    private MonitorProperties monitor = new MonitorProperties();
 
     @NestedConfigurationProperty
-    private RegisteredServiceRestProperties registeredServiceRestProperties = new RegisteredServiceRestProperties();
+    private RegisteredServiceRestProperties restServices = new RegisteredServiceRestProperties();
 
     @NestedConfigurationProperty
-    private ServerProperties serverProperties = new ServerProperties();
+    private ServerProperties server = new ServerProperties();
 
     @NestedConfigurationProperty
-    private ServiceRegistryProperties serviceRegistryProperties = new ServiceRegistryProperties();
+    private ServiceRegistryProperties serviceRegistry = new ServiceRegistryProperties();
 
     @NestedConfigurationProperty
-    private SloProperties sloProperties = new SloProperties();
+    private SloProperties slo = new SloProperties();
 
     @NestedConfigurationProperty
-    private SsoProperties ssoProperties = new SsoProperties();
+    private SsoProperties sso = new SsoProperties();
 
     @NestedConfigurationProperty
-    private ProxyGrantingTicketProperties proxyGrantingTicketProperties = new ProxyGrantingTicketProperties();
+    private ProxyGrantingTicketProperties pgt = new ProxyGrantingTicketProperties();
 
     @NestedConfigurationProperty
-    private ProxyTicketProperties proxyTicketProperties = new ProxyTicketProperties();
+    private ProxyTicketProperties pt = new ProxyTicketProperties();
 
     @NestedConfigurationProperty
-    private TicketRegistryProperties ticketRegistryProperties = new TicketRegistryProperties();
+    private TicketRegistryProperties ticketRegistry = new TicketRegistryProperties();
 
     @NestedConfigurationProperty
-    private ServiceTicketProperties serviceTicketProperties = new ServiceTicketProperties();
+    private ServiceTicketProperties st = new ServiceTicketProperties();
 
     @NestedConfigurationProperty
-    private TicketGrantingTicketProperties ticketGrantingTicketProperties = new TicketGrantingTicketProperties();
+    private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
     
     @NestedConfigurationProperty
-    private TicketProperties ticketProperties = new TicketProperties();
+    private TicketProperties ticket = new TicketProperties();
 
     @NestedConfigurationProperty
-    private MessageBundleProperties messageBundleProperties = new MessageBundleProperties();
+    private MessageBundleProperties messageBundle = new MessageBundleProperties();
 
     @NestedConfigurationProperty
-    private AdminPagesSecurityProperties adminPagesSecurityProperties = new AdminPagesSecurityProperties();
+    private AdminPagesSecurityProperties adminPagesSecurity = new AdminPagesSecurityProperties();
 
     @NestedConfigurationProperty
-    private HttpWebRequestProperties httpWebRequestProperties = new HttpWebRequestProperties();
+    private HttpWebRequestProperties httpWebRequest = new HttpWebRequestProperties();
 
     @NestedConfigurationProperty
-    private ViewProperties viewProperties = new ViewProperties();
+    private ViewProperties view = new ViewProperties();
 
     @NestedConfigurationProperty
-    private GoogleAnalyticsProperties googleAnalyticsProperties = new GoogleAnalyticsProperties();
+    private GoogleAnalyticsProperties googleAnalytics = new GoogleAnalyticsProperties();
 
     @NestedConfigurationProperty
-    private AcceptableUsagePolicyProperties acceptableUsagePolicyProperties = new AcceptableUsagePolicyProperties();
+    private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
 
     @NestedConfigurationProperty
-    private ClearpassProperties clearpassProperties = new ClearpassProperties();
+    private ClearpassProperties clearpass = new ClearpassProperties();
     
     @NestedConfigurationProperty
-    private TicketGrantingCookieProperties ticketGrantingCookieProperties = new TicketGrantingCookieProperties();
+    private TicketGrantingCookieProperties tgc = new TicketGrantingCookieProperties();
 
     @NestedConfigurationProperty
-    private WarningCookieProperties warningCookieProperties = new WarningCookieProperties();
+    private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
     @NestedConfigurationProperty
-    private CouchbaseServiceRegistryProperties couchbaseServiceRegistryProperties = new CouchbaseServiceRegistryProperties();
+    private CouchbaseServiceRegistryProperties couchbaseServiceRegistry = new CouchbaseServiceRegistryProperties();
 
     @NestedConfigurationProperty
-    private CouchbaseTicketRegistryProperties couchbaseTicketRegistryProperties = new CouchbaseTicketRegistryProperties();
+    private CouchbaseTicketRegistryProperties couchbaseTicketRegistry = new CouchbaseTicketRegistryProperties();
 
     @NestedConfigurationProperty
-    private EhcacheProperties ehcacheProperties = new EhcacheProperties();
+    private EhcacheProperties ehcache = new EhcacheProperties();
 
     @NestedConfigurationProperty
-    private AcceptAuthenticationProperties acceptAuthenticationProperties = new AcceptAuthenticationProperties();
+    private AcceptAuthenticationProperties acceptAuthn = new AcceptAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private FileAuthenticationProperties fileAuthenticationProperties = new FileAuthenticationProperties();
+    private FileAuthenticationProperties fileAuthn = new FileAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private RejectAuthenticationProperties rejectAuthenticationProperties = new RejectAuthenticationProperties();
+    private RejectAuthenticationProperties rejectAuthn = new RejectAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private RemoteAddressAuthenticationProperties remoteAddressAuthenticationProperties = new RemoteAddressAuthenticationProperties();
+    private RemoteAddressAuthenticationProperties remoteAddressAuthn = new RemoteAddressAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private ShiroAuthenticationProperties shiroAuthenticationProperties = new ShiroAuthenticationProperties();
+    private ShiroAuthenticationProperties shiroAuthn = new ShiroAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private MaxmindProperties maxmindProperties = new MaxmindProperties();
+    private MaxmindProperties maxmind = new MaxmindProperties();
 
     @NestedConfigurationProperty
-    private HazelcastProperties hazelcastProperties = new HazelcastProperties();
+    private HazelcastProperties hazelcast = new HazelcastProperties();
 
     @NestedConfigurationProperty
-    private IgniteProperties igniteProperties = new IgniteProperties();
+    private IgniteProperties ignite = new IgniteProperties();
 
     @NestedConfigurationProperty
-    private JaasAuthenticationProperties jaasAuthenticationProperties = new JaasAuthenticationProperties();
+    private JaasAuthenticationProperties jaas = new JaasAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private JdbcAuthenticationProperties jdbcAuthenticationProperties = new JdbcAuthenticationProperties();
+    private JdbcAuthenticationProperties jdbcAuthn = new JdbcAuthenticationProperties();
     
     @NestedConfigurationProperty
-    private DatabaseProperties databaseProperties = new DatabaseProperties();
+    private DatabaseProperties jdbc = new DatabaseProperties();
     
     @NestedConfigurationProperty
-    private JpaServiceRegistryProperties jpaServiceRegistryProperties = new JpaServiceRegistryProperties();
+    private JpaServiceRegistryProperties jpaServiceRegistry = new JpaServiceRegistryProperties();
 
     @NestedConfigurationProperty
-    private JpaTicketRegistryProperties jpaTicketRegistryProperties = new JpaTicketRegistryProperties();
+    private JpaTicketRegistryProperties jpaTicketRegistry = new JpaTicketRegistryProperties();
 
     @NestedConfigurationProperty
-    private LdapAuthorizationProperties ldapAuthorizationProperties = new LdapAuthorizationProperties();
+    private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 
     @NestedConfigurationProperty
-    private LdapServiceRegistryProperties ldapServiceRegistryProperties = new LdapServiceRegistryProperties();
+    private LdapServiceRegistryProperties ldapServiceRegistry = new LdapServiceRegistryProperties();
 
     @NestedConfigurationProperty
-    private MemcachedProperties memcachedProperties = new MemcachedProperties();
+    private MemcachedProperties memcached = new MemcachedProperties();
 
     @NestedConfigurationProperty
-    private MfaProperties mfaProperties = new MfaProperties();
+    private MfaProperties mfa = new MfaProperties();
 
     @NestedConfigurationProperty
-    private MongoAuthenticationProperties mongoAuthenticationProperties = new MongoAuthenticationProperties();
+    private MongoAuthenticationProperties mongoAuthn = new MongoAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private MongoServiceRegistryProperties mongoServiceRegistryProperties = new MongoServiceRegistryProperties();
+    private MongoServiceRegistryProperties mongoServiceRegistry = new MongoServiceRegistryProperties();
 
     @NestedConfigurationProperty
-    private NtlmProperties ntlmProperties = new NtlmProperties();
+    private NtlmProperties ntlm = new NtlmProperties();
 
     @NestedConfigurationProperty
-    private OAuthProperties oAuthProperties = new OAuthProperties();
+    private OAuthProperties oauth = new OAuthProperties();
 
     @NestedConfigurationProperty
-    private OidcProperties oidcProperties = new OidcProperties();
+    private OidcProperties oidc = new OidcProperties();
 
     @NestedConfigurationProperty
-    private OpenIdProperties openIdProperties = new OpenIdProperties();
+    private OpenIdProperties openid = new OpenIdProperties();
 
     @NestedConfigurationProperty
-    private Pac4jProperties pac4jProperties = new Pac4jProperties();
+    private Pac4jProperties pac4j = new Pac4jProperties();
 
     @NestedConfigurationProperty
-    private RadiusProperties radiusProperties = new RadiusProperties();
+    private RadiusProperties radius = new RadiusProperties();
 
     @NestedConfigurationProperty
-    private GoogleAppsProperties googleAppsProperties = new GoogleAppsProperties();
+    private GoogleAppsProperties googleApps = new GoogleAppsProperties();
 
     @NestedConfigurationProperty
-    private SamlIdPProperties samlIdPProperties = new SamlIdPProperties();
+    private SamlIdPProperties samlIdp = new SamlIdPProperties();
 
     @NestedConfigurationProperty
-    private SamlMetadataUIProperties samlMetadataUIProperties = new SamlMetadataUIProperties();
+    private SamlMetadataUIProperties samlMetadataUi = new SamlMetadataUIProperties();
 
     @NestedConfigurationProperty
-    private SamlResponseProperties samlResponseProperties = new SamlResponseProperties();
+    private SamlResponseProperties samlResponse = new SamlResponseProperties();
 
     @NestedConfigurationProperty
-    private AttributeResolverProperties attributeResolverProperties = new AttributeResolverProperties();
+    private AttributeResolverProperties shibAttributeResolver = new AttributeResolverProperties();
 
     @NestedConfigurationProperty
-    private SpnegoProperties spnegoProperties = new SpnegoProperties();
+    private SpnegoProperties spnego = new SpnegoProperties();
 
     @NestedConfigurationProperty
-    private StormpathProperties stormpathProperties = new StormpathProperties();
+    private StormpathProperties stormpath = new StormpathProperties();
 
     @NestedConfigurationProperty
-    private ThemeProperties themeProperties = new ThemeProperties();
+    private ThemeProperties theme = new ThemeProperties();
 
     @NestedConfigurationProperty
-    private ThrottleProperties throttleProperties = new ThrottleProperties();
+    private ThrottleProperties throttle = new ThrottleProperties();
 
     @NestedConfigurationProperty
-    private WsFederationProperties wsFederationProperties = new WsFederationProperties();
+    private WsFederationProperties wsfed = new WsFederationProperties();
 
     @NestedConfigurationProperty
-    private X509Properties x509Properties = new X509Properties();
+    private X509Properties x509 = new X509Properties();
 
     @NestedConfigurationProperty
-    private LocaleProperties localeProperties = new LocaleProperties();
+    private LocaleProperties locale = new LocaleProperties();
 
     @NestedConfigurationProperty
-    private ManagementWebappProperties managementWebappProperties = new ManagementWebappProperties();
+    private ManagementWebappProperties mgmt = new ManagementWebappProperties();
 
     @NestedConfigurationProperty
-    private WebflowProperties webflowProperties = new WebflowProperties();
+    private WebflowProperties webflow = new WebflowProperties();
     
-    public AuditProperties getAuditProperties() {
-        return auditProperties;
+    public AuditProperties getAudit() {
+        return audit;
     }
 
-    public void setAuditProperties(final AuditProperties auditProperties) {
-        this.auditProperties = auditProperties;
+    public void setAudit(final AuditProperties audit) {
+        this.audit = audit;
     }
 
-    public AuthenticationExceptionsProperties getAuthenticationExceptionsProperties() {
-        return authenticationExceptionsProperties;
+    public AuthenticationExceptionsProperties getAuthnExceptions() {
+        return authnExceptions;
     }
 
-    public void setAuthenticationExceptionsProperties(final AuthenticationExceptionsProperties authenticationExceptionsProperties) {
-        this.authenticationExceptionsProperties = authenticationExceptionsProperties;
+    public void setAuthnExceptions(final AuthenticationExceptionsProperties authnExceptions) {
+        this.authnExceptions = authnExceptions;
     }
 
-    public AuthenticationPolicyProperties getAuthenticationPolicyProperties() {
-        return authenticationPolicyProperties;
+    public AuthenticationPolicyProperties getAuthnPolicy() {
+        return authnPolicy;
     }
 
-    public void setAuthenticationPolicyProperties(final AuthenticationPolicyProperties authenticationPolicyProperties) {
-        this.authenticationPolicyProperties = authenticationPolicyProperties;
+    public void setAuthnPolicy(final AuthenticationPolicyProperties authnPolicy) {
+        this.authnPolicy = authnPolicy;
     }
 
-    public HttpClientProperties getHttpClientProperties() {
-        return httpClientProperties;
+    public HttpClientProperties getHttpClient() {
+        return httpClient;
     }
 
-    public void setHttpClientProperties(final HttpClientProperties httpClientProperties) {
-        this.httpClientProperties = httpClientProperties;
+    public void setHttpClient(final HttpClientProperties httpClient) {
+        this.httpClient = httpClient;
     }
 
-    public PasswordEncoderProperties getPasswordEncoderProperties() {
-        return passwordEncoderProperties;
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
     }
 
-    public void setPasswordEncoderProperties(final PasswordEncoderProperties passwordEncoderProperties) {
-        this.passwordEncoderProperties = passwordEncoderProperties;
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public PasswordPolicyProperties getPasswordPolicyProperties() {
-        return passwordPolicyProperties;
+    public PasswordPolicyProperties getPasswordPolicy() {
+        return passwordPolicy;
     }
 
-    public void setPasswordPolicyProperties(final PasswordPolicyProperties passwordPolicyProperties) {
-        this.passwordPolicyProperties = passwordPolicyProperties;
+    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
+        this.passwordPolicy = passwordPolicy;
     }
 
-    public PersonDirPrincipalResolverProperties getPersonDirPrincipalResolverProperties() {
-        return personDirPrincipalResolverProperties;
+    public PersonDirPrincipalResolverProperties getPersonDirectory() {
+        return personDirectory;
     }
 
-    public void setPersonDirPrincipalResolverProperties(final PersonDirPrincipalResolverProperties personDirPrincipalResolverProperties) {
-        this.personDirPrincipalResolverProperties = personDirPrincipalResolverProperties;
+    public void setPersonDirectory(final PersonDirPrincipalResolverProperties personDirectory) {
+        this.personDirectory = personDirectory;
     }
 
-    public PrincipalTransformationProperties getPrincipalTransformationProperties() {
-        return principalTransformationProperties;
+    public PrincipalTransformationProperties getPrincipalTransformation() {
+        return principalTransformation;
     }
 
-    public void setPrincipalTransformationProperties(final PrincipalTransformationProperties principalTransformationProperties) {
-        this.principalTransformationProperties = principalTransformationProperties;
+    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+        this.principalTransformation = principalTransformation;
     }
 
-    public EventsProperties getEventsProperties() {
-        return eventsProperties;
+    public EventsProperties getEvents() {
+        return events;
     }
 
-    public void setEventsProperties(final EventsProperties eventsProperties) {
-        this.eventsProperties = eventsProperties;
+    public void setEvents(final EventsProperties events) {
+        this.events = events;
     }
 
-    public HostProperties getHostProperties() {
-        return hostProperties;
+    public HostProperties getHost() {
+        return host;
     }
 
-    public void setHostProperties(final HostProperties hostProperties) {
-        this.hostProperties = hostProperties;
+    public void setHost(final HostProperties host) {
+        this.host = host;
     }
 
-    public LogoutProperties getLogoutProperties() {
-        return logoutProperties;
+    public LogoutProperties getLogout() {
+        return logout;
     }
 
-    public void setLogoutProperties(final LogoutProperties logoutProperties) {
-        this.logoutProperties = logoutProperties;
+    public void setLogout(final LogoutProperties logout) {
+        this.logout = logout;
     }
 
-    public MetricsProperties getMetricsProperties() {
-        return metricsProperties;
+    public MetricsProperties getMetrics() {
+        return metrics;
     }
 
-    public void setMetricsProperties(final MetricsProperties metricsProperties) {
-        this.metricsProperties = metricsProperties;
+    public void setMetrics(final MetricsProperties metrics) {
+        this.metrics = metrics;
     }
 
-    public MonitorProperties getMonitorProperties() {
-        return monitorProperties;
+    public MonitorProperties getMonitor() {
+        return monitor;
     }
 
-    public void setMonitorProperties(final MonitorProperties monitorProperties) {
-        this.monitorProperties = monitorProperties;
+    public void setMonitor(final MonitorProperties monitor) {
+        this.monitor = monitor;
     }
 
-    public RegisteredServiceRestProperties getRegisteredServiceRestProperties() {
-        return registeredServiceRestProperties;
+    public RegisteredServiceRestProperties getRestServices() {
+        return restServices;
     }
 
-    public void setRegisteredServiceRestProperties(final RegisteredServiceRestProperties registeredServiceRestProperties) {
-        this.registeredServiceRestProperties = registeredServiceRestProperties;
+    public void setRestServices(final RegisteredServiceRestProperties restServices) {
+        this.restServices = restServices;
     }
 
-    public ServerProperties getServerProperties() {
-        return serverProperties;
+    public ServerProperties getServer() {
+        return server;
     }
 
-    public void setServerProperties(final ServerProperties serverProperties) {
-        this.serverProperties = serverProperties;
+    public void setServer(final ServerProperties server) {
+        this.server = server;
     }
 
-    public ServiceRegistryProperties getServiceRegistryProperties() {
-        return serviceRegistryProperties;
+    public ServiceRegistryProperties getServiceRegistry() {
+        return serviceRegistry;
     }
 
-    public void setServiceRegistryProperties(final ServiceRegistryProperties serviceRegistryProperties) {
-        this.serviceRegistryProperties = serviceRegistryProperties;
+    public void setServiceRegistry(final ServiceRegistryProperties serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
     }
 
-    public SloProperties getSloProperties() {
-        return sloProperties;
+    public SloProperties getSlo() {
+        return slo;
     }
 
-    public void setSloProperties(final SloProperties sloProperties) {
-        this.sloProperties = sloProperties;
+    public void setSlo(final SloProperties slo) {
+        this.slo = slo;
     }
 
-    public SsoProperties getSsoProperties() {
-        return ssoProperties;
+    public SsoProperties getSso() {
+        return sso;
     }
 
-    public void setSsoProperties(final SsoProperties ssoProperties) {
-        this.ssoProperties = ssoProperties;
+    public void setSso(final SsoProperties sso) {
+        this.sso = sso;
     }
 
-    public ProxyGrantingTicketProperties getProxyGrantingTicketProperties() {
-        return proxyGrantingTicketProperties;
+    public ProxyGrantingTicketProperties getPgt() {
+        return pgt;
     }
 
-    public void setProxyGrantingTicketProperties(final ProxyGrantingTicketProperties proxyGrantingTicketProperties) {
-        this.proxyGrantingTicketProperties = proxyGrantingTicketProperties;
+    public void setPgt(final ProxyGrantingTicketProperties pgt) {
+        this.pgt = pgt;
     }
 
-    public ProxyTicketProperties getProxyTicketProperties() {
-        return proxyTicketProperties;
+    public ProxyTicketProperties getPt() {
+        return pt;
     }
 
-    public void setProxyTicketProperties(final ProxyTicketProperties proxyTicketProperties) {
-        this.proxyTicketProperties = proxyTicketProperties;
+    public void setPt(final ProxyTicketProperties pt) {
+        this.pt = pt;
     }
 
-    public TicketRegistryProperties getTicketRegistryProperties() {
-        return ticketRegistryProperties;
+    public TicketRegistryProperties getTicketRegistry() {
+        return ticketRegistry;
     }
 
-    public void setTicketRegistryProperties(final TicketRegistryProperties ticketRegistryProperties) {
-        this.ticketRegistryProperties = ticketRegistryProperties;
+    public void setTicketRegistry(final TicketRegistryProperties ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
     }
 
-    public ServiceTicketProperties getServiceTicketProperties() {
-        return serviceTicketProperties;
+    public ServiceTicketProperties getSt() {
+        return st;
     }
 
-    public void setServiceTicketProperties(final ServiceTicketProperties serviceTicketProperties) {
-        this.serviceTicketProperties = serviceTicketProperties;
+    public void setSt(final ServiceTicketProperties st) {
+        this.st = st;
     }
 
-    public TicketGrantingTicketProperties getTicketGrantingTicketProperties() {
-        return ticketGrantingTicketProperties;
+    public TicketGrantingTicketProperties getTgt() {
+        return tgt;
     }
 
-    public void setTicketGrantingTicketProperties(final TicketGrantingTicketProperties ticketGrantingTicketProperties) {
-        this.ticketGrantingTicketProperties = ticketGrantingTicketProperties;
-    }
-    
-
-    public TicketProperties getTicketProperties() {
-        return ticketProperties;
-    }
-
-    public void setTicketProperties(final TicketProperties ticketProperties) {
-        this.ticketProperties = ticketProperties;
-    }
-
-    public MessageBundleProperties getMessageBundleProperties() {
-        return messageBundleProperties;
-    }
-
-    public void setMessageBundleProperties(final MessageBundleProperties messageBundleProperties) {
-        this.messageBundleProperties = messageBundleProperties;
-    }
-
-    public AdminPagesSecurityProperties getAdminPagesSecurityProperties() {
-        return adminPagesSecurityProperties;
-    }
-
-    public void setAdminPagesSecurityProperties(final AdminPagesSecurityProperties adminPagesSecurityProperties) {
-        this.adminPagesSecurityProperties = adminPagesSecurityProperties;
-    }
-
-    public HttpWebRequestProperties getHttpWebRequestProperties() {
-        return httpWebRequestProperties;
-    }
-
-    public void setHttpWebRequestProperties(final HttpWebRequestProperties httpWebRequestProperties) {
-        this.httpWebRequestProperties = httpWebRequestProperties;
-    }
-
-    public ViewProperties getViewProperties() {
-        return viewProperties;
-    }
-
-    public void setViewProperties(final ViewProperties viewProperties) {
-        this.viewProperties = viewProperties;
-    }
-
-    public GoogleAnalyticsProperties getGoogleAnalyticsProperties() {
-        return googleAnalyticsProperties;
-    }
-
-    public void setGoogleAnalyticsProperties(final GoogleAnalyticsProperties googleAnalyticsProperties) {
-        this.googleAnalyticsProperties = googleAnalyticsProperties;
-    }
-
-    public AcceptableUsagePolicyProperties getAcceptableUsagePolicyProperties() {
-        return acceptableUsagePolicyProperties;
-    }
-
-    public void setAcceptableUsagePolicyProperties(final AcceptableUsagePolicyProperties acceptableUsagePolicyProperties) {
-        this.acceptableUsagePolicyProperties = acceptableUsagePolicyProperties;
-    }
-
-    public ClearpassProperties getClearpassProperties() {
-        return clearpassProperties;
-    }
-
-    public void setClearpassProperties(final ClearpassProperties clearpassProperties) {
-        this.clearpassProperties = clearpassProperties;
+    public void setTgt(final TicketGrantingTicketProperties tgt) {
+        this.tgt = tgt;
     }
     
 
-    public TicketGrantingCookieProperties getTicketGrantingCookieProperties() {
-        return ticketGrantingCookieProperties;
+    public TicketProperties getTicket() {
+        return ticket;
     }
 
-    public void setTicketGrantingCookieProperties(final TicketGrantingCookieProperties ticketGrantingCookieProperties) {
-        this.ticketGrantingCookieProperties = ticketGrantingCookieProperties;
+    public void setTicket(final TicketProperties ticket) {
+        this.ticket = ticket;
     }
 
-    public WarningCookieProperties getWarningCookieProperties() {
-        return warningCookieProperties;
+    public MessageBundleProperties getMessageBundle() {
+        return messageBundle;
     }
 
-    public void setWarningCookieProperties(final WarningCookieProperties warningCookieProperties) {
-        this.warningCookieProperties = warningCookieProperties;
+    public void setMessageBundle(final MessageBundleProperties messageBundle) {
+        this.messageBundle = messageBundle;
     }
 
-    public CouchbaseServiceRegistryProperties getCouchbaseServiceRegistryProperties() {
-        return couchbaseServiceRegistryProperties;
+    public AdminPagesSecurityProperties getAdminPagesSecurity() {
+        return adminPagesSecurity;
     }
 
-    public void setCouchbaseServiceRegistryProperties(final CouchbaseServiceRegistryProperties couchbaseServiceRegistryProperties) {
-        this.couchbaseServiceRegistryProperties = couchbaseServiceRegistryProperties;
+    public void setAdminPagesSecurity(final AdminPagesSecurityProperties adminPagesSecurity) {
+        this.adminPagesSecurity = adminPagesSecurity;
     }
 
-    public CouchbaseTicketRegistryProperties getCouchbaseTicketRegistryProperties() {
-        return couchbaseTicketRegistryProperties;
+    public HttpWebRequestProperties getHttpWebRequest() {
+        return httpWebRequest;
     }
 
-    public void setCouchbaseTicketRegistryProperties(final CouchbaseTicketRegistryProperties couchbaseTicketRegistryProperties) {
-        this.couchbaseTicketRegistryProperties = couchbaseTicketRegistryProperties;
+    public void setHttpWebRequest(final HttpWebRequestProperties httpWebRequest) {
+        this.httpWebRequest = httpWebRequest;
     }
 
-    public EhcacheProperties getEhcacheProperties() {
-        return ehcacheProperties;
+    public ViewProperties getView() {
+        return view;
     }
 
-    public void setEhcacheProperties(final EhcacheProperties ehcacheProperties) {
-        this.ehcacheProperties = ehcacheProperties;
+    public void setView(final ViewProperties view) {
+        this.view = view;
     }
 
-    public AcceptAuthenticationProperties getAcceptAuthenticationProperties() {
-        return acceptAuthenticationProperties;
+    public GoogleAnalyticsProperties getGoogleAnalytics() {
+        return googleAnalytics;
     }
 
-    public void setAcceptAuthenticationProperties(final AcceptAuthenticationProperties acceptAuthenticationProperties) {
-        this.acceptAuthenticationProperties = acceptAuthenticationProperties;
+    public void setGoogleAnalytics(final GoogleAnalyticsProperties googleAnalytics) {
+        this.googleAnalytics = googleAnalytics;
     }
 
-    public FileAuthenticationProperties getFileAuthenticationProperties() {
-        return fileAuthenticationProperties;
+    public AcceptableUsagePolicyProperties getAcceptableUsagePolicy() {
+        return acceptableUsagePolicy;
     }
 
-    public void setFileAuthenticationProperties(final FileAuthenticationProperties fileAuthenticationProperties) {
-        this.fileAuthenticationProperties = fileAuthenticationProperties;
+    public void setAcceptableUsagePolicy(final AcceptableUsagePolicyProperties acceptableUsagePolicy) {
+        this.acceptableUsagePolicy = acceptableUsagePolicy;
     }
 
-    public RejectAuthenticationProperties getRejectAuthenticationProperties() {
-        return rejectAuthenticationProperties;
+    public ClearpassProperties getClearpass() {
+        return clearpass;
     }
 
-    public void setRejectAuthenticationProperties(final RejectAuthenticationProperties rejectAuthenticationProperties) {
-        this.rejectAuthenticationProperties = rejectAuthenticationProperties;
-    }
-
-    public RemoteAddressAuthenticationProperties getRemoteAddressAuthenticationProperties() {
-        return remoteAddressAuthenticationProperties;
-    }
-
-    public void setRemoteAddressAuthenticationProperties(final RemoteAddressAuthenticationProperties remoteAddressAuthenticationProperties) {
-        this.remoteAddressAuthenticationProperties = remoteAddressAuthenticationProperties;
-    }
-
-    public ShiroAuthenticationProperties getShiroAuthenticationProperties() {
-        return shiroAuthenticationProperties;
-    }
-
-    public void setShiroAuthenticationProperties(final ShiroAuthenticationProperties shiroAuthenticationProperties) {
-        this.shiroAuthenticationProperties = shiroAuthenticationProperties;
-    }
-
-    public MaxmindProperties getMaxmindProperties() {
-        return maxmindProperties;
-    }
-
-    public void setMaxmindProperties(final MaxmindProperties maxmindProperties) {
-        this.maxmindProperties = maxmindProperties;
-    }
-
-    public HazelcastProperties getHazelcastProperties() {
-        return hazelcastProperties;
-    }
-
-    public void setHazelcastProperties(final HazelcastProperties hazelcastProperties) {
-        this.hazelcastProperties = hazelcastProperties;
-    }
-
-    public IgniteProperties getIgniteProperties() {
-        return igniteProperties;
-    }
-
-    public void setIgniteProperties(final IgniteProperties igniteProperties) {
-        this.igniteProperties = igniteProperties;
-    }
-
-    public JaasAuthenticationProperties getJaasAuthenticationProperties() {
-        return jaasAuthenticationProperties;
-    }
-
-    public void setJaasAuthenticationProperties(final JaasAuthenticationProperties jaasAuthenticationProperties) {
-        this.jaasAuthenticationProperties = jaasAuthenticationProperties;
-    }
-
-    public JdbcAuthenticationProperties getJdbcAuthenticationProperties() {
-        return jdbcAuthenticationProperties;
-    }
-
-    public void setJdbcAuthenticationProperties(final JdbcAuthenticationProperties jdbcAuthenticationProperties) {
-        this.jdbcAuthenticationProperties = jdbcAuthenticationProperties;
+    public void setClearpass(final ClearpassProperties clearpass) {
+        this.clearpass = clearpass;
     }
     
 
-    public DatabaseProperties getDatabaseProperties() {
-        return databaseProperties;
+    public TicketGrantingCookieProperties getTgc() {
+        return tgc;
     }
 
-    public void setDatabaseProperties(final DatabaseProperties databaseProperties) {
-        this.databaseProperties = databaseProperties;
+    public void setTgc(final TicketGrantingCookieProperties tgc) {
+        this.tgc = tgc;
     }
 
-    public JpaServiceRegistryProperties getJpaServiceRegistryProperties() {
-        return jpaServiceRegistryProperties;
+    public WarningCookieProperties getWarningCookie() {
+        return warningCookie;
     }
 
-    public void setJpaServiceRegistryProperties(final JpaServiceRegistryProperties jpaServiceRegistryProperties) {
-        this.jpaServiceRegistryProperties = jpaServiceRegistryProperties;
+    public void setWarningCookie(final WarningCookieProperties warningCookie) {
+        this.warningCookie = warningCookie;
     }
 
-    public JpaTicketRegistryProperties getJpaTicketRegistryProperties() {
-        return jpaTicketRegistryProperties;
+    public CouchbaseServiceRegistryProperties getCouchbaseServiceRegistry() {
+        return couchbaseServiceRegistry;
     }
 
-    public void setJpaTicketRegistryProperties(final JpaTicketRegistryProperties jpaTicketRegistryProperties) {
-        this.jpaTicketRegistryProperties = jpaTicketRegistryProperties;
+    public void setCouchbaseServiceRegistry(final CouchbaseServiceRegistryProperties couchbaseServiceRegistry) {
+        this.couchbaseServiceRegistry = couchbaseServiceRegistry;
     }
 
-    public LdapAuthorizationProperties getLdapAuthorizationProperties() {
-        return ldapAuthorizationProperties;
+    public CouchbaseTicketRegistryProperties getCouchbaseTicketRegistry() {
+        return couchbaseTicketRegistry;
     }
 
-    public void setLdapAuthorizationProperties(final LdapAuthorizationProperties ldapAuthorizationProperties) {
-        this.ldapAuthorizationProperties = ldapAuthorizationProperties;
+    public void setCouchbaseTicketRegistry(final CouchbaseTicketRegistryProperties couchbaseTicketRegistry) {
+        this.couchbaseTicketRegistry = couchbaseTicketRegistry;
     }
 
-    public LdapServiceRegistryProperties getLdapServiceRegistryProperties() {
-        return ldapServiceRegistryProperties;
+    public EhcacheProperties getEhcache() {
+        return ehcache;
     }
 
-    public void setLdapServiceRegistryProperties(final LdapServiceRegistryProperties ldapServiceRegistryProperties) {
-        this.ldapServiceRegistryProperties = ldapServiceRegistryProperties;
+    public void setEhcache(final EhcacheProperties ehcache) {
+        this.ehcache = ehcache;
     }
 
-    public MemcachedProperties getMemcachedProperties() {
-        return memcachedProperties;
+    public AcceptAuthenticationProperties getAcceptAuthn() {
+        return acceptAuthn;
     }
 
-    public void setMemcachedProperties(final MemcachedProperties memcachedProperties) {
-        this.memcachedProperties = memcachedProperties;
+    public void setAcceptAuthn(final AcceptAuthenticationProperties acceptAuthn) {
+        this.acceptAuthn = acceptAuthn;
     }
 
-    public MfaProperties getMfaProperties() {
-        return mfaProperties;
+    public FileAuthenticationProperties getFileAuthn() {
+        return fileAuthn;
     }
 
-    public void setMfaProperties(final MfaProperties mfaProperties) {
-        this.mfaProperties = mfaProperties;
+    public void setFileAuthn(final FileAuthenticationProperties fileAuthn) {
+        this.fileAuthn = fileAuthn;
     }
 
-    public MongoAuthenticationProperties getMongoAuthenticationProperties() {
-        return mongoAuthenticationProperties;
+    public RejectAuthenticationProperties getRejectAuthn() {
+        return rejectAuthn;
     }
 
-    public void setMongoAuthenticationProperties(final MongoAuthenticationProperties mongoAuthenticationProperties) {
-        this.mongoAuthenticationProperties = mongoAuthenticationProperties;
+    public void setRejectAuthn(final RejectAuthenticationProperties rejectAuthn) {
+        this.rejectAuthn = rejectAuthn;
     }
 
-    public MongoServiceRegistryProperties getMongoServiceRegistryProperties() {
-        return mongoServiceRegistryProperties;
+    public RemoteAddressAuthenticationProperties getRemoteAddressAuthn() {
+        return remoteAddressAuthn;
     }
 
-    public void setMongoServiceRegistryProperties(final MongoServiceRegistryProperties mongoServiceRegistryProperties) {
-        this.mongoServiceRegistryProperties = mongoServiceRegistryProperties;
+    public void setRemoteAddressAuthn(final RemoteAddressAuthenticationProperties remoteAddressAuthn) {
+        this.remoteAddressAuthn = remoteAddressAuthn;
     }
 
-    public NtlmProperties getNtlmProperties() {
-        return ntlmProperties;
+    public ShiroAuthenticationProperties getShiroAuthn() {
+        return shiroAuthn;
     }
 
-    public void setNtlmProperties(final NtlmProperties ntlmProperties) {
-        this.ntlmProperties = ntlmProperties;
+    public void setShiroAuthn(final ShiroAuthenticationProperties shiroAuthn) {
+        this.shiroAuthn = shiroAuthn;
     }
 
-    public OAuthProperties getoAuthProperties() {
-        return oAuthProperties;
+    public MaxmindProperties getMaxmind() {
+        return maxmind;
     }
 
-    public void setoAuthProperties(final OAuthProperties oAuthProperties) {
-        this.oAuthProperties = oAuthProperties;
+    public void setMaxmind(final MaxmindProperties maxmind) {
+        this.maxmind = maxmind;
     }
 
-    public OidcProperties getOidcProperties() {
-        return oidcProperties;
+    public HazelcastProperties getHazelcast() {
+        return hazelcast;
     }
 
-    public void setOidcProperties(final OidcProperties oidcProperties) {
-        this.oidcProperties = oidcProperties;
+    public void setHazelcast(final HazelcastProperties hazelcast) {
+        this.hazelcast = hazelcast;
     }
 
-    public OpenIdProperties getOpenIdProperties() {
-        return openIdProperties;
+    public IgniteProperties getIgnite() {
+        return ignite;
     }
 
-    public void setOpenIdProperties(final OpenIdProperties openIdProperties) {
-        this.openIdProperties = openIdProperties;
+    public void setIgnite(final IgniteProperties ignite) {
+        this.ignite = ignite;
     }
 
-    public Pac4jProperties getPac4jProperties() {
-        return pac4jProperties;
+    public JaasAuthenticationProperties getJaas() {
+        return jaas;
     }
 
-    public void setPac4jProperties(final Pac4jProperties pac4jProperties) {
-        this.pac4jProperties = pac4jProperties;
+    public void setJaas(final JaasAuthenticationProperties jaas) {
+        this.jaas = jaas;
     }
 
-    public RadiusProperties getRadiusProperties() {
-        return radiusProperties;
+    public JdbcAuthenticationProperties getJdbcAuthn() {
+        return jdbcAuthn;
     }
 
-    public void setRadiusProperties(final RadiusProperties radiusProperties) {
-        this.radiusProperties = radiusProperties;
+    public void setJdbcAuthn(final JdbcAuthenticationProperties jdbcAuthn) {
+        this.jdbcAuthn = jdbcAuthn;
+    }
+    
+
+    public DatabaseProperties getJdbc() {
+        return jdbc;
     }
 
-    public GoogleAppsProperties getGoogleAppsProperties() {
-        return googleAppsProperties;
+    public void setJdbc(final DatabaseProperties jdbc) {
+        this.jdbc = jdbc;
     }
 
-    public void setGoogleAppsProperties(final GoogleAppsProperties googleAppsProperties) {
-        this.googleAppsProperties = googleAppsProperties;
+    public JpaServiceRegistryProperties getJpaServiceRegistry() {
+        return jpaServiceRegistry;
     }
 
-    public SamlIdPProperties getSamlIdPProperties() {
-        return samlIdPProperties;
+    public void setJpaServiceRegistry(final JpaServiceRegistryProperties jpaServiceRegistry) {
+        this.jpaServiceRegistry = jpaServiceRegistry;
     }
 
-    public void setSamlIdPProperties(final SamlIdPProperties samlIdPProperties) {
-        this.samlIdPProperties = samlIdPProperties;
+    public JpaTicketRegistryProperties getJpaTicketRegistry() {
+        return jpaTicketRegistry;
     }
 
-    public SamlMetadataUIProperties getSamlMetadataUIProperties() {
-        return samlMetadataUIProperties;
+    public void setJpaTicketRegistry(final JpaTicketRegistryProperties jpaTicketRegistry) {
+        this.jpaTicketRegistry = jpaTicketRegistry;
     }
 
-    public void setSamlMetadataUIProperties(final SamlMetadataUIProperties samlMetadataUIProperties) {
-        this.samlMetadataUIProperties = samlMetadataUIProperties;
+    public LdapAuthorizationProperties getLdapAuthz() {
+        return ldapAuthz;
     }
 
-    public SamlResponseProperties getSamlResponseProperties() {
-        return samlResponseProperties;
+    public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
+        this.ldapAuthz = ldapAuthz;
     }
 
-    public void setSamlResponseProperties(final SamlResponseProperties samlResponseProperties) {
-        this.samlResponseProperties = samlResponseProperties;
+    public LdapServiceRegistryProperties getLdapServiceRegistry() {
+        return ldapServiceRegistry;
     }
 
-    public AttributeResolverProperties getAttributeResolverProperties() {
-        return attributeResolverProperties;
+    public void setLdapServiceRegistry(final LdapServiceRegistryProperties ldapServiceRegistry) {
+        this.ldapServiceRegistry = ldapServiceRegistry;
     }
 
-    public void setAttributeResolverProperties(final AttributeResolverProperties attributeResolverProperties) {
-        this.attributeResolverProperties = attributeResolverProperties;
+    public MemcachedProperties getMemcached() {
+        return memcached;
     }
 
-    public SpnegoProperties getSpnegoProperties() {
-        return spnegoProperties;
+    public void setMemcached(final MemcachedProperties memcached) {
+        this.memcached = memcached;
     }
 
-    public void setSpnegoProperties(final SpnegoProperties spnegoProperties) {
-        this.spnegoProperties = spnegoProperties;
+    public MfaProperties getMfa() {
+        return mfa;
     }
 
-    public StormpathProperties getStormpathProperties() {
-        return stormpathProperties;
+    public void setMfa(final MfaProperties mfa) {
+        this.mfa = mfa;
     }
 
-    public void setStormpathProperties(final StormpathProperties stormpathProperties) {
-        this.stormpathProperties = stormpathProperties;
+    public MongoAuthenticationProperties getMongoAuthn() {
+        return mongoAuthn;
     }
 
-    public ThemeProperties getThemeProperties() {
-        return themeProperties;
+    public void setMongoAuthn(final MongoAuthenticationProperties mongoAuthn) {
+        this.mongoAuthn = mongoAuthn;
     }
 
-    public void setThemeProperties(final ThemeProperties themeProperties) {
-        this.themeProperties = themeProperties;
+    public MongoServiceRegistryProperties getMongoServiceRegistry() {
+        return mongoServiceRegistry;
     }
 
-    public ThrottleProperties getThrottleProperties() {
-        return throttleProperties;
+    public void setMongoServiceRegistry(final MongoServiceRegistryProperties mongoServiceRegistry) {
+        this.mongoServiceRegistry = mongoServiceRegistry;
     }
 
-    public void setThrottleProperties(final ThrottleProperties throttleProperties) {
-        this.throttleProperties = throttleProperties;
+    public NtlmProperties getNtlm() {
+        return ntlm;
     }
 
-    public WsFederationProperties getWsFederationProperties() {
-        return wsFederationProperties;
+    public void setNtlm(final NtlmProperties ntlm) {
+        this.ntlm = ntlm;
     }
 
-    public void setWsFederationProperties(final WsFederationProperties wsFederationProperties) {
-        this.wsFederationProperties = wsFederationProperties;
+    public OAuthProperties getOauth() {
+        return oauth;
     }
 
-    public X509Properties getX509Properties() {
-        return x509Properties;
+    public void setOauth(final OAuthProperties oauth) {
+        this.oauth = oauth;
     }
 
-    public void setX509Properties(final X509Properties x509Properties) {
-        this.x509Properties = x509Properties;
+    public OidcProperties getOidc() {
+        return oidc;
     }
 
-    public LocaleProperties getLocaleProperties() {
-        return localeProperties;
+    public void setOidc(final OidcProperties oidc) {
+        this.oidc = oidc;
     }
 
-    public void setLocaleProperties(final LocaleProperties localeProperties) {
-        this.localeProperties = localeProperties;
+    public OpenIdProperties getOpenid() {
+        return openid;
     }
 
-    public ManagementWebappProperties getManagementWebappProperties() {
-        return managementWebappProperties;
+    public void setOpenid(final OpenIdProperties openid) {
+        this.openid = openid;
     }
 
-    public void setManagementWebappProperties(final ManagementWebappProperties managementWebappProperties) {
-        this.managementWebappProperties = managementWebappProperties;
+    public Pac4jProperties getPac4j() {
+        return pac4j;
     }
 
-    public WebflowProperties getWebflowProperties() {
-        return webflowProperties;
+    public void setPac4j(final Pac4jProperties pac4j) {
+        this.pac4j = pac4j;
     }
 
-    public void setWebflowProperties(final WebflowProperties webflowProperties) {
-        this.webflowProperties = webflowProperties;
+    public RadiusProperties getRadius() {
+        return radius;
+    }
+
+    public void setRadius(final RadiusProperties radius) {
+        this.radius = radius;
+    }
+
+    public GoogleAppsProperties getGoogleApps() {
+        return googleApps;
+    }
+
+    public void setGoogleApps(final GoogleAppsProperties googleApps) {
+        this.googleApps = googleApps;
+    }
+
+    public SamlIdPProperties getSamlIdp() {
+        return samlIdp;
+    }
+
+    public void setSamlIdp(final SamlIdPProperties samlIdp) {
+        this.samlIdp = samlIdp;
+    }
+
+    public SamlMetadataUIProperties getSamlMetadataUi() {
+        return samlMetadataUi;
+    }
+
+    public void setSamlMetadataUi(final SamlMetadataUIProperties samlMetadataUi) {
+        this.samlMetadataUi = samlMetadataUi;
+    }
+
+    public SamlResponseProperties getSamlResponse() {
+        return samlResponse;
+    }
+
+    public void setSamlResponse(final SamlResponseProperties samlResponse) {
+        this.samlResponse = samlResponse;
+    }
+
+    public AttributeResolverProperties getShibAttributeResolver() {
+        return shibAttributeResolver;
+    }
+
+    public void setShibAttributeResolver(final AttributeResolverProperties shibAttributeResolver) {
+        this.shibAttributeResolver = shibAttributeResolver;
+    }
+
+    public SpnegoProperties getSpnego() {
+        return spnego;
+    }
+
+    public void setSpnego(final SpnegoProperties spnego) {
+        this.spnego = spnego;
+    }
+
+    public StormpathProperties getStormpath() {
+        return stormpath;
+    }
+
+    public void setStormpath(final StormpathProperties stormpath) {
+        this.stormpath = stormpath;
+    }
+
+    public ThemeProperties getTheme() {
+        return theme;
+    }
+
+    public void setTheme(final ThemeProperties theme) {
+        this.theme = theme;
+    }
+
+    public ThrottleProperties getThrottle() {
+        return throttle;
+    }
+
+    public void setThrottle(final ThrottleProperties throttle) {
+        this.throttle = throttle;
+    }
+
+    public WsFederationProperties getWsfed() {
+        return wsfed;
+    }
+
+    public void setWsfed(final WsFederationProperties wsfed) {
+        this.wsfed = wsfed;
+    }
+
+    public X509Properties getX509() {
+        return x509;
+    }
+
+    public void setX509(final X509Properties x509) {
+        this.x509 = x509;
+    }
+
+    public LocaleProperties getLocale() {
+        return locale;
+    }
+
+    public void setLocale(final LocaleProperties locale) {
+        this.locale = locale;
+    }
+
+    public ManagementWebappProperties getMgmt() {
+        return mgmt;
+    }
+
+    public void setMgmt(final ManagementWebappProperties mgmt) {
+        this.mgmt = mgmt;
+    }
+
+    public WebflowProperties getWebflow() {
+        return webflow;
+    }
+
+    public void setWebflow(final WebflowProperties webflow) {
+        this.webflow = webflow;
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "st", ignoreUnknownFields = false)
+
 public class ServiceTicketProperties {
     private int numberOfUses = 1;
     private long timeToKillInSeconds = 10;

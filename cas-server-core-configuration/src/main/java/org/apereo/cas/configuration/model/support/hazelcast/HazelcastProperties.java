@@ -12,7 +12,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@ConfigurationProperties(prefix = "hz", ignoreUnknownFields = false)
+
 public class HazelcastProperties {
 
     /**

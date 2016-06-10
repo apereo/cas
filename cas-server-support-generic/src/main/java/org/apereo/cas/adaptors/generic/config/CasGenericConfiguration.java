@@ -71,7 +71,7 @@ public class CasGenericConfiguration {
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler();
-        bean.setIpNetworkRange(casProperties.getRemoteAddressAuthenticationProperties().getIpAddressRange());
+        bean.setIpNetworkRange(casProperties.getRemoteAddressAuthn().getIpAddressRange());
         return bean;
     }
 
@@ -85,8 +85,8 @@ public class CasGenericConfiguration {
     public AuthenticationHandler fileAuthenticationHandler() {
         final FileAuthenticationHandler h = new FileAuthenticationHandler();
 
-        h.setFileName(casProperties.getFileAuthenticationProperties().getFilename());
-        h.setSeparator(casProperties.getFileAuthenticationProperties().getSeparator());
+        h.setFileName(casProperties.getFileAuthn().getFilename());
+        h.setSeparator(casProperties.getFileAuthn().getSeparator());
 
 
         if (filePasswordEncoder != null) {
@@ -107,9 +107,9 @@ public class CasGenericConfiguration {
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
         final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler();
 
-        if (StringUtils.isNotBlank(casProperties.getRejectAuthenticationProperties().getUsers())) {
+        if (StringUtils.isNotBlank(casProperties.getRejectAuthn().getUsers())) {
             h.setUsers(org.springframework.util.StringUtils.commaDelimitedListToSet(
-                    casProperties.getRejectAuthenticationProperties().getUsers()));
+                    casProperties.getRejectAuthn().getUsers()));
         }
 
         if (rejectPasswordEncoder != null) {
@@ -129,9 +129,9 @@ public class CasGenericConfiguration {
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
         final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler();
-        h.setShiroConfiguration(casProperties.getShiroAuthenticationProperties().getConfig().getLocation());
-        h.setRequiredRoles(casProperties.getShiroAuthenticationProperties().getRequiredRoles());
-        h.setRequiredPermissions(casProperties.getShiroAuthenticationProperties().getRequiredPermissions());
+        h.setShiroConfiguration(casProperties.getShiroAuthn().getConfig().getLocation());
+        h.setRequiredRoles(casProperties.getShiroAuthn().getRequiredRoles());
+        h.setRequiredPermissions(casProperties.getShiroAuthn().getRequiredPermissions());
 
         if (shiroPasswordEncoder != null) {
             h.setPasswordEncoder(shiroPasswordEncoder);

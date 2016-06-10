@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.rest.services", ignoreUnknownFields = false)
+
 public class RegisteredServiceRestProperties {
     private String attributeName;
     private String attributeValue;

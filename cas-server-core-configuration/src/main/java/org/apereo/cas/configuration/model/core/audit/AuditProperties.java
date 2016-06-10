@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.audit", ignoreUnknownFields = false)
 public class AuditProperties {
 
     private String appCode = "CAS";

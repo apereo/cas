@@ -38,7 +38,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
-        return Beans.newHibernateJpaVendorAdapter(casProperties.getDatabaseProperties());
+        return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
 
@@ -50,7 +50,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceEvent() {
-        return Beans.newHickariDataSource(casProperties.getEventsProperties().getJpa().getDatabase());
+        return Beans.newHickariDataSource(casProperties.getEvents().getJpa().getDatabase());
     }
 
     /**
@@ -78,7 +78,7 @@ public class JpaEventsConfiguration {
                                 "jpaEventRegistryContext",
                                 jpaEventPackagesToScan(),
                                 dataSourceEvent()),
-                        casProperties.getEventsProperties().getJpa().getDatabase());
+                        casProperties.getEvents().getJpa().getDatabase());
 
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;

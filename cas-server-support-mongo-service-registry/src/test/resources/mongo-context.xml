@@ -80,7 +80,7 @@
           c:name="InMemoryMongo" />
 
     <bean id="mongo" factory-bean="fongo" factory-method="getMongo" />
-    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" />
+    <mongo:jdbc-factory id="mongoDbFactory" mongo-ref="mongo" />
 
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">

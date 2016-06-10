@@ -9,7 +9,7 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "geo.maxmind", ignoreUnknownFields = false)
+
 public class MaxmindProperties {
     
     private Resource cityDatabase;

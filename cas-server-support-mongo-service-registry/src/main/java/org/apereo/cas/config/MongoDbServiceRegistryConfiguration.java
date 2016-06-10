@@ -46,18 +46,18 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Override
     protected String getDatabaseName() {
-        return casProperties.getMongoServiceRegistryProperties().getServiceRegistryCollection();
+        return casProperties.getMongoServiceRegistry().getServiceRegistryCollection();
     }
 
     @Override
     public Mongo mongo() throws Exception {
         return new MongoClient(new ServerAddress(
-                casProperties.getMongoServiceRegistryProperties().getHost(),
-                casProperties.getMongoServiceRegistryProperties().getPort()),
+                casProperties.getMongoServiceRegistry().getHost(),
+                casProperties.getMongoServiceRegistry().getPort()),
                 Collections.singletonList(
-                        MongoCredential.createCredential(casProperties.getMongoServiceRegistryProperties().getUserId(),
+                        MongoCredential.createCredential(casProperties.getMongoServiceRegistry().getUserId(),
                                 getDatabaseName(),
-                                casProperties.getMongoServiceRegistryProperties().getUserPassword().toCharArray())),
+                                casProperties.getMongoServiceRegistry().getUserPassword().toCharArray())),
                 mongoClientOptions());
     }
 
@@ -71,15 +71,15 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     public MongoClientOptions mongoClientOptions() {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setWriteConcern(WriteConcern.valueOf(casProperties.getMongoServiceRegistryProperties().getWriteConcern()));
-            bean.setHeartbeatConnectTimeout(casProperties.getMongoServiceRegistryProperties().getTimeout());
-            bean.setHeartbeatSocketTimeout(casProperties.getMongoServiceRegistryProperties().getTimeout());
-            bean.setMaxConnectionLifeTime(casProperties.getMongoServiceRegistryProperties().getConns().getLifetime());
-            bean.setSocketKeepAlive(casProperties.getMongoServiceRegistryProperties().isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime(casProperties.getMongoServiceRegistryProperties().getIdleTimeout());
-            bean.setConnectionsPerHost(casProperties.getMongoServiceRegistryProperties().getConns().getPerHost());
-            bean.setSocketTimeout(casProperties.getMongoServiceRegistryProperties().getTimeout());
-            bean.setConnectTimeout(casProperties.getMongoServiceRegistryProperties().getTimeout());
+            bean.setWriteConcern(WriteConcern.valueOf(casProperties.getMongoServiceRegistry().getWriteConcern()));
+            bean.setHeartbeatConnectTimeout(casProperties.getMongoServiceRegistry().getTimeout());
+            bean.setHeartbeatSocketTimeout(casProperties.getMongoServiceRegistry().getTimeout());
+            bean.setMaxConnectionLifeTime(casProperties.getMongoServiceRegistry().getConns().getLifetime());
+            bean.setSocketKeepAlive(casProperties.getMongoServiceRegistry().isSocketKeepAlive());
+            bean.setMaxConnectionIdleTime(casProperties.getMongoServiceRegistry().getIdleTimeout());
+            bean.setConnectionsPerHost(casProperties.getMongoServiceRegistry().getConns().getPerHost());
+            bean.setSocketTimeout(casProperties.getMongoServiceRegistry().getTimeout());
+            bean.setConnectTimeout(casProperties.getMongoServiceRegistry().getTimeout());
             bean.afterPropertiesSet();
             return bean.getObject();
         } catch (final Exception e) {
@@ -107,7 +107,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     public ServiceRegistryDao mongoServiceRegistryDao() throws Exception {
         return new MongoServiceRegistryDao(
                 mongoTemplate(),
-                casProperties.getMongoServiceRegistryProperties().getServiceRegistryCollection(),
-                casProperties.getMongoServiceRegistryProperties().isDropCollection());
+                casProperties.getMongoServiceRegistry().getServiceRegistryCollection(),
+                casProperties.getMongoServiceRegistry().isDropCollection());
     }
 }

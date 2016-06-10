@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "slo.callbacks", ignoreUnknownFields = false)
+
 public class SloProperties {
     
     private boolean asynchronous = true;

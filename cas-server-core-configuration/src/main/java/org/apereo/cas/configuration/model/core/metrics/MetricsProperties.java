@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "metrics", ignoreUnknownFields = false)
+
 public class MetricsProperties {
 
     private long refreshInterval = 30;

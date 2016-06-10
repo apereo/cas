@@ -56,7 +56,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {
         final ThemeChangeInterceptor bean = new ThemeChangeInterceptor();
-        bean.setParamName(casProperties.getThemeProperties().getParamName());
+        bean.setParamName(casProperties.getTheme().getParamName());
         return bean;
     }
     
@@ -66,11 +66,11 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 final Locale locale = request.getLocale();
-                if (StringUtils.isBlank(casProperties.getLocaleProperties().getDefaultValue())
-                        || locale.getLanguage().equals(casProperties.getLocaleProperties().getDefaultValue())) {
+                if (StringUtils.isBlank(casProperties.getLocale().getDefaultValue())
+                        || locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
                     return locale;
                 }
-                return new Locale(casProperties.getLocaleProperties().getDefaultValue());
+                return new Locale(casProperties.getLocale().getDefaultValue());
             }
         };
 
@@ -82,7 +82,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
-        bean.setParamName(this.casProperties.getLocaleProperties().getParamName());
+        bean.setParamName(this.casProperties.getLocale().getParamName());
         return bean;
     }
     

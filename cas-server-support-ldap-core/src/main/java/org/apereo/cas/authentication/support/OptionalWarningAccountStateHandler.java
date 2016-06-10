@@ -28,26 +28,26 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             final LdapPasswordPolicyConfiguration configuration,
             final List<MessageDescriptor> messages) {
 
-        if (StringUtils.isBlank(casProperties.getPasswordPolicyProperties().getWarningAttributeName())) {
+        if (StringUtils.isBlank(casProperties.getPasswordPolicy().getWarningAttributeName())) {
             logger.debug("No warning attribute name is defined");
             return;
         }
 
-        if (StringUtils.isBlank(casProperties.getPasswordPolicyProperties().getWarningAttributeValue())) {
+        if (StringUtils.isBlank(casProperties.getPasswordPolicy().getWarningAttributeValue())) {
             logger.debug("No warning attribute value to match is defined");
             return;
         }
 
 
-        final LdapAttribute attribute = response.getLdapEntry().getAttribute(casProperties.getPasswordPolicyProperties().getWarningAttributeName());
+        final LdapAttribute attribute = response.getLdapEntry().getAttribute(casProperties.getPasswordPolicy().getWarningAttributeName());
         boolean matches = false;
         if (attribute != null) {
             logger.debug("Found warning attribute {} with value {}", attribute.getName(), attribute.getStringValue());
-            matches = casProperties.getPasswordPolicyProperties().getWarningAttributeValue().equals(attribute.getStringValue());
+            matches = casProperties.getPasswordPolicy().getWarningAttributeValue().equals(attribute.getStringValue());
         }
         logger.debug("matches={}, displayWarningOnMatch={}", matches, 
-                casProperties.getPasswordPolicyProperties().isDisplayWarningOnMatch());
-        if (casProperties.getPasswordPolicyProperties().isDisplayWarningOnMatch() == matches) {
+                casProperties.getPasswordPolicy().isDisplayWarningOnMatch());
+        if (casProperties.getPasswordPolicy().isDisplayWarningOnMatch() == matches) {
             super.handleWarning(warning, response, configuration, messages);
         }
     }

@@ -26,8 +26,8 @@ public class YamlServiceRegistryConfiguration {
     public ServiceRegistryDao yamlServiceRegistryDao() {
         try {
             return new YamlServiceRegistryDao(
-                    casProperties.getServiceRegistryProperties().getConfig().getLocation(),
-                    casProperties.getServiceRegistryProperties().isWatcherEnabled());
+                    casProperties.getServiceRegistry().getConfig().getLocation(),
+                    casProperties.getServiceRegistry().isWatcherEnabled());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

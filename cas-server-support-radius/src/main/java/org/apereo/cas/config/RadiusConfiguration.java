@@ -55,22 +55,22 @@ public class RadiusConfiguration {
     public JRadiusServerImpl radiusServer() {
         
         final RadiusClientFactory factory = new RadiusClientFactory();
-        factory.setAccountingPort(casProperties.getRadiusProperties().getClient().getAccountingPort());
-        factory.setAuthenticationPort(casProperties.getRadiusProperties().getClient().getAuthenticationPort());
-        factory.setInetAddress(casProperties.getRadiusProperties().getClient().getInetAddress());
-        factory.setSharedSecret(casProperties.getRadiusProperties().getClient().getSharedSecret());
-        factory.setSocketTimeout(casProperties.getRadiusProperties().getClient().getSocketTimeout());
+        factory.setAccountingPort(casProperties.getRadius().getClient().getAccountingPort());
+        factory.setAuthenticationPort(casProperties.getRadius().getClient().getAuthenticationPort());
+        factory.setInetAddress(casProperties.getRadius().getClient().getInetAddress());
+        factory.setSharedSecret(casProperties.getRadius().getClient().getSharedSecret());
+        factory.setSocketTimeout(casProperties.getRadius().getClient().getSocketTimeout());
 
-        final RadiusProtocol protocol = RadiusProtocol.valueOf(casProperties.getRadiusProperties().getServer().getProtocol());
+        final RadiusProtocol protocol = RadiusProtocol.valueOf(casProperties.getRadius().getServer().getProtocol());
 
         final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory);
-        impl.setRetries(casProperties.getRadiusProperties().getServer().getRetries());
-        impl.setNasIdentifier(casProperties.getRadiusProperties().getServer().getNasIdentifier());
-        impl.setNasPort(casProperties.getRadiusProperties().getServer().getNasPort());
-        impl.setNasPortId(casProperties.getRadiusProperties().getServer().getNasPortId());
-        impl.setNasRealPort(casProperties.getRadiusProperties().getServer().getNasRealPort());
-        impl.setNasIpAddress(casProperties.getRadiusProperties().getServer().getNasIpAddress());
-        impl.setNasIpv6Address(casProperties.getRadiusProperties().getServer().getNasIpv6Address());
+        impl.setRetries(casProperties.getRadius().getServer().getRetries());
+        impl.setNasIdentifier(casProperties.getRadius().getServer().getNasIdentifier());
+        impl.setNasPort(casProperties.getRadius().getServer().getNasPort());
+        impl.setNasPortId(casProperties.getRadius().getServer().getNasPortId());
+        impl.setNasRealPort(casProperties.getRadius().getServer().getNasRealPort());
+        impl.setNasIpAddress(casProperties.getRadius().getServer().getNasIpAddress());
+        impl.setNasIpv6Address(casProperties.getRadius().getServer().getNasIpv6Address());
 
         return impl;
     }
@@ -92,8 +92,8 @@ public class RadiusConfiguration {
     public AuthenticationHandler radiusAuthenticationHandler() {
         final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler();
         
-        h.setFailoverOnAuthenticationFailure(casProperties.getRadiusProperties().isFailoverOnAuthenticationFailure());
-        h.setFailoverOnException(casProperties.getRadiusProperties().isFailoverOnException());
+        h.setFailoverOnAuthenticationFailure(casProperties.getRadius().isFailoverOnAuthenticationFailure());
+        h.setFailoverOnException(casProperties.getRadius().isFailoverOnException());
         h.setServers(radiusServers());
         
         if (passwordEncoder != null) {

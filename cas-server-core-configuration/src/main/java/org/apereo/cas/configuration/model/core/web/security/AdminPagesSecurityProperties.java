@@ -9,7 +9,7 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.securityContext.adminpages", ignoreUnknownFields = false)
+
 public class AdminPagesSecurityProperties {
 
     private String ip = "127\\.0\\.0\\.1";

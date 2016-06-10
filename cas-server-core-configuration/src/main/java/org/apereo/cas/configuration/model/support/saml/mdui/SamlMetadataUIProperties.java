@@ -10,7 +10,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas.saml.mdui", ignoreUnknownFields = false)
+
 public class SamlMetadataUIProperties {
     private int startDelay;
     private int repeatInterval;

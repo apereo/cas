@@ -60,11 +60,11 @@ public class CasCoreAuditConfiguration {
     public AuditTrailManagementAspect auditTrailManagementAspect() {
 
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
-                casProperties.getAuditProperties().getAppCode(),
+                casProperties.getAudit().getAppCode(),
                 auditablePrincipalResolver(),
                 ImmutableList.of(slf4jAuditTrailManager()), auditActionResolverMap(),
                 auditResourceResolverMap());
-        aspect.setFailOnAuditFailures(!casProperties.getAuditProperties().isIgnoreAuditFailures());
+        aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
     }
 
@@ -76,9 +76,9 @@ public class CasCoreAuditConfiguration {
     @Bean
     public AuditTrailManager slf4jAuditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
-        mgmr.setUseSingleLine(casProperties.getAuditProperties().isUseSingleLine());
-        mgmr.setEntrySeparator(casProperties.getAuditProperties().getSinglelineSeparator());
-        mgmr.setAuditFormat(casProperties.getAuditProperties().getAuditFormat());
+        mgmr.setUseSingleLine(casProperties.getAudit().isUseSingleLine());
+        mgmr.setEntrySeparator(casProperties.getAudit().getSinglelineSeparator());
+        mgmr.setAuditFormat(casProperties.getAudit().getAuditFormat());
         return mgmr;
     }
 

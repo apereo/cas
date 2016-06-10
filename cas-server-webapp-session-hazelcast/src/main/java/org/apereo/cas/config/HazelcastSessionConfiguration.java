@@ -35,7 +35,7 @@ public class HazelcastSessionConfiguration {
      */
     @Bean
     public HazelcastInstance hazelcastInstance() {
-        final Resource hzConfigResource = casProperties.getWebflowProperties().getSession().getHzLocation();
+        final Resource hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
         try {
             final URL configUrl = hzConfigResource.getURL();
             final Config config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();

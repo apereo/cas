@@ -114,7 +114,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     @PostConstruct
     public void initialize() {
         System.setProperty("com.couchbase.queryEnabled", 
-                Boolean.toString(casProperties.getCouchbaseTicketRegistryProperties().isQueryEnabled()));
+                Boolean.toString(casProperties.getCouchbaseTicketRegistry().isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }

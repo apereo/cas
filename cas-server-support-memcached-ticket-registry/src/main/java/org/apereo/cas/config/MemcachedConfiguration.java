@@ -37,11 +37,11 @@ public class MemcachedConfiguration {
     @Bean
     public MemcachedClientFactoryBean memcachedClient() {
         final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
-        bean.setServers(casProperties.getMemcachedProperties().getServers());
-        bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(casProperties.getMemcachedProperties().getLocatorType()));
+        bean.setServers(casProperties.getMemcached().getServers());
+        bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(casProperties.getMemcached().getLocatorType()));
         bean.setTranscoder(kryoTranscoder());
-        bean.setFailureMode(FailureMode.valueOf(casProperties.getMemcachedProperties().getFailureMode()));
-        bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getMemcachedProperties().getHashAlgorithm()));
+        bean.setFailureMode(FailureMode.valueOf(casProperties.getMemcached().getFailureMode()));
+        bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getMemcached().getHashAlgorithm()));
         return bean;
     }
 

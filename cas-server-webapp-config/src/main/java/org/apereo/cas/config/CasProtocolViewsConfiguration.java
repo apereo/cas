@@ -43,7 +43,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2SuccessView() {
-        return new CasProtocolView(casProperties.getViewProperties().getCas2().getSuccess(),
+        return new CasProtocolView(casProperties.getView().getCas2().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -55,7 +55,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ServiceFailureView() {
-        return new CasProtocolView(casProperties.getViewProperties().getCas2().getFailure(),
+        return new CasProtocolView(casProperties.getView().getCas2().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -67,7 +67,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ProxyFailureView() {
-        return new CasProtocolView(casProperties.getViewProperties().getCas2().getProxy().getFailure(),
+        return new CasProtocolView(casProperties.getView().getCas2().getProxy().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -79,7 +79,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ProxySuccessView() {
-        return new CasProtocolView(casProperties.getViewProperties().getCas2().getProxy().getSuccess(),
+        return new CasProtocolView(casProperties.getView().getCas2().getProxy().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -91,7 +91,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas3SuccessView() {
-        return new CasProtocolView(casProperties.getViewProperties().getCas3().getSuccess(),
+        return new CasProtocolView(casProperties.getView().getCas3().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -103,7 +103,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas3ServiceFailureView() {
-        return new CasProtocolView(casProperties.getViewProperties().getCas3().getFailure(),
+        return new CasProtocolView(casProperties.getView().getCas3().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 

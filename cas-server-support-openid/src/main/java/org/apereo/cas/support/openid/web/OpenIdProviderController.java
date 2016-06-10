@@ -23,6 +23,6 @@ public class OpenIdProviderController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
-        return new ModelAndView("openIdProviderView", "openid_server", casProperties.getServerProperties().getPrefix());
+        return new ModelAndView("openIdProviderView", "openid_server", casProperties.getServer().getPrefix());
     }
 }
