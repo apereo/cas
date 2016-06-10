@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.core.web;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * Configuration properties class for message.bundle.
  *

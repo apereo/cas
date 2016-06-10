@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 
 /**

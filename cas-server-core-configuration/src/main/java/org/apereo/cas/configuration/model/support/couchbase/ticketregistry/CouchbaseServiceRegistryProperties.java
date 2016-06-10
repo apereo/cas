@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.couchbase.ticketregistry;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * This is {@link CouchbaseServiceRegistryProperties}.
  *

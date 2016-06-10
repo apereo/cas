@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.HashSet;

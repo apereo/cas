@@ -7,8 +7,6 @@ package org.apereo.cas.configuration.model.support.couchbase.ticketregistry;
  * @since 5.0.0
  */
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 
 public class CouchbaseTicketRegistryProperties {
 
