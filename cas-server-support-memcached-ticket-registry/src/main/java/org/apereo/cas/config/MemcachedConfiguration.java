@@ -39,7 +39,8 @@ public class MemcachedConfiguration {
         
         final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
         bean.setServers(casProperties.getTicket().getRegistry().getMemcached().getServers());
-        bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(casProperties.getTicket().getRegistry().getMemcached().getLocatorType()));
+        bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(
+                casProperties.getTicket().getRegistry().getMemcached().getLocatorType()));
         bean.setTranscoder(kryoTranscoder());
         bean.setFailureMode(FailureMode.valueOf(casProperties.getTicket().getRegistry().getMemcached().getFailureMode()));
         bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getTicket().getRegistry().getMemcached().getHashAlgorithm()));

@@ -153,6 +153,11 @@ public class RegisteredServiceResource {
 
     }
 
+    /**
+     * Sets properties.
+     *
+     * @param properties the properties
+     */
     public void setProperties(final RegisteredServiceRestProperties properties) {
         this.casProperties.setRestServices(properties);
     }

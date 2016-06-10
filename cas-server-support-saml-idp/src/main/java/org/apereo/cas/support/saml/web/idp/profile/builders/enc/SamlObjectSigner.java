@@ -267,8 +267,10 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
-            config.setSignatureCanonicalizationAlgorithm(casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm());
+        if (StringUtils.isNotBlank(
+                casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(
+                    casProperties.getAuthn().getSamlIdp().getResponse().getOverrideSignatureCanonicalizationAlgorithm());
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
@@ -307,10 +309,13 @@ public class SamlObjectSigner {
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getAuthn().getSamlIdp().getMetadata().getSigningKeyFile()));
-        privateKeyFactoryBean.setAlgorithm(casProperties.getAuthn().getSamlIdp().getMetadata().getPrivateKeyAlgName());
+        privateKeyFactoryBean.setLocation(
+                new FileSystemResource(casProperties.getAuthn().getSamlIdp().getMetadata().getSigningKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(
+                casProperties.getAuthn().getSamlIdp().getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from [{}]", casProperties.getAuthn().getSamlIdp().getMetadata().getSigningKeyFile());
+        logger.debug("Locating signature signing key file from [{}]", 
+                casProperties.getAuthn().getSamlIdp().getMetadata().getSigningKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 

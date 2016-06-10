@@ -226,7 +226,8 @@ public abstract class AbstractCasView extends AbstractView {
             final Map<String, Object> model) {
         if (model.containsKey(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())) {
             final Optional<MultifactorAuthenticationProvider> result =
-                    (Optional<MultifactorAuthenticationProvider>) model.get(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+                    (Optional<MultifactorAuthenticationProvider>) 
+                            model.get(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
             return result;
         }
         return Optional.empty();

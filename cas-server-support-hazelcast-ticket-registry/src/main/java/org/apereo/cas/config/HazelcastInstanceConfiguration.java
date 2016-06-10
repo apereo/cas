@@ -78,7 +78,8 @@ public class HazelcastInstanceConfiguration {
 
             try {
                 final URL configUrl = casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().getURL();
-                config = new XmlConfigBuilder(casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().getInputStream()).build();
+                config = new XmlConfigBuilder(casProperties.getTicket()
+                        .getRegistry().getHazelcast().getConfigLocation().getInputStream()).build();
                 config.setConfigurationUrl(configUrl);
             } catch (final Exception e) {
                 throw Throwables.propagate(e);
@@ -109,14 +110,20 @@ public class HazelcastInstanceConfiguration {
                     .setJoin(joinConfig);
 
             //Map config
-            final MapConfig mapConfig = new MapConfig().setName(casProperties.getTicket().getRegistry().getHazelcast().getMapName())
+            final MapConfig mapConfig = new MapConfig().setName(casProperties.getTicket()
+                    .getRegistry().getHazelcast().getMapName())
                     .setMaxIdleSeconds(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())
-                    .setEvictionPolicy(EvictionPolicy.valueOf(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getEvictionPolicy()))
-                    .setEvictionPercentage(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getEvictionPercentage())
+                    .setEvictionPolicy(EvictionPolicy.valueOf(
+                            casProperties.getTicket().getRegistry().getHazelcast().getCluster().getEvictionPolicy()))
+                    .setEvictionPercentage(
+                            casProperties.getTicket().getRegistry().getHazelcast().getCluster().getEvictionPercentage())
                     .setMaxSizeConfig(new MaxSizeConfig()
                             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(
-                                    casProperties.getTicket().getRegistry().getHazelcast().getCluster().getMaxSizePolicy()))
-                            .setSize(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getMaxHeapSizePercentage()));
+                                    casProperties.getTicket().getRegistry()
+                                            .getHazelcast().getCluster().getMaxSizePolicy()))
+                            .setSize(
+                                    casProperties.getTicket().getRegistry()
+                                            .getHazelcast().getCluster().getMaxHeapSizePercentage()));
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
             mapConfigs.put(casProperties.getTicket().getRegistry().getHazelcast().getMapName(), mapConfig);

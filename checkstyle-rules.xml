@@ -160,7 +160,7 @@
             <property name="tokens" value="METHOD_DEF"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="140"/>
+            <property name="max" value="160"/>
             <property name="tabWidth" value="4"/>
             <property name="severity" value="error"/>
         </module>

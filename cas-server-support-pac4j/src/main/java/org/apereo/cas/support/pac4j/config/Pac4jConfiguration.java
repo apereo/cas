@@ -106,14 +106,22 @@ public class Pac4jConfiguration {
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
                 casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
 
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, casProperties.getAuthn().getPac4j().getOidc().getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID, casProperties.getAuthn().getPac4j().getOidc().getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, casProperties.getAuthn().getPac4j().getOidc().getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, casProperties.getAuthn().getPac4j().getOidc().getPreferredJwsAlgorithm());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, 
+                casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, 
+                casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey2());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, 
+                casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, 
+                casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue2());
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, 
+                casProperties.getAuthn().getPac4j().getOidc().getDiscoveryUri());
+        properties.put(PropertiesConfigFactory.OIDC_ID, 
+                casProperties.getAuthn().getPac4j().getOidc().getId());
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, 
+                casProperties.getAuthn().getPac4j().getOidc().getMaxClockSkew());
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, 
+                casProperties.getAuthn().getPac4j().getOidc().getPreferredJwsAlgorithm());
         properties.put(PropertiesConfigFactory.OIDC_SECRET, casProperties.getAuthn().getPac4j().getOidc().getSecret());
         properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, casProperties.getAuthn().getPac4j().getOidc().getUseNonce());
 

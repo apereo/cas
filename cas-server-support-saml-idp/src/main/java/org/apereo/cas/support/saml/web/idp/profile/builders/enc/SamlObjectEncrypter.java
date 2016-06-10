@@ -235,8 +235,10 @@ public class SamlObjectEncrypter {
      * @return the encryption certificate
      */
     protected X509Certificate getEncryptionCertificate() {
-        logger.debug("Locating encryption certificate file from [{}]", casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile()));
+        logger.debug("Locating encryption certificate file from [{}]", 
+                casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile());
+        return SamlUtils.readCertificate(new FileSystemResource(
+                casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile()));
     }
 
     /**

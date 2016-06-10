@@ -64,7 +64,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check for principal attribute trigger
         if (!provider.isPresent() && principal != null && StringUtils.hasText(casProperties.getAuthn().getMfa().getPrincipalAttributes())) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(casProperties.getAuthn().getMfa().getPrincipalAttributes()).spliterator(), false)
+            provider = StreamSupport.stream(ATTR_NAMES.split(casProperties.getAuthn()
+                    .getMfa().getPrincipalAttributes()).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)

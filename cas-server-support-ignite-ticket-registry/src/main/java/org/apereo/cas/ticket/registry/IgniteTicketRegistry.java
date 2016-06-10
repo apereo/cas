@@ -174,8 +174,10 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
                     && nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
-                sslContextFactory.setTrustStoreFilePath(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
+                sslContextFactory.setTrustStoreFilePath(
+                        casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath());
+                sslContextFactory.setTrustStorePassword(
+                        casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
             }
 
             if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyAlgorithm())) {
