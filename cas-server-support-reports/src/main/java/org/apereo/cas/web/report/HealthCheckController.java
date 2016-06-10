@@ -2,7 +2,7 @@ package org.apereo.cas.web.report;
 
 import java.util.concurrent.Callable;
 
-import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
@@ -31,7 +31,7 @@ import java.util.Map;
 public class HealthCheckController {
 
     @Autowired
-    private HttpClientProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Resource(name="healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
@@ -75,6 +75,6 @@ public class HealthCheckController {
             return null;
         };
 
-        return new WebAsyncTask<>(properties.getAsyncTimeout(), asyncTask);
+        return new WebAsyncTask<>(casProperties.getHttpClientProperties().getAsyncTimeout(), asyncTask);
     }
 }

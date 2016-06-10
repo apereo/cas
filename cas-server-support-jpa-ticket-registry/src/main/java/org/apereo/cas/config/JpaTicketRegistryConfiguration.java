@@ -1,10 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.core.HostProperties;
-import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
@@ -12,7 +10,6 @@ import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.InetAddressUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,18 +30,11 @@ import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
  * @since 5.0.0
  */
 @Configuration("jpaTicketRegistryConfiguration")
-@EnableConfigurationProperties({JpaTicketRegistryProperties.class, DatabaseProperties.class, HostProperties.class})
 public class JpaTicketRegistryConfiguration {
 
     @Autowired
-    private DatabaseProperties databaseProperties;
-
-    @Autowired
-    private JpaTicketRegistryProperties jpaTicketRegistryProperties;
-
-    @Autowired
-    private HostProperties hostProperties;
-    
+    private CasConfigurationProperties casProperties;
+        
     /**
      * Jpa packages to scan string [].
      *
@@ -67,11 +57,11 @@ public class JpaTicketRegistryConfiguration {
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         return newEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
-                        newHibernateJpaVendorAdapter(this.databaseProperties),
+                        newHibernateJpaVendorAdapter(casProperties.getDatabaseProperties()),
                         "jpaTicketRegistryContext",
                         ticketPackagesToScan(),
                         dataSourceTicket()),
-                this.jpaTicketRegistryProperties);
+                        casProperties.getJpaTicketRegistryProperties());
     }
 
     /**
@@ -97,24 +87,24 @@ public class JpaTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
-        return newHickariDataSource(this.jpaTicketRegistryProperties);
+        return newHickariDataSource(casProperties.getJpaTicketRegistryProperties());
     }
 
     @Bean
     @RefreshScope
     public TicketRegistry jpaTicketRegistry() {
         final JpaTicketRegistry bean = new JpaTicketRegistry();
-        bean.setLockTgt(this.jpaTicketRegistryProperties.isJpaLockingTgtEnabled());
+        bean.setLockTgt(casProperties.getJpaTicketRegistryProperties().isJpaLockingTgtEnabled());
         return bean;
     }
 
     @Bean
     public LockingStrategy lockingStrategy() {
         final JpaLockingStrategy bean = new JpaLockingStrategy();
-        bean.setApplicationId(this.databaseProperties.getCleaner().getAppid());
-        bean.setUniqueId(StringUtils.defaultIfEmpty(this.hostProperties.getName(), 
+        bean.setApplicationId(casProperties.getDatabaseProperties().getCleaner().getAppid());
+        bean.setUniqueId(StringUtils.defaultIfEmpty(casProperties.getHostProperties().getName(), 
                 InetAddressUtils.getCasServerHostName()));
-        bean.setLockTimeout(this.jpaTicketRegistryProperties.getJpaLockingTimeout());
+        bean.setLockTimeout(casProperties.getJpaTicketRegistryProperties().getJpaLockingTimeout());
         return bean;
     }
 }

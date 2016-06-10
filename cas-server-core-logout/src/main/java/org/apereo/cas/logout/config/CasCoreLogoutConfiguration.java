@@ -1,6 +1,6 @@
 package org.apereo.cas.logout.config;
 
-import org.apereo.cas.configuration.model.core.slo.SloProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.LogoutManager;
@@ -28,7 +28,7 @@ import javax.annotation.Resource;
 public class CasCoreLogoutConfiguration {
 
     @Autowired
-    private SloProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Resource(name = "servicesManager")
     private ServicesManager servicesManager;
@@ -47,7 +47,7 @@ public class CasCoreLogoutConfiguration {
                 new DefaultSingleLogoutServiceMessageHandler();
 
         handler.setHttpClient(this.httpClient);
-        handler.setAsynchronous(properties.isAsynchronous());
+        handler.setAsynchronous(casProperties.getSloProperties().isAsynchronous());
         handler.setLogoutMessageBuilder(logoutBuilder());
         handler.setSingleLogoutServiceLogoutUrlBuilder(defaultSingleLogoutServiceLogoutUrlBuilder());
 
@@ -58,7 +58,7 @@ public class CasCoreLogoutConfiguration {
     @Bean
     public LogoutManager logoutManager() {
         final LogoutManagerImpl mgr = new LogoutManagerImpl();
-        mgr.setSingleLogoutCallbacksDisabled(properties.isDisabled());
+        mgr.setSingleLogoutCallbacksDisabled(casProperties.getSloProperties().isDisabled());
         mgr.setLogoutMessageBuilder(logoutBuilder());
         mgr.setSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler());
         return mgr;

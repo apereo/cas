@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.LogoutConversionService;
 import org.apereo.cas.web.flow.SelectiveFlowHandlerAdapter;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +49,6 @@ import java.io.OutputStream;
  * @since 5.0.0
  */
 @Configuration("casWebflowContextConfiguration")
-@EnableConfigurationProperties(WebflowProperties.class)
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
@@ -58,7 +56,7 @@ public class CasWebflowContextConfiguration {
     private static final String BASE_CLASSPATH_WEBFLOW = "classpath*:/webflow";
 
     @Autowired
-    private WebflowProperties webflowProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("registeredServiceViewResolver")
@@ -192,10 +190,11 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowBuilderServices builder() {
+        
         final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
-        builder.setDevelopmentMode(this.webflowProperties.isRefresh());
+        builder.setDevelopmentMode(casProperties.getWebflowProperties().isRefresh());
         return builder.build();
     }
 
@@ -276,8 +275,8 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowExecutor logoutFlowExecutor() {
         final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
-        builder.setAlwaysRedirectOnPause(this.webflowProperties.isAlwaysPauseRedirect());
-        builder.setRedirectInSameState(this.webflowProperties.isRedirectSameState());
+        builder.setAlwaysRedirectOnPause(casProperties.getWebflowProperties().isAlwaysPauseRedirect());
+        builder.setRedirectInSameState(casProperties.getWebflowProperties().isRedirectSameState());
         return builder.build();
     }
 
@@ -317,16 +316,16 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowExecutorImpl loginFlowExecutor() {
-        if (this.webflowProperties.getSession().isStorage()) {
+        if (casProperties.getWebflowProperties().getSession().isStorage()) {
             final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-            conversationManager.setLockTimeoutSeconds(this.webflowProperties.getSession().getLockTimeout());
-            conversationManager.setMaxConversations(this.webflowProperties.getSession().getMaxConversations());
+            conversationManager.setLockTimeoutSeconds(casProperties.getWebflowProperties().getSession().getLockTimeout());
+            conversationManager.setMaxConversations(casProperties.getWebflowProperties().getSession().getMaxConversations());
             
             final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
             
             final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
                     new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
-            flowExecutionSnapshotFactory.setCompress(this.webflowProperties.getSession().isCompress());
+            flowExecutionSnapshotFactory.setCompress(casProperties.getWebflowProperties().getSession().isCompress());
             
             final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
                     flowExecutionSnapshotFactory);

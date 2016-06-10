@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.ldap.services.config;
 import org.apereo.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistryDao;
-import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 public class LdapServiceRegistryConfiguration {
 
     @Autowired
-    private LdapServiceRegistryProperties properties;
+    private CasConfigurationProperties casProperties;
 
 
     @Nullable
@@ -45,7 +45,7 @@ public class LdapServiceRegistryConfiguration {
 
         r.setConnectionFactory(connectionFactory);
         r.setLdapServiceMapper(ldapServiceRegistryMapper());
-        r.setBaseDn(properties.getBaseDn());
+        r.setBaseDn(casProperties.getLdapServiceRegistryProperties().getBaseDn());
         
         return r;
     }

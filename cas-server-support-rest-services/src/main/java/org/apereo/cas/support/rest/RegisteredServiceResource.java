@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -44,7 +45,7 @@ public class RegisteredServiceResource {
     private CentralAuthenticationService centralAuthenticationService;
     
     @Autowired
-    private RegisteredServiceRestProperties properties;
+    private CasConfigurationProperties casProperties;
     
     /**
      * Create new service.
@@ -59,8 +60,8 @@ public class RegisteredServiceResource {
                                                 @PathVariable("tgtId") final String tgtId) {
         try {
 
-            if (StringUtils.isBlank(properties.getAttributeName()) 
-                    || StringUtils.isBlank(properties.getAttributeValue())) {
+            if (StringUtils.isBlank(casProperties.getRegisteredServiceRestProperties().getAttributeName()) 
+                    || StringUtils.isBlank(casProperties.getRegisteredServiceRestProperties().getAttributeValue())) {
                 throw new IllegalArgumentException("Attribute name and/or value must be configured");
             }
 
@@ -70,16 +71,16 @@ public class RegisteredServiceResource {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
             final Map<String, Object> attributes = ticket.getAuthentication().getPrincipal().getAttributes();
-            if (attributes.containsKey(properties.getAttributeName())) {
+            if (attributes.containsKey(casProperties.getRegisteredServiceRestProperties().getAttributeName())) {
                 final Collection<String> attributeValuesToCompare = new HashSet<>();
-                final Object value = attributes.get(properties.getAttributeName());
+                final Object value = attributes.get(casProperties.getRegisteredServiceRestProperties().getAttributeName());
                 if (value instanceof Collection) {
                     attributeValuesToCompare.addAll((Collection<String>) value);
                 } else {
                     attributeValuesToCompare.add(value.toString());
                 }
 
-                if (attributeValuesToCompare.contains(properties.getAttributeValue())) {
+                if (attributeValuesToCompare.contains(casProperties.getRegisteredServiceRestProperties().getAttributeValue())) {
                     final RegisteredService service = serviceDataHolder.getRegisteredService();
                     final RegisteredService savedService = this.servicesManager.save(service);
                     return new ResponseEntity<>(String.valueOf(savedService.getId()), HttpStatus.OK);
@@ -153,6 +154,6 @@ public class RegisteredServiceResource {
     }
 
     public void setProperties(final RegisteredServiceRestProperties properties) {
-        this.properties = properties;
+        this.casProperties.setRegisteredServiceRestProperties(properties);
     }
 }

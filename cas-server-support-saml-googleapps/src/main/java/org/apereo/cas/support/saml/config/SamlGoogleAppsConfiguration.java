@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.config;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.configuration.model.support.saml.SamlResponseProperties;
-import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlGoogleAppsApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
@@ -24,10 +23,7 @@ import org.springframework.context.annotation.Configuration;
 public class SamlGoogleAppsConfiguration {
 
     @Autowired
-    private GoogleAppsProperties googleAppsProperties;
-
-    @Autowired
-    private SamlResponseProperties samlResponseProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("googleSaml20ObjectBuilder")
@@ -42,10 +38,10 @@ public class SamlGoogleAppsConfiguration {
     @RefreshScope
     public ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory() {
         final GoogleAccountsServiceFactory factory = new GoogleAccountsServiceFactory();
-        factory.setKeyAlgorithm(googleAppsProperties.getKeyAlgorithm());
-        factory.setPrivateKeyLocation(googleAppsProperties.getPrivateKeyLocation());
-        factory.setPublicKeyLocation(googleAppsProperties.getPublicKeyLocation());
-        factory.setSkewAllowance(samlResponseProperties.getSkewAllowance());
+        factory.setKeyAlgorithm(casProperties.getGoogleAppsProperties().getKeyAlgorithm());
+        factory.setPrivateKeyLocation(casProperties.getGoogleAppsProperties().getPrivateKeyLocation());
+        factory.setPublicKeyLocation(casProperties.getGoogleAppsProperties().getPublicKeyLocation());
+        factory.setSkewAllowance(casProperties.getSamlResponseProperties().getSkewAllowance());
         factory.setBuilder(this.builder);
         return factory;
     }

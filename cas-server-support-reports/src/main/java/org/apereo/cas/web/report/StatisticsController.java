@@ -1,15 +1,14 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.configuration.model.core.HostProperties;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.Ticket;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.common.base.Predicates;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,28 +55,28 @@ public class StatisticsController implements ServletContextAware {
     private ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Autowired
-    private HostProperties hostProperties;
-    
+    private CasConfigurationProperties casProperties;
+
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Resource(name="metrics")
+    @Resource(name = "metrics")
     private MetricRegistry metricsRegistry;
 
-    @Resource(name="healthCheckMetrics")
+    @Resource(name = "healthCheckMetrics")
     private HealthCheckRegistry healthCheckRegistry;
 
     /**
      * Handles the request.
      *
-     * @param httpServletRequest the http servlet request
+     * @param httpServletRequest  the http servlet request
      * @param httpServletResponse the http servlet response
      * @return the model and view
      * @throws Exception the exception
      */
     @RequestMapping(method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
-                throws Exception {
+            throws Exception {
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("startTime", this.upTimeStartDate);
         final double difference = this.upTimeStartDate.until(ZonedDateTime.now(ZoneOffset.UTC), ChronoUnit.MILLIS);
@@ -91,7 +90,7 @@ public class StatisticsController implements ServletContextAware {
         modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
         modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("casTicketSuffix", hostProperties.getName());
+        modelAndView.addObject("casTicketSuffix", casProperties.getHostProperties().getName());
 
         int unexpiredTgts = 0;
         int unexpiredSts = 0;
@@ -131,18 +130,20 @@ public class StatisticsController implements ServletContextAware {
 
     /**
      * Convert to megabytes from bytes.
+     *
      * @param bytes the total number of bytes
      * @return value converted to MB
      */
     private static double convertToMegaBytes(final double bytes) {
         return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
     }
+
     /**
      * Calculates the up time.
      *
-     * @param difference the difference
+     * @param difference   the difference
      * @param calculations the calculations
-     * @param labels the labels
+     * @param labels       the labels
      * @return the uptime as a string.
      */
     protected String calculateUptime(final double difference, final Queue<Integer> calculations, final Queue<String> labels) {

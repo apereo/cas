@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -76,7 +76,7 @@ public class SamlObjectEncrypter {
     protected List overrideWhiteListedAlgorithms;
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
     
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
@@ -235,8 +235,8 @@ public class SamlObjectEncrypter {
      * @return the encryption certificate
      */
     protected X509Certificate getEncryptionCertificate() {
-        logger.debug("Locating encryption certificate file from [{}]", properties.getMetadata().getEncryptionCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(properties.getMetadata().getEncryptionCertFile()));
+        logger.debug("Locating encryption certificate file from [{}]", casProperties.getSamlIdPProperties().getMetadata().getEncryptionCertFile());
+        return SamlUtils.readCertificate(new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getEncryptionCertFile()));
     }
 
     /**
@@ -247,10 +247,10 @@ public class SamlObjectEncrypter {
      */
     protected PrivateKey getEncryptionPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(properties.getMetadata().getEncryptionKeyFile()));
-        privateKeyFactoryBean.setAlgorithm(properties.getMetadata().getPrivateKeyAlgName());
+        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getEncryptionKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(casProperties.getSamlIdPProperties().getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating encryption key file from [{}]", properties.getMetadata().getEncryptionKeyFile());
+        logger.debug("Locating encryption key file from [{}]", casProperties.getSamlIdPProperties().getMetadata().getEncryptionKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 }

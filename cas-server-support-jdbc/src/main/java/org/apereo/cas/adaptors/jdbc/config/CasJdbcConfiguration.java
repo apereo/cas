@@ -5,7 +5,10 @@ import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
+import org.apereo.cas.authentication.handler.PasswordEncoder;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -23,6 +26,42 @@ import javax.sql.DataSource;
 @Configuration("casJdbcConfiguration")
 public class CasJdbcConfiguration {
 
+    @Autowired(required=false)
+    @Qualifier("queryAndEncodePasswordEncoder")
+    private PasswordEncoder queryAndEncodePasswordEncoder;
+
+    @Autowired(required=false)
+    @Qualifier("queryAndEncodePrincipalNameTransformer")
+    private PrincipalNameTransformer queryAndEncodePrincipalNameTransformer;
+
+    @Autowired(required=false)
+    @Qualifier("queryAndEncodePasswordPolicyConfiguration")
+    private PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration;
+    
+    @Autowired(required=false)
+    @Qualifier("searchModePasswordEncoder")
+    private PasswordEncoder searchModePasswordEncoder;
+
+    @Autowired(required=false)
+    @Qualifier("searchModePrincipalNameTransformer")
+    private PrincipalNameTransformer searchModePrincipalNameTransformer;
+
+    @Autowired(required=false)
+    @Qualifier("searchModePasswordPolicyConfiguration")
+    private PasswordPolicyConfiguration searchModePasswordPolicyConfiguration;
+    
+    @Autowired(required=false)
+    @Qualifier("queryPasswordEncoder")
+    private PasswordEncoder queryPasswordEncoder;
+
+    @Autowired(required=false)
+    @Qualifier("queryPrincipalNameTransformer")
+    private PrincipalNameTransformer queryPrincipalNameTransformer;
+
+    @Autowired(required=false)
+    @Qualifier("queryPasswordPolicyConfiguration")
+    private PasswordPolicyConfiguration queryPasswordPolicyConfiguration;
+    
     @Autowired(required = false)
     @Qualifier("searchModeDatabaseDataSource")
     private DataSource searchModeDatabaseDataSource;
@@ -30,18 +69,29 @@ public class CasJdbcConfiguration {
     @Autowired(required = false)
     @Qualifier("queryEncodeDatabaseDataSource")
     private DataSource queryEncodeDatabaseDataSource;
-
-
+    
     @Autowired(required = false)
     @Qualifier("bindSearchDatabaseDataSource")
     private DataSource bindSearchDatabaseDataSource;
+    
+    @Autowired(required=false)
+    @Qualifier("bindSearchPasswordEncoder")
+    private PasswordEncoder bindSearchPasswordEncoder;
 
+    @Autowired(required=false)
+    @Qualifier("bindSearchPrincipalNameTransformer")
+    private PrincipalNameTransformer bindSearchPrincipalNameTransformer;
+
+    @Autowired(required=false)
+    @Qualifier("bindSearchPasswordPolicyConfiguration")
+    private PasswordPolicyConfiguration bindSearchPasswordPolicyConfiguration;
+    
     @Autowired(required = false)
     @Qualifier("queryDatabaseDataSource")
     private DataSource queryDatabaseDataSource;
 
     @Autowired
-    private JdbcAuthenticationProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
@@ -49,24 +99,45 @@ public class CasJdbcConfiguration {
         final BindModeSearchDatabaseAuthenticationHandler h =
                 new BindModeSearchDatabaseAuthenticationHandler();
         h.setDataSource(this.bindSearchDatabaseDataSource);
+
+        if (bindSearchPasswordEncoder != null) {
+            h.setPasswordEncoder(bindSearchPasswordEncoder);
+        }
+        if (bindSearchPasswordPolicyConfiguration != null) {
+            h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
+        }
+        if (bindSearchPrincipalNameTransformer != null) {
+            h.setPrincipalNameTransformer(bindSearchPrincipalNameTransformer);
+        }
+        
         return h;
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler() {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler();
 
-        q.setAlgorithmName(properties.getEncode().getAlgorithmName());
-        q.setNumberOfIterationsFieldName(properties.getEncode().getNumberOfIterationsFieldName());
-        q.setNumberOfIterations(properties.getEncode().getNumberOfIterations());
-        q.setPasswordFieldName(properties.getEncode().getPasswordFieldName());
-        q.setSaltFieldName(properties.getEncode().getSaltFieldName());
-        q.setSql(properties.getEncode().getSql());
-        q.setStaticSalt(properties.getEncode().getStaticSalt());
-        q.setDataSource(queryEncodeDatabaseDataSource);
+        h.setAlgorithmName(casProperties.getJdbcAuthenticationProperties().getEncode().getAlgorithmName());
+        h.setNumberOfIterationsFieldName(casProperties.getJdbcAuthenticationProperties().getEncode().getNumberOfIterationsFieldName());
+        h.setNumberOfIterations(casProperties.getJdbcAuthenticationProperties().getEncode().getNumberOfIterations());
+        h.setPasswordFieldName(casProperties.getJdbcAuthenticationProperties().getEncode().getPasswordFieldName());
+        h.setSaltFieldName(casProperties.getJdbcAuthenticationProperties().getEncode().getSaltFieldName());
+        h.setSql(casProperties.getJdbcAuthenticationProperties().getEncode().getSql());
+        h.setStaticSalt(casProperties.getJdbcAuthenticationProperties().getEncode().getStaticSalt());
+        h.setDataSource(queryEncodeDatabaseDataSource);
 
-        return q;
+        if (queryAndEncodePasswordEncoder != null) {
+            h.setPasswordEncoder(queryAndEncodePasswordEncoder);
+        }
+        if (queryAndEncodePasswordPolicyConfiguration != null) {
+            h.setPasswordPolicyConfiguration(queryAndEncodePasswordPolicyConfiguration);
+        }
+        if (queryAndEncodePrincipalNameTransformer != null) {
+            h.setPrincipalNameTransformer(queryAndEncodePrincipalNameTransformer);
+        }
+        
+        return h;
     }
 
     @Bean
@@ -75,20 +146,41 @@ public class CasJdbcConfiguration {
         final QueryDatabaseAuthenticationHandler h =
                 new QueryDatabaseAuthenticationHandler();
         h.setDataSource(queryDatabaseDataSource);
-        h.setSql(properties.getQuery().getSql());
+        h.setSql(casProperties.getJdbcAuthenticationProperties().getQuery().getSql());
+
+        if (queryPasswordEncoder != null) {
+            h.setPasswordEncoder(queryPasswordEncoder);
+        }
+        if (queryPasswordPolicyConfiguration != null) {
+            h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration);
+        }
+        if (queryPrincipalNameTransformer != null) {
+            h.setPrincipalNameTransformer(queryPrincipalNameTransformer);
+        }
+        
         return h;
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler() {
-        final SearchModeSearchDatabaseAuthenticationHandler a = new SearchModeSearchDatabaseAuthenticationHandler();
+        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler();
 
-        a.setDataSource(searchModeDatabaseDataSource);
-        a.setFieldPassword(properties.getSearch().getFieldPassword());
-        a.setFieldUser(properties.getSearch().getFieldUser());
-        a.setTableUsers(properties.getSearch().getTableUsers());
+        h.setDataSource(searchModeDatabaseDataSource);
+        h.setFieldPassword(casProperties.getJdbcAuthenticationProperties().getSearch().getFieldPassword());
+        h.setFieldUser(casProperties.getJdbcAuthenticationProperties().getSearch().getFieldUser());
+        h.setTableUsers(casProperties.getJdbcAuthenticationProperties().getSearch().getTableUsers());
 
-        return a;
+        if (searchModePasswordEncoder != null) {
+            h.setPasswordEncoder(searchModePasswordEncoder);
+        }
+        if (searchModePasswordPolicyConfiguration != null) {
+            h.setPasswordPolicyConfiguration(searchModePasswordPolicyConfiguration);
+        }
+        if (searchModePrincipalNameTransformer != null) {
+            h.setPrincipalNameTransformer(searchModePrincipalNameTransformer);
+        }
+        
+        return h;
     }
 }

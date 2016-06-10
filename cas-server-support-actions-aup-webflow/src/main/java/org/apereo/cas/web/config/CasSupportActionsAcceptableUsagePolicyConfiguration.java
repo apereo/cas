@@ -1,6 +1,6 @@
 package org.apereo.cas.web.config;
 
-import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyFormAction;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyRepository;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.Action;
 public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Autowired
-    private AcceptableUsagePolicyProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Bean
     public Action acceptableUsagePolicyFormAction() {

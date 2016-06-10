@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -19,7 +19,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
 
     @Autowired
-    private SpnegoProperties spnegoProperties;
+    private CasConfigurationProperties casProperties;
 
     @Override
     protected void doInitialize() throws Exception {
@@ -34,7 +34,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
         spnego.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow)));
 
         final ActionState evaluateClientRequest = createActionState(flow, "evaluateClientRequest",
-                createEvaluateAction(spnegoProperties.getHostNameClientActionStrategy()));
+                createEvaluateAction(casProperties.getSpnegoProperties().getHostNameClientActionStrategy()));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_YES, START_SPNEGO_AUTHENTICATE));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_NO, getStartState(flow)));
 

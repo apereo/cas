@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseServiceRegistryProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
 public class CouchbaseServiceRegistryConfiguration {
     
     @Autowired
-    private CouchbaseServiceRegistryProperties properties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Service registry couchbase client factory couchbase client factory.
@@ -31,10 +31,10 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(properties.getNodeSet()));
-        factory.setTimeout(properties.getTimeout());
-        factory.setBucketName(properties.getBucket());
-        factory.setPassword(properties.getPassword());
+        factory.setNodes(StringUtils.commaDelimitedListToSet(casProperties.getCouchbaseServiceRegistryProperties().getNodeSet()));
+        factory.setTimeout(casProperties.getCouchbaseServiceRegistryProperties().getTimeout());
+        factory.setBucketName(casProperties.getCouchbaseServiceRegistryProperties().getBucket());
+        factory.setPassword(casProperties.getCouchbaseServiceRegistryProperties().getPassword());
         return factory;
     }
     

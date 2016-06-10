@@ -1,14 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
-import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.ClearpassApplicationContextWrapper;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,21 +19,17 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  * @since 5.0.0
  */
 @Configuration("casCoreWebConfiguration")
-@EnableConfigurationProperties(MessageBundleProperties.class)
 public class CasCoreWebConfiguration {
 
     @Autowired
-    private ClearpassProperties properties;
-
-    @Autowired
-    private MessageBundleProperties messageBundleProperties;
-
+    private CasConfigurationProperties casProperties;
+    
     @Bean
     @RefreshScope
     public BaseApplicationContextWrapper clearpassApplicationContextWrapper() {
         final ClearpassApplicationContextWrapper w =
                 new ClearpassApplicationContextWrapper();
-        w.setCacheCredential(properties.isCacheCredential());
+        w.setCacheCredential(casProperties.getClearpassProperties().isCacheCredential());
         return w;
     }
 
@@ -48,11 +42,11 @@ public class CasCoreWebConfiguration {
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         final CasReloadableMessageBundle bean = new CasReloadableMessageBundle();
-        bean.setDefaultEncoding(this.messageBundleProperties.getEncoding());
-        bean.setCacheSeconds(this.messageBundleProperties.getCacheSeconds());
-        bean.setFallbackToSystemLocale(this.messageBundleProperties.isFallbackSystemLocale());
-        bean.setUseCodeAsDefaultMessage(this.messageBundleProperties.isUseCodeMessage());
-        bean.setBasenames(this.messageBundleProperties.getBaseNames());
+        bean.setDefaultEncoding(casProperties.getMessageBundleProperties().getEncoding());
+        bean.setCacheSeconds(casProperties.getMessageBundleProperties().getCacheSeconds());
+        bean.setFallbackToSystemLocale(casProperties.getMessageBundleProperties().isFallbackSystemLocale());
+        bean.setUseCodeAsDefaultMessage(casProperties.getMessageBundleProperties().isUseCodeMessage());
+        bean.setBasenames(casProperties.getMessageBundleProperties().getBaseNames());
         return bean;
     }
 }

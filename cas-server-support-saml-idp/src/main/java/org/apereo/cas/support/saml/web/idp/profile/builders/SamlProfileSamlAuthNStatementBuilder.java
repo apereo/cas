@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -31,7 +31,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     private static final long serialVersionUID = 8761566449790497226L;
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Resource(name="defaultAuthnContextClassRefBuilder")
     private AuthnContextClassRefBuilder authnContextClassRefBuilder;
@@ -66,7 +66,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         if (assertion.getValidUntilDate() != null) {
             final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
             statement.setSessionNotOnOrAfter(
-                    DateTimeUtils.dateTimeOf(dt.plusSeconds(properties.getResponse().getSkewAllowance())));
+                    DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getSamlIdPProperties().getResponse().getSkewAllowance())));
         }
         statement.setSubjectLocality(buildSubjectLocality(assertion, authnRequest, adaptor));
         return statement;

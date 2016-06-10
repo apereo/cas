@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class CasFiltersConfiguration {
 
     @Autowired
-    private HttpWebRequestProperties httpWebRequestProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Character encoding filter character encoding filter.
@@ -37,8 +37,9 @@ public class CasFiltersConfiguration {
     @Bean
     public FilterRegistrationBean characterEncodingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new CharacterEncodingFilter(httpWebRequestProperties.getWeb().getEncoding(),
-                httpWebRequestProperties.getWeb().isForceEncoding()));
+        bean.setFilter(new CharacterEncodingFilter(
+                casProperties.getHttpWebRequestProperties().getWeb().getEncoding(),
+                casProperties.getHttpWebRequestProperties().getWeb().isForceEncoding()));
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("characterEncodingFilter");
         return bean;
@@ -54,15 +55,15 @@ public class CasFiltersConfiguration {
     public FilterRegistrationBean responseHeadersSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
         initParams.put("enableCacheControl",
-                BooleanUtils.toStringTrueFalse(httpWebRequestProperties.getHeader().isCache()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isCache()));
         initParams.put("enableXContentTypeOptions",
-                BooleanUtils.toStringTrueFalse(httpWebRequestProperties.getHeader().isXcontent()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isXcontent()));
         initParams.put("enableStrictTransportSecurity",
-                BooleanUtils.toStringTrueFalse(httpWebRequestProperties.getHeader().isHsts()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isHsts()));
         initParams.put("enableXFrameOptions",
-                BooleanUtils.toStringTrueFalse(httpWebRequestProperties.getHeader().isXframe()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isXframe()));
         initParams.put("enableXSSProtection",
-                BooleanUtils.toStringTrueFalse(httpWebRequestProperties.getHeader().isXss()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().getHeader().isXss()));
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ResponseHeadersEnforcementFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
@@ -82,12 +83,12 @@ public class CasFiltersConfiguration {
     public FilterRegistrationBean requestParameterSecurityFilter() {
         final Map<String, String> initParams = new HashMap<>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
-                httpWebRequestProperties.getParamsToCheck());
+                casProperties.getHttpWebRequestProperties().getParamsToCheck());
         initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");
         initParams.put(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS,
-                BooleanUtils.toStringTrueFalse(httpWebRequestProperties.isAllowMultiValueParameters()));
+                BooleanUtils.toStringTrueFalse(casProperties.getHttpWebRequestProperties().isAllowMultiValueParameters()));
         initParams.put(RequestParameterPolicyEnforcementFilter.ONLY_POST_PARAMETERS,
-                httpWebRequestProperties.getOnlyPostParams());
+                casProperties.getHttpWebRequestProperties().getOnlyPostParams());
 
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new RequestParameterPolicyEnforcementFilter());

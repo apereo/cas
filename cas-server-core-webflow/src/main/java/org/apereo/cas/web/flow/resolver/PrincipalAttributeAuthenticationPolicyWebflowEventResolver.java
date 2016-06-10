@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.resolver;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
@@ -26,7 +26,7 @@ import java.util.Set;
 public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
@@ -39,7 +39,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(mfaProperties.getPrincipalAttributes())) {
+        if (StringUtils.isBlank(casProperties.getMfaProperties().getPrincipalAttributes())) {
             logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
             return null;
         }
@@ -53,7 +53,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
 
         final Collection<MultifactorAuthenticationProvider> providers = providerMap.values();
         return resolveEventViaPrincipalAttribute(principal,
-                org.springframework.util.StringUtils.commaDelimitedListToSet(mfaProperties.getPrincipalAttributes()),
+                org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getMfaProperties().getPrincipalAttributes()),
                 service, context, providers,
                 input -> providers.stream()
                         .filter(provider -> provider.getId().equals(input))

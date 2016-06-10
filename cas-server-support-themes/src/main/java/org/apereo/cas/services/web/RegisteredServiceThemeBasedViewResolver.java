@@ -52,7 +52,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
     @Autowired
     private ThymeleafProperties properties;
-
+    
     @Resource(name="thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
 
@@ -166,7 +166,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
                 final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
                 final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
 
-                final String viewLocationUrl = this.properties.getPrefix().concat(viewUrl).concat(this.properties.getSuffix());
+                final String viewLocationUrl = properties.getPrefix().concat(viewUrl).concat(this.properties.getSuffix());
                 LOGGER.debug("Attempting to locate view at {}", viewLocationUrl);
                 final TemplateLocation location = new TemplateLocation(viewLocationUrl);
                 if (location.exists(getApplicationContext())) {

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -72,13 +73,13 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     @Override
     @Autowired
-    public void setFailureView(@Qualifier("casOpenIdServiceFailureView") final String failureView) {
+    public void setFailureView(@Qualifier("casOpenIdServiceFailureView") final View failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Qualifier("casOpenIdServiceSuccessView") final String successView) {
+    public void setSuccessView(@Qualifier("casOpenIdServiceSuccessView") final View successView) {
         super.setSuccessView(successView);
     }
 

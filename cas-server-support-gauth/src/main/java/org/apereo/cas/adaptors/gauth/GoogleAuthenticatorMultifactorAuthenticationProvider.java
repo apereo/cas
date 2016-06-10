@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.gauth;
 
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +22,7 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
     private AuthenticationHandler yubiKeyAuthenticationHandler;
     
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Override
     public String getId() {
@@ -31,7 +31,7 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     @Override
     public int getOrder() {
-        return mfaProperties.getGauth().getRank();
+        return casProperties.getMfaProperties().getGauth().getRank();
     }
 
 

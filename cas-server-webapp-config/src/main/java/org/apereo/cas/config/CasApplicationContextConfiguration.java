@@ -11,6 +11,7 @@ import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,12 +39,7 @@ import java.util.Properties;
  */
 @Configuration("casApplicationContextConfiguration")
 public class CasApplicationContextConfiguration {
-
-    /**
-     * The constant URL_HANDLER_MAPPING_ORDER.
-     */
-    private static final int URL_HANDLER_MAPPING_ORDER = 1000;
-
+    
     /**
      * The Service ticket unique id generator.
      */

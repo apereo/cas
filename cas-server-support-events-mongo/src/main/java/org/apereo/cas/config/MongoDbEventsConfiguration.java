@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
-import org.apereo.cas.configuration.model.core.events.EventsProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +21,10 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  * @since 5.0.0
  */
 @Configuration("mongoDbEventsConfiguration")
-@EnableConfigurationProperties(EventsProperties.class)
 public class MongoDbEventsConfiguration {
 
     @Autowired
-    private EventsProperties eventsProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Persistence exception translation post processor persistence exception translation post processor.
@@ -59,7 +57,7 @@ public class MongoDbEventsConfiguration {
     @Bean
     public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
         try {
-            return new SimpleMongoDbFactory(new MongoClientURI(this.eventsProperties.getMongodb().getClientUri()));
+            return new SimpleMongoDbFactory(new MongoClientURI(casProperties.getEventsProperties().getMongodb().getClientUri()));
         } catch (final Exception e) {
             throw new BeanCreationException(e.getMessage(), e);
         }
@@ -69,7 +67,7 @@ public class MongoDbEventsConfiguration {
     public CasEventRepository casEventRepository() {
         return new MongoDbCasEventRepository(
                 mongoEventsTemplate(),
-                this.eventsProperties.getMongodb().getCollection(),
-                this.eventsProperties.getMongodb().isDropCollection());
+                casProperties.getEventsProperties().getMongodb().getCollection(),
+                casProperties.getEventsProperties().getMongodb().isDropCollection());
     }
 }

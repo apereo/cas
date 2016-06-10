@@ -2,8 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.configuration.model.core.ServerProperties;
-import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.openid.OpenIdApplicationContextWrapper;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
@@ -40,11 +39,7 @@ public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
     @Autowired
-    private OpenIdProperties openIdProperties;
-    
-    @Autowired
-    private ServerProperties serverProperties;
-    
+    private CasConfigurationProperties casProperties;
 
     /**
      * Openid delegating controller delegating controller.
@@ -91,9 +86,9 @@ public class OpenIdConfiguration {
     @Bean
     public ServerManager serverManager() {
         final ServerManager manager = new ServerManager();
-        manager.setOPEndpointUrl(serverProperties.getLoginUrl());
-        manager.setEnforceRpId(openIdProperties.isEnforceRpId());
-        LOGGER.info("Creating openid server manager with OP endpoint {}", serverProperties.getLoginUrl());
+        manager.setOPEndpointUrl(casProperties.getServerProperties().getLoginUrl());
+        manager.setEnforceRpId(casProperties.getOpenIdProperties().isEnforceRpId());
+        LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServerProperties().getLoginUrl());
         return manager;
     }
 
@@ -116,7 +111,7 @@ public class OpenIdConfiguration {
     @RefreshScope
     public ServiceFactory openIdServiceFactory() {
         final OpenIdServiceFactory f = new OpenIdServiceFactory();
-        f.setOpenIdPrefixUrl(serverProperties.getPrefix().concat("/openid"));
+        f.setOpenIdPrefixUrl(casProperties.getServerProperties().getPrefix().concat("/openid"));
         return f;
     }
 
@@ -131,7 +126,7 @@ public class OpenIdConfiguration {
     public Action openIdSingleSignOnAction() {
         return new OpenIdSingleSignOnAction();
     }
-    
+
     @Bean
     public OpenIdUserNameExtractor defaultOpenIdUserNameExtractor() {
         return new DefaultOpenIdUserNameExtractor();

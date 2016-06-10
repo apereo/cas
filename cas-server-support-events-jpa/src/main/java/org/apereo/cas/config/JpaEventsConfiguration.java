@@ -1,14 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.model.core.events.EventsProperties;
-import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,14 +25,10 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @Configuration("jpaEventsConfiguration")
-@EnableConfigurationProperties({EventsProperties.class, DatabaseProperties.class})
 public class JpaEventsConfiguration {
 
     @Autowired
-    private DatabaseProperties databaseProperties;
-
-    @Autowired
-    private EventsProperties eventsProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Jpa event vendor adapter hibernate jpa vendor adapter.
@@ -44,7 +38,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
-        return Beans.newHibernateJpaVendorAdapter(this.databaseProperties);
+        return Beans.newHibernateJpaVendorAdapter(casProperties.getDatabaseProperties());
     }
 
 
@@ -56,7 +50,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceEvent() {
-        return Beans.newHickariDataSource(this.eventsProperties.getJpa().getDatabase());
+        return Beans.newHickariDataSource(casProperties.getEventsProperties().getJpa().getDatabase());
     }
 
     /**
@@ -84,7 +78,7 @@ public class JpaEventsConfiguration {
                                 "jpaEventRegistryContext",
                                 jpaEventPackagesToScan(),
                                 dataSourceEvent()),
-                        this.eventsProperties.getJpa().getDatabase());
+                        casProperties.getEventsProperties().getJpa().getDatabase());
 
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;

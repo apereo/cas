@@ -1,6 +1,6 @@
 package org.apereo.cas.web.support.config;
 
-import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
@@ -10,7 +10,6 @@ import org.apereo.cas.web.support.NeverThrottledSubmissionHandlerInterceptorAdap
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,11 +24,10 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @Configuration("casThrottlingConfiguration")
-@EnableConfigurationProperties(ThrottleProperties.class)
 public class CasThrottlingConfiguration {
 
     @Autowired
-    private ThrottleProperties throttleProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("auditTrailManager")
@@ -54,11 +52,12 @@ public class CasThrottlingConfiguration {
     @Bean
     @RefreshScope
     public HandlerInterceptorAdapter inspektrIpAddressUsernameThrottle() {
+        
         final InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter bean =
                 new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(this.auditTrailManager, this.dataSource);
-        bean.setApplicationCode(this.throttleProperties.getAppcode());
-        bean.setAuthenticationFailureCode(this.throttleProperties.getFailure().getCode());
-        bean.setSqlQueryAudit(this.throttleProperties.getAuditQuery());
+        bean.setApplicationCode(casProperties.getThrottleProperties().getAppcode());
+        bean.setAuthenticationFailureCode(casProperties.getThrottleProperties().getFailure().getCode());
+        bean.setSqlQueryAudit(casProperties.getThrottleProperties().getAuditQuery());
         return configureThrottleHandlerInterceptorAdaptor(bean);
     }
 
@@ -69,9 +68,9 @@ public class CasThrottlingConfiguration {
 
     private AbstractThrottledSubmissionHandlerInterceptorAdapter
     configureThrottleHandlerInterceptorAdaptor(final AbstractThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
-        interceptorAdapter.setUsernameParameter(this.throttleProperties.getUsernameParameter());
-        interceptorAdapter.setFailureThreshold(this.throttleProperties.getFailure().getThreshold());
-        interceptorAdapter.setFailureRangeInSeconds(this.throttleProperties.getFailure().getRangeSeconds());
+        interceptorAdapter.setUsernameParameter(casProperties.getThrottleProperties().getUsernameParameter());
+        interceptorAdapter.setFailureThreshold(casProperties.getThrottleProperties().getFailure().getThreshold());
+        interceptorAdapter.setFailureRangeInSeconds(casProperties.getThrottleProperties().getFailure().getRangeSeconds());
         return interceptorAdapter;
     }
 

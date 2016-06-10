@@ -166,7 +166,6 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      *      Oracle documentation</a>
      * @since 4.1.0
      */
-    @Autowired
     public void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }

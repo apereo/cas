@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +18,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     private static final long serialVersionUID = 4789727148634156909L;
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Resource(name = "radiusTokenAuthenticationHandler")
     private RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
@@ -30,7 +30,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
 
     @Override
     public int getOrder() {
-        return mfaProperties.getRadius().getRank();
+        return casProperties.getMfaProperties().getRadius().getRank();
     }
 
     @Override

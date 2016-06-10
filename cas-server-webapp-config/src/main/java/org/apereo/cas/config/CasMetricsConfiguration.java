@@ -11,7 +11,7 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
-import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
     
     @Autowired
-    private MetricsProperties properties;
+    private CasConfigurationProperties casProperties;
             
     /**
      * Metric registry metric registry.
@@ -88,14 +88,14 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
 
     @Override
     public void configureReporters(final MetricRegistry metricRegistry) {
-        final Logger perfStatsLogger = LoggerFactory.getLogger(properties.getLoggerName());
+        final Logger perfStatsLogger = LoggerFactory.getLogger(casProperties.getMetricsProperties().getLoggerName());
         registerReporter(Slf4jReporter
                 .forRegistry(metricRegistry)
                 .outputTo(perfStatsLogger)
                 .convertRatesTo(TimeUnit.MILLISECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build())
-                .start(properties.getRefreshInterval(), TimeUnit.SECONDS);
+                .start(casProperties.getMetricsProperties().getRefreshInterval(), TimeUnit.SECONDS);
 
         registerReporter(JmxReporter
                 .forRegistry(metricRegistry)

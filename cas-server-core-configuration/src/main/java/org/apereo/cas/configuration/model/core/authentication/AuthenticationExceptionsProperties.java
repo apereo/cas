@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +13,7 @@ import java.util.List;
  */
 @ConfigurationProperties(prefix = "cas.custom.authentication", ignoreUnknownFields = false)
 public class AuthenticationExceptionsProperties {
-    private List exceptions;
+    private List exceptions = new ArrayList<>();
 
     public List getExceptions() {
         return exceptions;

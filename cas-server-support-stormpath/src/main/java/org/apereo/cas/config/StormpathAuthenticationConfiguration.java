@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.StormpathAuthenticationHandler;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.pac4j.http.credentials.password.NopPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 public class StormpathAuthenticationConfiguration {
 
     @Autowired
-    private StormpathProperties stormpathProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired(required = false)
     @Qualifier("stormpathPasswordEncoder")
@@ -39,9 +39,9 @@ public class StormpathAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler stormpathAuthenticationHandler() {
         final StormpathAuthenticationHandler handler =
-                new StormpathAuthenticationHandler(stormpathProperties.getApiKey(),
-                        stormpathProperties.getApplicationId(),
-                        stormpathProperties.getSecretkey());
+                new StormpathAuthenticationHandler(casProperties.getStormpathProperties().getApiKey(),
+                        casProperties.getStormpathProperties().getApplicationId(),
+                        casProperties.getStormpathProperties().getSecretkey());
 
         if (this.passwordEncoder != null) {
             handler.setPasswordEncoder(this.passwordEncoder);

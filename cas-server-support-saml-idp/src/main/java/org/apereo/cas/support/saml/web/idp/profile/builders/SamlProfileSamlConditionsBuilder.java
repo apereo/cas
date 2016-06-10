@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -26,7 +26,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
     private static final long serialVersionUID = 126393045912318783L;
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
             
     @Override
     public Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
@@ -42,7 +42,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         final Conditions conditions = newConditions(currentDateTime,
-                currentDateTime.plusSeconds(properties.getResponse().getSkewAllowance()),
+                currentDateTime.plusSeconds(casProperties.getSamlIdPProperties().getResponse().getSkewAllowance()),
                 adaptor.getEntityId());
         return conditions;
     }

@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheStatus> {
 
     @Autowired
-    private MonitorProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Override
     public CacheStatus observe() {
@@ -53,9 +53,9 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
      */
     protected StatusCode status(final CacheStatistics statistics) {
         final StatusCode code;
-        if (statistics.getEvictions() > properties.getWarn().getEvictionThreshold()) {
+        if (statistics.getEvictions() > casProperties.getMonitorProperties().getWarn().getEvictionThreshold()) {
             code = StatusCode.WARN;
-        } else if (statistics.getPercentFree() < properties.getWarn().getThreshold()) {
+        } else if (statistics.getPercentFree() < casProperties.getMonitorProperties().getWarn().getThreshold()) {
             code = StatusCode.WARN;
         } else {
             code = StatusCode.OK;

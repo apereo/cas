@@ -1,9 +1,6 @@
 package org.apereo.cas.web.config;
 
-import org.apereo.cas.configuration.model.core.events.EventsProperties;
-import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.configuration.model.core.sso.SsoProperties;
-import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.AuthenticationViaFormAction;
@@ -24,7 +21,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -40,7 +36,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("casSupportActionsConfiguration")
-@EnableConfigurationProperties(SsoProperties.class)
 public class CasSupportActionsConfiguration {
 
 
@@ -59,18 +54,8 @@ public class CasSupportActionsConfiguration {
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     @Autowired
-    private LogoutProperties logoutProperties;
-
-    @Autowired
-    private SsoProperties ssoProperties;
-
-    @Autowired
-    private EventsProperties eventsProperties;
-
-    @Autowired
-    private GoogleAnalyticsProperties googleAnalyticsProperties;
-
-
+    private CasConfigurationProperties casProperties;
+    
     @Bean
     public HandlerExceptionResolver errorHandlerResolver() {
         return new FlowExecutionExceptionResolver();
@@ -89,7 +74,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action sendTicketGrantingTicketAction() {
         final SendTicketGrantingTicketAction bean = new SendTicketGrantingTicketAction();
-        bean.setCreateSsoSessionCookieOnRenewAuthentications(this.ssoProperties.isRenewedAuthn());
+        bean.setCreateSsoSessionCookieOnRenewAuthentications(casProperties.getSsoProperties().isRenewedAuthn());
         return bean;
     }
 
@@ -97,7 +82,7 @@ public class CasSupportActionsConfiguration {
     public Action logoutAction() {
         final LogoutAction a = new LogoutAction();
 
-        a.setFollowServiceRedirects(logoutProperties.isFollowServiceRedirects());
+        a.setFollowServiceRedirects(casProperties.getLogoutProperties().isFollowServiceRedirects());
         a.setServicesManager(this.servicesManager);
         return a;
     }
@@ -110,13 +95,13 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action initialFlowSetupAction() {
         final InitialFlowSetupAction bean = new InitialFlowSetupAction();
-        bean.setEnableFlowOnAbsentServiceRequest(this.ssoProperties.isMissingService());
+        bean.setEnableFlowOnAbsentServiceRequest(casProperties.getSsoProperties().isMissingService());
         bean.setArgumentExtractors(this.argumentExtractors);
         bean.setServicesManager(this.servicesManager);
         bean.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
         bean.setWarnCookieGenerator(this.warnCookieGenerator);
-        bean.setGoogleAnalyticsTrackingId(googleAnalyticsProperties.getGoogleAnalyticsTrackingId());
-        bean.setTrackGeoLocation(eventsProperties.isTrackGeolocation());
+        bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalyticsProperties().getGoogleAnalyticsTrackingId());
+        bean.setTrackGeoLocation(casProperties.getEventsProperties().isTrackGeolocation());
         return bean;
     }
 

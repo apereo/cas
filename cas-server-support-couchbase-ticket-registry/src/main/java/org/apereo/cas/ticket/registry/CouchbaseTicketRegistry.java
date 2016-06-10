@@ -6,7 +6,7 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
-import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -48,7 +48,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     
     @Autowired
-    private CouchbaseTicketRegistryProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Resource(name="ticketRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
@@ -113,7 +113,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(properties.isQueryEnabled()));
+        System.setProperty("com.couchbase.queryEnabled", 
+                Boolean.toString(casProperties.getCouchbaseTicketRegistryProperties().isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }
@@ -172,9 +173,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         if (iterator.hasNext()) {
             final ViewRow res = iterator.next();
             return (Integer) res.value();
-        } else {
-            return 0;
-        }
+        } 
+        
+        return 0;
     }
     
     

@@ -5,7 +5,7 @@ import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
-import org.apereo.cas.configuration.model.support.memcached.MemcachedProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 public class MemcachedConfiguration {
     
     @Autowired
-    private MemcachedProperties properties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Memcached client memcached client factory bean.
@@ -37,11 +37,11 @@ public class MemcachedConfiguration {
     @Bean
     public MemcachedClientFactoryBean memcachedClient() {
         final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
-        bean.setServers(properties.getServers());
-        bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(properties.getLocatorType()));
+        bean.setServers(casProperties.getMemcachedProperties().getServers());
+        bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(casProperties.getMemcachedProperties().getLocatorType()));
         bean.setTranscoder(kryoTranscoder());
-        bean.setFailureMode(FailureMode.valueOf(properties.getFailureMode()));
-        bean.setHashAlg(DefaultHashAlgorithm.valueOf(properties.getHashAlgorithm()));
+        bean.setFailureMode(FailureMode.valueOf(casProperties.getMemcachedProperties().getFailureMode()));
+        bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getMemcachedProperties().getHashAlgorithm()));
         return bean;
     }
 

@@ -2,7 +2,7 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +22,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    
     protected UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-
-
+    
     /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
     @Resource(name="uniqueIdGeneratorsMap")
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
@@ -35,7 +33,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     protected ExpirationPolicy serviceTicketExpirationPolicy;
 
     @Autowired
-    private TicketGrantingTicketProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
@@ -60,7 +58,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                 service,
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication,
-                properties.isOnlyTrackMostRecentSession());
+                casProperties.getTicketGrantingTicketProperties().isOnlyTrackMostRecentSession());
         return (T) serviceTicket;
     }
 

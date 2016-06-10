@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,13 +48,13 @@ public class LegacyValidateController extends AbstractServiceValidateController 
 
     @Override
     @Autowired
-    public void setFailureView(@Qualifier("cas1ServiceFailureView") final String failureView) {
+    public void setFailureView(@Qualifier("cas1ServiceFailureView") final View failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Qualifier("cas1ServiceSuccessView") final String successView) {
+    public void setSuccessView(@Qualifier("cas1ServiceSuccessView") final View successView) {
         super.setSuccessView(successView);
     }
 

@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.MessageDescriptor;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -19,7 +19,7 @@ import java.util.List;
 public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandler {
 
     @Autowired
-    private PasswordPolicyProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Override
     protected void handleWarning(
@@ -28,25 +28,26 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             final LdapPasswordPolicyConfiguration configuration,
             final List<MessageDescriptor> messages) {
 
-        if (StringUtils.isBlank(properties.getWarningAttributeName())) {
+        if (StringUtils.isBlank(casProperties.getPasswordPolicyProperties().getWarningAttributeName())) {
             logger.debug("No warning attribute name is defined");
             return;
         }
 
-        if (StringUtils.isBlank(properties.getWarningAttributeValue())) {
+        if (StringUtils.isBlank(casProperties.getPasswordPolicyProperties().getWarningAttributeValue())) {
             logger.debug("No warning attribute value to match is defined");
             return;
         }
 
 
-        final LdapAttribute attribute = response.getLdapEntry().getAttribute(properties.getWarningAttributeName());
+        final LdapAttribute attribute = response.getLdapEntry().getAttribute(casProperties.getPasswordPolicyProperties().getWarningAttributeName());
         boolean matches = false;
         if (attribute != null) {
             logger.debug("Found warning attribute {} with value {}", attribute.getName(), attribute.getStringValue());
-            matches = properties.getWarningAttributeValue().equals(attribute.getStringValue());
+            matches = casProperties.getPasswordPolicyProperties().getWarningAttributeValue().equals(attribute.getStringValue());
         }
-        logger.debug("matches={}, displayWarningOnMatch={}", matches, properties.isDisplayWarningOnMatch());
-        if (properties.isDisplayWarningOnMatch() == matches) {
+        logger.debug("matches={}, displayWarningOnMatch={}", matches, 
+                casProperties.getPasswordPolicyProperties().isDisplayWarningOnMatch());
+        if (casProperties.getPasswordPolicyProperties().isDisplayWarningOnMatch() == matches) {
             super.handleWarning(warning, response, configuration, messages);
         }
     }

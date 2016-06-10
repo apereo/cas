@@ -1,7 +1,7 @@
 package org.apereo.cas.services.config;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.YamlServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,15 @@ import org.springframework.context.annotation.Configuration;
 public class YamlServiceRegistryConfiguration {
 
     @Autowired
-    private ServiceRegistryProperties serviceRegistryProperties;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
     public ServiceRegistryDao yamlServiceRegistryDao() {
         try {
-            return new YamlServiceRegistryDao(serviceRegistryProperties.getConfig().getLocation(),
-                    serviceRegistryProperties.isWatcherEnabled());
+            return new YamlServiceRegistryDao(
+                    casProperties.getServiceRegistryProperties().getConfig().getLocation(),
+                    casProperties.getServiceRegistryProperties().isWatcherEnabled());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

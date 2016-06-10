@@ -1,6 +1,6 @@
 package org.apereo.cas.web.config;
 
-import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyRepository;
 import org.apereo.cas.web.flow.LdapAcceptableUsagePolicyRepository;
 import org.ldaptive.ConnectionFactory;
@@ -24,17 +24,17 @@ public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
     private ConnectionFactory connectionFactory;
 
     @Autowired
-    private AcceptableUsagePolicyProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository ldapAcceptableUsagePolicyRepository() {
         final LdapAcceptableUsagePolicyRepository r =
                 new LdapAcceptableUsagePolicyRepository();
-        r.setBaseDn(properties.getLdap().getBaseDn());
+        r.setBaseDn(casProperties.getAcceptableUsagePolicyProperties().getLdap().getBaseDn());
         r.setConnectionFactory(this.connectionFactory);
-        r.setSearchFilter(properties.getLdap().getSearchFilter());
-        r.setAupAttributeName(properties.getAupAttributeName());
+        r.setSearchFilter(casProperties.getAcceptableUsagePolicyProperties().getLdap().getSearchFilter());
+        r.setAupAttributeName(casProperties.getAcceptableUsagePolicyProperties().getAupAttributeName());
         return r;
     }
 }

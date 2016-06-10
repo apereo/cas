@@ -3,7 +3,7 @@ package org.apereo.cas.mgmt.config;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
-import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
 import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFilterMapper;
@@ -87,9 +87,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
-    
+
     @Autowired
-    private ManagementWebappProperties properties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * A character encoding filter.
@@ -104,12 +104,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public RequireAnyRoleAuthorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(properties.getAdminRoles()));
+        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getManagementWebappProperties().getAdminRoles()));
     }
 
     @Bean
     public CasClient casClient() {
-        final CasClient client = new CasClient(properties.getLoginUrl());
+        final CasClient client = new CasClient(casProperties.getManagementWebappProperties().getLoginUrl());
         client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }
@@ -121,7 +121,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean
     public Config config() {
-        final Config cfg = new Config(properties.getDefaultServiceUrl(), casClient());
+        final Config cfg = new Config(casProperties.getManagementWebappProperties().getDefaultServiceUrl(), casClient());
         cfg.setAuthorizer(requireAnyRoleAuthorizer());
         return cfg;
     }
@@ -253,7 +253,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public Properties userProperties() {
         try {
             final Properties p = new Properties();
-            p.load(properties.getUserPropertiesFile().getInputStream());
+            p.load(casProperties.getManagementWebappProperties().getUserPropertiesFile().getInputStream());
             return p;
         } catch (final Exception e) {
             throw new RuntimeException(e);

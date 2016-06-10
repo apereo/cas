@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.OAuthApplicationContextWrapper;
-import org.apereo.cas.configuration.model.core.ServerProperties;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
@@ -73,10 +72,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     private UsernamePasswordAuthenticator oAuthClientAuthenticator;
 
     @Autowired
-    private ServerProperties serverProperties;
-
-    @Autowired
-    private OAuthProperties oAuthProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Access token response generator access token response generator.
@@ -108,7 +104,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean
     public Config oauthSecConfig() {
-        final CasClient oauthCasClient = new CasClient(serverProperties.getLoginUrl()) {
+        final CasClient oauthCasClient = new CasClient(casProperties.getServerProperties().getLoginUrl()) {
             @Override
             protected RedirectAction retrieveRedirectAction(final WebContext context) {
                 return oauthCasClientRedirectActionBuilder.build(this, context);
@@ -129,13 +125,13 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         final DirectFormClient userFormClient = new DirectFormClient(this.oAuthUserAuthenticator);
         userFormClient.setName("userForm");
 
-        final String callbackUrl = serverProperties.getPrefix().concat("/oauth2.0/callbackAuthorize");
+        final String callbackUrl = casProperties.getServerProperties().getPrefix().concat("/oauth2.0/callbackAuthorize");
         return new Config(callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
     }
 
     private CallbackUrlResolver buildOAuthCasCallbackUrlResolver() {
         return (url, context) -> {
-            final String callbackUrl = serverProperties.getPrefix().concat("/oauth2.0/callbackAuthorize");
+            final String callbackUrl = casProperties.getServerProperties().getPrefix().concat("/oauth2.0/callbackAuthorize");
             if (url.startsWith(callbackUrl)) {
                 final URIBuilder builder = new URIBuilder(url);
                 final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
@@ -276,9 +272,10 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public ExpirationPolicy accessTokenExpirationPolicy() {
+        
         return new OAuthAccessTokenExpirationPolicy(
-                oAuthProperties.getAccessToken().getMaxTimeToLiveInSeconds(),
-                oAuthProperties.getAccessToken().getTimeToKillInSeconds(),
+                casProperties.getoAuthProperties().getAccessToken().getMaxTimeToLiveInSeconds(),
+                casProperties.getoAuthProperties().getAccessToken().getTimeToKillInSeconds(),
                 TimeUnit.SECONDS
         );
     }
@@ -286,8 +283,8 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public ExpirationPolicy oAuthCodeExpirationPolicy() {
-        return new OAuthCodeExpirationPolicy(oAuthProperties.getCode().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(oAuthProperties.getCode().getTimeToKillInSeconds()));
+        return new OAuthCodeExpirationPolicy(casProperties.getoAuthProperties().getCode().getNumberOfUses(),
+                TimeUnit.SECONDS.toMillis(casProperties.getoAuthProperties().getCode().getTimeToKillInSeconds()));
     }
 
     @Bean
@@ -304,7 +301,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public ExpirationPolicy refreshTokenExpirationPolicy() {
         return new OAuthRefreshTokenExpirationPolicy(
-                TimeUnit.SECONDS.toMillis(oAuthProperties.getRefreshToken().getTimeToKillInSeconds())
+                TimeUnit.SECONDS.toMillis(casProperties.getoAuthProperties().getRefreshToken().getTimeToKillInSeconds())
         );
     }
 

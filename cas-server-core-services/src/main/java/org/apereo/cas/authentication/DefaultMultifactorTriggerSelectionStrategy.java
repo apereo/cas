@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -30,7 +31,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
     
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
     
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
@@ -47,7 +48,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
         if (!provider.isPresent() && request != null) {
-            provider = Optional.ofNullable(request.getParameter(mfaProperties.getRequestParameter()))
+            provider = Optional.ofNullable(request.getParameter(casProperties.getMfaProperties().getRequestParameter()))
                     .filter(validProviderIds::contains);
         }
 
@@ -62,8 +63,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null && StringUtils.hasText(mfaProperties.getPrincipalAttributes())) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(mfaProperties.getPrincipalAttributes()).spliterator(), false)
+        if (!provider.isPresent() && principal != null && StringUtils.hasText(casProperties.getMfaProperties().getPrincipalAttributes())) {
+            provider = StreamSupport.stream(ATTR_NAMES.split(casProperties.getMfaProperties().getPrincipalAttributes()).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
@@ -101,7 +102,12 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 .anyMatch(Predicates.containsPattern(attrValue)::apply);
     }
 
+    /**
+     * Sets mfa properties.
+     *
+     * @param mfaProperties the mfa properties
+     */
     public void setMfaProperties(final MfaProperties mfaProperties) {
-        this.mfaProperties = mfaProperties;
+        this.casProperties.setMfaProperties(mfaProperties);
     }
 }

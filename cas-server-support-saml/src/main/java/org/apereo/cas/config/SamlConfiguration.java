@@ -3,8 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
-import org.apereo.cas.configuration.model.core.ServerProperties;
-import org.apereo.cas.configuration.model.support.saml.SamlResponseProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
@@ -31,11 +30,8 @@ import org.springframework.context.annotation.Configuration;
 public class SamlConfiguration {
 
     @Autowired
-    private SamlResponseProperties samlResponseProperties;
-
-    @Autowired
-    private ServerProperties serverProperties;
-
+    private CasConfigurationProperties casProperties;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -52,12 +48,13 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public Saml10SuccessResponseView casSamlServiceSuccessView() {
+        
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
-        view.setIssuer(samlResponseProperties.getIssuer());
-        view.setSkewAllowance(samlResponseProperties.getSkewAllowance());
-        view.setDefaultAttributeNamespace(samlResponseProperties.getAttributeNamespace());
+        view.setIssuer(casProperties.getSamlResponseProperties().getIssuer());
+        view.setSkewAllowance(casProperties.getSamlResponseProperties().getSkewAllowance());
+        view.setDefaultAttributeNamespace(casProperties.getSamlResponseProperties().getAttributeNamespace());
         return view;
     }
 
@@ -98,8 +95,8 @@ public class SamlConfiguration {
     @Bean
     public SamlCompliantUniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
         final SamlCompliantUniqueTicketIdGenerator gen =
-                new SamlCompliantUniqueTicketIdGenerator(serverProperties.getName());
-        gen.setSaml2compliant(samlResponseProperties.isTicketidSaml2());
+                new SamlCompliantUniqueTicketIdGenerator(casProperties.getServerProperties().getName());
+        gen.setSaml2compliant(casProperties.getSamlResponseProperties().isTicketidSaml2());
         return gen;
     }
 

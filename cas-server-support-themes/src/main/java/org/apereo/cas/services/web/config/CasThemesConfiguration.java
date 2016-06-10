@@ -1,6 +1,6 @@
 package org.apereo.cas.services.web.config;
 
-import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ViewResolver;
 public class CasThemesConfiguration {
 
     @Autowired
-    private ThemeProperties themeProperties;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
@@ -29,7 +29,7 @@ public class CasThemesConfiguration {
     @Bean
     public ThemeResolver serviceThemeResolver() {
         final ServiceThemeResolver resolver = new ServiceThemeResolver();
-        resolver.setDefaultThemeName(this.themeProperties.getDefaultThemeName());
+        resolver.setDefaultThemeName(casProperties.getThemeProperties().getDefaultThemeName());
         return resolver;
     }
 }

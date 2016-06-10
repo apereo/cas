@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
@@ -37,6 +39,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
         "classpath*:/META-INF/spring/*.xml"})
 @EnableConfigServer
 @EnableAsync
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.

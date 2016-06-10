@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.flow.config;
 import com.google.common.collect.ImmutableList;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIWebConfigurer;
@@ -50,7 +50,7 @@ public class SamlMetadataUIConfiguration {
     private static final String DEFAULT_SEPARATOR = "::";
 
     @Autowired
-    private SamlMetadataUIProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -62,7 +62,7 @@ public class SamlMetadataUIConfiguration {
 
     @Bean
     public Action samlMetadataUIParserAction() {
-        final String parameter = StringUtils.defaultIfEmpty(properties.getParameter(),
+        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUIProperties().getParameter(),
                 SamlProtocolConstants.PARAMETER_ENTITY_ID);
         return new SamlMetadataUIParserAction(parameter, metadataAdapter());
     }
@@ -78,8 +78,8 @@ public class SamlMetadataUIConfiguration {
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
         final Map<Resource, MetadataFilterChain> resources = new HashMap<>();
         final MetadataFilterChain chain = new MetadataFilterChain();
-        properties.getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
-        adapter.setRequireValidMetadata(properties.isRequireValidMetadata());
+        casProperties.getSamlMetadataUIProperties().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
+        adapter.setRequireValidMetadata(casProperties.getSamlMetadataUIProperties().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
 
         return adapter;
@@ -95,8 +95,8 @@ public class SamlMetadataUIConfiguration {
             final String signingKey = entry.split(DEFAULT_SEPARATOR)[1];
 
             final List<MetadataFilter> filters = new ArrayList<>();
-            if (properties.getMaxValidity() > 0) {
-                filters.add(new RequiredValidUntilFilter(properties.getMaxValidity()));
+            if (casProperties.getSamlMetadataUIProperties().getMaxValidity() > 0) {
+                filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUIProperties().getMaxValidity()));
             }
 
             if (StringUtils.isNotEmpty(signingKey)) {
@@ -119,7 +119,7 @@ public class SamlMetadataUIConfiguration {
                         new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoResolver);
 
                 final SignatureValidationFilter sigFilter = new SignatureValidationFilter(engine);
-                sigFilter.setRequireSignedRoot(properties.isRequireSignedRoot());
+                sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUIProperties().isRequireSignedRoot());
                 filters.add(sigFilter);
             }
             chain.setFilters(filters);

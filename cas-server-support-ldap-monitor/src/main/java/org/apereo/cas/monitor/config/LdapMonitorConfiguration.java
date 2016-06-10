@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor.config;
 
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.monitor.PooledConnectionFactoryMonitor;
 import org.ldaptive.Connection;
@@ -35,12 +35,12 @@ public class LdapMonitorConfiguration {
     private Validator<Connection> validator;
     
     @Autowired
-    private MonitorProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor() {
         final PooledConnectionFactoryMonitor m = new PooledConnectionFactoryMonitor(connectionFactory, validator);
-        m.setMaxWait(properties.getMaxWait());
+        m.setMaxWait(casProperties.getMonitorProperties().getMaxWait());
         return m;
     }
 }

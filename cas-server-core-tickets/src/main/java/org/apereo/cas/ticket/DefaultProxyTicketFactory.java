@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
@@ -41,7 +41,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     protected ExpirationPolicy proxyTicketExpirationPolicy;
 
     @Autowired
-    private TicketGrantingTicketProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket,
@@ -60,7 +60,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
                 ticketId,
                 service,
                 this.proxyTicketExpirationPolicy,
-                properties.isOnlyTrackMostRecentSession());
+                casProperties.getTicketGrantingTicketProperties().isOnlyTrackMostRecentSession());
         return (T) serviceTicket;
     }
 

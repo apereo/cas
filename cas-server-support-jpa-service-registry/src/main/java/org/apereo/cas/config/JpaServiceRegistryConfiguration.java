@@ -1,13 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.services.JpaServiceRegistryDaoImpl;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,14 +28,10 @@ import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
  * @since 5.0.0
  */
 @Configuration("jpaServiceRegistryConfiguration")
-@EnableConfigurationProperties({JpaServiceRegistryProperties.class, DatabaseProperties.class})
 public class JpaServiceRegistryConfiguration {
-    
+
     @Autowired
-    private DatabaseProperties databaseProperties;
-    
-    @Autowired
-    private JpaServiceRegistryProperties jpaServiceRegistryProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Jpa vendor adapter hibernate jpa vendor adapter.
@@ -47,7 +41,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaServiceVendorAdapter() {
-        return newHibernateJpaVendorAdapter(this.databaseProperties);
+        return newHibernateJpaVendorAdapter(casProperties.getDatabaseProperties());
     }
 
     /**
@@ -57,7 +51,7 @@ public class JpaServiceRegistryConfiguration {
      */
     @Bean
     public String[] jpaServicePackagesToScan() {
-        return new String[] {
+        return new String[]{
                 "org.apereo.cas.services",
                 "org.apereo.cas.support.oauth.services",
                 "org.apereo.cas.support.saml.services"
@@ -77,7 +71,7 @@ public class JpaServiceRegistryConfiguration {
                         "jpaServiceRegistryContext",
                         jpaServicePackagesToScan(),
                         dataSourceService()),
-                this.jpaServiceRegistryProperties);
+                casProperties.getJpaServiceRegistryProperties());
     }
 
     /**
@@ -87,7 +81,7 @@ public class JpaServiceRegistryConfiguration {
      * @return the jpa transaction manager
      */
     @Bean
-    public JpaTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") 
+    public JpaTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory")
                                                               final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
@@ -102,9 +96,9 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceService() {
-        return newHickariDataSource(this.jpaServiceRegistryProperties);
+        return newHickariDataSource(casProperties.getJpaServiceRegistryProperties());
     }
-    
+
     @Bean
     public ServiceRegistryDao jpaServiceRegistryDao() {
         return new JpaServiceRegistryDaoImpl();

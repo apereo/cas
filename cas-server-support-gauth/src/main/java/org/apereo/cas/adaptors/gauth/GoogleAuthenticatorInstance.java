@@ -6,7 +6,7 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorException;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     private GoogleAuthenticator googleAuthenticator;
 
@@ -33,9 +33,9 @@ public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
         final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr =
                 new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
-        bldr.setCodeDigits(mfaProperties.getGauth().getCodeDigits());
-        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(mfaProperties.getGauth().getTimeStepSize()));
-        bldr.setWindowSize(mfaProperties.getGauth().getWindowSize());
+        bldr.setCodeDigits(casProperties.getMfaProperties().getGauth().getCodeDigits());
+        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(casProperties.getMfaProperties().getGauth().getTimeStepSize()));
+        bldr.setWindowSize(casProperties.getMfaProperties().getGauth().getWindowSize());
         bldr.setKeyRepresentation(KeyRepresentation.BASE32);
 
         this.googleAuthenticator = new GoogleAuthenticator(bldr.build());

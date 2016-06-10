@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -30,7 +30,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     private static final long serialVersionUID = -3945938960014421135L;
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Resource(name="samlProfileSamlAuthNStatementBuilder")
     private SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder;
@@ -59,7 +59,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                 request, response, casAssertion, service, adaptor));
 
         final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
-        final Assertion assertion = newAssertion(statements, properties.getEntityId(), 
+        final Assertion assertion = newAssertion(statements, casProperties.getSamlIdPProperties().getEntityId(), 
                                                 ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest, 

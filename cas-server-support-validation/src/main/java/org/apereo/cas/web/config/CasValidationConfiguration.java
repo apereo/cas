@@ -1,7 +1,6 @@
 package org.apereo.cas.web.config;
 
-import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.web.view.Cas10ResponseView;
 import org.apereo.cas.web.view.Cas20ResponseView;
@@ -29,10 +28,7 @@ public class CasValidationConfiguration {
     private ValidationServiceSelectionStrategy defaultStrategy;
 
     @Autowired
-    private MfaProperties properties;
-
-    @Autowired
-    private ViewProperties viewProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Validation service selection strategies list.
@@ -64,16 +60,16 @@ public class CasValidationConfiguration {
     @Bean
     public View cas3ServiceJsonView() {
         final Cas30JsonResponseView jsonResponseView = new Cas30JsonResponseView();
-        jsonResponseView.setAuthenticationContextAttribute(properties.getAuthenticationContextAttribute());
-        jsonResponseView.setReleaseProtocolAttributes(viewProperties.getCas3().isReleaseProtocolAttributes());
+        jsonResponseView.setAuthenticationContextAttribute(casProperties.getMfaProperties().getAuthenticationContextAttribute());
+        jsonResponseView.setReleaseProtocolAttributes(casProperties.getViewProperties().getCas3().isReleaseProtocolAttributes());
         return jsonResponseView;
     }
 
     @Bean
     public View cas3ServiceSuccessView() {
         final Cas30ResponseView.Success s = new Cas30ResponseView.Success();
-        s.setAuthenticationContextAttribute(properties.getAuthenticationContextAttribute());
-        s.setReleaseProtocolAttributes(viewProperties.getCas3().isReleaseProtocolAttributes());
+        s.setAuthenticationContextAttribute(casProperties.getMfaProperties().getAuthenticationContextAttribute());
+        s.setReleaseProtocolAttributes(casProperties.getViewProperties().getCas3().isReleaseProtocolAttributes());
         return s;
     }
 }

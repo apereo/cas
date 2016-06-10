@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
@@ -44,10 +44,11 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasSecurityContextConfiguration.class);
 
     @Autowired
-    private AdminPagesSecurityProperties securityProperties;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     public WebContentInterceptor webContentInterceptor() {
+        
         final WebContentInterceptor interceptor = new WebContentInterceptor();
         interceptor.setCacheSeconds(0);
         interceptor.setAlwaysUseFullPath(true);
@@ -58,28 +59,28 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationStatusInterceptor() {
         return new RequiresAuthenticationInterceptor(new
-                Config(new IpClient(new IpRegexpAuthenticator(securityProperties.getIp()))), "IpClient");
+                Config(new IpClient(new IpRegexpAuthenticator(casProperties.getAdminPagesSecurityProperties().getIp()))), "IpClient");
     }
 
     @RefreshScope
     @Bean
     public Config config() {
         try {
-            if (StringUtils.isNotBlank(securityProperties.getLoginUrl())
-                    && StringUtils.isNotBlank(securityProperties.getService())
-                    && StringUtils.isNotBlank(securityProperties.getAdminRoles())) {
+            if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurityProperties().getLoginUrl())
+                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurityProperties().getService())
+                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurityProperties().getAdminRoles())) {
                 
-                final IndirectClient client = new CasClient(securityProperties.getLoginUrl());
+                final IndirectClient client = new CasClient(casProperties.getAdminPagesSecurityProperties().getLoginUrl());
                 final Properties properties = new Properties();
-                properties.load(this.securityProperties.getUsers().getInputStream());
+                properties.load(this.casProperties.getAdminPagesSecurityProperties().getUsers().getInputStream());
                 client.setAuthorizationGenerator(
                         new SpringSecurityPropertiesAuthorizationGenerator(properties));
 
-                final Config cfg = new Config(securityProperties.getService(), client);
+                final Config cfg = new Config(casProperties.getAdminPagesSecurityProperties().getService(), client);
                 cfg.setAuthorizer(
                         new RequireAnyRoleAuthorizer(
                                 org.springframework.util.StringUtils.commaDelimitedListToSet(
-                                        securityProperties.getAdminRoles())));
+                                        casProperties.getAdminPagesSecurityProperties().getAdminRoles())));
 
                 return cfg;
             }

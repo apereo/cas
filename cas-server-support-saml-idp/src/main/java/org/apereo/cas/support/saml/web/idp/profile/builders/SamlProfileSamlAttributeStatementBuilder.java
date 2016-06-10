@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -26,7 +26,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     private static final long serialVersionUID = 1815697787562189088L;
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Override
     public AttributeStatement build(final AuthnRequest authnRequest,
@@ -41,6 +41,6 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             throws SamlException {
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
-        return newAttributeStatement(attributes, properties.getResponse().isUseAttributeFriendlyName());
+        return newAttributeStatement(attributes, casProperties.getSamlIdPProperties().getResponse().isUseAttributeFriendlyName());
     }
 }

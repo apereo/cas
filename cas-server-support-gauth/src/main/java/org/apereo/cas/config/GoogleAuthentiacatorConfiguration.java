@@ -15,7 +15,7 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationW
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -42,7 +42,7 @@ import javax.annotation.Resource;
 public class GoogleAuthentiacatorConfiguration {
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -93,7 +93,7 @@ public class GoogleAuthentiacatorConfiguration {
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
         final GoogleAuthenticatorAuthenticationMetaDataPopulator g =
                 new GoogleAuthenticatorAuthenticationMetaDataPopulator(
-                        mfaProperties.getAuthenticationContextAttribute(),
+                        casProperties.getMfaProperties().getAuthenticationContextAttribute(),
                         googleAuthenticatorAuthenticationHandler(),
                         googleAuthenticatorAuthenticationProvider()
                 );

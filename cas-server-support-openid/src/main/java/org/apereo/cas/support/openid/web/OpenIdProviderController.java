@@ -1,6 +1,6 @@
 package org.apereo.cas.support.openid.web;
 
-import org.apereo.cas.configuration.model.core.ServerProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -18,11 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 public class OpenIdProviderController extends AbstractController {
     
     @Autowired
-    private ServerProperties serverProperties;
+    private CasConfigurationProperties casProperties;
     
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
-        return new ModelAndView("openIdProviderView", "openid_server", serverProperties.getPrefix());
+        return new ModelAndView("openIdProviderView", "openid_server", casProperties.getServerProperties().getPrefix());
     }
 }

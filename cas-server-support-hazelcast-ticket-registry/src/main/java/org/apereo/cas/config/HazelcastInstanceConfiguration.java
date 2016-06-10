@@ -12,8 +12,7 @@ import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,18 +42,17 @@ import java.util.Map;
 public class HazelcastInstanceConfiguration {
 
     @Autowired
-    private HazelcastProperties hazelcastProperties;
-
-    @Autowired
-    private TicketGrantingTicketProperties ticketGrantingTicketProperties;
+    private CasConfigurationProperties casProperties;
     
     @Bean
     @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
-        return new HazelcastTicketRegistry(hazelcast(), 
-                hazelcastProperties.getMapName(), hazelcastProperties.getPageSize());
+
+        return new HazelcastTicketRegistry(hazelcast(),
+                casProperties.getHazelcastProperties().getMapName(),
+                casProperties.getHazelcastProperties().getPageSize());
     }
-    
+
     /**
      * Create HazelcastInstance bean.
      *
@@ -74,28 +72,28 @@ public class HazelcastInstanceConfiguration {
      */
     private Config getConfig() {
         final Config config;
-        if (hazelcastProperties.getConfigLocation() != null
-                && hazelcastProperties.getConfigLocation().exists()) { 
-            
+        if (casProperties.getHazelcastProperties().getConfigLocation() != null
+                && casProperties.getHazelcastProperties().getConfigLocation().exists()) {
+
             try {
-                final URL configUrl = hazelcastProperties.getConfigLocation().getURL();
-                config = new XmlConfigBuilder(hazelcastProperties.getConfigLocation().getInputStream()).build();
+                final URL configUrl = casProperties.getHazelcastProperties().getConfigLocation().getURL();
+                config = new XmlConfigBuilder(casProperties.getHazelcastProperties().getConfigLocation().getInputStream()).build();
                 config.setConfigurationUrl(configUrl);
             } catch (final Exception e) {
                 throw Throwables.propagate(e);
             }
-            
+
         } else {
             //No config location, so do a default config programmatically with handful of properties exposed by CAS
             config = new Config();
             //TCP config
             final TcpIpConfig tcpIpConfig = new TcpIpConfig()
-                    .setEnabled(hazelcastProperties.getCluster().isTcpipEnabled())
-                    .setMembers(hazelcastProperties.getCluster().getMembers());
+                    .setEnabled(casProperties.getHazelcastProperties().getCluster().isTcpipEnabled())
+                    .setMembers(casProperties.getHazelcastProperties().getCluster().getMembers());
 
             //Multicast config
             final MulticastConfig multicastConfig = new MulticastConfig()
-                    .setEnabled(hazelcastProperties.getCluster().isMulticastEnabled());
+                    .setEnabled(casProperties.getHazelcastProperties().getCluster().isMulticastEnabled());
 
             //Join config
             final JoinConfig joinConfig = new JoinConfig()
@@ -104,30 +102,30 @@ public class HazelcastInstanceConfiguration {
 
             //Network config
             final NetworkConfig networkConfig = new NetworkConfig()
-                    .setPort(hazelcastProperties.getCluster().getPort())
-                    .setPortAutoIncrement(hazelcastProperties.getCluster().isPortAutoIncrement())
+                    .setPort(casProperties.getHazelcastProperties().getCluster().getPort())
+                    .setPortAutoIncrement(casProperties.getHazelcastProperties().getCluster().isPortAutoIncrement())
                     .setJoin(joinConfig);
 
             //Map config
-            final MapConfig mapConfig = new MapConfig().setName(hazelcastProperties.getMapName())
-                    .setMaxIdleSeconds(ticketGrantingTicketProperties.getMaxTimeToLiveInSeconds())
-                    .setEvictionPolicy(EvictionPolicy.valueOf(hazelcastProperties.getCluster().getEvictionPolicy()))
-                    .setEvictionPercentage(hazelcastProperties.getCluster().getEvictionPercentage())
+            final MapConfig mapConfig = new MapConfig().setName(casProperties.getHazelcastProperties().getMapName())
+                    .setMaxIdleSeconds(casProperties.getTicketGrantingTicketProperties().getMaxTimeToLiveInSeconds())
+                    .setEvictionPolicy(EvictionPolicy.valueOf(casProperties.getHazelcastProperties().getCluster().getEvictionPolicy()))
+                    .setEvictionPercentage(casProperties.getHazelcastProperties().getCluster().getEvictionPercentage())
                     .setMaxSizeConfig(new MaxSizeConfig()
                             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(
-                                    hazelcastProperties.getCluster().getMaxSizePolicy()))
-                            .setSize(hazelcastProperties.getCluster().getMaxHeapSizePercentage()));
+                                    casProperties.getHazelcastProperties().getCluster().getMaxSizePolicy()))
+                            .setSize(casProperties.getHazelcastProperties().getCluster().getMaxHeapSizePercentage()));
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
-            mapConfigs.put(hazelcastProperties.getMapName(), mapConfig);
+            mapConfigs.put(casProperties.getHazelcastProperties().getMapName(), mapConfig);
 
             //Finally aggregate all those config into the main Config
             config.setMapConfigs(mapConfigs).setNetworkConfig(networkConfig);
         }
         //Add additional default config properties regardless of the configuration source
-        return config.setInstanceName(hazelcastProperties.getCluster().getInstanceName())
-                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, hazelcastProperties.getCluster().getLoggingType())
-                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, 
-                        String.valueOf(hazelcastProperties.getCluster().getMaxNoHeartbeatSeconds()));
+        return config.setInstanceName(casProperties.getHazelcastProperties().getCluster().getInstanceName())
+                .setProperty(casProperties.getHazelcastProperties().LOGGING_TYPE_PROP, casProperties.getHazelcastProperties().getCluster().getLoggingType())
+                .setProperty(casProperties.getHazelcastProperties().MAX_HEARTBEAT_SECONDS_PROP,
+                        String.valueOf(casProperties.getHazelcastProperties().getCluster().getMaxNoHeartbeatSeconds()));
     }
 }

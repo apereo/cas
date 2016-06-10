@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,10 +30,10 @@ public class CasProtocolViewsConfiguration {
     private SpringTemplateEngine springTemplateEngine;
 
     @Autowired
-    private ThymeleafProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ViewProperties viewProperties;
+    private ThymeleafProperties properties;
 
     /**
      * Cas 2  success view.
@@ -43,7 +43,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2SuccessView() {
-        return new CasProtocolView(viewProperties.getCas2().getSuccess(),
+        return new CasProtocolView(casProperties.getViewProperties().getCas2().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -55,7 +55,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ServiceFailureView() {
-        return new CasProtocolView(viewProperties.getCas2().getFailure(),
+        return new CasProtocolView(casProperties.getViewProperties().getCas2().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -67,7 +67,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ProxyFailureView() {
-        return new CasProtocolView(viewProperties.getCas2().getProxy().getFailure(),
+        return new CasProtocolView(casProperties.getViewProperties().getCas2().getProxy().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -79,7 +79,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas2ProxySuccessView() {
-        return new CasProtocolView(viewProperties.getCas2().getProxy().getSuccess(),
+        return new CasProtocolView(casProperties.getViewProperties().getCas2().getProxy().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -91,7 +91,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas3SuccessView() {
-        return new CasProtocolView(viewProperties.getCas3().getSuccess(),
+        return new CasProtocolView(casProperties.getViewProperties().getCas3().getSuccess(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
@@ -103,7 +103,7 @@ public class CasProtocolViewsConfiguration {
     @RefreshScope
     @Bean
     public View cas3ServiceFailureView() {
-        return new CasProtocolView(viewProperties.getCas3().getFailure(),
+        return new CasProtocolView(casProperties.getViewProperties().getCas3().getFailure(),
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.mgmt.config;
 
-import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
@@ -27,7 +27,7 @@ public class CasManagementLdapAuthorizationConfiguration {
     private AuthorizationGenerator authorizationGenerator;
 
     @Autowired
-    private LdapAuthorizationProperties properties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Authorization generator for ldap access.
@@ -49,8 +49,8 @@ public class CasManagementLdapAuthorizationConfiguration {
     @Bean
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final SearchExecutor executor = new SearchExecutor();
-        executor.setBaseDn(properties.getBaseDn());
-        executor.setSearchFilter(new SearchFilter(properties.getSearchFilter()));
+        executor.setBaseDn(casProperties.getLdapAuthorizationProperties().getBaseDn());
+        executor.setSearchFilter(new SearchFilter(casProperties.getLdapAuthorizationProperties().getSearchFilter()));
         executor.setReturnAttributes(ReturnAttributes.ALL.value());
         return executor;
     }

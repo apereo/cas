@@ -42,22 +42,12 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
-import org.apereo.cas.configuration.model.core.authentication.AuthenticationExceptionsProperties;
-import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,43 +65,35 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 @Configuration("casCoreAuthenticationConfiguration")
-@EnableConfigurationProperties(
-        {HttpClientProperties.class,
-                PasswordPolicyProperties.class,
-                PersonDirPrincipalResolverProperties.class,
-                AuthenticationPolicyProperties.class})
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired
-    private JaasAuthenticationProperties jaasAuthenticationProperties;
+    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private PrincipalTransformationProperties principalTransformationProperties;
+    @Autowired(required=false)
+    @Qualifier("acceptPasswordEncoder")
+    private PasswordEncoder acceptPasswordEncoder;
 
-    @Autowired
-    private MfaProperties mfaProperties;
+    @Autowired(required=false)
+    @Qualifier("acceptPrincipalNameTransformer")
+    private PrincipalNameTransformer acceptPrincipalNameTransformer;
 
-    @Autowired
-    private HttpClientProperties trustStoreProperties;
+    @Autowired(required=false)
+    @Qualifier("acceptPasswordPolicyConfiguration")
+    private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
+    
+    @Autowired(required=false)
+    @Qualifier("jaasPasswordEncoder")
+    private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordPolicyProperties passwordPolicyProperties;
+    @Autowired(required=false)
+    @Qualifier("jaasPrincipalNameTransformer")
+    private PrincipalNameTransformer principalNameTransformer;
 
-    @Autowired
-    private PersonDirPrincipalResolverProperties principalResolverProperties;
-
-    @Autowired
-    private AuthenticationPolicyProperties authenticationPolicyProperties;
-
-    @Autowired
-    private PasswordEncoderProperties passwordEncoderProperties;
-
-    @Autowired
-    private AcceptAuthenticationProperties acceptAuthenticationProperties;
-
-    @Autowired
-    private AuthenticationExceptionsProperties exceptionsProperties;
-
+    @Autowired(required=false)
+    @Qualifier("jaasPasswordPolicyConfiguration")
+    private PasswordPolicyConfiguration passwordPolicyConfiguration;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -124,7 +106,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
         final AuthenticationExceptionHandler h = new AuthenticationExceptionHandler();
-        h.setErrors(exceptionsProperties.getExceptions());
+        h.setErrors(casProperties.getAuthenticationExceptionsProperties().getExceptions());
         return h;
     }
 
@@ -132,15 +114,15 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationPolicy requiredHandlerAuthenticationPolicy() {
         final RequiredHandlerAuthenticationPolicy bean =
-                new RequiredHandlerAuthenticationPolicy(this.authenticationPolicyProperties.getReq().getHandlerName());
-        bean.setTryAll(this.authenticationPolicyProperties.getReq().isTryAll());
+                new RequiredHandlerAuthenticationPolicy(casProperties.getAuthenticationPolicyProperties().getReq().getHandlerName());
+        bean.setTryAll(casProperties.getAuthenticationPolicyProperties().getReq().isTryAll());
         return bean;
     }
 
     @Bean
     public AuthenticationPolicy anyAuthenticationPolicy() {
         final AnyAuthenticationPolicy bean = new AnyAuthenticationPolicy();
-        bean.setTryAll(this.authenticationPolicyProperties.getAny().isTryAll());
+        bean.setTryAll(casProperties.getAuthenticationPolicyProperties().getAny().isTryAll());
         return bean;
     }
 
@@ -153,15 +135,25 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final Pattern pattern = Pattern.compile("::");
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
-        if (StringUtils.isNotBlank(acceptAuthenticationProperties.getUsers())) {
+        if (StringUtils.isNotBlank(casProperties.getAcceptAuthenticationProperties().getUsers())) {
             final Set<String> usersPasswords =
-                    org.springframework.util.StringUtils.commaDelimitedListToSet(acceptAuthenticationProperties.getUsers());
+                    org.springframework.util.StringUtils.commaDelimitedListToSet(
+                            casProperties.getAcceptAuthenticationProperties().getUsers());
             final Map<String, String> parsedUsers = new HashMap<>();
             usersPasswords.stream().forEach(usersPassword -> {
                 final String[] splitArray = pattern.split(usersPassword);
                 parsedUsers.put(splitArray[0], splitArray[1]);
             });
             h.setUsers(parsedUsers);
+        }
+        if (acceptPasswordEncoder != null) {
+            h.setPasswordEncoder(acceptPasswordEncoder);
+        }
+        if (acceptPasswordPolicyConfiguration != null) {
+            h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
+        }
+        if (acceptPrincipalNameTransformer != null) {
+            h.setPrincipalNameTransformer(acceptPrincipalNameTransformer);
         }
         return h;
     }
@@ -175,9 +167,9 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
         final AuthenticationContextValidator val = new AuthenticationContextValidator();
-        val.setAuthenticationContextAttribute(mfaProperties.getAuthenticationContextAttribute());
+        val.setAuthenticationContextAttribute(casProperties.getMfaProperties().getAuthenticationContextAttribute());
         val.setServicesManager(this.servicesManager);
-        val.setGlobalFailureMode(mfaProperties.getGlobalFailureMode());
+        val.setGlobalFailureMode(casProperties.getMfaProperties().getGlobalFailureMode());
         return val;
     }
 
@@ -204,8 +196,8 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
-        return new FileTrustStoreSslSocketFactory(this.trustStoreProperties.getTruststore().getFile(),
-                this.trustStoreProperties.getTruststore().getPsw());
+        return new FileTrustStoreSslSocketFactory(casProperties.getHttpClientProperties().getTruststore().getFile(),
+                casProperties.getHttpClientProperties().getTruststore().getPsw());
     }
 
     @Bean
@@ -235,7 +227,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public PasswordPolicyConfiguration defaultPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration(this.passwordPolicyProperties);
+        return new PasswordPolicyConfiguration(casProperties.getPasswordPolicyProperties());
     }
 
     @Bean
@@ -253,8 +245,8 @@ public class CasCoreAuthenticationConfiguration {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
         bean.setAttributeRepository(attributeRepository);
         bean.setPrincipalFactory(principalFactory);
-        bean.setPrincipalAttributeName(this.principalResolverProperties.getPrincipalAttribute());
-        bean.setReturnNullIfNoAttributes(this.principalResolverProperties.isReturnNull());
+        bean.setPrincipalAttributeName(casProperties.getPersonDirPrincipalResolverProperties().getPrincipalAttribute());
+        bean.setReturnNullIfNoAttributes(casProperties.getPersonDirPrincipalResolverProperties().isReturnNull());
         return bean;
     }
 
@@ -273,10 +265,20 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationHandler jaasAuthenticationHandler() {
         final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
 
-        h.setKerberosKdcSystemProperty(jaasAuthenticationProperties.getKerberosKdcSystemProperty());
-        h.setKerberosRealmSystemProperty(jaasAuthenticationProperties.getKerberosRealmSystemProperty());
-        h.setRealm(jaasAuthenticationProperties.getRealm());
-
+        h.setKerberosKdcSystemProperty(casProperties.getJaasAuthenticationProperties().getKerberosKdcSystemProperty());
+        h.setKerberosRealmSystemProperty(casProperties.getJaasAuthenticationProperties().getKerberosRealmSystemProperty());
+        h.setRealm(casProperties.getJaasAuthenticationProperties().getRealm());
+        
+        if (passwordEncoder != null) {
+            h.setPasswordEncoder(passwordEncoder);
+        }
+        if (passwordPolicyConfiguration != null) {
+            h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
+        }
+        if (principalNameTransformer != null) {
+            h.setPrincipalNameTransformer(principalNameTransformer);
+        }
+        
         return h;
     }
 
@@ -289,8 +291,8 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalNameTransformer prefixSuffixPrincipalNameTransformer() {
         final PrefixSuffixPrincipalNameTransformer p = new PrefixSuffixPrincipalNameTransformer();
 
-        p.setPrefix(principalTransformationProperties.getPrefix());
-        p.setSuffix(principalTransformationProperties.getSuffix());
+        p.setPrefix(casProperties.getPrincipalTransformationProperties().getPrefix());
+        p.setSuffix(casProperties.getPrincipalTransformationProperties().getSuffix());
 
         return p;
     }
@@ -309,8 +311,8 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public DefaultPasswordEncoder defaultPasswordEncoder() {
         final DefaultPasswordEncoder e = new DefaultPasswordEncoder();
-        e.setCharacterEncoding(passwordEncoderProperties.getCharacterEncoding());
-        e.setEncodingAlgorithm(passwordEncoderProperties.getEncodingAlgorithm());
+        e.setCharacterEncoding(casProperties.getPasswordEncoderProperties().getCharacterEncoding());
+        e.setEncodingAlgorithm(casProperties.getPasswordEncoderProperties().getEncodingAlgorithm());
         return e;
     }
 
@@ -319,7 +321,7 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
         final ConvertCasePrincipalNameTransformer t =
                 new ConvertCasePrincipalNameTransformer(this.delegate);
-        t.setToUpperCase(principalTransformationProperties.isUppercase());
+        t.setToUpperCase(casProperties.getPrincipalTransformationProperties().isUppercase());
         return t;
     }
 

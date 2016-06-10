@@ -4,9 +4,8 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -22,11 +21,10 @@ import java.net.URL;
  */
 @Configuration("hazelcastSessionConfiguration")
 @EnableHazelcastHttpSession
-@EnableConfigurationProperties(WebflowProperties.class)
 public class HazelcastSessionConfiguration {
     
     @Autowired
-    private WebflowProperties webflowProperties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Hazelcast instance that is used by the spring session
@@ -37,7 +35,7 @@ public class HazelcastSessionConfiguration {
      */
     @Bean
     public HazelcastInstance hazelcastInstance() {
-        final Resource hzConfigResource = this.webflowProperties.getSession().getHzLocation();
+        final Resource hzConfigResource = casProperties.getWebflowProperties().getSession().getHzLocation();
         try {
             final URL configUrl = hzConfigResource.getURL();
             final Config config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();

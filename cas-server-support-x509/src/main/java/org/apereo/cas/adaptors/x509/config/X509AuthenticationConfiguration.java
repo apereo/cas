@@ -21,7 +21,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipa
 import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.configuration.model.support.x509.X509Properties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -60,7 +60,7 @@ public class X509AuthenticationConfiguration {
     private RevocationChecker revocationChecker;
 
     @Autowired
-    private X509Properties properties;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     public RevocationPolicy allowRevocationPolicy() {
@@ -71,7 +71,7 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public RevocationPolicy thresholdExpiredCRLRevocationPolicy() {
         final ThresholdExpiredCRLRevocationPolicy p = new ThresholdExpiredCRLRevocationPolicy();
-        p.setThreshold(properties.getRevocationPolicyThreshold());
+        p.setThreshold(casProperties.getX509Properties().getRevocationPolicyThreshold());
         return p;
     }
 
@@ -83,8 +83,8 @@ public class X509AuthenticationConfiguration {
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
         final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker();
-        c.setCheckAll(properties.isCheckAll());
-        c.setThrowOnFetchFailure(properties.isThrowOnFetchFailure());
+        c.setCheckAll(casProperties.getX509Properties().isCheckAll());
+        c.setThrowOnFetchFailure(casProperties.getX509Properties().isThrowOnFetchFailure());
         c.setUnavailableCRLPolicy(x509CrlUnavailableRevocationPolicy);
         c.setExpiredCRLPolicy(x509CrlExpiredRevocationPolicy);
         return c;
@@ -104,8 +104,8 @@ public class X509AuthenticationConfiguration {
     public RevocationChecker resourceCrlRevocationChecker() {
         final ResourceCRLRevocationChecker c = new ResourceCRLRevocationChecker();
 
-        c.setRefreshInterval(properties.getRefreshIntervalSeconds());
-        c.setCheckAll(properties.isCheckAll());
+        c.setRefreshInterval(casProperties.getX509Properties().getRefreshIntervalSeconds());
+        c.setCheckAll(casProperties.getX509Properties().isCheckAll());
         c.setExpiredCRLPolicy(this.x509ResourceExpiredRevocationPolicy);
         c.setUnavailableCRLPolicy(this.x509ResourceUnavailableRevocationPolicy);
         return c;
@@ -116,13 +116,13 @@ public class X509AuthenticationConfiguration {
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
         final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler();
 
-        h.setCheckKeyUsage(properties.isCheckKeyUsage());
-        h.setMaxPathLength(properties.getMaxPathLength());
-        h.setMaxPathLengthAllowUnspecified(properties.isMaxPathLengthAllowUnspecified());
-        h.setRequireKeyUsage(properties.isRequireKeyUsage());
+        h.setCheckKeyUsage(casProperties.getX509Properties().isCheckKeyUsage());
+        h.setMaxPathLength(casProperties.getX509Properties().getMaxPathLength());
+        h.setMaxPathLengthAllowUnspecified(casProperties.getX509Properties().isMaxPathLengthAllowUnspecified());
+        h.setRequireKeyUsage(casProperties.getX509Properties().isRequireKeyUsage());
         h.setRevocationChecker(this.revocationChecker);
-        h.setSubjectDnPattern(properties.getRegExSubjectDnPattern());
-        h.setTrustedIssuerDnPattern(properties.getRegExTrustedIssuerDnPattern());
+        h.setSubjectDnPattern(casProperties.getX509Properties().getRegExSubjectDnPattern());
+        h.setTrustedIssuerDnPattern(casProperties.getX509Properties().getRegExTrustedIssuerDnPattern());
 
         return h;
     }
@@ -146,7 +146,7 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
         final X509SubjectPrincipalResolver p = new X509SubjectPrincipalResolver();
-        p.setDescriptor(properties.getPrincipalDescriptor());
+        p.setDescriptor(casProperties.getX509Properties().getPrincipalDescriptor());
         return p;
     }
 
@@ -174,8 +174,8 @@ public class X509AuthenticationConfiguration {
         final X509SerialNumberAndIssuerDNPrincipalResolver r =
                 new X509SerialNumberAndIssuerDNPrincipalResolver();
 
-        r.setSerialNumberPrefix(properties.getSerialNumberPrefix());
-        r.setValueDelimiter(properties.getValueDelimiter());
+        r.setSerialNumberPrefix(casProperties.getX509Properties().getSerialNumberPrefix());
+        r.setValueDelimiter(casProperties.getX509Properties().getValueDelimiter());
 
         return r;
     }

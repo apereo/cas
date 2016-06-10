@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerController {
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
     
     /**
      * Instantiates a new Slo post profile handler controller.
@@ -60,13 +60,13 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     protected void handleSloPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        if (properties.getLogout().isSingleLogoutCallbacksDisabled()) {
+        if (casProperties.getSamlIdPProperties().getLogout().isSingleLogoutCallbacksDisabled()) {
             logger.info("Processing SAML IdP SLO requests is disabled");
             return;
         }
 
         final LogoutRequest logoutRequest = decodeRequest(request, decoder, LogoutRequest.class);
-        if (properties.getLogout().isForceSignedLogoutRequests() && !logoutRequest.isSigned()) {
+        if (casProperties.getSamlIdPProperties().getLogout().isForceSignedLogoutRequests() && !logoutRequest.isSigned()) {
             throw new SAMLException("Logout request is not signed but should be.");
         } else if (logoutRequest.isSigned()) {
             final MetadataResolver resolver = SamlIdPUtils.getMetadataResolverForAllSamlServices(this.servicesManager,

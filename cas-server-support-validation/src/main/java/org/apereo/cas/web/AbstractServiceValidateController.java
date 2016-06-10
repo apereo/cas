@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -39,6 +39,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -62,15 +63,6 @@ import java.util.Optional;
  * @since 3.0.0
  */
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
-    /** View if Service Ticket Validation Fails. */
-    public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
-
-    /** View if Service Ticket Validation Succeeds. */
-    public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
-
-    /** JSON View if Service Ticket Validation Succeeds and if service requires JSON. */
-    public static final String DEFAULT_SERVICE_VIEW_NAME_JSON = "cas3ServiceJsonView";
-
     @Autowired
     private ApplicationContext context;
     
@@ -92,10 +84,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private ProxyHandler proxyHandler;
 
     /** The view to redirect to on a successful validation. */
-    private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
+    private View successView;
 
     /** The view to redirect to on a validation failure. */
-    private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
+    private View failureView;
 
     /** Extracts parameters from Request object. */
     @Resource(name="defaultArgumentExtractor")
@@ -105,12 +97,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Resource(name="authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
+    
+    @Autowired
+    @Qualifier("cas3ServiceJsonView")
+    private View jsonView;
 
-    /**
+    /**View
      * Instantiates a new Service validate controller.
      */
     public AbstractServiceValidateController() {}
@@ -369,7 +365,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
         
         if (type == ValidationResponseType.JSON) {
-            return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
+            return new ModelAndView(this.jsonView);
         }
         
         return new ModelAndView(isSuccess ? this.successView : this.failureView);
@@ -401,7 +397,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         if (contextProvider.isPresent()) {
-            modelAndView.addObject(mfaProperties.getAuthenticationContextAttribute(), contextProvider);
+            modelAndView.addObject(casProperties.getMfaProperties().getAuthenticationContextAttribute(), contextProvider);
         }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
@@ -457,7 +453,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * @param failureView The failureView to set.
      */
-    public void setFailureView(final String failureView) {
+    public void setFailureView(final View failureView) {
         this.failureView = failureView;
     }
 
@@ -465,14 +461,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Return the failureView.
      * @return the failureView
      */
-    public String getFailureView() {
+    public View getFailureView() {
         return this.failureView;
     }
 
     /**
      * @param successView The successView to set.
      */
-    public void setSuccessView(final String successView) {
+    public void setSuccessView(final View successView) {
         this.successView = successView;
     }
 
@@ -480,9 +476,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Return the successView.
      * @return the successView
      */
-    public String getSuccessView() {
+    public View getSuccessView() {
         return this.successView;
     }
+    
     /**
      * @param proxyHandler The proxyHandler to set.
      */

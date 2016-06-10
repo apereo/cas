@@ -3,10 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowCipherExecutor;
-import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
-import org.apereo.cas.configuration.model.core.util.TicketProperties;
-import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
-import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
@@ -15,7 +12,6 @@ import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,47 +25,37 @@ import javax.validation.MessageInterpolator;
  * @since 5.0.0
  */
 @Configuration("casCoreUtilConfiguration")
-@EnableConfigurationProperties({TicketProperties.class, WebflowProperties.class, TicketGrantingCookieProperties.class})
 public class CasCoreUtilConfiguration {
 
     @Autowired
-    private HttpClientProperties httpClientProperties;
-
-    @Autowired
-    private TicketProperties ticketProperties;
-
-    @Autowired
-    private WebflowProperties webflowProperties;
-
-    @Autowired
-    private TicketGrantingCookieProperties tgcProperties;
-
+    private CasConfigurationProperties casProperties;
+    
     @Bean
     public CipherExecutor<byte[], byte[]> defaultTicketCipherExecutor() {
         return new DefaultTicketCipherExecutor(
-                this.ticketProperties.getEncryption().getKey(),
-                this.ticketProperties.getSigning().getKey(),
-                this.ticketProperties.getSecretkey().getAlg(),
-                this.ticketProperties.getSigning().getKeySize(),
-                this.ticketProperties.getEncryption().getKeySize());
+                casProperties.getTicketProperties().getEncryption().getKey(),
+                casProperties.getTicketProperties().getSigning().getKey(),
+                casProperties.getTicketProperties().getSecretkey().getAlg(),
+                casProperties.getTicketProperties().getSigning().getKeySize(),
+                casProperties.getTicketProperties().getEncryption().getKeySize());
     }
 
     @Bean
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
         return new WebflowCipherExecutor(
-                this.webflowProperties.getEncryption().getKey(),
-                this.webflowProperties.getSigning().getKey(),
-                this.webflowProperties.getSecretkey().getAlg(),
-                this.webflowProperties.getSigning().getKeySize(),
-                this.webflowProperties.getEncryption().getKeySize());
+                casProperties.getWebflowProperties().getEncryption().getKey(),
+                casProperties.getWebflowProperties().getSigning().getKey(),
+                casProperties.getWebflowProperties().getSecretkey().getAlg(),
+                casProperties.getWebflowProperties().getSigning().getKeySize(),
+                casProperties.getWebflowProperties().getEncryption().getKeySize());
     }
 
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c =
                 new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        c.setConnectionTimeout(httpClientProperties.getConnectionTimeout());
-        c.setReadTimeout(httpClientProperties.getReadTimeout());
+        c.setConnectionTimeout(casProperties.getHttpClientProperties().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClientProperties().getReadTimeout());
         return c;
     }
 
@@ -78,8 +64,8 @@ public class CasCoreUtilConfiguration {
     public FactoryBean<SimpleHttpClient> noRedirectHttpClient() {
         final SimpleHttpClientFactoryBean.NoRedirectHttpClient c =
                 new SimpleHttpClientFactoryBean.NoRedirectHttpClient();
-        c.setConnectionTimeout(httpClientProperties.getConnectionTimeout());
-        c.setReadTimeout(httpClientProperties.getReadTimeout());
+        c.setConnectionTimeout(casProperties.getHttpClientProperties().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClientProperties().getReadTimeout());
         return c;
     }
 
@@ -87,8 +73,8 @@ public class CasCoreUtilConfiguration {
     public FactoryBean<SimpleHttpClient> supportsTrustStoreSslSocketFactoryHttpClient() {
         final SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient c =
                 new SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient();
-        c.setConnectionTimeout(httpClientProperties.getConnectionTimeout());
-        c.setReadTimeout(httpClientProperties.getReadTimeout());
+        c.setConnectionTimeout(casProperties.getHttpClientProperties().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClientProperties().getReadTimeout());
         return c;
     }
 
@@ -105,7 +91,8 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     public CipherExecutor tgcCipherExecutor() {
-        return new TGCCipherExecutor(this.tgcProperties.getEncryptionKey(), this.tgcProperties.getSigningKey());
+        return new TGCCipherExecutor(casProperties.getTicketGrantingCookieProperties().getEncryptionKey(),
+                casProperties.getTicketGrantingCookieProperties().getSigningKey());
     }
 
     @Bean

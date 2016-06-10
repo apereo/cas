@@ -5,7 +5,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -48,7 +48,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
     @Autowired
-    private TicketGrantingTicketProperties grantingTicketProperties;
+    private CasConfigurationProperties casProperties;
     
     /**
      * Handle request internal model and view.
@@ -147,7 +147,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                 .append('&')
                 .append(OAuthConstants.EXPIRES)
                 .append('=')
-                .append(grantingTicketProperties.getTimeToKillInSeconds());
+                .append(casProperties.getTicketGrantingTicketProperties().getTimeToKillInSeconds());
 
         if (StringUtils.isNotBlank(state)) {
             stringBuilder.append('&')

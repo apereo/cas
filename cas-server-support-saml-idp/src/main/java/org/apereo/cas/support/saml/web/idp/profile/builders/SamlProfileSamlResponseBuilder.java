@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -55,7 +55,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     protected VelocityEngineFactory velocityEngineFactory;
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Resource(name="samlProfileSamlAssertionBuilder")
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
@@ -127,7 +127,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @return the issuer
      */
     protected Issuer buildEntityIssuer() {
-        final Issuer issuer = newIssuer(properties.getEntityId());
+        final Issuer issuer = newIssuer(casProperties.getSamlIdPProperties().getEntityId());
         issuer.setFormat(Issuer.ENTITY);
         return issuer;
     }

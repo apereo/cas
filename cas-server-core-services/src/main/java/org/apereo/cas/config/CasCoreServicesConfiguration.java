@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpCasAttributeEncoder;
-import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.JsonServiceRegistryDao;
@@ -22,7 +22,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +33,12 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  */
 @Configuration("casCoreServicesConfiguration")
-@EnableConfigurationProperties(ServiceRegistryProperties.class)
 public class CasCoreServicesConfiguration {
 
     @Autowired
-    private ServiceRegistryProperties serviceRegistryProperties;
+    private CasConfigurationProperties casProperties;
 
-            
+
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
@@ -61,7 +59,7 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Autowired
     @Bean
-    public CasAttributeEncoder casAttributeEncoder(@Qualifier("servicesManager") 
+    public CasAttributeEncoder casAttributeEncoder(@Qualifier("servicesManager")
                                                    final ServicesManager servicesManager) {
         return new DefaultCasAttributeEncoder(servicesManager);
     }
@@ -78,7 +76,7 @@ public class CasCoreServicesConfiguration {
 
     @Autowired
     @Bean
-    public ReloadableServicesManager servicesManager(@Qualifier("serviceRegistryDao") 
+    public ReloadableServicesManager servicesManager(@Qualifier("serviceRegistryDao")
                                                      final ServiceRegistryDao serviceRegistryDao) {
         return new DefaultServicesManagerImpl(serviceRegistryDao);
     }
@@ -87,17 +85,17 @@ public class CasCoreServicesConfiguration {
     public ServiceRegistryDao inMemoryServiceRegistryDao() {
         return new InMemoryServiceRegistryDaoImpl();
     }
-    
+
     @Bean
     public ServiceRegistryDao jsonServiceRegistryDao() {
         try {
-            return new JsonServiceRegistryDao(this.serviceRegistryProperties.getConfig().getLocation(),
-                    this.serviceRegistryProperties.isWatcherEnabled());
+            return new JsonServiceRegistryDao(casProperties.getServiceRegistryProperties().getConfig().getLocation(),
+                    casProperties.getServiceRegistryProperties().isWatcherEnabled());
         } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }
     }
-    
+
     @Autowired
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("serviceRegistryDao")
@@ -106,7 +104,7 @@ public class CasCoreServicesConfiguration {
                                                                  final ServiceRegistryDao jsonServiceRegistryDao,
                                                                  @Qualifier("servicesManager")
                                                                  final ReloadableServicesManager servicesManager) {
-        return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao, servicesManager, 
-                this.serviceRegistryProperties.isInitFromJson());
+        return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao, servicesManager,
+                casProperties.getServiceRegistryProperties().isInitFromJson());
     }
 }

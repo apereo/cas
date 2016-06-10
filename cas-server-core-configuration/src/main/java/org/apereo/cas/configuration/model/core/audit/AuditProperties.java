@@ -12,11 +12,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "cas.audit", ignoreUnknownFields = false)
 public class AuditProperties {
 
-    private String appCode;
-    private String singlelineSeparator;
+    private String appCode = "CAS";
+    
+    private String singlelineSeparator = "|";
+    
     private boolean useSingleLine;
+    
     private AbstractStringAuditTrailManager.AuditFormats auditFormat =
             AbstractStringAuditTrailManager.AuditFormats.DEFAULT;
+    
     private boolean ignoreAuditFailures;
 
     public String getAppCode() {

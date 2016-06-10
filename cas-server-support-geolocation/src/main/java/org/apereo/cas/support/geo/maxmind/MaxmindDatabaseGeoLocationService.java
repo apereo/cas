@@ -4,7 +4,7 @@ import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
-import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.geo.GeoLocation;
 import org.apereo.cas.support.geo.GeoLocationService;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private MaxmindProperties maxmindProperties;
+    private CasConfigurationProperties casProperties;
 
     private DatabaseReader cityDatabaseReader;
     private DatabaseReader countryDatabaseReader;
@@ -37,15 +37,15 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     @PostConstruct
     public void init() {
         try {
-            if (maxmindProperties.getCityDatabase().exists()) {
+            if (casProperties.getMaxmindProperties().getCityDatabase().exists()) {
                 this.cityDatabaseReader =
-                        new DatabaseReader.Builder(maxmindProperties.getCityDatabase().getFile())
+                        new DatabaseReader.Builder(casProperties.getMaxmindProperties().getCityDatabase().getFile())
                                 .withCache(new CHMCache()).build();
             }
 
-            if (maxmindProperties.getCountryDatabase().exists()) {
+            if (casProperties.getMaxmindProperties().getCountryDatabase().exists()) {
                 this.countryDatabaseReader =
-                        new DatabaseReader.Builder(maxmindProperties.getCountryDatabase().getFile())
+                        new DatabaseReader.Builder(casProperties.getMaxmindProperties().getCountryDatabase().getFile())
                                 .withCache(new CHMCache()).build();
             }
         } catch (final Exception e) {

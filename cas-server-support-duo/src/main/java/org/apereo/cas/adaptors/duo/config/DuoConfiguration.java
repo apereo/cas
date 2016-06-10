@@ -10,7 +10,7 @@ import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolve
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
@@ -39,7 +39,7 @@ import javax.annotation.Resource;
 public class DuoConfiguration {
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -74,7 +74,7 @@ public class DuoConfiguration {
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
         final DuoAuthenticationMetaDataPopulator pop = new DuoAuthenticationMetaDataPopulator();
 
-        pop.setAuthenticationContextAttribute(mfaProperties.getAuthenticationContextAttribute());
+        pop.setAuthenticationContextAttribute(casProperties.getMfaProperties().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(duoAuthenticationHandler());
         pop.setProvider(duoAuthenticationProvider());
         

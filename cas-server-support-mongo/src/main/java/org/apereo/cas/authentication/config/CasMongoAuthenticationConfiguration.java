@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -33,18 +33,18 @@ public class CasMongoAuthenticationConfiguration {
     private org.pac4j.http.credentials.password.PasswordEncoder mongoPasswordEncoder;
 
     @Autowired
-    private MongoAuthenticationProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
         final MongoAuthenticationHandler mongo = new MongoAuthenticationHandler();
 
-        mongo.setAttributes(properties.getAttributes());
-        mongo.setCollectionName(properties.getCollectionName());
-        mongo.setMongoHostUri(properties.getMongoHostUri());
-        mongo.setPasswordAttribute(properties.getPasswordAttribute());
-        mongo.setUsernameAttribute(properties.getUsernameAttribute());
+        mongo.setAttributes(casProperties.getMongoAuthenticationProperties().getAttributes());
+        mongo.setCollectionName(casProperties.getMongoAuthenticationProperties().getCollectionName());
+        mongo.setMongoHostUri(casProperties.getMongoAuthenticationProperties().getMongoHostUri());
+        mongo.setPasswordAttribute(casProperties.getMongoAuthenticationProperties().getPasswordAttribute());
+        mongo.setUsernameAttribute(casProperties.getMongoAuthenticationProperties().getUsernameAttribute());
 
         if (principalNameTransformer != null) {
             mongo.setPrincipalNameTransformer(principalNameTransformer);

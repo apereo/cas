@@ -9,7 +9,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowActi
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
@@ -17,7 +17,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,11 +33,10 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @Configuration("yubikeyConfiguration")
-@EnableConfigurationProperties(MfaProperties.class)
 public class YubiKeyConfiguration {
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -70,8 +68,8 @@ public class YubiKeyConfiguration {
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
 
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(
-                this.mfaProperties.getYubikey().getClientId(),
-                this.mfaProperties.getYubikey().getSecretKey());
+                this.casProperties.getMfaProperties().getYubikey().getClientId(),
+                this.casProperties.getMfaProperties().getYubikey().getSecretKey());
 
         if (registry != null) {
             handler.setRegistry(this.registry);
@@ -87,7 +85,7 @@ public class YubiKeyConfiguration {
         final YubiKeyAuthenticationMetaDataPopulator pop = 
                 new YubiKeyAuthenticationMetaDataPopulator();
         
-        pop.setAuthenticationContextAttribute(mfaProperties.getAuthenticationContextAttribute());
+        pop.setAuthenticationContextAttribute(casProperties.getMfaProperties().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(yubikeyAuthenticationHandler());
         pop.setProvider(yubikeyAuthenticationProvider(httpClient));
         return pop;
@@ -100,7 +98,7 @@ public class YubiKeyConfiguration {
                                                                            final HttpClient httpClient) {
         return new YubiKeyMultifactorAuthenticationProvider(
                 yubikeyAuthenticationHandler(),
-                this.mfaProperties.getYubikey().getRank(),
+                this.casProperties.getMfaProperties().getYubikey().getRank(),
                 httpClient);
     }
 

@@ -9,7 +9,7 @@ import org.apereo.cas.adaptors.radius.web.RadiusMultifactorApplicationContextWra
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -38,7 +38,7 @@ import java.util.List;
 public class RadiusMultifactorConfiguration {
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -72,22 +72,22 @@ public class RadiusMultifactorConfiguration {
         final List<JRadiusServerImpl> list = new ArrayList<>();
 
         final RadiusClientFactory factory = new RadiusClientFactory();
-        factory.setAccountingPort(mfaProperties.getRadius().getClient().getAccountingPort());
-        factory.setAuthenticationPort(mfaProperties.getRadius().getClient().getAuthenticationPort());
-        factory.setInetAddress(mfaProperties.getRadius().getClient().getInetAddress());
-        factory.setSharedSecret(mfaProperties.getRadius().getClient().getSharedSecret());
-        factory.setSocketTimeout(mfaProperties.getRadius().getClient().getSocketTimeout());
+        factory.setAccountingPort(casProperties.getMfaProperties().getRadius().getClient().getAccountingPort());
+        factory.setAuthenticationPort(casProperties.getMfaProperties().getRadius().getClient().getAuthenticationPort());
+        factory.setInetAddress(casProperties.getMfaProperties().getRadius().getClient().getInetAddress());
+        factory.setSharedSecret(casProperties.getMfaProperties().getRadius().getClient().getSharedSecret());
+        factory.setSocketTimeout(casProperties.getMfaProperties().getRadius().getClient().getSocketTimeout());
 
-        final RadiusProtocol protocol = RadiusProtocol.valueOf(mfaProperties.getRadius().getServer().getProtocol());
+        final RadiusProtocol protocol = RadiusProtocol.valueOf(casProperties.getMfaProperties().getRadius().getServer().getProtocol());
 
         final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory);
-        impl.setRetries(mfaProperties.getRadius().getServer().getRetries());
-        impl.setNasIdentifier(mfaProperties.getRadius().getServer().getNasIdentifier());
-        impl.setNasPort(mfaProperties.getRadius().getServer().getNasPort());
-        impl.setNasPortId(mfaProperties.getRadius().getServer().getNasPortId());
-        impl.setNasRealPort(mfaProperties.getRadius().getServer().getNasRealPort());
-        impl.setNasIpAddress(mfaProperties.getRadius().getServer().getNasIpAddress());
-        impl.setNasIpv6Address(mfaProperties.getRadius().getServer().getNasIpv6Address());
+        impl.setRetries(casProperties.getMfaProperties().getRadius().getServer().getRetries());
+        impl.setNasIdentifier(casProperties.getMfaProperties().getRadius().getServer().getNasIdentifier());
+        impl.setNasPort(casProperties.getMfaProperties().getRadius().getServer().getNasPort());
+        impl.setNasPortId(casProperties.getMfaProperties().getRadius().getServer().getNasPortId());
+        impl.setNasRealPort(casProperties.getMfaProperties().getRadius().getServer().getNasRealPort());
+        impl.setNasIpAddress(casProperties.getMfaProperties().getRadius().getServer().getNasIpAddress());
+        impl.setNasIpv6Address(casProperties.getMfaProperties().getRadius().getServer().getNasIpv6Address());
 
         list.add(impl);
         return list;
@@ -105,8 +105,8 @@ public class RadiusMultifactorConfiguration {
         final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler();
 
         a.setServers(radiusTokenServers());
-        a.setFailoverOnAuthenticationFailure(mfaProperties.getRadius().isFailoverOnAuthenticationFailure());
-        a.setFailoverOnException(mfaProperties.getRadius().isFailoverOnException());
+        a.setFailoverOnAuthenticationFailure(casProperties.getMfaProperties().getRadius().isFailoverOnAuthenticationFailure());
+        a.setFailoverOnException(casProperties.getMfaProperties().getRadius().isFailoverOnException());
         
         return a;
     }

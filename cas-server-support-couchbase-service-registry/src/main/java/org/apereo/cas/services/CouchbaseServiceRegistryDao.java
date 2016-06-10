@@ -6,7 +6,7 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
-import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseServiceRegistryProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
@@ -49,7 +49,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
 
     @Autowired
-    private CouchbaseServiceRegistryProperties properties;
+    private CasConfigurationProperties casProperties;
 
     @Resource(name = "serviceRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
@@ -148,7 +148,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
      */
     @PostConstruct
     public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(properties.isQueryEnabled()));
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(casProperties.getCouchbaseServiceRegistryProperties().isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }

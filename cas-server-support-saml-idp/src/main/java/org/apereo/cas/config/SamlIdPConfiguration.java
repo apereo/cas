@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPApplicationContextWrapper;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
@@ -47,7 +47,7 @@ import org.springframework.core.io.Resource;
 public class SamlIdPConfiguration {
     
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
     
     @Bean
     public Resource templateSpMetadata() {
@@ -80,9 +80,9 @@ public class SamlIdPConfiguration {
     public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         final ChainingMetadataResolverCacheLoader c = new ChainingMetadataResolverCacheLoader();
         
-        c.setFailFastInitialization(properties.getMetadata().isFailFast());
-        c.setMetadataCacheExpirationMinutes(properties.getMetadata().getCacheExpirationMinutes());
-        c.setRequireValidMetadata(properties.getMetadata().isRequireValidMetadata());
+        c.setFailFastInitialization(casProperties.getSamlIdPProperties().getMetadata().isFailFast());
+        c.setMetadataCacheExpirationMinutes(casProperties.getSamlIdPProperties().getMetadata().getCacheExpirationMinutes());
+        c.setRequireValidMetadata(casProperties.getSamlIdPProperties().getMetadata().isRequireValidMetadata());
         
         return c;
     }
@@ -93,7 +93,7 @@ public class SamlIdPConfiguration {
         final DefaultSamlRegisteredServiceCachingMetadataResolver r =
                 new DefaultSamlRegisteredServiceCachingMetadataResolver();
         r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
-        r.setMetadataCacheExpirationMinutes(properties.getMetadata().getCacheExpirationMinutes());
+        r.setMetadataCacheExpirationMinutes(casProperties.getSamlIdPProperties().getMetadata().getCacheExpirationMinutes());
         return r;
     }
     
@@ -126,10 +126,10 @@ public class SamlIdPConfiguration {
         final ShibbolethIdpMetadataAndCertificatesGenerationService s =
                 new ShibbolethIdpMetadataAndCertificatesGenerationService();
         
-        s.setEntityId(properties.getEntityId());
-        s.setHostName(properties.getHostName());
-        s.setMetadataLocation(properties.getMetadata().getLocation());
-        s.setScope(properties.getScope());
+        s.setEntityId(casProperties.getSamlIdPProperties().getEntityId());
+        s.setHostName(casProperties.getSamlIdPProperties().getHostName());
+        s.setMetadataLocation(casProperties.getSamlIdPProperties().getMetadata().getLocation());
+        s.setScope(casProperties.getSamlIdPProperties().getScope());
         
         return s;
     }

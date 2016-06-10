@@ -2,12 +2,10 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
-import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
-import org.apereo.cas.configuration.model.webapp.LocaleProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +35,6 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casWebAppConfiguration")
-@EnableConfigurationProperties(LocaleProperties.class)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
@@ -45,10 +42,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     private MessageInterpolator messageInterpolator;
 
     @Autowired
-    private LocaleProperties localeProperties;
-
-    @Autowired
-    private ThemeProperties themeProperties;
+    private CasConfigurationProperties casProperties;
     
     @RefreshScope
     @Bean
@@ -62,7 +56,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {
         final ThemeChangeInterceptor bean = new ThemeChangeInterceptor();
-        bean.setParamName(this.themeProperties.getParamName());
+        bean.setParamName(casProperties.getThemeProperties().getParamName());
         return bean;
     }
     
@@ -72,13 +66,15 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 final Locale locale = request.getLocale();
-                if (StringUtils.isBlank(localeProperties.getDefaultValue())
-                        || locale.getLanguage().equals(localeProperties.getDefaultValue())) {
+                if (StringUtils.isBlank(casProperties.getLocaleProperties().getDefaultValue())
+                        || locale.getLanguage().equals(casProperties.getLocaleProperties().getDefaultValue())) {
                     return locale;
                 }
-                return new Locale(localeProperties.getDefaultValue());
+                return new Locale(casProperties.getLocaleProperties().getDefaultValue());
             }
         };
+
+        
         return bean;
     }
     
@@ -86,7 +82,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
-        bean.setParamName(this.localeProperties.getParamName());
+        bean.setParamName(this.casProperties.getLocaleProperties().getParamName());
         return bean;
     }
     
@@ -109,7 +105,8 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
                                                          final HttpServletResponse response)
                     throws Exception {
                 final String queryString = request.getQueryString();
-                final String url = request.getContextPath() + "/login" + (queryString != null ? '?' + queryString : "");
+                final String url = request.getContextPath() + "/login" 
+                        + (queryString != null ? '?' + queryString : "");
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 

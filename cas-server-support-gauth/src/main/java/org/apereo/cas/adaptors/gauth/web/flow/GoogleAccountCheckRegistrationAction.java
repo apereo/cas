@@ -4,7 +4,7 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 public class GoogleAccountCheckRegistrationAction extends AbstractAction {
 
     @Autowired
-    private MfaProperties mfaProperties;
+    private CasConfigurationProperties casProperties;
 
     @Resource(name = "googleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry accountRegistry;
@@ -43,8 +43,8 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
             final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
                     key.getVerificationCode(), key.getScratchCodes());
 
-            final String keyUri = "otpauth://totp/" + mfaProperties.getGauth().getLabel() + ':' + uid + "?secret="
-                    + keyAccount.getSecretKey() + "&issuer=" + mfaProperties.getGauth().getIssuer();
+            final String keyUri = "otpauth://totp/" + casProperties.getMfaProperties().getGauth().getLabel() + ':' + uid + "?secret="
+                    + keyAccount.getSecretKey() + "&issuer=" + casProperties.getMfaProperties().getGauth().getIssuer();
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
 

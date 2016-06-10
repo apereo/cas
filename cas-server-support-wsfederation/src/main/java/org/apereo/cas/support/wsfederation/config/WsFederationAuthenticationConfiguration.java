@@ -2,7 +2,7 @@ package org.apereo.cas.support.wsfederation.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.wsfederation.WsFedApplicationContextWrapper;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
@@ -30,9 +30,9 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired
     private ResourceLoader resourceLoader;
-    
+
     @Autowired
-    private WsFederationProperties wsFederationProperties;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("adfsAuthNHandler")
@@ -41,37 +41,37 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     @Qualifier("adfsPrincipalResolver")
     private PrincipalResolver adfsPrincipalResolver;
-    
+
     @Bean
     public BaseApplicationContextWrapper wsFedApplicationContextWrapper() {
-        return new WsFedApplicationContextWrapper(this.adfsAuthNHandler, this.adfsPrincipalResolver, 
-                wsFederationProperties.isAttributeResolverEnabled());
+        return new WsFedApplicationContextWrapper(this.adfsAuthNHandler, this.adfsPrincipalResolver,
+                casProperties.getWsFederationProperties().isAttributeResolverEnabled());
     }
-    
+
     @Bean
     @RefreshScope
     public WsFederationConfiguration wsFedConfig() {
         final WsFederationConfiguration config = new WsFederationConfiguration();
-        
+
         config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType
-                .valueOf(wsFederationProperties.getAttributesType()));
-        config.setIdentityAttribute(wsFederationProperties.getIdentityAttribute());
-        config.setIdentityProviderIdentifier(wsFederationProperties.getIdentityProviderIdentifier());
-        config.setIdentityProviderUrl(wsFederationProperties.getIdentityProviderUrl());
-        config.setTolerance(wsFederationProperties.getTolerance());
-        config.setRelyingPartyIdentifier(wsFederationProperties.getRelyingPartyIdentifier());
-        StringUtils.commaDelimitedListToSet(wsFederationProperties.getSigningCertificateResources())
-                   .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
-        
+                .valueOf(casProperties.getWsFederationProperties().getAttributesType()));
+        config.setIdentityAttribute(casProperties.getWsFederationProperties().getIdentityAttribute());
+        config.setIdentityProviderIdentifier(casProperties.getWsFederationProperties().getIdentityProviderIdentifier());
+        config.setIdentityProviderUrl(casProperties.getWsFederationProperties().getIdentityProviderUrl());
+        config.setTolerance(casProperties.getWsFederationProperties().getTolerance());
+        config.setRelyingPartyIdentifier(casProperties.getWsFederationProperties().getRelyingPartyIdentifier());
+        StringUtils.commaDelimitedListToSet(casProperties.getWsFederationProperties().getSigningCertificateResources())
+                .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
+
         return config;
     }
-    
+
     @Bean
     @RefreshScope
     public WsFederationHelper wsFederationHelper() {
         return new WsFederationHelper();
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationHandler adfsAuthNHandler() {

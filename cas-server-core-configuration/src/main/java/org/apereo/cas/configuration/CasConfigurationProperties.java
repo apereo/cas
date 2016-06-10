@@ -23,7 +23,6 @@ import org.apereo.cas.configuration.model.core.ticket.ProxyTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ServiceTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
-import org.apereo.cas.configuration.model.core.util.AbstractCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
@@ -32,7 +31,6 @@ import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
-import org.apereo.cas.configuration.model.support.cookie.AbstractCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseServiceRegistryProperties;
@@ -48,9 +46,7 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
@@ -80,6 +76,7 @@ import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -88,7 +85,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(merge=true)
+@ConfigurationProperties(prefix = "cas")
+@EnableConfigurationProperties(AcceptAuthenticationProperties.class)
 public class CasConfigurationProperties {
     
     @NestedConfigurationProperty

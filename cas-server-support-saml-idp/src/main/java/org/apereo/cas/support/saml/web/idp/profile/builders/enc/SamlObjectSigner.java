@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -93,7 +93,7 @@ public class SamlObjectSigner {
 
 
     @Autowired
-    private SamlIdPProperties properties;
+    private CasConfigurationProperties casProperties;
 
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
@@ -137,7 +137,7 @@ public class SamlObjectSigner {
             throws Exception {
         logger.debug("Attempting to sign the outbound SAML message...");
         final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
-        handler.setSignErrorResponses(properties.getResponse().isSignError());
+        handler.setSignErrorResponses(casProperties.getSamlIdPProperties().getResponse().isSignError());
         handler.invoke(outboundContext);
         logger.debug("Signed SAML message successfully");
     }
@@ -251,7 +251,7 @@ public class SamlObjectSigner {
 
 
         if (this.overrideBlackListedSignatureSigningAlgorithms != null
-                && !properties.getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
+                && !casProperties.getSamlIdPProperties().getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureSigningAlgorithms);
         }
 
@@ -267,8 +267,8 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(properties.getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
-            config.setSignatureCanonicalizationAlgorithm(properties.getResponse().getOverrideSignatureCanonicalizationAlgorithm());
+        if (StringUtils.isNotBlank(casProperties.getSamlIdPProperties().getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(casProperties.getSamlIdPProperties().getResponse().getOverrideSignatureCanonicalizationAlgorithm());
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
@@ -294,8 +294,9 @@ public class SamlObjectSigner {
      */
     protected X509Certificate getSigningCertificate() {
         logger.debug("Locating signature signing certificate file from [{}]",
-                properties.getMetadata().getSigningCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(properties.getMetadata().getSigningCertFile()));
+                casProperties.getSamlIdPProperties().getMetadata().getSigningCertFile());
+        return SamlUtils.readCertificate(
+                new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getSigningCertFile()));
     }
 
     /**
@@ -306,10 +307,10 @@ public class SamlObjectSigner {
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(properties.getMetadata().getSigningKeyFile()));
-        privateKeyFactoryBean.setAlgorithm(properties.getMetadata().getPrivateKeyAlgName());
+        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getSamlIdPProperties().getMetadata().getSigningKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(casProperties.getSamlIdPProperties().getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from [{}]", properties.getMetadata().getSigningKeyFile());
+        logger.debug("Locating signature signing key file from [{}]", casProperties.getSamlIdPProperties().getMetadata().getSigningKeyFile());
         return privateKeyFactoryBean.getObject();
     }
 

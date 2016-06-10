@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -28,7 +28,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
     @Autowired
-    private TicketRegistryProperties ticketRegistryProperties;
+    private CasConfigurationProperties casProperties;
     
     @Autowired
     @Qualifier("logoutManager")
@@ -53,7 +53,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             
-            if (!ticketRegistryProperties.getCleaner().isEnabled()) {
+            if (!casProperties.getTicketRegistryProperties().getCleaner().isEnabled()) {
                 LOGGER.info("Ticket registry cleaner is disabled for {}. No cleaner processes will be scheduled.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;

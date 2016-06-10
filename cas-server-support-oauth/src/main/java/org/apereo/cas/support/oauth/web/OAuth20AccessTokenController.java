@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.web;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @Autowired
-    private TicketGrantingTicketProperties grantingTicketProperties;
+    private CasConfigurationProperties casProperties;
     
     @Resource(name="defaultRefreshTokenFactory")
     private RefreshTokenFactory refreshTokenFactory;
@@ -133,11 +133,11 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         }
 
         logger.debug("access token: {} / timeout: {} / refresh token: {}", accessToken,
-                grantingTicketProperties.getTimeToKillInSeconds(), refreshToken);
+                casProperties.getTicketGrantingTicketProperties().getTimeToKillInSeconds(), refreshToken);
 
         this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
                 accessToken, refreshToken, 
-                grantingTicketProperties.getTimeToKillInSeconds());
+                casProperties.getTicketGrantingTicketProperties().getTimeToKillInSeconds());
 
         response.setStatus(HttpServletResponse.SC_OK);
         return null;
