@@ -30,7 +30,7 @@ public class LdapCoreConfiguration {
     
     @Bean
     public PasswordPolicyConfiguration ldapPasswordPolicyConfiguration() {
-        return new LdapPasswordPolicyConfiguration(this.casProperties.getPasswordPolicy());
+        return new LdapPasswordPolicyConfiguration(this.casProperties.getAuthn().getPasswordPolicy());
     }
 
     @Bean

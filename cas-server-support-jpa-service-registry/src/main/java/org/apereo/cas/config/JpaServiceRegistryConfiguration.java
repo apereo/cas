@@ -71,7 +71,7 @@ public class JpaServiceRegistryConfiguration {
                         "jpaServiceRegistryContext",
                         jpaServicePackagesToScan(),
                         dataSourceService()),
-                casProperties.getJpaServiceRegistry());
+                casProperties.getServiceRegistry().getJpa());
     }
 
     /**
@@ -96,7 +96,7 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceService() {
-        return newHickariDataSource(casProperties.getJpaServiceRegistry());
+        return newHickariDataSource(casProperties.getServiceRegistry().getJpa());
     }
 
     @Bean

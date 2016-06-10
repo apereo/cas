@@ -87,7 +87,7 @@ public class OpenIdConfiguration {
     public ServerManager serverManager() {
         final ServerManager manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
-        manager.setEnforceRpId(casProperties.getOpenid().isEnforceRpId());
+        manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
         LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServer().getLoginUrl());
         return manager;
     }

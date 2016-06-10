@@ -45,7 +45,7 @@ public class LdapServiceRegistryConfiguration {
 
         r.setConnectionFactory(connectionFactory);
         r.setLdapServiceMapper(ldapServiceRegistryMapper());
-        r.setBaseDn(casProperties.getLdapServiceRegistry().getBaseDn());
+        r.setBaseDn(casProperties.getServiceRegistry().getLdap().getBaseDn());
         
         return r;
     }

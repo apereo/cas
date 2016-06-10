@@ -30,7 +30,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
 
     @Override
     public int getOrder() {
-        return casProperties.getMfa().getRadius().getRank();
+        return casProperties.getAuthn().getMfa().getRadius().getRank();
     }
 
     @Override

@@ -752,7 +752,7 @@ public class OAuth20AccessTokenControllerTests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         //This assert fails because deep down inside Oauth2 access token ctrl the refresh token gets deleted
-        //assertNotNull(oAuth20AccessTokenController.getTicketRegistry().getTicket((refreshToken.getId())));
+        //assertNotNull(oAuth20AccessTokenController.getRegistry().getTicket((refreshToken.getId())));
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 

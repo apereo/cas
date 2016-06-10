@@ -147,7 +147,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                 .append('&')
                 .append(OAuthConstants.EXPIRES)
                 .append('=')
-                .append(casProperties.getTgt().getTimeToKillInSeconds());
+                .append(casProperties.getTicket().getTgt().getTimeToKillInSeconds());
 
         if (StringUtils.isNotBlank(state)) {
             stringBuilder.append('&')

@@ -80,42 +80,42 @@ public class Pac4jConfiguration {
         // turn the properties file into a map of properties
         final Map<String, String> properties = new HashMap<>();
 
-        properties.put(PropertiesConfigFactory.FACEBOOK_ID, casProperties.getPac4j().getFacebook().getId());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, casProperties.getPac4j().getFacebook().getSecret());
-        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, casProperties.getPac4j().getFacebook().getScope());
-        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, casProperties.getPac4j().getFacebook().getFields());
+        properties.put(PropertiesConfigFactory.FACEBOOK_ID, casProperties.getAuthn().getPac4j().getFacebook().getId());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SECRET, casProperties.getAuthn().getPac4j().getFacebook().getSecret());
+        properties.put(PropertiesConfigFactory.FACEBOOK_SCOPE, casProperties.getAuthn().getPac4j().getFacebook().getScope());
+        properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, casProperties.getAuthn().getPac4j().getFacebook().getFields());
 
-        properties.put(PropertiesConfigFactory.TWITTER_ID, casProperties.getPac4j().getTwitter().getId());
-        properties.put(PropertiesConfigFactory.TWITTER_SECRET, casProperties.getPac4j().getTwitter().getSecret());
+        properties.put(PropertiesConfigFactory.TWITTER_ID, casProperties.getAuthn().getPac4j().getTwitter().getId());
+        properties.put(PropertiesConfigFactory.TWITTER_SECRET, casProperties.getAuthn().getPac4j().getTwitter().getSecret());
 
-        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, casProperties.getPac4j().getCas().getLoginUrl());
-        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, casProperties.getPac4j().getCas().getProtocol());
+        properties.put(PropertiesConfigFactory.CAS_LOGIN_URL, casProperties.getAuthn().getPac4j().getCas().getLoginUrl());
+        properties.put(PropertiesConfigFactory.CAS_PROTOCOL, casProperties.getAuthn().getPac4j().getCas().getProtocol());
 
         properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH,
-                casProperties.getPac4j().getSaml().getIdentityProviderMetadataPath());
+                casProperties.getAuthn().getPac4j().getSaml().getIdentityProviderMetadataPath());
         properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD,
-                casProperties.getPac4j().getSaml().getKeystorePassword());
+                casProperties.getAuthn().getPac4j().getSaml().getKeystorePassword());
         properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH,
-                casProperties.getPac4j().getSaml().getKeystorePath());
+                casProperties.getAuthn().getPac4j().getSaml().getKeystorePath());
         properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME,
-                casProperties.getPac4j().getSaml().getMaximumAuthenticationLifetime());
+                casProperties.getAuthn().getPac4j().getSaml().getMaximumAuthenticationLifetime());
         properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD,
-                casProperties.getPac4j().getSaml().getPrivateKeyPassword());
+                casProperties.getAuthn().getPac4j().getSaml().getPrivateKeyPassword());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
-                casProperties.getPac4j().getSaml().getServiceProviderEntityId());
+                casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
-                casProperties.getPac4j().getSaml().getServiceProviderEntityId());
+                casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
 
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, casProperties.getPac4j().getOidc().getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, casProperties.getPac4j().getOidc().getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, casProperties.getPac4j().getOidc().getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, casProperties.getPac4j().getOidc().getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, casProperties.getPac4j().getOidc().getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID, casProperties.getPac4j().getOidc().getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, casProperties.getPac4j().getOidc().getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, casProperties.getPac4j().getOidc().getPreferredJwsAlgorithm());
-        properties.put(PropertiesConfigFactory.OIDC_SECRET, casProperties.getPac4j().getOidc().getSecret());
-        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, casProperties.getPac4j().getOidc().getUseNonce());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey2());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue2());
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, casProperties.getAuthn().getPac4j().getOidc().getDiscoveryUri());
+        properties.put(PropertiesConfigFactory.OIDC_ID, casProperties.getAuthn().getPac4j().getOidc().getId());
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, casProperties.getAuthn().getPac4j().getOidc().getMaxClockSkew());
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, casProperties.getAuthn().getPac4j().getOidc().getPreferredJwsAlgorithm());
+        properties.put(PropertiesConfigFactory.OIDC_SECRET, casProperties.getAuthn().getPac4j().getOidc().getSecret());
+        properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, casProperties.getAuthn().getPac4j().getOidc().getUseNonce());
 
         // add the new clients found via properties first
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);

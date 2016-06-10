@@ -274,8 +274,8 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     public ExpirationPolicy accessTokenExpirationPolicy() {
         
         return new OAuthAccessTokenExpirationPolicy(
-                casProperties.getOauth().getAccessToken().getMaxTimeToLiveInSeconds(),
-                casProperties.getOauth().getAccessToken().getTimeToKillInSeconds(),
+                casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds(),
+                casProperties.getAuthn().getOauth().getAccessToken().getTimeToKillInSeconds(),
                 TimeUnit.SECONDS
         );
     }
@@ -283,8 +283,8 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public ExpirationPolicy oAuthCodeExpirationPolicy() {
-        return new OAuthCodeExpirationPolicy(casProperties.getOauth().getCode().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(casProperties.getOauth().getCode().getTimeToKillInSeconds()));
+        return new OAuthCodeExpirationPolicy(casProperties.getAuthn().getOauth().getCode().getNumberOfUses(),
+                TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds()));
     }
 
     @Bean
@@ -301,7 +301,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public ExpirationPolicy refreshTokenExpirationPolicy() {
         return new OAuthRefreshTokenExpirationPolicy(
-                TimeUnit.SECONDS.toMillis(casProperties.getOauth().getRefreshToken().getTimeToKillInSeconds())
+                TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds())
         );
     }
 

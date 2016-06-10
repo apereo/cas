@@ -28,26 +28,29 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             final LdapPasswordPolicyConfiguration configuration,
             final List<MessageDescriptor> messages) {
 
-        if (StringUtils.isBlank(casProperties.getPasswordPolicy().getWarningAttributeName())) {
+        if (StringUtils.isBlank(casProperties.getAuthn().getPasswordPolicy().getWarningAttributeName())) {
             logger.debug("No warning attribute name is defined");
             return;
         }
 
-        if (StringUtils.isBlank(casProperties.getPasswordPolicy().getWarningAttributeValue())) {
+        if (StringUtils.isBlank(casProperties.getAuthn().getPasswordPolicy().getWarningAttributeValue())) {
             logger.debug("No warning attribute value to match is defined");
             return;
         }
 
 
-        final LdapAttribute attribute = response.getLdapEntry().getAttribute(casProperties.getPasswordPolicy().getWarningAttributeName());
+        final LdapAttribute attribute = response.getLdapEntry().getAttribute(
+                casProperties.getAuthn().getPasswordPolicy().getWarningAttributeName());
         boolean matches = false;
         if (attribute != null) {
-            logger.debug("Found warning attribute {} with value {}", attribute.getName(), attribute.getStringValue());
-            matches = casProperties.getPasswordPolicy().getWarningAttributeValue().equals(attribute.getStringValue());
+            logger.debug("Found warning attribute {} with value {}", 
+                    attribute.getName(), attribute.getStringValue());
+            matches = casProperties.getAuthn().getPasswordPolicy()
+                    .getWarningAttributeValue().equals(attribute.getStringValue());
         }
         logger.debug("matches={}, displayWarningOnMatch={}", matches, 
-                casProperties.getPasswordPolicy().isDisplayWarningOnMatch());
-        if (casProperties.getPasswordPolicy().isDisplayWarningOnMatch() == matches) {
+                casProperties.getAuthn().getPasswordPolicy().isDisplayWarningOnMatch());
+        if (casProperties.getAuthn().getPasswordPolicy().isDisplayWarningOnMatch() == matches) {
             super.handleWarning(warning, response, configuration, messages);
         }
     }

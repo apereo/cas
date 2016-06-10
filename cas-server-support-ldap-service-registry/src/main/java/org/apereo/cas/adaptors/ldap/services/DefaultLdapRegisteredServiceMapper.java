@@ -44,14 +44,17 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
             final String newDn = getDnForRegisteredService(dn, svc);
             LOGGER.debug("Creating entry {}", newDn);
 
+            
             final Collection<LdapAttribute> attrs = new ArrayList<>();
-            attrs.add(new LdapAttribute(casProperties.getLdapServiceRegistry().getIdAttribute(),
+            attrs.add(new LdapAttribute(casProperties.getServiceRegistry().getLdap().getIdAttribute(),
                     String.valueOf(svc.getId())));
 
             final StringWriter writer = new StringWriter();
             this.jsonSerializer.to(writer, svc);
-            attrs.add(new LdapAttribute(casProperties.getLdapServiceRegistry().getServiceDefinitionAttribute(), writer.toString()));
-            attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, "top", casProperties.getLdapServiceRegistry().getObjectClass()));
+            attrs.add(new LdapAttribute(casProperties.getServiceRegistry()
+                    .getLdap().getServiceDefinitionAttribute(), writer.toString()));
+            attrs.add(new LdapAttribute(LdapUtils.OBJECTCLASS_ATTRIBUTE, "top", 
+                    casProperties.getServiceRegistry().getLdap().getObjectClass()));
 
             return new LdapEntry(newDn, attrs);
         } catch (final Exception e) {
@@ -62,7 +65,8 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     @Override
     public RegisteredService mapToRegisteredService(final LdapEntry entry) {
         try {
-            final String value = LdapUtils.getString(entry, casProperties.getLdapServiceRegistry().getServiceDefinitionAttribute());
+            final String value = LdapUtils.getString(entry, 
+                    casProperties.getServiceRegistry().getLdap().getServiceDefinitionAttribute());
             if (StringUtils.hasText(value)) {
                 final RegisteredService service = this.jsonSerializer.from(value);
                 return service;
@@ -76,12 +80,12 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
     @Override
     public String getObjectClass() {
-        return casProperties.getLdapServiceRegistry().getObjectClass();
+        return casProperties.getServiceRegistry().getLdap().getObjectClass();
     }
 
     @Override
     public String getIdAttribute() {
-        return casProperties.getLdapServiceRegistry().getIdAttribute();
+        return casProperties.getServiceRegistry().getLdap().getIdAttribute();
     }
 
 
@@ -91,7 +95,9 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
     @Override
     public String getDnForRegisteredService(final String parentDn, final RegisteredService svc) {
-        return String.format("%s=%s,%s", casProperties.getLdapServiceRegistry().getIdAttribute(), svc.getId(), parentDn);
+        return String.format("%s=%s,%s", 
+                casProperties.getServiceRegistry().getLdap().getIdAttribute(), 
+                svc.getId(), parentDn);
     }
 
 }

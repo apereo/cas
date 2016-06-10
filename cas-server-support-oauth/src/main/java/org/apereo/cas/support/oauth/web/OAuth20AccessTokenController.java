@@ -133,11 +133,11 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         }
 
         logger.debug("access token: {} / timeout: {} / refresh token: {}", accessToken,
-                casProperties.getTgt().getTimeToKillInSeconds(), refreshToken);
+                casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
 
         this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
                 accessToken, refreshToken, 
-                casProperties.getTgt().getTimeToKillInSeconds());
+                casProperties.getTicket().getTgt().getTimeToKillInSeconds());
 
         response.setStatus(HttpServletResponse.SC_OK);
         return null;

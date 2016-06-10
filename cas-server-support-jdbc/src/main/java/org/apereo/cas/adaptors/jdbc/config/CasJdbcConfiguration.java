@@ -118,13 +118,13 @@ public class CasJdbcConfiguration {
     public AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler() {
         final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler();
 
-        h.setAlgorithmName(casProperties.getJdbcAuthn().getEncode().getAlgorithmName());
-        h.setNumberOfIterationsFieldName(casProperties.getJdbcAuthn().getEncode().getNumberOfIterationsFieldName());
-        h.setNumberOfIterations(casProperties.getJdbcAuthn().getEncode().getNumberOfIterations());
-        h.setPasswordFieldName(casProperties.getJdbcAuthn().getEncode().getPasswordFieldName());
-        h.setSaltFieldName(casProperties.getJdbcAuthn().getEncode().getSaltFieldName());
-        h.setSql(casProperties.getJdbcAuthn().getEncode().getSql());
-        h.setStaticSalt(casProperties.getJdbcAuthn().getEncode().getStaticSalt());
+        h.setAlgorithmName(casProperties.getAuthn().getJdbc().getEncode().getAlgorithmName());
+        h.setNumberOfIterationsFieldName(casProperties.getAuthn().getJdbc().getEncode().getNumberOfIterationsFieldName());
+        h.setNumberOfIterations(casProperties.getAuthn().getJdbc().getEncode().getNumberOfIterations());
+        h.setPasswordFieldName(casProperties.getAuthn().getJdbc().getEncode().getPasswordFieldName());
+        h.setSaltFieldName(casProperties.getAuthn().getJdbc().getEncode().getSaltFieldName());
+        h.setSql(casProperties.getAuthn().getJdbc().getEncode().getSql());
+        h.setStaticSalt(casProperties.getAuthn().getJdbc().getEncode().getStaticSalt());
         h.setDataSource(queryEncodeDatabaseDataSource);
 
         if (queryAndEncodePasswordEncoder != null) {
@@ -146,7 +146,7 @@ public class CasJdbcConfiguration {
         final QueryDatabaseAuthenticationHandler h =
                 new QueryDatabaseAuthenticationHandler();
         h.setDataSource(queryDatabaseDataSource);
-        h.setSql(casProperties.getJdbcAuthn().getQuery().getSql());
+        h.setSql(casProperties.getAuthn().getJdbc().getQuery().getSql());
 
         if (queryPasswordEncoder != null) {
             h.setPasswordEncoder(queryPasswordEncoder);
@@ -167,9 +167,9 @@ public class CasJdbcConfiguration {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler();
 
         h.setDataSource(searchModeDatabaseDataSource);
-        h.setFieldPassword(casProperties.getJdbcAuthn().getSearch().getFieldPassword());
-        h.setFieldUser(casProperties.getJdbcAuthn().getSearch().getFieldUser());
-        h.setTableUsers(casProperties.getJdbcAuthn().getSearch().getTableUsers());
+        h.setFieldPassword(casProperties.getAuthn().getJdbc().getSearch().getFieldPassword());
+        h.setFieldUser(casProperties.getAuthn().getJdbc().getSearch().getFieldUser());
+        h.setTableUsers(casProperties.getAuthn().getJdbc().getSearch().getTableUsers());
 
         if (searchModePasswordEncoder != null) {
             h.setPasswordEncoder(searchModePasswordEncoder);

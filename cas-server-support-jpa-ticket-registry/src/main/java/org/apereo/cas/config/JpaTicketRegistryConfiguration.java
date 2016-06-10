@@ -61,7 +61,7 @@ public class JpaTicketRegistryConfiguration {
                         "jpaTicketRegistryContext",
                         ticketPackagesToScan(),
                         dataSourceTicket()),
-                        casProperties.getJpaTicketRegistry());
+                        casProperties.getTicket().getRegistry().getJpa());
     }
 
     /**
@@ -74,6 +74,8 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory")
                                                           final EntityManagerFactory emf) {
+
+        
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
@@ -87,14 +89,14 @@ public class JpaTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
-        return newHickariDataSource(casProperties.getJpaTicketRegistry());
+        return newHickariDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
     @Bean
     @RefreshScope
     public TicketRegistry jpaTicketRegistry() {
         final JpaTicketRegistry bean = new JpaTicketRegistry();
-        bean.setLockTgt(casProperties.getJpaTicketRegistry().isJpaLockingTgtEnabled());
+        bean.setLockTgt(casProperties.getTicket().getRegistry().getJpa().isJpaLockingTgtEnabled());
         return bean;
     }
 
@@ -104,7 +106,7 @@ public class JpaTicketRegistryConfiguration {
         bean.setApplicationId(casProperties.getJdbc().getCleaner().getAppid());
         bean.setUniqueId(StringUtils.defaultIfEmpty(casProperties.getHost().getName(), 
                 InetAddressUtils.getCasServerHostName()));
-        bean.setLockTimeout(casProperties.getJpaTicketRegistry().getJpaLockingTimeout());
+        bean.setLockTimeout(casProperties.getTicket().getRegistry().getJpa().getJpaLockingTimeout());
         return bean;
     }
 }
