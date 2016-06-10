@@ -93,7 +93,7 @@ public class GoogleAuthentiacatorConfiguration {
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
         final GoogleAuthenticatorAuthenticationMetaDataPopulator g =
                 new GoogleAuthenticatorAuthenticationMetaDataPopulator(
-                        casProperties.getMfa().getAuthenticationContextAttribute(),
+                        casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                         googleAuthenticatorAuthenticationHandler(),
                         googleAuthenticatorAuthenticationProvider()
                 );

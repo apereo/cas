@@ -74,7 +74,7 @@ public class DuoConfiguration {
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
         final DuoAuthenticationMetaDataPopulator pop = new DuoAuthenticationMetaDataPopulator();
 
-        pop.setAuthenticationContextAttribute(casProperties.getMfa().getAuthenticationContextAttribute());
+        pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(duoAuthenticationHandler());
         pop.setProvider(duoAuthenticationProvider());
         

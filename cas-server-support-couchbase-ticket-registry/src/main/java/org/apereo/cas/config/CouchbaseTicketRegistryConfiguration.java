@@ -29,10 +29,11 @@ public class CouchbaseTicketRegistryConfiguration {
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
         
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(casProperties.getCouchbaseTicketRegistry().getNodeSet()));
-        factory.setTimeout(casProperties.getCouchbaseTicketRegistry().getTimeout());
-        factory.setBucketName(casProperties.getCouchbaseTicketRegistry().getBucket());
-        factory.setPassword(casProperties.getCouchbaseTicketRegistry().getPassword());
+        factory.setNodes(StringUtils.commaDelimitedListToSet(
+                casProperties.getTicket().getRegistry().getCouchbase().getNodeSet()));
+        factory.setTimeout(casProperties.getTicket().getRegistry().getCouchbase().getTimeout());
+        factory.setBucketName(casProperties.getTicket().getRegistry().getCouchbase().getBucket());
+        factory.setPassword(casProperties.getTicket().getRegistry().getCouchbase().getPassword());
         return factory;
     }
 

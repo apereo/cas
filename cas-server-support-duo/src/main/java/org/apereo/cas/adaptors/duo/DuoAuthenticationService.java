@@ -46,10 +46,10 @@ public class DuoAuthenticationService {
 
     @PostConstruct
     private void initialize() {
-        Assert.hasLength(casProperties.getMfa().getDuo().getDuoApiHost(), "Duo API host cannot be blank");
-        Assert.hasLength(casProperties.getMfa().getDuo().getDuoIntegrationKey(), "Duo integration key cannot be blank");
-        Assert.hasLength(casProperties.getMfa().getDuo().getDuoSecretKey(), "Duo secret key cannot be blank");
-        Assert.hasLength(casProperties.getMfa().getDuo().getDuoApplicationKey(), "Duo application key cannot be blank");
+        Assert.hasLength(casProperties.getAuthn().getMfa().getDuo().getDuoApiHost(), "Duo API host cannot be blank");
+        Assert.hasLength(casProperties.getAuthn().getMfa().getDuo().getDuoIntegrationKey(), "Duo integration key cannot be blank");
+        Assert.hasLength(casProperties.getAuthn().getMfa().getDuo().getDuoSecretKey(), "Duo secret key cannot be blank");
+        Assert.hasLength(casProperties.getAuthn().getMfa().getDuo().getDuoApplicationKey(), "Duo application key cannot be blank");
     }
 
 
@@ -60,9 +60,9 @@ public class DuoAuthenticationService {
      * @return signed response
      */
     public String generateSignedRequestToken(final String username) {
-        return DuoWeb.signRequest(casProperties.getMfa().getDuo().getDuoIntegrationKey(),
-                casProperties.getMfa().getDuo().getDuoSecretKey(),
-                casProperties.getMfa().getDuo().getDuoApplicationKey(), username);
+        return DuoWeb.signRequest(casProperties.getAuthn().getMfa().getDuo().getDuoIntegrationKey(),
+                casProperties.getAuthn().getMfa().getDuo().getDuoSecretKey(),
+                casProperties.getAuthn().getMfa().getDuo().getDuoApplicationKey(), username);
     }
 
     /**
@@ -78,9 +78,9 @@ public class DuoAuthenticationService {
         }
 
         logger.debug("Calling DuoWeb.verifyResponse with signed request token '{}'", signedRequestToken);
-        return DuoWeb.verifyResponse(casProperties.getMfa().getDuo().getDuoIntegrationKey(),
-                casProperties.getMfa().getDuo().getDuoSecretKey(),
-                casProperties.getMfa().getDuo().getDuoApplicationKey(), signedRequestToken);
+        return DuoWeb.verifyResponse(casProperties.getAuthn().getMfa().getDuo().getDuoIntegrationKey(),
+                casProperties.getAuthn().getMfa().getDuo().getDuoSecretKey(),
+                casProperties.getAuthn().getMfa().getDuo().getDuoApplicationKey(), signedRequestToken);
     }
 
     /**
@@ -90,7 +90,7 @@ public class DuoAuthenticationService {
      */
     public boolean canPing() {
         try {
-            String url = casProperties.getMfa().getDuo().getDuoApiHost().concat("/rest/v1/ping");
+            String url = casProperties.getAuthn().getMfa().getDuo().getDuoApiHost().concat("/rest/v1/ping");
             if (!url.startsWith("http")) {
                 url = "https://" + url;
             }

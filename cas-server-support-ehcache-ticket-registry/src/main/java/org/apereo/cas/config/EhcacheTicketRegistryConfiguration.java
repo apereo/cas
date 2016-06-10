@@ -37,11 +37,12 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     public RMISynchronousCacheReplicator ticketRMISynchronousCacheReplicator() {
         
-        return new RMISynchronousCacheReplicator(casProperties.getEhcache().isReplicatePuts(),
-                casProperties.getEhcache().isReplicatePutsViaCopy(),
-                casProperties.getEhcache().isReplicateUpdates(),
-                casProperties.getEhcache().isReplicateUpdatesViaCopy(),
-                casProperties.getEhcache().isReplicateRemovals());
+        return new RMISynchronousCacheReplicator(
+                casProperties.getTicket().getRegistry().getEhcache().isReplicatePuts(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicatePutsViaCopy(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicateUpdates(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicateUpdatesViaCopy(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicateRemovals());
     }
 
     /**
@@ -52,8 +53,8 @@ public class EhcacheTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public RMIBootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
-        return new RMIBootstrapCacheLoader(casProperties.getEhcache().isLoaderAsync(),
-                casProperties.getEhcache().getMaxChunkSize());
+        return new RMIBootstrapCacheLoader(casProperties.getTicket().getRegistry().getEhcache().isLoaderAsync(),
+                casProperties.getTicket().getRegistry().getEhcache().getMaxChunkSize());
     }
 
 
@@ -66,9 +67,10 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-        bean.setConfigLocation(ResourceUtils.prepareClasspathResourceIfNeeded(casProperties.getEhcache().getConfigLocation()));
-        bean.setShared(casProperties.getEhcache().isShared());
-        bean.setCacheManagerName(casProperties.getEhcache().getCacheManagerName());
+        bean.setConfigLocation(ResourceUtils.prepareClasspathResourceIfNeeded(
+                casProperties.getTicket().getRegistry().getEhcache().getConfigLocation()));
+        bean.setShared(casProperties.getTicket().getRegistry().getEhcache().isShared());
+        bean.setCacheManagerName(casProperties.getTicket().getRegistry().getEhcache().getCacheManagerName());
 
         return bean;
     }
@@ -83,21 +85,22 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     public EhCacheFactoryBean ehcacheTicketsCache(final CacheManager manager) {
         final EhCacheFactoryBean bean = new EhCacheFactoryBean();
-        bean.setCacheName(casProperties.getEhcache().getCacheName());
+        bean.setCacheName(casProperties.getTicket().getRegistry().getEhcache().getCacheName());
         bean.setCacheEventListeners(ImmutableSet.of(ticketRMISynchronousCacheReplicator()));
-        bean.setTimeToIdle(casProperties.getEhcache().getCacheTimeToIdle());
-        bean.setTimeToLive(casProperties.getEhcache().getCacheTimeToLive());
+        bean.setTimeToIdle(casProperties.getTicket().getRegistry().getEhcache().getCacheTimeToIdle());
+        bean.setTimeToLive(casProperties.getTicket().getRegistry().getEhcache().getCacheTimeToLive());
 
         bean.setCacheManager(manager);
         bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
 
-        bean.setDiskExpiryThreadIntervalSeconds(casProperties.getEhcache().getDiskExpiryThreadIntervalSeconds());
-        bean.setDiskPersistent(casProperties.getEhcache().isDiskPersistent());
-        bean.setEternal(casProperties.getEhcache().isEternal());
-        bean.setMaxElementsInMemory(casProperties.getEhcache().getMaxElementsInMemory());
-        bean.setMaxElementsOnDisk(casProperties.getEhcache().getMaxElementsOnDisk());
-        bean.setMemoryStoreEvictionPolicy(casProperties.getEhcache().getMemoryStoreEvictionPolicy());
-        bean.setOverflowToDisk(casProperties.getEhcache().isOverflowToDisk());
+        bean.setDiskExpiryThreadIntervalSeconds(
+                casProperties.getTicket().getRegistry().getEhcache().getDiskExpiryThreadIntervalSeconds());
+        bean.setDiskPersistent(casProperties.getTicket().getRegistry().getEhcache().isDiskPersistent());
+        bean.setEternal(casProperties.getTicket().getRegistry().getEhcache().isEternal());
+        bean.setMaxElementsInMemory(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsInMemory());
+        bean.setMaxElementsOnDisk(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsOnDisk());
+        bean.setMemoryStoreEvictionPolicy(casProperties.getTicket().getRegistry().getEhcache().getMemoryStoreEvictionPolicy());
+        bean.setOverflowToDisk(casProperties.getTicket().getRegistry().getEhcache().isOverflowToDisk());
         
         return bean;
     }

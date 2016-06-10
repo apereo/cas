@@ -46,21 +46,25 @@ public class IgniteTicketRegistryConfiguration {
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
-        finder.setAddresses(StringUtils.commaDelimitedListToSet(casProperties.getIgnite().getIgniteAddresses()));
+        finder.setAddresses(StringUtils.commaDelimitedListToSet(casProperties.getTicket().getRegistry().getIgnite().getIgniteAddresses()));
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
 
         final List<CacheConfiguration> configurations = new ArrayList<>();
 
         final CacheConfiguration ticketsCache = new CacheConfiguration();
-        ticketsCache.setName(casProperties.getIgnite().getTicketsCache().getCacheName());
-        ticketsCache.setCacheMode(CacheMode.valueOf(casProperties.getIgnite().getTicketsCache().getCacheMode()));
-        ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(casProperties.getIgnite().getTicketsCache().getAtomicityMode()));
+        ticketsCache.setName(
+                casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
+        ticketsCache.setCacheMode(
+                CacheMode.valueOf(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheMode()));
+        ticketsCache.setAtomicityMode(
+                CacheAtomicityMode.valueOf(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getAtomicityMode()));
         ticketsCache.setWriteSynchronizationMode(
-                CacheWriteSynchronizationMode.valueOf(casProperties.getIgnite().getTicketsCache().getWriteSynchronizationMode()));
+                CacheWriteSynchronizationMode.valueOf(
+                        casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getWriteSynchronizationMode()));
         ticketsCache.setExpiryPolicyFactory(
                 CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS,
-                        casProperties.getTgt().getMaxTimeToLiveInSeconds())));
+                        casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())));
 
         configurations.add(ticketsCache);
 

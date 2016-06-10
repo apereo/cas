@@ -26,8 +26,8 @@ public class HazelcastMonitor extends AbstractCacheMonitor {
         final List<CacheStatistics> statsList = new ArrayList<>();
 
         final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(
-                casProperties.getHazelcast().getCluster().getInstanceName());
-        final IMap map = instance.getMap(casProperties.getHazelcast().getMapName());
+                casProperties.getTicket().getRegistry().getHazelcast().getCluster().getInstanceName());
+        final IMap map = instance.getMap(casProperties.getTicket().getRegistry().getHazelcast().getMapName());
         statsList.add(new HazelcastStatistics(map));
 
         return statsList.toArray(new CacheStatistics[statsList.size()]);

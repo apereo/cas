@@ -43,8 +43,8 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
             final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
                     key.getVerificationCode(), key.getScratchCodes());
 
-            final String keyUri = "otpauth://totp/" + casProperties.getMfa().getGauth().getLabel() + ':' + uid + "?secret="
-                    + keyAccount.getSecretKey() + "&issuer=" + casProperties.getMfa().getGauth().getIssuer();
+            final String keyUri = "otpauth://totp/" + casProperties.getAuthn().getMfa().getGauth().getLabel() + ':' + uid + "?secret="
+                    + keyAccount.getSecretKey() + "&issuer=" + casProperties.getAuthn().getMfa().getGauth().getIssuer();
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
 

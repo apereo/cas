@@ -160,35 +160,35 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     private void configureSecureTransport() {
         final String nullKey = "NULL";
-
-        if (StringUtils.isNotBlank(casProperties.getIgnite().getKeyStoreFilePath()) 
-                && StringUtils.isNotBlank(casProperties.getIgnite().getKeyStorePassword())
-                && StringUtils.isNotBlank(casProperties.getIgnite().getTrustStoreFilePath()) 
-                && StringUtils.isNotBlank(casProperties.getIgnite().getTrustStorePassword())) {
+        
+        if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath()) 
+                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword())
+                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath()) 
+                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
             
             final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStoreFilePath(casProperties.getIgnite().getKeyStoreFilePath());
-            sslContextFactory.setKeyStorePassword(casProperties.getIgnite().getKeyStorePassword().toCharArray());
+            sslContextFactory.setKeyStoreFilePath(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath());
+            sslContextFactory.setKeyStorePassword(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
             
-            if (nullKey.equals(casProperties.getIgnite().getTrustStoreFilePath()) 
-                    && nullKey.equals(casProperties.getIgnite().getTrustStorePassword())) {
+            if (nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath()) 
+                    && nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
-                sslContextFactory.setTrustStoreFilePath(casProperties.getIgnite().getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(casProperties.getIgnite().getKeyStorePassword().toCharArray());
+                sslContextFactory.setTrustStoreFilePath(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath());
+                sslContextFactory.setTrustStorePassword(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
             }
 
-            if (StringUtils.isNotBlank(casProperties.getIgnite().getKeyAlgorithm())) {
-                sslContextFactory.setKeyAlgorithm(casProperties.getIgnite().getKeyAlgorithm());
+            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyAlgorithm())) {
+                sslContextFactory.setKeyAlgorithm(casProperties.getTicket().getRegistry().getIgnite().getKeyAlgorithm());
             }
-            if (StringUtils.isNotBlank(casProperties.getIgnite().getProtocol())) {
-                sslContextFactory.setProtocol(casProperties.getIgnite().getProtocol());
+            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getProtocol())) {
+                sslContextFactory.setProtocol(casProperties.getTicket().getRegistry().getIgnite().getProtocol());
             }
-            if (StringUtils.isNotBlank(casProperties.getIgnite().getTrustStoreType())) {
-                sslContextFactory.setTrustStoreType(casProperties.getIgnite().getTrustStoreType());
+            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreType())) {
+                sslContextFactory.setTrustStoreType(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreType());
             }
-            if (StringUtils.isNotBlank(casProperties.getIgnite().getKeyStoreType())) {
-                sslContextFactory.setKeyStoreType(casProperties.getIgnite().getKeyStoreType());
+            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreType())) {
+                sslContextFactory.setKeyStoreType(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreType());
             }
             this.igniteConfiguration.setSslContextFactory(sslContextFactory);
         }
@@ -215,7 +215,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
             this.ignite = Ignition.ignite();
         }
 
-        this.ticketIgniteCache = this.ignite.getOrCreateCache(casProperties.getIgnite().getTicketsCache().getCacheName());
+        this.ticketIgniteCache = this.ignite.getOrCreateCache(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
 
     }
 
@@ -241,7 +241,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("igniteConfiguration", casProperties.getIgnite())
+                .append("igniteConfiguration", casProperties.getTicket().getRegistry().getIgnite())
                 .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
