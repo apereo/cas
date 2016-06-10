@@ -1,7 +1,12 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -12,6 +17,19 @@ import org.springframework.core.io.ClassPathResource;
  */
 
 public class ServiceRegistryProperties extends AbstractConfigProperties {
+
+    @NestedConfigurationProperty
+    private JpaServiceRegistryProperties jpa = new JpaServiceRegistryProperties();
+
+    @NestedConfigurationProperty
+    private LdapServiceRegistryProperties ldap = new LdapServiceRegistryProperties();
+
+    @NestedConfigurationProperty
+    private MongoServiceRegistryProperties mongo =
+            new MongoServiceRegistryProperties();
+
+    @NestedConfigurationProperty
+    private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
 
     private boolean initFromJson = true;
 
@@ -60,5 +78,35 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
         this.repeatInterval = repeatInterval;
     }
 
+    public JpaServiceRegistryProperties getJpa() {
+        return jpa;
+    }
 
+    public void setJpa(final JpaServiceRegistryProperties jpa) {
+        this.jpa = jpa;
+    }
+
+    public LdapServiceRegistryProperties getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final LdapServiceRegistryProperties ldap) {
+        this.ldap = ldap;
+    }
+
+    public MongoServiceRegistryProperties getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoServiceRegistryProperties mongo) {
+        this.mongo = mongo;
+    }
+
+    public CouchbaseServiceRegistryProperties getCouchbase() {
+        return couchbase;
+    }
+
+    public void setCouchbase(final CouchbaseServiceRegistryProperties couchbase) {
+        this.couchbase = couchbase;
+    }
 }

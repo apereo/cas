@@ -1,6 +1,12 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
+import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.memcached.MemcachedProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link TicketRegistryProperties}.
@@ -10,6 +16,26 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 
 public class TicketRegistryProperties {
+
+    @NestedConfigurationProperty
+    private CouchbaseTicketRegistryProperties couchbase =
+            new CouchbaseTicketRegistryProperties();
+    
+    @NestedConfigurationProperty
+    private EhcacheProperties ehcache = new EhcacheProperties();
+
+    @NestedConfigurationProperty
+    private HazelcastProperties hazelcast = new HazelcastProperties();
+
+    @NestedConfigurationProperty
+    private IgniteProperties ignite = new IgniteProperties();
+
+    @NestedConfigurationProperty
+    private JpaTicketRegistryProperties jpaTicketRegistry = new JpaTicketRegistryProperties();
+
+    @NestedConfigurationProperty
+    private MemcachedProperties memcached = new MemcachedProperties();
+    
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
 
