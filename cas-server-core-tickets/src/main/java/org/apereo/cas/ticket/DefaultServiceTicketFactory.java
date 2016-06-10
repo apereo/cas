@@ -58,7 +58,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                 service,
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication,
-                casProperties.getTgt().isOnlyTrackMostRecentSession());
+                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
         return (T) serviceTicket;
     }
 

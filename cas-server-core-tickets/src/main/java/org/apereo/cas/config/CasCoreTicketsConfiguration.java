@@ -94,9 +94,10 @@ public class CasCoreTicketsConfiguration {
     @RefreshScope
     @Bean
     public TicketRegistry defaultTicketRegistry() {
-        return new DefaultTicketRegistry(casProperties.getTicketRegistry().getInMemory().getInitialCapacity(),
-                casProperties.getTicketRegistry().getInMemory().getLoadFactor(),
-                casProperties.getTicketRegistry().getInMemory().getConcurrency());
+        return new DefaultTicketRegistry(
+                casProperties.getTicket().getRegistry().getInMemory().getInitialCapacity(),
+                casProperties.getTicket().getRegistry().getInMemory().getLoadFactor(),
+                casProperties.getTicket().getRegistry().getInMemory().getConcurrency());
     }
 
     @Bean
@@ -107,28 +108,28 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.TicketGrantingTicketIdGenerator(
-                casProperties.getTgt().getMaxLength(),
+                casProperties.getTicket().getTgt().getMaxLength(),
                 casProperties.getHost().getName());
     }
 
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(
-                casProperties.getSt().getMaxLength(),
+                casProperties.getTicket().getSt().getMaxLength(),
                 casProperties.getHost().getName());
     }
 
     @Bean
     public UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ProxyTicketIdGenerator(
-                casProperties.getPgt().getMaxLength(),
+                casProperties.getTicket().getPgt().getMaxLength(),
                 casProperties.getHost().getName());
     }
 
     @Bean
     public ExpirationPolicy timeoutExpirationPolicy() {
         final TimeoutExpirationPolicy t = new TimeoutExpirationPolicy(
-                casProperties.getTgt().getTimeout().getMaxTimeToLiveInSeconds(),
+                casProperties.getTicket().getTgt().getTimeout().getMaxTimeToLiveInSeconds(),
                 TimeUnit.SECONDS
         );
         return t;
@@ -136,9 +137,10 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public ExpirationPolicy ticketGrantingTicketExpirationPolicy() {
+        
         final TicketGrantingTicketExpirationPolicy t = new TicketGrantingTicketExpirationPolicy(
-                casProperties.getTgt().getMaxTimeToLiveInSeconds(),
-                casProperties.getTgt().getTimeToKillInSeconds(),
+                casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds(),
+                casProperties.getTicket().getTgt().getTimeToKillInSeconds(),
                 TimeUnit.SECONDS
         );
         return t;
@@ -148,10 +150,10 @@ public class CasCoreTicketsConfiguration {
     public ExpirationPolicy throttledUseAndTimeoutExpirationPolicy() {
         final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
         p.setTimeToKillInMilliSeconds(TimeUnit.SECONDS.toMillis(
-                casProperties.getTgt().getThrottledTimeout().getTimeToKillInSeconds()));
+                casProperties.getTicket().getTgt().getThrottledTimeout().getTimeToKillInSeconds()));
         p.setTimeInBetweenUsesInMilliSeconds(
                 TimeUnit.SECONDS.toMillis(
-                        casProperties.getTgt().getThrottledTimeout().getTimeInBetweenUsesInSeconds()));
+                        casProperties.getTicket().getTgt().getThrottledTimeout().getTimeInBetweenUsesInSeconds()));
         return p;
     }
 
@@ -173,7 +175,7 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public ExpirationPolicy hardTimeoutExpirationPolicy() {
         final HardTimeoutExpirationPolicy h = new HardTimeoutExpirationPolicy(
-                casProperties.getTgt().getHardTimeout().getTimeToKillInSeconds(),
+                casProperties.getTicket().getTgt().getHardTimeout().getTimeToKillInSeconds(),
                 TimeUnit.SECONDS
         );
         return h;
@@ -182,16 +184,16 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-                casProperties.getSt().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(casProperties.getSt().getTimeToKillInSeconds()));
+                casProperties.getTicket().getSt().getNumberOfUses(),
+                TimeUnit.SECONDS.toMillis(casProperties.getTicket().getSt().getTimeToKillInSeconds()));
 
     }
 
     @Bean
     public ExpirationPolicy proxyTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(
-                casProperties.getPt().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(casProperties.getPt().getTimeToKillInSeconds()));
+                casProperties.getTicket().getPt().getNumberOfUses(),
+                TimeUnit.SECONDS.toMillis(casProperties.getTicket().getPt().getTimeToKillInSeconds()));
     }
 
     @ConditionalOnMissingBean(name = "lockingStrategy")

@@ -60,7 +60,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
                 ticketId,
                 service,
                 this.proxyTicketExpirationPolicy,
-                casProperties.getTgt().isOnlyTrackMostRecentSession());
+                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
         return (T) serviceTicket;
     }
 

@@ -48,7 +48,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
         if (!provider.isPresent() && request != null) {
-            provider = Optional.ofNullable(request.getParameter(casProperties.getMfa().getRequestParameter()))
+            provider = Optional.ofNullable(request.getParameter(casProperties.getAuthn().getMfa().getRequestParameter()))
                     .filter(validProviderIds::contains);
         }
 
@@ -63,8 +63,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null && StringUtils.hasText(casProperties.getMfa().getPrincipalAttributes())) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(casProperties.getMfa().getPrincipalAttributes()).spliterator(), false)
+        if (!provider.isPresent() && principal != null && StringUtils.hasText(casProperties.getAuthn().getMfa().getPrincipalAttributes())) {
+            provider = StreamSupport.stream(ATTR_NAMES.split(casProperties.getAuthn().getMfa().getPrincipalAttributes()).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
@@ -108,6 +108,6 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
      * @param mfaProperties the mfa properties
      */
     public void setMfaProperties(final MfaProperties mfaProperties) {
-        this.casProperties.setMfa(mfaProperties);
+        this.casProperties.getAuthn().setMfa(mfaProperties);
     }
 }

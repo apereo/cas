@@ -29,7 +29,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
@@ -44,16 +44,14 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     public DefaultTicketRegistryCleaner() {
     }
-    
-    @Scheduled(initialDelayString="${ticket.registry.cleaner.startDelay:20000}",
-               fixedDelayString = "${ticket.registry.cleaner.repeatInterval:60000}")
+
+    @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
+            fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
     @Override
     public void clean() {
         try {
-
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            
-            if (!casProperties.getTicketRegistry().getCleaner().isEnabled()) {
+            if (!casProperties.getTicket().getRegistry().getCleaner().isEnabled()) {
                 LOGGER.info("Ticket registry cleaner is disabled for {}. No cleaner processes will be scheduled.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;
@@ -64,7 +62,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                         getClass().getSimpleName());
                 return;
             }
-            
+
             LOGGER.debug("Attempting to acquire ticket cleanup lock.");
             if (!this.jpaLockingStrategy.acquire()) {
                 LOGGER.info("Could not obtain lock. Aborting cleanup. The ticket registry may not support self-service maintenance.");
