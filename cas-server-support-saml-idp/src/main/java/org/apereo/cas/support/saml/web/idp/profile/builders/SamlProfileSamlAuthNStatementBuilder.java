@@ -66,7 +66,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         if (assertion.getValidUntilDate() != null) {
             final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
             statement.setSessionNotOnOrAfter(
-                    DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getSamlIdp().getResponse().getSkewAllowance())));
+                    DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance())));
         }
         statement.setSubjectLocality(buildSubjectLocality(assertion, authnRequest, adaptor));
         return statement;

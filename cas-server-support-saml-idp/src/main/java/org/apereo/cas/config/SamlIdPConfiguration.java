@@ -80,9 +80,9 @@ public class SamlIdPConfiguration {
     public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         final ChainingMetadataResolverCacheLoader c = new ChainingMetadataResolverCacheLoader();
         
-        c.setFailFastInitialization(casProperties.getSamlIdp().getMetadata().isFailFast());
-        c.setMetadataCacheExpirationMinutes(casProperties.getSamlIdp().getMetadata().getCacheExpirationMinutes());
-        c.setRequireValidMetadata(casProperties.getSamlIdp().getMetadata().isRequireValidMetadata());
+        c.setFailFastInitialization(casProperties.getAuthn().getSamlIdp().getMetadata().isFailFast());
+        c.setMetadataCacheExpirationMinutes(casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes());
+        c.setRequireValidMetadata(casProperties.getAuthn().getSamlIdp().getMetadata().isRequireValidMetadata());
         
         return c;
     }
@@ -93,7 +93,7 @@ public class SamlIdPConfiguration {
         final DefaultSamlRegisteredServiceCachingMetadataResolver r =
                 new DefaultSamlRegisteredServiceCachingMetadataResolver();
         r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
-        r.setMetadataCacheExpirationMinutes(casProperties.getSamlIdp().getMetadata().getCacheExpirationMinutes());
+        r.setMetadataCacheExpirationMinutes(casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes());
         return r;
     }
     
@@ -126,10 +126,10 @@ public class SamlIdPConfiguration {
         final ShibbolethIdpMetadataAndCertificatesGenerationService s =
                 new ShibbolethIdpMetadataAndCertificatesGenerationService();
         
-        s.setEntityId(casProperties.getSamlIdp().getEntityId());
-        s.setHostName(casProperties.getSamlIdp().getHostName());
-        s.setMetadataLocation(casProperties.getSamlIdp().getMetadata().getLocation());
-        s.setScope(casProperties.getSamlIdp().getScope());
+        s.setEntityId(casProperties.getAuthn().getSamlIdp().getEntityId());
+        s.setHostName(casProperties.getAuthn().getSamlIdp().getHostName());
+        s.setMetadataLocation(casProperties.getAuthn().getSamlIdp().getMetadata().getLocation());
+        s.setScope(casProperties.getAuthn().getSamlIdp().getScope());
         
         return s;
     }

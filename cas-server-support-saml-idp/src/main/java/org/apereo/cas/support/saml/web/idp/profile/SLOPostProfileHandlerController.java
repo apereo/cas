@@ -60,13 +60,13 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     protected void handleSloPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        if (casProperties.getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled()) {
+        if (casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled()) {
             logger.info("Processing SAML IdP SLO requests is disabled");
             return;
         }
 
         final LogoutRequest logoutRequest = decodeRequest(request, decoder, LogoutRequest.class);
-        if (casProperties.getSamlIdp().getLogout().isForceSignedLogoutRequests() && !logoutRequest.isSigned()) {
+        if (casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests() && !logoutRequest.isSigned()) {
             throw new SAMLException("Logout request is not signed but should be.");
         } else if (logoutRequest.isSigned()) {
             final MetadataResolver resolver = SamlIdPUtils.getMetadataResolverForAllSamlServices(this.servicesManager,

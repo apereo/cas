@@ -42,7 +42,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         final Conditions conditions = newConditions(currentDateTime,
-                currentDateTime.plusSeconds(casProperties.getSamlIdp().getResponse().getSkewAllowance()),
+                currentDateTime.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()),
                 adaptor.getEntityId());
         return conditions;
     }

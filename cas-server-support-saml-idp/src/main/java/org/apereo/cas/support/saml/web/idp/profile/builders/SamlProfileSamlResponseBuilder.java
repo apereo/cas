@@ -127,7 +127,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @return the issuer
      */
     protected Issuer buildEntityIssuer() {
-        final Issuer issuer = newIssuer(casProperties.getSamlIdp().getEntityId());
+        final Issuer issuer = newIssuer(casProperties.getAuthn().getSamlIdp().getEntityId());
         issuer.setFormat(Issuer.ENTITY);
         return issuer;
     }

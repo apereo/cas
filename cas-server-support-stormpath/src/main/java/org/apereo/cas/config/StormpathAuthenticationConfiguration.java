@@ -39,9 +39,10 @@ public class StormpathAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler stormpathAuthenticationHandler() {
         final StormpathAuthenticationHandler handler =
-                new StormpathAuthenticationHandler(casProperties.getStormpath().getApiKey(),
-                        casProperties.getStormpath().getApplicationId(),
-                        casProperties.getStormpath().getSecretkey());
+                new StormpathAuthenticationHandler(
+                        casProperties.getAuthn().getStormpath().getApiKey(),
+                        casProperties.getAuthn().getStormpath().getApplicationId(),
+                        casProperties.getAuthn().getStormpath().getSecretkey());
 
         if (this.passwordEncoder != null) {
             handler.setPasswordEncoder(this.passwordEncoder);

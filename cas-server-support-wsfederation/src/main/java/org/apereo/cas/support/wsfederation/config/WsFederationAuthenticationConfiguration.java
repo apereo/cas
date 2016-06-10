@@ -45,7 +45,7 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     public BaseApplicationContextWrapper wsFedApplicationContextWrapper() {
         return new WsFedApplicationContextWrapper(this.adfsAuthNHandler, this.adfsPrincipalResolver,
-                casProperties.getWsfed().isAttributeResolverEnabled());
+                casProperties.getAuthn().getWsfed().isAttributeResolverEnabled());
     }
 
     @Bean
@@ -54,13 +54,13 @@ public class WsFederationAuthenticationConfiguration {
         final WsFederationConfiguration config = new WsFederationConfiguration();
 
         config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType
-                .valueOf(casProperties.getWsfed().getAttributesType()));
-        config.setIdentityAttribute(casProperties.getWsfed().getIdentityAttribute());
-        config.setIdentityProviderIdentifier(casProperties.getWsfed().getIdentityProviderIdentifier());
-        config.setIdentityProviderUrl(casProperties.getWsfed().getIdentityProviderUrl());
-        config.setTolerance(casProperties.getWsfed().getTolerance());
-        config.setRelyingPartyIdentifier(casProperties.getWsfed().getRelyingPartyIdentifier());
-        StringUtils.commaDelimitedListToSet(casProperties.getWsfed().getSigningCertificateResources())
+                .valueOf(casProperties.getAuthn().getWsfed().getAttributesType()));
+        config.setIdentityAttribute(casProperties.getAuthn().getWsfed().getIdentityAttribute());
+        config.setIdentityProviderIdentifier(casProperties.getAuthn().getWsfed().getIdentityProviderIdentifier());
+        config.setIdentityProviderUrl(casProperties.getAuthn().getWsfed().getIdentityProviderUrl());
+        config.setTolerance(casProperties.getAuthn().getWsfed().getTolerance());
+        config.setRelyingPartyIdentifier(casProperties.getAuthn().getWsfed().getRelyingPartyIdentifier());
+        StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getSigningCertificateResources())
                 .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
 
         return config;

@@ -71,7 +71,7 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public RevocationPolicy thresholdExpiredCRLRevocationPolicy() {
         final ThresholdExpiredCRLRevocationPolicy p = new ThresholdExpiredCRLRevocationPolicy();
-        p.setThreshold(casProperties.getX509().getRevocationPolicyThreshold());
+        p.setThreshold(casProperties.getAuthn().getX509().getRevocationPolicyThreshold());
         return p;
     }
 
@@ -83,8 +83,8 @@ public class X509AuthenticationConfiguration {
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
         final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker();
-        c.setCheckAll(casProperties.getX509().isCheckAll());
-        c.setThrowOnFetchFailure(casProperties.getX509().isThrowOnFetchFailure());
+        c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
+        c.setThrowOnFetchFailure(casProperties.getAuthn().getX509().isThrowOnFetchFailure());
         c.setUnavailableCRLPolicy(x509CrlUnavailableRevocationPolicy);
         c.setExpiredCRLPolicy(x509CrlExpiredRevocationPolicy);
         return c;
@@ -104,8 +104,8 @@ public class X509AuthenticationConfiguration {
     public RevocationChecker resourceCrlRevocationChecker() {
         final ResourceCRLRevocationChecker c = new ResourceCRLRevocationChecker();
 
-        c.setRefreshInterval(casProperties.getX509().getRefreshIntervalSeconds());
-        c.setCheckAll(casProperties.getX509().isCheckAll());
+        c.setRefreshInterval(casProperties.getAuthn().getX509().getRefreshIntervalSeconds());
+        c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
         c.setExpiredCRLPolicy(this.x509ResourceExpiredRevocationPolicy);
         c.setUnavailableCRLPolicy(this.x509ResourceUnavailableRevocationPolicy);
         return c;
@@ -116,13 +116,13 @@ public class X509AuthenticationConfiguration {
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
         final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler();
 
-        h.setCheckKeyUsage(casProperties.getX509().isCheckKeyUsage());
-        h.setMaxPathLength(casProperties.getX509().getMaxPathLength());
-        h.setMaxPathLengthAllowUnspecified(casProperties.getX509().isMaxPathLengthAllowUnspecified());
-        h.setRequireKeyUsage(casProperties.getX509().isRequireKeyUsage());
+        h.setCheckKeyUsage(casProperties.getAuthn().getX509().isCheckKeyUsage());
+        h.setMaxPathLength(casProperties.getAuthn().getX509().getMaxPathLength());
+        h.setMaxPathLengthAllowUnspecified(casProperties.getAuthn().getX509().isMaxPathLengthAllowUnspecified());
+        h.setRequireKeyUsage(casProperties.getAuthn().getX509().isRequireKeyUsage());
         h.setRevocationChecker(this.revocationChecker);
-        h.setSubjectDnPattern(casProperties.getX509().getRegExSubjectDnPattern());
-        h.setTrustedIssuerDnPattern(casProperties.getX509().getRegExTrustedIssuerDnPattern());
+        h.setSubjectDnPattern(casProperties.getAuthn().getX509().getRegExSubjectDnPattern());
+        h.setTrustedIssuerDnPattern(casProperties.getAuthn().getX509().getRegExTrustedIssuerDnPattern());
 
         return h;
     }
@@ -146,7 +146,7 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
         final X509SubjectPrincipalResolver p = new X509SubjectPrincipalResolver();
-        p.setDescriptor(casProperties.getX509().getPrincipalDescriptor());
+        p.setDescriptor(casProperties.getAuthn().getX509().getPrincipalDescriptor());
         return p;
     }
 
@@ -174,8 +174,8 @@ public class X509AuthenticationConfiguration {
         final X509SerialNumberAndIssuerDNPrincipalResolver r =
                 new X509SerialNumberAndIssuerDNPrincipalResolver();
 
-        r.setSerialNumberPrefix(casProperties.getX509().getSerialNumberPrefix());
-        r.setValueDelimiter(casProperties.getX509().getValueDelimiter());
+        r.setSerialNumberPrefix(casProperties.getAuthn().getX509().getSerialNumberPrefix());
+        r.setValueDelimiter(casProperties.getAuthn().getX509().getValueDelimiter());
 
         return r;
     }

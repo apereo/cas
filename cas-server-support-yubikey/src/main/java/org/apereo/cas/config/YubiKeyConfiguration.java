@@ -68,8 +68,8 @@ public class YubiKeyConfiguration {
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
 
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(
-                this.casProperties.getMfa().getYubikey().getClientId(),
-                this.casProperties.getMfa().getYubikey().getSecretKey());
+                this.casProperties.getAuthn().getMfa().getYubikey().getClientId(),
+                this.casProperties.getAuthn().getMfa().getYubikey().getSecretKey());
 
         if (registry != null) {
             handler.setRegistry(this.registry);
@@ -85,7 +85,7 @@ public class YubiKeyConfiguration {
         final YubiKeyAuthenticationMetaDataPopulator pop = 
                 new YubiKeyAuthenticationMetaDataPopulator();
         
-        pop.setAuthenticationContextAttribute(casProperties.getMfa().getAuthenticationContextAttribute());
+        pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(yubikeyAuthenticationHandler());
         pop.setProvider(yubikeyAuthenticationProvider(httpClient));
         return pop;
@@ -98,7 +98,7 @@ public class YubiKeyConfiguration {
                                                                            final HttpClient httpClient) {
         return new YubiKeyMultifactorAuthenticationProvider(
                 yubikeyAuthenticationHandler(),
-                this.casProperties.getMfa().getYubikey().getRank(),
+                this.casProperties.getAuthn().getMfa().getYubikey().getRank(),
                 httpClient);
     }
 
