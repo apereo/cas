@@ -4,7 +4,8 @@ title: CAS - CAS SAML Protocol
 ---
 
 # SAML Protocol
-CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
+CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. 
+This document deals with CAS-specific concerns.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
