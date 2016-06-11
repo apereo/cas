@@ -17,7 +17,7 @@ Couchbase integration is enabled by including the following dependency in the WA
 Enable the registry in `application.properties` via:
 
 ```properties
-#CAS components mappings
+prefix = "
 serviceRegistryDao=couchbaseServiceRegistryDao
 ```
 

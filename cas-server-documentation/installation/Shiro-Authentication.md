@@ -29,7 +29,7 @@ for the given authentication handler to check their presence and report back.
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 primaryAuthenticationHandler=shiroAuthenticationHandler
 ```
 

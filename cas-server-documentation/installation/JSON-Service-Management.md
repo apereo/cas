@@ -12,7 +12,7 @@ the directory structure to find relevant JSON files.
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 serviceRegistryDao=jsonServiceRegistryDao
 ```
 

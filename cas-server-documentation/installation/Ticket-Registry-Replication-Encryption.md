@@ -20,7 +20,7 @@ when you use the above ticket registries. It requires explicit configuration bef
 Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. 
 
 ```properties
-#CAS components mappings
+prefix = "
 ticketCipherExecutor=defaultTicketCipherExecutor
 ```
 

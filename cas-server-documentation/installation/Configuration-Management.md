@@ -42,6 +42,10 @@ All CAS settings can be overridden via the above outlined strategies.
 the CAS configuration, you should configure access 
 to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
+## Settings
+
+To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 ## Embedded
 
 By default, all CAS settings and configuration is controlled via the `application.properties` file. This file

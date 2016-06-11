@@ -21,7 +21,7 @@ This implementation auto-configures most of the internal details.
 Enable the registry in `application.properties` via:
 
 ```properties
-#CAS components mappings
+prefix = "
 serviceRegistryDao=mongoServiceRegistryDao
 ```
 

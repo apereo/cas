@@ -49,7 +49,7 @@ The _inspektr_ components, on the other hand, fully support stateless clusters.
 Uses a memory map to prevent successive failed login attempts from the same IP address. In `cas.propeties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 authenticationThrottle=inMemoryIpAddressThrottle
 ```
 
@@ -59,7 +59,7 @@ Uses a memory map to prevent successive failed login attempts for
 a particular username from the same IP address. In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 authenticationThrottle=inMemoryIpAddressUsernameThrottle
 ```
 
@@ -70,7 +70,7 @@ username from the same IP address. This component requires that the
 `JdbcAuditTrailManager`, which writes audit data to a database.
 
 ```properties
-#CAS components mappings
+prefix = "
 authenticationThrottle=inspektrIpAddressUsernameThrottle
 ```
 

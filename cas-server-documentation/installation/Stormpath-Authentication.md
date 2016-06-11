@@ -19,7 +19,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 primaryAuthenticationHandler=stormpathAuthenticationHandler
 ```
 

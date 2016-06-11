@@ -37,7 +37,7 @@ acceptable client certificates.
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 primaryAuthenticationHandler=x509CredentialsAuthenticationHandler
 ```
 

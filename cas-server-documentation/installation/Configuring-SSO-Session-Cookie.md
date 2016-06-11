@@ -81,7 +81,7 @@ If you wish to turn off cookie encryption, adjust your configuration to be the f
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 cookieCipherExecutor=noOpCipherExecutor
 ```
 

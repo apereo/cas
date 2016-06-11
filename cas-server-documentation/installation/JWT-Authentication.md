@@ -48,7 +48,7 @@ Then, configure the JWT handler in your overlay configuration:
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 primaryAuthenticationHandler=tokenAuthenticationHandler
 ```
 

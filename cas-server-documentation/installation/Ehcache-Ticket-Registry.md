@@ -31,7 +31,7 @@ replication with Ehcache, [see this resource](http://ehcache.org/documentation/u
 Enable the registry in `application.properties` via:
 
 ```properties
-#CAS components mappings
+prefix = "
 ticketRegistry=ehcacheTicketRegistry
 ```
 

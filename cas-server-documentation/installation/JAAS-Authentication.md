@@ -21,7 +21,7 @@ directives in the JAAS config file.
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 primaryAuthenticationHandler=jaasAuthenticationHandler
 ```
 

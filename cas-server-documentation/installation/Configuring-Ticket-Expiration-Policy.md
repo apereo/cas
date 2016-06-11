@@ -24,7 +24,7 @@ This is default option, which provides a hard-time out as well as a sliding wind
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 ```
 
@@ -43,7 +43,7 @@ it would be marked as expired.
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 grantingTicketExpirationPolicy=timeoutExpirationPolicy
 ```
 
@@ -61,7 +61,7 @@ and the user will be forced to re-authenticate.
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 grantingTicketExpirationPolicy=hardTimeoutExpirationPolicy
 ```
 
@@ -79,7 +79,7 @@ attempts to consume CAS server resources by requesting high volumes of service t
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 grantingTicketExpirationPolicy=throttledUseAndTimeoutExpirationPolicy
 ```
 
@@ -102,7 +102,7 @@ is strongly discouraged.</p></div>
 In `application.properties`:
 
 ```properties
-#CAS components mappings
+prefix = "
 grantingTicketExpirationPolicy=neverExpiresExpirationPolicy
 ```
 

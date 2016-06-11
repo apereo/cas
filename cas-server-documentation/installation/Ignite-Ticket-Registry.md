@@ -23,7 +23,7 @@ Distributed caches are recommended for HA architectures since they offer fault t
 Enable the registry in `application.properties` via:
 
 ```properties
-#CAS components mappings
+prefix = "
 ticketRegistry=igniteTicketRegistry
 ```
 
