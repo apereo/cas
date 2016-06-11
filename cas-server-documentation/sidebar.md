@@ -11,6 +11,7 @@
 * [Installation](#installation)
     *   [Maven Overlay](/$version/installation/Maven-Overlay-Installation.html)
     *   [Configuration Management](/$version/installation/Configuration-Management.html)
+    *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Docker](/$version/installation/Docker-Installation.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
