@@ -42,58 +42,49 @@ components may afford some protection but
 they cannot apply the rate strictly since requests to CAS hosts would be split across N systems.
 The _inspektr_ components, on the other hand, fully support stateless clusters.
 
+## IP Address
 
-## Configuration
-
-### IP Address
 Uses a memory map to prevent successive failed login attempts from the same IP address. In `cas.propeties`:
 
 ```properties
-prefix = "
 authenticationThrottle=inMemoryIpAddressThrottle
 ```
 
+## IP Address and Username
 
-### IP Address and Username
 Uses a memory map to prevent successive failed login attempts for 
 a particular username from the same IP address. In `application.properties`:
 
 ```properties
-prefix = "
 authenticationThrottle=inMemoryIpAddressUsernameThrottle
 ```
 
-### Inspektr + JDBC
+## Inspektr + JDBC
+
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
 [inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
 `JdbcAuditTrailManager`, which writes audit data to a database.
 
-```properties
-prefix = "
-authenticationThrottle=inspektrIpAddressUsernameThrottle
-```
-
-Import in local `deployerConfigContext.xml`:
+Enable the following module in your configuration overlay:
 
 ```xml
-<import resource="classpath:inspektr-throttle-jdbc-config.xml" />
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+And then enable the throttling engine: 
+
+```properties
+authenticationThrottle=inspektrIpAddressUsernameThrottle
 ```
 
 For additional instructions on how to configure auditing via Inspektr,
 please [review the following guide](Logging.html).
 
-### Configuration
+## Configuration
 
-Login throttling configuration consists of:
-
-```properties
-# cas.throttle.failure.threshold=
-# cas.throttle.failure.range.seconds=
-# cas.throttle.username.parameter=
-# cas.throttle.appcode=
-# cas.throttle.authn.failurecode=
-# cas.throttle.audit.query=
-# cas.throttle.startDelay=20000
-# cas.throttle.repeatInterval=30000
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

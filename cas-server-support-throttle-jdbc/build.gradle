@@ -1,0 +1,12 @@
+description = 'Apereo CAS JDBC Authentication Throttling'
+dependencies {
+    compile libraries.spring
+    compile libraries.quartz
+    compile libraries.inspektr
+    compile libraries.hibernate
+    compile libraries.guava
+    compile project(':cas-server-support-audit-jdbc')
+    compile project(':cas-server-core-audit')
+    compile project(':cas-server-support-throttle')
+}
+

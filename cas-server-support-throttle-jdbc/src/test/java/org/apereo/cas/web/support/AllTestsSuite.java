@@ -10,8 +10,8 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class,
-        InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class
-})
+@Suite.SuiteClasses(
+        InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class
+)
 public class AllTestsSuite {
 }

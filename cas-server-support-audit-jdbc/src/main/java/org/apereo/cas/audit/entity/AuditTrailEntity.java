@@ -1,4 +1,4 @@
-package org.apereo.cas.web.support.entity;
+package org.apereo.cas.audit.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

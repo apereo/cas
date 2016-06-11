@@ -21,13 +21,7 @@ deployers via relevant properties in `application.properties`
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager` and are routed to
 a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
 
-```properties
-# cas.audit.useSingleLine=true
-# cas.audit.singlelineSeparator=|
-# cas.audit.auditFormat=DEFAULT
-# cas.audit.ignoreAuditFailures=false
-# cas.audit.appCode=CAS
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Sample Log Output
 
@@ -53,35 +47,22 @@ SERVER IP ADDRESS: 192.168.200.22
 
 If you intend to use a database
 for auditing functionality, adjust the audit manager mapping 
-in `application.properties` to match the configuration below:
+in `application.properties` to match the configuration below.
 
-```properties
-# CAS components mappings
-auditTrailManager=jdbcAuditTrailManager
-```
-
-and also include this import in local `deployerConfigContext.xml`:
+Enable the following module in your configuration overlay:
 
 ```xml
-<import resource="classpath:inspektr-jdbc-audit-config.xml" />
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+```properties
+auditTrailManager=jdbcAuditTrailManager
 ```
 
 ### Configuration
 
-Configuration consists of:
-
-```properties
-#cas.audit.database.max.agedays=
-#cas.audit.database.dialect=
-#cas.audit.database.batchSize=
-#cas.audit.database.ddl.auto=
-#cas.audit.database.gen.ddl=
-#cas.audit.database.show.sql=
-#cas.audit.database.driverClass=
-#cas.audit.database.url=
-#cas.audit.database.user=
-#cas.audit.database.password=
-#cas.audit.database.pool.maxSize=
-#cas.audit.database.pool.maxIdleTime=
-#cas.audit.database.pool.maxWait=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

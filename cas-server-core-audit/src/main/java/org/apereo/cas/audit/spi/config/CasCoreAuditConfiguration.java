@@ -66,7 +66,6 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
-
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
                 auditablePrincipalResolver(),
@@ -176,48 +175,7 @@ public class CasCoreAuditConfiguration {
         return new MessageBundleAwareResourceResolver();
     }
 
-    @Bean
-    public MaxAgeWhereClauseMatchCriteria auditCleanupCriteria() {
-        return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
-    }
-
-    @Bean
-    public DataSourceTransactionManager inspektrAuditTransactionManager() {
-        return new DataSourceTransactionManager(inspektrAuditTrailDataSource());
-    }
-
-    @Bean
-    public DataSource inspektrAuditTrailDataSource() {
-        return Beans.newHickariDataSource(casProperties.getAudit().getJdbc());
-    }
-
-    @Bean
-    public TransactionTemplate inspektrAuditTransactionTemplate() {
-        final TransactionTemplate t =
-                new TransactionTemplate(inspektrAuditTransactionManager());
-        t.setIsolationLevelName(casProperties.getAudit().getJdbc().getIsolationLevelName());
-        t.setPropagationBehaviorName(casProperties.getAudit().getJdbc().getPropagationBehaviorName());
-        return t;
-    }
-
-    @Bean
-    public JdbcAuditTrailManager jdbcAuditTrailManager() {
-        final JdbcAuditTrailManager t =
-                new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
-        t.setCleanupCriteria(auditCleanupCriteria());
-        t.setDataSource(inspektrAuditTrailDataSource());
-        return t;
-    }
 
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
-        return Beans.newEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                        Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
-                        "jpaEventRegistryContext",
-                        new String[]{"org.apereo.cas.web.support.entity"},
-                        inspektrAuditTrailDataSource()),
-                casProperties.getAudit().getJdbc());
-    }
+
 }
