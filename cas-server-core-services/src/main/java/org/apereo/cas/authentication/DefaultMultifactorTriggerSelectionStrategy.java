@@ -4,7 +4,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
@@ -106,9 +106,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     /**
      * Sets mfa properties.
      *
-     * @param mfaProperties the mfa properties
+     * @param multifactorAuthenticationProperties the mfa properties
      */
-    public void setMfaProperties(final MfaProperties mfaProperties) {
-        this.casProperties.getAuthn().setMfa(mfaProperties);
+    public void setMfaProperties(final MultifactorAuthenticationProperties multifactorAuthenticationProperties) {
+        this.casProperties.getAuthn().setMfa(multifactorAuthenticationProperties);
     }
 }

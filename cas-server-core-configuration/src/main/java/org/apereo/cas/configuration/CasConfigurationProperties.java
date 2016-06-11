@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.core.ServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
@@ -16,7 +15,6 @@ import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestPropert
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.core.slo.SloProperties;
 import org.apereo.cas.configuration.model.core.sso.SsoProperties;
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;

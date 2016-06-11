@@ -7,7 +7,7 @@ package org.apereo.cas.configuration.model.support.mfa;
  * @since 5.0.0
  */
 
-public class MfaProperties {
+public class MultifactorAuthenticationProperties {
 
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";

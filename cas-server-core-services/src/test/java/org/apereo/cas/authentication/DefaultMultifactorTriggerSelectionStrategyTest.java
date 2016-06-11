@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -56,7 +56,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     public void setUp() {
         strategy = new DefaultMultifactorTriggerSelectionStrategy();
         
-        final MfaProperties p = new MfaProperties();
+        final MultifactorAuthenticationProperties p = new MultifactorAuthenticationProperties();
         p.setRequestParameter(REQUEST_PARAM);
         p.setPrincipalAttributes(P_ATTRS_12);
 

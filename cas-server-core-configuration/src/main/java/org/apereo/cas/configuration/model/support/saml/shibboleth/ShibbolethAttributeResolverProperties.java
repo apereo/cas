@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.saml.shibboleth;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

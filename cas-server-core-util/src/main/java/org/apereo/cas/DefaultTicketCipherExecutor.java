@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.BinaryCipherExecutor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is {@link DefaultTicketCipherExecutor} that handles the encryption

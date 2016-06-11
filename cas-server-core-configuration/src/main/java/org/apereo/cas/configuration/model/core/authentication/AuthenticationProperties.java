@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthentic
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MfaProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
@@ -73,7 +73,7 @@ public class AuthenticationProperties {
     private JdbcAuthenticationProperties jdbc = new JdbcAuthenticationProperties();
 
     @NestedConfigurationProperty
-    private MfaProperties mfa = new MfaProperties();
+    private MultifactorAuthenticationProperties mfa = new MultifactorAuthenticationProperties();
     
     @NestedConfigurationProperty
     private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
@@ -196,11 +196,11 @@ public class AuthenticationProperties {
         this.jdbc = jdbc;
     }
 
-    public MfaProperties getMfa() {
+    public MultifactorAuthenticationProperties getMfa() {
         return mfa;
     }
 
-    public void setMfa(final MfaProperties mfa) {
+    public void setMfa(final MultifactorAuthenticationProperties mfa) {
         this.mfa = mfa;
     }
 
