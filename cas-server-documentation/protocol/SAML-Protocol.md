@@ -125,19 +125,10 @@ Content-Type: text/xml
 ## Configuration
 
 SAML configuration in CAS is contained within the `application.properties` file.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# Indicates the SAML response issuer
-# cas.saml.response.issuer=localhost
-#
-# Indicates the skew allowance which controls the issue instant of the SAML response
-# cas.saml.response.skewAllowance=0
-# 
-# Indicates the default namespace used for SAML attributes
-# cas.saml.attributeNamespace=http://www.ja-sig.org/products/cas/
-```
-
-You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
+You may also need to declare the following Maven repository in 
+your CAS Overlay to be able to resolve dependencies:
 
 ```xml
 <repositories>

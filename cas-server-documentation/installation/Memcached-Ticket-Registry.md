@@ -32,11 +32,11 @@ Enable the registry in `application.properties` via:
 In `application.properties`:
 
 ```properties
-
 ticketRegistry=memcachedTicketRegistry
 ```
 
 ## Configuration Considerations
+
 There are three core configuration concerns with memcached:
 
 1. Hash Algorithm
@@ -81,13 +81,8 @@ compact data, which benefits both storage requirements and throughput.
 
 
 ## Configuration
-```properties
-# memcached.servers=cas-1.example.org:11211,cas-2.example.org:11211,cas-3.example.org:11211
-# memcached.hashAlgorithm=FNV1_64_HASH
-# memcached.protocol=BINARY
-# memcached.locatorType=ARRAY_MOD
-# memcached.failureMode=Redistribute
-```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with

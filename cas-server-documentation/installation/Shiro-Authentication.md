@@ -29,17 +29,10 @@ for the given authentication handler to check their presence and report back.
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=shiroAuthenticationHandler
 ```
 
-The following settings are applicable:
-
-```properties
-# shiro.authn.requiredRoles=
-# shiro.authn.requiredPermissions=
-# shiro.authn.config.location=classpath:shiro.ini
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:
 

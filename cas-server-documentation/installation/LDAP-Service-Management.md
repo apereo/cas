@@ -26,7 +26,6 @@ Support is enabled by adding the following module into the Maven overlay:
 In `application.properties`:
 
 ```properties
-
 serviceRegistryDao=ldapServiceRegistryDao
 ```
 
@@ -48,11 +47,7 @@ Service definitions are by default stored inside the `serviceDefinitionAttribute
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html).
 
-The following settings are applicable:
-
-```properties
-svcreg.ldap.baseDn=dc=example,dc=org
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Auto Initialization
 
@@ -60,6 +55,4 @@ Upon startup and if the services registry database is blank,
 the registry is able to auto initialize itself from default 
 JSON service definitions available to CAS. This behavior can be controlled via:
 
-```properties
-# svcreg.database.from.json=false
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

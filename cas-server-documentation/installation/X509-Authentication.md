@@ -37,27 +37,11 @@ acceptable client certificates.
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=x509CredentialsAuthenticationHandler
 ```
 
-The following settings are applicable:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# cas.x509.authn.crl.checkAll=false
-# cas.x509.authn.crl.throw.failure=true
-# cas.x509.authn.crl.refresh.interval=
-# cas.x509.authn.revocation.policy.threshold=
-# cas.x509.authn.trusted.issuer.dnpattern=
-# cas.x509.authn.max.path.length=
-# cas.x509.authn.max.path.length.unspecified=
-# cas.x509.authn.check.key.usage=
-# cas.x509.authn.require.key.usage=
-# cas.x509.authn.subject.dnpattern=
-# cas.x509.authn.principal.descriptor=
-# cas.x509.authn.principal.serial.no.prefix=
-# cas.x509.authn.principal.value.delim=
-```
 
 ## Principal Resolution
 

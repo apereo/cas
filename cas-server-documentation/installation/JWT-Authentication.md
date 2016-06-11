@@ -48,7 +48,6 @@ Then, configure the JWT handler in your overlay configuration:
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=tokenAuthenticationHandler
 ```
 

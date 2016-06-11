@@ -107,40 +107,10 @@ Provide a JAAS `login.conf` file:
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
     };
 
-You may use the following configuration in `application.properties`:
-
-```properties
-# cas.spnego.ldap.attribute=spnegoattribute
-# cas.spnego.ldap.filter=host={0}
-# cas.spnego.ldap.basedn=
-# cas.spnego.hostname.pattern=.+
-# cas.spnego.ip.pattern=
-# cas.spnego.alt.remote.host.attribute
-# cas.spengo.use.principal.domain=false
-# cas.spnego.ntlm.allowed=true
-# cas.spnego.kerb.debug=false
-# cas.spnego.kerb.realm=EXAMPLE.COM
-# cas.spnego.kerb.kdc=172.10.1.10
-# cas.spnego.login.conf.file=/path/to/login
-# cas.spnego.jcifs.domain=
-# cas.spnego.jcifs.domaincontroller=
-# cas.spnego.jcifs.netbios.cache.policy:600
-# cas.spnego.jcifs.netbios.wins=
-# cas.spnego.jcifs.password=
-# cas.spnego.jcifs.service.password=
-# cas.spnego.jcifs.socket.timeout:300000
-# cas.spnego.jcifs.username=
-# cas.spnego.kerb.conf=
-# cas.spnego.ntlm=false
-# cas.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
-# cas.spnego.mixed.mode.authn=false
-# cas.spnego.send.401.authn.failure=false
-# cas.spnego.principal.resolver.transform=NONE
-# cas.spnego.service.principal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.spnego.hostname.client.action.strategy=hostnameSpnegoClientAction
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Client Selection Strategy
+
 CAS provides a set of components that attempt to activate the SPNEGO flow conditionally,
 in case deployers need a configurable way to decide whether SPNEGO should be applied to the
 current authentication/browser request. The state that is available to the webflow
@@ -148,6 +118,7 @@ is `evaluateClientRequest` which will attempt to start SPNEGO authentication
 or resume normally, depending on the client action strategy chosen below.
 
 ### By Remote IP
+
 Checks to see if the request's remote ip address matches a predefine pattern.
 
 ```properties
@@ -158,6 +129,7 @@ Checks to see if the request's remote ip address matches a predefine pattern.
 
 
 ### By Hostname
+
 Checks to see if the request's remote hostname matches a predefine pattern.
 
 ```properties
@@ -168,6 +140,7 @@ Checks to see if the request's remote hostname matches a predefine pattern.
 
 
 ### By LDAP Attribute
+
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 

@@ -104,12 +104,10 @@ Invoke CAS to register applications into its own service registry. The REST
 call must be authenticated as it requires a TGT from the CAS server, and furthermore,
 the authenticated principal that submits the request must be authorized with a
 preconfigured role name and value that is designated in the CAS configuration
-via the following properties:
+via the CAS properties.
 
-```properties
-# cas.rest.services.attributeName=
-# cas.rest.services.attributeValue=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 ### Sample Request 
 
@@ -152,7 +150,7 @@ To understand how to throttling works in CAS,
 please review [the available options](../installation/Configuring-Authentication-Throttling.html).
 
 By default, throttling REST requests is turned off. To enable this behavior,
-adjust the following settings: 
+adjust the following setting:
 
 ```properties
 restAuthenticationThrottle=inMemoryIpAddressUsernameThrottle

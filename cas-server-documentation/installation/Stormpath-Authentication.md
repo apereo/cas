@@ -19,14 +19,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=stormpathAuthenticationHandler
 ```
 
-The following settings are applicable:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# cas.authn.stormpath.apiKey=
-# cas.authn.stormpath.applicationId=
-# cas.authn.stormpath.secretkey=
-```

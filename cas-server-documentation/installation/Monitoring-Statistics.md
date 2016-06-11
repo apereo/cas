@@ -34,31 +34,13 @@ The following endpoints are secured and available:
 
 ## Security
 
-Access is granted the following settings in `application.properties` file:
-
-```properties
-# cas.securityContext.adminpages.ip=127\.0\.0\.1
-```
-
+Access is granted the following settings in `application.properties` file.
 The `/status` endpoint is always protected by an IP pattern. The other administrative 
 endpoints however can optionally 
-be protected by the CAS server, via the following settings:
-
-```properties
-# cas.securityContext.adminpages.users=classpath:user-details.properties
-# cas.securityContext.adminpages.adminRoles=ROLE_ADMIN
-# cas.securityContext.adminpages.loginUrl=${server.prefix}/login
-# cas.securityContext.adminpages.service=${server.prefix}/callback
-```
-
-The format of the `user-details.properties` file is as such:
-
-```properties
-# username=password,grantedAuthority
-casuser=notused,ROLE_ADMIN
-```
-
+be protected by the CAS server.
 Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Monitors
 
@@ -76,13 +58,8 @@ Supported metrics include:
 
 ### Metric Refresh Interval
 
-The metrics reporting interval can be configured via the `application.properties` file:
-
-```properties
-# Define how often should metric data be reported. Default is 30 seconds.
-# metrics.refreshInternal=30
-# metrics.loggerName=perfStatsLogger
-```
+The metrics reporting interval can be configured via the `application.properties` file.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Loggers
 

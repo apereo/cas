@@ -26,32 +26,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
 and made it available to CAS at a location that can be resolved at runtime.
 
-```properties
-# The claim from ADFS that should be used as the user's identifier.
-# cas.wsfed.identityAttribute=upn
-#
-# Federation Service identifier
-# cas.wsfed.identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
-#
-# The ADFS login url.
-# cas.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
-#
-# Identifies resource(s) that point to ADFS's signing certificates.
-# These are used verify the WS Federation token that is returned by ADFS.
-# Multiple certificates may be separated by comma.
-# cas.wsfed.signingCertificateResources=classpath:adfs-signing.crt
-#
-# Unique identifier that will be set in the ADFS configuration.
-# cas.wsfed.relyingPartyIdentifier=urn:cas:localhost
-#
-# Slack dealing with time-drift between the ADFS Server and the CAS Server.
-# cas.wsfed.tolerance=10000
-#
-# Decides which bundle of attributes should be resolved during WS-FED authentication.
-# cas.wsfed.attributeResolverEnabled=true
-# cas.wsfed.attributesType=WSFED
-```
-
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Modifying ADFS Claims
 The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but 

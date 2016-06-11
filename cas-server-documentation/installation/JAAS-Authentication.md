@@ -21,20 +21,14 @@ directives in the JAAS config file.
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=jaasAuthenticationHandler
 ```
 
-The following settings are applicable:
-
-```properties
-# cas.authn.jaas.realm=CAS
-# cas.authn.jaas.kerb.realm=
-# cas.authn.jaas.kerb.kdc=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
 ## JAAS Configuration File
+
 The default JAAS configuration file is located at `$JRE_HOME/lib/security/java.security`. It's important to note
 that JAAS configuration applies to the entire JVM. The path to the JAAS configuration file in effect may be altered
 by setting the `java.security.auth.login.config` system property to an alternate file path.

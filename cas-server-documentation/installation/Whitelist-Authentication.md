@@ -26,15 +26,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=acceptUsersAuthenticationHandler
 ```
 
-The following settings are applicable:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-accept.authn.users=casuser::Mellon
-```
 
 ### `FileAuthenticationHandler`
 
@@ -42,14 +38,11 @@ accept.authn.users=casuser::Mellon
 <alias name="fileAuthenticationHandler" alias="primaryAuthenticationHandler" />
 ```
 
-The following settings are applicable:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# file.authn.filename=classpath:people.txt
-# file.authn.separator=::
-```
 
 #### Example Password File
+
 ```bash
 scott::password
 bob::password2

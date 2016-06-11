@@ -13,6 +13,7 @@ is routed to the IdP, the following may take place:
 
 - If the user has already authenticated to CAS and has a valid CAS SSO session, the IdP will transparently 
 perform the requested action, e.g. attribute release.
+
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must 
 authenticate before the 
 IDP proceeds with the requested action.
@@ -160,23 +161,15 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-The following settings are available:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# cas.saml.mdui.startDelay=20000
-# cas.saml.mdui.repeatInterval=60000
-# cas.saml.mduiparameter=entityId
-# cas.saml.mdui.maxValidity=0
-# cas.saml.mdui.requireSignedRoot=false
-# cas.saml.mdui.requireValidMetadata=true
-# cas.saml.mdui.resources=resource::key,resource::key
-```
 
 A sample screenshot of the above configuration in action:
 
 ![capture](https://cloud.githubusercontent.com/assets/1205228/8120071/095c7628-1050-11e5-810e-7bce128391df.PNG)
 
 ## Shibboleth Service Provider Proxy
+
 The [CASShib project](https://code.google.com/p/casshib/) "Shibbolizes" the CAS 
 server and enables end applications to get authentication 
 information from CAS rather than the Shibboleth Service Provider. 

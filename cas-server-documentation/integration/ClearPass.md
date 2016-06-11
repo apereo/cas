@@ -30,11 +30,10 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 ## Configuration
 
 ### Cache Credential
-Enable the caching and capturing of the credential via the following:
+Enable the caching and capturing of the credential in `application.properties`.
 
-```properties
-# cas.clearpass.cache.credential=true
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 ### Create Keys
 
@@ -68,6 +67,7 @@ as an attribute for the given attribute release policy of choice.
 ```
 
 ### Decrypt the Password
+
 Once the client application has received the `credential` attribute in the CAS validation response, it can decrypt
 it via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:

@@ -4,6 +4,7 @@ title: CAS - Database Authentication
 ---
 
 # Database Authentication
+
 Database authentication components are enabled by including the following dependencies in the WAR overlay:
 
 ```xml
@@ -15,11 +16,13 @@ Database authentication components are enabled by including the following depend
 ```
 
 ## Connection Pooling
+
 All database authentication components require a `DataSource` for acquiring connections to the underlying database.
 The use of connection pooling is _strongly_ recommended, and the [c3p0 library](http://www.mchange.com/projects/c3p0/)
 is a good choice that we discuss here.
 
 ### Pooled Data Source Example
+
 A bean named `dataSource` must be defined for CAS components that use a database.
 
             
@@ -35,18 +38,18 @@ A bean named `dataSource` must be defined for CAS components that use a database
   p:loginTimeout="${database.pool.maxWait:3000}" />
 ```
 
+## Options
 
-## Database Components
 CAS provides the following components to accommodate different database authentication needs.
 
-###### `QueryDatabaseAuthenticationHandler`
+### Query
+
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
 configurable database query.
 
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=queryDatabaseAuthenticationHandler
 ```
 
@@ -56,20 +59,16 @@ In local `deployerConfigContext.xml`:
 <alias name="dataSource" alias="queryDatabaseDataSource" />
 ```
 
-The following settings are applicable:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# cas.jdbc.authn.query.sql=select password from users where username=?
-```
+### Search
 
-###### `SearchModeSearchDatabaseAuthenticationHandler`
 Searches for a user record by querying against a username and password; the user is authenticated if at
 least one result is found.
 
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=searchModeSearchDatabaseAuthenticationHandler
 ```
 
@@ -79,16 +78,11 @@ In local `deployerConfigContext.xml`:
 <alias name="dataSource" alias="searchModeDatabaseDataSource" />
 ```
 
-The following settings are applicable:
-
-```properties
-# cas.jdbc.authn.search.password=
-# cas.jdbc.authn.search.user=
-# cas.jdbc.authn.search.table=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
-###### `BindModeSearchDatabaseAuthenticationHandler`
+### Bind
+
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
 The following example does not perform any password encoding since most JDBC drivers natively encode plaintext
@@ -99,7 +93,6 @@ ability to establish a connection with username/password credentials. This handl
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=bindModeSearchDatabaseAuthenticationHandler
 ```
 
@@ -109,7 +102,8 @@ In local `deployerConfigContext.xml`:
 <alias name="dataSource" alias="bindSearchDatabaseDataSource" />
 ```
 
-###### `QueryAndEncodeDatabaseAuthenticationHandler`
+###### Query & Encode
+
 A JDBC querying handler that will pull back the password and
 the private salt value for a user and validate the encoded
 password using the public salt value. Assumes everything
@@ -125,7 +119,6 @@ The final hash is converted to Hex before comparing it to the database value.
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=queryAndEncodeDatabaseAuthenticationHandler
 ```
 
@@ -135,14 +128,4 @@ In local `deployerConfigContext.xml`:
 <alias name="dataSource" alias="queryEncodeDatabaseDataSource" />
 ```
 
-The following settings are applicable:
-
-```properties
-# cas.jdbc.authn.query.encode.sql=
-# cas.jdbc.authn.query.encode.alg=
-# cas.jdbc.authn.query.encode.salt.static=
-# cas.jdbc.authn.query.encode.password=
-# cas.jdbc.authn.query.encode.salt=
-# cas.jdbc.authn.query.encode.iterations.field=
-# cas.jdbc.authn.query.encode.iterations=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

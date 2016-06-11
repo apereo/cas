@@ -49,7 +49,6 @@ See the [full list of implementations](http://infinispan.org/cache-store-impleme
 Enable the registry in `application.properties` via:
 
 ```properties
-
 ticketRegistry=infinispanTicketRegistry
 ```
 

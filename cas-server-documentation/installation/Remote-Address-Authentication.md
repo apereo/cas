@@ -40,15 +40,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 In `application.properties`:
 
 ```properties
-
 primaryAuthenticationHandler=remoteAddressAuthenticationHandler
 ```
 
-The following settings are applicable:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# ip.address.range=192.168.1.0/255.255.255.0
-```
 
 You should appropriately evaluate your webflow configuration
 to route the flow to the state `startAuthenticate` where needed.

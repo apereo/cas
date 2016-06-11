@@ -305,13 +305,20 @@ ldap.allowMultipleDns=false
 ```
 
 ## LDAP Password Policy Enforcement
+
 The purpose of the LPPE is twofold:
 
-- Detect a number of scenarios that would otherwise prevent user authentication, specifically using an Ldap instance as the primary source of user accounts.
-- Warn users whose account status is near a configurable expiration date and redirect the flow to an external identity management system.
+- Detect a number of scenarios that would otherwise prevent user authentication, specifically 
+using an Ldap instance as the primary source of user accounts.
+- Warn users whose account status is near a configurable expiration date and redirect the flow 
+to an external identity management system.
 
 ### Reflecting LDAP Account Status
-The below scenarios are by default considered errors preventing authentication in a generic manner through the normal CAS login flow. LPPE intercepts the authentication flow, detecting the above standard error codes. Error codes are then translated into proper messages in the CAS login flow and would allow the user to take proper action, fully explaining the nature of the problem.
+
+The below scenarios are by default considered errors preventing authentication in a generic 
+manner through the normal CAS login flow. LPPE intercepts the authentication flow, detecting the 
+above standard error codes. Error codes are then translated into proper messages in the CAS login 
+flow and would allow the user to take proper action, fully explaining the nature of the problem.
 
 - `ACCOUNT_LOCKED`
 - `ACCOUNT_DISABLED`
@@ -323,27 +330,23 @@ The below scenarios are by default considered errors preventing authentication i
 The translation of LDAP errors into CAS workflow is all handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate).
 
 ### Account Expiration Notification
-LPPE is also able to warn the user when the account is about to expire. The expiration policy is determined through pre-configured Ldap attributes with default values in place.
+LPPE is also able to warn the user when the account is about to expire. The expiration 
+policy is determined through pre-configured Ldap attributes with default values in place.
 
-<div class="alert alert-danger"><strong>No Password Management!</strong><p>LPPE is not about password management. If you are looking for that sort of capability integrating with CAS, you might be interested in:
+<div class="alert alert-danger"><strong>No Password Management!</strong><p>LPPE is not 
+about password management. If you are looking for that sort of capability integrating with CAS, you might be interested in:
 
 <ul>
-    <li><a href="https://github.com/Unicon/cas-password-manager">https://github.com/Unicon/cas-password-manager</a></li>
     <li><a href="http://code.google.com/p/pwm/">http://code.google.com/p/pwm/</a></li>‎
 </ul></p></div>
 
 ## Configuration
+
 ```xml
 <alias name="ldapPasswordPolicyConfiguration" alias="passwordPolicyConfiguration" />
 ```
 
-The following settings are applicable:
-
-```properties
-# password.policy.warnAll=false
-# password.policy.warningDays=30
-# password.policy.url=https://password.example.edu/change
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Next, in your `ldapAuthenticationHandler` bean, configure the password policy configuration above:
 
@@ -367,24 +370,23 @@ Next, make sure `Authenticator` is set to enable/use password policy:
 
 ### Components
 
-#### `DefaultAccountStateHandler`
+#### Default
+
 The default account state handler, that calculates the password expiration warning period,
 maps LDAP errors to the CAS workflow.
 
-#### `OptionalWarningAccountStateHandler`
+#### Optional
+
 Supports both opt-in and opt-out warnings on a per-user basis.
 
 ```xml
 <alias name="optionalWarningAccountStateHandler" alias="passwordPolicyConfiguration" />
 ```
 
-```properties
-# password.policy.warn.attribute.name=attributeName
-# password.policy.warn.attribute.value=attributeValue
-# password.policy.warn.display.matched=true
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Troubleshooting
+
 To enable additional logging, modify the log4j configuration file to add the following:
 
 ```xml
