@@ -25,12 +25,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ### `RejectUsersAuthenticationHandler` in `application.properties`:
 
 ```properties
-prefix = "
 primaryAuthenticationHandler=rejectUsersAuthenticationHandler
 ```
 
-The following settings are applicable:
-
-```properties
-# reject.authn.users=user1,user2
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

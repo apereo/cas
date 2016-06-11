@@ -24,7 +24,7 @@ This ticket registry implementation is enabled by simply including the module in
 Enable the registry in `application.properties` via:
 
 ```properties
-prefix = "
+
 ticketRegistry=hazelcastTicketRegistry
 ```
 

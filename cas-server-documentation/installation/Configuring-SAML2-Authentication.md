@@ -98,21 +98,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ### Settings
 
-The following settings are applicable:
-
-```properties
-# cas.samlidp.metadata.location=file:/etc/cas/saml
-# cas.samlidp.hostName=mmoayyed.unicon.net
-# cas.samlidp.scope=unicon.net
-# cas.samlidp.entityId=mmoayyed.unicon.net
-# cas.samlidp.metadata.cacheExpirationMinutes=30
-# cas.samlidp.metadata.failFast=true
-# cas.samlidp.metadata.requireValidMetadata=true
-# cas.samlidp.response.skewAllowance=0
-# cas.samlidp.logout.forceSignedLogoutRequests=true
-# cas.samlidp.logout.singleLogoutCallbacksDisabled=false
-# cas.samlidp.useAttributeFriendlyName=true
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
 ### SAML Services

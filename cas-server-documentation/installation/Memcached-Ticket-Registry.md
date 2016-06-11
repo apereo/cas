@@ -32,7 +32,7 @@ Enable the registry in `application.properties` via:
 In `application.properties`:
 
 ```properties
-prefix = "
+
 ticketRegistry=memcachedTicketRegistry
 ```
 

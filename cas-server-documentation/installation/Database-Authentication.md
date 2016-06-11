@@ -46,7 +46,7 @@ configurable database query.
 In `application.properties`:
 
 ```properties
-prefix = "
+
 primaryAuthenticationHandler=queryDatabaseAuthenticationHandler
 ```
 
@@ -69,7 +69,7 @@ least one result is found.
 In `application.properties`:
 
 ```properties
-prefix = "
+
 primaryAuthenticationHandler=searchModeSearchDatabaseAuthenticationHandler
 ```
 
@@ -99,7 +99,7 @@ ability to establish a connection with username/password credentials. This handl
 In `application.properties`:
 
 ```properties
-prefix = "
+
 primaryAuthenticationHandler=bindModeSearchDatabaseAuthenticationHandler
 ```
 
@@ -125,7 +125,7 @@ The final hash is converted to Hex before comparing it to the database value.
 In `application.properties`:
 
 ```properties
-prefix = "
+
 primaryAuthenticationHandler=queryAndEncodeDatabaseAuthenticationHandler
 ```
 

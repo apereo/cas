@@ -45,7 +45,7 @@ The following settings are expected:
 In `application.properties`:
 
 ```properties
-prefix = "
+
 serviceRegistryDao=jpaServiceRegistryDao
 ```
 

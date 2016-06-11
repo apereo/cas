@@ -70,9 +70,7 @@ spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
 An example of an external `application.properties` file hosted by an external location follows:
 
 ```properties
-accept.authn.users: casuser::Mellon
-st.timeToKillInSeconds:10000
-st.numberOfUses:100
+cas.server.name=...
 ```
 
 You could have just as well used a `cas.yml` file to host the changes.

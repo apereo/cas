@@ -103,12 +103,7 @@ the credential password to a form that is acceptable by the authentication sourc
 <alias name="defaultPasswordEncoder" alias="passwordEncoder" />
 ```
 
-The following settings are applicable:
-
-```properties
-# cas.authn.password.encoding.char=UTF-8
-# cas.authn.password.encoding.alg=SHA-256
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Plain Text
 
@@ -143,10 +138,7 @@ Transforms the user id by adding a postfix or suffix.
 
 The following settings are applicable:
 
-```properties
-# cas.principal.transform.prefix=
-# cas.principal.transform.suffix=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ###### `ConvertCasePrincipalNameTransformer`
 A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
@@ -159,9 +151,7 @@ a previous transformer that might have modified the uid, such that the two can b
 
 The following settings are applicable:
 
-```properties
-# cas.principal.transform.upperCase=false
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Authentication Metadata
 `AuthenticationMetaDataPopulator` components provide a pluggable strategy for injecting arbitrary metadata into the

@@ -46,12 +46,7 @@ Health: OK
 ```
 
 
-The following settings are available:
-
-```properties
-# cache.monitor.warn.free.threshold=10
-# cache.monitor.eviction.threshold=0
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Ehcache
 
@@ -71,10 +66,7 @@ The following settings are available:
 
 The following settings are available:
 
-```properties
-# cache.monitor.warn.free.threshold=10
-# cache.monitor.eviction.threshold=0
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
 ## Hazelcast
@@ -95,10 +87,7 @@ The following settings are available:
 
 The following settings are available:
 
-```properties
-# cache.monitor.warn.free.threshold=10
-# cache.monitor.eviction.threshold=0
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
 ## JDBC

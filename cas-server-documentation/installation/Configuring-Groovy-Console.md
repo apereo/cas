@@ -44,15 +44,4 @@ Scripts are loaded by their class name and added to the shell.
 
 ### Settings
 
-```properties
-# shell.command-refresh-interval=15
-# shell.command-path-patterns=classpath*:/commands/**
-# shell.auth.simple.user.name=user
-# shell.auth.simple.user.password=password
-# shell.ssh.enabled=true
-# shell.ssh.port=2000
-# shell.telnet.enabled=false
-# shell.telnet.port=5000
-# shell.ssh.auth-timeout=3000
-# shell.ssh.idle-timeout=30000
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

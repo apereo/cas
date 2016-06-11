@@ -35,18 +35,7 @@ are handled via the CAS default SSO session expiration policy.
 <alias name="ticketGrantingTicketExpirationPolicy" alias="sessionExpirationPolicy" />
 ```
 
-The length of the long term authentication session is determined by:
-
-```properties
-# Inactivity Timeout Policy
-# tgt.timeout.maxTimeToLiveInSeconds=1209600
-
-# Default Expiration Policy
-# tgt.maxTimeToLiveInSeconds=28800
-# tgt.timeToKillInSeconds=7200
-
-# tgc.remember.me.maxAge=1209600
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 This allows CAS to preserve a ticket expiration policy for 2 weeks for
 long-term authentication requests, while using a maximum 8-hour expiration policy
@@ -56,9 +45,12 @@ It also allows CAS to preserve the SSO session cookie for a maximum age of
 2 weeks for long-term authentication requests.
 
 ### Webflow Configuration
+
 Two sections of `login-webflow.xml` require changes:
+
 1. Uncomment `RememberMeUsernamePasswordCredential` as the `credential` type.
 2. Uncomment the binding property for `rememberMe`.
 
 ### User Interface Customization
+
 Uncomment the `rememberMe` checkbox control in `loginform.html`.

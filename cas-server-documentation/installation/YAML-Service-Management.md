@@ -21,7 +21,7 @@ Support is enabled by adding the following module into the Maven overlay:
 In `application.properties`:
 
 ```properties
-prefix = "
+
 serviceRegistryDao=yamlServiceRegistryDao
 ```
 

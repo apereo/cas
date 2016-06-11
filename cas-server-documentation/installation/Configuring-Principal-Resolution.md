@@ -33,12 +33,7 @@ configuration for two common examples:
 * [Database (JDBC)](https://wiki.jasig.org/x/bBjP)
 * [LDAP](https://wiki.jasig.org/x/iBjP)
 
-Configuration consists of:
-
-```properties
-# cas.principal.resolver.persondir.principal.attribute=cn
-# cas.principal.resolver.persondir.return.null=false
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## PrincipalResolver vs. AuthenticationHandler
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to

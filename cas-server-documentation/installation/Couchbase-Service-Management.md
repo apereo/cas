@@ -17,7 +17,6 @@ Couchbase integration is enabled by including the following dependency in the WA
 Enable the registry in `application.properties` via:
 
 ```properties
-prefix = "
 serviceRegistryDao=couchbaseServiceRegistryDao
 ```
 
@@ -26,13 +25,8 @@ serviceRegistryDao=couchbaseServiceRegistryDao
 server to provide high availability to CAS.
 
 ## Configuration
-The following settings are available:
 
-```properties
-svcreg.couchbase.nodes=
-svcreg.couchbase.bucket=
-svcreg.couchbase.password=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 The Couchbase integration currently assumes that the service registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup
@@ -48,6 +42,4 @@ Upon startup and if the services registry database is blank,
 the registry is able to auto initialize itself from default 
 JSON service definitions available to CAS. This behavior can be controlled via:
 
-```properties
-# svcreg.database.from.json=false
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

@@ -155,6 +155,5 @@ By default, throttling REST requests is turned off. To enable this behavior,
 adjust the following settings: 
 
 ```properties
-prefix = "
 restAuthenticationThrottle=inMemoryIpAddressUsernameThrottle
 ```

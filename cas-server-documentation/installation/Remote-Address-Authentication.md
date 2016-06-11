@@ -40,7 +40,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 In `application.properties`:
 
 ```properties
-prefix = "
+
 primaryAuthenticationHandler=remoteAddressAuthenticationHandler
 ```
 

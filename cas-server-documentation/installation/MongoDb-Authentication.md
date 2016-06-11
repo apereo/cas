@@ -7,7 +7,7 @@ title: CAS - MongoDb Authentication
 Verify and authenticate credentials against a [MongoDb](https://www.mongodb.org/) instance.
 
 ```properties
-prefix = "
+
 primaryAuthenticationHandler=mongoAuthenticationHandler
 ```
 
