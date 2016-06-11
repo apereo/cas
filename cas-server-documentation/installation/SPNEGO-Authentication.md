@@ -21,12 +21,14 @@ ticket expires.
 
 
 ## SPNEGO Requirements
+
 * Client is logged in to a Windows Active Directory domain.
 * Supported browser and JDK.
 * CAS is running MIT kerberos against the AD domain controller.
 
 
 ## SPNEGO Components
+
 SPNEGO support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -40,9 +42,11 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 ## SPNEGO Configuration
 
 ### Create SPN Account
+
 Create an Active Directory account for the Service Principal Name (SPN) and record the username and password.
 
 ### Create Keytab File
+
 The keytab file enables a trust link between the CAS server and the Key Distribution Center (KDC); an Active Directory
 domain controller serves the role of KDC in this context.
 The [`ktpass` tool](http://technet.microsoft.com/en-us/library/cc753771.aspx) is used to generate the keytab file,
@@ -51,6 +55,7 @@ administrator.
 
 
 ### Test SPN Account
+
 Install and configure MIT Kerberos V on the CAS server host(s). The following sample `krb5.conf` file may be used
 as a reference.
 
@@ -88,12 +93,14 @@ Then verify that your are able to read the keytab file:
 
 
 ### Browser Configuration
+
 * Internet Explorer - Enable _Integrated Windows Authentication_ and add the CAS server URL to the _Local Intranet_
 zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
 URL, e.g. `https://cas.example.com`.
 
 ### Webflow Configuration
+
 Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
 
 ### Authentication Configuration
@@ -120,23 +127,12 @@ or resume normally, depending on the client action strategy chosen below.
 ### By Remote IP
 
 Checks to see if the request's remote ip address matches a predefine pattern.
-
-```properties
-...
-# cas.spnego.hostname.client.action.strategy=baseSpnegoClientAction
-...
-```
-
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### By Hostname
 
 Checks to see if the request's remote hostname matches a predefine pattern.
-
-```properties
-...
-# cas.spnego.hostname.client.action.strategy=hostnameSpnegoClientAction
-...
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
 ### By LDAP Attribute
@@ -144,11 +140,8 @@ Checks to see if the request's remote hostname matches a predefine pattern.
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-```properties
-...
-# cas.spnego.hostname.client.action.strategy=ldapSpnegoClientAction
-...
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 ...and the LDAP configuration:
 
