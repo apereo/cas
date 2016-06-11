@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -77,7 +78,10 @@ public class Beans {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
-        bean.setPersistenceUnitName(config.getPersistenceUnitName());
+        
+        if (StringUtils.isNotEmpty(config.getPersistenceUnitName())) {
+            bean.setPersistenceUnitName(config.getPersistenceUnitName());
+        }
         bean.setPackagesToScan(config.getPackagesToScan());
         bean.setDataSource(config.getDataSource());
 

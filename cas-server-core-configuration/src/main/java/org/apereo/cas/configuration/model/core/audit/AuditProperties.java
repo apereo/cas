@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 
 /**
@@ -11,15 +12,25 @@ import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 public class AuditProperties {
 
     private String appCode = "CAS";
-    
+
     private String singlelineSeparator = "|";
-    
+
     private boolean useSingleLine;
-    
+
+    private Jdbc jdbc = new Jdbc();
+
     private AbstractStringAuditTrailManager.AuditFormats auditFormat =
             AbstractStringAuditTrailManager.AuditFormats.DEFAULT;
-    
+
     private boolean ignoreAuditFailures;
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
 
     public String getAppCode() {
         return appCode;
@@ -59,5 +70,36 @@ public class AuditProperties {
 
     public void setIgnoreAuditFailures(final boolean ignoreAuditFailures) {
         this.ignoreAuditFailures = ignoreAuditFailures;
+    }
+
+    public static class Jdbc extends AbstractJpaProperties {
+        private int maxAgeDays = 180;
+
+        private String isolationLevelName = "ISOLATION_READ_COMMITTED";
+        private String propagationBehaviorName = "PROPAGATION_REQUIRED";
+
+        public int getMaxAgeDays() {
+            return maxAgeDays;
+        }
+
+        public void setMaxAgeDays(final int maxAgeDays) {
+            this.maxAgeDays = maxAgeDays;
+        }
+
+        public String getPropagationBehaviorName() {
+            return propagationBehaviorName;
+        }
+
+        public void setPropagationBehaviorName(final String propagationBehaviorName) {
+            this.propagationBehaviorName = propagationBehaviorName;
+        }
+
+        public String getIsolationLevelName() {
+            return isolationLevelName;
+        }
+
+        public void setIsolationLevelName(final String isolationLevelName) {
+            this.isolationLevelName = isolationLevelName;
+        }
     }
 }

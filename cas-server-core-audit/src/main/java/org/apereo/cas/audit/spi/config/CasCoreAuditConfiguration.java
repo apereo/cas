@@ -9,12 +9,16 @@ import org.apereo.cas.audit.spi.ServiceResourceResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.TicketOrCredentialPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
+import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
+import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
@@ -24,7 +28,11 @@ import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -166,5 +174,50 @@ public class CasCoreAuditConfiguration {
     @Bean
     public MessageBundleAwareResourceResolver messageBundleAwareResourceResolver() {
         return new MessageBundleAwareResourceResolver();
+    }
+
+    @Bean
+    public MaxAgeWhereClauseMatchCriteria auditCleanupCriteria() {
+        return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
+    }
+
+    @Bean
+    public DataSourceTransactionManager inspektrAuditTransactionManager() {
+        return new DataSourceTransactionManager(inspektrAuditTrailDataSource());
+    }
+
+    @Bean
+    public DataSource inspektrAuditTrailDataSource() {
+        return Beans.newHickariDataSource(casProperties.getAudit().getJdbc());
+    }
+
+    @Bean
+    public TransactionTemplate inspektrAuditTransactionTemplate() {
+        final TransactionTemplate t =
+                new TransactionTemplate(inspektrAuditTransactionManager());
+        t.setIsolationLevelName(casProperties.getAudit().getJdbc().getIsolationLevelName());
+        t.setPropagationBehaviorName(casProperties.getAudit().getJdbc().getPropagationBehaviorName());
+        return t;
+    }
+
+    @Bean
+    public JdbcAuditTrailManager jdbcAuditTrailManager() {
+        final JdbcAuditTrailManager t =
+                new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
+        t.setCleanupCriteria(auditCleanupCriteria());
+        t.setDataSource(inspektrAuditTrailDataSource());
+        return t;
+    }
+
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
+        return Beans.newEntityManagerFactoryBean(
+                new JpaConfigDataHolder(
+                        Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                        "jpaEventRegistryContext",
+                        new String[]{"org.apereo.cas.web.support.entity"},
+                        inspektrAuditTrailDataSource()),
+                casProperties.getAudit().getJdbc());
     }
 }
