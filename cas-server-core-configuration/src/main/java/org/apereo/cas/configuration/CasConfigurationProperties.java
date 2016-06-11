@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.core.ServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
@@ -15,6 +16,7 @@ import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestPropert
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.core.slo.SloProperties;
 import org.apereo.cas.configuration.model.core.sso.SsoProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
@@ -31,14 +33,25 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperti
 import org.apereo.cas.configuration.model.support.saml.SamlResponseProperties;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
-import org.apereo.cas.configuration.model.support.saml.shibboleth.AttributeResolverProperties;
+import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
-import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
+import org.jooq.lambda.Unchecked;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -145,7 +158,7 @@ public class CasConfigurationProperties {
     private SamlResponseProperties samlResponse = new SamlResponseProperties();
 
     @NestedConfigurationProperty
-    private AttributeResolverProperties shibAttributeResolver = new AttributeResolverProperties();
+    private ShibbolethAttributeResolverProperties shibAttributeResolver = new ShibbolethAttributeResolverProperties();
 
     @NestedConfigurationProperty
     private ThemeProperties theme = new ThemeProperties();
@@ -351,7 +364,7 @@ public class CasConfigurationProperties {
     public void setWarningCookie(final WarningCookieProperties warningCookie) {
         this.warningCookie = warningCookie;
     }
-    
+
     public MaxmindProperties getMaxmind() {
         return maxmind;
     }
@@ -359,7 +372,7 @@ public class CasConfigurationProperties {
     public void setMaxmind(final MaxmindProperties maxmind) {
         this.maxmind = maxmind;
     }
-    
+
     public DatabaseProperties getJdbc() {
         return jdbc;
     }
@@ -375,7 +388,7 @@ public class CasConfigurationProperties {
     public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
         this.ldapAuthz = ldapAuthz;
     }
-    
+
     public GoogleAppsProperties getGoogleApps() {
         return googleApps;
     }
@@ -400,11 +413,11 @@ public class CasConfigurationProperties {
         this.samlResponse = samlResponse;
     }
 
-    public AttributeResolverProperties getShibAttributeResolver() {
+    public ShibbolethAttributeResolverProperties getShibAttributeResolver() {
         return shibAttributeResolver;
     }
 
-    public void setShibAttributeResolver(final AttributeResolverProperties shibAttributeResolver) {
+    public void setShibAttributeResolver(final ShibbolethAttributeResolverProperties shibAttributeResolver) {
         this.shibAttributeResolver = shibAttributeResolver;
     }
 
@@ -415,7 +428,7 @@ public class CasConfigurationProperties {
     public void setTheme(final ThemeProperties theme) {
         this.theme = theme;
     }
-    
+
     public LocaleProperties getLocale() {
         return locale;
     }
@@ -447,6 +460,137 @@ public class CasConfigurationProperties {
     public void setAuthn(final AuthenticationProperties authn) {
         this.authn = authn;
     }
+
+    public static Object createInstance(final Class o) {
+        try {
+            if (o.isPrimitive()) {
+                return null;
+            }
+            if (o.equals(String.class)) {
+                return null;
+            }
+            return o.newInstance();
+        } catch (final Throwable e) {
+            return null;
+        }
+    }
+
+    public static void props(final Object o, final String initialLine) {
+        final HashSet<Field> set1 = new HashSet<>();
+        getAllFields(set1, o.getClass());
+
+        set1.forEach(Unchecked.consumer(
+            f -> {
+                
+                final Object instance = createInstance(f.getType());
     
-    
+                if (instance != null) {
+                    props(instance, initialLine + f.getName() + ".");
+                }
+            }));
+
+        final StringBuilder builder = new StringBuilder();
+        final HashSet<Field> set = new HashSet<>();
+        getAllFields(set, o.getClass());
+        set.forEach(Unchecked.consumer(f -> {
+            f.setAccessible(true);
+
+            final Object v = f.get(o);
+            
+            if (!f.getType().getName().contains("Properties")) {
+                builder.append("# " + initialLine + f.getName() + "=" + getFieldValue(v) + "\n");
+            } else {
+                //builder.append("# " + initialLine + f.getName() + "=" + StringUtils.defaultIfEmpty(v.toString(), "") + "\n");
+            }
+        }));
+
+        if (builder.length() > 0) {
+            System.out.println("##");
+            if (o.getClass().isMemberClass()) {
+                System.out.println("# " + o.getClass().getDeclaringClass().getSimpleName()
+                        + " -> " + o.getClass().getSimpleName());
+            } else {
+                System.out.println("# " + o.getClass().getSimpleName());
+            }
+            System.out.println("#");
+            System.out.println(builder.toString());
+        }
+
+    }
+
+    public static StringBuilder getFieldValue(final Object o) {
+        if (o == null) {
+            return new StringBuilder();
+        }
+        
+        if (Collection.class.isAssignableFrom(o.getClass())) {
+            final Collection cc = Collection.class.cast(o);
+
+            if (cc.isEmpty()) {
+                return new StringBuilder("value1,value2,...");
+            }
+
+            StringBuilder b = new StringBuilder();
+            cc.forEach(item -> {
+                b.append(getFieldValue(item));
+            });
+            
+            return b;
+        }
+        if (o.getClass().isArray()) {
+            Object[] v = (Object[]) o;
+
+            Collection cc = new ArrayList<>();
+            for (final Object o1 : v) {
+                cc.add(o1);
+            }
+
+            if (cc.isEmpty()) {
+                return new StringBuilder("value1,value2,...");
+            }
+
+            StringBuilder b = new StringBuilder();
+            cc.forEach(item -> {
+                b.append(getFieldValue(item));
+            });
+
+            return b;
+        }
+        
+        if (Resource.class.isAssignableFrom(o.getClass())) {
+            final Resource r = Resource.class.cast(o);
+
+            if (r instanceof ClassPathResource) {
+                return new StringBuilder("classpath:/" + r.getFilename());
+
+            }
+            if (r instanceof FileSystemResource) {
+                return new StringBuilder("file:/" + r.getFilename());
+            }
+
+            return new StringBuilder(r.getFilename());
+        }
+        
+        return new StringBuilder(o.toString());
+    }
+
+    public static Set<Field> getAllFields(final Set<Field> fields, Class<?> type) {
+        Arrays.stream(type.getDeclaredFields()).forEach(f -> {
+            if (!Modifier.isFinal(f.getModifiers()) && !Modifier.isStatic(f.getModifiers())) {
+                fields.add(f);
+            }
+        });
+
+        if (type.getSuperclass() != null) {
+            fields.addAll(getAllFields(fields, type.getSuperclass()));
+        }
+
+        return fields;
+    }
+
+    public static void main(final String[] args) {
+        System.out.println();
+        CasConfigurationProperties c = new CasConfigurationProperties();
+        props(c, "cas.");
+    }
 }
