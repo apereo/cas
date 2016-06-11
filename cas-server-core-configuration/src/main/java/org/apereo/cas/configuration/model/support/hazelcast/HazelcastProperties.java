@@ -64,9 +64,9 @@ public class HazelcastProperties {
         private boolean tcpipEnabled = true;
         private List<String> members = Arrays.asList("localhost");
         private int maxHeapSizePercentage = 85;
-        private String maxSizePolicy;
-        private String evictionPolicy;
-        private int evictionPercentage;
+        private String maxSizePolicy = "USED_HEAP_PERCENTAGE";
+        private String evictionPolicy = "LRU";
+        private int evictionPercentage = 10;
 
         public String getLoggingType() {
             return loggingType;

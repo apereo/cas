@@ -12,7 +12,7 @@ public class MfaProperties {
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
-    private String principalAttributes;
+    private String principalAttributes = "memberOf,eduPersonPrimaryAffiliation";
     
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();

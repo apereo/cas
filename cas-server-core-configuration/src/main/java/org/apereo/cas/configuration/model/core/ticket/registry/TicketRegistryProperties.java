@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.memcached.MemcachedProperties;
+import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -17,6 +17,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 public class TicketRegistryProperties {
 
+    
     @NestedConfigurationProperty
     private CouchbaseTicketRegistryProperties couchbase =
             new CouchbaseTicketRegistryProperties();
@@ -34,7 +35,7 @@ public class TicketRegistryProperties {
     private JpaTicketRegistryProperties jpa = new JpaTicketRegistryProperties();
 
     @NestedConfigurationProperty
-    private MemcachedProperties memcached = new MemcachedProperties();
+    private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
     
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
@@ -95,11 +96,11 @@ public class TicketRegistryProperties {
         this.jpa = jpa;
     }
 
-    public MemcachedProperties getMemcached() {
+    public MemcachedTicketRegistryProperties getMemcached() {
         return memcached;
     }
 
-    public void setMemcached(final MemcachedProperties memcached) {
+    public void setMemcached(final MemcachedTicketRegistryProperties memcached) {
         this.memcached = memcached;
     }
 
@@ -135,8 +136,18 @@ public class TicketRegistryProperties {
     
     public static class Cleaner {
         private boolean enabled = true;
-        private long startDelay = 20000;
-        private long repeatInterval = 10000;
+        private long startDelay = 10000;
+        private long repeatInterval = 60000;
+
+        private String appId = "cas-ticket-registry-cleaner";
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(final String appId) {
+            this.appId = appId;
+        }
 
         public boolean isEnabled() {
             return enabled;

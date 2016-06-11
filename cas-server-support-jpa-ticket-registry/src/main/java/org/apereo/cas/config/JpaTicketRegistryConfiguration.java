@@ -103,7 +103,7 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     public LockingStrategy lockingStrategy() {
         final JpaLockingStrategy bean = new JpaLockingStrategy();
-        bean.setApplicationId(casProperties.getJdbc().getCleaner().getAppid());
+        bean.setApplicationId(casProperties.getTicket().getRegistry().getCleaner().getAppId());
         bean.setUniqueId(StringUtils.defaultIfEmpty(casProperties.getHost().getName(), 
                 InetAddressUtils.getCasServerHostName()));
         bean.setLockTimeout(casProperties.getTicket().getRegistry().getJpa().getJpaLockingTimeout());

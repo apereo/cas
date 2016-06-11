@@ -35,7 +35,7 @@ public class CasCoreUtilConfiguration {
         return new DefaultTicketCipherExecutor(
                 casProperties.getTicket().getEncryption().getKey(),
                 casProperties.getTicket().getSigning().getKey(),
-                casProperties.getTicket().getSecretkey().getAlg(),
+                casProperties.getTicket().getAlg(),
                 casProperties.getTicket().getSigning().getKeySize(),
                 casProperties.getTicket().getEncryption().getKeySize());
     }
@@ -45,7 +45,7 @@ public class CasCoreUtilConfiguration {
         return new WebflowCipherExecutor(
                 casProperties.getWebflow().getEncryption().getKey(),
                 casProperties.getWebflow().getSigning().getKey(),
-                casProperties.getWebflow().getSecretkey().getAlg(),
+                casProperties.getTicket().getAlg(),
                 casProperties.getWebflow().getSigning().getKeySize(),
                 casProperties.getWebflow().getEncryption().getKeySize());
     }

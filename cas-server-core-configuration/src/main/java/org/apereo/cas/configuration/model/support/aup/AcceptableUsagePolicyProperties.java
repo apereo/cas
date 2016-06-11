@@ -29,9 +29,9 @@ public class AcceptableUsagePolicyProperties {
     }
 
     public static class Ldap {
-        private String searchFilter;
+        private String searchFilter = "cn={0}";
 
-        private String baseDn;
+        private String baseDn = "dc=example,dc=org";
 
         public String getSearchFilter() {
             return searchFilter;

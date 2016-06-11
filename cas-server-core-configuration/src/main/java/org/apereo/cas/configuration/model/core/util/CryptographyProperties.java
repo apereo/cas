@@ -7,13 +7,13 @@ package org.apereo.cas.configuration.model.core.util;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public abstract class AbstractCryptographyProperties {
+public class CryptographyProperties {
 
     private Encryption encryption = new Encryption();
 
     private Signing signing = new Signing();
 
-    private Secretkey secretkey = new Secretkey();
+    private String alg = "AES";
 
     public Encryption getEncryption() {
         return encryption;
@@ -31,19 +31,19 @@ public abstract class AbstractCryptographyProperties {
         this.signing = signing;
     }
 
-    public Secretkey getSecretkey() {
-        return secretkey;
+    public String getAlg() {
+        return alg;
     }
 
-    public void setSecretkey(final Secretkey secretkey) {
-        this.secretkey = secretkey;
+    public void setAlg(final String alg) {
+        this.alg = alg;
     }
 
     /**
      * Encryption.
      */
     public static class Encryption {
-        private String key = "";
+        private String key;
         private int keySize = 16;
 
         public String getKey() {
@@ -67,7 +67,7 @@ public abstract class AbstractCryptographyProperties {
      * Signing.
      */
     public static class Signing {
-        private String key = "";
+        private String key = "C@$W3bSecretKey!";
         private int keySize = 512;
 
         public String getKey() {
@@ -86,19 +86,5 @@ public abstract class AbstractCryptographyProperties {
             this.keySize = keySize;
         }
     }
-
-    /**
-     * Secretkey.
-     */
-    public static class Secretkey {
-        private String alg = "AES";
-
-        public String getAlg() {
-            return alg;
-        }
-
-        public void setAlg(final String alg) {
-            this.alg = alg;
-        }
-    }
+    
 }

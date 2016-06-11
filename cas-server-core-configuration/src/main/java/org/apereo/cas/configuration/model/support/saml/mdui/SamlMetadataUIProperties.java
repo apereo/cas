@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -10,13 +11,14 @@ import java.util.List;
  */
 
 public class SamlMetadataUIProperties {
-    private int startDelay;
-    private int repeatInterval;
-    private String parameter;
+    private int startDelay = 30_000;
+    private int repeatInterval = 120_000;
+    private String parameter = "entityId";
     private long maxValidity;
     private boolean requireSignedRoot;
-    private boolean requireValidMetadata;
-    private List<String> resources;
+    private boolean requireValidMetadata = true;
+    private List<String> resources = Arrays.asList("classpath:/sp-metadata::classpath:/pub.key," 
+        + "http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key");
 
     public List<String> getResources() {
         return resources;
@@ -73,20 +75,5 @@ public class SamlMetadataUIProperties {
     public void setRequireSignedRoot(final boolean requireSignedRoot) {
         this.requireSignedRoot = requireSignedRoot;
     }
-
-    public static class Fixed {
-        private List<String> resources;
-
-        public List<String> getResources() {
-            return resources;
-        }
-
-        public void setResources(final List<String> resources) {
-            this.resources = resources;
-        }
-    }
-
-    public static class Dynamic {
-
-    }
+    
 }

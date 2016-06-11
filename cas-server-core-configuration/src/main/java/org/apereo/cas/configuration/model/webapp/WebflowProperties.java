@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import org.apereo.cas.configuration.model.core.util.AbstractCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -11,7 +11,7 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 
-public class WebflowProperties extends AbstractCryptographyProperties {
+public class WebflowProperties extends CryptographyProperties {
 
     private boolean autoconfigure = true;
     

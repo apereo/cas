@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 /**
@@ -13,7 +14,7 @@ public class OidcProperties {
     
     private String issuer = "http://localhost:8080/cas/oidc";
     private int skew = 5;
-    private Resource jwksFile;
+    private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
 
     public String getIssuer() {
         return issuer;

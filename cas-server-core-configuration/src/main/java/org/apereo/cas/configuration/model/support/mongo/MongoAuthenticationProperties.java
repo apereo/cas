@@ -10,7 +10,7 @@ package org.apereo.cas.configuration.model.support.mongo;
 public class MongoAuthenticationProperties {
 
     private String collectionName = "users";
-    private String mongoHostUri;
+    private String mongoHostUri = "mongodb://uri";
     private String attributes;
     private String usernameAttribute = "username";
     private String passwordAttribute = "password";

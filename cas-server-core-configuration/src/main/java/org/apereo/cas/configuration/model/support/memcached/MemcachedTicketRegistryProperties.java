@@ -1,15 +1,14 @@
 package org.apereo.cas.configuration.model.support.memcached;
 
 /**
- * This is {@link MemcachedProperties}.
+ * This is {@link MemcachedTicketRegistryProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
-public class MemcachedProperties {
+public class MemcachedTicketRegistryProperties {
     
-    private String servers = "localhost:11211}";
+    private String servers = "localhost:11211";
     private String failureMode = "Redistribute";
     private String locatorType = "ARRAY_MOD";
     private String hashAlgorithm = "FNV1_64_HASH";

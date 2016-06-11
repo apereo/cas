@@ -11,9 +11,9 @@ import java.io.File;
 
 public class SamlIdPProperties {
     
-    private String entityId;
-    private String hostName;
-    private String scope;
+    private String entityId = "https://cas.example.org/idp";
+    private String hostName = "cas.example.org";
+    private String scope = "example.org";
     
     private Response response = new Response();
     private Metadata metadata = new Metadata();
@@ -71,8 +71,8 @@ public class SamlIdPProperties {
         private boolean failFast = true;
         private boolean requireValidMetadata = true;
         private long cacheExpirationMinutes = 30;
-        private File location;
-        private String privateKeyAlgName;
+        private File location = new File("file:/etc/cas/saml");
+        private String privateKeyAlgName = "RSA";
         
         public boolean isFailFast() {
             return failFast;

@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 5.0.0
  */
 public class DefaultTicketCipherExecutor extends BinaryCipherExecutor {
-
-    @Autowired
     public DefaultTicketCipherExecutor(
             final String encryptionSecretKey,
             final String signingSecretKey,

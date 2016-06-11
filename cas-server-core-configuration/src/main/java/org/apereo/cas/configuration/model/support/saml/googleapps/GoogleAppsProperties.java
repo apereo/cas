@@ -9,9 +9,9 @@ package org.apereo.cas.configuration.model.support.saml.googleapps;
 
 public class GoogleAppsProperties {
 
-    private String publicKeyLocation;
-    private String privateKeyLocation;
-    private String keyAlgorithm;
+    private String publicKeyLocation = "file:/etc/cas/public.key";
+    private String privateKeyLocation = "file:/etc/cas/private.key";
+    private String keyAlgorithm = "RSA";
 
     public String getPublicKeyLocation() {
         return publicKeyLocation;

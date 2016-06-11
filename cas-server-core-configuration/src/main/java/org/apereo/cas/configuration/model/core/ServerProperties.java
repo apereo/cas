@@ -9,8 +9,8 @@ package org.apereo.cas.configuration.model.core;
 
 public class ServerProperties {
     
-    private String name;
-    private String prefix;
+    private String name = "https://cas.example.org:8443";
+    private String prefix = name.concat("/cas");
 
     public String getName() {
         return name;

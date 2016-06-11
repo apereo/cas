@@ -32,9 +32,9 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
 
     private boolean initFromJson = true;
 
-    private int startDelay;
+    private int startDelay = 15000;
     
-    private int repeatInterval;
+    private int repeatInterval = 120000;
 
     private boolean watcherEnabled = true;
 

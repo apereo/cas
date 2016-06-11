@@ -46,7 +46,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     }
 
     @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
-            fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
+               fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
     @Override
     public void clean() {
         try {

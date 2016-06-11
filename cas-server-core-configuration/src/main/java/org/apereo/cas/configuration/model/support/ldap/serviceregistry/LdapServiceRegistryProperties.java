@@ -9,7 +9,7 @@ package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
 public class LdapServiceRegistryProperties {
     
-    private String baseDn;
+    private String baseDn = "dc=example,dc=org";
     private String objectClass = "casRegisteredService";
     private String idAttribute = "uid";
     private String serviceDefinitionAttribute = "description";

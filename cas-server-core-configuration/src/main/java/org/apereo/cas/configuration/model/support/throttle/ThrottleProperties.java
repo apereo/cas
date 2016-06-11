@@ -30,8 +30,8 @@ public class ThrottleProperties {
 
     private String auditQuery = SQL_AUDIT_QUERY;
 
-    private int repeatInterval = 5000;
-    private int startDelay = 5000;
+    private int repeatInterval = 20000;
+    private int startDelay = 10000;
     
     public Failure getFailure() {
         return failure;

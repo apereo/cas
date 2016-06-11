@@ -9,7 +9,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 public class RejectAuthenticationProperties {
     
-    private String users;
+    private String users = "user1,user2";
 
     public String getUsers() {
         return users;

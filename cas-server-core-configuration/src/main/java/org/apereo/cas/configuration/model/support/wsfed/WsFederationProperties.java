@@ -12,7 +12,7 @@ public class WsFederationProperties {
     private String identityAttribute = "upn";
     private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
     private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
-    private String signingCertificateResources;
+    private String signingCertificateResources = "classpath:adfs-signing.crt";
     private String relyingPartyIdentifier = "urn:cas:localhost";
     private int tolerance = 10000;
     private String attributesType = "WSFED";
