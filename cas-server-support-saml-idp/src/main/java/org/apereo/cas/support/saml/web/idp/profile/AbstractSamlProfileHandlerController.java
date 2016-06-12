@@ -106,6 +106,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * The Config bean.
      */
     @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
     protected OpenSamlConfigBean configBean;
     
     /**

@@ -18,8 +18,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.annotation.Resource;
-
 import static org.junit.Assert.*;
 
 /**

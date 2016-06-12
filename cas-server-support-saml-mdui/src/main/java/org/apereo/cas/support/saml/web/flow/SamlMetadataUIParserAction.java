@@ -19,12 +19,10 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -49,18 +47,13 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
     
     private String entityIdParameterName;
-
     
     private MetadataResolverAdapter metadataAdapter;
-
-    @Autowired
     
     private ServicesManager servicesManager;
-
-    @Resource(name="webApplicationServiceFactory")
+    
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     /**
@@ -163,5 +156,13 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         }
         logger.debug("SP SSO descriptor resolved to be [{}]", spssoDescriptor);
         return spssoDescriptor;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setServiceFactory(final ServiceFactory<WebApplicationService> serviceFactory) {
+        this.serviceFactory = serviceFactory;
     }
 }

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +24,11 @@ import java.util.Map;
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
     
     /** The Services manager. */
-    @Autowired
-    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** The Logger. */
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    @Qualifier("registeredServiceCipherExecutor")
+    
     private RegisteredServiceCipherExecutor cipherExecutor;
 
     /**
@@ -129,5 +124,9 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
                     CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         }
         return cachedAttributesToEncode;
+    }
+
+    public void setCipherExecutor(final RegisteredServiceCipherExecutor cipherExecutor) {
+        this.cipherExecutor = cipherExecutor;
     }
 }

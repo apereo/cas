@@ -31,7 +31,7 @@ public class CasCoreMonitorConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
+        
     @Bean
     public Monitor healthCheckMonitor() {
         final HealthCheckMonitor bean = new HealthCheckMonitor();

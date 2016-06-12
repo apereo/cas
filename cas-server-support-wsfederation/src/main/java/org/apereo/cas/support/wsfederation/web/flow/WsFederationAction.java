@@ -1,26 +1,22 @@
 package org.apereo.cas.support.wsfederation.web.flow;
 
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
-import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
+import org.apereo.cas.support.wsfederation.WsFederationHelper;
+import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.support.WebUtils;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -44,26 +40,14 @@ public class WsFederationAction extends AbstractAction {
     private static final String WSIGNIN = "wsignin1.0";
 
     private transient Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
-
     
-    @Autowired
-    @Qualifier("wsFederationHelper")
     private WsFederationHelper wsFederationHelper;
-
     
-    @Autowired
-    @Qualifier("wsFedConfig")
     private WsFederationConfiguration configuration;
-
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
      * Executes the webflow action.
@@ -214,5 +198,13 @@ public class WsFederationAction extends AbstractAction {
      */
     public void setConfiguration(final WsFederationConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public void setWsFederationHelper(final WsFederationHelper wsFederationHelper) {
+        this.wsFederationHelper = wsFederationHelper;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }

@@ -16,8 +16,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-
 
 /**
  * Test cases for {@link LdaptiveResourceCRLFetcher}

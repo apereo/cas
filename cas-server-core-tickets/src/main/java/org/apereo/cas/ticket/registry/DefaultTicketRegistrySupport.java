@@ -6,7 +6,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -18,9 +17,8 @@ import java.util.Map;
  */
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry = new DefaultTicketRegistry();
+
+    private TicketRegistry ticketRegistry;
 
     /**
      * Instantiates a new Default ticket registry support.

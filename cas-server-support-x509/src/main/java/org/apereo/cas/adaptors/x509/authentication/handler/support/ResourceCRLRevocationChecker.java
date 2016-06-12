@@ -3,9 +3,6 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
@@ -39,13 +36,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     /** CRL refresh interval in seconds. */
     private int refreshInterval;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    /** Handles fetching CRL data. */
-    @Autowired(required = false)
-    @Qualifier("x509CrlFetcher")
+    
     private CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
@@ -100,13 +91,8 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     }
 
 
-    private void initializeResourcesFromContext() {
-        try {
-            this.resources = this.applicationContext.getBean("x509CrlResources", Set.class);
-            logger.debug("Located {} CRL resources from configuration", this.resources.size());
-        } catch (final Exception e) {
-            logger.debug("[x509CrlResources] is not defined in the application context");
-        }
+    public void setResources(final Set<Resource> resources) {
+        this.resources = resources;
     }
 
     /**
@@ -116,8 +102,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     @Override
     public void init() {
         super.init();
-
-        initializeResourcesFromContext();
+        
         if (!validateConfiguration()) {
             return;
         }
@@ -146,7 +131,10 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
             }
         };
         this.scheduler.scheduleAtFixedRate(
-                scheduledFetcher, this.refreshInterval, this.refreshInterval, TimeUnit.SECONDS);
+                scheduledFetcher, 
+                this.refreshInterval, 
+                this.refreshInterval, 
+                TimeUnit.SECONDS);
 
     }
 
@@ -215,6 +203,8 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     public void shutdown() {
         this.scheduler.shutdown();
     }
-    
 
+    public void setFetcher(final CRLFetcher fetcher) {
+        this.fetcher = fetcher;
+    }
 }

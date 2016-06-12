@@ -25,15 +25,11 @@ public class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
 
     @Autowired
-    
     private ParserPool parserPool;
-
     
     private XMLObjectBuilderFactory builderFactory;
-
     
     private MarshallerFactory marshallerFactory;
-
     
     private UnmarshallerFactory unmarshallerFactory;
 

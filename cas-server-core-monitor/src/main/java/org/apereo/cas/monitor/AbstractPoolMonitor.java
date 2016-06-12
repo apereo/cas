@@ -1,9 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -22,12 +18,8 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
     private int maxWait;
 
     /** Executor that performs pool resource validation. */
-    @Nullable
-    @Autowired(required=false)
-    @Qualifier("pooledConnectionFactoryMonitorExecutorService")
     private ExecutorService executor;
-
-
+    
     /**
      * Sets the executor service responsible for pool resource validation.
      *
@@ -36,8 +28,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
     public void setExecutor(final ExecutorService executorService) {
         this.executor = executorService;
     }
-
-
+    
     /**
      * Set the maximum amount of time wait while validating pool resources.
      * If the pool defines a maximum time to wait for a resource, this property

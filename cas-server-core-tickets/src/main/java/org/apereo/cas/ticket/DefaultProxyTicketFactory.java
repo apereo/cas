@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -31,18 +30,16 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     /**
      * Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s.
      */
-    @Resource(name = "uniqueIdGeneratorsMap")
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-        
+
     /**
      * ExpirationPolicy for Service Tickets.
      */
-    @Resource(name = "proxyTicketExpirationPolicy")
     protected ExpirationPolicy proxyTicketExpirationPolicy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket,
                                        final Service service) {
@@ -68,7 +65,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
     }
-    
+
     public void setUniqueTicketIdGeneratorsForService(final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService) {
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }

@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 
-import javax.annotation.Resource;
-
 /**
  * This is {@link RadiusMultifactorWebflowConfigurer}.
  *

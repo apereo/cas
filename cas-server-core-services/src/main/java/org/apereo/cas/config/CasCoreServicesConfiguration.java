@@ -38,7 +38,18 @@ public class CasCoreServicesConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("registeredServiceCipherExecutor")
+    private RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("serviceRegistryDao")
+    private ServiceRegistryDao serviceRegistryDao;
+            
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
@@ -57,11 +68,11 @@ public class CasCoreServicesConfiguration {
     }
 
     @RefreshScope
-    @Autowired
     @Bean
-    public CasAttributeEncoder casAttributeEncoder(@Qualifier("servicesManager")
-                                                   final ServicesManager servicesManager) {
-        return new DefaultCasAttributeEncoder(servicesManager);
+    public CasAttributeEncoder casAttributeEncoder() {
+        final DefaultCasAttributeEncoder e = new DefaultCasAttributeEncoder(servicesManager);
+        e.setCipherExecutor(registeredServiceCipherExecutor);
+        return e;
     }
 
     @Bean
@@ -74,10 +85,9 @@ public class CasCoreServicesConfiguration {
         return new DefaultRegisteredServiceCipherExecutor();
     }
 
-    @Autowired
+    
     @Bean
-    public ReloadableServicesManager servicesManager(@Qualifier("serviceRegistryDao")
-                                                     final ServiceRegistryDao serviceRegistryDao) {
+    public ReloadableServicesManager servicesManager() {
         return new DefaultServicesManagerImpl(serviceRegistryDao);
     }
 

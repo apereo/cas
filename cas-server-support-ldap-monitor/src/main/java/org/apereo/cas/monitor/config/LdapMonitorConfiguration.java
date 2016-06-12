@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Nullable;
+import java.util.concurrent.ExecutorService;
 
 /**
  * This is {@link LdapMonitorConfiguration}.
@@ -22,25 +22,26 @@ import javax.annotation.Nullable;
 @Configuration("ldapMonitorConfiguration")
 public class LdapMonitorConfiguration {
 
-    /** Source of connections to validate. */
-    @Nullable
-    @Autowired(required=false)
+    @Autowired
     @Qualifier("pooledConnectionFactoryMonitorConnectionFactory")
     private PooledConnectionFactory connectionFactory;
 
-    /** Connection validator. */
-    @Nullable
-    @Autowired(required=false)
+    @Autowired
     @Qualifier("pooledConnectionFactoryMonitorValidator")
     private Validator<Connection> validator;
     
     @Autowired
+    @Qualifier("pooledConnectionFactoryMonitorExecutorService")
+    private ExecutorService executor;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor() {
         final PooledConnectionFactoryMonitor m = new PooledConnectionFactoryMonitor(connectionFactory, validator);
         m.setMaxWait(casProperties.getMonitor().getMaxWait());
+        m.setExecutor(executor);
         return m;
     }
 }

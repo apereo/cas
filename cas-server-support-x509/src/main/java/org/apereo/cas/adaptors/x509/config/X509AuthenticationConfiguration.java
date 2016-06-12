@@ -25,9 +25,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
+
+import java.util.Set;
 
 /**
  * This is {@link X509AuthenticationConfiguration}.
@@ -46,6 +49,8 @@ public class X509AuthenticationConfiguration {
     @Qualifier("x509ResourceExpiredRevocationPolicy")
     private RevocationPolicy x509ResourceExpiredRevocationPolicy;
 
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired(required = false)
     @Qualifier("x509CrlUnavailableRevocationPolicy")
@@ -59,6 +64,14 @@ public class X509AuthenticationConfiguration {
     @Qualifier("x509RevocationChecker")
     private RevocationChecker revocationChecker;
 
+    @Autowired(required=false)
+    @Qualifier("x509CrlResources")
+    private Set x509CrlResources;
+
+    @Autowired(required = false)
+    @Qualifier("x509CrlFetcher")
+    private CRLFetcher x509CrlFetcher;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -108,6 +121,9 @@ public class X509AuthenticationConfiguration {
         c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
         c.setExpiredCRLPolicy(this.x509ResourceExpiredRevocationPolicy);
         c.setUnavailableCRLPolicy(this.x509ResourceUnavailableRevocationPolicy);
+        c.setResources(x509CrlResources);
+        c.setFetcher(this.x509CrlFetcher);
+        
         return c;
     }
 

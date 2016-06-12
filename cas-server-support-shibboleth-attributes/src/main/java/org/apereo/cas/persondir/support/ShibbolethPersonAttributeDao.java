@@ -9,7 +9,6 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.NamedPersonImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
  */
 public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
     
-    @Autowired
     private AttributeResolver attributeResolver;
 
     /**
@@ -109,5 +107,9 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
     @Override
     public Map<String, Object> getUserAttributes(final String uid) {
         throw new UnsupportedOperationException();
+    }
+
+    public void setAttributeResolver(final AttributeResolver attributeResolver) {
+        this.attributeResolver = attributeResolver;
     }
 }

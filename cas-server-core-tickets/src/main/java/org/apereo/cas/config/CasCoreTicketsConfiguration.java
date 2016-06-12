@@ -30,6 +30,7 @@ import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,20 +59,54 @@ public class CasCoreTicketsConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("ticketGrantingTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+
+    @Autowired
+    @Qualifier("grantingTicketExpirationPolicy")
+    private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("rememberMeExpirationPolicy")
+    private ExpirationPolicy rememberMeExpirationPolicy;
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("sessionExpirationPolicy")
+    private ExpirationPolicy sessionExpirationPolicy;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+
+    @Resource(name = "uniqueIdGeneratorsMap")
+    protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
-        return new DefaultProxyGrantingTicketFactory();
+        final DefaultProxyGrantingTicketFactory f = new DefaultProxyGrantingTicketFactory();
+        f.setTicketGrantingTicketExpirationPolicy(ticketGrantingTicketExpirationPolicy);
+        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueTicketIdGenerator);
+        return f;
     }
 
     @RefreshScope
     @Bean
     public ProxyTicketFactory defaultProxyTicketFactory() {
-        return new DefaultProxyTicketFactory();
+        final DefaultProxyTicketFactory f = new DefaultProxyTicketFactory();
+        f.setProxyTicketExpirationPolicy(proxyTicketExpirationPolicy());
+        f.setUniqueTicketIdGeneratorsForService(uniqueTicketIdGeneratorsForService);
+        return f;
     }
 
     @Bean
     public DefaultServiceTicketFactory defaultServiceTicketFactory() {
-        return new DefaultServiceTicketFactory();
+        final DefaultServiceTicketFactory f = new DefaultServiceTicketFactory();
+        f.setServiceTicketExpirationPolicy(serviceTicketExpirationPolicy());
+        f.setUniqueTicketIdGeneratorsForService(uniqueTicketIdGeneratorsForService);
+        return f;
     }
 
     @Bean
@@ -78,7 +116,10 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public DefaultTicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
-        return new DefaultTicketGrantingTicketFactory();
+        final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
+        f.setTicketGrantingTicketExpirationPolicy(ticketGrantingTicketExpirationPolicy);
+        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueTicketIdGenerator);
+        return f;
     }
 
     @Bean
@@ -102,7 +143,9 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
-        return new DefaultTicketRegistrySupport();
+        final DefaultTicketRegistrySupport s = new DefaultTicketRegistrySupport();
+        s.setTicketRegistry(ticketRegistry);
+        return s;
     }
 
     @Bean
@@ -137,7 +180,6 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public ExpirationPolicy ticketGrantingTicketExpirationPolicy() {
-        
         final TicketGrantingTicketExpirationPolicy t = new TicketGrantingTicketExpirationPolicy(
                 casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds(),
                 casProperties.getTicket().getTgt().getTimeToKillInSeconds(),
@@ -159,7 +201,10 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public ExpirationPolicy rememberMeDelegatingExpirationPolicy() {
-        return new RememberMeDelegatingExpirationPolicy();
+        final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy();
+        p.setRememberMeExpirationPolicy(rememberMeExpirationPolicy);
+        p.setSessionExpirationPolicy(sessionExpirationPolicy);
+        return p;
     }
 
     @Bean

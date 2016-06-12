@@ -12,8 +12,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Resource;
-
 /**
  * Webflow action to receive and record the AUP response.
  *

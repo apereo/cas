@@ -22,8 +22,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Resource;
-
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and
  * Service.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
+import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -11,6 +12,8 @@ import org.apereo.cas.web.flow.resolver.RegisteredServicePrincipalAttributeAuthe
 import org.apereo.cas.web.flow.resolver.RequestParameterAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.SelectiveAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.ServiceTicketRequestWebflowEventResolver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,23 +26,27 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreWebflowConfiguration")
 public class CasCoreWebflowConfiguration {
-    
+
+    @Autowired
+    @Qualifier("authenticationContextValidator")
+    private AuthenticationContextValidator authenticationContextValidator;
+
     @Bean
     @RefreshScope
     public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new PrincipalAttributeAuthenticationPolicyWebflowEventResolver();
     }
-    
+
     @Bean
     public MultifactorAuthenticationProviderSelector firstMultifactorAuthenticationProviderSelector() {
         return new FirstMultifactorAuthenticationProviderSelector();
     }
-    
+
     @Bean
     public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         return new InitialAuthenticationAttemptWebflowEventResolver();
     }
-    
+
     @Bean
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
         return new ServiceTicketRequestWebflowEventResolver();
@@ -70,6 +77,10 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver() {
-        return new RankedAuthenticationProviderWebflowEventResolver();
+        final RankedAuthenticationProviderWebflowEventResolver r =
+                new RankedAuthenticationProviderWebflowEventResolver();
+        r.setAuthenticationContextValidator(authenticationContextValidator);
+        r.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver());
+        return r;
     }
 }

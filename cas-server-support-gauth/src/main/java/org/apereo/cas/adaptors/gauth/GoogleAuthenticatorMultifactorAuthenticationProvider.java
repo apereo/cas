@@ -7,8 +7,6 @@ import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Resource;
-
 /**
  * The authentication provider for google authenticator.
  *

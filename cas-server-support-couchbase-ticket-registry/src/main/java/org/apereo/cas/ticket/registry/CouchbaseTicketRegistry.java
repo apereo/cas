@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;

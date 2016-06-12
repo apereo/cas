@@ -1,9 +1,14 @@
 package org.apereo.cas.support.wsfederation.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFedApplicationContextWrapper;
+import org.apereo.cas.support.wsfederation.WsFederationAttributeMutator;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFederationAuthenticationHandler;
@@ -28,6 +33,14 @@ import org.springframework.webflow.execution.Action;
 @Configuration("wsFederationConfiguration")
 public class WsFederationAuthenticationConfiguration {
 
+    @Autowired(required=false)
+    @Qualifier("wsfedAttributeMutator")
+    private WsFederationAttributeMutator attributeMutator;
+    
+    @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
+    private OpenSamlConfigBean configBean;
+    
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -41,6 +54,15 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     @Qualifier("adfsPrincipalResolver")
     private PrincipalResolver adfsPrincipalResolver;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired(required = false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport =
+            new DefaultAuthenticationSystemSupport();
 
     @Bean
     public BaseApplicationContextWrapper wsFedApplicationContextWrapper() {
@@ -62,14 +84,16 @@ public class WsFederationAuthenticationConfiguration {
         config.setRelyingPartyIdentifier(casProperties.getAuthn().getWsfed().getRelyingPartyIdentifier());
         StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getSigningCertificateResources())
                 .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
-
+        config.setAttributeMutator(this.attributeMutator);
         return config;
     }
 
     @Bean
     @RefreshScope
     public WsFederationHelper wsFederationHelper() {
-        return new WsFederationHelper();
+        final WsFederationHelper h = new WsFederationHelper();
+        h.setConfigBean(this.configBean);
+        return h;
     }
 
     @Bean
@@ -81,12 +105,22 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver adfsPrincipalResolver() {
-        return new WsFederationCredentialsToPrincipalResolver();
+        final WsFederationCredentialsToPrincipalResolver r =
+                new WsFederationCredentialsToPrincipalResolver();
+        r.setConfiguration(wsFedConfig());
+        return r;
     }
 
     @Bean
     @RefreshScope
     public Action wsFederationAction() {
-        return new WsFederationAction();
+        final WsFederationAction a = new WsFederationAction();
+
+        a.setAuthenticationSystemSupport(authenticationSystemSupport);
+        a.setCentralAuthenticationService(centralAuthenticationService);
+        a.setConfiguration(wsFedConfig());
+        a.setWsFederationHelper(wsFederationHelper());
+        
+        return a;
     }
 }

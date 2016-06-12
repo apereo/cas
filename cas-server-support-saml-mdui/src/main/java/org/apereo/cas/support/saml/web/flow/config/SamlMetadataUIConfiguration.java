@@ -3,7 +3,10 @@ package org.apereo.cas.support.saml.web.flow.config;
 import com.google.common.collect.ImmutableList;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIWebConfigurer;
@@ -26,6 +29,7 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -55,6 +59,13 @@ public class SamlMetadataUIConfiguration {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @javax.annotation.Resource(name="webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> serviceFactory;
+    
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
         return new SamlMetadataUIWebConfigurer();
@@ -64,7 +75,11 @@ public class SamlMetadataUIConfiguration {
     public Action samlMetadataUIParserAction() {
         final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
                 SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, metadataAdapter());
+        final SamlMetadataUIParserAction a = new SamlMetadataUIParserAction(parameter, metadataAdapter());
+        
+        a.setServiceFactory(this.serviceFactory);
+        a.setServicesManager(this.servicesManager);
+        return a;
     }
 
     @Bean

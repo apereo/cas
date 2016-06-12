@@ -32,7 +32,6 @@ import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -52,8 +51,6 @@ import java.util.List;
  */
 public class WsFederationHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationHelper.class);
-
-    @Autowired
     
     private OpenSamlConfigBean configBean;
 
@@ -208,5 +205,9 @@ public class WsFederationHelper {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
     }
 }

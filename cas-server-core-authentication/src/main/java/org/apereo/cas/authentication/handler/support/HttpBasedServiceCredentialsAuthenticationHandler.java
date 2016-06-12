@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.handler.support;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 
-import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
 
 import org.apereo.cas.authentication.HandlerResult;

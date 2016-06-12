@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.saml.SamlIdPApplicationContextWrapper;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
@@ -21,8 +21,8 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlRespo
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlSubjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -31,11 +31,15 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -45,9 +49,30 @@ import org.springframework.core.io.Resource;
  */
 @Configuration("samlIdPConfiguration")
 public class SamlIdPConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
+
+    @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
+    private OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
+    private ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy;
+
+    @javax.annotation.Resource(name = "validationServiceSelectionStrategies")
+    private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+
+    @PostConstruct
+    public void init() {
+        this.validationServiceSelectionStrategies.add(0,
+                this.samlIdPEntityIdValidationServiceSelectionStrategy);
+    }
     
     @Bean
     public Resource templateSpMetadata() {
@@ -59,15 +84,10 @@ public class SamlIdPConfiguration {
      *
      * @return the saml idp single logout service logout url builder
      */
-    @Bean(name={"defaultSingleLogoutServiceLogoutUrlBuilder",
-                "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
+    @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder",
+            "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
-    }
-    
-    @Bean
-    public BaseApplicationContextWrapper samlIdPApplicationContextWrapper() {
-        return new SamlIdPApplicationContextWrapper();
     }
 
     @Bean
@@ -79,11 +99,12 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         final ChainingMetadataResolverCacheLoader c = new ChainingMetadataResolverCacheLoader();
-        
+
         c.setFailFastInitialization(casProperties.getAuthn().getSamlIdp().getMetadata().isFailFast());
         c.setMetadataCacheExpirationMinutes(casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes());
         c.setRequireValidMetadata(casProperties.getAuthn().getSamlIdp().getMetadata().isRequireValidMetadata());
-        
+        c.setConfigBean(this.openSamlConfigBean);
+        c.setHttpClient(this.httpClient);
         return c;
     }
 
@@ -94,43 +115,44 @@ public class SamlIdPConfiguration {
                 new DefaultSamlRegisteredServiceCachingMetadataResolver();
         r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
         r.setMetadataCacheExpirationMinutes(casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes());
+        r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
         return r;
     }
-    
+
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder() {
         return new SamlProfileSamlResponseBuilder();
     }
-    
+
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder() {
         return new SamlProfileSamlSubjectBuilder();
     }
-    
+
     @Bean
     @RefreshScope
     public SamlObjectEncrypter samlObjectEncrypter() {
         return new SamlObjectEncrypter();
     }
-    
+
     @Bean
     @RefreshScope
     public SamlObjectSigner samlObjectSigner() {
         return new SamlObjectSigner();
     }
-    
+
     @Bean
     public SamlIdpMetadataAndCertificatesGenerationService shibbolethIdpMetadataAndCertificatesGenerationService() {
         final ShibbolethIdpMetadataAndCertificatesGenerationService s =
                 new ShibbolethIdpMetadataAndCertificatesGenerationService();
-        
+
         s.setEntityId(casProperties.getAuthn().getSamlIdp().getEntityId());
         s.setHostName(casProperties.getAuthn().getSamlIdp().getHostName());
         s.setMetadataLocation(casProperties.getAuthn().getSamlIdp().getMetadata().getLocation());
         s.setScope(casProperties.getAuthn().getSamlIdp().getScope());
-        
+
         return s;
     }
 

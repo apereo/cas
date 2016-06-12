@@ -55,7 +55,6 @@ import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -3,10 +3,6 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.annotation.Resource;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -23,15 +19,11 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    
-    @Autowired
-    @Qualifier("ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /** Expiration policy for ticket granting tickets. */
-    
-    @Autowired
-    @Qualifier("grantingTicketExpirationPolicy")
+    /**
+     * Expiration policy for ticket granting tickets.
+     */
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     @Override

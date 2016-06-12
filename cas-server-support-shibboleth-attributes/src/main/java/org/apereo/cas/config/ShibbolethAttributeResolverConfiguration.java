@@ -63,6 +63,8 @@ public class ShibbolethAttributeResolverConfiguration {
     
     @Bean
     public IPersonAttributeDao shibbolethPersonAttributeDao() {
-        return new ShibbolethPersonAttributeDao();
+        final ShibbolethPersonAttributeDao d = new ShibbolethPersonAttributeDao();
+        d.setAttributeResolver(attributeResolver());
+        return d;
     }
 }
