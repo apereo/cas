@@ -28,19 +28,24 @@ import java.util.Set;
  */
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Resource(name="requestParameterAuthenticationPolicyWebflowEventResolver")
+    @Autowired
+    @Qualifier("requestParameterAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver;
 
-    @Resource(name="registeredServiceAuthenticationPolicyWebflowEventResolver")
+    @Autowired
+    @Qualifier("registeredServiceAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver;
 
-    @Resource(name="principalAttributeAuthenticationPolicyWebflowEventResolver")
+    @Autowired
+    @Qualifier("principalAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver;
 
-    @Resource(name="registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
+    @Autowired
+    @Qualifier("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 
-    @Resource(name="selectiveAuthenticationProviderWebflowEventResolver")
+    @Autowired
+    @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
 

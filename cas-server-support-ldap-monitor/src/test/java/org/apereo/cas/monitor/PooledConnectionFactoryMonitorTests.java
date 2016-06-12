@@ -20,7 +20,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"/ldap-context.xml", "/ldap-poolmonitor-test.xml"})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
-    @Resource(name="pooledLdapConnectionFactoryMonitor")
+    @Autowired
+    @Qualifier("pooledLdapConnectionFactoryMonitor")
     private PooledConnectionFactoryMonitor monitor;
 
     @BeforeClass

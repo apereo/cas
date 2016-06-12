@@ -32,17 +32,20 @@ public class TerminateSessionAction extends AbstractAction {
 
     /** The CORE to which we delegate for all CAS functionality. */
     
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** CookieGenerator for TGT Cookie. */
     
-    @Resource(name="ticketGrantingTicketCookieGenerator")
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** CookieGenerator for Warn Cookie. */
     
-    @Resource(name="warnCookieGenerator")
+    @Autowired
+    @Qualifier("warnCookieGenerator")
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     

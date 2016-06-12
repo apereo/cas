@@ -14,7 +14,8 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class GoogleAuthenticatorAuthenticationWebflowAction extends AbstractAction {
-    @Resource(name="googleAuthenticatorAuthenticationWebflowEventResolver")
+    @Autowired
+    @Qualifier("googleAuthenticatorAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver casWebflowEventResolver;
 
     @Override

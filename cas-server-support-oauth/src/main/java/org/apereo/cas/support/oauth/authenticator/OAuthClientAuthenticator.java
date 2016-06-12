@@ -21,12 +21,14 @@ public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
 
     /** The OAuth validator. */
     
-    @Resource(name="oAuthValidator")
+    @Autowired
+    @Qualifier("oAuthValidator")
     private OAuthValidator validator;
 
     /** The services manager. */
     
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Override

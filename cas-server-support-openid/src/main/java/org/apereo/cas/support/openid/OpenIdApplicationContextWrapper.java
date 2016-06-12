@@ -18,16 +18,20 @@ import javax.annotation.Resource;
  */
 public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Resource(name="serviceTicketUniqueIdGenerator")
+    @Autowired
+    @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
-    @Resource(name="openIdCredentialsAuthenticationHandler")
+    @Autowired
+    @Qualifier("openIdCredentialsAuthenticationHandler")
     private AuthenticationHandler openIdCredentialsAuthenticationHandler;
 
-    @Resource(name="openIdPrincipalResolver")
+    @Autowired
+    @Qualifier("openIdPrincipalResolver")
     private PrincipalResolver openIdPrincipalResolver;
 
-    @Resource(name="openIdServiceFactory")
+    @Autowired
+    @Qualifier("openIdServiceFactory")
     private OpenIdServiceFactory openIdServiceFactory;
 
     /**

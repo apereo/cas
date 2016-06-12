@@ -15,10 +15,12 @@ import javax.annotation.Resource;
  */
 public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Resource(name="clientAuthenticationHandler")
+    @Autowired
+    @Qualifier("clientAuthenticationHandler")
     private ClientAuthenticationHandler clientAuthenticationHandler;
 
-    @Resource(name="clientAuthenticationMetaDataPopulator")
+    @Autowired
+    @Qualifier("clientAuthenticationMetaDataPopulator")
     private AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator;
 
     /**

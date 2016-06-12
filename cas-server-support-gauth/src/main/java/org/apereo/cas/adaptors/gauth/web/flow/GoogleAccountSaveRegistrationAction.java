@@ -16,7 +16,8 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class GoogleAccountSaveRegistrationAction extends AbstractAction {
-    @Resource(name="googleAuthenticatorAccountRegistry")
+    @Autowired
+    @Qualifier("googleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry accountRegistry;
     
     @Override

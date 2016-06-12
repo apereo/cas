@@ -16,7 +16,8 @@ import javax.annotation.Resource;
 @Configuration("casRestConfiguration")
 public class RestConfiguration extends WebMvcConfigurerAdapter {
 
-    @Resource(name="restAuthenticationThrottle")
+    @Autowired
+    @Qualifier("restAuthenticationThrottle")
     private HandlerInterceptor authenticationThrottle;
 
     @Override

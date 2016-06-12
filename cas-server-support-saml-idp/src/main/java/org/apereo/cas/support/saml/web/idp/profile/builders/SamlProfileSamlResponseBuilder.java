@@ -45,7 +45,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     /**
      * The Saml object encoder.
      */
-    @Resource(name="samlObjectSigner")
+    @Autowired
+    @Qualifier("samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
@@ -57,10 +58,12 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Resource(name="samlProfileSamlAssertionBuilder")
+    @Autowired
+    @Qualifier("samlProfileSamlAssertionBuilder")
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
 
-    @Resource(name="samlObjectEncrypter")
+    @Autowired
+    @Qualifier("samlObjectEncrypter")
     private SamlObjectEncrypter samlObjectEncrypter;
 
     @Override

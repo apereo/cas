@@ -32,7 +32,8 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
     /** ExpirationPolicy for OAuth code. */
     
-    @Resource(name="oAuthCodeExpirationPolicy")
+    @Autowired
+    @Qualifier("oAuthCodeExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

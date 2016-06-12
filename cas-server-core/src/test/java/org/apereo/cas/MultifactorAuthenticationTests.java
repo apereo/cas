@@ -45,7 +45,8 @@ public class MultifactorAuthenticationTests {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
     @Test

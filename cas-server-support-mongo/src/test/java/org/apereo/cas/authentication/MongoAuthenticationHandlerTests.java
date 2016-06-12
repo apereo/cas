@@ -18,7 +18,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration("/mongo-context.xml")
 public class MongoAuthenticationHandlerTests {
 
-    @Resource(name="mongoAuthenticationHandler")
+    @Autowired
+    @Qualifier("mongoAuthenticationHandler")
     private MongoAuthenticationHandler authenticationHandler;
 
     @Test

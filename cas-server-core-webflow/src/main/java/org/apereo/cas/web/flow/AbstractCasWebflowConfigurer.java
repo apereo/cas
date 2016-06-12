@@ -73,13 +73,15 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * The Login flow definition registry.
      */
-    @Resource(name="loginFlowRegistry")
+    @Autowired
+    @Qualifier("loginFlowRegistry")
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @Resource(name="logoutFlowRegistry")
+    @Autowired
+    @Qualifier("logoutFlowRegistry")
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     @Autowired

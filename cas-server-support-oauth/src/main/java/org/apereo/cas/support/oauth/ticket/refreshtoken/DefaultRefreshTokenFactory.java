@@ -32,7 +32,8 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
     /** ExpirationPolicy for refresh tokens. */
     
-    @Resource(name="refreshTokenExpirationPolicy")
+    @Autowired
+    @Qualifier("refreshTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

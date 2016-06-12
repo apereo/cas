@@ -17,7 +17,8 @@ import java.util.Properties;
  */
 public class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
-    @Resource(name="openidDelegatingController")
+    @Autowired
+    @Qualifier("openidDelegatingController")
     private Controller controller;
 
     @Override

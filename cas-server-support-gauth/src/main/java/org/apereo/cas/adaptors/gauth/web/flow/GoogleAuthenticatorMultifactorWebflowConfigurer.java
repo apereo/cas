@@ -16,7 +16,8 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
     /** Webflow event id. */
     public static final String MFA_GAUTH_EVENT_ID = "mfa-gauth";
 
-    @Resource(name="googleAuthenticatorFlowRegistry")
+    @Autowired
+    @Qualifier("googleAuthenticatorFlowRegistry")
     private FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Override

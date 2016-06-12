@@ -44,7 +44,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"/ldap-context.xml", "/ldap-regservice-test.xml"})
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
-    @Resource(name="ldapServiceRegistryDao")
+    @Autowired
+    @Qualifier("ldapServiceRegistryDao")
     private ServiceRegistryDao dao;
 
     @BeforeClass

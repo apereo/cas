@@ -28,7 +28,8 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    @Resource(name="acceptableUsagePolicyRepository")
+    @Autowired
+    @Qualifier("acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository repository;
 
     /**

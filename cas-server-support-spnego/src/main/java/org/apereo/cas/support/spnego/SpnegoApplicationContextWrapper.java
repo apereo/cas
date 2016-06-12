@@ -14,13 +14,16 @@ import javax.annotation.Resource;
  * @since 4.2
  */
 public class SpnegoApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Resource(name="spnegoHandler")
+    @Autowired
+    @Qualifier("spnegoHandler")
     private AuthenticationHandler spnegoHandler;
 
-    @Resource(name="spnegoPrincipalResolver")
+    @Autowired
+    @Qualifier("spnegoPrincipalResolver")
     private PrincipalResolver spnegoPrincipalResolver;
 
-    @Resource(name="successfulHandlerMetaDataPopulator")
+    @Autowired
+    @Qualifier("successfulHandlerMetaDataPopulator")
     private AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator;
 
     /**

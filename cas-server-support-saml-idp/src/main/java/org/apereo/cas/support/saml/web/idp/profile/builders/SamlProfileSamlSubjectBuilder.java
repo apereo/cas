@@ -23,7 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
     private static final long serialVersionUID = 4782621942035583007L;
 
-    @Resource(name="samlProfileSamlNameIdBuilder")
+    @Autowired
+    @Qualifier("samlProfileSamlNameIdBuilder")
     private SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder;
 
     @Override

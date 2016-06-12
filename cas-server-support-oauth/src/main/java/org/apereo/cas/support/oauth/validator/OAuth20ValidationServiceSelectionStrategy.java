@@ -22,7 +22,8 @@ import java.util.Optional;
 public class OAuth20ValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
     
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Resource(name="webApplicationServiceFactory")

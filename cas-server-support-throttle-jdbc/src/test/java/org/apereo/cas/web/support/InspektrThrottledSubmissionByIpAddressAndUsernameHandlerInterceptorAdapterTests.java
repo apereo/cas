@@ -39,7 +39,8 @@ import static org.junit.Assert.*;
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
                 AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
-    @Resource(name="inspektrIpAddressUsernameThrottle")
+    @Autowired
+    @Qualifier("inspektrIpAddressUsernameThrottle")
     private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
 
     @Autowired

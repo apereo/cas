@@ -34,7 +34,8 @@ public class SmartOpenIdController extends AbstractDelegateController implements
 
     private transient Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
-    @Resource(name="serverManager")
+    @Autowired
+    @Qualifier("serverManager")
     private ServerManager serverManager;
 
     /** The view to redirect to on a successful validation. */

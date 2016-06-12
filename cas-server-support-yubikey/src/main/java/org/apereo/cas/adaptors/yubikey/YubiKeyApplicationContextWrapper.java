@@ -13,10 +13,12 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class YubiKeyApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Resource(name="yubikeyAuthenticationHandler")
+    @Autowired
+    @Qualifier("yubikeyAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
-    @Resource(name="yubikeyAuthenticationMetaDataPopulator")
+    @Autowired
+    @Qualifier("yubikeyAuthenticationMetaDataPopulator")
     private YubiKeyAuthenticationMetaDataPopulator populator;
 
     /**

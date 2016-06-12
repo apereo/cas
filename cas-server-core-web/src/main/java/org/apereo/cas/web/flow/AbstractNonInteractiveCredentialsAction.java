@@ -39,14 +39,16 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Principal factory instance. */
-    @Resource(name="principalFactory")
+    @Autowired
+    @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory;
     
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
     
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** Instance of warn cookie generator. */

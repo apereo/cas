@@ -21,7 +21,8 @@ public class OidcCasClientRedirectActionBuilder extends DefaultOAuthCasClientRed
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcCasClientRedirectActionBuilder.class);
     
-    @Resource(name="oidcAuthorizationRequestSupport")
+    @Autowired
+    @Qualifier("oidcAuthorizationRequestSupport")
     private OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport;
 
     @Override

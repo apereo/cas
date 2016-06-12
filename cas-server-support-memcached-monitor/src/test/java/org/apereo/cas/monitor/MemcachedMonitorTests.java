@@ -22,10 +22,12 @@ import java.io.IOException;
 @ContextConfiguration("/monitor-test.xml")
 public class MemcachedMonitorTests extends AbstractMemcachedTests {
 
-    @Resource(name="memcachedMonitor")
+    @Autowired
+    @Qualifier("memcachedMonitor")
     private MemcachedMonitor monitor;
 
-    @Resource(name="memcachedClient")
+    @Autowired
+    @Qualifier("memcachedClient")
     private MemcachedClientIF memcachedClient;
 
 

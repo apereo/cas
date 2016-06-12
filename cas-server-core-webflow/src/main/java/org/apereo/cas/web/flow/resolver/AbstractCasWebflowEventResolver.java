@@ -85,28 +85,32 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     /**
      * Ticket registry support.
      */
-    @Resource(name="defaultTicketRegistrySupport")
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
     protected TicketRegistrySupport ticketRegistrySupport;
     
     /**
      * The Services manager.
      */
     
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /**
      * The Central authentication service.
      */
     
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     protected CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Warn cookie generator.
      */
     
-    @Resource(name="warnCookieGenerator")
+    @Autowired
+    @Qualifier("warnCookieGenerator")
     protected CookieGenerator warnCookieGenerator;
 
     /**

@@ -25,7 +25,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"/ldap-context.xml", "/authn-context.xml"})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
-    @Resource(name="ldapAuthenticationHandler")
+    @Autowired
+    @Qualifier("ldapAuthenticationHandler")
     private AuthenticationHandler handler;
 
     @BeforeClass

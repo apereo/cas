@@ -32,19 +32,24 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Resource(name="samlProfileSamlAuthNStatementBuilder")
+    @Autowired
+    @Qualifier("samlProfileSamlAuthNStatementBuilder")
     private SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder;
 
-    @Resource(name="samlProfileSamlAttributeStatementBuilder")
+    @Autowired
+    @Qualifier("samlProfileSamlAttributeStatementBuilder")
     private SamlProfileSamlAttributeStatementBuilder samlProfileSamlAttributeStatementBuilder;
 
-    @Resource(name="samlProfileSamlSubjectBuilder")
+    @Autowired
+    @Qualifier("samlProfileSamlSubjectBuilder")
     private SamlProfileSamlSubjectBuilder samlProfileSamlSubjectBuilder;
 
-    @Resource(name="samlProfileSamlConditionsBuilder")
+    @Autowired
+    @Qualifier("samlProfileSamlConditionsBuilder")
     private SamlProfileSamlConditionsBuilder samlProfileSamlConditionsBuilder;
 
-    @Resource(name="samlObjectSigner")
+    @Autowired
+    @Qualifier("samlObjectSigner")
     private SamlObjectSigner samlObjectSigner;
 
 

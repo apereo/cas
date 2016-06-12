@@ -104,7 +104,8 @@ public class SingleSignOnSessionsReportController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     

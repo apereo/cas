@@ -18,7 +18,8 @@ public class AttributeFormDataPopulator implements FormDataPopulator {
     /**
      * Instance of AttributeRegistry.
      */
-    @Resource(name="attributeRepository")
+    @Autowired
+    @Qualifier("attributeRepository")
     private IPersonAttributeDao personAttributeDao;
 
     public AttributeFormDataPopulator() {

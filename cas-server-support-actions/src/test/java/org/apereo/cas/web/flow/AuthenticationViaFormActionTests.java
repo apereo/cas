@@ -30,10 +30,12 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTests {
 
-    @Resource(name="authenticationViaFormAction")
+    @Autowired
+    @Qualifier("authenticationViaFormAction")
     private AuthenticationViaFormAction action;
 
-    @Resource(name="warnCookieGenerator")
+    @Autowired
+    @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
 

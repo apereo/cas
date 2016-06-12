@@ -46,15 +46,18 @@ public class WsFederationAction extends AbstractAction {
     private transient Logger logger = LoggerFactory.getLogger(WsFederationAction.class);
 
     
-    @Resource(name="wsFederationHelper")
+    @Autowired
+    @Qualifier("wsFederationHelper")
     private WsFederationHelper wsFederationHelper;
 
     
-    @Resource(name="wsFedConfig")
+    @Autowired
+    @Qualifier("wsFedConfig")
     private WsFederationConfiguration configuration;
 
     
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     

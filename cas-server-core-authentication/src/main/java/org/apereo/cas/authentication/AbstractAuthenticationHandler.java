@@ -20,11 +20,13 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
-    @Resource(name="principalFactory")
+    @Autowired
+    @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** The services manager instance, as the entry point to the registry. **/
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** Configurable handler name. */

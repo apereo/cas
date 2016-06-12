@@ -48,7 +48,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * The Authentication handler resolver.
      */
     
-    @Resource(name="registeredServiceAuthenticationHandlerResolver")
+    @Autowired
+    @Qualifier("registeredServiceAuthenticationHandlerResolver")
     protected AuthenticationHandlerResolver authenticationHandlerResolver =
             new RegisteredServiceAuthenticationHandlerResolver();
 

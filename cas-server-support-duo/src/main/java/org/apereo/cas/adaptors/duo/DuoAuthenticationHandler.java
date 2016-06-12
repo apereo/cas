@@ -19,7 +19,8 @@ import java.util.ArrayList;
  */
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    @Resource(name="duoAuthenticationService")
+    @Autowired
+    @Qualifier("duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 
     /**

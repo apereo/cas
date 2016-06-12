@@ -16,7 +16,8 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasWebflowConfi
     /** Webflow event id. */
     public static final String MFA_YUBIKEY_EVENT_ID = "mfa-yubikey";
 
-    @Resource(name="yubikeyFlowRegistry")
+    @Autowired
+    @Qualifier("yubikeyFlowRegistry")
     private FlowDefinitionRegistry yubikeyFlowRegistry;
 
     @Override

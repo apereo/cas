@@ -41,10 +41,12 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     /**
      * The code factory instance.
      */
-    @Resource(name="defaultOAuthCodeFactory")
+    @Autowired
+    @Qualifier("defaultOAuthCodeFactory")
     protected OAuthCodeFactory oAuthCodeFactory;
 
-    @Resource(name="consentApprovalViewResolver")
+    @Autowired
+    @Qualifier("consentApprovalViewResolver")
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
     @Autowired

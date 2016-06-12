@@ -50,7 +50,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Resource(name="ticketRegistryCouchbaseClientFactory")
+    @Autowired
+    @Qualifier("ticketRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
 
     /**

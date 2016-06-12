@@ -53,10 +53,12 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     @Autowired
     private ThymeleafProperties properties;
     
-    @Resource(name="thymeleafViewResolver")
+    @Autowired
+    @Qualifier("thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
 
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Resource(name="argumentExtractors")

@@ -30,7 +30,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     /**
      * The Saml object builder.
      */
-    @Resource(name="saml10ObjectBuilder")
+    @Autowired
+    @Qualifier("saml10ObjectBuilder")
     protected Saml10ObjectBuilder samlObjectBuilder;
 
     private ArgumentExtractor samlArgumentExtractor;

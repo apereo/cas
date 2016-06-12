@@ -22,10 +22,12 @@ import static org.junit.Assert.*;
  */
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
-    @Resource(name="samlMetadataUIParserAction")
+    @Autowired
+    @Qualifier("samlMetadataUIParserAction")
     private SamlMetadataUIParserAction samlMetadataUIParserAction;
 
-    @Resource(name="samlDynamicMetadataUIParserAction")
+    @Autowired
+    @Qualifier("samlDynamicMetadataUIParserAction")
     private SamlMetadataUIParserAction samlDynamicMetadataUIParserAction;
 
     @Test

@@ -38,7 +38,8 @@ import static org.junit.Assert.*;
 @DirtiesContext
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
         
     private Map<?, ?> renderView() throws Exception{

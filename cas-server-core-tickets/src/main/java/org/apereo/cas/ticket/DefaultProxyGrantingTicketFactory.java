@@ -24,12 +24,14 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * created.
      */
     
-    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
+    @Autowired
+    @Qualifier("ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Expiration policy for ticket granting tickets. */
     
-    @Resource(name="grantingTicketExpirationPolicy")
+    @Autowired
+    @Qualifier("grantingTicketExpirationPolicy")
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     @Override

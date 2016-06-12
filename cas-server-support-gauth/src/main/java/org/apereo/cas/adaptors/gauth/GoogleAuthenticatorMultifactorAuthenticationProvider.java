@@ -18,7 +18,8 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    @Resource(name="googleAuthenticatorAuthenticationHandler")
+    @Autowired
+    @Qualifier("googleAuthenticatorAuthenticationHandler")
     private AuthenticationHandler yubiKeyAuthenticationHandler;
     
     @Autowired

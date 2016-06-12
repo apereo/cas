@@ -31,7 +31,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:/mongo-cloudtest-context.xml")
 public class MongoServiceRegistryDaoCloudTests {
 
-    @Resource(name="serviceRegistryDao")
+    @Autowired
+    @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
 

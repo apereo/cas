@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class SamlIdPApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Resource(name="samlIdPEntityIdValidationServiceSelectionStrategy")
+    @Autowired
+    @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
     private ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy;
     
     @Resource(name="validationServiceSelectionStrategies")

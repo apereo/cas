@@ -15,7 +15,8 @@ import javax.annotation.Resource;
  */
 
 public class RadiusAuthenticationWebflowAction extends AbstractAction {
-    @Resource(name="radiusAuthenticationWebflowEventResolver")
+    @Autowired
+    @Qualifier("radiusAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
 
     @Override

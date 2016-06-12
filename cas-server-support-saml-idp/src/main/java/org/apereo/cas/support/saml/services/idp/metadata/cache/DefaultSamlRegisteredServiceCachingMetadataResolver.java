@@ -24,7 +24,8 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
     
     private long metadataCacheExpirationMinutes;
 
-    @Resource(name="chainingMetadataResolverCacheLoader")
+    @Autowired
+    @Qualifier("chainingMetadataResolverCacheLoader")
     private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
 
     private LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;

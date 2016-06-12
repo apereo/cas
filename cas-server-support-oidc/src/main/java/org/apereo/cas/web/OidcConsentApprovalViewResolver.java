@@ -16,7 +16,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
-    @Resource(name="oidcAuthorizationRequestSupport")
+    @Autowired
+    @Qualifier("oidcAuthorizationRequestSupport")
     private OidcAuthorizationRequestSupport oidcAuthzRequestSupport;
 
     @Override

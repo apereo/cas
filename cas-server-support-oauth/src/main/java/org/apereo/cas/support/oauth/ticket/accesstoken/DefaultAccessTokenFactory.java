@@ -32,7 +32,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     /** ExpirationPolicy for access tokens. */
     
-    @Resource(name="accessTokenExpirationPolicy")
+    @Autowired
+    @Qualifier("accessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

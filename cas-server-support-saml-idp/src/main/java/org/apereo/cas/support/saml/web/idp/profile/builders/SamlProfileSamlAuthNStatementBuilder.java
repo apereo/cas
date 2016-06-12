@@ -33,7 +33,8 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Resource(name="defaultAuthnContextClassRefBuilder")
+    @Autowired
+    @Qualifier("defaultAuthnContextClassRefBuilder")
     private AuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     @Override

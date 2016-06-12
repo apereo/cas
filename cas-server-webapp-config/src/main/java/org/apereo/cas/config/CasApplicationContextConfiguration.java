@@ -42,7 +42,8 @@ public class CasApplicationContextConfiguration {
     /**
      * The Service ticket unique id generator.
      */
-    @Resource(name="serviceTicketUniqueIdGenerator")
+    @Autowired
+    @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
     /**
@@ -55,7 +56,8 @@ public class CasApplicationContextConfiguration {
      * The Default argument extractor.
      */
     
-    @Resource(name="defaultArgumentExtractor")
+    @Autowired
+    @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
     
     /**

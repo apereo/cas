@@ -66,7 +66,8 @@ public class TicketsResource {
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
 
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     
@@ -77,10 +78,12 @@ public class TicketsResource {
     @Autowired(required = false)
     private CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
-    @Resource(name="webApplicationServiceFactory")
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
 
-    @Resource(name="defaultTicketRegistrySupport")
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
 
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper();

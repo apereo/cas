@@ -31,7 +31,8 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
     @Resource(name="webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    @Resource(name="oauth20ValidationServiceSelectionStrategy")
+    @Autowired
+    @Qualifier("oauth20ValidationServiceSelectionStrategy")
     private ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy;
 
     @Resource(name = "validationServiceSelectionStrategies")

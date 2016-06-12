@@ -15,7 +15,8 @@ import javax.annotation.Resource;
  */
 public class SamlGoogleAppsApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Resource(name="googleAccountsServiceFactory")
+    @Autowired
+    @Qualifier("googleAccountsServiceFactory")
     private ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory;
 
     /**

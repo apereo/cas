@@ -65,7 +65,8 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * The Http client.
      */
     
-    @Resource(name="noRedirectHttpClient")
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
     protected HttpClient httpClient;
     
     private long metadataCacheExpirationMinutes;

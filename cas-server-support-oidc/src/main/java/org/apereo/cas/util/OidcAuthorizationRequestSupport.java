@@ -33,10 +33,12 @@ public class OidcAuthorizationRequestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizationRequestSupport.class);
     
-    @Resource(name="ticketGrantingTicketCookieGenerator")
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    @Resource(name="defaultTicketRegistrySupport")
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
 

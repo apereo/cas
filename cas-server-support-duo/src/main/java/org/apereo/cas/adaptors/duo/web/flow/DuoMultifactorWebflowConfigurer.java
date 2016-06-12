@@ -16,7 +16,8 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
     /** Duo Webflow event id. */
     public static final String MFA_DUO_EVENT_ID = "mfa-duo";
 
-    @Resource(name="duoFlowRegistry")
+    @Autowired
+    @Qualifier("duoFlowRegistry")
     private FlowDefinitionRegistry duoFlowRegistry;
 
     @Override

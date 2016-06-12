@@ -30,7 +30,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration("/ldap-context.xml")
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
 
-    @Resource(name="provisioningConnectionFactory")
+    @Autowired
+    @Qualifier("provisioningConnectionFactory")
     private ConnectionFactory connectionFactory;
 
     @Autowired

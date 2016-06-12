@@ -35,7 +35,8 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
 
     /** Instance of Apache Commons HttpClient. */
     
-    @Resource(name="supportsTrustStoreSslSocketFactoryHttpClient")
+    @Autowired
+    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     @Override

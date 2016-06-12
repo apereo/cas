@@ -25,7 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("oidcAccessTokenController")
 public class OidcAccessTokenController extends OAuth20AccessTokenController {
 
-    @Resource(name="oidcAccessTokenResponseGenerator")
+    @Autowired
+    @Qualifier("oidcAccessTokenResponseGenerator")
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     /**

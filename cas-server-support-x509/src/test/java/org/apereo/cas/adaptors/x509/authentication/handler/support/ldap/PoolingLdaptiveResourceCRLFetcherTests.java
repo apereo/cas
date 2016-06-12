@@ -27,7 +27,8 @@ import javax.annotation.Resource;
 public class PoolingLdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
 
 
-    @Resource(name="poolingLdapCertFetcher")
+    @Autowired
+    @Qualifier("poolingLdapCertFetcher")
     private PoolingLdaptiveResourceCRLFetcher fetcher;
 
     @BeforeClass

@@ -38,10 +38,12 @@ import java.util.Map;
 public class RegisteredServiceResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceResource.class);
 
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
     
     @Autowired

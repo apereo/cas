@@ -35,7 +35,8 @@ public class TokenAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationAction.class);
 
     
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     

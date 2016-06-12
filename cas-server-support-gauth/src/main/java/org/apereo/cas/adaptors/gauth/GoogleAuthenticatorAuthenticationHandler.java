@@ -23,10 +23,12 @@ import java.security.GeneralSecurityException;
  */
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    @Resource(name="googleAuthenticatorAccountRegistry")
+    @Autowired
+    @Qualifier("googleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry accountRegistry;
 
-    @Resource(name="googleAuthenticatorInstance")
+    @Autowired
+    @Qualifier("googleAuthenticatorInstance")
     private GoogleAuthenticatorInstance googleAuthenticatorInstance;
 
     /**

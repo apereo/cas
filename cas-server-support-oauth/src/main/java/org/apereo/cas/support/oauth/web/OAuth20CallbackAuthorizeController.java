@@ -26,13 +26,15 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("callbackAuthorizeController")
 public class OAuth20CallbackAuthorizeController extends AbstractController {
     
-    @Resource(name="oauthSecConfig")
+    @Autowired
+    @Qualifier("oauthSecConfig")
     private Config config;
     
     @Autowired
     private CallbackController callbackController;
 
-    @Resource(name="callbackAuthorizeViewResolver")
+    @Autowired
+    @Qualifier("callbackAuthorizeViewResolver")
     private OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;
     
     @PostConstruct

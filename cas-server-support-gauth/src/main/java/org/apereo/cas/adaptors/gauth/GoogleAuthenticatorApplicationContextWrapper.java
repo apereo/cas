@@ -14,10 +14,12 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class GoogleAuthenticatorApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Resource(name="googleAuthenticatorAuthenticationHandler")
+    @Autowired
+    @Qualifier("googleAuthenticatorAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
-    @Resource(name="googleAuthenticatorAuthenticationMetaDataPopulator")
+    @Autowired
+    @Qualifier("googleAuthenticatorAuthenticationMetaDataPopulator")
     private AuthenticationMetaDataPopulator populator;
 
     /**

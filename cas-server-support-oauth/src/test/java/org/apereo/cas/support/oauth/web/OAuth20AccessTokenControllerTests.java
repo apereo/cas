@@ -93,25 +93,32 @@ public class OAuth20AccessTokenControllerTests {
 
     private static final int DELTA = 2;
 
-    @Resource(name="defaultOAuthCodeFactory")
+    @Autowired
+    @Qualifier("defaultOAuthCodeFactory")
     private DefaultOAuthCodeFactory oAuthCodeFactory;
 
-    @Resource(name="defaultRefreshTokenFactory")
+    @Autowired
+    @Qualifier("defaultRefreshTokenFactory")
     private DefaultRefreshTokenFactory oAuthRefreshTokenFactory;
 
-    @Resource(name="accessTokenController")
+    @Autowired
+    @Qualifier("accessTokenController")
     private OAuth20AccessTokenController oAuth20AccessTokenController;
 
-    @Resource(name="oAuthValidator")
+    @Autowired
+    @Qualifier("oAuthValidator")
     private OAuthValidator validator;
 
-    @Resource(name="oauthSecConfig")
+    @Autowired
+    @Qualifier("oauthSecConfig")
     private Config oauthSecConfig;
 
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Resource(name="requiresAuthenticationAccessTokenInterceptor")
+    @Autowired
+    @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     private RequiresAuthenticationInterceptor requiresAuthenticationInterceptor;
 
     @Before

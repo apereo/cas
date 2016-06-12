@@ -23,13 +23,15 @@ import java.util.Map;
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
     
     /** The Services manager. */
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** The Logger. */
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Resource(name="registeredServiceCipherExecutor")
+    @Autowired
+    @Qualifier("registeredServiceCipherExecutor")
     private RegisteredServiceCipherExecutor cipherExecutor;
 
     /**

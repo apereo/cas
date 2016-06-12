@@ -20,7 +20,8 @@ public class InitializeLoginAction extends AbstractAction {
 
     /** The services manager with access to the registry. **/
     
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     @Override

@@ -36,7 +36,8 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
 
     /** The ServiceRegistry to look up the service. */
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     private Map<Pattern, String> overrides = new HashMap<>();

@@ -21,7 +21,8 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
 
     private transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
 
-    @Resource(name="wsFedConfig")
+    @Autowired
+    @Qualifier("wsFedConfig")
     private WsFederationConfiguration configuration;
 
     /**

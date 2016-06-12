@@ -27,10 +27,12 @@ import java.util.Set;
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
     
 
-    @Resource(name="initialAuthenticationAttemptWebflowEventResolver")
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     
-    @Resource(name="authenticationContextValidator")
+    @Autowired
+    @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
 
     @Override

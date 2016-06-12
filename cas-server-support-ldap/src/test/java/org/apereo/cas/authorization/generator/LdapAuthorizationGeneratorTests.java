@@ -27,7 +27,8 @@ public class LdapAuthorizationGeneratorTests extends AbstractLdapTests {
 
     private static final String CAS_SERVICE_DETAILS_OBJ_CLASS = "casServiceUserDetails";
 
-    @Resource(name="ldapAuthorizationGenerator")
+    @Autowired
+    @Qualifier("ldapAuthorizationGenerator")
     private LdapAuthorizationGenerator ldapAuthorizationGenerator;
 
     @BeforeClass

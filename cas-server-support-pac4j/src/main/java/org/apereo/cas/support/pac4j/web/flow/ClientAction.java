@@ -76,7 +76,8 @@ public class ClientAction extends AbstractAction {
      * The clients used for authentication.
      */
     
-    @Resource(name="builtClients")
+    @Autowired
+    @Qualifier("builtClients")
     private Clients clients;
 
     

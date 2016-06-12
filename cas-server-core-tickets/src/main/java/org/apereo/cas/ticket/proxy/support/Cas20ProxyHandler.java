@@ -38,12 +38,14 @@ public class Cas20ProxyHandler implements ProxyHandler {
 
     /** Generate unique ids. */
     
-    @Resource(name="proxy20TicketUniqueIdGenerator")
+    @Autowired
+    @Qualifier("proxy20TicketUniqueIdGenerator")
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     /** Instance of Apache Commons HttpClient. */
     
-    @Resource(name="supportsTrustStoreSslSocketFactoryHttpClient")
+    @Autowired
+    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     /**

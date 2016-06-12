@@ -32,14 +32,17 @@ import javax.annotation.Resource;
 public class GenerateServiceTicketAction extends AbstractAction {
     /** Instance of CentralAuthenticationService. */
     
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     
-    @Resource(name="defaultAuthenticationSystemSupport")
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @Resource(name="defaultTicketRegistrySupport")
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override

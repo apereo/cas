@@ -19,7 +19,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/stormpath-context.xml")
 public class StormpathAuthenticationHandlerTests {
-    @Resource(name="stormpathAuthenticationHandler")
+    @Autowired
+    @Qualifier("stormpathAuthenticationHandler")
     private StormpathAuthenticationHandler authenticationHandler;
 
     @Test

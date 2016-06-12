@@ -166,8 +166,5 @@ public class CasCoreAuditConfiguration {
     public MessageBundleAwareResourceResolver messageBundleAwareResourceResolver() {
         return new MessageBundleAwareResourceResolver();
     }
-
-
-
-
+    
 }

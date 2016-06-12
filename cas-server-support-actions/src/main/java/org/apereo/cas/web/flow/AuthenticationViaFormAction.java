@@ -17,10 +17,12 @@ import javax.annotation.Resource;
  */
 public class AuthenticationViaFormAction extends AbstractAction {
 
-    @Resource(name="serviceTicketRequestWebflowEventResolver")
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
-    @Resource(name="initialAuthenticationAttemptWebflowEventResolver")
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
 

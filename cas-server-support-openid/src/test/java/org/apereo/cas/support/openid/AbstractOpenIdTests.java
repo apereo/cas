@@ -23,16 +23,20 @@ public class AbstractOpenIdTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Resource(name="openIdServiceFactory")
+    @Autowired
+    @Qualifier("openIdServiceFactory")
     protected OpenIdServiceFactory openIdServiceFactory;
 
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     protected CentralAuthenticationService centralAuthenticationService;
 
-    @Resource(name="defaultAuthenticationSystemSupport")
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport;
 
-    @Resource(name="serverAssociations")
+    @Autowired
+    @Qualifier("serverAssociations")
     protected ServerAssociationStore sharedAssociations;
 
     public OpenIdServiceFactory getOpenIdServiceFactory() {

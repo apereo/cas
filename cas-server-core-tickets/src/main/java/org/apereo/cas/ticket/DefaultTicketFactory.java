@@ -25,16 +25,20 @@ public class DefaultTicketFactory implements TicketFactory {
 
     private Map<String, Object> factoryMap;
 
-    @Resource(name="defaultProxyTicketFactory")
+    @Autowired
+    @Qualifier("defaultProxyTicketFactory")
     private ProxyTicketFactory proxyTicketFactory;
 
-    @Resource(name="defaultServiceTicketFactory")
+    @Autowired
+    @Qualifier("defaultServiceTicketFactory")
     private ServiceTicketFactory serviceTicketFactory;
 
-    @Resource(name="defaultTicketGrantingTicketFactory")
+    @Autowired
+    @Qualifier("defaultTicketGrantingTicketFactory")
     private TicketGrantingTicketFactory ticketGrantingTicketFactory;
 
-    @Resource(name="defaultProxyGrantingTicketFactory")
+    @Autowired
+    @Qualifier("defaultProxyGrantingTicketFactory")
     private ProxyGrantingTicketFactory proxyGrantingTicketFactory;
 
     /**

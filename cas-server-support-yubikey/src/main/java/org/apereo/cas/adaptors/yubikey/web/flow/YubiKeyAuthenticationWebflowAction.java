@@ -14,7 +14,8 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class YubiKeyAuthenticationWebflowAction extends AbstractAction {
-    @Resource(name="yubikeyAuthenticationWebflowEventResolver")
+    @Autowired
+    @Qualifier("yubikeyAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver;
 
     @Override

@@ -25,13 +25,15 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
     /**
      * The Services manager.
      */
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ReloadableServicesManager servicesManager;
 
     /**
      * The Saml registered service caching metadata resolver.
      */
-    @Resource(name="defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Autowired
+    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Override

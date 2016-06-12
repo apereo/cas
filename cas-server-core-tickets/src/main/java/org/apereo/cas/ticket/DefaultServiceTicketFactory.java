@@ -29,7 +29,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
     
     /** ExpirationPolicy for Service Tickets. */
-    @Resource(name="serviceTicketExpirationPolicy")
+    @Autowired
+    @Qualifier("serviceTicketExpirationPolicy")
     protected ExpirationPolicy serviceTicketExpirationPolicy;
 
     @Autowired

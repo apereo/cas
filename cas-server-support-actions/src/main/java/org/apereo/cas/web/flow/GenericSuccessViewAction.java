@@ -23,7 +23,8 @@ public class GenericSuccessViewAction extends AbstractAction {
     /** Log instance for logging events, info, warnings, errors, etc. */
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     public GenericSuccessViewAction() {

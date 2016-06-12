@@ -15,7 +15,8 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasWebflowConfig
     /** Radius Webflow event id. */
     public static final String MFA_RADIUS_EVENT_ID = "mfa-radius";
 
-    @Resource(name="radiusFlowRegistry")
+    @Autowired
+    @Qualifier("radiusFlowRegistry")
     private FlowDefinitionRegistry radiusFlowRegistry;
 
     @Override

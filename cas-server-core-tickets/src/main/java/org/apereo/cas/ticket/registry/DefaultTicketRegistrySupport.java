@@ -16,7 +16,8 @@ import java.util.Map;
  */
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
-    @Resource(name="ticketRegistry")
+    @Autowired
+    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry = new DefaultTicketRegistry();
 
     /**

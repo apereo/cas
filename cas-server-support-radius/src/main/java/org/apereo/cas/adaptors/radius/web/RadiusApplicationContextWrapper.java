@@ -13,7 +13,8 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class RadiusApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Resource(name="radiusAuthenticationHandler")
+    @Autowired
+    @Qualifier("radiusAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
     /**

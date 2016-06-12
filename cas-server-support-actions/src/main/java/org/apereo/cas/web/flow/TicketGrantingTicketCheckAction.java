@@ -43,7 +43,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
     /**
      * The Central authentication service.
      */
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     public TicketGrantingTicketCheckAction() {

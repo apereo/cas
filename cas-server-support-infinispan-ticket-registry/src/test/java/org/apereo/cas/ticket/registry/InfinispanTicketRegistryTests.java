@@ -25,7 +25,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:/infinispan-springcache-tests.xml")
 public class InfinispanTicketRegistryTests {
 
-    @Resource(name="infinispanTicketRegistry")
+    @Autowired
+    @Qualifier("infinispanTicketRegistry")
     private TicketRegistry infinispanTicketRegistry;
 
     @Test

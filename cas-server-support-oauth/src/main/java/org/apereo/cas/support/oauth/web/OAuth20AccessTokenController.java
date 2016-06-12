@@ -48,10 +48,12 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Resource(name="defaultRefreshTokenFactory")
+    @Autowired
+    @Qualifier("defaultRefreshTokenFactory")
     private RefreshTokenFactory refreshTokenFactory;
 
-    @Resource(name="accessTokenResponseGenerator")
+    @Autowired
+    @Qualifier("accessTokenResponseGenerator")
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     /**

@@ -23,7 +23,8 @@ import java.util.Map;
 public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
 
     
-    @Resource(name="defaultAuthenticationSystemSupport")
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override

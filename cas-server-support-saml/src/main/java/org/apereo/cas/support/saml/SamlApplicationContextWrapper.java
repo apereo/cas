@@ -17,13 +17,16 @@ import javax.annotation.Resource;
  */
 public class SamlApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Resource(name="samlServiceFactory")
+    @Autowired
+    @Qualifier("samlServiceFactory")
     private SamlServiceFactory samlServiceFactory;
 
-    @Resource(name="samlServiceTicketUniqueIdGenerator")
+    @Autowired
+    @Qualifier("samlServiceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
     
-    @Resource(name="samlAuthenticationMetaDataPopulator")
+    @Autowired
+    @Qualifier("samlAuthenticationMetaDataPopulator")
     private SamlAuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator;
 
     /**

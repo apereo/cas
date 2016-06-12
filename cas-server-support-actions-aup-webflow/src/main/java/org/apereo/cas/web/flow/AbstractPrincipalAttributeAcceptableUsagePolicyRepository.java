@@ -29,7 +29,8 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
      */
     protected String aupAttributeName;
 
-    @Resource(name="defaultTicketRegistrySupport")
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override

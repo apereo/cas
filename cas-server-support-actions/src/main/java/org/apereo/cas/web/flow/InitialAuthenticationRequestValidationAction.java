@@ -14,7 +14,8 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class InitialAuthenticationRequestValidationAction extends AbstractAction {
-    @Resource(name="rankedAuthenticationProviderWebflowEventResolver")
+    @Autowired
+    @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
 
     @Override

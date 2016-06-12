@@ -21,7 +21,8 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalElectionStrategy.class);
     private static final long serialVersionUID = 6704726217030836315L;
 
-    @Resource(name="principalFactory")
+    @Autowired
+    @Qualifier("principalFactory")
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Override

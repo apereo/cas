@@ -31,7 +31,8 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     /**
      * The clients for authentication.
      */
-    @Resource(name="builtClients")
+    @Autowired
+    @Qualifier("builtClients")
     private Clients clients;
 
     @Override

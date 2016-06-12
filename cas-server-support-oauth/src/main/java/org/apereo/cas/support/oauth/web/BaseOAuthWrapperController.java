@@ -42,26 +42,31 @@ public abstract class BaseOAuthWrapperController {
     /**
      * The services manager.
      */
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /**
      * The ticket registry.
      */
-    @Resource(name="ticketRegistry")
+    @Autowired
+    @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
     
     /**
      * The OAuth validator.
      */
-    @Resource(name="oAuthValidator")
+    @Autowired
+    @Qualifier("oAuthValidator")
     protected OAuthValidator validator;
 
-    @Resource(name="defaultAccessTokenFactory")
+    @Autowired
+    @Qualifier("defaultAccessTokenFactory")
     private AccessTokenFactory accessTokenFactory;
 
 
-    @Resource(name="defaultPrincipalFactory")
+    @Autowired
+    @Qualifier("defaultPrincipalFactory")
     private PrincipalFactory principalFactory;
 
     /**

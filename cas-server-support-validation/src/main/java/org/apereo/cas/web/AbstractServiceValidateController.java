@@ -72,12 +72,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
     
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
     
     /** The CORE which we will delegate all requests to. */
     
-    @Resource(name="centralAuthenticationService")
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The proxy handler we want to use with the controller. */
@@ -90,16 +92,19 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private View failureView;
 
     /** Extracts parameters from Request object. */
-    @Resource(name="defaultArgumentExtractor")
+    @Autowired
+    @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
     
-    @Resource(name="defaultMultifactorTriggerSelectionStrategy")
+    @Autowired
+    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Resource(name="authenticationContextValidator")
+    @Autowired
+    @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
     
     @Autowired

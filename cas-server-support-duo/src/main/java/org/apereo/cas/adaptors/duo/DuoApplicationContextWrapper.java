@@ -14,10 +14,12 @@ import javax.annotation.Resource;
  * @since 5.0.0
  */
 public class DuoApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Resource(name="duoAuthenticationHandler")
+    @Autowired
+    @Qualifier("duoAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
-    @Resource(name="duoAuthenticationMetaDataPopulator")
+    @Autowired
+    @Qualifier("duoAuthenticationMetaDataPopulator")
     private AuthenticationMetaDataPopulator populator;
 
     /**
