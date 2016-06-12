@@ -10,6 +10,8 @@ import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -25,7 +27,6 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/x509-ldap-context.xml")
 public class PoolingLdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
-
 
     @Autowired
     @Qualifier("poolingLdapCertFetcher")

@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 
 import javax.annotation.Resource;

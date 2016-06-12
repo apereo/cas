@@ -5,6 +5,8 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Resource;
 
@@ -23,7 +25,6 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * Used to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    
     @Autowired
     @Qualifier("ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;

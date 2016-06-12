@@ -6,6 +6,8 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

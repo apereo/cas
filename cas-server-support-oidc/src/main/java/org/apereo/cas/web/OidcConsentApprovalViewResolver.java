@@ -5,6 +5,8 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
 import org.pac4j.core.context.J2EContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Resource;
 import java.util.Set;

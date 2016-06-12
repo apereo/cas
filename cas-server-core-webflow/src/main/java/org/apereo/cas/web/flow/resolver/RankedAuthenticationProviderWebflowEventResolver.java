@@ -10,6 +10,8 @@ import org.apereo.cas.util.Pair;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -26,8 +28,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     private static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
     
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
+    
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository repository;

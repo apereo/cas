@@ -4,6 +4,8 @@ import org.apereo.cas.OidcConstants;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

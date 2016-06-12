@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

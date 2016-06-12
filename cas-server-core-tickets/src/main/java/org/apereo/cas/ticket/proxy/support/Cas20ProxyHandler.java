@@ -10,6 +10,8 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Resource;
 import java.net.URL;

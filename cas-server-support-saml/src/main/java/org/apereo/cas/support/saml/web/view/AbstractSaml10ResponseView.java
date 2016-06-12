@@ -8,6 +8,8 @@ import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.opensaml.saml.saml1.core.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

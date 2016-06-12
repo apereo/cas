@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.util.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;

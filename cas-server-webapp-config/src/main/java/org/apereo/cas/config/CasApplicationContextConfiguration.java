@@ -10,6 +10,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -46,16 +47,10 @@ public class CasApplicationContextConfiguration {
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
-    /**
-     * The Web application service factory.
-     */
+
     @Resource(name="webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    /**
-     * The Default argument extractor.
-     */
-    
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;

@@ -32,6 +32,8 @@ import org.junit.runner.RunWith;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -131,7 +133,6 @@ public class OAuth20AccessTokenControllerTests {
     // authorization code grant type tests
     //
     //
-
     @Test
     public void verifyClientNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT

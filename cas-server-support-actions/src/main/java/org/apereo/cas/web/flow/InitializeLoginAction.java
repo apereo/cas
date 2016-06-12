@@ -3,6 +3,8 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -19,7 +21,6 @@ public class InitializeLoginAction extends AbstractAction {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/
-    
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
