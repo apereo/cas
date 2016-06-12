@@ -1,11 +1,11 @@
 task pathingJar(type: Jar) {
     dependsOn configurations.runtime
-    appendix = 'pathing'
+    appendix = "pathing"
  
     doFirst {
         manifest {
             attributes "Class-Path": configurations.runtime.files.collect {
-                it.toURL().toString().replaceFirst('/file:/+/', '/')}.join(' ')
+                it.toURL().toString().replaceFirst("/file:/+/", "/")}.join(" ")
         }
     }
 }
@@ -17,22 +17,22 @@ task testJar(type: Jar, dependsOn: testClasses, description: "archive the testCl
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    classifier = "sources"
     from sourceSets.main.allSource
 }
 
 task resourcesJar(type: Jar) {
-    classifier 'resources'
-    from project.file('src/main/resources')
+    classifier "resources"
+    from project.file("src/main/resources")
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    classifier = "javadoc"
     from javadoc.destinationDir
 }
 
 task cleanLogs(description: "Clean build log files") {
-    delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
+    delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz"])
 }
 
 task findbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
@@ -44,4 +44,4 @@ gradle.buildFinished { buildResult ->
 }
 
 
-clean.dependsOn('cleanLogs')
+clean.dependsOn("cleanLogs")

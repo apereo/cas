@@ -1,7 +1,7 @@
-apply plugin: 'war'
-apply plugin: 'spring-boot'
+apply plugin: "war"
+apply plugin: "spring-boot"
 
-description = 'Apereo CAS Management Web Application'
+description = "Apereo CAS Management Web Application"
 
 javadoc {
     enabled false
@@ -13,11 +13,11 @@ bootRun {
 }
 
 springBoot  {
-    mainClass = 'org.apereo.cas.mgmt.web.CasManagementWebApplication'
+    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
 }
 
 bootRepackage {
-    mainClass = 'org.apereo.cas.mgmt.web.CasManagementWebApplication'
+    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
 }
 
 war {
@@ -32,7 +32,7 @@ war {
 
 dependencies {
     compile libraries.springboot
-    runtime project(':cas-management-webapp-support')
+    runtime project(":cas-management-webapp-support")
     providedRuntime libraries.springboottomcat
     runtime libraries.hibernate
     runtime libraries.groovy

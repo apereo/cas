@@ -1,12 +1,12 @@
 
-description = 'Apereo CAS JDBC Audit Support'
+description = "Apereo CAS JDBC Audit Support"
 dependencies {
-	compile project(':cas-server-core-api')
+	compile project(":cas-server-core-api")
     compile libraries.pac4j
     compile libraries.inspektr
     compile libraries.persondirectory
     compile libraries.spring
     compile libraries.hibernate
-    compile project(':cas-server-core-util')
+    compile project(":cas-server-core-util")
 }
 

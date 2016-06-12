@@ -274,7 +274,7 @@ subprojects {
     ext.libraries = rootProject.ext.libraries;
 
     /*
-        Don't publish test dependencies into the final POM.
+        Do NOT publish test dependencies into the final POM.
     */
     conf2ScopeMappings.mappings.remove(configurations.findByName("testCompile"))
     conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntime"))
@@ -436,18 +436,18 @@ subprojects {
     }
 }
 
-task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+task wrapper(type: Wrapper, description: "Gradle wrapper") {
     gradleVersion = project.gradleVersion
 }
 
 task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory") {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
-    destinationDir = new File(buildDir, 'javadoc')
+    destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
 task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
-    classifier = 'javadoc'
+    classifier = "javadoc"
     from javadoc.destinationDir
 }
 

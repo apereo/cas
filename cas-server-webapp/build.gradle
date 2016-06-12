@@ -1,7 +1,7 @@
-apply plugin: 'war'
-apply plugin: 'spring-boot'
+apply plugin: "war"
+apply plugin: "spring-boot"
 
-description = 'Apereo CAS Web Application'
+description = "Apereo CAS Web Application"
 
 sourceSets {
     main {
@@ -39,33 +39,33 @@ bootRun {
 }
 
 springBoot  {
-    mainClass = 'org.apereo.cas.web.CasWebApplication'
+    mainClass = "org.apereo.cas.web.CasWebApplication"
 }
 
 bootRepackage {
-    mainClass = 'org.apereo.cas.web.CasWebApplication'
+    mainClass = "org.apereo.cas.web.CasWebApplication"
 }
 
 dependencies {
-    compile project(':cas-server-core')
-    compile project(':cas-server-core-monitor')
-    compile project(':cas-server-core-authentication')
-    compile project(':cas-server-core-services')
-    compile project(':cas-server-core-logout')
-    compile project(':cas-server-core-audit')
-    compile project(':cas-server-core-logging')
-    compile project(':cas-server-core-tickets')
-    compile project(':cas-server-core-web')
-    compile project(':cas-server-core-validation')
-    compile project(':cas-server-core-util')
-    compile project(':cas-server-webapp-init')
-    compile project(':cas-server-support-throttle')
-    compile project(':cas-server-support-actions')
-    compile project(':cas-server-support-cookie')
-    compile project(':cas-server-support-reports')
-    compile project(':cas-server-support-themes')
-    compile project(':cas-server-webapp-config')
-    compile project(':cas-server-support-validation')
+    compile project(":cas-server-core")
+    compile project(":cas-server-core-monitor")
+    compile project(":cas-server-core-authentication")
+    compile project(":cas-server-core-services")
+    compile project(":cas-server-core-logout")
+    compile project(":cas-server-core-audit")
+    compile project(":cas-server-core-logging")
+    compile project(":cas-server-core-tickets")
+    compile project(":cas-server-core-web")
+    compile project(":cas-server-core-validation")
+    compile project(":cas-server-core-util")
+    compile project(":cas-server-webapp-init")
+    compile project(":cas-server-support-throttle")
+    compile project(":cas-server-support-actions")
+    compile project(":cas-server-support-cookie")
+    compile project(":cas-server-support-reports")
+    compile project(":cas-server-support-themes")
+    compile project(":cas-server-webapp-config")
+    compile project(":cas-server-support-validation")
     
     providedRuntime libraries.springboottomcat
     runtime libraries.pac4j

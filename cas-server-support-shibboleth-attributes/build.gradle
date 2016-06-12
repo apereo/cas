@@ -1,4 +1,4 @@
-apply plugin: 'groovy'
+apply plugin: "groovy"
 
 dependencies {
     compile libraries.groovy
@@ -8,7 +8,7 @@ dependencies {
     compile libraries.shibattributes
     compile libraries.springcloud
 
-    compile project(':cas-server-support-saml-core')
+    compile project(":cas-server-support-saml-core")
     
     testCompile libraries.tests
 }

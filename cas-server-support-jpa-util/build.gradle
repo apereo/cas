@@ -1,8 +1,8 @@
 
-description = 'Apereo CAS JPA Ticket Registry Support'
+description = "Apereo CAS JPA Ticket Registry Support"
 dependencies {
   
-  compile project(':cas-server-core-util')
+  compile project(":cas-server-core-util")
   compile libraries.hibernate
   
 }

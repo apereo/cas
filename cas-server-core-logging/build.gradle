@@ -1,8 +1,8 @@
-description = 'Apereo CAS Core Logging'
+description = "Apereo CAS Core Logging"
 dependencies {
-    compile project(':cas-server-core-api-ticket')
-    compile project(':cas-server-core-web')
-    compileOnly project(':cas-server-support-cookie')
+    compile project(":cas-server-core-api-ticket")
+    compile project(":cas-server-core-web")
+    compileOnly project(":cas-server-support-cookie")
     compile libraries.spring
     compile libraries.log4j
 }
