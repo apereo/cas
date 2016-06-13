@@ -27,9 +27,6 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
     private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousRegisteredServiceUsernameAttributeProvider.class);
 
     /** Encoder to generate PseudoIds. */
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("persistentIdGenerator")
     private PersistentIdGenerator persistentIdGenerator;
 
     /** Init provider. */

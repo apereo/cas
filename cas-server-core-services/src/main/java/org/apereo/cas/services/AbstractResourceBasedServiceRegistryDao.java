@@ -50,13 +50,13 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      * The Registered service json serializer.
      */
     private StringSerializer<RegisteredService> registeredServiceSerializer;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
+    
     private Thread serviceRegistryWatcherThread;
+    
     private ServiceRegistryConfigWatcher serviceRegistryConfigWatcher;
 
+    private ReloadableServicesManager servicesManager;
+    
     /**
      * Instantiates a new service registry dao.
      *
@@ -107,18 +107,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      * Refreshes the services manager, forcing it to reload.
      */
     public void refreshServicesManager() {
-        if (this.applicationContext == null) {
-            LOGGER.debug("Application context has failed to initialize because it's null. "
-                    + "Service definition may not be immediately available to CAS, which suggests a configuration problem");
-            return;
-        }
-        final ReloadableServicesManager manager = this.applicationContext.getBean(ReloadableServicesManager.class);
-        if (manager != null) {
-            manager.reload();
-        } else {
-            LOGGER.warn("Services manger could not be obtained from the application context. "
-                    + "Service definition may not take immediate effect, which suggests a configuration problem");
-        }
+        this.servicesManager.reload();
     }
 
     /**
@@ -276,6 +265,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
             LOGGER.warn("Service file name {} is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public void setServicesManager(final ReloadableServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
     /**

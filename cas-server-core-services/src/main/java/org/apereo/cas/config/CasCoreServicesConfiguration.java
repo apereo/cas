@@ -47,6 +47,10 @@ public class CasCoreServicesConfiguration {
     @Qualifier("inMemoryRegisteredServices")
     private List inMemoryRegisteredServices;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ReloadableServicesManager servicesManager;
+    
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
@@ -98,8 +102,11 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ServiceRegistryDao jsonServiceRegistryDao() {
         try {
-            return new JsonServiceRegistryDao(casProperties.getServiceRegistry().getConfig().getLocation(),
+            final JsonServiceRegistryDao dao =
+                    new JsonServiceRegistryDao(casProperties.getServiceRegistry().getConfig().getLocation(),
                     casProperties.getServiceRegistry().isWatcherEnabled());
+            dao.setServicesManager(this.servicesManager);
+            return dao;
         } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }

@@ -29,10 +29,10 @@ import java.util.stream.StreamSupport;
  */
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                     final HttpServletRequest request, final RegisteredService service, final Principal principal) {
@@ -78,8 +78,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         return provider;
     }
 
-    private boolean shouldApplyRegisteredServiceMultifactorPolicy(final RegisteredServiceMultifactorPolicy policy,
-                                                                  final Principal principal) {
+    private static boolean shouldApplyRegisteredServiceMultifactorPolicy(
+            final RegisteredServiceMultifactorPolicy policy,
+            final Principal principal) {
         final String attrName = policy.getPrincipalAttributeNameTrigger();
         final String attrValue = policy.getPrincipalAttributeValueToMatch();
 
