@@ -28,7 +28,7 @@ org.gradle.daemon=false
 - Build the project using the following command:
 
 ```bash
-./gradlew clean build -x test --parallel -DskipCheckstyle=true -DskipFindbugs=true
+./gradlew clean assemble -x test --parallel -DskipCheckstyle=true -DskipFindbugs=true
 ```
 
 - Release the project using the following commands:
