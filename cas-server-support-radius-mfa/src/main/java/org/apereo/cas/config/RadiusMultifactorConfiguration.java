@@ -96,7 +96,9 @@ public class RadiusMultifactorConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
-        return new RadiusMultifactorAuthenticationProvider();
+        final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider();
+        p.setRadiusAuthenticationHandler(radiusTokenAuthenticationHandler());
+        return p;
     }
 
     @RefreshScope
@@ -107,27 +109,37 @@ public class RadiusMultifactorConfiguration {
         a.setServers(radiusTokenServers());
         a.setFailoverOnAuthenticationFailure(casProperties.getAuthn().getMfa().getRadius().isFailoverOnAuthenticationFailure());
         a.setFailoverOnException(casProperties.getAuthn().getMfa().getRadius().isFailoverOnException());
-        
+
         return a;
     }
 
     @Bean
     public BaseApplicationContextWrapper radiusMultifactorApplicationContextWrapper() {
-        return new RadiusMultifactorApplicationContextWrapper();
+        final RadiusMultifactorApplicationContextWrapper w =
+                new RadiusMultifactorApplicationContextWrapper();
+        w.setAuthenticationHandler(radiusTokenAuthenticationHandler());
+        return w;
     }
 
     @Bean
     public Action radiusAuthenticationWebflowAction() {
-        return new RadiusAuthenticationWebflowAction();
+        final RadiusAuthenticationWebflowAction w = new RadiusAuthenticationWebflowAction();
+        w.setRadiusAuthenticationWebflowEventResolver(radiusAuthenticationWebflowEventResolver());
+        return w;
     }
 
     @Bean
     public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
-        return new RadiusAuthenticationWebflowEventResolver();
+        final RadiusAuthenticationWebflowEventResolver r =
+                new RadiusAuthenticationWebflowEventResolver();
+        return r;
     }
 
     @Bean
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
-        return new RadiusMultifactorWebflowConfigurer();
+        final RadiusMultifactorWebflowConfigurer w =
+                new RadiusMultifactorWebflowConfigurer();
+        w.setRadiusFlowRegistry(radiusFlowRegistry());
+        return w;
     }
 }

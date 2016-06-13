@@ -32,19 +32,19 @@ public class RadiusConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("radiusPasswordEncoder")
     private PasswordEncoder passwordEncoder;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("radiusPrincipalNameTransformer")
     private PrincipalNameTransformer principalNameTransformer;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("radiusPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
-    
-    
+
+
     /**
      * Radius server j radius server.
      *
@@ -53,7 +53,7 @@ public class RadiusConfiguration {
     @RefreshScope
     @Bean
     public JRadiusServerImpl radiusServer() {
-        
+
         final RadiusClientFactory factory = new RadiusClientFactory();
         factory.setAccountingPort(casProperties.getAuthn().getRadius().getClient().getAccountingPort());
         factory.setAuthenticationPort(casProperties.getAuthn().getRadius().getClient().getAuthenticationPort());
@@ -92,11 +92,11 @@ public class RadiusConfiguration {
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
         final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler();
-        
+
         h.setFailoverOnAuthenticationFailure(casProperties.getAuthn().getRadius().isFailoverOnAuthenticationFailure());
         h.setFailoverOnException(casProperties.getAuthn().getRadius().isFailoverOnException());
         h.setServers(radiusServers());
-        
+
         if (passwordEncoder != null) {
             h.setPasswordEncoder(passwordEncoder);
         }
@@ -111,7 +111,9 @@ public class RadiusConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper radiusApplicationContextWrapper() {
-        return new RadiusApplicationContextWrapper();
+        final RadiusApplicationContextWrapper w = new RadiusApplicationContextWrapper();
+        w.setAuthenticationHandler(radiusAuthenticationHandler());
+        return w;
     }
 }
 

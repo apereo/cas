@@ -53,33 +53,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     public void setRequiredPermissions(final Set<String> requiredPermissions) {
         this.requiredPermissions = requiredPermissions;
     }
-
-    /**
-     * Sets shiro configuration to the path of the resource
-     * that points to the {@code shiro.ini} file.
-     *
-     * @param resource the resource
-     */
-    @Autowired
-    public void setShiroConfiguration(final Resource resource) {
-        try {
-            final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
-            if (shiroResource.exists()) {
-                
-                final String location = shiroResource.getURI().toString();
-                logger.debug("Loading Shiro configuration from {}", location);
-
-                final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
-                final SecurityManager securityManager = factory.getInstance();
-                SecurityUtils.setSecurityManager(securityManager);
-            } else {
-                logger.debug("Shiro configuration is not defined");
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
@@ -162,6 +136,31 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof RememberMeUsernamePasswordCredential;
+    }
+
+    /**
+     * Sets shiro configuration to the path of the resource
+     * that points to the {@code shiro.ini} file.
+     *
+     * @param resource the resource
+     */
+    public void loadShiroConfiguration(final Resource resource) {
+        try {
+            final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
+            if (shiroResource.exists()) {
+
+                final String location = shiroResource.getURI().toString();
+                logger.debug("Loading Shiro configuration from {}", location);
+
+                final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
+                final SecurityManager securityManager = factory.getInstance();
+                SecurityUtils.setSecurityManager(securityManager);
+            } else {
+                logger.debug("Shiro configuration is not defined");
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

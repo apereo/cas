@@ -16,12 +16,8 @@ import javax.annotation.PostConstruct;
  */
 public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrapper {
 
-    @Autowired
-    @Qualifier("clientAuthenticationHandler")
     private ClientAuthenticationHandler clientAuthenticationHandler;
 
-    @Autowired
-    @Qualifier("clientAuthenticationMetaDataPopulator")
     private AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator;
 
     /**
@@ -31,5 +27,13 @@ public class Pac4jApplicationContextWrapper extends BaseApplicationContextWrappe
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.clientAuthenticationHandler);
         addAuthenticationMetadataPopulator(this.clientAuthenticationMetaDataPopulator);
+    }
+
+    public void setClientAuthenticationHandler(final ClientAuthenticationHandler clientAuthenticationHandler) {
+        this.clientAuthenticationHandler = clientAuthenticationHandler;
+    }
+
+    public void setClientAuthenticationMetaDataPopulator(final AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator) {
+        this.clientAuthenticationMetaDataPopulator = clientAuthenticationMetaDataPopulator;
     }
 }

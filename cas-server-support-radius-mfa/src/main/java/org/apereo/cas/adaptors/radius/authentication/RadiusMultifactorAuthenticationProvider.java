@@ -19,8 +19,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Resource(name = "radiusTokenAuthenticationHandler")
+    
     private RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
 
     @Override
@@ -36,5 +35,9 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     @Override
     protected boolean isAvailable() {
         return this.radiusAuthenticationHandler.canPing();
+    }
+
+    public void setRadiusAuthenticationHandler(final RadiusTokenAuthenticationHandler radiusAuthenticationHandler) {
+        this.radiusAuthenticationHandler = radiusAuthenticationHandler;
     }
 }

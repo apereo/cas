@@ -37,19 +37,9 @@ import java.util.List;
  * @since 3.4.6
  */
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
-
-    /**
-     * CRL cache.
-     */
-    @Autowired(required = false)
-    @Qualifier("x509CrlCache")
+    
     private Cache crlCache;
-
-    /**
-     * The CRL fetcher instance.
-     **/
-    @Autowired(required = false)
-    @Qualifier("x509CrlFetcher")
+    
     private CRLFetcher fetcher;
 
     private boolean throwOnFetchFailure;
@@ -89,7 +79,6 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     public CRLDistributionPointRevocationChecker(
             final Cache crlCache,
-
             final CRLFetcher fetcher) {
         this.crlCache = crlCache;
         this.fetcher = fetcher;

@@ -15,12 +15,9 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 public class DuoApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Autowired
-    @Qualifier("duoAuthenticationHandler")
-    private AuthenticationHandler authenticationHandler;
 
-    @Autowired
-    @Qualifier("duoAuthenticationMetaDataPopulator")
+    private AuthenticationHandler authenticationHandler;
+    
     private AuthenticationMetaDataPopulator populator;
 
     /**
@@ -30,5 +27,13 @@ public class DuoApplicationContextWrapper extends BaseApplicationContextWrapper 
     protected void initializeServletApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
         addAuthenticationMetadataPopulator(this.populator);
+    }
+
+    public void setAuthenticationHandler(final AuthenticationHandler authenticationHandler) {
+        this.authenticationHandler = authenticationHandler;
+    }
+
+    public void setPopulator(final AuthenticationMetaDataPopulator populator) {
+        this.populator = populator;
     }
 }

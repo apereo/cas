@@ -14,13 +14,15 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 public class RadiusMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /** Radius Webflow event id. */
     public static final String MFA_RADIUS_EVENT_ID = "mfa-radius";
-
-    @Autowired
-    @Qualifier("radiusFlowRegistry")
+    
     private FlowDefinitionRegistry radiusFlowRegistry;
 
     @Override
     protected void doInitialize() throws Exception {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_RADIUS_EVENT_ID, this.radiusFlowRegistry);
+    }
+
+    public void setRadiusFlowRegistry(final FlowDefinitionRegistry radiusFlowRegistry) {
+        this.radiusFlowRegistry = radiusFlowRegistry;
     }
 }

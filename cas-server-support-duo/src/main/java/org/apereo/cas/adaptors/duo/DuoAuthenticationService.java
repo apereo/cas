@@ -31,8 +31,7 @@ public class DuoAuthenticationService {
     private static final String RESULT_KEY_STAT = "stat";
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Resource(name = "noRedirectHttpClient")
+    
     private HttpClient httpClient;
 
     @Autowired
@@ -111,5 +110,9 @@ public class DuoAuthenticationService {
             logger.warn("Pinging Duo has failed with error: {}", e.getMessage(), e);
         }
         return false;
+    }
+
+    public void setHttpClient(final HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }

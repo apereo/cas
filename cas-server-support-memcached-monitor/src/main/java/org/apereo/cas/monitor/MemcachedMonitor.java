@@ -18,10 +18,7 @@ import java.util.List;
  * @since 3.5.1
  */
 public class MemcachedMonitor extends AbstractCacheMonitor {
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("memcachedClient")
+    
     private MemcachedClientIF memcachedClient;
 
     /**
@@ -90,5 +87,9 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
             });
         }
         return statsList.toArray(new CacheStatistics[statsList.size()]);
+    }
+
+    public void setMemcachedClient(final MemcachedClientIF memcachedClient) {
+        this.memcachedClient = memcachedClient;
     }
 }

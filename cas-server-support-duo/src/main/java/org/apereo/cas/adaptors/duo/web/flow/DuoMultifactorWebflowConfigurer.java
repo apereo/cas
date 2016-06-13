@@ -16,13 +16,15 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
     /** Duo Webflow event id. */
     public static final String MFA_DUO_EVENT_ID = "mfa-duo";
 
-    @Autowired
-    @Qualifier("duoFlowRegistry")
     private FlowDefinitionRegistry duoFlowRegistry;
 
     @Override
     protected void doInitialize() throws Exception {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_DUO_EVENT_ID, this.duoFlowRegistry);
 
+    }
+
+    public void setDuoFlowRegistry(final FlowDefinitionRegistry duoFlowRegistry) {
+        this.duoFlowRegistry = duoFlowRegistry;
     }
 }

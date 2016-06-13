@@ -16,11 +16,7 @@ import java.util.List;
  * @since 4.2
  */
 public class AttributeFormDataPopulator implements FormDataPopulator {
-    /**
-     * Instance of AttributeRegistry.
-     */
-    @Autowired
-    @Qualifier("attributeRepository")
+
     private IPersonAttributeDao personAttributeDao;
 
     public AttributeFormDataPopulator() {

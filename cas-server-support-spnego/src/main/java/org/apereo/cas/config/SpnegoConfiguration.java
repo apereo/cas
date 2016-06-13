@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import jcifs.spnego.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -36,6 +37,10 @@ import java.util.Arrays;
 @Configuration("spnegoConfiguration")
 public class SpnegoConfiguration {
 
+    @Autowired
+    @Qualifier("successfulHandlerMetaDataPopulator")
+    private AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator;
+    
     @Autowired(required = false)
     @Qualifier("spnegoClientActionConnectionFactory")
     private ConnectionFactory connectionFactory;
@@ -59,7 +64,13 @@ public class SpnegoConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper spnegoApplicationContextWrapper() {
-        return new SpnegoApplicationContextWrapper();
+        final SpnegoApplicationContextWrapper w = new SpnegoApplicationContextWrapper();
+        
+        w.setSpnegoHandler(spnegoHandler());
+        w.setSpnegoPrincipalResolver(spnegoPrincipalResolver());
+        w.setSuccessfulHandlerMetaDataPopulator(successfulHandlerMetaDataPopulator);
+        
+        return w;
     }
 
     @Bean

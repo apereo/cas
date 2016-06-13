@@ -16,11 +16,13 @@ import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesReposi
 import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
 import org.apereo.cas.mgmt.services.web.factory.FormDataPopulator;
 import org.apereo.cas.mgmt.services.web.factory.PrincipalAttributesRepositoryMapper;
 import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
+import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -30,6 +32,8 @@ import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.AuthorizationGenerator;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
@@ -39,7 +43,9 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -88,6 +94,14 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
 
+    @Autowired(required = false)
+    @Qualifier("formDataPopulators")
+    private List formDataPopulators;
+
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao personAttributeDao;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -107,6 +121,36 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles()));
     }
 
+    /**
+     * Stub attribute repository person attribute dao.
+     *
+     * @param factoryBean the factory bean
+     * @return the person attribute dao
+     */
+    @Bean
+    public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
+                                                       final FactoryBean<Properties> factoryBean) {
+        try {
+            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
+            dao.setBackingMap(new HashMap(factoryBean.getObject()));
+            return dao;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Cas attributes to resolve factory bean.
+     *
+     * @return the factory bean
+     */
+    @Bean
+    public FactoryBean<Properties> casAttributesToResolve() {
+        final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
+        bean.setPrefix("cas.attrs.resolve.");
+        return bean;
+    }
+    
     @Bean
     public CasClient casClient() {
         final CasClient client = new CasClient(casProperties.getMgmt().getLoginUrl());
@@ -135,7 +179,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request, 
+                                                         final HttpServletResponse response)
                     throws Exception {
                 final String url = request.getContextPath() + "/manage.html";
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
@@ -342,18 +387,34 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public RegisteredServiceFactory registeredServiceFactory() {
-        return new DefaultRegisteredServiceFactory();
+        final DefaultRegisteredServiceFactory f = new DefaultRegisteredServiceFactory();
+        f.setAccessStrategyMapper(defaultAccessStrategyMapper());
+        f.setAttributeReleasePolicyMapper(defaultAttributeReleasePolicyMapper());
+        f.setProxyPolicyMapper(defaultProxyPolicyMapper());
+        f.setRegisteredServiceMapper(defaultRegisteredServiceMapper());
+        f.setUsernameAttributeProviderMapper(usernameAttributeProviderMapper());
+        f.setFormDataPopulators(this.formDataPopulators);
+        return f;
     }
 
 
     @Bean
     public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
-        return new DefaultAttributeReleasePolicyMapper();
+        final DefaultAttributeReleasePolicyMapper m = new DefaultAttributeReleasePolicyMapper();
+        m.setAttributeFilterMapper(defaultAttributeFilterMapper());
+        m.setPrincipalAttributesRepositoryMapper(defaultPrincipalAttributesRepositoryMapper());
+        return m;
     }
 
     @Bean
     public FormDataPopulator attributeFormDataPopulator() {
-        return new AttributeFormDataPopulator();
+        final AttributeFormDataPopulator p = new AttributeFormDataPopulator(this.personAttributeDao);
+        return p;
+    }
+
+    @Bean
+    public DefaultUsernameAttributeProviderMapper usernameAttributeProviderMapper() {
+        return new DefaultUsernameAttributeProviderMapper();
     }
 
     @Bean

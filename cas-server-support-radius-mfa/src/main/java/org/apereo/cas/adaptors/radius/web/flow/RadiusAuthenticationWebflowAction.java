@@ -15,13 +15,16 @@ import org.springframework.webflow.execution.RequestContext;
  */
 
 public class RadiusAuthenticationWebflowAction extends AbstractAction {
-    @Autowired
-    @Qualifier("radiusAuthenticationWebflowEventResolver")
+   
     private CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         return this.radiusAuthenticationWebflowEventResolver.resolveSingle(requestContext);
+    }
+
+    public void setRadiusAuthenticationWebflowEventResolver(final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver) {
+        this.radiusAuthenticationWebflowEventResolver = radiusAuthenticationWebflowEventResolver;
     }
 }
 

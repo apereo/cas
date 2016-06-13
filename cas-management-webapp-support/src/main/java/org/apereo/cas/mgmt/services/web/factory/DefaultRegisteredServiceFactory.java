@@ -23,41 +23,19 @@ import java.util.List;
  * @since 4.2
  */
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
-    @Autowired(required = false)
-    private ApplicationContext applicationContext;
-
     
-    @Autowired(required = false)
-    @Qualifier("accessStrategyMapper")
     private AccessStrategyMapper accessStrategyMapper;
 
-    
-    @Autowired(required = false)
-    @Qualifier("attributeReleasePolicyMapper")
     private AttributeReleasePolicyMapper attributeReleasePolicyMapper;
-
     
-    @Autowired(required = false)
-    @Qualifier("proxyPolicyMapper")
     private ProxyPolicyMapper proxyPolicyMapper;
-
     
-    @Autowired(required = false)
-    @Qualifier("registeredServiceMapper")
     private RegisteredServiceMapper registeredServiceMapper;
-
     
-    @Autowired(required = false)
-    @Qualifier("usernameAttributeProviderMapper")
     private UsernameAttributeProviderMapper usernameAttributeProviderMapper;
-
     
-    @Autowired
     private List<? extends FormDataPopulator> formDataPopulators;
-
-    public void setApplicationContext(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
+    
 
     public void setAccessStrategyMapper(final AccessStrategyMapper accessStrategyMapper) {
         this.accessStrategyMapper = accessStrategyMapper;

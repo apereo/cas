@@ -30,25 +30,11 @@ import java.util.Map;
  * @since 4.2
  */
 public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePolicyMapper {
-    /**
-     * Name of this bean within the Spring context.
-     */
-    public static final String BEAN_NAME = "";
-
-    @Autowired(required = false)
-    private ApplicationContext applicationContext;
-
-    @Autowired(required = false)
-    @Qualifier("attributeFilterMapper")
+    
     private AttributeFilterMapper attributeFilterMapper;
-
-    @Autowired(required = false)
-    @Qualifier("principalAttributesRepositoryMapper")
+    
     private PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
-
-    public void setApplicationContext(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
+    
 
     public void setAttributeFilterMapper(final AttributeFilterMapper attributeFilterMapper) {
         this.attributeFilterMapper = attributeFilterMapper;

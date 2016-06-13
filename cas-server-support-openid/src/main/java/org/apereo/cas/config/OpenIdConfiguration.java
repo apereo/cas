@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.openid.OpenIdApplicationContextWrapper;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -14,6 +13,8 @@ import org.apereo.cas.support.openid.web.mvc.SmartOpenIdController;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.DelegatingController;
@@ -21,12 +22,14 @@ import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * This is {@link OpenIdConfiguration}.
@@ -39,7 +42,15 @@ public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
     @Autowired
+    @Qualifier("serviceTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
     /**
      * Openid delegating controller delegating controller.
@@ -63,7 +74,9 @@ public class OpenIdConfiguration {
      */
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
-        return new SmartOpenIdController();
+        final SmartOpenIdController b = new SmartOpenIdController();
+        b.setServerManager(serverManager());
+        return b;
     }
 
     /**
@@ -74,7 +87,9 @@ public class OpenIdConfiguration {
      */
     @Bean
     public AbstractDelegateController openIdValidateController() {
-        return new OpenIdValidateController();
+        final OpenIdValidateController c = new OpenIdValidateController();
+        c.setServerManager(serverManager());
+        return c;
     }
 
     /**
@@ -94,12 +109,19 @@ public class OpenIdConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper openIdApplicationContextWrapper() {
-        return new OpenIdApplicationContextWrapper();
+        final OpenIdApplicationContextWrapper w = new OpenIdApplicationContextWrapper();
+        w.setOpenIdCredentialsAuthenticationHandler(openIdCredentialsAuthenticationHandler());
+        w.setOpenIdPrincipalResolver(openIdPrincipalResolver());
+        w.setOpenIdServiceFactory(openIdServiceFactory());
+        w.setServiceTicketUniqueIdGenerator(this.serviceTicketUniqueIdGenerator);
+        return w;
     }
 
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
-        return new OpenIdCredentialsAuthenticationHandler();
+        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler();
+        h.setTicketRegistry(this.ticketRegistry);
+        return h;
     }
 
     @Bean
@@ -109,7 +131,7 @@ public class OpenIdConfiguration {
 
     @Bean
     @RefreshScope
-    public ServiceFactory openIdServiceFactory() {
+    public OpenIdServiceFactory openIdServiceFactory() {
         final OpenIdServiceFactory f = new OpenIdServiceFactory();
         f.setOpenIdPrefixUrl(casProperties.getServer().getPrefix().concat("/openid"));
         return f;
@@ -134,7 +156,12 @@ public class OpenIdConfiguration {
 
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
-        return new OpenIdPostUrlHandlerMapping();
+        final OpenIdPostUrlHandlerMapping m = new OpenIdPostUrlHandlerMapping();
+        m.setOrder(1);
+        final Properties mappings = new Properties();
+        mappings.put("/login", openidDelegatingController());
+        m.setMappings(mappings);
+        return m;
     }
 
 

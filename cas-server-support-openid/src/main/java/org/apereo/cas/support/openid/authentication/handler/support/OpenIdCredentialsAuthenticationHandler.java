@@ -24,10 +24,7 @@ import javax.security.auth.login.FailedLoginException;
  * @since 3.1
  */
 public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-
     
-    @Autowired
-    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Override

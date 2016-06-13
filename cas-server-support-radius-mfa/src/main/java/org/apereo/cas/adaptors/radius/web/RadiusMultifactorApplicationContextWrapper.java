@@ -14,8 +14,7 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 public class RadiusMultifactorApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Autowired
-    @Qualifier("radiusTokenAuthenticationHandler")
+    
     private AuthenticationHandler authenticationHandler;
 
     /**
@@ -24,5 +23,9 @@ public class RadiusMultifactorApplicationContextWrapper extends BaseApplicationC
     @PostConstruct
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
+    }
+
+    public void setAuthenticationHandler(final AuthenticationHandler authenticationHandler) {
+        this.authenticationHandler = authenticationHandler;
     }
 }

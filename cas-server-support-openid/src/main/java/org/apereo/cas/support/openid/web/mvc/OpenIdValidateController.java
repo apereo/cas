@@ -31,9 +31,11 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     private static final String VIEW_MODEL_KEY_PARAMETERS = "parameters";
     private transient Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
 
-    @Autowired
-    @Qualifier("serverManager")
     private ServerManager serverManager;
+
+    public void setServerManager(final ServerManager serverManager) {
+        this.serverManager = serverManager;
+    }
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)

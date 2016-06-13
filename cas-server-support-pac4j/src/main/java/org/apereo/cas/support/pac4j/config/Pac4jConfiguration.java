@@ -38,7 +38,7 @@ import java.util.Map;
  */
 @Configuration("pac4jConfiguration")
 public class Pac4jConfiguration {
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -60,7 +60,12 @@ public class Pac4jConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper pac4jApplicationContextWrapper() {
-        return new Pac4jApplicationContextWrapper();
+        final Pac4jApplicationContextWrapper w = new Pac4jApplicationContextWrapper();
+        
+        w.setClientAuthenticationHandler(clientAuthenticationHandler());
+        w.setClientAuthenticationMetaDataPopulator(clientAuthenticationMetaDataPopulator());
+        
+        return w;
     }
 
     @Bean
@@ -69,7 +74,7 @@ public class Pac4jConfiguration {
     }
 
     @Bean
-    public AuthenticationHandler clientAuthenticationHandler() {
+    public ClientAuthenticationHandler clientAuthenticationHandler() {
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler();
         h.setClients(builtClients());
         return h;

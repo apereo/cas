@@ -20,8 +20,6 @@ import java.util.ArrayList;
  */
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    @Autowired
-    @Qualifier("duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 
     /**
@@ -75,5 +73,9 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     @Override
     public boolean supports(final Credential credential) {
         return DuoCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    public void setDuoAuthenticationService(final DuoAuthenticationService duoAuthenticationService) {
+        this.duoAuthenticationService = duoAuthenticationService;
     }
 }

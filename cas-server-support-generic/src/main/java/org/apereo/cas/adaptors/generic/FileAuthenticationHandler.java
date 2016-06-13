@@ -78,7 +78,6 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * @param separator The separator to set.
      */
-    @Autowired
     public void setSeparator(final String separator) {
         this.separator = separator;
     }

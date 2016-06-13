@@ -27,6 +27,8 @@ import org.ldaptive.SearchScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +50,8 @@ public final class LdapUtils {
     public static final String OBJECTCLASS_ATTRIBUTE = "objectClass";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
+
+    private static final String LDAP_PREFIX = "ldap";
 
 
     /**
@@ -230,7 +234,7 @@ public final class LdapUtils {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
             final List<AttributeModification> mods = attributes.entrySet()
                     .stream().map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
-                    new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{})))).collect(Collectors.toList());
+                            new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{})))).collect(Collectors.toList());
             final ModifyRequest request = new ModifyRequest(currentDn,
                     mods.toArray(new AttributeModification[]{}));
             operation.execute(request);
@@ -302,4 +306,35 @@ public final class LdapUtils {
         }
         return false;
     }
+
+    /**
+     * Is ldap connection url?.
+     *
+     * @param r the resource
+     * @return true/false
+     */
+    public static boolean isLdapConnectionUrl(final String r) {
+        return r.toLowerCase().startsWith(LDAP_PREFIX);
+    }
+
+    /**
+     * Is ldap connection url?.
+     *
+     * @param r the resource
+     * @return true/false
+     */
+    public static boolean isLdapConnectionUrl(final URI r) {
+        return r.getScheme().equalsIgnoreCase(LDAP_PREFIX);
+    }
+
+    /**
+     * Is ldap connection url?.
+     *
+     * @param r the resource
+     * @return true/false
+     */
+    public static boolean isLdapConnectionUrl(final URL r) {
+        return r.getProtocol().equalsIgnoreCase(LDAP_PREFIX);
+    }
+
 }

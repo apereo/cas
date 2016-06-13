@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.config;
 
+import net.sf.ehcache.Cache;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLFetcher;
@@ -28,7 +29,6 @@ import org.ldaptive.pool.BlockingConnectionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
@@ -45,17 +45,17 @@ import java.util.Set;
 public class X509AuthenticationConfiguration {
 
     @Autowired(required = false)
-    @Qualifier("poolingLdaptiveResourceCRLConnectionConfig") 
+    @Qualifier("poolingLdaptiveResourceCRLConnectionConfig")
     private ConnectionConfig poolingLdaptiveResourceCRLConnectionConfig;
-    
+
     @Autowired(required = false)
     @Qualifier("poolingLdaptiveConnectionPool")
     private BlockingConnectionPool poolingLdaptiveConnectionPool;
-            
+
     @Autowired(required = false)
-    @Qualifier("poolingLdaptiveResourceCRLSearchExecutor") 
+    @Qualifier("poolingLdaptiveResourceCRLSearchExecutor")
     private SearchExecutor poolingLdaptiveResourceCRLSearchExecutor;
-    
+
     @Autowired(required = false)
     @Qualifier("x509ResourceUnavailableRevocationPolicy")
     private RevocationPolicy x509ResourceUnavailableRevocationPolicy;
@@ -76,13 +76,25 @@ public class X509AuthenticationConfiguration {
     @Qualifier("x509RevocationChecker")
     private RevocationChecker revocationChecker;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("x509CrlResources")
     private Set x509CrlResources;
 
     @Autowired(required = false)
     @Qualifier("x509CrlFetcher")
     private CRLFetcher x509CrlFetcher;
+
+    @Autowired(required = false)
+    @Qualifier("x509CrlCache")
+    private Cache x509CrlCache;
+
+    @Autowired(required = false)
+    @Qualifier("ldaptiveResourceCRLSearchExecutor")
+    private SearchExecutor ldaptiveResourceCRLSearchExecutor;
+
+    @Autowired(required = false)
+    @Qualifier("ldaptiveResourceCRLConnectionConfig")
+    private ConnectionConfig ldaptiveResourceCRLConnectionConfig;
     
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -107,7 +119,8 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
-        final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker();
+        final CRLDistributionPointRevocationChecker c =
+                new CRLDistributionPointRevocationChecker(this.x509CrlCache, this.x509CrlFetcher);
         c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
         c.setThrowOnFetchFailure(casProperties.getAuthn().getX509().isThrowOnFetchFailure());
         c.setUnavailableCRLPolicy(x509CrlUnavailableRevocationPolicy);
@@ -135,7 +148,7 @@ public class X509AuthenticationConfiguration {
         c.setUnavailableCRLPolicy(this.x509ResourceUnavailableRevocationPolicy);
         c.setResources(x509CrlResources);
         c.setFetcher(this.x509CrlFetcher);
-        
+
         return c;
     }
 
@@ -157,13 +170,16 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public CRLFetcher ldaptiveResourceCRLFetcher() {
-        return new LdaptiveResourceCRLFetcher();
+        final LdaptiveResourceCRLFetcher r = new LdaptiveResourceCRLFetcher();
+        r.setConnectionConfig(this.ldaptiveResourceCRLConnectionConfig);
+        r.setSearchExecutor(this.ldaptiveResourceCRLSearchExecutor);
+        return r;
     }
 
     @Bean
     public CRLFetcher poolingLdaptiveResourceCRLFetcher() {
         final PoolingLdaptiveResourceCRLFetcher f = new PoolingLdaptiveResourceCRLFetcher();
-        
+
         f.setSearchExecutor(this.poolingLdaptiveResourceCRLSearchExecutor);
         f.setConnectionPool(this.poolingLdaptiveConnectionPool);
         f.setConnectionConfig(this.poolingLdaptiveResourceCRLConnectionConfig);

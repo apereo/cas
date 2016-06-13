@@ -76,6 +76,8 @@ public class IgniteTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     public TicketRegistry igniteTicketRegistry() {
-        return new IgniteTicketRegistry();
+        final IgniteTicketRegistry r = new IgniteTicketRegistry();
+        r.setIgniteConfiguration(igniteConfiguration());
+        return r;
     }
 }

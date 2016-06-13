@@ -26,9 +26,7 @@ import java.util.stream.Collectors;
  * @since 3.5
  */
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
-
-    @Autowired
-    @Qualifier("ehcacheTicketsCache")
+    
     private Cache ehcacheTicketsCache;
 
     private boolean supportRegistryState = true;
@@ -203,4 +201,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
                 .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
+    
+    
 }

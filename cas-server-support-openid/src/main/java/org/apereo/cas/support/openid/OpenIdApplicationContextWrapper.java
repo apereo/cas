@@ -18,21 +18,12 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapper {
-
-    @Autowired
-    @Qualifier("serviceTicketUniqueIdGenerator")
-    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
-
-    @Autowired
-    @Qualifier("openIdCredentialsAuthenticationHandler")
     private AuthenticationHandler openIdCredentialsAuthenticationHandler;
-
-    @Autowired
-    @Qualifier("openIdPrincipalResolver")
+    
     private PrincipalResolver openIdPrincipalResolver;
 
-    @Autowired
-    @Qualifier("openIdServiceFactory")
+    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
+    
     private OpenIdServiceFactory openIdServiceFactory;
 
     /**
@@ -45,4 +36,19 @@ public class OpenIdApplicationContextWrapper extends BaseApplicationContextWrapp
         addServiceFactory(this.openIdServiceFactory);
     }
 
+    public void setServiceTicketUniqueIdGenerator(final UniqueTicketIdGenerator serviceTicketUniqueIdGenerator) {
+        this.serviceTicketUniqueIdGenerator = serviceTicketUniqueIdGenerator;
+    }
+
+    public void setOpenIdCredentialsAuthenticationHandler(final AuthenticationHandler openIdCredentialsAuthenticationHandler) {
+        this.openIdCredentialsAuthenticationHandler = openIdCredentialsAuthenticationHandler;
+    }
+
+    public void setOpenIdPrincipalResolver(final PrincipalResolver openIdPrincipalResolver) {
+        this.openIdPrincipalResolver = openIdPrincipalResolver;
+    }
+
+    public void setOpenIdServiceFactory(final OpenIdServiceFactory openIdServiceFactory) {
+        this.openIdServiceFactory = openIdServiceFactory;
+    }
 }

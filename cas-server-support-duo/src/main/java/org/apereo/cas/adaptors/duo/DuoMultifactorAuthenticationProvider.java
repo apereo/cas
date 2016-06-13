@@ -19,8 +19,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
     
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Resource(name = "duoAuthenticationService")
+    
     private DuoAuthenticationService duoAuthenticationService;
 
 
@@ -34,6 +33,9 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
         return casProperties.getAuthn().getMfa().getDuo().getRank();
     }
 
+    public void setDuoAuthenticationService(final DuoAuthenticationService duoAuthenticationService) {
+        this.duoAuthenticationService = duoAuthenticationService;
+    }
 
     @Override
     protected boolean isAvailable() {

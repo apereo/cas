@@ -15,16 +15,11 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 public class SpnegoApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Autowired
-    @Qualifier("spnegoHandler")
+
     private AuthenticationHandler spnegoHandler;
 
-    @Autowired
-    @Qualifier("spnegoPrincipalResolver")
     private PrincipalResolver spnegoPrincipalResolver;
-
-    @Autowired
-    @Qualifier("successfulHandlerMetaDataPopulator")
+    
     private AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator;
 
     /**
@@ -36,4 +31,15 @@ public class SpnegoApplicationContextWrapper extends BaseApplicationContextWrapp
         addAuthenticationMetadataPopulator(this.successfulHandlerMetaDataPopulator);
     }
 
+    public void setSpnegoHandler(final AuthenticationHandler spnegoHandler) {
+        this.spnegoHandler = spnegoHandler;
+    }
+
+    public void setSpnegoPrincipalResolver(final PrincipalResolver spnegoPrincipalResolver) {
+        this.spnegoPrincipalResolver = spnegoPrincipalResolver;
+    }
+
+    public void setSuccessfulHandlerMetaDataPopulator(final AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator) {
+        this.successfulHandlerMetaDataPopulator = successfulHandlerMetaDataPopulator;
+    }
 }

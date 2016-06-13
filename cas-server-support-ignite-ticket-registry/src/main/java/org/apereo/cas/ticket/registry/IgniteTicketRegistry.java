@@ -47,8 +47,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Resource(name = "igniteConfiguration")
+    
     private IgniteConfiguration igniteConfiguration;
 
     private IgniteCache<String, Ticket> ticketIgniteCache;
@@ -246,5 +245,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
                 .append("igniteConfiguration", casProperties.getTicket().getRegistry().getIgnite())
                 .append("supportRegistryState", this.supportRegistryState)
                 .toString();
+    }
+
+    public void setCasProperties(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
     }
 }

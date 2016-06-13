@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -26,8 +27,6 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link DuoConfiguration}.
@@ -44,8 +43,13 @@ public class DuoConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Resource(name = "builder")
+    @Autowired
+    @Qualifier("builder")
     private FlowBuilderServices builder;
+
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -61,12 +65,17 @@ public class DuoConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper duoApplicationContextWrapper() {
-        return new DuoApplicationContextWrapper();
+        final DuoApplicationContextWrapper w = new DuoApplicationContextWrapper();
+        w.setAuthenticationHandler(duoAuthenticationHandler());
+        w.setPopulator(duoAuthenticationMetaDataPopulator());
+        return w;
     }
 
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
-        return new DuoAuthenticationHandler();
+        final DuoAuthenticationHandler h = new DuoAuthenticationHandler();
+        h.setDuoAuthenticationService(duoAuthenticationService());
+        return h;
     }
 
     @Bean
@@ -77,35 +86,44 @@ public class DuoConfiguration {
         pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(duoAuthenticationHandler());
         pop.setProvider(duoAuthenticationProvider());
-        
+
         return pop;
     }
 
     @Bean
     @RefreshScope
     public DuoAuthenticationService duoAuthenticationService() {
-        return new DuoAuthenticationService();
+        final DuoAuthenticationService s = new DuoAuthenticationService();
+        s.setHttpClient(this.httpClient);
+        return s;
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider duoAuthenticationProvider() {
-        return new DuoMultifactorAuthenticationProvider();
+        final DuoMultifactorAuthenticationProvider p = new DuoMultifactorAuthenticationProvider();
+        p.setDuoAuthenticationService(duoAuthenticationService());
+        return p;
     }
 
     @Bean
     public Action duoAuthenticationWebflowAction() {
-        return new DuoAuthenticationWebflowAction();
+        final DuoAuthenticationWebflowAction a = new DuoAuthenticationWebflowAction();
+        a.setDuoAuthenticationWebflowEventResolver(duoAuthenticationWebflowEventResolver());
+        return a;
     }
 
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
-        return new DuoAuthenticationWebflowEventResolver();
+        final DuoAuthenticationWebflowEventResolver r = new DuoAuthenticationWebflowEventResolver();
+        return r;
     }
 
     @Bean
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
-        return new DuoMultifactorWebflowConfigurer();
+        final DuoMultifactorWebflowConfigurer r = new DuoMultifactorWebflowConfigurer();
+        r.setDuoFlowRegistry(duoFlowRegistry());
+        return r;
     }
 
 }
