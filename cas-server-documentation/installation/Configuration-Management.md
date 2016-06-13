@@ -53,7 +53,7 @@ serves as a reference and a placeholder for all settings that are available to C
 
 ## Native
 
-CAS is also configured to load `*.properties` files from an external location that is `/etc/cas/config`. 
+CAS is also configured to load `*.properties` or `*.yml` files from an external location that is `/etc/cas/config`. 
 This location is constantly
 monitored by CAS to detect external changes. Note that this location simply needs to 
 exist, and does not require any special permissions
@@ -130,8 +130,8 @@ to manage configuration in a distributed deployment. Spring Cloud Bus links node
 distributed system with a lightweight message broker. This can then be used to broadcast state 
 changes (e.g. configuration changes) or other management instructions.
 
-The bus supports sending messages to all nodes listening or all nodes for a particular 
-service (as defined by Eureka). Broadcasted events will attempt to update, refreshh and 
+The bus supports sending messages to all nodes listening.
+Broadcasted events will attempt to update, refresh and 
 reload each application’s configuration.
 
 The following properties need to be adjusted, in order to turn on the bus configuration:
