@@ -24,6 +24,7 @@ war {
                     "Implementation-Version": project.version)
     }
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
+    enabled = !rootProject.publishReleases
 }
 
 
@@ -44,6 +45,7 @@ springBoot  {
 
 bootRepackage {
     mainClass = "org.apereo.cas.web.CasWebApplication"
+    enabled = !rootProject.publishReleases
 }
 
 dependencies {
@@ -79,5 +81,3 @@ dependencies {
     runtime libraries.hibernate
     runtime libraries.bouncycastle
 }
-
-uploadArchives.dependsOn bootRepackage  
