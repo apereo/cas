@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**

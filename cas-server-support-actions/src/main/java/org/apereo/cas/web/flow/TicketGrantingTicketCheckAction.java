@@ -4,8 +4,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;

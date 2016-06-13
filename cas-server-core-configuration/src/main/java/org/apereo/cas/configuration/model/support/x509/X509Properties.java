@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.x509;
 
+import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link X509Properties}.
  *
@@ -37,6 +40,17 @@ public class X509Properties {
     private String principalDescriptor;
     private boolean throwOnFetchFailure;
 
+    @NestedConfigurationProperty
+    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+
+    public PersonDirPrincipalResolverProperties getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+        this.principal = principal;
+    }
+    
     /**
      * The compiled pattern supplied by the deployer.
      */

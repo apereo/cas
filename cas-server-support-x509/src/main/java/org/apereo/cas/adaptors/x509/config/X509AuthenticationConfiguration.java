@@ -21,8 +21,11 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrinci
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
 import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.pool.BlockingConnectionPool;
@@ -44,6 +47,10 @@ import java.util.Set;
 @Configuration("x509AuthenticationConfiguration")
 public class X509AuthenticationConfiguration {
 
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
+    
     @Autowired(required = false)
     @Qualifier("poolingLdaptiveResourceCRLConnectionConfig")
     private ConnectionConfig poolingLdaptiveResourceCRLConnectionConfig;
@@ -194,29 +201,57 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
-        final X509SubjectPrincipalResolver p = new X509SubjectPrincipalResolver();
-        p.setDescriptor(casProperties.getAuthn().getX509().getPrincipalDescriptor());
-        return p;
+        final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver();
+        r.setDescriptor(casProperties.getAuthn().getX509().getPrincipalDescriptor());
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalFactory(x509PrincipalFactory());
+        return r;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
-        return new X509SubjectDNPrincipalResolver();
+        final X509SubjectDNPrincipalResolver r = new X509SubjectDNPrincipalResolver();
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalFactory(x509PrincipalFactory());
+        return r;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
-        return new X509SubjectAlternativeNameUPNPrincipalResolver();
+        final X509SubjectAlternativeNameUPNPrincipalResolver r =
+                new X509SubjectAlternativeNameUPNPrincipalResolver();
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalFactory(x509PrincipalFactory());
+        return r;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
-        return new X509SerialNumberPrincipalResolver();
+        final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver();
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getX509().getPrincipal().isReturnNull());
+        r.setPrincipalFactory(x509PrincipalFactory());
+        return r;
     }
 
+    @Bean
+    public PrincipalFactory x509PrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+
+
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {

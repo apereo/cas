@@ -5,8 +5,6 @@ import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopu
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 
