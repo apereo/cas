@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction;
-import org.apereo.cas.support.saml.web.flow.SamlMetadataUIWebConfigurer;
+import org.apereo.cas.support.saml.web.flow.SamlMetadataUIWebflowConfigurer;
 import org.apereo.cas.support.saml.web.flow.mdui.AbstractMetadataResolverAdapter;
 import org.apereo.cas.support.saml.web.flow.mdui.ChainingMetadataResolverAdapter;
 import org.apereo.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter;
@@ -68,7 +68,9 @@ public class SamlMetadataUIConfiguration {
     
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        return new SamlMetadataUIWebConfigurer();
+        final SamlMetadataUIWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer();
+        w.setSamlMetadataUIParserAction(samlMetadataUIParserAction());
+        return w;
     }
 
     @Bean

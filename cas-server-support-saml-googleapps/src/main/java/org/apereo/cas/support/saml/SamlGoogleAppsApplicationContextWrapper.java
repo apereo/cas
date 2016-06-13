@@ -15,9 +15,7 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 public class SamlGoogleAppsApplicationContextWrapper extends BaseApplicationContextWrapper {
-
-    @Autowired
-    @Qualifier("googleAccountsServiceFactory")
+    
     private ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory;
 
     /**
@@ -33,5 +31,11 @@ public class SamlGoogleAppsApplicationContextWrapper extends BaseApplicationCont
         addServiceFactory(this.googleAccountsServiceFactory);
     }
 
+    public ServiceFactory<GoogleAccountsService> getGoogleAccountsServiceFactory() {
+        return googleAccountsServiceFactory;
+    }
 
+    public void setGoogleAccountsServiceFactory(final ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory) {
+        this.googleAccountsServiceFactory = googleAccountsServiceFactory;
+    }
 }

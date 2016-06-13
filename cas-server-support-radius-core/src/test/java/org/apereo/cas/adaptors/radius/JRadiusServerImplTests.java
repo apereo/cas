@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-context.xml")
-public class JRadiusServerImplTest {
+public class JRadiusServerImplTests {
 
     @Autowired
     private JRadiusServerImpl radiusServer;

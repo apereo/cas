@@ -18,13 +18,14 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * This is {@link CasCoreServicesConfiguration}.
@@ -39,17 +40,13 @@ public class CasCoreServicesConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("registeredServiceCipherExecutor")
-    private RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
-    @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
-            
+
+    @Autowired(required = false)
+    @Qualifier("inMemoryRegisteredServices")
+    private List inMemoryRegisteredServices;
+
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
@@ -70,8 +67,8 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Bean
     public CasAttributeEncoder casAttributeEncoder() {
-        final DefaultCasAttributeEncoder e = new DefaultCasAttributeEncoder(servicesManager);
-        e.setCipherExecutor(registeredServiceCipherExecutor);
+        final DefaultCasAttributeEncoder e = new DefaultCasAttributeEncoder(servicesManager());
+        e.setCipherExecutor(registeredServiceCipherExecutor());
         return e;
     }
 
@@ -85,7 +82,7 @@ public class CasCoreServicesConfiguration {
         return new DefaultRegisteredServiceCipherExecutor();
     }
 
-    
+
     @Bean
     public ReloadableServicesManager servicesManager() {
         return new DefaultServicesManagerImpl(serviceRegistryDao);
@@ -93,7 +90,9 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     public ServiceRegistryDao inMemoryServiceRegistryDao() {
-        return new InMemoryServiceRegistryDaoImpl();
+        final InMemoryServiceRegistryDaoImpl impl = new InMemoryServiceRegistryDaoImpl();
+        impl.setRegisteredServices(inMemoryRegisteredServices);
+        return impl;
     }
 
     @Bean
@@ -106,15 +105,10 @@ public class CasCoreServicesConfiguration {
         }
     }
 
-    @Autowired
     @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("serviceRegistryDao")
-                                                                 final ServiceRegistryDao serviceRegistryDao,
-                                                                 @Qualifier("jsonServiceRegistryDao")
-                                                                 final ServiceRegistryDao jsonServiceRegistryDao,
-                                                                 @Qualifier("servicesManager")
-                                                                 final ReloadableServicesManager servicesManager) {
-        return new ServiceRegistryInitializer(jsonServiceRegistryDao, serviceRegistryDao, servicesManager,
+    public ServiceRegistryInitializer serviceRegistryInitializer() {
+        return new ServiceRegistryInitializer(jsonServiceRegistryDao(),
+                serviceRegistryDao, servicesManager(),
                 casProperties.getServiceRegistry().isInitFromJson());
     }
 }

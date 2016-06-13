@@ -34,13 +34,16 @@ public class CouchbaseTicketRegistryConfiguration {
         factory.setTimeout(casProperties.getTicket().getRegistry().getCouchbase().getTimeout());
         factory.setBucketName(casProperties.getTicket().getRegistry().getCouchbase().getBucket());
         factory.setPassword(casProperties.getTicket().getRegistry().getCouchbase().getPassword());
+        
         return factory;
     }
 
     @RefreshScope
     @Bean
     public CouchbaseTicketRegistry couchbaseTicketRegistry() {
-        return new CouchbaseTicketRegistry();
+        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry();
+        c.setCouchbaseClientFactory(ticketRegistryCouchbaseClientFactory());
+        return c;
     }
 
     @Bean

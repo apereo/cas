@@ -9,15 +9,13 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link SamlMetadataUIWebConfigurer}.
+ * This is {@link SamlMetadataUIWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlMetadataUIWebConfigurer extends AbstractCasWebflowConfigurer {
-
-    @Autowired
-    @Qualifier("samlMetadataUIParserAction")
+public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigurer {
+    
     private Action samlMetadataUIParserAction;
 
     @Override
@@ -26,5 +24,9 @@ public class SamlMetadataUIWebConfigurer extends AbstractCasWebflowConfigurer {
         final ViewState state = (ViewState)
                 flow.getTransitionableState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         state.getEntryActionList().add(this.samlMetadataUIParserAction);
+    }
+
+    public void setSamlMetadataUIParserAction(final Action samlMetadataUIParserAction) {
+        this.samlMetadataUIParserAction = samlMetadataUIParserAction;
     }
 }

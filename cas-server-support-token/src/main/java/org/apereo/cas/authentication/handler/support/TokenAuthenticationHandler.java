@@ -51,16 +51,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                     service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
         return null;
     }
-
-    @Autowired(required=false)
-    @Override
-    public void setPrincipalNameTransformer(@Qualifier("tokenPrincipalNameTransformer")
-                                            final PrincipalNameTransformer principalNameTransformer) {
-        if (principalNameTransformer != null) {
-            super.setPrincipalNameTransformer(principalNameTransformer);
-        }
-    }
-
+    
     /**
      * Gets registered service jwt encryption secret.
      *

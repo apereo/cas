@@ -5,9 +5,11 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.spi.AssertionAsReturnValuePrincipalResolver;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
+import org.apereo.cas.audit.spi.PrincipalIdProvider;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.TicketOrCredentialPrincipalResolver;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -142,29 +144,24 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     public PrincipalResolver auditablePrincipalResolver() {
-        return new AssertionAsReturnValuePrincipalResolver(
-                new TicketOrCredentialPrincipalResolver(this.centralAuthenticationService));
+        final TicketOrCredentialPrincipalResolver r =
+                new TicketOrCredentialPrincipalResolver(this.centralAuthenticationService);
+        r.setPrincipalIdProvider(principalIdProvider());
+        return new AssertionAsReturnValuePrincipalResolver(r);
     }
 
-
-    /**
-     * Ticket as first parameter resource resolver.
-     *
-     * @return the ticket as first parameter resource resolver
-     */
     @Bean
     public TicketAsFirstParameterResourceResolver ticketResourceResolver() {
         return new TicketAsFirstParameterResourceResolver();
     }
 
-    /**
-     * Message bundle aware resource resolver.
-     *
-     * @return the message bundle aware resource resolver
-     */
     @Bean
     public MessageBundleAwareResourceResolver messageBundleAwareResourceResolver() {
         return new MessageBundleAwareResourceResolver();
     }
-    
+
+    @Bean
+    public PrincipalIdProvider principalIdProvider() {
+        return authentication -> authentication.getPrincipal().getId();
+    }
 }

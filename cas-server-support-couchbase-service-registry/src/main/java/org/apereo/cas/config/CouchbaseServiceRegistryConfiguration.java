@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
 public class CouchbaseServiceRegistryConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -30,7 +30,7 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
-        
+
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
         factory.setNodes(StringUtils.commaDelimitedListToSet(
                 casProperties.getServiceRegistry().getCouchbase().getNodeSet()));
@@ -39,10 +39,12 @@ public class CouchbaseServiceRegistryConfiguration {
         factory.setPassword(casProperties.getServiceRegistry().getCouchbase().getPassword());
         return factory;
     }
-    
+
     @Bean
     @RefreshScope
     public ServiceRegistryDao couchbaseServiceRegistryDao() {
-        return new CouchbaseServiceRegistryDao();
+        final CouchbaseServiceRegistryDao c = new CouchbaseServiceRegistryDao();
+        c.setCouchbaseClientFactory(serviceRegistryCouchbaseClientFactory());
+        return c;
     }
 }

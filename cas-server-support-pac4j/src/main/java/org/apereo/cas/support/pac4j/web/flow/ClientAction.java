@@ -65,30 +65,13 @@ public class ClientAction extends AbstractAction {
      */
     private static final Set<ClientType> SUPPORTED_PROTOCOLS = ImmutableSet.of(ClientType.CAS_PROTOCOL, ClientType.OAUTH_PROTOCOL,
             ClientType.OPENID_PROTOCOL, ClientType.SAML_PROTOCOL, ClientType.OPENID_CONNECT_PROTOCOL);
-
-    /**
-     * The logger.
-     */
+    
     private transient Logger logger = LoggerFactory.getLogger(ClientAction.class);
-
-    /**
-     * The clients used for authentication.
-     */
     
-    @Autowired
-    @Qualifier("builtClients")
     private Clients clients;
-
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
-    /**
-     * The service for CAS authentication.
-     */
+    private AuthenticationSystemSupport authenticationSystemSupport;
     
-    @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
     static {
@@ -249,6 +232,10 @@ public class ClientAction extends AbstractAction {
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return this.authenticationSystemSupport;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     /**

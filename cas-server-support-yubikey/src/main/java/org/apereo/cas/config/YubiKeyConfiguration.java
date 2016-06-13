@@ -8,7 +8,6 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.http.HttpClient;
@@ -36,6 +35,10 @@ import org.springframework.webflow.execution.Action;
 public class YubiKeyConfiguration {
 
     @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -48,10 +51,10 @@ public class YubiKeyConfiguration {
     @Autowired(required = false)
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry registry;
-    
+
     @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = 
+        final FlowDefinitionRegistryBuilder builder =
                 new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
@@ -60,7 +63,12 @@ public class YubiKeyConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper yubiKeyApplicationContextWrapper() {
-        return new YubiKeyApplicationContextWrapper();
+        final YubiKeyApplicationContextWrapper y = new YubiKeyApplicationContextWrapper();
+
+        y.setAuthenticationHandler(yubikeyAuthenticationHandler());
+        y.setPopulator(yubikeyAuthenticationMetaDataPopulator());
+
+        return y;
     }
 
     @Bean
@@ -77,43 +85,43 @@ public class YubiKeyConfiguration {
         return handler;
     }
 
-    @Autowired
     @Bean
     @RefreshScope
-    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator(@Qualifier("noRedirectHttpClient")
-                                                                                  final HttpClient httpClient) {
-        final YubiKeyAuthenticationMetaDataPopulator pop = 
+    public YubiKeyAuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
+        final YubiKeyAuthenticationMetaDataPopulator pop =
                 new YubiKeyAuthenticationMetaDataPopulator();
-        
+
         pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(yubikeyAuthenticationHandler());
-        pop.setProvider(yubikeyAuthenticationProvider(httpClient));
+        pop.setProvider(yubikeyAuthenticationProvider());
         return pop;
     }
 
-    @Autowired
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider(@Qualifier("noRedirectHttpClient") 
-                                                                           final HttpClient httpClient) {
+    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
         return new YubiKeyMultifactorAuthenticationProvider(
                 yubikeyAuthenticationHandler(),
                 this.casProperties.getAuthn().getMfa().getYubikey().getRank(),
-                httpClient);
+                this.httpClient);
     }
 
     @Bean
     public Action yubikeyAuthenticationWebflowAction() {
-        return new YubiKeyAuthenticationWebflowAction();
+        final YubiKeyAuthenticationWebflowAction a = new YubiKeyAuthenticationWebflowAction();
+        a.setYubikeyAuthenticationWebflowEventResolver(yubikeyAuthenticationWebflowEventResolver());
+        return a;
     }
 
     @Bean
-    public CasWebflowConfigurer yubikeyAuthenticationWebflowEventResolver() {
-        return new YubiKeyMultifactorWebflowConfigurer();
+    public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
+        final YubiKeyMultifactorWebflowConfigurer c = new YubiKeyMultifactorWebflowConfigurer();
+        c.setYubikeyFlowRegistry(yubikeyFlowRegistry());
+        return c;
     }
 
     @Bean
-    public CasWebflowEventResolver yubikeyMultifactorWebflowConfigurer() {
+    public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver() {
         return new YubiKeyAuthenticationWebflowEventResolver();
     }
 }

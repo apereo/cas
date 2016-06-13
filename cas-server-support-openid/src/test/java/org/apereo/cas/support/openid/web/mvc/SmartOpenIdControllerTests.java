@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @author Frederic Esnault
  * @since 3.0.0
  */
-public class SmartOpenIdControllerTest extends AbstractOpenIdTests {
+public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private HttpServletResponse response = new MockHttpServletResponse();
 

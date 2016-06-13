@@ -14,12 +14,9 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 public class YubiKeyApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Autowired
-    @Qualifier("yubikeyAuthenticationHandler")
+
     private AuthenticationHandler authenticationHandler;
 
-    @Autowired
-    @Qualifier("yubikeyAuthenticationMetaDataPopulator")
     private YubiKeyAuthenticationMetaDataPopulator populator;
 
     /**
@@ -29,5 +26,13 @@ public class YubiKeyApplicationContextWrapper extends BaseApplicationContextWrap
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
         addAuthenticationMetadataPopulator(this.populator);
+    }
+
+    public void setAuthenticationHandler(final AuthenticationHandler authenticationHandler) {
+        this.authenticationHandler = authenticationHandler;
+    }
+
+    public void setPopulator(final YubiKeyAuthenticationMetaDataPopulator populator) {
+        this.populator = populator;
     }
 }

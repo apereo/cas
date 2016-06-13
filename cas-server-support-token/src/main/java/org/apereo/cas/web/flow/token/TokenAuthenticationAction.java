@@ -32,16 +32,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TokenAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationAction.class);
-
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -70,5 +64,17 @@ public class TokenAuthenticationAction extends AbstractAction {
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }

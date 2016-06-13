@@ -110,23 +110,11 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
         pc.setValidatePeriod(config.getValidatePeriod());
         return pc;
     }
-
-    @Autowired(required=false)
-    public void setConnectionPool(@Qualifier("poolingLdaptiveConnectionPool")
-                                 final BlockingConnectionPool connectionPool) {
+    
+    public void setConnectionPool(final BlockingConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
+    
 
-    @Autowired(required = false)
-    @Override
-    public void setSearchExecutor(@Qualifier("poolingLdaptiveResourceCRLSearchExecutor") final SearchExecutor searchExecutor) {
-        super.setSearchExecutor(searchExecutor);
-    }
-
-    @Autowired(required=false)
-    @Override
-    public void setConnectionConfig(@Qualifier("poolingLdaptiveResourceCRLConnectionConfig") final ConnectionConfig connectionConfig) {
-        super.setConnectionConfig(connectionConfig);
-    }
 
 }

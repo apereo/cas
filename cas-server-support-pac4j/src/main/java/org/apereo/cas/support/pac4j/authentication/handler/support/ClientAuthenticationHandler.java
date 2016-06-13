@@ -29,11 +29,7 @@ import java.security.GeneralSecurityException;
 @SuppressWarnings("unchecked")
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
-    /**
-     * The clients for authentication.
-     */
-    @Autowired
-    @Qualifier("builtClients")
+
     private Clients clients;
 
     @Override

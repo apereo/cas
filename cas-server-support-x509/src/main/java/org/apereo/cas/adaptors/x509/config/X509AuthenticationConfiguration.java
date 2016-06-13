@@ -22,6 +22,9 @@ import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonIntera
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.pool.BlockingConnectionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -42,15 +45,24 @@ import java.util.Set;
 public class X509AuthenticationConfiguration {
 
     @Autowired(required = false)
+    @Qualifier("poolingLdaptiveResourceCRLConnectionConfig") 
+    private ConnectionConfig poolingLdaptiveResourceCRLConnectionConfig;
+    
+    @Autowired(required = false)
+    @Qualifier("poolingLdaptiveConnectionPool")
+    private BlockingConnectionPool poolingLdaptiveConnectionPool;
+            
+    @Autowired(required = false)
+    @Qualifier("poolingLdaptiveResourceCRLSearchExecutor") 
+    private SearchExecutor poolingLdaptiveResourceCRLSearchExecutor;
+    
+    @Autowired(required = false)
     @Qualifier("x509ResourceUnavailableRevocationPolicy")
     private RevocationPolicy x509ResourceUnavailableRevocationPolicy;
 
     @Autowired(required = false)
     @Qualifier("x509ResourceExpiredRevocationPolicy")
     private RevocationPolicy x509ResourceExpiredRevocationPolicy;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @Autowired(required = false)
     @Qualifier("x509CrlUnavailableRevocationPolicy")
@@ -150,7 +162,12 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public CRLFetcher poolingLdaptiveResourceCRLFetcher() {
-        return new PoolingLdaptiveResourceCRLFetcher();
+        final PoolingLdaptiveResourceCRLFetcher f = new PoolingLdaptiveResourceCRLFetcher();
+        
+        f.setSearchExecutor(this.poolingLdaptiveResourceCRLSearchExecutor);
+        f.setConnectionPool(this.poolingLdaptiveConnectionPool);
+        f.setConnectionConfig(this.poolingLdaptiveResourceCRLConnectionConfig);
+        return f;
     }
 
     @Bean

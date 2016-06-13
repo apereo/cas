@@ -1,8 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.support.TokenAuthenticationHandler;
 import org.apereo.cas.web.flow.token.TokenAuthenticationAction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
@@ -15,14 +20,34 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("tokenAuthenticationConfiguration")
 public class TokenAuthenticationConfiguration {
-    
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("tokenPrincipalNameTransformer")
+    private PrincipalNameTransformer principalNameTransformer;
+
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
-        return new TokenAuthenticationHandler();
+        final TokenAuthenticationHandler h = new TokenAuthenticationHandler();
+        if (principalNameTransformer != null) {
+            h.setPrincipalNameTransformer(principalNameTransformer);
+        }
+        return h;
     }
-    
+
     @Bean
     public Action tokenAuthenticationAction() {
-        return new TokenAuthenticationAction();
+        final TokenAuthenticationAction a = new TokenAuthenticationAction();
+        a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
+        a.setCentralAuthenticationService(this.centralAuthenticationService);
+        return a;
     }
 }

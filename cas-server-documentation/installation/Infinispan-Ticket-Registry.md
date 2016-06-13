@@ -66,14 +66,15 @@ Here is an example:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<infinispan xsi:schemaLocation="urn:infinispan:config:7.2 http://www.infinispan.org/schemas/infinispan-config-7.2.xsd"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:infinispan:config:7.2">
+<infinispan xsi:schemaLocation="urn:infinispan:config:8.2 http://www.infinispan.org/schemas/infinispan-config-8.2.xsd"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:infinispan:config:8.2">
 
    <cache-container default-cache="cas">
        <jmx duplicate-domains="true" />
        <local-cache name="cas" />
    </cache-container>
 </infinispan>
+
 ```
 
 Refer to the [Infinispan](http://infinispan.org/) documentation to learn more about cache configuration, and how

@@ -50,8 +50,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Resource(name = "serviceRegistryCouchbaseClientFactory")
+    
     private CouchbaseClientFactory couchbase;
 
 

@@ -70,38 +70,32 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * {@link TicketRegistry}  for storing and retrieving tickets as needed.
      */
-    @Resource(name = "ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /**
      * Implementation of Service Manager.
      */
-    @Resource(name = "servicesManager")
     protected ServicesManager servicesManager;
 
     /**
      * The logout manager.
      **/
-    @Resource(name = "logoutManager")
     protected LogoutManager logoutManager;
 
     /**
      * The ticket factory.
      **/
-    @Resource(name = "defaultTicketFactory")
     protected TicketFactory ticketFactory;
 
     /**
      * The service selection strategy during validation events.
      **/
-    @Resource(name = "validationServiceSelectionStrategies")
     protected List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    @Resource(name = "authenticationPolicyFactory")
     protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
@@ -149,9 +143,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      *
      * @param principalFactory the principal factory
      */
-    @Autowired
-    public void setPrincipalFactory(@Qualifier("principalFactory")
-                                    final PrincipalFactory principalFactory) {
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 

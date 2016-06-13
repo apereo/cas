@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -20,7 +19,7 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
 
-    
+
     private List<RegisteredService> registeredServices = new ArrayList<>();
 
     @Autowired
@@ -30,32 +29,6 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
      * Instantiates a new In memory service registry.
      */
     public InMemoryServiceRegistryDaoImpl() {
-    }
-    
-    /**
-     * After properties set.
-     */
-    @PostConstruct
-    public void afterPropertiesSet() {
-        final String[] aliases =
-            this.applicationContext.getAutowireCapableBeanFactory().getAliases("inMemoryServiceRegistryDao");
-        if (aliases.length > 0) {
-            LOGGER.debug("{} is used as the active service registry dao", this.getClass().getSimpleName());
-
-            try {
-                final List<RegisteredService> list = (List<RegisteredService>)
-                    this.applicationContext.getBean("inMemoryRegisteredServices", List.class);
-                if (list != null) {
-                    LOGGER.debug("Loaded {} services from the application context for {}",
-                        list.size(),
-                        this.getClass().getSimpleName());
-                    this.registeredServices = list;
-                }
-            } catch (final Exception e) {
-                LOGGER.debug("No registered services are defined for {}", this.getClass().getSimpleName());
-            }
-        }
-
     }
 
     @Override
@@ -102,9 +75,9 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
     }
 
     private static void logWarning() {
-        LOGGER.debug("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-            + "Changes that are made to service definitions during runtime "
-            + "will be LOST upon container restarts.");
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+                + "Changes that are made to service definitions during runtime "
+                + "will be LOST upon container restarts.");
     }
 
     @Override

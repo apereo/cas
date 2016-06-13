@@ -1,6 +1,9 @@
 package org.apereo.cas.support.events.config;
 
+import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.listener.DefaultCasEventListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,9 +15,15 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreEventsConfiguration")
 public class CasCoreEventsConfiguration {
+
+    @Autowired(required = false)
+    @Qualifier("casEventRepository")
+    private CasEventRepository casEventRepository;
     
     @Bean
     public DefaultCasEventListener defaultCasEventListener() {
-        return new DefaultCasEventListener();
+        final DefaultCasEventListener l = new DefaultCasEventListener();
+        l.setCasEventRepository(casEventRepository);
+        return l;
     }
 }

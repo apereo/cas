@@ -1,7 +1,9 @@
 package org.apereo.cas.support.pac4j.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.support.pac4j.Pac4jApplicationContextWrapper;
@@ -16,6 +18,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,9 +42,17 @@ public class Pac4jConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
     @Autowired(required = false)
     private IndirectClient[] clients;
-    
+
     @Bean
     public Pac4jProperties pac4jProperties() {
         return new Pac4jProperties();
@@ -59,12 +70,18 @@ public class Pac4jConfiguration {
 
     @Bean
     public AuthenticationHandler clientAuthenticationHandler() {
-        return new ClientAuthenticationHandler();
+        final ClientAuthenticationHandler h = new ClientAuthenticationHandler();
+        h.setClients(builtClients());
+        return h;
     }
 
     @Bean
     public Action clientAction() {
-        return new ClientAction();
+        final ClientAction a = new ClientAction();
+        a.setCentralAuthenticationService(centralAuthenticationService);
+        a.setAuthenticationSystemSupport(authenticationSystemSupport);
+        a.setClients(builtClients());
+        return a;
     }
 
     /**
@@ -106,21 +123,21 @@ public class Pac4jConfiguration {
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
                 casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
 
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, 
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1,
                 casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, 
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2,
                 casProperties.getAuthn().getPac4j().getOidc().getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, 
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1,
                 casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, 
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2,
                 casProperties.getAuthn().getPac4j().getOidc().getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, 
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI,
                 casProperties.getAuthn().getPac4j().getOidc().getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID, 
+        properties.put(PropertiesConfigFactory.OIDC_ID,
                 casProperties.getAuthn().getPac4j().getOidc().getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, 
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW,
                 casProperties.getAuthn().getPac4j().getOidc().getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, 
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM,
                 casProperties.getAuthn().getPac4j().getOidc().getPreferredJwsAlgorithm());
         properties.put(PropertiesConfigFactory.OIDC_SECRET, casProperties.getAuthn().getPac4j().getOidc().getSecret());
         properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, casProperties.getAuthn().getPac4j().getOidc().getUseNonce());

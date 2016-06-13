@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlGoogleAppsConfiguration")
 public class SamlGoogleAppsConfiguration {
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -31,7 +31,9 @@ public class SamlGoogleAppsConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper samlGoogleAppsApplicationContextWrapper() {
-        return new SamlGoogleAppsApplicationContextWrapper();
+        final SamlGoogleAppsApplicationContextWrapper w = new SamlGoogleAppsApplicationContextWrapper();
+        w.setGoogleAccountsServiceFactory(googleAccountsServiceFactory());
+        return w;
     }
 
     @Bean

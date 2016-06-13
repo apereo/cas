@@ -14,12 +14,18 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class YubiKeyAuthenticationWebflowAction extends AbstractAction {
-    @Autowired
-    @Qualifier("yubikeyAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         return this.yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext);
+    }
+
+    public CasWebflowEventResolver getYubikeyAuthenticationWebflowEventResolver() {
+        return yubikeyAuthenticationWebflowEventResolver;
+    }
+
+    public void setYubikeyAuthenticationWebflowEventResolver(final CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver) {
+        this.yubikeyAuthenticationWebflowEventResolver = yubikeyAuthenticationWebflowEventResolver;
     }
 }

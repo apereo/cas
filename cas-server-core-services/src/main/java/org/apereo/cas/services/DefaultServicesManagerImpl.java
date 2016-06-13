@@ -8,7 +8,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -37,10 +36,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-    
+        
     private ConcurrentMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
     
     /**
