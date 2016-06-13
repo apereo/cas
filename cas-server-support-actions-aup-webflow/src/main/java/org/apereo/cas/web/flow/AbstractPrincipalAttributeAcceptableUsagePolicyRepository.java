@@ -29,9 +29,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
      * has been accepted. Its value must match either TRUE/FALSE.
      */
     protected String aupAttributeName;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override
@@ -54,6 +52,10 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
 
     public void setAupAttributeName(final String aupAttributeName) {
         this.aupAttributeName = aupAttributeName;
+    }
+
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
     /**

@@ -33,8 +33,7 @@ public class ServiceAuthorizationCheck extends AbstractAction {
      * Initialize the component with an instance of the services manager.
      * @param servicesManager the service registry instance.
      */
-    @Autowired
-    public ServiceAuthorizationCheck(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+    public ServiceAuthorizationCheck(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 

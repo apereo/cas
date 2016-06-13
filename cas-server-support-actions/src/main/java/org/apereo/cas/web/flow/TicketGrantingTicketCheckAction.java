@@ -40,11 +40,6 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      **/
     public static final String VALID = "valid";
 
-    /**
-     * The Central authentication service.
-     */
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     public TicketGrantingTicketCheckAction() {

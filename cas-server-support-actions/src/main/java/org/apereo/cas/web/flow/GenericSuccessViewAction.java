@@ -22,9 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class GenericSuccessViewAction extends AbstractAction {
     /** Log instance for logging events, info, warnings, errors, etc. */
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    
     private CentralAuthenticationService centralAuthenticationService;
 
     public GenericSuccessViewAction() {

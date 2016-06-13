@@ -14,12 +14,15 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class InitialAuthenticationRequestValidationAction extends AbstractAction {
-    @Autowired
-    @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         return this.rankedAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
+    }
+
+    public void setRankedAuthenticationProviderWebflowEventResolver(
+            final CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver) {
+        this.rankedAuthenticationProviderWebflowEventResolver = rankedAuthenticationProviderWebflowEventResolver;
     }
 }

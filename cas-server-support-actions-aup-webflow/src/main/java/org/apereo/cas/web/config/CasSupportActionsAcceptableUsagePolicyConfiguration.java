@@ -22,10 +22,12 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public Action acceptableUsagePolicyFormAction() {
-        return new AcceptableUsagePolicyFormAction();
+        final AcceptableUsagePolicyFormAction a = new AcceptableUsagePolicyFormAction();
+        a.setRepository(defaultAcceptableUsagePolicyRepository());
+        return a;
     }
 
     @Bean

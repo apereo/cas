@@ -27,8 +27,6 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
     private AcceptableUsagePolicyRepository repository;
 
     /**
@@ -64,6 +62,9 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
         return error();
     }
 
+    public void setRepository(final AcceptableUsagePolicyRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {

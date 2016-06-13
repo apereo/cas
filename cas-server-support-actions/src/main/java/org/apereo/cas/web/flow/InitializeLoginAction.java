@@ -19,13 +19,15 @@ public class InitializeLoginAction extends AbstractAction {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The services manager with access to the registry. **/
-    @Autowired
-    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         logger.debug("Initialized login sequence");
         return success();
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 }

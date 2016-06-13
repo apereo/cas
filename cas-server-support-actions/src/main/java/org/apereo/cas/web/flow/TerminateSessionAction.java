@@ -29,28 +29,14 @@ public class TerminateSessionAction extends AbstractAction {
     /** Webflow event helper component. */
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
 
-    /** The CORE to which we delegate for all CAS functionality. */
-    
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
 
-    /** CookieGenerator for TGT Cookie. */
+    private CentralAuthenticationService centralAuthenticationService;
     
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    /** CookieGenerator for Warn Cookie. */
-    
-    @Autowired
-    @Qualifier("warnCookieGenerator")
     private CookieRetrievingCookieGenerator warnCookieGenerator;
-
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
      * Creates a new instance with the given parameters.
@@ -85,5 +71,21 @@ public class TerminateSessionAction extends AbstractAction {
         this.ticketGrantingTicketCookieGenerator.removeCookie(response);
         this.warnCookieGenerator.removeCookie(response);
         return this.eventFactorySupport.success(this);
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+    }
+
+    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
+        this.warnCookieGenerator = warnCookieGenerator;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }

@@ -16,13 +16,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 public class AuthenticationViaFormAction extends AbstractAction {
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
 
@@ -34,5 +30,15 @@ public class AuthenticationViaFormAction extends AbstractAction {
         }
 
         return this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+    }
+
+    public void setServiceTicketRequestWebflowEventResolver(
+            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver) {
+        this.serviceTicketRequestWebflowEventResolver = serviceTicketRequestWebflowEventResolver;
+    }
+
+    public void setInitialAuthenticationAttemptWebflowEventResolver(
+            final CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+        this.initialAuthenticationAttemptWebflowEventResolver = initialAuthenticationAttemptWebflowEventResolver;
     }
 }

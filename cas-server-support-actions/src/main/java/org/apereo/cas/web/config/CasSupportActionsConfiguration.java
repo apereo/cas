@@ -1,7 +1,10 @@
 package org.apereo.cas.web.config;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.AuthenticationViaFormAction;
 import org.apereo.cas.web.flow.FrontChannelLogoutAction;
@@ -17,6 +20,7 @@ import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.ServiceWarningAction;
 import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,13 @@ import java.util.List;
 @Configuration("casSupportActionsConfiguration")
 public class CasSupportActionsConfiguration {
 
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Resource(name = "servicesManager")
     private ServicesManager servicesManager;
@@ -55,7 +66,24 @@ public class CasSupportActionsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
+    private CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
+
     @Bean
     public HandlerExceptionResolver errorHandlerResolver() {
         return new FlowExecutionExceptionResolver();
@@ -63,12 +91,15 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action authenticationViaFormAction() {
-        return new AuthenticationViaFormAction();
+        final AuthenticationViaFormAction a = new AuthenticationViaFormAction();
+        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
+        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
+        return a;
     }
 
     @Bean
     public Action serviceAuthorizationCheck() {
-        return new ServiceAuthorizationCheck(servicesManager);
+        return new ServiceAuthorizationCheck(this.servicesManager);
     }
 
     @Bean
@@ -89,7 +120,9 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action initializeLoginAction() {
-        return new InitializeLoginAction();
+        final InitializeLoginAction a = new InitializeLoginAction();
+        a.setServicesManager(this.servicesManager);
+        return a;
     }
 
     @Bean
@@ -107,17 +140,24 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action initialAuthenticationRequestValidationAction() {
-        return new InitialAuthenticationRequestValidationAction();
+        final InitialAuthenticationRequestValidationAction a =
+                new InitialAuthenticationRequestValidationAction();
+        a.setRankedAuthenticationProviderWebflowEventResolver(rankedAuthenticationProviderWebflowEventResolver);
+        return a;
     }
 
     @Bean
     public Action genericSuccessViewAction() {
-        return new GenericSuccessViewAction();
+        return new GenericSuccessViewAction(this.centralAuthenticationService);
     }
 
     @Bean
     public Action generateServiceTicketAction() {
-        return new GenerateServiceTicketAction();
+        final GenerateServiceTicketAction a = new GenerateServiceTicketAction();
+        a.setCentralAuthenticationService(this.centralAuthenticationService);
+        a.setAuthenticationSystemSupport(authenticationSystemSupport);
+        a.setTicketRegistrySupport(ticketRegistrySupport);
+        return a;
     }
 
     @Bean
@@ -132,12 +172,17 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action ticketGrantingTicketCheckAction() {
-        return new TicketGrantingTicketCheckAction();
+        return new TicketGrantingTicketCheckAction(this.centralAuthenticationService);
     }
 
     @Bean
     public Action terminateSessionAction() {
-        return new TerminateSessionAction();
+        final TerminateSessionAction a = new TerminateSessionAction();
+        a.setAuthenticationSystemSupport(authenticationSystemSupport);
+        a.setCentralAuthenticationService(centralAuthenticationService);
+        a.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
+        a.setWarnCookieGenerator(warnCookieGenerator);
+        return a;
     }
 
     @Bean

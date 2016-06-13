@@ -31,18 +31,11 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class GenerateServiceTicketAction extends AbstractAction {
     /** Instance of CentralAuthenticationService. */
-    
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
 
+    private CentralAuthenticationService centralAuthenticationService;
     
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override
