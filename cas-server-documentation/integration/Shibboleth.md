@@ -13,10 +13,6 @@ It is possible to designate CAS to serve as the authentication provider for the 
 
 ## SSO for Shibboleth IdP (RemoteUser)
 
-### Configuration
-
-#### Include CAS Client Libraries in IdP Deployable
-
 Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are 
 included in the `./lib` installer folder, then redeploy the Idp with these files:
 
@@ -24,9 +20,10 @@ included in the `./lib` installer folder, then redeploy the Idp with these files
 cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
 ```
 
-#### Modify `$SHIB_HOME/conf/handler.xml`
+### Modify `$SHIB_HOME/conf/handler.xml`
 
 Define the `RemoteUser` authentication method to be used with CAS authentication.
+
 ```xml
 <!-- Remote User handler for CAS support -->
 <LoginHandler xsi:type="RemoteUser">
@@ -40,8 +37,10 @@ Define the `RemoteUser` authentication method to be used with CAS authentication
 ```
 
 
-#### Modify IdP Deployable `web.xml`
+### Modify IdP Deployable `web.xml`
+
 Add the following XML blocks to the `web.xml` file for the IdP war deployable.
+
 ```xml
 <!-- For CAS client support -->
 <context-param>
@@ -100,7 +99,7 @@ CAS Filters
 ```
 
 
-#### Enable `RemoteUserHandler` in Idp Deployable `web.xml`
+### Enable `RemoteUserHandler` in Idp Deployable `web.xml`
 Ensure the following is defined:
 
 ```xml
@@ -118,6 +117,7 @@ Ensure the following is defined:
 
 
 ## SSO for Shibboleth IdP (External)
+
 This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using 
 this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`.
 
@@ -132,7 +132,7 @@ The entity ID is passed in form of a url parameter to the CAS server as such:
 https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<relying-party-entity-id>
 ```
 
-### Displaying SAML MDUI
+## Displaying SAML MDUI
 The CAS server is able to recognize the `entityId` parameter and display SAML MDUI on the login page,
 that is provided by the metadata associated with the relying party. This means that CAS will also need to know
 about metadata sources that the identity provider uses.

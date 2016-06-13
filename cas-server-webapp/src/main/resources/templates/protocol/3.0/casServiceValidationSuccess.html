@@ -1,7 +1,7 @@
 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
     <cas:authenticationSuccess>
         <cas:user th:text="${principal.id}" />
-        <cas:proxyGrantingTicket th:if="${pgtIou}" th:text="${pgtIou"/>
+        <cas:proxyGrantingTicket th:if="${pgtIou}" th:text="${pgtIou}"/>
         <cas:proxies th:if="${not #lists.isEmpty(chainedAuthentications)}">
             <cas:proxy th:each="proxy : ${chainedAuthentications}" th:text="${proxy.principal.id}" />
         </cas:proxies>
