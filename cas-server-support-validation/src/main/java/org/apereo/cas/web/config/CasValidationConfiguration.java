@@ -44,12 +44,16 @@ public class CasValidationConfiguration {
 
     @Bean
     public View cas1ServiceSuccessView() {
-        return new Cas10ResponseView.Success();
+        final Cas10ResponseView v = new Cas10ResponseView();
+        v.setSuccessResponse(true);
+        return v;
     }
 
     @Bean
     public View cas1ServiceFailureView() {
-        return new Cas10ResponseView.Failure();
+        final Cas10ResponseView v = new Cas10ResponseView();
+        v.setSuccessResponse(false);
+        return v;
     }
 
     @Bean

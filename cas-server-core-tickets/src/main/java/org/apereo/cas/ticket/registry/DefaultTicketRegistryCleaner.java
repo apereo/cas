@@ -40,7 +40,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Autowired
     @Qualifier("lockingStrategy")
-    private LockingStrategy jpaLockingStrategy;
+    private LockingStrategy lockingStrategy;
 
     public DefaultTicketRegistryCleaner() {
     }
@@ -64,7 +64,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
             }
 
             LOGGER.debug("Attempting to acquire ticket cleanup lock.");
-            if (!this.jpaLockingStrategy.acquire()) {
+            if (!this.lockingStrategy.acquire()) {
                 LOGGER.info("Could not obtain lock. Aborting cleanup. The ticket registry may not support self-service maintenance.");
                 return;
             }
@@ -96,7 +96,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
             LOGGER.error(e.getMessage(), e);
         } finally {
             LOGGER.debug("Releasing ticket cleanup lock.");
-            this.jpaLockingStrategy.release();
+            this.lockingStrategy.release();
             LOGGER.info("Finished ticket cleanup.");
         }
     }
@@ -110,5 +110,17 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
      */
     protected boolean isCleanerSupported() {
         return true;
+    }
+
+    public void setLogoutManager(final LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
+    }
+
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
+    public void setLockingStrategy(final LockingStrategy lockingStrategy) {
+        this.lockingStrategy = lockingStrategy;
     }
 }

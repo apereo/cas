@@ -29,6 +29,7 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
+import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,7 +41,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -66,13 +66,11 @@ public class CasCoreTicketsConfiguration {
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
-
-    @Nullable
+    
     @Autowired(required = false)
     @Qualifier("rememberMeExpirationPolicy")
     private ExpirationPolicy rememberMeExpirationPolicy;
 
-    @Nullable
     @Autowired(required = false)
     @Qualifier("sessionExpirationPolicy")
     private ExpirationPolicy sessionExpirationPolicy;
@@ -81,8 +79,12 @@ public class CasCoreTicketsConfiguration {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+    private HttpClient httpClient;
+
     @Resource(name = "uniqueIdGeneratorsMap")
-    protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
@@ -129,7 +131,10 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public ProxyHandler proxy20Handler() {
-        return new Cas20ProxyHandler();
+        final Cas20ProxyHandler h = new Cas20ProxyHandler();
+        h.setHttpClient(httpClient);
+        h.setUniqueTicketIdGenerator(proxy20TicketUniqueIdGenerator());
+        return h;
     }
 
     @RefreshScope

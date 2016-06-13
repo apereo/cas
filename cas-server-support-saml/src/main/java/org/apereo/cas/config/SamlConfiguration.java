@@ -1,13 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
-import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
@@ -31,7 +29,11 @@ public class SamlConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
+    private OpenSamlConfigBean configBean;
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -48,13 +50,14 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public Saml10SuccessResponseView casSamlServiceSuccessView() {
-        
+
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
         view.setIssuer(casProperties.getSamlResponse().getIssuer());
         view.setSkewAllowance(casProperties.getSamlResponse().getSkewAllowance());
         view.setDefaultAttributeNamespace(casProperties.getSamlResponse().getAttributeNamespace());
+        view.setSamlObjectBuilder(saml10ObjectBuilder());
         return view;
     }
 
@@ -69,27 +72,34 @@ public class SamlConfiguration {
         final Saml10FailureResponseView view = new Saml10FailureResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
+        view.setSamlObjectBuilder(saml10ObjectBuilder());
         return view;
     }
 
     @Bean
     public BaseApplicationContextWrapper samlApplicationContextWrapper() {
-        return new SamlApplicationContextWrapper();
+        final SamlApplicationContextWrapper w = new SamlApplicationContextWrapper();
+        w.setSamlAuthenticationMetaDataPopulator(samlAuthenticationMetaDataPopulator());
+        w.setSamlServiceFactory(samlServiceFactory());
+        w.setSamlServiceTicketUniqueIdGenerator(samlServiceTicketUniqueIdGenerator());
+        return w;
     }
 
     @Bean
-    public AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator() {
+    public SamlAuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator() {
         return new SamlAuthenticationMetaDataPopulator();
     }
 
     @Bean
-    public ServiceFactory<SamlService> samlServiceFactory() {
+    public SamlServiceFactory samlServiceFactory() {
         return new SamlServiceFactory();
     }
 
     @Bean
     public Saml10ObjectBuilder saml10ObjectBuilder() {
-        return new Saml10ObjectBuilder();
+        final Saml10ObjectBuilder w = new Saml10ObjectBuilder();
+        w.setConfigBean(this.configBean);
+        return w;
     }
 
     @Bean

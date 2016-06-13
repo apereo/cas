@@ -17,17 +17,11 @@ import javax.annotation.PostConstruct;
  * @since 4.2
  */
 public class SamlApplicationContextWrapper extends BaseApplicationContextWrapper {
-
-    @Autowired
-    @Qualifier("samlServiceFactory")
+    
     private SamlServiceFactory samlServiceFactory;
-
-    @Autowired
-    @Qualifier("samlServiceTicketUniqueIdGenerator")
+    
     private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
     
-    @Autowired
-    @Qualifier("samlAuthenticationMetaDataPopulator")
     private SamlAuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator;
 
     /**
@@ -39,5 +33,17 @@ public class SamlApplicationContextWrapper extends BaseApplicationContextWrapper
         addServiceTicketUniqueIdGenerator(SamlService.class.getCanonicalName(),
                 this.samlServiceTicketUniqueIdGenerator);
         addAuthenticationMetadataPopulator(this.samlAuthenticationMetaDataPopulator);
+    }
+
+    public void setSamlServiceFactory(final SamlServiceFactory samlServiceFactory) {
+        this.samlServiceFactory = samlServiceFactory;
+    }
+
+    public void setSamlServiceTicketUniqueIdGenerator(final UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator) {
+        this.samlServiceTicketUniqueIdGenerator = samlServiceTicketUniqueIdGenerator;
+    }
+
+    public void setSamlAuthenticationMetaDataPopulator(final SamlAuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator) {
+        this.samlAuthenticationMetaDataPopulator = samlAuthenticationMetaDataPopulator;
     }
 }

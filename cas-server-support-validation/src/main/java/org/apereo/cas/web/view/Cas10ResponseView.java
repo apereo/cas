@@ -28,29 +28,4 @@ public class Cas10ResponseView extends AbstractCasView {
             response.getWriter().print("no\n\n");
         }
     }
-
-    /**
-     * The type Success.
-     */
-    public static class Success extends Cas10ResponseView {
-        /**
-         * Instantiates a new Success.
-         */
-        public Success() {
-            super.setSuccessResponse(true);
-        }
-    }
-
-    /**
-     * The type Failure.
-     */
-    public static class Failure extends Cas10ResponseView {
-        /**
-         * Instantiates a new Failure.
-         */
-        public Failure() {
-            super.setSuccessResponse(false);
-        }
-    }
-
 }

@@ -1,17 +1,15 @@
 package org.apereo.cas.ticket.proxy.support;
 
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.net.URL;
 
@@ -28,25 +26,23 @@ import java.net.URL;
 public class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
-    /** The proxy granting ticket identifier parameter. */
+    /**
+     * The proxy granting ticket identifier parameter.
+     */
     private static final String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
 
-    /** The Constant proxy granting ticket parameter. */
+    /**
+     * The Constant proxy granting ticket parameter.
+     */
     private static final String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
 
-    /** The Commons Logging instance. */
+    /**
+     * The Commons Logging instance.
+     */
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** Generate unique ids. */
-    
-    @Autowired
-    @Qualifier("proxy20TicketUniqueIdGenerator")
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    /** Instance of Apache Commons HttpClient. */
-    
-    @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     /**
@@ -92,10 +88,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
         logger.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
         return null;
     }
-
-    /**
-     * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to set.
-     */
+    
     public void setUniqueTicketIdGenerator(final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
