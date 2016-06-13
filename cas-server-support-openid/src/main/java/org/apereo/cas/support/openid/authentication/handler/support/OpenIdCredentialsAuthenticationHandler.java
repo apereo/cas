@@ -11,8 +11,6 @@ import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.security.auth.login.FailedLoginException;
 

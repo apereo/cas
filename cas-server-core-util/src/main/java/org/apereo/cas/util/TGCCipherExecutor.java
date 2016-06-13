@@ -1,7 +1,5 @@
 package org.apereo.cas.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * This is {@link TGCCipherExecutor} that reads TGC keys from the CAS config
  * and presents a cipher.
@@ -17,7 +15,6 @@ public class TGCCipherExecutor extends BaseStringCipherExecutor {
      * @param secretKeyEncryption the secret key encryption
      * @param secretKeySigning    the secret key signing
      */
-    @Autowired
     public TGCCipherExecutor(final String secretKeyEncryption,
                              final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);

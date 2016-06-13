@@ -44,7 +44,21 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
-        return new InitialAuthenticationAttemptWebflowEventResolver();
+        final InitialAuthenticationAttemptWebflowEventResolver r =
+                new InitialAuthenticationAttemptWebflowEventResolver();
+
+        r.setPrincipalAttributeAuthenticationPolicyWebflowEventResolver(
+                principalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.setPrincipalAttributeAuthenticationPolicyWebflowEventResolver(
+                registeredServiceAuthenticationPolicyWebflowEventResolver());
+        r.setRegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(
+                registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.setRequestParameterAuthenticationPolicyWebflowEventResolver(
+                requestParameterAuthenticationPolicyWebflowEventResolver());
+        r.setSelectiveAuthenticationProviderWebflowEventResolver(
+                selectiveAuthenticationProviderWebflowEventResolver());
+
+        return r;
     }
 
     @Bean

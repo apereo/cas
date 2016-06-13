@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.gauth;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 
@@ -15,12 +13,9 @@ import javax.annotation.PostConstruct;
  * @since 5.0.0
  */
 public class GoogleAuthenticatorApplicationContextWrapper extends BaseApplicationContextWrapper {
-    @Autowired
-    @Qualifier("googleAuthenticatorAuthenticationHandler")
+
     private AuthenticationHandler authenticationHandler;
 
-    @Autowired
-    @Qualifier("googleAuthenticatorAuthenticationMetaDataPopulator")
     private AuthenticationMetaDataPopulator populator;
 
     /**
@@ -30,5 +25,13 @@ public class GoogleAuthenticatorApplicationContextWrapper extends BaseApplicatio
     protected void initializeRootApplicationContext() {
         addAuthenticationHandler(this.authenticationHandler);
         addAuthenticationMetadataPopulator(this.populator);
+    }
+
+    public void setAuthenticationHandler(final AuthenticationHandler authenticationHandler) {
+        this.authenticationHandler = authenticationHandler;
+    }
+
+    public void setPopulator(final AuthenticationMetaDataPopulator populator) {
+        this.populator = populator;
     }
 }

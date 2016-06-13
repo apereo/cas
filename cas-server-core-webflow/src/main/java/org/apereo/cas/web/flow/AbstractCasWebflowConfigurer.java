@@ -22,8 +22,6 @@ import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
-import org.springframework.util.ClassUtils;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -34,7 +32,6 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
-import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
@@ -44,7 +41,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
-import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.expression.spel.ActionPropertyAccessor;
@@ -56,7 +52,6 @@ import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccesso
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,9 +62,9 @@ import java.util.List;
  * @since 4.2
  */
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
-    
+
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     /**
      * The Login flow definition registry.
      */
@@ -81,15 +76,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
-    @Qualifier("logoutFlowRegistry")
-    private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     /**
      * Initialize.
      */
@@ -124,22 +112,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public Flow getLoginFlow() {
         final Flow flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         return flow;
-    }
-
-    protected List<String> getFlowDefinitionIds() {
-        return Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
-    }
-
-    /**
-     * Gets flow definition ids.
-     *
-     * @param excludedFlowIds the excluded flow ids
-     * @return the flow definition ids
-     */
-    protected List<String> getFlowDefinitionIds(final List<String> excludedFlowIds) {
-        final List<String> flowIds = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
-        flowIds.removeAll(excludedFlowIds);
-        return flowIds;
     }
 
     /**
@@ -186,12 +158,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     @Override
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
-                                                final String thenStateId, final String elseStateId) {
+                                             final String thenStateId, final String elseStateId) {
         if (containsFlowState(flow, id)) {
             logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
             return (DecisionState) flow.getTransitionableState(id);
         }
-        
+
         final DecisionState decisionState = new DecisionState(flow, id);
 
         final Expression expression = createExpression(flow, testExpression, Boolean.class);
@@ -228,32 +200,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void setStartState(final Flow flow, final TransitionableState state) {
         setStartState(flow, state.getId());
     }
-
-    /**
-     * Add global transition if exception is thrown.
-     *
-     * @param flow          the flow
-     * @param targetStateId the target state id
-     * @param clazz         the exception class
-     */
-    protected void createGlobalTransition(final Flow flow, final String targetStateId,
-                                          final Class<? extends Throwable> clazz) {
-
-        try {
-            final TransitionExecutingFlowExecutionExceptionHandler handler = new TransitionExecutingFlowExecutionExceptionHandler();
-            final TargetStateResolver targetStateResolver = (TargetStateResolver) convertClassToTargetType(TargetStateResolver.class)
-                    .execute(targetStateId);
-            handler.add(clazz, targetStateResolver);
-
-            logger.debug("Added transition {} to execute on the occurrence of {}", targetStateId, clazz.getName());
-            flow.getExceptionHandlerSet().add(handler);
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-
-
-    }
-
+    
     /**
      * From string to class type, based on the flow conversion service.
      *
@@ -262,28 +209,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected ConversionExecutor convertClassToTargetType(final Class targetType) {
         return this.flowBuilderServices.getConversionService().getConversionExecutor(String.class, targetType);
-    }
-
-    /**
-     * Loads the specified class by name, either based on the conversion service
-     * or by the flow classloader.
-     *
-     * @param name the name
-     * @return the class
-     */
-    private Class toClass(final String name) {
-        final Class clazz = this.flowBuilderServices.getConversionService().getClassForAlias(name);
-        if (clazz != null) {
-            return clazz;
-        }
-
-        try {
-            final ClassLoader classLoader = this.flowBuilderServices.getApplicationContext().getClassLoader();
-            return ClassUtils.forName(name, classLoader);
-        } catch (final ClassNotFoundException e) {
-            throw new IllegalArgumentException("Unable to load class " + name);
-        }
-
     }
 
     /**
@@ -479,7 +404,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                 logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
                 return;
             }
-            
+
             final EndState endState = new EndState(flow, id);
             final Action finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
             endState.setFinalResponseAction(finalResponseAction);
@@ -518,7 +443,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                 logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
                 return (ViewState) flow.getTransitionableState(id);
             }
-            
+
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
                     expression,
                     this.flowBuilderServices.getExpressionParser(),
@@ -566,8 +491,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
             return (SubflowState) flow.getTransitionableState(id);
         }
-        
-        final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, 
+
+        final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow,
                 this.loginFlowDefinitionRegistry));
         if (entryAction != null) {
             state.getEntryActionList().add(entryAction);

@@ -12,8 +12,6 @@ import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Fetches a CRL from an LDAP instance.

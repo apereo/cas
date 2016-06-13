@@ -13,8 +13,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.Resource;
-
 /**
  * This is {@link GoogleAccountCheckRegistrationAction}.
  *
@@ -25,11 +23,9 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Resource(name = "googleAuthenticatorAccountRegistry")
+    
     private GoogleAuthenticatorAccountRegistry accountRegistry;
-
-    @Resource(name = "googleAuthenticatorInstance")
+    
     private GoogleAuthenticatorInstance googleAuthenticatorInstance;
 
     @Override
@@ -52,6 +48,13 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
         }
 
         return success();
+    }
 
+    public void setAccountRegistry(final GoogleAuthenticatorAccountRegistry accountRegistry) {
+        this.accountRegistry = accountRegistry;
+    }
+
+    public void setGoogleAuthenticatorInstance(final GoogleAuthenticatorInstance googleAuthenticatorInstance) {
+        this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }

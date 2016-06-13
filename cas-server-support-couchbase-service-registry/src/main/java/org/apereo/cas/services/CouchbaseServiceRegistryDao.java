@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;

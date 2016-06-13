@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.util.BinaryCipherExecutor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is {@link WebflowCipherExecutor}, that reads webflow keys
@@ -21,7 +20,6 @@ public class WebflowCipherExecutor extends BinaryCipherExecutor {
      * @param signingKeySize      the signing key size
      * @param encryptionKeySize   the encryption key size
      */
-    @Autowired
     public WebflowCipherExecutor(final String secretKeyEncryption,
                                  final String secretKeySigning,
                                  final String secretKeyAlg,

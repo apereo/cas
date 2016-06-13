@@ -22,7 +22,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.ResourceUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountLockedException;

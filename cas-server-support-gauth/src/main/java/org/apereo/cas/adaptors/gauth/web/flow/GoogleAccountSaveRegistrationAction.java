@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.gauth.web.flow;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -16,8 +14,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class GoogleAccountSaveRegistrationAction extends AbstractAction {
-    @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
     private GoogleAuthenticatorAccountRegistry accountRegistry;
     
     @Override
@@ -28,5 +24,9 @@ public class GoogleAccountSaveRegistrationAction extends AbstractAction {
         this.accountRegistry.save(uid, account);
         
         return success();
+    }
+
+    public void setAccountRegistry(final GoogleAuthenticatorAccountRegistry accountRegistry) {
+        this.accountRegistry = accountRegistry;
     }
 }

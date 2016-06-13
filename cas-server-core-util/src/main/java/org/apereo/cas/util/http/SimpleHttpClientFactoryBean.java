@@ -33,8 +33,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
@@ -463,28 +461,12 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
     }
 
-    /**
-     * The type No redirect http client.
-     */
-    public static class NoRedirectHttpClient extends SslTrustStoreAwareHttpClient {
-        /**
-         * Instantiates a new No redirect http client.
-         */
-        public NoRedirectHttpClient() {
-            super.setRedirectsEnabled(false);
-            super.setCircularRedirectsAllowed(false);
-        }
-    }
+
 
     /**
      * The type Ssl trust store aware http client.
      */
     public static class SslTrustStoreAwareHttpClient extends DefaultHttpClient {
-        @Override
-        @Autowired
-        public void setSslSocketFactory(@Qualifier("trustStoreSslSocketFactory")
-                                        final SSLConnectionSocketFactory sslSocketFactory) {
-            super.setSslSocketFactory(sslSocketFactory);
-        }
+
     }
 }

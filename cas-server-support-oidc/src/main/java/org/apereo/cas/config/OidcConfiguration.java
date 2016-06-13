@@ -6,9 +6,11 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
@@ -16,6 +18,8 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +56,14 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Resource(name = "oauthSecConfig")
     private Config oauthSecConfig;
 
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oidcInterceptor())
@@ -65,7 +77,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
-        return new OidcConsentApprovalViewResolver();
+        final OidcConsentApprovalViewResolver c = new OidcConsentApprovalViewResolver();
+        c.setOidcAuthzRequestSupport(oidcAuthorizationRequestSupport());
+        return c;
     }
 
     /**
@@ -109,7 +123,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      */
     @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
-        return new OidcCasClientRedirectActionBuilder();
+        final OidcCasClientRedirectActionBuilder builder = new OidcCasClientRedirectActionBuilder();
+        builder.setOidcAuthorizationRequestSupport(oidcAuthorizationRequestSupport());
+        return builder;
     }
 
     /**
@@ -169,13 +185,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         gen.setIssuer(properties.getIssuer());
         gen.setJwksFile(properties.getJwksFile());
         gen.setSkew(properties.getSkew());
-        
+
         return gen;
     }
 
     @Bean
     public OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport() {
-        return new OidcAuthorizationRequestSupport();
+        final OidcAuthorizationRequestSupport s = new OidcAuthorizationRequestSupport();
+        s.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
+        s.setTicketRegistrySupport(ticketRegistrySupport);
+        return s;
     }
 }
 

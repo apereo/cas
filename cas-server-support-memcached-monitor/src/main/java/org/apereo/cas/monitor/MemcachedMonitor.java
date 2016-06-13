@@ -1,10 +1,7 @@
 package org.apereo.cas.monitor;
 
 import net.spy.memcached.MemcachedClientIF;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowCipherExecutor;
@@ -12,6 +13,7 @@ import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +30,12 @@ import javax.validation.MessageInterpolator;
 public class CasCoreUtilConfiguration {
 
     @Autowired
+    @Qualifier("trustStoreSslSocketFactory")
+    private SSLConnectionSocketFactory trustStoreSslSocketFactory;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public CipherExecutor<byte[], byte[]> defaultTicketCipherExecutor() {
         return new DefaultTicketCipherExecutor(
@@ -56,25 +62,29 @@ public class CasCoreUtilConfiguration {
                 new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setSslSocketFactory(this.trustStoreSslSocketFactory);
         return c;
     }
-
-
+    
     @Bean
     public FactoryBean<SimpleHttpClient> noRedirectHttpClient() {
-        final SimpleHttpClientFactoryBean.NoRedirectHttpClient c =
-                new SimpleHttpClientFactoryBean.NoRedirectHttpClient();
+        final SimpleHttpClientFactoryBean c =
+                new SimpleHttpClientFactoryBean();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setRedirectsEnabled(false);
+        c.setCircularRedirectsAllowed(false);
+        c.setSslSocketFactory(this.trustStoreSslSocketFactory);
+
         return c;
     }
 
     @Bean
     public FactoryBean<SimpleHttpClient> supportsTrustStoreSslSocketFactoryHttpClient() {
-        final SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient c =
-                new SimpleHttpClientFactoryBean.SslTrustStoreAwareHttpClient();
+        final SimpleHttpClientFactoryBean c = new SimpleHttpClientFactoryBean();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setSslSocketFactory(this.trustStoreSslSocketFactory);
         return c;
     }
 
@@ -91,7 +101,8 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     public CipherExecutor tgcCipherExecutor() {
-        return new TGCCipherExecutor(casProperties.getTgc().getEncryptionKey(),
+        return new TGCCipherExecutor(
+                casProperties.getTgc().getEncryptionKey(),
                 casProperties.getTgc().getSigningKey());
     }
 

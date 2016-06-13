@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorApplicationContextWrapper;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
@@ -50,9 +49,6 @@ public class GoogleAuthentiacatorConfiguration {
     @Resource(name = "builder")
     private FlowBuilderServices builder;
 
-    @Resource(name = "defaultGoogleAuthenticatorAccountRegistry")
-    private GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry;
-
     /**
      * Yubikey flow registry flow definition registry.
      *
@@ -67,25 +63,22 @@ public class GoogleAuthentiacatorConfiguration {
         return builder.build();
     }
 
-    /**
-     * Google authenticator account registry google authenticator account registry.
-     *
-     * @return the google authenticator account registry
-     */
-    @RefreshScope
-    @Bean
-    public GoogleAuthenticatorAccountRegistry googleAuthenticatorAccountRegistry() {
-        return this.googleAuthenticatorAccountRegistry;
-    }
 
     @Bean
     public BaseApplicationContextWrapper googleAuthenticatorApplicationContextWrapper() {
-        return new GoogleAuthenticatorApplicationContextWrapper();
+        final GoogleAuthenticatorApplicationContextWrapper w =
+                new GoogleAuthenticatorApplicationContextWrapper();
+        w.setAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
+        w.setPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
+        return w;
     }
 
     @Bean
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        return new GoogleAuthenticatorAuthenticationHandler();
+        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
+        h.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
+        h.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
+        return h;
     }
 
     @Bean
@@ -102,8 +95,9 @@ public class GoogleAuthentiacatorConfiguration {
 
     @Bean
     @RefreshScope
-    public IGoogleAuthenticator googleAuthenticatorInstance() {
-        return new GoogleAuthenticatorInstance();
+    public GoogleAuthenticatorInstance googleAuthenticatorInstance() {
+        final GoogleAuthenticatorInstance i = new GoogleAuthenticatorInstance();
+        return i;
     }
 
     @Bean
@@ -124,22 +118,32 @@ public class GoogleAuthentiacatorConfiguration {
 
     @Bean
     public Action saveAccountRegistrationAction() {
-        return new GoogleAccountSaveRegistrationAction();
+        final GoogleAccountSaveRegistrationAction a = new GoogleAccountSaveRegistrationAction();
+        a.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
+        return a;
     }
 
     @Bean
     public Action googleAuthenticatorAuthenticationWebflowAction() {
-        return new GoogleAuthenticatorAuthenticationWebflowAction();
+        final GoogleAuthenticatorAuthenticationWebflowAction a = new GoogleAuthenticatorAuthenticationWebflowAction();
+        a.setCasWebflowEventResolver(googleAuthenticatorAuthenticationWebflowEventResolver());
+        return a;
     }
 
     @Bean
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
-        return new GoogleAuthenticatorMultifactorWebflowConfigurer();
+        final GoogleAuthenticatorMultifactorWebflowConfigurer c =
+                new GoogleAuthenticatorMultifactorWebflowConfigurer();
+        c.setFlowDefinitionRegistry(googleAuthenticatorFlowRegistry());
+        return c;
     }
 
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
-        return new GoogleAccountCheckRegistrationAction();
+        final GoogleAccountCheckRegistrationAction a = new GoogleAccountCheckRegistrationAction();
+        a.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
+        a.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
+        return a;
     }
 }

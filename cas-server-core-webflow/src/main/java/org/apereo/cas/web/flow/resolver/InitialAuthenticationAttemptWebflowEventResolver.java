@@ -6,12 +6,10 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,24 +27,14 @@ import java.util.Set;
  */
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Autowired
-    @Qualifier("requestParameterAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("registeredServiceAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("principalAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 
-    @Autowired
-    @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
 
@@ -109,7 +97,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
                                                               final RegisteredService registeredService) {
         logger.debug("Evaluating authentication policy for {} based on principal attribute requirements only when accessing {}",
-               registeredService.getServiceId(), service);
+                registeredService.getServiceId(), service);
         final Event serviceAttributeEvent =
                 this.registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
 
@@ -156,4 +144,28 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
 
+    public void setRequestParameterAuthenticationPolicyWebflowEventResolver(
+            final CasWebflowEventResolver r) {
+        this.requestParameterAuthenticationPolicyWebflowEventResolver = r;
+    }
+
+    public void setRegisteredServiceAuthenticationPolicyWebflowEventResolver(
+            final CasWebflowEventResolver r) {
+        this.registeredServiceAuthenticationPolicyWebflowEventResolver = r;
+    }
+
+    public void setPrincipalAttributeAuthenticationPolicyWebflowEventResolver(
+            final CasWebflowEventResolver r) {
+        this.principalAttributeAuthenticationPolicyWebflowEventResolver = r;
+    }
+
+    public void setRegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(
+            final CasWebflowEventResolver r) {
+        this.registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver = r;
+    }
+
+    public void setSelectiveAuthenticationProviderWebflowEventResolver(
+            final CasWebflowEventResolver r) {
+        this.selectiveAuthenticationProviderWebflowEventResolver = r;
+    }
 }
