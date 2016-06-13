@@ -18,16 +18,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @since 5.0.0
  */
 public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
-
-    /** The OAuth validator. */
-    @Autowired
-    @Qualifier("oAuthValidator")
-    private OAuthValidator validator;
-
-    /** The services manager. */
     
-    @Autowired
-    @Qualifier("servicesManager")
+    private OAuthValidator validator;
+    
     private ServicesManager servicesManager;
 
     @Override

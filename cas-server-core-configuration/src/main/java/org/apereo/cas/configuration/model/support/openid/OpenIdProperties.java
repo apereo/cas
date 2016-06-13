@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.openid;
 
+import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link OpenIdProperties}.
  *
@@ -8,6 +11,9 @@ package org.apereo.cas.configuration.model.support.openid;
  */
 
 public class OpenIdProperties {
+    @NestedConfigurationProperty
+    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+    
     private boolean enforceRpId;
 
     public boolean isEnforceRpId() {
@@ -16,6 +22,15 @@ public class OpenIdProperties {
 
     public void setEnforceRpId(final boolean enforceRpId) {
         this.enforceRpId = enforceRpId;
+    }
+
+
+    public PersonDirPrincipalResolverProperties getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+        this.principal = principal;
     }
 }
 

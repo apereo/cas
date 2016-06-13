@@ -19,6 +19,7 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
+import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -66,6 +67,9 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private ShiroAuthenticationProperties shiro = new ShiroAuthenticationProperties();
 
+    @NestedConfigurationProperty
+    private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
+    
     @NestedConfigurationProperty
     private JaasAuthenticationProperties jaas = new JaasAuthenticationProperties();
 
@@ -306,5 +310,13 @@ public class AuthenticationProperties {
 
     public void setThrottle(final ThrottleProperties throttle) {
         this.throttle = throttle;
+    }
+
+    public TrustedAuthenticationProperties getTrusted() {
+        return trusted;
+    }
+
+    public void setTrusted(final TrustedAuthenticationProperties trusted) {
+        this.trusted = trusted;
     }
 }

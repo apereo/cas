@@ -1,5 +1,9 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
+import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link WsFederationProperties}.
  *
@@ -18,6 +22,17 @@ public class WsFederationProperties {
     private String attributesType = "WSFED";
     private boolean attributeResolverEnabled = true;
 
+    @NestedConfigurationProperty
+    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+
+    public PersonDirPrincipalResolverProperties getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+        this.principal = principal;
+    }
+    
     public boolean isAttributeResolverEnabled() {
         return attributeResolverEnabled;
     }

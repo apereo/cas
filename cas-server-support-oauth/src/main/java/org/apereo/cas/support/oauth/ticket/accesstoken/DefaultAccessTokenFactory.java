@@ -23,15 +23,9 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    
-    @Autowired(required = false)
-    @Qualifier("accessTokenIdGenerator")
     protected UniqueTicketIdGenerator accessTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for access tokens. */
-    
-    @Autowired
-    @Qualifier("accessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

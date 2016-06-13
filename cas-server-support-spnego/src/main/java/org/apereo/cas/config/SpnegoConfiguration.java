@@ -4,6 +4,8 @@ import jcifs.spnego.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.spnego.SpnegoApplicationContextWrapper;
@@ -17,6 +19,7 @@ import org.apereo.cas.support.spnego.web.flow.client.BaseSpnegoKnownClientSystem
 import org.apereo.cas.support.spnego.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +43,7 @@ public class SpnegoConfiguration {
     @Autowired
     @Qualifier("successfulHandlerMetaDataPopulator")
     private AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator;
-    
+
     @Autowired(required = false)
     @Qualifier("spnegoClientActionConnectionFactory")
     private ConnectionFactory connectionFactory;
@@ -54,6 +57,10 @@ public class SpnegoConfiguration {
     private PrincipalNameTransformer transformer;
 
     @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @RefreshScope
@@ -65,11 +72,11 @@ public class SpnegoConfiguration {
     @Bean
     public BaseApplicationContextWrapper spnegoApplicationContextWrapper() {
         final SpnegoApplicationContextWrapper w = new SpnegoApplicationContextWrapper();
-        
+
         w.setSpnegoHandler(spnegoHandler());
         w.setSpnegoPrincipalResolver(spnegoPrincipalResolver());
         w.setSuccessfulHandlerMetaDataPopulator(successfulHandlerMetaDataPopulator);
-        
+
         return w;
     }
 
@@ -77,7 +84,7 @@ public class SpnegoConfiguration {
     @RefreshScope
     public JcifsConfig jcifsConfig() {
         final JcifsConfig c = new JcifsConfig();
-        
+
         c.setJcifsDomain(casProperties.getAuthn().getSpnego().getJcifsDomain());
         c.setJcifsDomainController(casProperties.getAuthn().getSpnego().getJcifsDomainController());
         c.setJcifsNetbiosCachePolicy(casProperties.getAuthn().getSpnego().getCachePolicy());
@@ -93,7 +100,7 @@ public class SpnegoConfiguration {
         c.setKerberosRealm(casProperties.getAuthn().getSpnego().getKerberosRealm());
         c.setLoginConf(casProperties.getAuthn().getSpnego().getLoginConf());
         c.setUseSubjectCredsOnly(casProperties.getAuthn().getSpnego().isUseSubjectCredsOnly());
-        
+
         return c;
     }
 
@@ -126,7 +133,16 @@ public class SpnegoConfiguration {
         if (transformer != null) {
             r.setPrincipalNameTransformer(transformer);
         }
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getSpnego().getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getSpnego().getPrincipal().isReturnNull());
+        r.setPrincipalFactory(spnegoPrincipalFactory());
         return r;
+    }
+
+    @Bean
+    public PrincipalFactory spnegoPrincipalFactory() {
+        return new DefaultPrincipalFactory();
     }
 
     @Bean

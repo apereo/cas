@@ -1,5 +1,9 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
+import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link SpnegoProperties}.
  *
@@ -8,7 +12,8 @@ package org.apereo.cas.configuration.model.support.spnego;
  */
 
 public class SpnegoProperties {
-
+    
+    
     private boolean principalWithDomainName;
     private boolean ntlmAllowed = true;
     private boolean send401OnAuthenticationFailure = true;
@@ -39,6 +44,17 @@ public class SpnegoProperties {
     private boolean ntlm;
     private boolean mixedModeAuthentication;
     private String supportedBrowsers = "MSIE,Trident,Firefox,AppleWebKit";
+
+    @NestedConfigurationProperty
+    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+
+    public PersonDirPrincipalResolverProperties getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+        this.principal = principal;
+    }
 
     public boolean isSend401OnAuthenticationFailure() {
         return send401OnAuthenticationFailure;
@@ -255,5 +271,7 @@ public class SpnegoProperties {
     public void setNtlmAllowed(final boolean ntlmAllowed) {
         this.ntlmAllowed = ntlmAllowed;
     }
+    
+    
 }
 

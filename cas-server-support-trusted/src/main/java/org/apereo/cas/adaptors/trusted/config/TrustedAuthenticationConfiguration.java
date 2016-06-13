@@ -5,7 +5,13 @@ import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearing
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +25,13 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("trustedAuthenticationConfiguration")
 public class TrustedAuthenticationConfiguration {
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
     
     @Bean
     @RefreshScope
@@ -29,9 +42,20 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver trustedPrincipalResolver() {
-        return new PrincipalBearingPrincipalResolver();
+        final PrincipalBearingPrincipalResolver r = new PrincipalBearingPrincipalResolver();
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getTrusted().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getTrusted().isReturnNull());
+        r.setPrincipalFactory(trustedPrincipalFactory());
+        return r;
     }
 
+    @Bean
+    public PrincipalFactory trustedPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+    
 
     @Bean
     @RefreshScope

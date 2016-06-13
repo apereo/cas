@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.openid.OpenIdApplicationContextWrapper;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -18,6 +20,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.DelegatingController;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,10 @@ import java.util.Properties;
 public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
+    
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
@@ -126,9 +133,19 @@ public class OpenIdConfiguration {
 
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
-        return new OpenIdPrincipalResolver();
+        final OpenIdPrincipalResolver r = new OpenIdPrincipalResolver();
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull());
+        r.setPrincipalFactory(openidPrincipalFactory());
+        return r;
     }
 
+    @Bean
+    public PrincipalFactory openidPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+    
     @Bean
     @RefreshScope
     public OpenIdServiceFactory openIdServiceFactory() {

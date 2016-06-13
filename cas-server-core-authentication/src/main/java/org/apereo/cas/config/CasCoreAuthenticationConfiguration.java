@@ -70,30 +70,38 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired(required=false)
+    @Autowired
+    @Qualifier("principalFactory")
+    private PrincipalFactory principalFactory;
+    
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
+
+    @Autowired(required = false)
     @Qualifier("acceptPasswordEncoder")
     private PasswordEncoder acceptPasswordEncoder;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("acceptPrincipalNameTransformer")
     private PrincipalNameTransformer acceptPrincipalNameTransformer;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("acceptPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
-    
-    @Autowired(required=false)
+
+    @Autowired(required = false)
     @Qualifier("jaasPasswordEncoder")
     private PasswordEncoder passwordEncoder;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("jaasPrincipalNameTransformer")
     private PrincipalNameTransformer principalNameTransformer;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("jaasPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -238,16 +246,12 @@ public class CasCoreAuthenticationConfiguration {
 
     @RefreshScope
     @Bean
-    @Autowired
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository")
-                                                              final IPersonAttributeDao attributeRepository,
-                                                              @Qualifier("principalFactory")
-                                                              final PrincipalFactory principalFactory) {
+    public PrincipalResolver personDirectoryPrincipalResolver() {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
         bean.setAttributeRepository(attributeRepository);
-        bean.setPrincipalFactory(principalFactory);
         bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
         bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
+        bean.setPrincipalFactory(principalFactory);
         return bean;
     }
 
@@ -257,8 +261,15 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
+    public PrincipalFactory proxyPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+    @Bean
     public PrincipalResolver proxyPrincipalResolver() {
-        return new BasicPrincipalResolver();
+        final BasicPrincipalResolver p = new BasicPrincipalResolver();
+        p.setPrincipalFactory(proxyPrincipalFactory());
+        return p;
     }
 
     @RefreshScope
@@ -269,7 +280,7 @@ public class CasCoreAuthenticationConfiguration {
         h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
         h.setKerberosRealmSystemProperty(casProperties.getAuthn().getJaas().getKerberosRealmSystemProperty());
         h.setRealm(casProperties.getAuthn().getJaas().getRealm());
-        
+
         if (passwordEncoder != null) {
             h.setPasswordEncoder(passwordEncoder);
         }
@@ -279,7 +290,7 @@ public class CasCoreAuthenticationConfiguration {
         if (principalNameTransformer != null) {
             h.setPrincipalNameTransformer(principalNameTransformer);
         }
-        
+
         return h;
     }
 

@@ -1,7 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.OAuthApplicationContextWrapper;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
@@ -22,6 +26,8 @@ import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.jasig.cas.client.util.URIBuilder;
@@ -36,6 +42,7 @@ import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +54,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -62,17 +70,22 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
 
-    @Resource(name = "oauthCasClientRedirectActionBuilder")
-    private OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder;
-
-    @Resource(name = "oAuthUserAuthenticator")
-    private UsernamePasswordAuthenticator oAuthUserAuthenticator;
-
-    @Resource(name = "oAuthClientAuthenticator")
-    private UsernamePasswordAuthenticator oAuthClientAuthenticator;
-
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Resource(name = "webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Resource(name = "validationServiceSelectionStrategies")
+    private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
      * Access token response generator access token response generator.
@@ -107,22 +120,22 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         final CasClient oauthCasClient = new CasClient(casProperties.getServer().getLoginUrl()) {
             @Override
             protected RedirectAction retrieveRedirectAction(final WebContext context) {
-                return oauthCasClientRedirectActionBuilder.build(this, context);
+                return oauthCasClientRedirectActionBuilder().build(this, context);
             }
         };
 
         oauthCasClient.setName(CAS_OAUTH_CLIENT);
         oauthCasClient.setCallbackUrlResolver(buildOAuthCasCallbackUrlResolver());
 
-        final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(this.oAuthClientAuthenticator);
+        final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(oAuthClientAuthenticator());
         basicAuthClient.setName("clientBasicAuth");
 
-        final DirectFormClient directFormClient = new DirectFormClient(this.oAuthClientAuthenticator);
+        final DirectFormClient directFormClient = new DirectFormClient(oAuthClientAuthenticator());
         directFormClient.setName("clientForm");
         directFormClient.setUsernameParameter(OAuthConstants.CLIENT_ID);
         directFormClient.setPasswordParameter(OAuthConstants.CLIENT_SECRET);
 
-        final DirectFormClient userFormClient = new DirectFormClient(this.oAuthUserAuthenticator);
+        final DirectFormClient userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName("userForm");
 
         final String callbackUrl = casProperties.getServer().getPrefix().concat("/oauth2.0/callbackAuthorize");
@@ -236,7 +249,11 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public BaseApplicationContextWrapper oauthApplicationContextWrapper() {
-        return new OAuthApplicationContextWrapper();
+        final OAuthApplicationContextWrapper w = new OAuthApplicationContextWrapper();
+        w.setOauth20ValidationServiceSelectionStrategy(oauth20ValidationServiceSelectionStrategy());
+        w.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
+        w.setWebApplicationServiceFactory(webApplicationServiceFactory);
+        return w;
     }
 
     @Bean
@@ -246,12 +263,17 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public UsernamePasswordAuthenticator oAuthClientAuthenticator() {
-        return new OAuthClientAuthenticator();
+        final OAuthClientAuthenticator c = new OAuthClientAuthenticator();
+        c.setValidator(oAuthValidator());
+        c.setServicesManager(this.servicesManager);
+        return c;
     }
 
     @Bean
     public UsernamePasswordAuthenticator oAuthUserAuthenticator() {
-        return new OAuthUserAuthenticator();
+        final OAuthUserAuthenticator w = new OAuthUserAuthenticator();
+        w.setAuthenticationSystemSupport(authenticationSystemSupport);
+        return w;
     }
 
     @Bean
@@ -266,13 +288,15 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public AccessTokenFactory defaultAccessTokenFactory() {
-        return new DefaultAccessTokenFactory();
+        final DefaultAccessTokenFactory f = new DefaultAccessTokenFactory();
+        f.setAccessTokenIdGenerator(accessTokenIdGenerator());
+        f.setExpirationPolicy(accessTokenExpirationPolicy());
+        return f;
     }
 
     @Bean
     @RefreshScope
     public ExpirationPolicy accessTokenExpirationPolicy() {
-        
         return new OAuthAccessTokenExpirationPolicy(
                 casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds(),
                 casProperties.getAuthn().getOauth().getAccessToken().getTimeToKillInSeconds(),
@@ -288,13 +312,29 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    public UniqueTicketIdGenerator oAuthCodeIdGenerator() {
+        return new DefaultUniqueTicketIdGenerator();
+    }
+
+    @Bean
+    public UniqueTicketIdGenerator refreshTokenIdGenerator() {
+        return new DefaultUniqueTicketIdGenerator();
+    }
+
+    @Bean
     public OAuthCodeFactory defaultOAuthCodeFactory() {
-        return new DefaultOAuthCodeFactory();
+        final DefaultOAuthCodeFactory f = new DefaultOAuthCodeFactory();
+        f.setExpirationPolicy(oAuthCodeExpirationPolicy());
+        f.setoAuthCodeIdGenerator(oAuthCodeIdGenerator());
+        return f;
     }
 
     @Bean
     public RefreshTokenFactory defaultRefreshTokenFactory() {
-        return new DefaultRefreshTokenFactory();
+        final DefaultRefreshTokenFactory f = new DefaultRefreshTokenFactory();
+        f.setExpirationPolicy(refreshTokenExpirationPolicy());
+        f.setRefreshTokenIdGenerator(refreshTokenIdGenerator());
+        return f;
     }
 
     @Bean
@@ -307,6 +347,14 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy() {
-        return new OAuth20ValidationServiceSelectionStrategy();
+        final OAuth20ValidationServiceSelectionStrategy s = new OAuth20ValidationServiceSelectionStrategy();
+        s.setServicesManager(servicesManager);
+        s.setWebApplicationServiceFactory(webApplicationServiceFactory);
+        return s;
+    }
+
+    @Bean
+    public UniqueTicketIdGenerator accessTokenIdGenerator() {
+        return new DefaultUniqueTicketIdGenerator();
     }
 }

@@ -78,7 +78,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      *
      * @param principalFactory the principal factory
      */
-    @Autowired
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }

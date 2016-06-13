@@ -4,6 +4,8 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -15,6 +17,7 @@ import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFede
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.flow.WsFederationAction;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -33,6 +36,10 @@ import org.springframework.webflow.execution.Action;
 @Configuration("wsFederationConfiguration")
 public class WsFederationAuthenticationConfiguration {
 
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
+            
     @Autowired(required=false)
     @Qualifier("wsfedAttributeMutator")
     private WsFederationAttributeMutator attributeMutator;
@@ -46,15 +53,7 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("adfsAuthNHandler")
-    private AuthenticationHandler adfsAuthNHandler;
-
-    @Autowired
-    @Qualifier("adfsPrincipalResolver")
-    private PrincipalResolver adfsPrincipalResolver;
-
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -66,7 +65,7 @@ public class WsFederationAuthenticationConfiguration {
 
     @Bean
     public BaseApplicationContextWrapper wsFedApplicationContextWrapper() {
-        return new WsFedApplicationContextWrapper(this.adfsAuthNHandler, this.adfsPrincipalResolver,
+        return new WsFedApplicationContextWrapper(adfsAuthNHandler(), adfsPrincipalResolver(),
                 casProperties.getAuthn().getWsfed().isAttributeResolverEnabled());
     }
 
@@ -108,9 +107,18 @@ public class WsFederationAuthenticationConfiguration {
         final WsFederationCredentialsToPrincipalResolver r =
                 new WsFederationCredentialsToPrincipalResolver();
         r.setConfiguration(wsFedConfig());
+        r.setAttributeRepository(attributeRepository);
+        r.setPrincipalAttributeName(casProperties.getAuthn().getWsfed().getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getWsfed().getPrincipal().isReturnNull());
+        r.setPrincipalFactory(adfsPrincipalFactory());
         return r;
     }
 
+    @Bean
+    public PrincipalFactory adfsPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+    
     @Bean
     @RefreshScope
     public Action wsFederationAction() {

@@ -22,10 +22,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
-
     
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override

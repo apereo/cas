@@ -28,16 +28,27 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Resource(name="webApplicationServiceFactory")
+    
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-    @Autowired
-    @Qualifier("oauth20ValidationServiceSelectionStrategy")
+    
     private ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy;
-
-    @Resource(name = "validationServiceSelectionStrategies")
+    
     private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+
+    public void setWebApplicationServiceFactory(
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+    }
+
+    public void setOauth20ValidationServiceSelectionStrategy(
+            final ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy) {
+        this.oauth20ValidationServiceSelectionStrategy = oauth20ValidationServiceSelectionStrategy;
+    }
+
+    public void setValidationServiceSelectionStrategies(
+            final List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies) {
+        this.validationServiceSelectionStrategies = validationServiceSelectionStrategies;
+    }
 
     /**
      * Initialize servlet application context.

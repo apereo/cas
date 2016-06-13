@@ -23,15 +23,9 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    
-    @Autowired(required = false)
-    @Qualifier("oAuthCodeIdGenerator")
-    protected UniqueTicketIdGenerator oAuthCodeIdGenerator = new DefaultUniqueTicketIdGenerator();
+    protected UniqueTicketIdGenerator oAuthCodeIdGenerator;
 
     /** ExpirationPolicy for OAuth code. */
-    
-    @Autowired
-    @Qualifier("oAuthCodeExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

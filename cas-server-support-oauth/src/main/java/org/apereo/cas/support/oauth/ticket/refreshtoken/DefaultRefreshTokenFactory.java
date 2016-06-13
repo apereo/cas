@@ -23,15 +23,9 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    
-    @Autowired(required = false)
-    @Qualifier("refreshTokenIdGenerator")
     protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for refresh tokens. */
-    
-    @Autowired
-    @Qualifier("refreshTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

@@ -24,11 +24,8 @@ import java.util.Optional;
 public class OAuth20ValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
     
-    @Autowired
-    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Resource(name="webApplicationServiceFactory")
+    
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Override
@@ -56,5 +53,13 @@ public class OAuth20ValidationServiceSelectionStrategy implements ValidationServ
     @Override
     public int compareTo(final ValidationServiceSelectionStrategy o) {
         return MAX_ORDER - 1;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setWebApplicationServiceFactory(final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 }
