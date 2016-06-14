@@ -29,8 +29,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * The collection of users to reject.
      */
     private Set<String> users = new HashSet<>();
-
-
+    
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {

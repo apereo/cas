@@ -13,13 +13,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
-    @Autowired(required = false)
-    @Qualifier("defaultAuthenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager = new DefaultAuthenticationTransactionManager();
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
-    @Autowired(required = false)
-    @Qualifier("principalElectionStrategy")
-    private PrincipalElectionStrategy principalElectionStrategy = new DefaultPrincipalElectionStrategy();
+    private PrincipalElectionStrategy principalElectionStrategy;
 
     @Override
     public AuthenticationTransactionManager getAuthenticationTransactionManager() {

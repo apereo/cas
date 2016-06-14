@@ -35,9 +35,6 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Instance of Apache Commons HttpClient. */
-    
-    @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     @Override

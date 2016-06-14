@@ -15,8 +15,6 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
     
-    @Autowired
-    @Qualifier("authenticationManager")
     private AuthenticationManager authenticationManager;
 
     @Override

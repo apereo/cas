@@ -42,16 +42,11 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             new ArrayList<>();
 
     /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
-    
-    @Resource(name="authenticationHandlersResolvers")
     protected Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
     /**
      * The Authentication handler resolver.
      */
-    
-    @Autowired
-    @Qualifier("registeredServiceAuthenticationHandlerResolver")
     protected AuthenticationHandlerResolver authenticationHandlerResolver =
             new RegisteredServiceAuthenticationHandlerResolver();
 
@@ -106,7 +101,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param builder the builder
      * @param credentials the credentials
      */
-    protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, final Collection<Credential> credentials) {
+    protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, 
+                                                            final Collection<Credential> credentials) {
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
             credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
         }
@@ -118,7 +114,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param builder the builder
      * @param authentication the authentication
      */
-    protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder, final Authentication authentication) {
+    protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder, 
+                                                    final Authentication authentication) {
         for (final HandlerResult result : authentication.getSuccesses().values()) {
             builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
         }
@@ -226,12 +223,15 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      *
      * @param populators Non-null list of metadata populators.
      */
-    @Resource(name="authenticationMetadataPopulators")
     public void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
         this.authenticationMetaDataPopulators = populators;
     }
 
     public void setAuthenticationHandlerResolver(final AuthenticationHandlerResolver authenticationHandlerResolver) {
         this.authenticationHandlerResolver = authenticationHandlerResolver;
+    }
+
+    public void setHandlerResolverMap(final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap) {
+        this.handlerResolverMap = handlerResolverMap;
     }
 }

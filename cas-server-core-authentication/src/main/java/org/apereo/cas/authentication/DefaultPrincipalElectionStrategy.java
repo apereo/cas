@@ -21,10 +21,8 @@ import java.util.Map;
 public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalElectionStrategy.class);
     private static final long serialVersionUID = 6704726217030836315L;
-
-    @Autowired
-    @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    
+    private PrincipalFactory principalFactory;
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications, final Map<String, Object> principalAttributes) {

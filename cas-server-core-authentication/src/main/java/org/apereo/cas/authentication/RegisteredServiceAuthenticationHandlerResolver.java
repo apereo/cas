@@ -65,8 +65,6 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         return candidateHandlers;
     }
 
-    @Autowired
-    @Qualifier("servicesManager")
     public void setServicesManager(final ReloadableServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }

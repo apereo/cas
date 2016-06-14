@@ -152,7 +152,6 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
      *
      * @param policy Non-null authentication policy. The default policy is {@link AnyAuthenticationPolicy}.
      */
-    @Resource(name = "authenticationPolicy")
     public void setAuthenticationPolicy(final AuthenticationPolicy policy) {
         this.authenticationPolicy = policy;
     }
