@@ -42,7 +42,7 @@ an external `cas.properties` file (with sensible defaults for all the properties
 # hz.cluster.tcpip.enabled=true
 # hz.cluster.multicast.enabled=false
 # hz.cluster.max.heapsize.percentage=85
-# hz.cluster.max.heartbeat.seconds=5
+# hz.cluster.max.heartbeat.seconds=300
 # hz.cluster.eviction.percentage=10
 # hz.cluster.eviction.policy=LRU
 # hz.cluster.instance.name=${host.name}
