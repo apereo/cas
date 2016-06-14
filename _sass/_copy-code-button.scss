@@ -1,0 +1,77 @@
+.copy-code-button {
+  border: 1px solid peachpuff;
+  padding: 3px 5px 5px;
+  position: absolute;
+  bottom: -21px;
+  left: 12px;
+}
+.copy-button {
+  cursor: pointer;
+  border: 0;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 500;
+  //padding: 6px 10px 10px;
+  color: #795548;
+  background-color: transparent;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus {
+    outline-width: 1px;
+  }
+
+  &:before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 3px;
+    background-size: contain;
+    background-image: url('../images/clipboard.svg');
+    background-repeat: no-repeat;
+    position: relative;
+    top: 3px;
+  }
+}
+
+
+/*
+
+.highlight {
+  .btn {
+    -webkit-transition: opacity 0.3s ease-in-out;
+    -o-transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    padding: 2px 6px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    line-height: 20px;
+    background-color: #eee;
+    background-image: linear-gradient(#fcfcfc,#eee);
+    border: 1px solid #d5d5d5;
+
+    &:focus:hover, &.selected:focus {
+      border-color: #51a7e8;
+    }
+    &:hover {
+      background-color: #ddd;
+      background-image: linear-gradient(#eee,#ddd);
+      border-color: #ccc;
+    }
+  }
+  &:hover .btn {
+    opacity: 1;
+  }
+}
+.clippy {
+  margin-top: -3px;
+  position: relative;
+  top: 3px;
+}*/
