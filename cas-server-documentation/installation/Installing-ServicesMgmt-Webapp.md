@@ -15,8 +15,7 @@ You MUST keep in mind that both applications (the CAS server and the services ma
 share the <strong>same</strong> configuration for the CAS services.
 </p></div>
 
-A sample Maven overlay for the services management webapp is provided here: [https://github.com/Jasig/cas-services-management-overlay]
-(https://github.com/Jasig/cas-services-management-overlay)
+A sample Maven overlay for the services management webapp is provided here: [https://github.com/Apereo/cas-services-management-overlay](https://github.com/Apereo/cas-services-management-overlay)
 
 ## Services Registry
 
@@ -100,71 +99,32 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-ldap</artifactId>
+  <artifactId>cas-management-webapp-support-ldap</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
 
-Define a custom set of roles and permissions that would be cross-checked later against the value of `adminRoles`.
- 
-```xml
-
-<alias name="ldapAuthorizationGenerator" alias="authorizationGenerator" />
-
-<ldaptive:pooled-connection-factory
-    id="ldapAuthorizationGeneratorConnectionFactory"
-    ldapUrl="${ldap.url}"
-    blockWaitTime="${ldap.pool.blockWaitTime}"
-    failFastInitialize="true"
-    connectTimeout="${ldap.connectTimeout}"
-    useStartTLS="${ldap.useStartTLS}"
-    validateOnCheckOut="${ldap.pool.validateOnCheckout}"
-    validatePeriodically="${ldap.pool.validatePeriodically}"
-    validatePeriod="${ldap.pool.validatePeriod}"
-    idleTime="${ldap.pool.idleTime}"
-    maxPoolSize="${ldap.pool.maxSize}"
-    minPoolSize="${ldap.pool.minSize}"
-    useSSL="${ldap.use.ssl:false}"
-    prunePeriod="${ldap.pool.prunePeriod}"
-/>
-
-<bean id="ldapAuthorizationGeneratorUserSearchExecutor" class="org.ldaptive.SearchExecutor"
-      p:baseDn="${ldap.baseDn}"
-      p:searchFilter="${ldap.user.searchFilter}"
-      p:returnAttributes-ref="userDetailsUserAttributes" />
-
-<bean id="ldapAuthorizationGeneratorRoleSearchExecutor" class="org.ldaptive.SearchExecutor"
-      p:baseDn="${ldap.role.baseDn}"
-      p:searchFilter="${ldap.role.searchFilter}"
-      p:returnAttributes-ref="userDetailsRoleAttributes" />
-
-<util:list id="userDetailsUserAttributes">
-    <value>...</value>
-</util:list>
-
-<util:list id="userDetailsRoleAttributes">
-    <value>...</value>
-</util:list>
-```
 
 The following properties are applicable to this configuration:
 
 ```properties
-# ldap.authorizationgenerator.user.attr=uid
-# ldap.authorizationgenerator.role.attr=roleAttributeName
+# ldap.url=ldap://localhost:1389
+# ldap.baseDn=dc=example,dc=org
+# ldap.user.searchFilter=cn={0}
+#
+# ldap.pool.blockWaitTime=5000
+# ldap.pool.validateOnCheckout=true
+# ldap.pool.validatePeriodically=true
+# ldap.pool.validatePeriod=5000
+# ldap.pool.idleTime=5000
+# ldap.pool.maxSize=1
+# ldap.pool.minSize=1
+# ldap.pool.prunePeriod=10000
+# ldap.connectTimeout=5000
+# ldap.useStartTLS=false
+# ldap.use.ssl=false
+#
+# ldap.authorizationgenerator.role.attribute=sn
 # ldap.authorizationgenerator.role.prefix=ROLE_
 # ldap.authorizationgenerator.allow.multiple=false
 ```
-
-You will also need to configure the `ldaptive` namespace at the top of the `managementConfigContext.xml` file:
-
-```xml
-<beans xmlns="http://www.springframework.org/schema/beans"
-       ...
-       ...
-       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
-       xsi:schemaLocation="
-       ...
-       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
-       ...
-```       

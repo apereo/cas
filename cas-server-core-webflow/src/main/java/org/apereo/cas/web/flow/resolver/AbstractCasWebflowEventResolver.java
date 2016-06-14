@@ -224,7 +224,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
         } else {
             tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-            tgt.getAuthentication().update(authentication.getAttributes());
+            tgt.getAuthentication().update(authentication);
             this.centralAuthenticationService.updateTicket(tgt);
         }
 

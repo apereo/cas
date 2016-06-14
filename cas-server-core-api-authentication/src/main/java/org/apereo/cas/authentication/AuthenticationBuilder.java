@@ -3,8 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.Serializable;
-import java.util.List;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 

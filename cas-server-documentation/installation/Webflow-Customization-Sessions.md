@@ -4,6 +4,7 @@ title: CAS - Web Flow Customization
 ---
 
 # Webflow Session
+CAS uses [Spring Webflow](https://github.com/spring-projects/spring-webflow) to manage the authentication sequence. Spring Webflow provides a pluggable architecture whereby various actions, decisions and operations throughout the primary authentication workflow can be easily controlled and navigated. In order for this navigation to work, some form of conversational session state must be maintained.
 
 ## Client-side Sessions
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte
@@ -93,7 +94,7 @@ The following settings are applicable:
 # spring.redis.port=16216
 ```
 
-### Mongo Session Replication
+### MongoDb Session Replication
 
 If you don't wish to use the native container's strategy for session replication, 
 you can use CAS's support for Mongo session replication.

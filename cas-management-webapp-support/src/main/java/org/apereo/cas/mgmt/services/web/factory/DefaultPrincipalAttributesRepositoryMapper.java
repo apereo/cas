@@ -1,21 +1,18 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleasePolicyEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
-
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Default mapper for converting {@link PrincipalAttributesRepository} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -42,7 +39,7 @@ public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttr
             final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
 
             attrPolicyBean.setCachedExpiration(cc.getExpiration());
-            attrPolicyBean.setCachedTimeUnit(cc.getTimeUnit().name());
+            attrPolicyBean.setCachedTimeUnit(cc.getTimeUnit());
 
             final IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
 
@@ -68,8 +65,8 @@ public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttr
 
         if (StringUtils.equalsIgnoreCase(attrType, RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED
                 .toString())) {
-            return new CachingPrincipalAttributesRepository(TimeUnit.valueOf(attrRelease.getCachedTimeUnit()
-                    .toUpperCase()), attrRelease.getCachedExpiration());
+            return new CachingPrincipalAttributesRepository(attrRelease.getCachedTimeUnit().toUpperCase(), 
+                    attrRelease.getCachedExpiration());
         } else if (StringUtils.equalsIgnoreCase(attrType, RegisteredServiceAttributeReleasePolicyEditBean.Types
                 .DEFAULT.toString())) {
             return new DefaultPrincipalAttributesRepository();

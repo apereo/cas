@@ -165,6 +165,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 ## LDAP Anonymous Search
 The following configuration snippet provides a template for LDAP authentication performed with an anonymous search
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
+
 ```xml
 <ldaptive:anonymous-search-authenticator id="authenticator"
        ldapUrl="${ldap.url}"

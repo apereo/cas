@@ -36,17 +36,9 @@ for each authenticated principal. That global set of attributes is then filtered
 | `JsonBackedComplexStubPersonAttributeDao`| Resolve person attributes that are specified in an external JSON file.
 | `LdaptivePersonAttributeDao`| Queries an LDAP directory to populate person attributes using the Ldaptive library.
 
-Note that the Person Directory project requires the following configuration in CAS overlays:
+More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
-```xml
-<dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.1</version>
-</dependency>
-```
-
-More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
+<div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases, CAS authentication is able to retrieve and resolve attributes from the authentication source, which would eliminate the need for configuring a separate DAO specially if both the authentication and the attribute source are the same. DAOs listed here should only be used when sources are different, or when there is a need to tackle more advanced attribute resolution use cases such as those that involve merging, cascading and elaborate caching techniques. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
 
 
 ### CAS

@@ -57,20 +57,13 @@ to put together an implementation of `WsFederationAttributeMutator` that changes
 ```java
 package org.apereo.cas.support.wsfederation;
 
+@Component("wsfedAttributeMutator")
 public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
     public void modifyAttributes(...) {
         ...
     }
 }
 ```
-
-The mutator then needs to be declared in your configuration:
-
-```xml
-<bean id="wsfedAttributeMutator"
-    class="org.apereo.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
-```
-
 
 Finally, ensure that the attributes sent from ADFS are available and mapped in
 your `attributeRepository` configuration.

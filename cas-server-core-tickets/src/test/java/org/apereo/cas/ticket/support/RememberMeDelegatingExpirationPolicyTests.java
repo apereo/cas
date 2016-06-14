@@ -44,7 +44,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, null, true);
         assertTrue(t.isExpired());
 
     }
@@ -54,7 +54,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
         final Authentication authentication = TestUtils.getAuthentication();
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, null, true);
         assertFalse(t.isExpired());
 
     }
