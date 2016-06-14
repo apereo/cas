@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.view.CasProtocolView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -9,9 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.view.ThymeleafView;
-
-import java.util.Locale;
 
 /**
  * This is {@link CasProtocolViewsConfiguration} that attempts to create Spring-managed beans
@@ -144,17 +142,6 @@ public class CasProtocolViewsConfiguration {
                 this.applicationContext, this.springTemplateEngine, this.properties);
     }
 
-    /**
-     * Cas open id association failure view.
-     *
-     * @return the view
-     */
-    @RefreshScope
-    @Bean
-    public View casOpenIdAssociationFailureView() {
-        return new CasProtocolView("protocol/openid/casOpenIdAssociationFailureView",
-                this.applicationContext, this.springTemplateEngine, this.properties);
-    }
 
     /**
      * Cas open id association success view .
@@ -179,23 +166,5 @@ public class CasProtocolViewsConfiguration {
         return new CasProtocolView("protocol/openid/user", this.applicationContext, this.springTemplateEngine,
                 this.properties);
     }
-
-
-    private static class CasProtocolView extends ThymeleafView {
-        /**
-         * Instantiates a new Cas protocol view.
-         *
-         * @param templateName       the template name
-         * @param applicationContext the application context
-         * @param templateEngine     the template engine
-         */
-        CasProtocolView(final String templateName, final ApplicationContext applicationContext,
-                        final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
-            super(templateName);
-            setApplicationContext(applicationContext);
-            setTemplateEngine(templateEngine);
-            setCharacterEncoding(properties.getEncoding().displayName());
-            setLocale(Locale.getDefault());
-        }
-    }
+    
 }

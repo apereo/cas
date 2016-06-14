@@ -7,8 +7,6 @@ import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;

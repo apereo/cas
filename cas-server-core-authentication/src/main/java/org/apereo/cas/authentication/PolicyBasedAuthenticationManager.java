@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 
-import javax.annotation.Resource;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;

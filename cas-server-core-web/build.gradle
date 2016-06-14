@@ -9,4 +9,5 @@ dependencies {
     compile libraries.pac4j
     compile libraries.spring
     compile libraries.springboot
+    compile libraries.thmyeleaf
 }

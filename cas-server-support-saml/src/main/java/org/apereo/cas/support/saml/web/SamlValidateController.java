@@ -5,7 +5,6 @@ import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
 @Controller("samlValidateController")
 public class SamlValidateController extends AbstractServiceValidateController {
 

@@ -1,5 +1,9 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -9,14 +13,19 @@ import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopu
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
+import org.apereo.cas.support.saml.web.SamlValidateController;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
+import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.View;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary opensaml context and beans.
@@ -29,7 +38,15 @@ public class SamlConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
+    
+    @Autowired
+    @Qualifier("cas3ServiceJsonView")
+    private View cas3ServiceJsonView;
+    
+    @Autowired
+    @Qualifier("proxy20Handler")
+    private ProxyHandler proxy20Handler;
+    
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean configBean;
@@ -42,6 +59,30 @@ public class SamlConfiguration {
     @Qualifier("casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
 
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+    
+    @Autowired
+    @Qualifier("authenticationContextValidator")
+    private AuthenticationContextValidator authenticationContextValidator;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+    
+    @Autowired
+    @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
+    private ValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
+
+    @Autowired
+    @Qualifier("defaultArgumentExtractor")
+    private ArgumentExtractor argumentExtractor;
+
+    @Autowired
+    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
+    
     /**
      * Cas saml service success view saml 10 success response view.
      *
@@ -110,4 +151,21 @@ public class SamlConfiguration {
         return gen;
     }
 
+    @Bean
+    public SamlValidateController samlValidateController() {
+        final SamlValidateController c = new SamlValidateController();
+        c.setValidationSpecification(cas20WithoutProxyProtocolValidationSpecification);
+        c.setSuccessView(casSamlServiceSuccessView());
+        c.setFailureView(casSamlServiceFailureView());
+        c.setProxyHandler(proxy20Handler);
+        c.setAuthenticationSystemSupport(authenticationSystemSupport);
+        c.setServicesManager(servicesManager);
+        c.setCentralAuthenticationService(centralAuthenticationService);
+        c.setArgumentExtractor(argumentExtractor);
+        c.setMultifactorTriggerSelectionStrategy(multifactorTriggerSelectionStrategy);
+        c.setAuthenticationContextValidator(authenticationContextValidator);
+        c.setJsonView(cas3ServiceJsonView);
+        c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+        return c;
+    }
 }
