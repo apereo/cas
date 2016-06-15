@@ -17,6 +17,9 @@ pom.xml.versionsBackup
 _site
 **/.checkstyle
 .gradle/
-build/
+**/build/
 classes
 .sass-cache/
+*.jar
+*.MF
+*.war
