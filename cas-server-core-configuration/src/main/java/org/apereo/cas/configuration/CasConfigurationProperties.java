@@ -45,7 +45,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas")
+@ConfigurationProperties(value = "casProperties", prefix = "cas")
 public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
@@ -446,5 +446,5 @@ public class CasConfigurationProperties {
     public void setAuthn(final AuthenticationProperties authn) {
         this.authn = authn;
     }
-    
+
 }

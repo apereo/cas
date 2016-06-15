@@ -36,10 +36,4 @@ public class CasCoreValidationConfiguration {
     public ValidationSpecification cas20WithoutProxyProtocolValidationSpecification() {
         return new Cas20WithoutProxyingValidationSpecification();
     }
-
-    @Bean
-    @Scope(value = "prototype")
-    public ValidationServiceSelectionStrategy defaultValidationServiceSelectionStrategy() {
-        return new DefaultValidationServiceSelectionStrategy();
-    }
 }

@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -50,11 +49,11 @@ import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,17 +68,15 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 @Configuration("casCoreAuthenticationConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationConfiguration {
-
-    @Resource(name = "authenticationPolicy")
-    private AuthenticationPolicy authenticationPolicy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    @Qualifier("authenticationPolicy")
+    private AuthenticationPolicy authenticationPolicy;
 
     @Autowired
     @Qualifier("principalElectionStrategy")
@@ -117,20 +114,17 @@ public class CasCoreAuthenticationConfiguration {
     @Qualifier("delegateTransformer")
     private PrincipalNameTransformer delegate;
 
-    @Resource(name = "authenticationMetadataPopulators")
-    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
+    @Autowired
+    @Qualifier("authenticationMetadataPopulators")
+    private List authenticationMetadataPopulators;
 
-    @Resource(name = "authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient supportsTrustStoreSslSocketFactoryHttpClient;
-
-    @Autowired
-    @Qualifier("registeredServiceAuthenticationHandlerResolver")
-    private AuthenticationHandlerResolver authenticationHandlerResolver =
-            new RegisteredServiceAuthenticationHandlerResolver();
 
     @Autowired
     @Qualifier("servicesManager")
@@ -148,7 +142,6 @@ public class CasCoreAuthenticationConfiguration {
         return h;
     }
 
-    @RefreshScope
     @Bean
     public AuthenticationPolicy requiredHandlerAuthenticationPolicy() {
         final RequiredHandlerAuthenticationPolicy bean =
@@ -244,7 +237,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public PrincipalElectionStrategy defaultPrincipalElectionStrategy() {
         final DefaultPrincipalElectionStrategy s = new DefaultPrincipalElectionStrategy();
-        s.setPrincipalFactory(principalFactory);
+        s.setPrincipalFactory(defaultPrincipalFactory());
         return s;
     }
 
@@ -266,7 +259,7 @@ public class CasCoreAuthenticationConfiguration {
 
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators);
         p.setHandlerResolverMap(authenticationHandlersResolvers);
-        p.setAuthenticationHandlerResolver(authenticationHandlerResolver);
+        p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
         p.setAuthenticationPolicy(authenticationPolicy);
         return p;
     }
@@ -306,7 +299,7 @@ public class CasCoreAuthenticationConfiguration {
         bean.setAttributeRepository(attributeRepository);
         bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
         bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
-        bean.setPrincipalFactory(principalFactory);
+        bean.setPrincipalFactory(defaultPrincipalFactory());
         return bean;
     }
 

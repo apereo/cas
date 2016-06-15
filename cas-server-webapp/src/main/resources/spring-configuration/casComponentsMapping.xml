@@ -30,9 +30,6 @@
     <alias name="${cookieValueManager}" alias="cookieValueManager" />
     <alias name="${cookieCipherExecutor}" alias="cookieCipherExecutor" />
     
-    
-    
-    <alias name="${principalFactory}" alias="principalFactory" />
     <alias name="${authenticationTransactionManager}" alias="authenticationTransactionManager" />
     <alias name="${principalElectionStrategy}" alias="principalElectionStrategy" />
     <alias name="${auditTrailManager}" alias="auditTrailManager" />

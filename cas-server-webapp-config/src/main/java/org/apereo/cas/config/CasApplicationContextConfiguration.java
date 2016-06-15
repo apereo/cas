@@ -40,14 +40,10 @@ import java.util.Properties;
 @Configuration("casApplicationContextConfiguration")
 public class CasApplicationContextConfiguration {
     
-    /**
-     * The Service ticket unique id generator.
-     */
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
-
-
+    
     @Resource(name="webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
@@ -55,73 +51,37 @@ public class CasApplicationContextConfiguration {
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
     
-    /**
-     * Advisor auto proxy creator default advisor auto proxy creator.
-     *
-     * @return the default advisor auto proxy creator
-     */
-    @RefreshScope
     @Bean
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
-
-    /**
-     * Service factory list list.
-     *
-     * @return the list
-     */
-    @RefreshScope
+    
     @Bean
     public List serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
         list.add(this.webApplicationServiceFactory);
         return list;
     }
-
-    /**
-     * Argument extractors list.
-     *
-     * @return the list
-     */
-    @RefreshScope
+    
     @Bean
     public List argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
         list.add(this.defaultArgumentExtractor);
         return list;
     }
-
-    /**
-     * Unique id generators map map.
-     *
-     * @return the map
-     */
-    @RefreshScope
+    
     @Bean
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
         map.put(SimpleWebApplicationServiceImpl.class.getName(), this.serviceTicketUniqueIdGenerator);
         return map;
     }
-
-    /**
-     * Pass through controller url filename view controller.
-     *
-     * @return the url filename view controller
-     */
-    @RefreshScope
+    
     @Bean
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
     }
-
-    /**
-     * Root controller controller.
-     *
-     * @return the controller
-     */
-    @RefreshScope
+    
     @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {

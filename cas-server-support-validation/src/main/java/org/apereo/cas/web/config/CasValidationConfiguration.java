@@ -24,6 +24,7 @@ import org.apereo.cas.web.view.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
@@ -39,8 +40,12 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("casValidationConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasValidationConfiguration {
-
+    
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -49,7 +54,8 @@ public class CasValidationConfiguration {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
-    @Resource(name = "defaultValidationServiceSelectionStrategy")
+    @Autowired
+    @Qualifier("defaultValidationServiceSelectionStrategy")
     private ValidationServiceSelectionStrategy defaultStrategy;
 
     @Autowired
@@ -64,7 +70,8 @@ public class CasValidationConfiguration {
     @Qualifier("cas10ProtocolValidationSpecification")
     private ValidationSpecification cas10ProtocolValidationSpecification;
 
-    @javax.annotation.Resource(name = "webApplicationServiceFactory")
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
@@ -90,10 +97,7 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
@@ -101,19 +105,7 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-
-    /**
-     * Validation service selection strategies list.
-     *
-     * @return the list
-     */
-    @Bean
-    public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
-        final List<ValidationServiceSelectionStrategy> list = new ArrayList<>();
-        list.add(this.defaultStrategy);
-        return list;
-    }
-
+    
     @Bean
     public View cas1ServiceSuccessView() {
         final Cas10ResponseView v = new Cas10ResponseView();

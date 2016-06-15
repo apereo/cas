@@ -120,28 +120,6 @@ The following list of properties are defined and controlled by the CAS project:
 #####################################################
 
 ##
-# CAS Components Mapping
-#
-attributeRepository=stubAttributeRepository
-primaryAuthenticationHandler=acceptUsersAuthenticationHandler
-primaryPrincipalResolver=personDirectoryPrincipalResolver
-themeResolver=serviceThemeResolver
-serviceRegistryDao=jsonServiceRegistryDao
-ticketRegistry=defaultTicketRegistry
-ticketCipherExecutor=noOpCipherExecutor
-grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
-authenticationPolicy=anyAuthenticationPolicy
-authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
-authenticationThrottle=neverThrottle
-restAuthenticationThrottle=neverThrottle
-cookieCipherExecutor=tgcCipherExecutor
-cookieValueManager=defaultCookieValueManager
-principalFactory=defaultPrincipalFactory
-authenticationTransactionManager=defaultAuthenticationTransactionManager
-principalElectionStrategy=defaultPrincipalElectionStrategy
-auditTrailManager=slf4jAuditTrailManager
-
-##
 # CAS Authentication Attributes
 #
 cas.attrs.resolve.uid=uid
