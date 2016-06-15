@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * {@link RestController} implementation of CAS' REST API.
  * <p>
  * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
- * <p>
+ * </p>
  * <ul>
  * <li>{@code POST /v1/tickets}</li>
  * <li>{@code POST /v1/tickets/{TGT-id}}</li>
@@ -57,8 +57,7 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
-
-
+    
     private CentralAuthenticationService centralAuthenticationService;
 
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();

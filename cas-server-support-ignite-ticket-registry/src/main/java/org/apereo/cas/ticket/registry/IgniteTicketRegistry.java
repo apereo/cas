@@ -31,7 +31,6 @@ import static java.util.stream.Collectors.toList;
  * <a href="https://ignite.apache.org">Ignite</a> based distributed ticket registry.
  * </p>
  * <p>
- * <p>
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
  * </p>
  * <ul>
@@ -143,7 +142,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     /**
      * Flag to indicate whether this registry instance should participate in reporting its state with
      * default value set to {@code true}.
-     * <p>
      * <p>Therefore, the flag provides a level of flexibility such that depending on the cache and environment
      * settings, reporting statistics
      * can be set to false and disabled.</p>

@@ -17,6 +17,7 @@ import java.util.List;
  * of the collection may be specified through {@link #setCollectionName(String)}.
  * It also presents the ability to drop an existing collection and start afresh
  * through the use of {@link #setDropCollection(boolean)}.</p>
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -32,7 +33,8 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     /**
      * Ctor.
-     * @param mongoTemplate mongoTemplate
+     *
+     * @param mongoTemplate  mongoTemplate
      * @param collectionName collectionName
      * @param dropCollection dropCollection
      */
@@ -108,19 +110,10 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
         return this.mongoTemplate.count(new Query(), RegisteredService.class, this.collectionName);
     }
 
-    /**
-     * Optionally, specify the name of the mongodb collection where services are to be kept.
-     * By default, the name of the collection is specified by the constant {@link #MONGODB_COLLECTION_NAME}
-     * @param name the name
-     */
     public void setCollectionName(final String name) {
         this.collectionName = name;
     }
-
-    /**
-     * When set to true, the collection will be dropped first before proceeding with other operations.
-     * @param dropCollection the drop collection
-     */
+    
     public void setDropCollection(final boolean dropCollection) {
         this.dropCollection = dropCollection;
     }

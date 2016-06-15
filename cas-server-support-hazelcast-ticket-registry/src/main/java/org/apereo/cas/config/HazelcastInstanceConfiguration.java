@@ -58,7 +58,6 @@ public class HazelcastInstanceConfiguration {
      * Create HazelcastInstance bean.
      *
      * @return HazelcastInstance bean.
-     * @throws IOException if parsing of hazelcast xml configuration fails
      */
     @Bean
     public HazelcastInstance hazelcast() {

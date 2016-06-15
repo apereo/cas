@@ -13,14 +13,15 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class CasProtocolView extends ThymeleafView {
+
     /**
      * Instantiates a new Cas protocol view.
      *
      * @param templateName       the template name
      * @param applicationContext the application context
      * @param templateEngine     the template engine
+     * @param properties         the properties
      */
     public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
                     final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {

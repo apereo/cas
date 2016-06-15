@@ -55,7 +55,6 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
      *     <li>{@code Firefox}</li>
      *     <li>{@code AppleWebKit}</li>
      * </ul>
-     * @see #setSupportedBrowser(List)
      * @since 4.1
      */
     public SpnegoNegociateCredentialsAction() {
