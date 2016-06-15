@@ -33,11 +33,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
     
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
-
     
     /**
      * Default constructor.
@@ -250,8 +246,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
     }
     
-        
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
     }
+    
+    
 }

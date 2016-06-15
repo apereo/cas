@@ -1,9 +1,14 @@
 package org.apereo.cas.ticket.registry.config;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.registry.InfinispanTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Nullable;
 
 /**
  * This is {@link InfinispanTicketRegistryConfiguration}.
@@ -13,9 +18,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("infinispanTicketRegistryConfiguration")
 public class InfinispanTicketRegistryConfiguration {
-    
+
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
+
     @Bean
     public TicketRegistry infinispanTicketRegistry() {
-        return new InfinispanTicketRegistry();
+        final InfinispanTicketRegistry r = new InfinispanTicketRegistry();
+        r.setCipherExecutor(cipherExecutor);
+        return r;
     }
 }

@@ -5,6 +5,7 @@ import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
@@ -12,9 +13,12 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Nullable;
 
 /**
  * This is {@link MemcachedConfiguration}.
@@ -24,7 +28,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedConfiguration")
 public class MemcachedConfiguration {
-    
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -36,7 +45,7 @@ public class MemcachedConfiguration {
     @RefreshScope
     @Bean
     public MemcachedClientFactoryBean memcachedClient() {
-        
+
         final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
         bean.setServers(casProperties.getTicket().getRegistry().getMemcached().getServers());
         bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(
@@ -54,8 +63,9 @@ public class MemcachedConfiguration {
 
     @Bean
     public TicketRegistry memcachedTicketRegistry() throws Exception {
-        final MemCacheTicketRegistry registry = 
+        final MemCacheTicketRegistry registry =
                 new MemCacheTicketRegistry((MemcachedClientIF) memcachedClient().getObject());
+        registry.setCipherExecutor(cipherExecutor);
         return registry;
     }
 

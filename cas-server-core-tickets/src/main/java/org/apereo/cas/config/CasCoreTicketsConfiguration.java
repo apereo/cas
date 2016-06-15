@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
@@ -42,6 +43,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +61,12 @@ public class CasCoreTicketsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
+
     @Autowired
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
@@ -67,11 +74,11 @@ public class CasCoreTicketsConfiguration {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-    
+
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
-    
+
     @Autowired(required = false)
     @Qualifier("rememberMeExpirationPolicy")
     private ExpirationPolicy rememberMeExpirationPolicy;
@@ -79,7 +86,7 @@ public class CasCoreTicketsConfiguration {
     @Autowired(required = false)
     @Qualifier("sessionExpirationPolicy")
     private ExpirationPolicy sessionExpirationPolicy;
-    
+
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
@@ -146,10 +153,12 @@ public class CasCoreTicketsConfiguration {
     @RefreshScope
     @Bean
     public TicketRegistry defaultTicketRegistry() {
-        return new DefaultTicketRegistry(
+        final DefaultTicketRegistry r = new DefaultTicketRegistry(
                 casProperties.getTicket().getRegistry().getInMemory().getInitialCapacity(),
                 casProperties.getTicket().getRegistry().getInMemory().getLoadFactor(),
                 casProperties.getTicket().getRegistry().getInMemory().getConcurrency());
+        r.setCipherExecutor(cipherExecutor);
+        return r;
     }
 
     @Bean
@@ -270,7 +279,7 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
-        
+
         c.setLockingStrategy(lockingStrategy());
         c.setLogoutManager(logoutManager);
         c.setTicketRegistry(ticketRegistry);

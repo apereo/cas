@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -34,7 +36,12 @@ public class JpaTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
+    
     /**
      * Jpa packages to scan string [].
      *
@@ -97,6 +104,7 @@ public class JpaTicketRegistryConfiguration {
     public TicketRegistry jpaTicketRegistry() {
         final JpaTicketRegistry bean = new JpaTicketRegistry();
         bean.setLockTgt(casProperties.getTicket().getRegistry().getJpa().isJpaLockingTgtEnabled());
+        bean.setCipherExecutor(this.cipherExecutor);
         return bean;
     }
 

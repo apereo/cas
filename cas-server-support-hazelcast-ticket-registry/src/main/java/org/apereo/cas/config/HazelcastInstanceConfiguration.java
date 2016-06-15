@@ -12,15 +12,18 @@ import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -44,14 +47,20 @@ public class HazelcastInstanceConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
+
     @Bean
     @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
-
-        return new HazelcastTicketRegistry(hazelcast(),
+        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
                 casProperties.getTicket().getRegistry().getHazelcast().getMapName(),
                 casProperties.getTicket().getRegistry().getHazelcast().getPageSize());
+        r.setCipherExecutor(cipherExecutor);
+        return r;
     }
 
     /**
@@ -101,7 +110,7 @@ public class HazelcastInstanceConfiguration {
                     .setMulticastConfig(multicastConfig)
                     .setTcpIpConfig(tcpIpConfig);
 
-            
+
             //Network config
             final NetworkConfig networkConfig = new NetworkConfig()
                     .setPort(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getPort())
@@ -132,7 +141,7 @@ public class HazelcastInstanceConfiguration {
         }
         //Add additional default config properties regardless of the configuration source
         return config.setInstanceName(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getInstanceName())
-                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, 
+                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP,
                         casProperties.getTicket().getRegistry().getHazelcast().getCluster().getLoggingType())
                 .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP,
                         String.valueOf(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getMaxNoHeartbeatSeconds()));

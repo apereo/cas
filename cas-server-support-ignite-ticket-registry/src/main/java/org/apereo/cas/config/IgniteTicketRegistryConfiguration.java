@@ -7,15 +7,18 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import java.util.ArrayList;
@@ -34,6 +37,10 @@ public class IgniteTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
 
     /**
      * Ignite configuration ignite configuration.
@@ -78,6 +85,7 @@ public class IgniteTicketRegistryConfiguration {
     public TicketRegistry igniteTicketRegistry() {
         final IgniteTicketRegistry r = new IgniteTicketRegistry();
         r.setIgniteConfiguration(igniteConfiguration());
+        r.setCipherExecutor(cipherExecutor);
         return r;
     }
 }
