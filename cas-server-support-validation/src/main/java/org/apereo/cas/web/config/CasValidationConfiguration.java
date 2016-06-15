@@ -24,14 +24,9 @@ import org.apereo.cas.web.view.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasValidationConfiguration}.
@@ -40,7 +35,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("casValidationConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasValidationConfiguration {
     
     @Autowired

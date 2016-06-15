@@ -3,8 +3,6 @@ package org.apereo.cas.validation.config;
 import org.apereo.cas.validation.Cas10ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
-import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

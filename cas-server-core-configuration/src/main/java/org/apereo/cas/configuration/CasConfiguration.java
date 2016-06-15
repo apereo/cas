@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**

@@ -5,7 +5,6 @@ import org.apereo.cas.CentralAuthenticationServiceImpl;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -14,7 +13,6 @@ import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -29,7 +27,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("casCoreConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreConfiguration {
 
     @Autowired

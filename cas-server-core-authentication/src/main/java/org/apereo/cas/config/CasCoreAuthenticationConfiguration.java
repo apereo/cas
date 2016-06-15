@@ -49,7 +49,6 @@ import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,7 +67,6 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 @Configuration("casCoreAuthenticationConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationConfiguration {
 
     @Autowired

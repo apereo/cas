@@ -11,11 +11,8 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Assert;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;

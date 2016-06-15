@@ -39,6 +39,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
         "classpath*:/META-INF/spring/*.xml"})
 @EnableConfigServer
 @EnableAsync
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.
