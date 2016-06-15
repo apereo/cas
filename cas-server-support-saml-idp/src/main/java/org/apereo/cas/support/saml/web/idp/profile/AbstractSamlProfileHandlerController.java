@@ -4,31 +4,31 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.configuration.model.core.ServerProperties;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
-import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
-import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.Assertion;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.util.EncodingUtils;
+import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
+import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
+import org.jasig.cas.client.util.CommonUtils;
+import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
@@ -36,7 +36,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -56,24 +55,21 @@ import java.security.SecureRandom;
  */
 public abstract class AbstractSamlProfileHandlerController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     /**
      * The server properties.
      */
     @Autowired
-    protected ServerProperties serverProperties;
-    
+    protected CasConfigurationProperties casProperrties;
+
     /**
      * The Saml object signer.
      */
-    @Autowired
-    @Qualifier("samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
      * The Parser pool.
      */
-    @Autowired
     protected ParserPool parserPool;
 
     /**
@@ -84,36 +80,26 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Services manager.
      */
-    @Autowired
-    @Qualifier("servicesManager")
     protected ReloadableServicesManager servicesManager;
 
     /**
      * The Web application service factory.
      */
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-    
+
     /**
      * The Saml registered service caching metadata resolver.
      */
-    @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     /**
      * The Config bean.
      */
-    @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
     protected OpenSamlConfigBean configBean;
-    
+
     /**
      * The Response builder.
      */
-    @Autowired
-    @Qualifier("samlProfileSamlResponseBuilder")
     protected SamlProfileSamlResponseBuilder responseBuilder;
 
     /**
@@ -138,7 +124,7 @@ public abstract class AbstractSamlProfileHandlerController {
         return SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
     }
-    
+
     /**
      * Gets registered service and verify.
      *
@@ -176,7 +162,8 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the service
      */
     protected Service registerCallback(final String callbackUrl) {
-        final Service callbackService = this.webApplicationServiceFactory.createService(serverProperties.getPrefix().concat(callbackUrl));
+        final Service callbackService = this.webApplicationServiceFactory.createService(
+                casProperrties.getServer().getPrefix().concat(callbackUrl));
         logger.debug("Initialized callback service [{}]", callbackService);
 
         if (!this.servicesManager.matchesExistingService(callbackService)) {
@@ -205,7 +192,7 @@ public abstract class AbstractSamlProfileHandlerController {
         logger.debug("Retrieving authentication request from scope");
         final String requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes("UTF-8"));
-        final AuthnRequest authnRequest = (AuthnRequest) 
+        final AuthnRequest authnRequest = (AuthnRequest)
                 XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
         return authnRequest;
     }
@@ -275,7 +262,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url [{}]", serviceUrl);
 
-        final String urlToRedirectTo = CommonUtils.constructRedirectUrl(serverProperties.getLoginUrl(),
+        final String urlToRedirectTo = CommonUtils.constructRedirectUrl(casProperrties.getServer().getLoginUrl(),
                 CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
                 authnRequest.isPassive());
 
@@ -294,13 +281,13 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the string
      * @throws SamlException the saml exception
      */
-    protected String constructServiceUrl(final HttpServletRequest request, 
+    protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
                                          final AuthnRequest authnRequest)
             throws SamlException {
         try (final StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
-            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, 
+            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
                     SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
 
             final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes("UTF-8"));
@@ -309,12 +296,41 @@ public abstract class AbstractSamlProfileHandlerController {
 
             logger.debug("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                    url, serverProperties.getName(),
+                    url, casProperrties.getServer().getName(),
                     CasProtocolConstants.PARAMETER_SERVICE,
                     CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
+    }
+
+    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
+        this.samlObjectSigner = samlObjectSigner;
+    }
+
+    public void setParserPool(final ParserPool parserPool) {
+        this.parserPool = parserPool;
+    }
+
+    public void setServicesManager(final ReloadableServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setWebApplicationServiceFactory(final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+    }
+
+    public void setSamlRegisteredServiceCachingMetadataResolver(
+            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
+        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
+    }
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
+    }
+
+    public void setResponseBuilder(final SamlProfileSamlResponseBuilder responseBuilder) {
+        this.responseBuilder = responseBuilder;
     }
 }
 

@@ -1,9 +1,7 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The authentication provider for yubikey.
@@ -14,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
     
     private RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
 

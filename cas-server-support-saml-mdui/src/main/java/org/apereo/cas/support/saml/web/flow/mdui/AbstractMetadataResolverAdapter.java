@@ -12,7 +12,6 @@ import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,7 +43,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     protected boolean requireValidMetadata = true;
 
     /** The openSAML config bean. **/
-    @Autowired
     protected OpenSamlConfigBean configBean;
 
     private ChainingMetadataResolver metadataResolver;
@@ -190,5 +188,9 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
     public void setMetadataResources(final Map<Resource, MetadataFilterChain> metadataResources) {
         this.metadataResources = metadataResources;
+    }
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
     }
 }

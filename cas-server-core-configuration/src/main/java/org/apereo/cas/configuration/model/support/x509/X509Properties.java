@@ -42,14 +42,6 @@ public class X509Properties {
 
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
-
-    public PersonDirPrincipalResolverProperties getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
-        this.principal = principal;
-    }
     
     /**
      * The compiled pattern supplied by the deployer.
@@ -86,6 +78,15 @@ public class X509Properties {
 
     private String trustedIssuerDnPattern;
 
+    public PersonDirPrincipalResolverProperties getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+        this.principal = principal;
+    }
+
+    
     public String getTrustedIssuerDnPattern() {
         return trustedIssuerDnPattern;
     }

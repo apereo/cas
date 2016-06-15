@@ -113,10 +113,6 @@ public class CasCoreAuthenticationConfiguration {
     @Qualifier("jaasPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ReloadableServicesManager servicesManager;
-
     @Autowired(required = false)
     @Qualifier("delegateTransformer")
     private PrincipalNameTransformer delegate;
@@ -135,6 +131,15 @@ public class CasCoreAuthenticationConfiguration {
     @Qualifier("registeredServiceAuthenticationHandlerResolver")
     private AuthenticationHandlerResolver authenticationHandlerResolver =
             new RegisteredServiceAuthenticationHandlerResolver();
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ReloadableServicesManager servicesManager;
+
+    @Bean
+    public PrincipalFactory jaasPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
 
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler() {
@@ -189,7 +194,15 @@ public class CasCoreAuthenticationConfiguration {
         if (acceptPrincipalNameTransformer != null) {
             h.setPrincipalNameTransformer(acceptPrincipalNameTransformer);
         }
+
+        h.setPrincipalFactory(acceptUsersPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
+    }
+
+    @Bean
+    public PrincipalFactory acceptUsersPrincipalFactory() {
+        return new DefaultPrincipalFactory();
     }
 
     @Bean
@@ -333,6 +346,8 @@ public class CasCoreAuthenticationConfiguration {
             h.setPrincipalNameTransformer(principalNameTransformer);
         }
 
+        h.setPrincipalFactory(jaasPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 
@@ -341,6 +356,8 @@ public class CasCoreAuthenticationConfiguration {
         final HttpBasedServiceCredentialsAuthenticationHandler h =
                 new HttpBasedServiceCredentialsAuthenticationHandler();
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
+        h.setPrincipalFactory(proxyPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 

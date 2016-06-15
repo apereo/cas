@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.config;
 
 import net.sf.ehcache.Cache;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLFetcher;
@@ -21,10 +22,12 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrinci
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
 import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.SearchExecutor;
@@ -34,6 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Set;
@@ -47,6 +51,10 @@ import java.util.Set;
 @Configuration("x509AuthenticationConfiguration")
 public class X509AuthenticationConfiguration {
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
@@ -106,6 +114,18 @@ public class X509AuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired(required=false)
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
+    
     @Bean
     public RevocationPolicy allowRevocationPolicy() {
         return new AllowRevocationPolicy();
@@ -171,7 +191,8 @@ public class X509AuthenticationConfiguration {
         h.setRevocationChecker(this.revocationChecker);
         h.setSubjectDnPattern(casProperties.getAuthn().getX509().getRegExSubjectDnPattern());
         h.setTrustedIssuerDnPattern(casProperties.getAuthn().getX509().getRegExTrustedIssuerDnPattern());
-
+        h.setPrincipalFactory(x509PrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 
@@ -195,7 +216,13 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public Action x509Check() {
-        return new X509CertificateCredentialsNonInteractiveAction();
+        final X509CertificateCredentialsNonInteractiveAction a =
+                new X509CertificateCredentialsNonInteractiveAction();
+        a.setAuthenticationSystemSupport(authenticationSystemSupport);
+        a.setCentralAuthenticationService(centralAuthenticationService);
+        a.setPrincipalFactory(x509PrincipalFactory());
+        a.setWarnCookieGenerator(warnCookieGenerator);
+        return a;
     }
 
     @Bean
@@ -248,9 +275,6 @@ public class X509AuthenticationConfiguration {
     public PrincipalFactory x509PrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
-
-
     
     @Bean
     @RefreshScope

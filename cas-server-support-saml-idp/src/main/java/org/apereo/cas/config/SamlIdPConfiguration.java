@@ -1,6 +1,10 @@
 package org.apereo.cas.config;
 
+import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
@@ -9,9 +13,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegist
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.metadata.ShibbolethIdpMetadataAndCertificatesGenerationService;
+import org.apereo.cas.support.saml.web.idp.profile.SLOPostProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.SSOPostProfileCallbackHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.SSOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.DefaultAuthnContextClassRefBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAssertionBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAttributeStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAuthNStatementBuilder;
@@ -23,13 +29,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncryp
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
-import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.AttributeStatement;
-import org.opensaml.saml.saml2.core.AuthnStatement;
-import org.opensaml.saml.saml2.core.Conditions;
-import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.Response;
-import org.opensaml.saml.saml2.core.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,6 +36,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -54,6 +54,10 @@ public class SamlIdPConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ReloadableServicesManager servicesManager;
+
+    @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
 
@@ -61,19 +65,57 @@ public class SamlIdPConfiguration {
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
 
-    @Autowired
-    @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
-    private ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy;
-
     @javax.annotation.Resource(name = "validationServiceSelectionStrategies")
     private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    private VelocityEngineFactory velocityEngineFactory;
+
+    @Autowired
+    @Qualifier("shibboleth.ParserPool")
+    private BasicParserPool parserPool;
+
+    @javax.annotation.Resource(name = "webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired(required = false)
+    @Qualifier("overrideDataEncryptionAlgorithms")
+    private List overrideDataEncryptionAlgorithms;
+
+    @Autowired(required = false)
+    @Qualifier("overrideKeyEncryptionAlgorithms")
+    private List overrideKeyEncryptionAlgorithms;
+
+    @Autowired(required = false)
+    @Qualifier("overrideBlackListedEncryptionAlgorithms")
+    private List overrideBlackListedEncryptionAlgorithms;
+
+    @Autowired(required = false)
+    @Qualifier("overrideWhiteListedEncryptionAlgorithms")
+    private List overrideWhiteListedAlgorithms;
+    
+    @Autowired(required = false)
+    @Qualifier("overrideSignatureReferenceDigestMethods")
+    private List overrideSignatureReferenceDigestMethods;
+    
+    @Autowired(required = false)
+    @Qualifier("overrideSignatureAlgorithms")
+    private List overrideSignatureAlgorithms;
+    
+    @Autowired(required = false)
+    @Qualifier("overrideBlackListedSignatureSigningAlgorithms")
+    private List overrideBlackListedSignatureSigningAlgorithms;
+    
+    @Autowired(required = false)
+    @Qualifier("overrideWhiteListedSignatureSigningAlgorithms")
+    private List overrideWhiteListedSignatureSigningAlgorithms;
+    
     @PostConstruct
     public void init() {
-        this.validationServiceSelectionStrategies.add(0,
-                this.samlIdPEntityIdValidationServiceSelectionStrategy);
+        this.validationServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
     }
-    
+
     @Bean
     public Resource templateSpMetadata() {
         return new ClassPathResource("template-sp-metadata.xml");
@@ -87,7 +129,10 @@ public class SamlIdPConfiguration {
     @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder",
             "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
-        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
+        final SamlIdPSingleLogoutServiceLogoutUrlBuilder b = new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
+        b.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
+        b.setServicesManager(servicesManager);
+        return b;
     }
 
     @Bean
@@ -121,26 +166,46 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder() {
-        return new SamlProfileSamlResponseBuilder();
+    public SamlProfileSamlResponseBuilder samlProfileSamlResponseBuilder() {
+        final SamlProfileSamlResponseBuilder b = new SamlProfileSamlResponseBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        b.setSamlObjectEncrypter(samlObjectEncrypter());
+        b.setSamlProfileSamlAssertionBuilder(samlProfileSamlAssertionBuilder());
+        b.setVelocityEngineFactory(velocityEngineFactory);
+        return b;
     }
+
 
     @Bean
     @RefreshScope
-    public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder() {
-        return new SamlProfileSamlSubjectBuilder();
+    public SamlProfileSamlSubjectBuilder samlProfileSamlSubjectBuilder() {
+        final SamlProfileSamlSubjectBuilder b = new SamlProfileSamlSubjectBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        b.setSkewAllowance(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
+        b.setSsoPostProfileSamlNameIdBuilder(samlProfileSamlNameIdBuilder());
+        return b;
     }
 
     @Bean
     @RefreshScope
     public SamlObjectEncrypter samlObjectEncrypter() {
-        return new SamlObjectEncrypter();
+        final SamlObjectEncrypter e = new SamlObjectEncrypter();
+        e.setOverrideBlackListedEncryptionAlgorithms(overrideBlackListedEncryptionAlgorithms);
+        e.setOverrideDataEncryptionAlgorithms(overrideDataEncryptionAlgorithms);
+        e.setOverrideKeyEncryptionAlgorithms(overrideKeyEncryptionAlgorithms);
+        e.setOverrideWhiteListedAlgorithms(overrideWhiteListedAlgorithms);
+        return e;
     }
 
     @Bean
     @RefreshScope
     public SamlObjectSigner samlObjectSigner() {
-        return new SamlObjectSigner();
+        final SamlObjectSigner s = new SamlObjectSigner();
+        s.setOverrideBlackListedSignatureSigningAlgorithms(overrideBlackListedSignatureSigningAlgorithms);
+        s.setOverrideSignatureAlgorithms(overrideSignatureAlgorithms);
+        s.setOverrideSignatureReferenceDigestMethods(overrideSignatureReferenceDigestMethods);
+        s.setOverrideWhiteListedAlgorithms(overrideWhiteListedSignatureSigningAlgorithms);
+        return s;
     }
 
     @Bean
@@ -158,14 +223,18 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder() {
-        return new SamlProfileSamlNameIdBuilder();
+    public SamlProfileSamlNameIdBuilder samlProfileSamlNameIdBuilder() {
+        final SamlProfileSamlNameIdBuilder b = new SamlProfileSamlNameIdBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        return b;
     }
 
     @Bean
     @RefreshScope
-    public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder() {
-        return new SamlProfileSamlConditionsBuilder();
+    public SamlProfileSamlConditionsBuilder samlProfileSamlConditionsBuilder() {
+        final SamlProfileSamlConditionsBuilder b = new SamlProfileSamlConditionsBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        return b;
     }
 
     @Bean
@@ -176,19 +245,74 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
-        return new SamlProfileSamlAssertionBuilder();
+    public SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder() {
+        final SamlProfileSamlAssertionBuilder b = new SamlProfileSamlAssertionBuilder();
+
+        b.setConfigBean(openSamlConfigBean);
+        b.setSamlObjectSigner(samlObjectSigner());
+        b.setSamlProfileSamlAttributeStatementBuilder(samlProfileSamlAttributeStatementBuilder());
+        b.setSamlProfileSamlAuthNStatementBuilder(samlProfileSamlAuthNStatementBuilder());
+        b.setSamlProfileSamlConditionsBuilder(samlProfileSamlConditionsBuilder());
+        b.setSamlProfileSamlSubjectBuilder(samlProfileSamlSubjectBuilder());
+        return b;
     }
 
     @Bean
     @RefreshScope
-    public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder() {
-        return new SamlProfileSamlAuthNStatementBuilder();
+    public SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder() {
+        final SamlProfileSamlAuthNStatementBuilder b = new SamlProfileSamlAuthNStatementBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        b.setAuthnContextClassRefBuilder(defaultAuthnContextClassRefBuilder());
+        return b;
     }
 
     @Bean
     @RefreshScope
-    public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
-        return new SamlProfileSamlAttributeStatementBuilder();
+    public SamlProfileSamlAttributeStatementBuilder samlProfileSamlAttributeStatementBuilder() {
+        final SamlProfileSamlAttributeStatementBuilder b = new SamlProfileSamlAttributeStatementBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        return b;
+    }
+
+    @Bean
+    @RefreshScope
+    public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
+        final SSOPostProfileHandlerController c = new SSOPostProfileHandlerController();
+        c.setConfigBean(openSamlConfigBean);
+        c.setParserPool(parserPool);
+        c.setResponseBuilder(samlProfileSamlResponseBuilder());
+        c.setSamlObjectSigner(samlObjectSigner());
+        c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
+        c.setServicesManager(servicesManager);
+        c.setWebApplicationServiceFactory(webApplicationServiceFactory);
+        return c;
+    }
+
+    @Bean
+    @RefreshScope
+    public SLOPostProfileHandlerController sloPostProfileHandlerController() {
+        final SLOPostProfileHandlerController c = new SLOPostProfileHandlerController();
+        c.setConfigBean(openSamlConfigBean);
+        c.setParserPool(parserPool);
+        c.setResponseBuilder(samlProfileSamlResponseBuilder());
+        c.setSamlObjectSigner(samlObjectSigner());
+        c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
+        c.setServicesManager(servicesManager);
+        c.setWebApplicationServiceFactory(webApplicationServiceFactory);
+        return c;
+    }
+
+    @Bean
+    @RefreshScope
+    public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
+        final SSOPostProfileCallbackHandlerController c = new SSOPostProfileCallbackHandlerController();
+        c.setConfigBean(openSamlConfigBean);
+        c.setParserPool(parserPool);
+        c.setResponseBuilder(samlProfileSamlResponseBuilder());
+        c.setSamlObjectSigner(samlObjectSigner());
+        c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
+        c.setServicesManager(servicesManager);
+        c.setWebApplicationServiceFactory(webApplicationServiceFactory);
+        return c;
     }
 }

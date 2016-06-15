@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -29,17 +28,11 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("logoutManager")
+    
     private LogoutManager logoutManager;
 
-    @Autowired
-    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    @Autowired
-    @Qualifier("lockingStrategy")
+    
     private LockingStrategy lockingStrategy;
 
     public DefaultTicketRegistryCleaner() {

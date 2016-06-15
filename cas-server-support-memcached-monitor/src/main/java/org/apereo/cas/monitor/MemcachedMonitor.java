@@ -15,7 +15,7 @@ import java.util.List;
  * @since 3.5.1
  */
 public class MemcachedMonitor extends AbstractCacheMonitor {
-    
+
     private MemcachedClientIF memcachedClient;
 
     /**

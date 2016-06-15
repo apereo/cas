@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 
@@ -17,10 +15,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String SPNEGO = "spnego";
 
     private static final String START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();

@@ -4,7 +4,10 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.StormpathAuthenticationHandler;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.http.credentials.password.NopPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,6 +39,15 @@ public class StormpathAuthenticationConfiguration {
     @Qualifier("stormpathPrincipalNameTransformer")
     private PrincipalNameTransformer principalNameTransformer;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Bean
+    public PrincipalFactory stormpathPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
     @Bean
     public AuthenticationHandler stormpathAuthenticationHandler() {
         final StormpathAuthenticationHandler handler =
@@ -52,7 +64,9 @@ public class StormpathAuthenticationConfiguration {
         }
 
         handler.setStormpathPasswordEncoder(this.stormpathPasswordEncoder);
-        
+
+        handler.setPrincipalFactory(stormpathPrincipalFactory());
+        handler.setServicesManager(servicesManager);
         return handler;
     }
 }

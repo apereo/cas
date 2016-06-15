@@ -13,8 +13,11 @@ import java.util.Arrays;
  */
 public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheStatus> {
 
+    /**
+     * CAS properties.
+     */
     @Autowired
-    private CasConfigurationProperties casProperties;
+    protected CasConfigurationProperties casProperties;
 
     @Override
     public CacheStatus observe() {

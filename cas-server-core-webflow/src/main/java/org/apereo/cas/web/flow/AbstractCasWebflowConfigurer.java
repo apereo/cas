@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -68,16 +67,14 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * The Login flow definition registry.
      */
-    @Autowired
-    @Qualifier("loginFlowRegistry")
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
+    /** CAS Properties. */
     @Autowired
+    protected CasConfigurationProperties casProperties;
+    
     private FlowBuilderServices flowBuilderServices;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     /**
      * Initialize.
      */
@@ -593,6 +590,14 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         createTransitionForState(state, subflowId, subflowId);
     }
 
+
+    public void setLoginFlowDefinitionRegistry(final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
+    }
+
+    public void setFlowBuilderServices(final FlowBuilderServices flowBuilderServices) {
+        this.flowBuilderServices = flowBuilderServices;
+    }
 
     /**
      * Contains flow state?

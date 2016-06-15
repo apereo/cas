@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
@@ -9,16 +10,25 @@ import org.apereo.cas.adaptors.radius.web.RadiusMultifactorApplicationContextWra
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -45,6 +55,38 @@ public class RadiusMultifactorConfiguration {
 
     @Resource(name = "builder")
     private FlowBuilderServices builder;
+
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+    
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired(required = false)
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
+            new FirstMultifactorAuthenticationProviderSelector();
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
 
     /**
      * Radius flow registry flow definition registry.
@@ -106,6 +148,8 @@ public class RadiusMultifactorConfiguration {
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
         final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler();
 
+        a.setPrincipalFactory(radiusTokenPrincipalFactory());
+        a.setServicesManager(servicesManager);
         a.setServers(radiusTokenServers());
         a.setFailoverOnAuthenticationFailure(casProperties.getAuthn().getMfa().getRadius().isFailoverOnAuthenticationFailure());
         a.setFailoverOnException(casProperties.getAuthn().getMfa().getRadius().isFailoverOnException());
@@ -113,6 +157,11 @@ public class RadiusMultifactorConfiguration {
         return a;
     }
 
+    @Bean
+    public PrincipalFactory radiusTokenPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+    
     @Bean
     public BaseApplicationContextWrapper radiusMultifactorApplicationContextWrapper() {
         final RadiusMultifactorApplicationContextWrapper w =
@@ -132,6 +181,12 @@ public class RadiusMultifactorConfiguration {
     public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
         final RadiusAuthenticationWebflowEventResolver r =
                 new RadiusAuthenticationWebflowEventResolver();
+        r.setAuthenticationSystemSupport(authenticationSystemSupport);
+        r.setCentralAuthenticationService(centralAuthenticationService);
+        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
+        r.setServicesManager(servicesManager);
+        r.setTicketRegistrySupport(ticketRegistrySupport);
+        r.setWarnCookieGenerator(warnCookieGenerator);
         return r;
     }
 
@@ -140,6 +195,8 @@ public class RadiusMultifactorConfiguration {
         final RadiusMultifactorWebflowConfigurer w =
                 new RadiusMultifactorWebflowConfigurer();
         w.setRadiusFlowRegistry(radiusFlowRegistry());
+        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
 }

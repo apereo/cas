@@ -8,8 +8,11 @@ import org.apereo.cas.adaptors.radius.web.RadiusApplicationContextWrapper;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +47,14 @@ public class RadiusConfiguration {
     @Qualifier("radiusPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Bean
+    public PrincipalFactory radiusPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
 
     /**
      * Radius server j radius server.
@@ -106,6 +117,9 @@ public class RadiusConfiguration {
         if (principalNameTransformer != null) {
             h.setPrincipalNameTransformer(principalNameTransformer);
         }
+
+        h.setPrincipalFactory(radiusPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 

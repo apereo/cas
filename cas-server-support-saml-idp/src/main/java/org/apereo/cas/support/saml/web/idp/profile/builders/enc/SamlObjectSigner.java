@@ -43,7 +43,6 @@ import org.opensaml.xmlsec.signature.support.SignatureValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,34 +60,25 @@ import java.util.List;
  */
 public class SamlObjectSigner {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
+    
     /**
      * The Override signature reference digest methods.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideSignatureReferenceDigestMethods")
     protected List overrideSignatureReferenceDigestMethods;
 
     /**
      * The Override signature algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideSignatureAlgorithms")
     protected List overrideSignatureAlgorithms;
 
     /**
      * The Override black listed signature signing algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideBlackListedSignatureSigningAlgorithms")
     protected List overrideBlackListedSignatureSigningAlgorithms;
 
     /**
      * The Override white listed signature signing algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideWhiteListedSignatureSigningAlgorithms")
     protected List overrideWhiteListedAlgorithms;
 
 
@@ -369,5 +359,19 @@ public class SamlObjectSigner {
         logger.info("Successfully validated the request signature.");
     }
 
+    public void setOverrideSignatureReferenceDigestMethods(final List overrideSignatureReferenceDigestMethods) {
+        this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
+    }
 
+    public void setOverrideSignatureAlgorithms(final List overrideSignatureAlgorithms) {
+        this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
+    }
+
+    public void setOverrideBlackListedSignatureSigningAlgorithms(final List overrideBlackListedSignatureSigningAlgorithms) {
+        this.overrideBlackListedSignatureSigningAlgorithms = overrideBlackListedSignatureSigningAlgorithms;
+    }
+
+    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
+        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+    }
 }

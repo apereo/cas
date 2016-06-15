@@ -31,8 +31,6 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;

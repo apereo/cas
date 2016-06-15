@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorApplicationContextWrapper;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
@@ -14,16 +15,25 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationW
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -46,8 +56,40 @@ public class GoogleAuthentiacatorConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+
     @Resource(name = "builder")
     private FlowBuilderServices builder;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired(required = false)
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
+            new FirstMultifactorAuthenticationProviderSelector();
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
 
     /**
      * Yubikey flow registry flow definition registry.
@@ -78,7 +120,14 @@ public class GoogleAuthentiacatorConfiguration {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
         h.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
         h.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
+        h.setPrincipalFactory(googlePrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
+    }
+
+    @Bean
+    public PrincipalFactory googlePrincipalFactory() {
+        return new DefaultPrincipalFactory();
     }
 
     @Bean
@@ -113,7 +162,14 @@ public class GoogleAuthentiacatorConfiguration {
 
     @Bean
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
-        return new GoogleAuthenticatorAuthenticationWebflowEventResolver();
+        final GoogleAuthenticatorAuthenticationWebflowEventResolver r = new GoogleAuthenticatorAuthenticationWebflowEventResolver();
+        r.setAuthenticationSystemSupport(authenticationSystemSupport);
+        r.setCentralAuthenticationService(centralAuthenticationService);
+        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
+        r.setServicesManager(servicesManager);
+        r.setTicketRegistrySupport(ticketRegistrySupport);
+        r.setWarnCookieGenerator(warnCookieGenerator);
+        return r;
     }
 
     @Bean
@@ -135,6 +191,8 @@ public class GoogleAuthentiacatorConfiguration {
         final GoogleAuthenticatorMultifactorWebflowConfigurer c =
                 new GoogleAuthenticatorMultifactorWebflowConfigurer();
         c.setFlowDefinitionRegistry(googleAuthenticatorFlowRegistry());
+        c.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        c.setFlowBuilderServices(flowBuilderServices);
         return c;
     }
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.DefaultProxyTicketFactory;
 import org.apereo.cas.ticket.DefaultServiceTicketFactory;
@@ -58,11 +59,15 @@ public class CasCoreTicketsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+    
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
 
     @Autowired
-    @Qualifier("ticketGrantingTicketUniqueIdGenerator")
-    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
-
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+    
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
@@ -74,11 +79,7 @@ public class CasCoreTicketsConfiguration {
     @Autowired(required = false)
     @Qualifier("sessionExpirationPolicy")
     private ExpirationPolicy sessionExpirationPolicy;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
+    
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
@@ -90,7 +91,7 @@ public class CasCoreTicketsConfiguration {
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         final DefaultProxyGrantingTicketFactory f = new DefaultProxyGrantingTicketFactory();
         f.setTicketGrantingTicketExpirationPolicy(ticketGrantingTicketExpirationPolicy);
-        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueTicketIdGenerator);
+        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());
         return f;
     }
 
@@ -113,14 +114,19 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public DefaultTicketFactory defaultTicketFactory() {
-        return new DefaultTicketFactory();
+        final DefaultTicketFactory f = new DefaultTicketFactory();
+        f.setProxyGrantingTicketFactory(defaultProxyGrantingTicketFactory());
+        f.setTicketGrantingTicketFactory(defaultTicketGrantingTicketFactory());
+        f.setServiceTicketFactory(defaultServiceTicketFactory());
+        f.setProxyTicketFactory(defaultProxyTicketFactory());
+        return f;
     }
 
     @Bean
     public DefaultTicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
         final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
         f.setTicketGrantingTicketExpirationPolicy(ticketGrantingTicketExpirationPolicy);
-        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueTicketIdGenerator);
+        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());
         return f;
     }
 
@@ -263,7 +269,12 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new DefaultTicketRegistryCleaner();
+        final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
+        
+        c.setLockingStrategy(lockingStrategy());
+        c.setLogoutManager(logoutManager);
+        c.setTicketRegistry(ticketRegistry);
+        return c;
     }
 
     @Bean

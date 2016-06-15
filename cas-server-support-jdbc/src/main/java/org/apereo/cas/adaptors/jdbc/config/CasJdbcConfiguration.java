@@ -7,8 +7,11 @@ import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandle
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -89,7 +92,11 @@ public class CasJdbcConfiguration {
     @Autowired(required = false)
     @Qualifier("queryDatabaseDataSource")
     private DataSource queryDatabaseDataSource;
-
+    
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -109,7 +116,9 @@ public class CasJdbcConfiguration {
         if (bindSearchPrincipalNameTransformer != null) {
             h.setPrincipalNameTransformer(bindSearchPrincipalNameTransformer);
         }
-        
+
+        h.setPrincipalFactory(jdbcPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 
@@ -136,7 +145,9 @@ public class CasJdbcConfiguration {
         if (queryAndEncodePrincipalNameTransformer != null) {
             h.setPrincipalNameTransformer(queryAndEncodePrincipalNameTransformer);
         }
-        
+
+        h.setPrincipalFactory(jdbcPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 
@@ -157,6 +168,9 @@ public class CasJdbcConfiguration {
         if (queryPrincipalNameTransformer != null) {
             h.setPrincipalNameTransformer(queryPrincipalNameTransformer);
         }
+
+        h.setPrincipalFactory(jdbcPrincipalFactory());
+        h.setServicesManager(servicesManager);
         
         return h;
     }
@@ -180,7 +194,14 @@ public class CasJdbcConfiguration {
         if (searchModePrincipalNameTransformer != null) {
             h.setPrincipalNameTransformer(searchModePrincipalNameTransformer);
         }
-        
+
+        h.setPrincipalFactory(jdbcPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
+    }
+
+    @Bean
+    public PrincipalFactory jdbcPrincipalFactory() {
+        return new DefaultPrincipalFactory();
     }
 }

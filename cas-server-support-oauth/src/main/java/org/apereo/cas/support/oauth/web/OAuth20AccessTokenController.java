@@ -20,8 +20,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,19 +39,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
 @Controller("accessTokenController")
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Autowired
-    @Qualifier("defaultRefreshTokenFactory")
     private RefreshTokenFactory refreshTokenFactory;
 
-    @Autowired
-    @Qualifier("accessTokenResponseGenerator")
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     /**
@@ -263,4 +256,6 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     public void setRefreshTokenFactory(final RefreshTokenFactory refreshTokenFactory) {
         this.refreshTokenFactory = refreshTokenFactory;
     }
+    
+    
 }

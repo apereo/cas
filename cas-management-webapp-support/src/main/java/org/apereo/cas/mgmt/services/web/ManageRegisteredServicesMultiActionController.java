@@ -2,7 +2,6 @@ package org.apereo.cas.mgmt.services.web;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
@@ -10,7 +9,6 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReloadableServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,16 +46,16 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      *
      * @param servicesManager          the services manager
      * @param registeredServiceFactory the registered service factory
-     * @param properties               props
+     * @param defaultServiceUrl        the default service url
      */
     @Autowired
     public ManageRegisteredServicesMultiActionController(
-            @Qualifier("servicesManager") final ReloadableServicesManager servicesManager,
-            @Qualifier("registeredServiceFactory") final RegisteredServiceFactory registeredServiceFactory,
-            final ManagementWebappProperties properties) {
+            final ReloadableServicesManager servicesManager,
+            final RegisteredServiceFactory registeredServiceFactory,
+            final String defaultServiceUrl) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
-        this.defaultService = new WebApplicationServiceFactory().createService(properties.getDefaultServiceUrl());
+        this.defaultService = new WebApplicationServiceFactory().createService(defaultServiceUrl);
     }
 
     /**

@@ -24,8 +24,9 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /** CAS Properties. */
     @Autowired
-    private CasConfigurationProperties casProperties;
+    protected CasConfigurationProperties casProperties;
 
     @Override
     public boolean verify(final RegisteredService service) throws AuthenticationException {

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFedApplicationContextWrapper;
 import org.apereo.cas.support.wsfederation.WsFederationAttributeMutator;
@@ -37,23 +38,27 @@ import org.springframework.webflow.execution.Action;
 public class WsFederationAuthenticationConfiguration {
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
-            
-    @Autowired(required=false)
+
+    @Autowired(required = false)
     @Qualifier("wsfedAttributeMutator")
     private WsFederationAttributeMutator attributeMutator;
-    
+
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean configBean;
-    
+
     @Autowired
     private ResourceLoader resourceLoader;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -98,9 +103,13 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler adfsAuthNHandler() {
-        return new WsFederationAuthenticationHandler();
+        final WsFederationAuthenticationHandler h =
+                new WsFederationAuthenticationHandler();
+        h.setPrincipalFactory(adfsPrincipalFactory());
+        h.setServicesManager(servicesManager);
+        return h;
     }
-
+    
     @Bean
     @RefreshScope
     public PrincipalResolver adfsPrincipalResolver() {
@@ -118,7 +127,7 @@ public class WsFederationAuthenticationConfiguration {
     public PrincipalFactory adfsPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     @RefreshScope
     public Action wsFederationAction() {
@@ -128,7 +137,7 @@ public class WsFederationAuthenticationConfiguration {
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setConfiguration(wsFedConfig());
         a.setWsFederationHelper(wsFederationHelper());
-        
+
         return a;
     }
 }

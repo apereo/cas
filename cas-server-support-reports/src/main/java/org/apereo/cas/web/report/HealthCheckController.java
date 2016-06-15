@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -33,7 +32,6 @@ public class HealthCheckController {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Resource(name="healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
 
     /**
@@ -76,5 +74,9 @@ public class HealthCheckController {
         };
 
         return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
+    }
+
+    public void setHealthCheckMonitor(final Monitor<HealthStatus> healthCheckMonitor) {
+        this.healthCheckMonitor = healthCheckMonitor;
     }
 }

@@ -4,8 +4,6 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +15,7 @@ import java.util.List;
  * @since 5.0.0
  */
 public class HazelcastMonitor extends AbstractCacheMonitor {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Override
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();

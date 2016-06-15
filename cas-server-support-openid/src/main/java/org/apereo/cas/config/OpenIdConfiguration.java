@@ -38,6 +38,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Arrays;
@@ -54,6 +55,10 @@ public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
     @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
+
+    @Autowired
     @Qualifier("cas3ServiceJsonView")
     private View cas3ServiceJsonView;
 
@@ -64,19 +69,19 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("casOpenIdServiceFailureView")
     private View casOpenIdServiceFailureView;
-    
+
     @Autowired
     @Qualifier("casOpenIdAssociationSuccessView")
     private View casOpenIdAssociationSuccessView;
-    
+
     @Autowired
     @Qualifier("proxy20Handler")
     private ProxyHandler proxy20Handler;
-    
+
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
-    
+
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
@@ -111,11 +116,11 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     /**
      * Openid delegating controller delegating controller.
      *
@@ -166,7 +171,7 @@ public class OpenIdConfiguration {
         c.setAuthenticationContextValidator(authenticationContextValidator);
         c.setJsonView(cas3ServiceJsonView);
         c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        
+
         return c;
     }
 
@@ -199,6 +204,8 @@ public class OpenIdConfiguration {
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler();
         h.setTicketRegistry(this.ticketRegistry);
+        h.setPrincipalFactory(openidPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 
@@ -216,7 +223,7 @@ public class OpenIdConfiguration {
     public PrincipalFactory openidPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     @RefreshScope
     public OpenIdServiceFactory openIdServiceFactory() {
@@ -234,7 +241,13 @@ public class OpenIdConfiguration {
 
     @Bean
     public Action openIdSingleSignOnAction() {
-        return new OpenIdSingleSignOnAction();
+        final OpenIdSingleSignOnAction a = new OpenIdSingleSignOnAction();
+        a.setExtractor(defaultOpenIdUserNameExtractor());
+        a.setAuthenticationSystemSupport(authenticationSystemSupport);
+        a.setCentralAuthenticationService(centralAuthenticationService);
+        a.setPrincipalFactory(openidPrincipalFactory());
+        a.setWarnCookieGenerator(warnCookieGenerator);
+        return a;
     }
 
     @Bean
@@ -251,6 +264,6 @@ public class OpenIdConfiguration {
         m.setMappings(mappings);
         return m;
     }
-    
-    
+
+
 }

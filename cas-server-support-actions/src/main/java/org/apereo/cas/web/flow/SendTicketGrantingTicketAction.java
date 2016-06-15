@@ -7,12 +7,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,24 +27,15 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
-
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Instance of CentralAuthenticationService. */
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
     
-    @Autowired
-    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
      * Instantiates a new Send ticket granting ticket action.
@@ -117,6 +105,10 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
         return false;
     }
 
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
+    }
 
     public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;

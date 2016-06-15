@@ -1,8 +1,6 @@
 package org.apereo.cas.monitor;
 
 import net.sf.ehcache.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +18,6 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
     /**
      * The Ticket granting tickets cache.
      */
-    @Autowired(required = false)
-    @Qualifier("ehcacheTicketsCache")
     private Cache ehcacheTicketsCache;
 
     /**
@@ -47,4 +43,6 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
         }
         return list.toArray(new CacheStatistics[]{});
     }
+    
+    
 }

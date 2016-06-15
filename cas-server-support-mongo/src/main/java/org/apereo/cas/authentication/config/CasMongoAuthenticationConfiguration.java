@@ -4,7 +4,10 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -35,6 +38,16 @@ public class CasMongoAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Bean
+    public PrincipalFactory mongoPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
     @Bean
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
@@ -57,7 +70,11 @@ public class CasMongoAuthenticationConfiguration {
         if (mongoPasswordEncoder != null) {
             mongo.setMongoPasswordEncoder(mongoPasswordEncoder);
         }
-        
+
+
+        mongo.setPrincipalFactory(mongoPrincipalFactory());
+        mongo.setServicesManager(servicesManager);
+
         return mongo;
     }
 }

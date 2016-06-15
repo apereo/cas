@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,14 +55,11 @@ public class StatisticsController implements ServletContextAware {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
+    
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Resource(name = "metrics")
+    
     private MetricRegistry metricsRegistry;
-
-    @Resource(name = "healthCheckMetrics")
+    
     private HealthCheckRegistry healthCheckRegistry;
 
     /**
@@ -165,5 +161,17 @@ public class StatisticsController implements ServletContextAware {
         servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, this.metricsRegistry);
         servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, Boolean.TRUE);
         servletContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, this.healthCheckRegistry);
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setMetricsRegistry(final MetricRegistry metricsRegistry) {
+        this.metricsRegistry = metricsRegistry;
+    }
+
+    public void setHealthCheckRegistry(final HealthCheckRegistry healthCheckRegistry) {
+        this.healthCheckRegistry = healthCheckRegistry;
     }
 }

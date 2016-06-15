@@ -18,20 +18,13 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
-
-    private int rank;
-
-    private HttpClient httpClient;
-
-    public YubiKeyMultifactorAuthenticationProvider() {
-    }
-
+    private final YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
+    
+    private final HttpClient httpClient;
+    
     public YubiKeyMultifactorAuthenticationProvider(final YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler,
-                                                    final int rank,
                                                     final HttpClient httpClient) {
         this.yubiKeyAuthenticationHandler = yubiKeyAuthenticationHandler;
-        this.rank = rank;
         this.httpClient = httpClient;
     }
 
@@ -42,7 +35,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
 
     @Override
     public int getOrder() {
-        return this.rank;
+        return casProperties.getAuthn().getMfa().getGauth().getRank();
     }
 
 

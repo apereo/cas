@@ -2,8 +2,12 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * This is {@link WsFederationAuthenticationWebflowConfiguration}.
@@ -13,9 +17,19 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("wsFederationAuthenticationWebflowConfiguration")
 public class WsFederationAuthenticationWebflowConfiguration {
+
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
     
     @Bean
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        return new WsFederationWebflowConfigurer();
+        final WsFederationWebflowConfigurer w = new WsFederationWebflowConfigurer();
+        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        w.setFlowBuilderServices(flowBuilderServices);
+        return w;
     }
 }

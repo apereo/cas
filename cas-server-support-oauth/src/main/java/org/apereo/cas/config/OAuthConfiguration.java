@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.OAuthApplicationContextWrapper;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -22,11 +24,16 @@ import org.apereo.cas.support.oauth.validator.OAuth20ValidationServiceSelectionS
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenController;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.OAuth20AuthorizeController;
+import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeController;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
@@ -39,6 +46,7 @@ import org.pac4j.core.http.CallbackUrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
+import org.pac4j.springframework.web.CallbackController;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +79,9 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
 
     @Autowired
+    private CallbackController callbackController;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Resource(name = "webApplicationServiceFactory")
@@ -87,34 +98,22 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
-    /**
-     * Access token response generator access token response generator.
-     *
-     * @return the access token response generator
-     */
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+    
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean(autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
-
-
-    /**
-     * Oauth cas client redirect action builder.
-     *
-     * @return the oauth cas client redirect action builder.
-     */
+    
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
     @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
 
-    /**
-     * Oauth sec config config.
-     *
-     * @return the config
-     */
     @Bean
     public Config oauthSecConfig() {
         final CasClient oauthCasClient = new CasClient(casProperties.getServer().getLoginUrl()) {
@@ -329,6 +328,57 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         return f;
     }
 
+    @Bean
+    public OAuth20CallbackAuthorizeController callbackAuthorizeController() {
+        final OAuth20CallbackAuthorizeController c = new OAuth20CallbackAuthorizeController();
+        c.setCallbackController(this.callbackController);
+        c.setConfig(oauthSecConfig());
+        c.setAuth20CallbackAuthorizeViewResolver(callbackAuthorizeViewResolver());
+        return c;
+    }
+    
+    @Bean
+    public OAuth20AccessTokenController accessTokenController() {
+        final OAuth20AccessTokenController c = new OAuth20AccessTokenController();
+        c.setAccessTokenFactory(defaultAccessTokenFactory());
+        c.setAccessTokenResponseGenerator(accessTokenResponseGenerator());
+        c.setPrincipalFactory(oauthPrincipalFactory());
+        c.setRefreshTokenFactory(defaultRefreshTokenFactory());
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator());
+        return c;
+    }
+    
+    @Bean
+    public OAuth20ProfileController profileController() {
+        final OAuth20ProfileController c = new OAuth20ProfileController();
+        c.setAccessTokenFactory(defaultAccessTokenFactory());
+        c.setPrincipalFactory(oauthPrincipalFactory());
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator());
+        return c;
+    }
+
+    @Bean
+    public OAuth20AuthorizeController authorizeController() {
+        final OAuth20AuthorizeController c = new OAuth20AuthorizeController();
+        c.setAccessTokenFactory(defaultAccessTokenFactory());
+        c.setPrincipalFactory(oauthPrincipalFactory());
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator());
+        c.setConsentApprovalViewResolver(consentApprovalViewResolver());
+        c.setoAuthCodeFactory(defaultOAuthCodeFactory());
+        return c;
+    }
+    
+    @Bean
+    public PrincipalFactory oauthPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+    
     @Bean
     public RefreshTokenFactory defaultRefreshTokenFactory() {
         final DefaultRefreshTokenFactory f = new DefaultRefreshTokenFactory();

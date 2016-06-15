@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,12 +37,8 @@ import java.util.Map;
 public class RegisteredServiceResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceResource.class);
 
-    @Autowired
-    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    
     private CentralAuthenticationService centralAuthenticationService;
     
     @Autowired
@@ -153,6 +148,10 @@ public class RegisteredServiceResource {
             return service;
         }
 
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
     /**

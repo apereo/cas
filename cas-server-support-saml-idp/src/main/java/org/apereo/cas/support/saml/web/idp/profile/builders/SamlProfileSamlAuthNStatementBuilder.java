@@ -13,7 +13,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +32,6 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Autowired
-    @Qualifier("defaultAuthnContextClassRefBuilder")
     private AuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     @Override
@@ -88,5 +85,9 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
         subjectLocality.setAddress(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
         return subjectLocality;
+    }
+
+    public void setAuthnContextClassRefBuilder(final AuthnContextClassRefBuilder authnContextClassRefBuilder) {
+        this.authnContextClassRefBuilder = authnContextClassRefBuilder;
     }
 }

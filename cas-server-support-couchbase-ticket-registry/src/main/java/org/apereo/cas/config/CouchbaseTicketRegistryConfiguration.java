@@ -54,7 +54,6 @@ public class CouchbaseTicketRegistryConfiguration {
                 return false;
             }
         };
-        
         return c;
     }
 }

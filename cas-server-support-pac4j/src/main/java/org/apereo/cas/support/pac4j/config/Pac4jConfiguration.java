@@ -3,8 +3,11 @@ package org.apereo.cas.support.pac4j.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.Pac4jApplicationContextWrapper;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
@@ -52,6 +55,15 @@ public class Pac4jConfiguration {
     @Autowired(required = false)
     private IndirectClient[] clients;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Bean
+    public PrincipalFactory clientPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+    
     @Bean
     public Pac4jProperties pac4jProperties() {
         return new Pac4jProperties();
@@ -76,6 +88,8 @@ public class Pac4jConfiguration {
     public ClientAuthenticationHandler clientAuthenticationHandler() {
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler();
         h.setClients(builtClients());
+        h.setPrincipalFactory(clientPrincipalFactory());
+        h.setServicesManager(servicesManager);
         return h;
     }
 

@@ -10,7 +10,6 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,24 +31,14 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Autowired
-    @Qualifier("samlProfileSamlAuthNStatementBuilder")
     private SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder;
-
-    @Autowired
-    @Qualifier("samlProfileSamlAttributeStatementBuilder")
+    
     private SamlProfileSamlAttributeStatementBuilder samlProfileSamlAttributeStatementBuilder;
-
-    @Autowired
-    @Qualifier("samlProfileSamlSubjectBuilder")
+    
     private SamlProfileSamlSubjectBuilder samlProfileSamlSubjectBuilder;
-
-    @Autowired
-    @Qualifier("samlProfileSamlConditionsBuilder")
+    
     private SamlProfileSamlConditionsBuilder samlProfileSamlConditionsBuilder;
 
-    @Autowired
-    @Qualifier("samlObjectSigner")
     private SamlObjectSigner samlObjectSigner;
 
 
@@ -100,4 +89,23 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         }
     }
 
+    public void setSamlProfileSamlAuthNStatementBuilder(final SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder) {
+        this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
+    }
+
+    public void setSamlProfileSamlAttributeStatementBuilder(final SamlProfileSamlAttributeStatementBuilder samlProfileSamlAttributeStatementBuilder) {
+        this.samlProfileSamlAttributeStatementBuilder = samlProfileSamlAttributeStatementBuilder;
+    }
+
+    public void setSamlProfileSamlSubjectBuilder(final SamlProfileSamlSubjectBuilder samlProfileSamlSubjectBuilder) {
+        this.samlProfileSamlSubjectBuilder = samlProfileSamlSubjectBuilder;
+    }
+
+    public void setSamlProfileSamlConditionsBuilder(final SamlProfileSamlConditionsBuilder samlProfileSamlConditionsBuilder) {
+        this.samlProfileSamlConditionsBuilder = samlProfileSamlConditionsBuilder;
+    }
+
+    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
+        this.samlObjectSigner = samlObjectSigner;
+    }
 }

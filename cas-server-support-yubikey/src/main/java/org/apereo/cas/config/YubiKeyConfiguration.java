@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyApplicationContextWrapper;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
@@ -8,11 +9,18 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +28,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -39,6 +48,13 @@ public class YubiKeyConfiguration {
     private HttpClient httpClient;
 
     @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -51,6 +67,31 @@ public class YubiKeyConfiguration {
     @Autowired(required = false)
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry registry;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired(required = false)
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
+            new FirstMultifactorAuthenticationProviderSelector();
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
 
     @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
@@ -72,6 +113,11 @@ public class YubiKeyConfiguration {
     }
 
     @Bean
+    public PrincipalFactory yubikeyPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+    @Bean
     @RefreshScope
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
 
@@ -82,6 +128,9 @@ public class YubiKeyConfiguration {
         if (registry != null) {
             handler.setRegistry(this.registry);
         }
+
+        handler.setPrincipalFactory(yubikeyPrincipalFactory());
+        handler.setServicesManager(servicesManager);
         return handler;
     }
 
@@ -102,7 +151,6 @@ public class YubiKeyConfiguration {
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
         return new YubiKeyMultifactorAuthenticationProvider(
                 yubikeyAuthenticationHandler(),
-                this.casProperties.getAuthn().getMfa().getYubikey().getRank(),
                 this.httpClient);
     }
 
@@ -115,13 +163,22 @@ public class YubiKeyConfiguration {
 
     @Bean
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
-        final YubiKeyMultifactorWebflowConfigurer c = new YubiKeyMultifactorWebflowConfigurer();
-        c.setYubikeyFlowRegistry(yubikeyFlowRegistry());
-        return c;
+        final YubiKeyMultifactorWebflowConfigurer r = new YubiKeyMultifactorWebflowConfigurer();
+        r.setYubikeyFlowRegistry(yubikeyFlowRegistry());
+        r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        r.setFlowBuilderServices(flowBuilderServices);
+        return r;
     }
 
     @Bean
     public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver() {
-        return new YubiKeyAuthenticationWebflowEventResolver();
+        final YubiKeyAuthenticationWebflowEventResolver r = new YubiKeyAuthenticationWebflowEventResolver();
+        r.setAuthenticationSystemSupport(authenticationSystemSupport);
+        r.setCentralAuthenticationService(centralAuthenticationService);
+        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
+        r.setServicesManager(servicesManager);
+        r.setTicketRegistrySupport(ticketRegistrySupport);
+        r.setWarnCookieGenerator(warnCookieGenerator);
+        return r;
     }
 }

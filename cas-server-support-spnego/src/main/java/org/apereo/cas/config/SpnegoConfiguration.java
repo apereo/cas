@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.SpnegoApplicationContextWrapper;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
@@ -40,6 +41,11 @@ import java.util.Arrays;
 @Configuration("spnegoConfiguration")
 public class SpnegoConfiguration {
 
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+    
     @Autowired
     @Qualifier("successfulHandlerMetaDataPopulator")
     private AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator;
@@ -108,7 +114,8 @@ public class SpnegoConfiguration {
     @RefreshScope
     public AuthenticationHandler spnegoHandler() {
         final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler();
-
+        h.setPrincipalFactory(spnegoPrincipalFactory());
+        h.setServicesManager(servicesManager);
         h.setAuthentication(spnegoAuthentication());
         h.setPrincipalWithDomainName(casProperties.getAuthn().getSpnego().isPrincipalWithDomainName());
         h.setNTLMallowed(casProperties.getAuthn().getSpnego().isNtlmAllowed());
@@ -123,9 +130,16 @@ public class SpnegoConfiguration {
         ntlm.setDomainController(casProperties.getAuthn().getNtlm().getDomainController());
         ntlm.setIncludePattern(casProperties.getAuthn().getNtlm().getIncludePattern());
         ntlm.setLoadBalance(casProperties.getAuthn().getNtlm().isLoadBalance());
+        ntlm.setPrincipalFactory(ntlmPrincipalFactory());
+        ntlm.setServicesManager(servicesManager);
         return ntlm;
     }
 
+    @Bean
+    public PrincipalFactory ntlmPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+    
     @Bean
     @RefreshScope
     public PrincipalResolver spnegoPrincipalResolver() {

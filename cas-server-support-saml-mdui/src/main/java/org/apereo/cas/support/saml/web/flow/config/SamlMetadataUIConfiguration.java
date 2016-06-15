@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.web.flow.SamlMetadataUIWebflowConfigurer;
@@ -34,6 +35,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
@@ -54,22 +57,35 @@ public class SamlMetadataUIConfiguration {
     private static final String DEFAULT_SEPARATOR = "::";
 
     @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
+    private OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     private ResourceLoader resourceLoader;
 
     @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+    
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @javax.annotation.Resource(name="webApplicationServiceFactory")
+    @javax.annotation.Resource(name = "webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> serviceFactory;
-    
+
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
         final SamlMetadataUIWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer();
         w.setSamlMetadataUIParserAction(samlMetadataUIParserAction());
+        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
 
@@ -78,7 +94,7 @@ public class SamlMetadataUIConfiguration {
         final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
                 SamlProtocolConstants.PARAMETER_ENTITY_ID);
         final SamlMetadataUIParserAction a = new SamlMetadataUIParserAction(parameter, metadataAdapter());
-        
+
         a.setServiceFactory(this.serviceFactory);
         a.setServicesManager(this.servicesManager);
         return a;
@@ -98,7 +114,7 @@ public class SamlMetadataUIConfiguration {
         casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
         adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
-
+        adapter.setConfigBean(openSamlConfigBean);
         return adapter;
     }
 

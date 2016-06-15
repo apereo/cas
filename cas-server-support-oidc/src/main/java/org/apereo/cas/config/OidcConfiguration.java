@@ -1,15 +1,26 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.support.oauth.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshTokenFactory;
+import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.web.OidcAccessTokenController;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
+import org.apereo.cas.web.OidcAuthorizeController;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.web.OidcProfileController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -63,6 +74,30 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("defaultAccessTokenFactory")
+    private AccessTokenFactory defaultAccessTokenFactory;
+
+    @Autowired
+    @Qualifier("defaultRefreshTokenFactory")
+    private RefreshTokenFactory defaultRefreshTokenFactory;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier("oAuthValidator")
+    private OAuthValidator oAuthValidator;
+
+    @Autowired
+    @Qualifier("defaultOAuthCodeFactory")
+    private OAuthCodeFactory defaultOAuthCodeFactory;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -195,6 +230,48 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         s.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
         s.setTicketRegistrySupport(ticketRegistrySupport);
         return s;
+    }
+
+    @Bean
+    public PrincipalFactory oidcPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+    @Bean
+    public OidcAccessTokenController oidcAccessTokenController() {
+        final OidcAccessTokenController c = new OidcAccessTokenController();
+        c.setAccessTokenResponseGenerator(oidcAccessTokenResponseGenerator());
+        c.setAccessTokenFactory(defaultAccessTokenFactory);
+        c.setPrincipalFactory(oidcPrincipalFactory());
+        c.setRefreshTokenFactory(defaultRefreshTokenFactory);
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator);
+        return c;
+    }
+
+    @Bean
+    public OidcProfileController oidcProfileController() {
+        final OidcProfileController c = new OidcProfileController();
+        c.setAccessTokenFactory(defaultAccessTokenFactory);
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator);
+        c.setPrincipalFactory(oidcPrincipalFactory());
+        return c;
+    }
+
+    @Bean
+    public OidcAuthorizeController oidcAuthorizeController() {
+        final OidcAuthorizeController c = new OidcAuthorizeController();
+        c.setAccessTokenFactory(defaultAccessTokenFactory);
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator);
+        c.setPrincipalFactory(oidcPrincipalFactory());
+        c.setConsentApprovalViewResolver(consentApprovalViewResolver());
+        c.setoAuthCodeFactory(defaultOAuthCodeFactory);
+        return c;
     }
 }
 

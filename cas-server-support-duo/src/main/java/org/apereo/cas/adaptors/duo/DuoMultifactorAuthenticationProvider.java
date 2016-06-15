@@ -1,9 +1,7 @@
 package org.apereo.cas.adaptors.duo;
 
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is {@link DuoMultifactorAuthenticationProvider}.
@@ -15,12 +13,8 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     private static final long serialVersionUID = 4789727148634156909L;
     
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
     private DuoAuthenticationService duoAuthenticationService;
-
-
+    
     @Override
     public String getId() {
         return DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;

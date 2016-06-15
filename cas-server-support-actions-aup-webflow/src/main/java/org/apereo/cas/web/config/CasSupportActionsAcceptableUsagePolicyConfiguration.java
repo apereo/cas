@@ -7,8 +7,11 @@ import org.apereo.cas.web.flow.AcceptableUsagePolicyWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.DefaultAcceptableUsagePolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -23,6 +26,13 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+    
     @Bean
     public Action acceptableUsagePolicyFormAction() {
         final AcceptableUsagePolicyFormAction a = new AcceptableUsagePolicyFormAction();
@@ -32,7 +42,10 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Bean
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
-        return new AcceptableUsagePolicyWebflowConfigurer();
+        final AcceptableUsagePolicyWebflowConfigurer r = new AcceptableUsagePolicyWebflowConfigurer();
+        r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        r.setFlowBuilderServices(flowBuilderServices);
+        return r;
     }
 
     @Bean

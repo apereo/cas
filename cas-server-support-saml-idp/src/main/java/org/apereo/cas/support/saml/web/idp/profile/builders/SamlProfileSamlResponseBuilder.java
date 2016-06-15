@@ -22,7 +22,6 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,29 +40,21 @@ import java.time.ZonedDateTime;
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;
     
-    
     /**
      * The Saml object encoder.
      */
-    @Autowired
-    @Qualifier("samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
      * The Velocity engine factory.
      */
-    @Autowired
     protected VelocityEngineFactory velocityEngineFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Autowired
-    @Qualifier("samlProfileSamlAssertionBuilder")
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
-
-    @Autowired
-    @Qualifier("samlObjectEncrypter")
+    
     private SamlObjectEncrypter samlObjectEncrypter;
 
     @Override
@@ -191,5 +182,21 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for encryption", e);
         }
+    }
+
+    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
+        this.samlObjectSigner = samlObjectSigner;
+    }
+
+    public void setVelocityEngineFactory(final VelocityEngineFactory velocityEngineFactory) {
+        this.velocityEngineFactory = velocityEngineFactory;
+    }
+
+    public void setSamlProfileSamlAssertionBuilder(final SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder) {
+        this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;
+    }
+
+    public void setSamlObjectEncrypter(final SamlObjectEncrypter samlObjectEncrypter) {
+        this.samlObjectEncrypter = samlObjectEncrypter;
     }
 }

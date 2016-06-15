@@ -1,12 +1,9 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Base class for all authentication handlers that support configurable naming.
@@ -20,13 +17,9 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
-    @Autowired
-    @Qualifier("principalFactory")
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    protected PrincipalFactory principalFactory;
 
     /** The services manager instance, as the entry point to the registry. **/
-    @Autowired
-    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** Configurable handler name. */
@@ -61,5 +54,9 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 }

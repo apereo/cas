@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -15,8 +14,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
@@ -28,7 +25,6 @@ import org.springframework.webflow.execution.RequestContext;
  * credential such as client certificates, NTLM, etc.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
@@ -37,21 +33,13 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Principal factory instance. */
-    @Autowired
-    @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory;
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport;
     
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** Instance of warn cookie generator. */
-    @Autowired(required=false)
-    @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
     /**
@@ -181,4 +169,12 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * from the request.
      */
     protected abstract Credential constructCredentialsFromRequest(RequestContext context);
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
+    }
+
+    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+        this.warnCookieGenerator = warnCookieGenerator;
+    }
 }

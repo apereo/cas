@@ -1,18 +1,18 @@
 package org.apereo.cas.web.view;
 
-/**
- * This is {@link CasProtocolView}.
- *
- * @author Misagh Moayyed
- * @since 5.0.0
- */
-
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafView;
 
 import java.util.Locale;
+
+/**
+ * This is {@link CasProtocolView}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.0.0
+ */
 
 public class CasProtocolView extends ThymeleafView {
     /**

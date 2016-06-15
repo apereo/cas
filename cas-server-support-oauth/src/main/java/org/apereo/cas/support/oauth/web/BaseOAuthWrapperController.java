@@ -23,8 +23,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -43,31 +41,20 @@ public abstract class BaseOAuthWrapperController {
     /**
      * The services manager.
      */
-    @Autowired
-    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /**
      * The ticket registry.
      */
-    @Autowired
-    @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
     
     /**
      * The OAuth validator.
      */
-    @Autowired
-    @Qualifier("oAuthValidator")
     protected OAuthValidator validator;
-
-    @Autowired
-    @Qualifier("defaultAccessTokenFactory")
+    
     private AccessTokenFactory accessTokenFactory;
-
-
-    @Autowired
-    @Qualifier("defaultPrincipalFactory")
+    
     private PrincipalFactory principalFactory;
 
     /**

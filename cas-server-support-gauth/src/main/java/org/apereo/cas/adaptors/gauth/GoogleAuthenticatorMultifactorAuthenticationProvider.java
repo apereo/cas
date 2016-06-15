@@ -1,9 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The authentication provider for google authenticator.
@@ -15,9 +13,6 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     private static final long serialVersionUID = 4789727148634156909L;
     
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Override
     public String getId() {
         return GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID;

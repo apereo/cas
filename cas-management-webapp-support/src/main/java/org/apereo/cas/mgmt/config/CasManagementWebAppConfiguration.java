@@ -5,6 +5,8 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
+import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
+import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFilterMapper;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
@@ -22,6 +24,7 @@ import org.apereo.cas.mgmt.services.web.factory.PrincipalAttributesRepositoryMap
 import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
+import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -94,6 +97,14 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Resource(name = "auditActionResolverMap")
     private Map auditActionResolverMap;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ReloadableServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("registeredServiceFactory")
+    private RegisteredServiceFactory registeredServiceFactory;
+
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators;
@@ -150,7 +161,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         bean.setPrefix("cas.attrs.resolve.");
         return bean;
     }
-    
+
     @Bean
     public CasClient casClient() {
         final CasClient client = new CasClient(casProperties.getMgmt().getLoginUrl());
@@ -179,7 +190,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request, 
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                          final HttpServletResponse response)
                     throws Exception {
                 final String url = request.getContextPath() + "/manage.html";
@@ -435,5 +446,24 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public PrincipalAttributesRepositoryMapper defaultPrincipalAttributesRepositoryMapper() {
         return new DefaultPrincipalAttributesRepositoryMapper();
+    }
+
+    @Bean
+    public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController() {
+        final ManageRegisteredServicesMultiActionController c =
+                new ManageRegisteredServicesMultiActionController(
+                        this.servicesManager,
+                        this.registeredServiceFactory,
+                        casProperties.getMgmt().getDefaultServiceUrl());
+        return c;
+    }
+
+    @Bean
+    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController() {
+        final RegisteredServiceSimpleFormController c = new RegisteredServiceSimpleFormController(
+                this.servicesManager,
+                this.registeredServiceFactory
+        );
+        return c;
     }
 }

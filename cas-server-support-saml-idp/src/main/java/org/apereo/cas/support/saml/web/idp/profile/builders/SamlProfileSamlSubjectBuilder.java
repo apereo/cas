@@ -8,9 +8,6 @@ import org.apereo.cas.support.saml.SamlException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -26,12 +23,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
     private static final long serialVersionUID = 4782621942035583007L;
-
-    @Autowired
-    @Qualifier("samlProfileSamlNameIdBuilder")
+    
     private SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder;
-
-    @Value("${cas.samlidp.response.skewAllowance:0}")
+    
     private int skewAllowance;
     
     @Override
@@ -55,5 +49,21 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                 authnRequest.getID());
         subject.setNameID(nameID);
         return subject;
+    }
+
+    public SamlProfileSamlNameIdBuilder getSsoPostProfileSamlNameIdBuilder() {
+        return ssoPostProfileSamlNameIdBuilder;
+    }
+
+    public void setSsoPostProfileSamlNameIdBuilder(final SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder) {
+        this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
+    }
+
+    public int getSkewAllowance() {
+        return skewAllowance;
+    }
+
+    public void setSkewAllowance(final int skewAllowance) {
+        this.skewAllowance = skewAllowance;
     }
 }

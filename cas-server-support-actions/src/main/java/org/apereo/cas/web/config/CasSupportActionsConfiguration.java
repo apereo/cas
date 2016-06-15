@@ -106,6 +106,10 @@ public class CasSupportActionsConfiguration {
     public Action sendTicketGrantingTicketAction() {
         final SendTicketGrantingTicketAction bean = new SendTicketGrantingTicketAction();
         bean.setCreateSsoSessionCookieOnRenewAuthentications(casProperties.getSso().isRenewedAuthn());
+        bean.setCentralAuthenticationService(centralAuthenticationService);
+        bean.setServicesManager(servicesManager);
+        bean.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
+        bean.setAuthenticationSystemSupport(authenticationSystemSupport);
         return bean;
     }
 

@@ -29,7 +29,6 @@ import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,29 +49,21 @@ public class SamlObjectEncrypter {
     /**
      * The Override data encryption algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideDataEncryptionAlgorithms")
     protected List overrideDataEncryptionAlgorithms;
 
     /**
      * The Override key encryption algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideKeyEncryptionAlgorithms")
     protected List overrideKeyEncryptionAlgorithms;
 
     /**
      * The Override black listed encryption signing algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideBlackListedEncryptionAlgorithms")
     protected List overrideBlackListedEncryptionAlgorithms;
 
     /**
      * The Override white listed encryption signing algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideWhiteListedEncryptionAlgorithms")
     protected List overrideWhiteListedAlgorithms;
 
     @Autowired
@@ -254,5 +245,21 @@ public class SamlObjectEncrypter {
         privateKeyFactoryBean.setSingleton(false);
         logger.debug("Locating encryption key file from [{}]", casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionKeyFile());
         return privateKeyFactoryBean.getObject();
+    }
+
+    public void setOverrideDataEncryptionAlgorithms(final List overrideDataEncryptionAlgorithms) {
+        this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
+    }
+
+    public void setOverrideKeyEncryptionAlgorithms(final List overrideKeyEncryptionAlgorithms) {
+        this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
+    }
+
+    public void setOverrideBlackListedEncryptionAlgorithms(final List overrideBlackListedEncryptionAlgorithms) {
+        this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
+    }
+
+    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
+        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
     }
 }

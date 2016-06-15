@@ -5,8 +5,6 @@ import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReloadableServicesManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +29,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     /**
      * Instance of the RegisteredServiceFactory.
      */
-    
+
     private RegisteredServiceFactory registeredServiceFactory;
 
     /**
@@ -40,22 +38,20 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param servicesManager          the services manager
      * @param registeredServiceFactory the registered service factory
      */
-    @Autowired
     public RegisteredServiceSimpleFormController(
-        @Qualifier("servicesManager")
-        final ReloadableServicesManager servicesManager,
-        @Qualifier("registeredServiceFactory")
-        final RegisteredServiceFactory registeredServiceFactory) {
+            final ReloadableServicesManager servicesManager,
+            final RegisteredServiceFactory registeredServiceFactory) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
     }
 
     /**
      * Adds the service to the Service Registry.
-     * @param request the request
+     *
+     * @param request  the request
      * @param response the response
-     * @param result the result
-     * @param service the edit bean
+     * @param result   the result
+     * @param service  the edit bean
      */
     @RequestMapping(method = RequestMethod.POST, value = {"saveService.html"})
     public void saveService(final HttpServletRequest request,

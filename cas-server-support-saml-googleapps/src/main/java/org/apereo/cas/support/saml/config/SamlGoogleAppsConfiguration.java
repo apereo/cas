@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.config;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlGoogleAppsApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
@@ -21,13 +22,13 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlGoogleAppsConfiguration")
 public class SamlGoogleAppsConfiguration {
-    
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("googleSaml20ObjectBuilder")
-    private GoogleSaml20ObjectBuilder builder;
+    @Qualifier("shibboleth.OpenSAMLConfig")
+    private OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Bean
     public BaseApplicationContextWrapper samlGoogleAppsApplicationContextWrapper() {
@@ -44,12 +45,14 @@ public class SamlGoogleAppsConfiguration {
         factory.setPrivateKeyLocation(casProperties.getGoogleApps().getPrivateKeyLocation());
         factory.setPublicKeyLocation(casProperties.getGoogleApps().getPublicKeyLocation());
         factory.setSkewAllowance(casProperties.getSamlResponse().getSkewAllowance());
-        factory.setBuilder(this.builder);
+        factory.setBuilder(googleSaml20ObjectBuilder());
         return factory;
     }
 
     @Bean
     public GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder() {
-        return new GoogleSaml20ObjectBuilder();
+        final GoogleSaml20ObjectBuilder b = new GoogleSaml20ObjectBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        return b;
     }
 }

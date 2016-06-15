@@ -4,12 +4,15 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.LegacyValidateController;
+import org.apereo.cas.web.ProxyController;
 import org.apereo.cas.web.ProxyValidateController;
 import org.apereo.cas.web.ServiceValidateController;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -60,6 +63,9 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("cas10ProtocolValidationSpecification")
     private ValidationSpecification cas10ProtocolValidationSpecification;
+
+    @javax.annotation.Resource(name = "webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("cas2ServiceFailureView")
@@ -212,6 +218,14 @@ public class CasValidationConfiguration {
         c.setAuthenticationContextValidator(authenticationContextValidator);
         c.setJsonView(cas3ServiceJsonView());
         c.setAuthnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+        return c;
+    }
+
+    @Bean
+    public ProxyController proxyController() {
+        final ProxyController c = new ProxyController();
+        c.setCentralAuthenticationService(centralAuthenticationService);
+        c.setWebApplicationServiceFactory(webApplicationServiceFactory);
         return c;
     }
 
