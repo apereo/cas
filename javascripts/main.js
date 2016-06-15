@@ -100,7 +100,7 @@ function sidebarSubNav( el ) {
 
 function hideDevelopmentVersionWarning() {
     var formattedVersion = getActiveDocumentationVersionInView(true);
-    if (formattedVersion != CONST_CURRENT_VER) {
+    if (formattedVersion != CONST_CURRENT_VER && formattedVersion != "") {
         $("#dev-doc-info").hide();
     }
 }
