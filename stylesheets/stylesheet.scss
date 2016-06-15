@@ -58,6 +58,7 @@ h3 {
 }
 
 @import "syntax-highlighting";
+@import "copy-code-button";
 
 footer {
   border-top: 1px solid #333;
@@ -78,7 +79,7 @@ footer {
 }
 
 .box {
-  bottom: 0; /* increase for footer use */
+  //bottom: 0; /* increase for footer use */
   left: 0;
   position: absolute;
   right: 0;

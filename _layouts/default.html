@@ -28,24 +28,7 @@
 <div class="wrapper">
     <div class="box">
         <!-- HEADER -->
-        <header class="hidden-sm-down">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xs-4 col-md-2">
-                        <a href="{{ relative }}index.html">
-                            <img class="undecorated" src="{{ relative }}images/cas_logo.png"/>
-                        </a>
-                    </div>
-                    <div class="col-xs-8 col-md-6">
-                        <h1>Single Sign-On for the Web</h1>
-                    </div>
-                    <div class="hidden-sm-down col-md-4">
-                        <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
-                    </div>
-                </div>
-            </div>
-        </header>
-
+        {% include header.html %}
 
         <!-- NAVBAR -->
         {% include navbar.html %}
@@ -58,37 +41,8 @@
             </div>
             <div class="column col-md-8 col-sm-9 col-xs-11" id="main">
                 <section>
-                    <div id="mobile-nav" class="navbar navbar-cas navbar-static-top hidden-md-up" role="banner">
-                        <!-- top nav -->
-                        <div class="navbar-header clearfix">
-                            <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                    data-target=".navbar-collapse">
-                                <span class="sr-only">Toggle</span>
-                                <span class="fa fa-bars"></span>
-                            </button>
-                            <a href="{{ relative }}index.html" class="navbar-brand logo"><img
-                                    class="undecorated img-responsive" src="{{ relative }}images/cas_logo.png"/></a>
-                            <h1>Single Sign-On for the Web</h1>
-                        </div>
-                        <nav class="collapse navbar-collapse" role="navigation">
-                            <ul class="nav navbar-nav">
-                                <li class="nav-item active"><a href="{{ relative }}index.html" class="nav-link">Home</a>
-                                </li>
-                                <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="nav-link">Downloads</a>
-                                </li>
-                                <li class="nav-item"><a
-                                        href="https://www.google.com/cse/publicurl?cx=017040929083740828958:sqr2hwvrxmg"
-                                        class="nav-link">Search</a></li>
-                                <li class="nav-item"><a href="{{ relative }}Support.html" class="nav-link">Support</a>
-                                </li>
-                                <li class="nav-item"><a href="{{ relative }}Mailing-Lists.html" class="nav-link">Mailing
-                                    Lists</a></li>
-                                <li class="nav-item"><a href="{{ relative }}Older-Versions.html" class="nav-link">Versions</a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <!-- /top nav -->
-                    </div>
+                    <!-- Mobile Nav-->
+                    {% include mobilenavbar.html %}
 
                     <div id="cas-docs-container" class="container cas-docs-container">
 
@@ -113,42 +67,8 @@
             </div>
 
             <!-- sidebar -->
-            <div class="column col-md-2 col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
-                <ul class="nav hidden-sm-up">
-                    <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i
-                            class="fa fa-chevron-left"></i></a></li>
-                </ul>
-
-                <ul class="nav hidden-xs-down" id="lg-menu">
-                    <li id="tableOfContents" class="active hidden-md-up">
-                        <a data-toggle="collapse" href="#sidebarTableofContents" data-parent="#lg-menu"
-                           aria-expanded="true" class="collapsed">
-                            <i class="fa fa-list"></i> Page Contents
-                            <i class="expand"></i>
-                        </a>
-                        <ul class="collapse nav" id="sidebarTableofContents" aria-expanded="false"
-                            style="height: 0px;"></ul>
-                    </li>
-                    <li id="sidebartoc">
-                        <a data-toggle="collapse"
-                           href="#sidebarTopics"
-                           data-parent="#lg-menu"
-                           aria-expanded="true"
-                           class="">
-                            <i class="fa fa-list-alt"></i> Table of Contents
-                            <i class="expand"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            {% include sidebar.html %}
         </div>
-
-        <!-- FOOTER  -->
-        <footer>
-            <div class="container">
-                CAS is supported by the <a href="http://www.apereo.org/">Apereo Foundation</a>.
-            </div>
-        </footer>
     </div>
 </div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -160,6 +80,7 @@
         crossorigin="anonymous"></script>
 
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
 <script src="{{ relative }}javascripts/URI.js"></script>
 <script src="{{ relative }}javascripts/main.js"></script>
 
