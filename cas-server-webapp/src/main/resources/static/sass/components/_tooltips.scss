@@ -1,0 +1,46 @@
+// Todo: look into resetting the transition delay when mouse out
+
+.casTooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.casTooltip .tooltiptext {
+  visibility: hidden;
+  width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-left: -125px;
+  margin-top: 10px;
+  opacity: 0;
+  transition: opacity 1s;
+  transition-delay: 2s;
+  font-size: 1.5rem;
+  font-weight: 300;
+  font-family: Lato;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.casTooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.casTooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;  /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+}
