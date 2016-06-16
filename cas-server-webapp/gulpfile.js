@@ -1,7 +1,8 @@
 'use strict';
 
 var gulp = require('gulp'),
-    sass = require('gulp-sass');
+    sass = require('gulp-sass'),
+    autoprefixer = require('gulp-autoprefixer');
 
 var argv = require('yargs')
     .option('sassPath', {
@@ -22,6 +23,20 @@ var argv = require('yargs')
     .help('help')
     .argv;
 
+var sassOptions = {
+    errLogToConsole: true,
+    outputStyle: 'expanded',
+    includePaths: [
+        argv.sassPath,
+        argv.npmPath + '/bootstrap-sass/assets/stylesheets'
+    ]
+};
+
+var autoprefixerOptions = {
+    browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
+};
+
+
 gulp.task('default', ['sass']);
 
 gulp.task('sass', function () {
@@ -29,14 +44,10 @@ gulp.task('sass', function () {
     process.stdout.write("\tsassPath: " + argv.sassPath + "\n");
     process.stdout.write("\tnpmPath: " + argv.npmPath + "\n");
     process.stdout.write("\tcssPath: " + argv.cssPath + "\n");
-    return gulp.src(argv.sassPath + '/**/*.scss')
-        .pipe(sass({
-            //outputStyle: 'compressed',
-            includePaths: [
-                argv.sassPath,
-                argv.npmPath + '/bootstrap-sass/assets/stylesheets'
-            ]
-        }).on('error', sass.logError))
+    return gulp
+        .src(argv.sassPath + '/**/*.scss')
+        .pipe(sass(sassOptions).on('error', sass.logError))
+        .pipe(autoprefixer(autoprefixerOptions))
         .pipe(gulp.dest(argv.cssPath));
 
 });

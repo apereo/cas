@@ -1,0 +1,52 @@
+/*
+ * Since switching to the Bootstrap alerts, has this become depricated?
+ */
+
+#msg {
+  margin-bottom: 40px;
+  border: 1px dotted #eeeeee;
+  padding: 20px 20px 20px 100px;
+  background-repeat: no-repeat;
+  background-position: 20px center;
+
+  .errors {
+    border-color: #BB0000;
+    color: #BB0000;
+    background-image: url(../images/error.png);
+  }
+
+  .success {
+    border-color: #390;
+    color: #390;
+    background-image: url(../images/success.png);
+  }
+
+  .info {
+    border-color: #008;
+    color: #008;
+    background-image: url(../images/info.png);
+  }
+
+  .question {
+    border-color: #390;
+    color: #390;
+    background-image: url(../images/question.png);
+  }
+
+  .warn {
+    border-color: #960;
+    color: #960;
+    background: #ffbc8f url(../images/info.png);
+  }
+
+}
+// Duplicate of above?
+// Todo: look for usage in code
+.errors {
+  border: 1px dotted #BB0000;
+  color: #BB0000;
+  padding-left: 100px;
+  padding-top: 5px;
+  margin-bottom: 5px;
+  background: url(../images/error.png) no-repeat 20px center;
+}
