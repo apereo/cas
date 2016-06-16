@@ -34,7 +34,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +52,8 @@ public class RadiusMultifactorConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Resource(name = "builder")
+    @Autowired
+    @Qualifier("builder")
     private FlowBuilderServices builder;
 
     @Autowired

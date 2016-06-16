@@ -6,12 +6,11 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.pac4j.core.authorization.AuthorizationGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link CasManagementLdapAuthorizationConfiguration}.
@@ -23,7 +22,8 @@ import javax.annotation.Resource;
 @ComponentScan(basePackages = {"org.apereo.cas.authorization"})
 public class CasManagementLdapAuthorizationConfiguration {
 
-    @Resource(name = "ldapAuthorizationGenerator")
+    @Autowired
+    @Qualifier("ldapAuthorizationGenerator")
     private AuthorizationGenerator authorizationGenerator;
 
     @Autowired

@@ -39,8 +39,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.Resource;
-
 /**
  * This is {@link GoogleAuthentiacatorConfiguration}.
  *
@@ -63,7 +61,8 @@ public class GoogleAuthentiacatorConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @Resource(name = "builder")
+    @Autowired
+    @Qualifier("builder")
     private FlowBuilderServices builder;
 
     @Autowired

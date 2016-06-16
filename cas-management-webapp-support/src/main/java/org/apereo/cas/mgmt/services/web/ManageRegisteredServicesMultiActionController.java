@@ -8,7 +8,6 @@ import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReloadableServicesManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,7 +47,6 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param registeredServiceFactory the registered service factory
      * @param defaultServiceUrl        the default service url
      */
-    @Autowired
     public ManageRegisteredServicesMultiActionController(
             final ReloadableServicesManager servicesManager,
             final RegisteredServiceFactory registeredServiceFactory,

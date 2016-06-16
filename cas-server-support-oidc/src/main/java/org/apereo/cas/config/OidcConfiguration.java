@@ -61,10 +61,12 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Resource
     private OidcProperties properties;
 
-    @Resource(name = "oauthInterceptor")
+    @Autowired
+    @Qualifier("oauthInterceptor")
     private HandlerInterceptor oauthInterceptor;
 
-    @Resource(name = "oauthSecConfig")
+    @Autowired
+    @Qualifier("oauthSecConfig")
     private Config oauthSecConfig;
 
     @Autowired

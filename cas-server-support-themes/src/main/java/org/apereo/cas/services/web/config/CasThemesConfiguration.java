@@ -25,11 +25,11 @@ import org.thymeleaf.templateparser.xmlsax.XhtmlAndHtml5NonValidatingSAXTemplate
 import org.thymeleaf.templatewriter.AbstractGeneralTemplateWriter;
 import org.thymeleaf.templatewriter.ITemplateWriter;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link CasThemesConfiguration}.
@@ -54,8 +54,13 @@ public class CasThemesConfiguration {
     @Qualifier("thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
 
-    @Resource(name = "argumentExtractors")
+    @Autowired
+    @Qualifier("argumentExtractors")
     private List argumentExtractors;
+
+    @Autowired
+    @Qualifier("serviceThemeResolverSupportedBrowsers")
+    private Map serviceThemeResolverSupportedBrowsers;
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
@@ -118,7 +123,7 @@ public class CasThemesConfiguration {
         r.setArgumentExtractors(this.argumentExtractors);
         r.setPrefix(this.properties.getPrefix());
         r.setSuffix(this.properties.getSuffix());
-        
+
         return r;
     }
 
@@ -127,6 +132,7 @@ public class CasThemesConfiguration {
         final ServiceThemeResolver resolver = new ServiceThemeResolver();
         resolver.setDefaultThemeName(casProperties.getTheme().getDefaultThemeName());
         resolver.setServicesManager(this.servicesManager);
+        resolver.setMobileBrowsers(serviceThemeResolverSupportedBrowsers);
         return resolver;
     }
 

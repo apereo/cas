@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
-
 /**
  * This is {@link CasReportsConfiguration}.
  *
@@ -27,7 +25,8 @@ import javax.annotation.Resource;
 @Configuration("casReportsConfiguration")
 public class CasReportsConfiguration {
 
-    @Resource(name = "healthCheckMonitor")
+    @Autowired
+    @Qualifier("healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
 
     @Autowired
@@ -39,10 +38,12 @@ public class CasReportsConfiguration {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
-    @Resource(name = "metrics")
+    @Autowired
+    @Qualifier("metrics")
     private MetricRegistry metricsRegistry;
 
-    @Resource(name = "healthCheckMetrics")
+    @Autowired
+    @Qualifier("healthCheckMetrics")
     private HealthCheckRegistry healthCheckRegistry;
 
     @Bean

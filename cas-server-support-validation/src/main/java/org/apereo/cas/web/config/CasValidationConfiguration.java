@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -39,7 +40,15 @@ public class CasValidationConfiguration {
     
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Autowired
+    @Qualifier("casAttributeEncoder")
+    private CasAttributeEncoder casAttributeEncoder;
+
+    @Autowired
+    @Qualifier("cas3SuccessView")
+    private View cas3SuccessView;
+            
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -73,6 +82,10 @@ public class CasValidationConfiguration {
     private View cas2ServiceFailureView;
 
     @Autowired
+    @Qualifier("cas2SuccessView")
+    private View cas2SuccessView;
+    
+    @Autowired
     @Qualifier("cas3ServiceFailureView")
     private View cas3ServiceFailureView;
 
@@ -104,6 +117,7 @@ public class CasValidationConfiguration {
     public View cas1ServiceSuccessView() {
         final Cas10ResponseView v = new Cas10ResponseView();
         v.setSuccessResponse(true);
+        v.setCasAttributeEncoder(casAttributeEncoder);
         return v;
     }
 
@@ -111,27 +125,36 @@ public class CasValidationConfiguration {
     public View cas1ServiceFailureView() {
         final Cas10ResponseView v = new Cas10ResponseView();
         v.setSuccessResponse(false);
+        v.setCasAttributeEncoder(casAttributeEncoder);
         return v;
     }
+    
 
     @Bean
     public View cas2ServiceSuccessView() {
-        return new Cas20ResponseView.Success();
+        final Cas20ResponseView v = new Cas20ResponseView();
+        v.setView(this.cas2SuccessView);
+        v.setCasAttributeEncoder(casAttributeEncoder);
+        return v;
     }
-
+    
     @Bean
     public View cas3ServiceJsonView() {
-        final Cas30JsonResponseView jsonResponseView = new Cas30JsonResponseView();
-        jsonResponseView.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        jsonResponseView.setReleaseProtocolAttributes(casProperties.getView().getCas3().isReleaseProtocolAttributes());
-        return jsonResponseView;
+        final Cas30JsonResponseView s = new Cas30JsonResponseView();
+        s.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+        s.setReleaseProtocolAttributes(casProperties.getView().getCas3().isReleaseProtocolAttributes());
+        s.setCasAttributeEncoder(casAttributeEncoder);
+        s.setView(cas3SuccessView);
+        return s;
     }
 
     @Bean
     public View cas3ServiceSuccessView() {
-        final Cas30ResponseView.Success s = new Cas30ResponseView.Success();
+        final Cas30ResponseView s = new Cas30ResponseView();
         s.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         s.setReleaseProtocolAttributes(casProperties.getView().getCas3().isReleaseProtocolAttributes());
+        s.setCasAttributeEncoder(casAttributeEncoder);
+        s.setView(cas3SuccessView);
         return s;
     }
 

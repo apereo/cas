@@ -3,7 +3,6 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
      */
     public DefaultArgumentExtractor() {
     }
-    
+
     /**
      * Instantiates a new argument extractor.
      *
@@ -55,10 +54,4 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
             return null;
         });
     }
-
-    @Resource(name="serviceFactoryList")
-    public void setServiceFactoryList(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
-        this.serviceFactoryList = serviceFactoryList;
-    }
-
 }

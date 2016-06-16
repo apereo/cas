@@ -9,14 +9,12 @@ import org.apereo.cas.logout.LogoutMessageCreator;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link CasCoreLogoutConfiguration}.
@@ -29,11 +27,9 @@ public class CasCoreLogoutConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Resource(name = "servicesManager")
-    private ServicesManager servicesManager;
-
-    @Resource(name = "noRedirectHttpClient")
+    
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
 
     @Bean

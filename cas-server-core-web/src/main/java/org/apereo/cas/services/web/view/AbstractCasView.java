@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.AbstractView;
 
-import javax.annotation.Resource;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,14 +48,11 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * The attribute encoder instance.
      */
-
-    @Resource(name = "casAttributeEncoder")
     protected CasAttributeEncoder casAttributeEncoder;
 
     /**
      * The Services manager.
      */
-    @Resource(name = "servicesManager")
     protected ServicesManager servicesManager;
 
     /**
@@ -402,23 +398,12 @@ public abstract class AbstractCasView extends AbstractView {
     protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values) {
         model.putAll(values);
     }
-
-    /**
-     * Sets services manager.
-     *
-     * @param servicesManager the services manager
-     * @since 4.1
-     */
+    
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
-    /**
-     * Sets cas attribute encoder.
-     *
-     * @param casAttributeEncoder the cas attribute encoder
-     * @since 4.1
-     */
+
     public void setCasAttributeEncoder(final CasAttributeEncoder casAttributeEncoder) {
         this.casAttributeEncoder = casAttributeEncoder;
     }
@@ -430,14 +415,10 @@ public abstract class AbstractCasView extends AbstractView {
     public ServicesManager getServicesManager() {
         return this.servicesManager;
     }
-
-    /**
-     * Sets whether this view functions as a success response.
-     *
-     * @param successResponse the success response
-     * @since 4.1.0
-     */
+    
     public void setSuccessResponse(final boolean successResponse) {
         this.successResponse = successResponse;
     }
+    
+    
 }

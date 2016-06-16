@@ -11,8 +11,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
-
 /**
  * This is {@link CasSupportActionsAcceptableUsagePolicyLdapConfiguration}.
  *
@@ -22,7 +20,8 @@ import javax.annotation.Resource;
 @Configuration("casSupportActionsAcceptableUsagePolicyLdapConfiguration")
 public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
 
-    @Resource(name = "ldapUsagePolicyConnectionFactory")
+    @Autowired
+    @Qualifier("ldapUsagePolicyConnectionFactory")
     private ConnectionFactory connectionFactory;
 
     @Autowired

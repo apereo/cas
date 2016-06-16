@@ -21,7 +21,6 @@ import org.apereo.cas.web.flow.ServiceWarningAction;
 import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +29,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -50,11 +48,13 @@ public class CasSupportActionsConfiguration {
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
-    @Resource(name = "servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Resource(name = "argumentExtractors")
-    private List<ArgumentExtractor> argumentExtractors;
+    @Autowired
+    @Qualifier("argumentExtractors")
+    private List argumentExtractors;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")

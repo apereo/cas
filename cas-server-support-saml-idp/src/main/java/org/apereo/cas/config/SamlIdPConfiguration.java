@@ -94,23 +94,23 @@ public class SamlIdPConfiguration {
     @Autowired(required = false)
     @Qualifier("overrideWhiteListedEncryptionAlgorithms")
     private List overrideWhiteListedAlgorithms;
-    
+
     @Autowired(required = false)
     @Qualifier("overrideSignatureReferenceDigestMethods")
     private List overrideSignatureReferenceDigestMethods;
-    
+
     @Autowired(required = false)
     @Qualifier("overrideSignatureAlgorithms")
     private List overrideSignatureAlgorithms;
-    
+
     @Autowired(required = false)
     @Qualifier("overrideBlackListedSignatureSigningAlgorithms")
     private List overrideBlackListedSignatureSigningAlgorithms;
-    
+
     @Autowired(required = false)
     @Qualifier("overrideWhiteListedSignatureSigningAlgorithms")
     private List overrideWhiteListedSignatureSigningAlgorithms;
-    
+
     @PostConstruct
     public void init() {
         this.validationServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
@@ -137,7 +137,10 @@ public class SamlIdPConfiguration {
 
     @Bean
     public ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        return new SamlIdPEntityIdValidationServiceSelectionStrategy();
+        final SamlIdPEntityIdValidationServiceSelectionStrategy s =
+                new SamlIdPEntityIdValidationServiceSelectionStrategy();
+        s.setWebApplicationServiceFactory(webApplicationServiceFactory);
+        return s;
     }
 
     @Bean

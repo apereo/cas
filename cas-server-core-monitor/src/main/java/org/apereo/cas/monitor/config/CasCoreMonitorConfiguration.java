@@ -12,7 +12,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -25,13 +24,17 @@ import java.util.Collections;
 @Configuration("casCoreMonitorConfiguration")
 public class CasCoreMonitorConfiguration {
 
-    //Spring 4.2 does not support injecting generic collections via @Autowired. 4.3 will fix that.
-    @Resource(name = "monitorsList")
-    private Collection<Monitor> monitors = Collections.emptySet();
+    @Autowired
+    @Qualifier("monitorsList")
+    private Collection monitors = Collections.emptySet();
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
+
     @Bean
     public Monitor healthCheckMonitor() {
         final HealthCheckMonitor bean = new HealthCheckMonitor();
@@ -50,7 +53,7 @@ public class CasCoreMonitorConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    public Monitor sessionMonitor(@Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
+    public Monitor sessionMonitor() {
         final SessionMonitor bean = new SessionMonitor();
         bean.setTicketRegistry(ticketRegistry);
         bean.setServiceTicketCountWarnThreshold(casProperties.getMonitor().getSt().getWarn().getThreshold());

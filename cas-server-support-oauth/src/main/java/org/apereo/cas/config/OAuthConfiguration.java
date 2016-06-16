@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -59,7 +58,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -80,14 +78,16 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CallbackController callbackController;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Resource(name = "webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
 
-    @Resource(name = "validationServiceSelectionStrategies")
+    @Autowired
+    @Qualifier("validationServiceSelectionStrategies")
     private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     @Autowired
@@ -101,13 +101,13 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-    
+
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean(autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
-    
+
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
     @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
@@ -336,7 +336,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         c.setAuth20CallbackAuthorizeViewResolver(callbackAuthorizeViewResolver());
         return c;
     }
-    
+
     @Bean
     public OAuth20AccessTokenController accessTokenController() {
         final OAuth20AccessTokenController c = new OAuth20AccessTokenController();
@@ -349,7 +349,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         c.setValidator(oAuthValidator());
         return c;
     }
-    
+
     @Bean
     public OAuth20ProfileController profileController() {
         final OAuth20ProfileController c = new OAuth20ProfileController();
@@ -373,12 +373,12 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         c.setoAuthCodeFactory(defaultOAuthCodeFactory());
         return c;
     }
-    
+
     @Bean
     public PrincipalFactory oauthPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     public RefreshTokenFactory defaultRefreshTokenFactory() {
         final DefaultRefreshTokenFactory f = new DefaultRefreshTokenFactory();

@@ -67,7 +67,6 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -88,13 +87,16 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
     private static final String AUDIT_ACTION_SUFFIX_SUCCESS = "_SUCCESS";
 
-    @Resource(name = "auditablePrincipalResolver")
+    @Autowired
+    @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver principalResolver;
 
-    @Resource(name = "auditResourceResolverMap")
+    @Autowired
+    @Qualifier("auditResourceResolverMap")
     private Map auditResourceResolverMap;
 
-    @Resource(name = "auditActionResolverMap")
+    @Autowired
+    @Qualifier("auditActionResolverMap")
     private Map auditActionResolverMap;
 
     @Autowired

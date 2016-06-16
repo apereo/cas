@@ -7,10 +7,13 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+
+import java.util.List;
 
 /**
  * This is {@link CasCoreWebConfiguration}.
@@ -23,7 +26,11 @@ public class CasCoreWebConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Autowired
+    @Qualifier("serviceFactoryList")
+    private List serviceFactoryList;
+
     @Bean
     @RefreshScope
     public BaseApplicationContextWrapper clearpassApplicationContextWrapper() {
@@ -35,7 +42,8 @@ public class CasCoreWebConfiguration {
 
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {
-        return new DefaultArgumentExtractor();
+        final DefaultArgumentExtractor a = new DefaultArgumentExtractor(serviceFactoryList);
+        return a;
     }
 
     @RefreshScope

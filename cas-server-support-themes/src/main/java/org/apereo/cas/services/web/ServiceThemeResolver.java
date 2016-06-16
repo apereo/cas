@@ -7,12 +7,13 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ import java.util.regex.Pattern;
 public class ServiceThemeResolver extends AbstractThemeResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
-    
+
     private ServicesManager servicesManager;
 
     private Map<Pattern, String> overrides = new HashMap<>();
@@ -102,14 +103,16 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
      *
      * @param mobileOverrides the list of mobile browsers.
      */
-    @Resource(name="serviceThemeResolverSupportedBrowsers")
-    public void setMobileBrowsers(final Map<String, String> mobileOverrides) {
+    @Autowired
+    @Qualifier("serviceThemeResolverSupportedBrowsers")
+    public void setMobileBrowsers(final Map mobileOverrides) {
         // initialize the overrides variable to an empty map
         this.overrides = new HashMap<>();
 
-        for (final Map.Entry<String, String> entry : mobileOverrides.entrySet()) {
+        mobileOverrides.entrySet().forEach(e -> {
+            final Map.Entry<String, String> entry = (Map.Entry<String, String>) e;
             this.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());
-        }
+        });
     }
 
     private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {

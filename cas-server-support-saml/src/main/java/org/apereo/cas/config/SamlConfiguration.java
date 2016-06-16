@@ -38,6 +38,10 @@ public class SamlConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("casAttributeEncoder")
+    private CasAttributeEncoder casAttributeEncoder;
     
     @Autowired
     @Qualifier("cas3ServiceJsonView")
@@ -54,10 +58,6 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("casAttributeEncoder")
-    private CasAttributeEncoder casAttributeEncoder;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -91,7 +91,6 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public Saml10SuccessResponseView casSamlServiceSuccessView() {
-
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
@@ -99,6 +98,7 @@ public class SamlConfiguration {
         view.setSkewAllowance(casProperties.getSamlResponse().getSkewAllowance());
         view.setDefaultAttributeNamespace(casProperties.getSamlResponse().getAttributeNamespace());
         view.setSamlObjectBuilder(saml10ObjectBuilder());
+        view.setCasAttributeEncoder(casAttributeEncoder);
         return view;
     }
 
@@ -114,6 +114,7 @@ public class SamlConfiguration {
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
         view.setSamlObjectBuilder(saml10ObjectBuilder());
+        view.setCasAttributeEncoder(casAttributeEncoder);
         return view;
     }
 

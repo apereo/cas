@@ -44,7 +44,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.Nullable;
-import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -91,8 +90,9 @@ public class CasCoreTicketsConfiguration {
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
-    @Resource(name = "uniqueIdGeneratorsMap")
-    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+    @Autowired
+    @Qualifier("uniqueIdGeneratorsMap")
+    private Map uniqueTicketIdGeneratorsForService;
 
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
