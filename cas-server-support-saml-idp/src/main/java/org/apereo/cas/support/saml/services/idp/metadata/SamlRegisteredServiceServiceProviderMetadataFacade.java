@@ -2,9 +2,9 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.DateTimeUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;

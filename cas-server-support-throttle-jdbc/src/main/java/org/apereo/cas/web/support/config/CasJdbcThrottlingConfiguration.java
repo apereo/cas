@@ -14,13 +14,13 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.sql.DataSource;
 
 /**
- * This is {@link CasThrottlingConfiguration}.
+ * This is {@link CasJdbcThrottlingConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Configuration("casThrottlingConfiguration")
-public class CasThrottlingConfiguration {
+public class CasJdbcThrottlingConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;

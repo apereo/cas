@@ -453,12 +453,12 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
-    failOnError = false
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, 
+        description: "Aggregate all Javadocs into a single directory") {
     classifier = "javadoc"
-    from javadoc.destinationDir
+    from javadoc
 }
 
 task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
