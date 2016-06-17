@@ -48,16 +48,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @ConfigurationProperties("cas")
 public class CasConfigurationProperties {
 
-    private String misagh;
-
-    public String getMisagh() {
-        return misagh;
-    }
-
-    public void setMisagh(final String misagh) {
-        this.misagh = misagh;
-    }
-
     @NestedConfigurationProperty
     private AuthenticationProperties authn = new AuthenticationProperties();
 
