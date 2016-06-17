@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.coyote.AbstractProtocol;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,15 +141,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new SimpleControllerHandlerAdapter();
     }
 
-    @RefreshScope
-    @Bean
-    public Integer port() {
-        if (casProperties.getServer().getHttp().getPort() <= 0) {
-            return SocketUtils.findAvailableTcpPort();
-        }
-        return casProperties.getServer().getHttp().getPort();
-    }
-    
+
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory tomcat =
@@ -177,9 +170,21 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
         if (casProperties.getServer().getHttp().isEnabled()) {
             final Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
-            connector.setPort(port());
+
+            int port = casProperties.getServer().getHttp().getPort();
+            if (port <= 0) {
+                port = SocketUtils.findAvailableTcpPort();
+            }
+            connector.setPort(port);
             tomcat.addAdditionalTomcatConnectors(connector);
         }
+
+        tomcat.getAdditionalTomcatConnectors()
+                .stream()
+                .filter(connector -> connector.getProtocolHandler() instanceof AbstractProtocol)
+                .forEach(connector -> ((AbstractProtocol) connector.getProtocolHandler())
+                        .setConnectionTimeout(casProperties.getServer().getConnectionTimeout()));
+
         return tomcat;
     }
 }

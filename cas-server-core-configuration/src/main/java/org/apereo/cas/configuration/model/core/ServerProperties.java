@@ -12,6 +12,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties
 public class ServerProperties {
     
+    private int connectionTimeout = 20000;
+    
     private String name = "https://cas.example.org:8443";
     private String prefix = name.concat("/cas");
     private Ajp ajp = new Ajp();
@@ -56,7 +58,15 @@ public class ServerProperties {
     public String getLogoutUrl() {
         return getPrefix().concat("/logout");
     }
-    
+
+    public void setConnectionTimeout(final int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
     public static class Ajp {
         private String protocol = "AJP/1.3";
         private int port = 8009;
