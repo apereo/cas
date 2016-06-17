@@ -21,7 +21,7 @@ public class MonitorProperties {
 
     private DataSource dataSource = new DataSource();
 
-    private int maxWait;
+    private int maxWait = 5000;
 
     public int getMaxWait() {
         return maxWait;

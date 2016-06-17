@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -17,7 +18,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/ldap-context.xml", "/ldap-poolmonitor-test.xml"})
+@SpringApplicationConfiguration(locations={"/ldap-context.xml", "/ldap-poolmonitor-test.xml"})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @Autowired
