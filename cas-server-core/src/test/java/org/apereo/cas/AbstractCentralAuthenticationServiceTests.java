@@ -4,11 +4,13 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -28,7 +30,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 3.0.0
  */
 @SpringApplicationConfiguration(
-   classes = {CasCoreServicesConfiguration.class, CasCoreUtilConfiguration.class},
+   classes = {CasCoreServicesConfiguration.class, CasCoreUtilConfiguration.class,
+              CasCoreLogoutConfiguration.class, CasCoreValidationConfiguration.class},
         locations = {
         "classpath:/core-context.xml"
 }, initializers = ConfigFileApplicationContextInitializer.class)

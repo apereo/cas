@@ -2,7 +2,11 @@ package org.apereo.cas.support.pac4j.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.AuthenticationTransactionManager;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.CasProtocolConstants;
@@ -129,13 +133,28 @@ public class ClientActionTests {
         final FacebookClient facebookClient = new MockFacebookClient();
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
 
-        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
+        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), 
+                mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
         final ClientAction action = new ClientAction();
 
+        final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
+
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);
-        when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
+        when(authNManager.authenticate(any(AuthenticationTransaction.class)))
+                .thenReturn(TestUtils.getAuthentication());
+        
+        transManager.setAuthenticationManager(authNManager);
+        
+        when(transManager.handle(any(AuthenticationTransaction.class), 
+                                 any(AuthenticationResultBuilder.class)))
+                                .thenReturn(transManager);
+        
+        final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
+        when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
+        action.setAuthenticationSystemSupport(support);
+
         action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(authNManager);
         action.setCentralAuthenticationService(casImpl);

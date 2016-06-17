@@ -54,7 +54,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -68,20 +67,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
- * This this {@link OAuthConfiguration}.
+ * This this {@link CasOAuthConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class OAuthConfiguration extends WebMvcConfigurerAdapter {
+public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
-
-    @Autowired
-    private CallbackController callbackController;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -116,7 +112,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
-
+    
     @Bean
     public Config oauthSecConfig() {
         final CasClient oauthCasClient = new CasClient(casProperties.getServer().getLoginUrl()) {
@@ -334,7 +330,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public OAuth20CallbackAuthorizeController callbackAuthorizeController() {
         final OAuth20CallbackAuthorizeController c = new OAuth20CallbackAuthorizeController();
-        c.setCallbackController(this.callbackController);
+        c.setCallbackController(callbackController());
         c.setConfig(oauthSecConfig());
         c.setAuth20CallbackAuthorizeViewResolver(callbackAuthorizeViewResolver());
         return c;
@@ -406,6 +402,13 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
         return s;
     }
 
+    @Bean
+    public CallbackController callbackController() {
+        final CallbackController c = new CallbackController();
+        c.setConfig(oauthSecConfig());
+        return c;
+    }
+    
     @Bean
     public UniqueTicketIdGenerator accessTokenIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();

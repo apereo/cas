@@ -25,9 +25,10 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     
     private boolean asynchronous = true;
     
-    private LogoutMessageCreator logoutMessageBuilder;
+    private LogoutMessageCreator logoutMessageBuilder = new SamlCompliantLogoutMessageCreator();
     
-    private SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+    private SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder = 
+            new DefaultSingleLogoutServiceLogoutUrlBuilder();
 
     /**
      * Instantiates a new Single logout service message handler.

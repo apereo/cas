@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.oauth.credentials.OAuthCredentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
@@ -29,6 +31,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  * @since 4.1.0
  *
  */
+@SpringApplicationConfiguration
 public class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
@@ -46,10 +49,9 @@ public class ClientAuthenticationHandlerTests {
         final Clients clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new ClientAuthenticationHandler();
         this.handler.setClients(clients);
-
-        final Pac4jProperties props = new Pac4jProperties();
-        props.setTypedIdUsed(true);
-        this.handler.setProperties(props);
+        this.handler.setServicesManager(mock(ServicesManager.class));
+        this.handler.setTypedIdUsed(true);
+        
         final Credentials credentials = new OAuthCredentials(null, MockFacebookClient.CLIENT_NAME);
         this.clientCredential = new ClientCredential(credentials);
         ExternalContextHolder.setExternalContext(mock(ServletExternalContext.class));
@@ -67,9 +69,7 @@ public class ClientAuthenticationHandlerTests {
 
     @Test
     public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
-        final Pac4jProperties props = new Pac4jProperties();
-        props.setTypedIdUsed(false);
-        this.handler.setProperties(props);
+        this.handler.setTypedIdUsed(false);
         
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);

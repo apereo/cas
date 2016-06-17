@@ -530,7 +530,8 @@ ext.libraries = [
                 },
                 "org.springframework:spring-test:$springVersion",
                 "org.spockframework:spock-core:$spockVersion",
-                "org.spockframework:spock-spring:$spockVersion"
+                "org.spockframework:spock-spring:$spockVersion",
+                "org.json:json:$jsonVersion"
         ],
         memcached            : [
                 "net.spy:spymemcached:$spymemcachedVersion",
@@ -542,7 +543,6 @@ ext.libraries = [
                     exclude(group: "com.esotericsoftware.kryo", module: "kryo")
                     force = true
                 }
-
         ],
         ldaptive             : [
                 dependencies.create("org.ldaptive:ldaptive:$ldaptiveVersion") {

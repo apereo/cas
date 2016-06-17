@@ -24,10 +24,6 @@
         </property>
     </bean>
     
-    <context:component-scan base-package="org.apereo.cas" />
-    <context:component-scan base-package="org.pac4j.springframework" />
-    <context:annotation-config/>
-
     <!-- OAuth View -->
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers">

@@ -1,26 +1,30 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link MongoAuthenticationHandler}.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/mongo-context.xml")
+@SpringApplicationConfiguration(locations = "classpath:/mongo-context.xml",
+        classes = CasMongoAuthenticationConfiguration.class)
 public class MongoAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("mongoAuthenticationHandler")
-    private MongoAuthenticationHandler authenticationHandler;
+    private AuthenticationHandler authenticationHandler;
 
     @Test
     public void verifyAuthentication() throws Exception {

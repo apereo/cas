@@ -62,7 +62,7 @@ public class TicketsResource {
 
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    private CredentialFactory credentialFactory;
+    private CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
     private ServiceFactory webApplicationServiceFactory;
 

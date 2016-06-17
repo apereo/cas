@@ -21,6 +21,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
@@ -40,6 +41,7 @@ import static org.junit.Assert.*;
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class}, 
         locations="classpath:HazelcastInstanceConfigurationTests-config.xml")
+@TestPropertySource(properties = {"cas.ticket.registry.hazelcast.configLocation="})
 @DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHazelcastInstanceConfigurationTests.class);

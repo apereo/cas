@@ -40,7 +40,7 @@ import java.util.Map;
  */
 @Configuration("pac4jConfiguration")
 public class Pac4jConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -63,7 +63,7 @@ public class Pac4jConfiguration {
     public PrincipalFactory clientPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     public Pac4jProperties pac4jProperties() {
         return new Pac4jProperties();
@@ -72,10 +72,10 @@ public class Pac4jConfiguration {
     @Bean
     public BaseApplicationContextWrapper pac4jApplicationContextWrapper() {
         final Pac4jApplicationContextWrapper w = new Pac4jApplicationContextWrapper();
-        
+
         w.setClientAuthenticationHandler(clientAuthenticationHandler());
         w.setClientAuthenticationMetaDataPopulator(clientAuthenticationMetaDataPopulator());
-        
+
         return w;
     }
 
@@ -90,6 +90,7 @@ public class Pac4jConfiguration {
         h.setClients(builtClients());
         h.setPrincipalFactory(clientPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setTypedIdUsed(casProperties.getAuthn().getPac4j().isTypedIdUsed());
         return h;
     }
 

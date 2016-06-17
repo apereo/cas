@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolverTests}.
@@ -42,8 +42,10 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         list.add(svc);
 
         dao.setRegisteredServices(list);
+
         this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
         this.defaultServicesManagerImpl.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+        this.defaultServicesManagerImpl.load();
 
         final AcceptUsersAuthenticationHandler handler1 = new AcceptUsersAuthenticationHandler();
         handler1.setName("handler1");

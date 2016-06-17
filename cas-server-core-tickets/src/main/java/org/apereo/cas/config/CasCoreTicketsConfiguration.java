@@ -118,6 +118,7 @@ public class CasCoreTicketsConfiguration {
         final DefaultServiceTicketFactory f = new DefaultServiceTicketFactory();
         f.setServiceTicketExpirationPolicy(serviceTicketExpirationPolicy());
         f.setUniqueTicketIdGeneratorsForService(uniqueTicketIdGeneratorsForService);
+        f.setTrackMostRecentSession(casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
         return f;
     }
 

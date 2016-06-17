@@ -6,10 +6,7 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.pac4j.core.profile.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -22,9 +19,8 @@ import java.security.GeneralSecurityException;
  */
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    private boolean isTypedIdUsed;
+    
     /**
      * Build the handler result.
      *
@@ -39,14 +35,14 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
 
         if (profile != null) {
             final String id;
-            if (casProperties.getAuthn().getPac4j().isTypedIdUsed()) {
+            if (isTypedIdUsed) {
                 id = profile.getTypedId();
             } else {
                 id = profile.getId();
             }
             if (StringUtils.isNotBlank(id)) {
                 credentials.setUserProfile(profile);
-                credentials.setTypedIdUsed(casProperties.getAuthn().getPac4j().isTypedIdUsed());
+                credentials.setTypedIdUsed(isTypedIdUsed);
                 return new DefaultHandlerResult(
                         this,
                         new BasicCredentialMetaData(credentials),
@@ -59,12 +55,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
     }
 
-    /**
-     * Sets properties.
-     *
-     * @param properties the properties
-     */
-    public void setProperties(final Pac4jProperties properties) {
-        casProperties.getAuthn().setPac4j(properties);
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.isTypedIdUsed = typedIdUsed;
     }
 }

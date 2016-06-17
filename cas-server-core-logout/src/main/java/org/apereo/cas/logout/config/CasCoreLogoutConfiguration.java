@@ -9,6 +9,7 @@ import org.apereo.cas.logout.LogoutMessageCreator;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +33,10 @@ public class CasCoreLogoutConfiguration {
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder defaultSingleLogoutServiceLogoutUrlBuilder() {
         return new DefaultSingleLogoutServiceLogoutUrlBuilder();
@@ -46,7 +51,7 @@ public class CasCoreLogoutConfiguration {
         handler.setAsynchronous(casProperties.getSlo().isAsynchronous());
         handler.setLogoutMessageBuilder(logoutBuilder());
         handler.setSingleLogoutServiceLogoutUrlBuilder(defaultSingleLogoutServiceLogoutUrlBuilder());
-
+        handler.setServicesManager(servicesManager);
         return handler;
     }
 

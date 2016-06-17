@@ -15,6 +15,13 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
     
     private AuthenticationManager authenticationManager;
 
+    public DefaultAuthenticationTransactionManager() {
+    }
+
+    public DefaultAuthenticationTransactionManager(final AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
     @Override
     public AuthenticationTransactionManager handle(final AuthenticationTransaction authenticationTransaction,
                                                    final AuthenticationResultBuilder authenticationResult)

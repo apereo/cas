@@ -12,8 +12,13 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.OAuthConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -26,23 +31,21 @@ import org.apereo.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.apereo.cas.support.oauth.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
@@ -62,7 +65,14 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml")
+@ComponentScan(basePackages = {"org.pac4j.springframework", "org.apereo.cas"})
+@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml",
+        classes = {CasCoreServicesConfiguration.class,
+                CasCoreUtilConfiguration.class,
+                CasOAuthConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreLogoutConfiguration.class})
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OAuth20AccessTokenControllerTests {
@@ -98,7 +108,7 @@ public class OAuth20AccessTokenControllerTests {
     private static final String GOOD_PASSWORD = "test";
 
     private static final int DELTA = 2;
-    
+
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     private DefaultOAuthCodeFactory oAuthCodeFactory;
@@ -111,13 +121,6 @@ public class OAuth20AccessTokenControllerTests {
     @Qualifier("accessTokenController")
     private OAuth20AccessTokenController oAuth20AccessTokenController;
 
-    @Autowired
-    @Qualifier("oAuthValidator")
-    private OAuthValidator validator;
-
-    @Autowired
-    @Qualifier("oauthSecConfig")
-    private Config oauthSecConfig;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -243,7 +246,7 @@ public class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        
+
         addCode(principal, service);
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();

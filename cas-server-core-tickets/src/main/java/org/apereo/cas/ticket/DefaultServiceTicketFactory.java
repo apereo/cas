@@ -28,10 +28,9 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     
     /** ExpirationPolicy for Service Tickets. */
     protected ExpirationPolicy serviceTicketExpirationPolicy;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
     
+    private boolean trackMostRecentSession = true;
+
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
                                        final Service service,
@@ -55,7 +54,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                 service,
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication,
-                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
+                trackMostRecentSession);
         return (T) serviceTicket;
     }
 
@@ -74,5 +73,9 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     public void setDefaultServiceTicketIdGenerator(final UniqueTicketIdGenerator defaultServiceTicketIdGenerator) {
         this.defaultServiceTicketIdGenerator = defaultServiceTicketIdGenerator;
+    }
+
+    public void setTrackMostRecentSession(final boolean trackMostRecentSession) {
+        this.trackMostRecentSession = trackMostRecentSession;
     }
 }

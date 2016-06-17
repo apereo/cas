@@ -15,6 +15,15 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     private PrincipalElectionStrategy principalElectionStrategy;
 
+    public DefaultAuthenticationSystemSupport() {
+    }
+
+    public DefaultAuthenticationSystemSupport(final AuthenticationTransactionManager authenticationTransactionManager,
+                                              final PrincipalElectionStrategy principalElectionStrategy) {
+        this.authenticationTransactionManager = authenticationTransactionManager;
+        this.principalElectionStrategy = principalElectionStrategy;
+    }
+
     @Override
     public AuthenticationTransactionManager getAuthenticationTransactionManager() {
         return this.authenticationTransactionManager;
