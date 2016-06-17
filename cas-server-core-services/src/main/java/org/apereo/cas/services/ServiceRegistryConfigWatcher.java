@@ -133,7 +133,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
 
             if (!newService.equals(oldService)) {
                 this.serviceRegistryDao.updateRegisteredService(newService);
-                this.serviceRegistryDao.refreshServicesManager();
+                this.serviceRegistryDao.refresh();
             } else {
                 LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
                         + "in the event processing pipeline", newService.getId(), file.getName());
@@ -146,7 +146,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
      */
     private void handleDeleteEvent() {
         this.serviceRegistryDao.load();
-        this.serviceRegistryDao.refreshServicesManager();
+        this.serviceRegistryDao.refresh();
     }
 
     /**
@@ -169,7 +169,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
 
         }
         this.serviceRegistryDao.updateRegisteredService(service);
-        this.serviceRegistryDao.refreshServicesManager();
+        this.serviceRegistryDao.refresh();
     }
 
     @Override

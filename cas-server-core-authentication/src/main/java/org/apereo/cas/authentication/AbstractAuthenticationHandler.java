@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
-    protected PrincipalFactory principalFactory;
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** The services manager instance, as the entry point to the registry. **/
     protected ServicesManager servicesManager;

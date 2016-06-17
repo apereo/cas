@@ -8,7 +8,7 @@ package org.apereo.cas.configuration.model.support.generic;
  */
 public class AcceptAuthenticationProperties {
     
-    private String users = "casuser::Mellon";
+    private String users = "";
 
     public String getUsers() {
         return users;

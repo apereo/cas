@@ -51,8 +51,10 @@ import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -72,6 +74,7 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
@@ -88,7 +91,7 @@ public class OAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     @Qualifier("validationServiceSelectionStrategies")
-    private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+    private List validationServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("servicesManager")

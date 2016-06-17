@@ -3,8 +3,8 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
@@ -13,8 +13,8 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -30,21 +30,20 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/ticketRegistry.xml")
+@SpringApplicationConfiguration(locations = "/ticketRegistry.xml")
 public class IgniteTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    
 
     @Autowired
-    private ApplicationContext applicationContext;
-
+    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Before
     public void setUp() throws Exception {
-        this.ticketRegistry = this.applicationContext.getBean("igniteTicketRegistry", TicketRegistry.class);
         initTicketRegistry();
     }
 
@@ -235,7 +234,7 @@ public class IgniteTicketRegistryTests {
         this.ticketRegistry.addTicket(st2);
         this.ticketRegistry.addTicket(st3);
         this.ticketRegistry.updateTicket(tgt);
-        
+
         assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));

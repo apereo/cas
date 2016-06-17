@@ -38,6 +38,7 @@ import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.stereotype.Component;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -45,8 +46,18 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(value = "casProperties", prefix = "cas")
+@ConfigurationProperties(prefix = "cas", ignoreUnknownFields = true)
 public class CasConfigurationProperties {
+
+    private String misagh;
+
+    public String getMisagh() {
+        return misagh;
+    }
+
+    public void setMisagh(final String misagh) {
+        this.misagh = misagh;
+    }
 
     @NestedConfigurationProperty
     private AuthenticationProperties authn = new AuthenticationProperties();

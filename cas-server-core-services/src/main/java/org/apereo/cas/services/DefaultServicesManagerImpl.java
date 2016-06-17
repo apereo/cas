@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,14 +34,17 @@ import java.util.stream.Collectors;
 public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
-    
+
     private ServiceRegistryDao serviceRegistryDao;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-        
+
     private ConcurrentMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
-    
+
+    public DefaultServicesManagerImpl() {
+    }
+
     /**
      * Instantiates a new default services manager impl.
      *
@@ -46,11 +52,14 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      */
     public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
-        load();
+    }
+
+    public void setServiceRegistryDao(final ServiceRegistryDao serviceRegistryDao) {
+        this.serviceRegistryDao = serviceRegistryDao;
     }
 
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
@@ -115,7 +124,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
     }
 
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
@@ -123,9 +132,9 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
         this.eventPublisher.publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
     }
-    
-    @Scheduled(initialDelayString="${cas.serviceRegistry.startDelay:20000}",
-               fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
+
+    @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:20000}",
+            fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
     @Override
     public void reload() {
         LOGGER.debug("Reloading registered services.");
@@ -133,8 +142,19 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
     }
 
     /**
+     * Handle services manager refresh event.
+     *
+     * @param event the event
+     */
+    @TransactionalEventListener
+    public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
+        reload();
+    }
+
+    /**
      * Load services that are provided by the DAO.
      */
+    @PostConstruct
     public void load() {
         LOGGER.debug("Loading services from {}", this.serviceRegistryDao);
         this.services = this.serviceRegistryDao.load().stream()
@@ -143,11 +163,11 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s == null ? r : s));
         LOGGER.info("Loaded {} services from {}.", this.services.size(),
-            this.serviceRegistryDao);
+                this.serviceRegistryDao);
 
     }
-    
-    
+
+
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;

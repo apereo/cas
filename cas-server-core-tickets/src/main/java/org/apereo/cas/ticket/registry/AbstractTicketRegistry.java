@@ -163,7 +163,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return the ticket
      */
     protected String encodeTicketId(final String ticketId) {
-        if (isCipherExecutorEnabled()) {
+        if (!isCipherExecutorEnabled()) {
             logger.trace(MESSAGE);
             return ticketId;
         }
@@ -181,7 +181,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return the ticket
      */
     protected Ticket encodeTicket(final Ticket ticket) {
-        if (isCipherExecutorEnabled()) {
+        if (!isCipherExecutorEnabled()) {
             logger.trace(MESSAGE);
             return ticket;
         }
@@ -209,7 +209,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return the ticket
      */
     protected Ticket decodeTicket(final Ticket result) {
-        if (isCipherExecutorEnabled()) {
+        if (!isCipherExecutorEnabled()) {
             logger.trace(MESSAGE);
             return result;
         }
@@ -235,7 +235,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @return the set
      */
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
-        if (isCipherExecutorEnabled()) {
+        if (!isCipherExecutorEnabled()) {
             logger.trace(MESSAGE);
             return items;
         }

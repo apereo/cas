@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * This is {@link ServerProperties}.
  *
@@ -7,6 +9,7 @@ package org.apereo.cas.configuration.model.core;
  * @since 5.0.0
  */
 
+@ConfigurationProperties
 public class ServerProperties {
     
     private String name = "https://cas.example.org:8443";

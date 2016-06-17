@@ -40,7 +40,9 @@
           c:mongoDbFactory-ref="mongoDbFactory"/>
 
     <bean id="mongoDbEventsRepository" class="org.apereo.cas.support.events.mongo.MongoDbCasEventRepository"
-        p:dropCollection="true"/>
+          c:collectionName="MongoDbCasEventRepository"
+          c:dropCollection="true"
+          c:mongoTemplate-ref="mongoEventsTemplate"/>
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>

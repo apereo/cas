@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,19 +21,22 @@ import java.util.List;
  * @since 4.2
  */
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
-    
-    private AccessStrategyMapper accessStrategyMapper;
 
-    private AttributeReleasePolicyMapper attributeReleasePolicyMapper;
-    
-    private ProxyPolicyMapper proxyPolicyMapper;
-    
-    private RegisteredServiceMapper registeredServiceMapper;
-    
-    private UsernameAttributeProviderMapper usernameAttributeProviderMapper;
-    
-    private List<? extends FormDataPopulator> formDataPopulators;
-    
+    private AccessStrategyMapper accessStrategyMapper = new DefaultAccessStrategyMapper();
+
+    private AttributeReleasePolicyMapper attributeReleasePolicyMapper =
+            new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+                                                    new DefaultPrincipalAttributesRepositoryMapper());
+
+    private ProxyPolicyMapper proxyPolicyMapper = new DefaultProxyPolicyMapper();
+
+    private RegisteredServiceMapper registeredServiceMapper = new DefaultRegisteredServiceMapper();
+
+    private UsernameAttributeProviderMapper usernameAttributeProviderMapper = 
+            new DefaultUsernameAttributeProviderMapper();
+
+    private List<? extends FormDataPopulator> formDataPopulators = new ArrayList<>();
+
 
     public void setAccessStrategyMapper(final AccessStrategyMapper accessStrategyMapper) {
         this.accessStrategyMapper = accessStrategyMapper;

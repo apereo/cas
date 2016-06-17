@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +44,7 @@ import java.util.Map;
  * @since 4.2.0
  */
 @Configuration("hazelcastInstanceConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastInstanceConfiguration {
 
     @Autowired
@@ -62,12 +64,7 @@ public class HazelcastInstanceConfiguration {
         r.setCipherExecutor(cipherExecutor);
         return r;
     }
-
-    /**
-     * Create HazelcastInstance bean.
-     *
-     * @return HazelcastInstance bean.
-     */
+    
     @Bean
     public HazelcastInstance hazelcast() {
         return Hazelcast.newHazelcastInstance(getConfig());

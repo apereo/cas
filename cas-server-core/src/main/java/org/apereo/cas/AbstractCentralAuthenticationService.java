@@ -298,7 +298,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.logoutManager = logoutManager;
     }
 
-    public void setValidationServiceSelectionStrategies(final List<ValidationServiceSelectionStrategy> list) {
+    public void setValidationServiceSelectionStrategies(final List list) {
         this.validationServiceSelectionStrategies = list;
     }
 }

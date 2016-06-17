@@ -4,12 +4,15 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,8 +27,8 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml")
-@ActiveProfiles("default_hz_config")
+@SpringApplicationConfiguration(classes = {CasCoreTicketsConfiguration.class, CasCoreLogoutConfiguration.class}, 
+        locations="classpath:HazelcastInstanceConfigurationTests-config.xml")
 @DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHazelcastInstanceConfigurationTests.class);

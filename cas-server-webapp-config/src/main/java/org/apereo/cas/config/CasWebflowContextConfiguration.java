@@ -83,6 +83,7 @@ public class CasWebflowContextConfiguration {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
                 new SpelExpressionParser(),
                 logoutConversionService());
+        
         return parser;
     }
 

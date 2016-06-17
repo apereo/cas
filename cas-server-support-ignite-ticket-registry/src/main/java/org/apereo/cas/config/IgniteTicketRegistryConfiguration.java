@@ -40,7 +40,7 @@ public class IgniteTicketRegistryConfiguration {
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
-    private CipherExecutor<byte[], byte[]> cipherExecutor;
+    private CipherExecutor cipherExecutor;
 
     /**
      * Ignite configuration ignite configuration.

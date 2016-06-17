@@ -50,12 +50,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     /**
      * The Password field name.
      */
-    protected String passwordFieldName;
+    protected String passwordFieldName = "password";
 
     /**
      * The Salt field name.
      */
-    protected String saltFieldName;
+    protected String saltFieldName = "salt";
 
     /**
      * The Number of iterations field name.

@@ -23,6 +23,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@ImportResource(locations = {
+        "classpath:/spring-configuration/*.xml",
+        "classpath:/spring-configuration/*.groovy",
+        "classpath:/deployerConfigContext.xml",
+        "classpath*:/META-INF/spring/*.xml"})
 @SpringBootApplication(
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
@@ -33,10 +38,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ComponentScan(basePackages = {"org.apereo.cas", "org.pac4j.springframework"},
                excludeFilters = { @ComponentScan.Filter(type = FilterType.REGEX,
                pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
-@ImportResource(locations = {"classpath:/spring-configuration/*.xml",
-        "classpath:/spring-configuration/*.groovy",
-        "classpath:/deployerConfigContext.xml",
-        "classpath*:/META-INF/spring/*.xml"})
 @EnableConfigServer
 @EnableAsync
 @EnableConfigurationProperties(CasConfigurationProperties.class)

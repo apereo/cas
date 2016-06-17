@@ -28,7 +28,7 @@ public class CasCookieConfiguration {
 
     @Autowired
     @Qualifier("cookieCipherExecutor")
-    private CipherExecutor<String, String> cookieCipherExecutor;
+    private CipherExecutor cookieCipherExecutor;
 
     @Bean
     @RefreshScope

@@ -39,7 +39,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     private DataSource dataSource;
 
-
     @Before
     public void setUp() throws Exception {
         final ClassPathXmlApplicationContext ctx = new
@@ -119,6 +118,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setSql(buildSql());
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
+        q.setSaltFieldName("salt");
 
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
         final HandlerResult r = q.authenticateUsernamePasswordInternal(c);
@@ -135,6 +135,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setSql(buildSql());
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
+        q.setSaltFieldName("salt");
+        q.setPasswordFieldName("password");
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
             public String encode(final String password) {

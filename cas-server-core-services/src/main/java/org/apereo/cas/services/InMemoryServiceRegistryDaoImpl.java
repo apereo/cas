@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,12 +17,8 @@ import java.util.List;
 public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
-
-
+    
     private List<RegisteredService> registeredServices = new ArrayList<>();
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     /**
      * Instantiates a new In memory service registry.
@@ -62,7 +57,7 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
     }
 
     public void setRegisteredServices(final List registeredServices) {
-        this.registeredServices = registeredServices;
+        this.registeredServices = ObjectUtils.defaultIfNull(registeredServices, new ArrayList<>());
     }
 
     /**

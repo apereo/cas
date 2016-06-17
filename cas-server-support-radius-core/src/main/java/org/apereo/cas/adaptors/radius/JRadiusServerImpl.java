@@ -69,8 +69,7 @@ public class JRadiusServerImpl implements RadiusServer {
     
     /** Load the dictionary implementation. */
     static {
-        AttributeFactory
-        .loadAttributeDictionary("net.jradius.dictionary.AttributeDictionaryImpl");
+        AttributeFactory.loadAttributeDictionary("net.jradius.dictionary.AttributeDictionaryImpl");
     }
 
     /**

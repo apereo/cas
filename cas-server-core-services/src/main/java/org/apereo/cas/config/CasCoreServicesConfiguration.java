@@ -21,7 +21,9 @@ import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,23 +36,19 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("casCoreServicesConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreServicesConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    private ApplicationContext context;
+
+    @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
-    @Autowired(required = false)
-    @Qualifier("inMemoryRegisteredServices")
-    private List inMemoryRegisteredServices;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ReloadableServicesManager servicesManager;
-    
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
@@ -85,16 +83,21 @@ public class CasCoreServicesConfiguration {
     public RegisteredServiceCipherExecutor registeredServiceCipherExecutor() {
         return new DefaultRegisteredServiceCipherExecutor();
     }
-    
+
     @Bean
     public ReloadableServicesManager servicesManager() {
-        return new DefaultServicesManagerImpl(serviceRegistryDao);
+        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl();
+        impl.setServiceRegistryDao(this.serviceRegistryDao);
+        return impl;
     }
 
     @Bean
     public ServiceRegistryDao inMemoryServiceRegistryDao() {
         final InMemoryServiceRegistryDaoImpl impl = new InMemoryServiceRegistryDaoImpl();
-        impl.setRegisteredServices(inMemoryRegisteredServices);
+        if (context.containsBean("inMemoryRegisteredServices")) {
+            final List list = context.getBean("inMemoryRegisteredServices", List.class);
+            impl.setRegisteredServices(list);
+        }
         return impl;
     }
 
@@ -103,8 +106,7 @@ public class CasCoreServicesConfiguration {
         try {
             final JsonServiceRegistryDao dao =
                     new JsonServiceRegistryDao(casProperties.getServiceRegistry().getConfig().getLocation(),
-                    casProperties.getServiceRegistry().isWatcherEnabled());
-            dao.setServicesManager(this.servicesManager);
+                            casProperties.getServiceRegistry().isWatcherEnabled());
             return dao;
         } catch (final Throwable e) {
             throw Throwables.propagate(e);

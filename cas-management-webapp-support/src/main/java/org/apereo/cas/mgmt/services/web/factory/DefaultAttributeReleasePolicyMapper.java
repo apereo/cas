@@ -31,7 +31,16 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
     private AttributeFilterMapper attributeFilterMapper;
     
     private PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
+
+    public DefaultAttributeReleasePolicyMapper() {
+    }
     
+    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper, 
+                                               final PrincipalAttributesRepositoryMapper mapper) {
+        
+        this.attributeFilterMapper = attributeFilterMapper;
+        this.principalAttributesRepositoryMapper = mapper;
+    }
 
     public void setAttributeFilterMapper(final AttributeFilterMapper attributeFilterMapper) {
         this.attributeFilterMapper = attributeFilterMapper;

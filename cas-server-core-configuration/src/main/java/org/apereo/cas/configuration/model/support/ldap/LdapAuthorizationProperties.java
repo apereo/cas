@@ -11,7 +11,7 @@ public class LdapAuthorizationProperties {
     /** Default role prefix. */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
     
-    private String roleAttribute;
+    private String roleAttribute = "uugid";
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
     private boolean allowMultipleResults;
 

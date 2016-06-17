@@ -2,11 +2,14 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.LockedOutputStream;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
@@ -48,13 +51,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      * The Registered service json serializer.
      */
     private StringSerializer<RegisteredService> registeredServiceSerializer;
-    
+
     private Thread serviceRegistryWatcherThread;
-    
+
     private ServiceRegistryConfigWatcher serviceRegistryConfigWatcher;
 
-    private ReloadableServicesManager servicesManager;
-    
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     /**
      * Instantiates a new service registry dao.
      *
@@ -104,8 +108,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
     /**
      * Refreshes the services manager, forcing it to reload.
      */
-    public void refreshServicesManager() {
-        this.servicesManager.reload();
+    public void refresh() {
+        this.eventPublisher.publishEvent(new CasRegisteredServicesRefreshEvent(this));
     }
 
     /**
@@ -263,10 +267,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
             LOGGER.warn("Service file name {} is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
-    }
-
-    public void setServicesManager(final ReloadableServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 
     /**

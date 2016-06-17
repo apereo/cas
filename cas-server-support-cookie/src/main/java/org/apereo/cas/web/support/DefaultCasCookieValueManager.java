@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
@@ -23,7 +23,9 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
-    /** The cipher exec that is responsible for encryption and signing of the cookie. */
+    /**
+     * The cipher exec that is responsible for encryption and signing of the cookie.
+     */
     private CipherExecutor<String, String> cipherExecutor = new NoOpCipherExecutor();
 
     /**
@@ -39,7 +41,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
      *
      * @param cipherExecutor the cipher executor
      */
-    public DefaultCasCookieValueManager(final CipherExecutor<String, String> cipherExecutor) {
+    public DefaultCasCookieValueManager(final CipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
                 this.cipherExecutor.getClass());

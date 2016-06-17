@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd 
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">
@@ -14,14 +17,17 @@
             </map>
         </property>
     </bean>
-    <context:component-scan base-package="org.apereo.cas.config"/>
 
-    <beans profile="default_hz_config">
-        <context:property-placeholder location="cas_without_hazelcast_xml_pointer.properties"/>
-    </beans>
-
-    <beans profile="provided_hz_config">
-        <context:property-placeholder location="cas_with_hazelcast_xml_pointer.properties"/>
-    </beans>
+    <util:list id="serviceFactoryList"/>
+    <alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
 
 </beans>

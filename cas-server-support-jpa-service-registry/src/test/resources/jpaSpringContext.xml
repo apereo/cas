@@ -26,20 +26,25 @@
     </bean>
     <context:property-placeholder properties-ref="casProperties"/>
     <util:properties id="casProperties"/>
-
-
+    
     <context:component-scan base-package="org.apereo.cas"/>
     <context:annotation-config/>
-
-    <import resource="classpath:META-INF/spring/jpa-svc-reg-context.xml"/>
     
     <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao"/>
 
+    <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
+          id="dataSourceService"
+          p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+          p:username="${database.user:sa}"
+          p:password="${database.password:}"
+          p:url="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}" />
+    
     <!-- CAS Context Core -->
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators"/>
     <util:list id="monitorsList"/>
+    <util:list id="inMemoryRegisteredServices" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>

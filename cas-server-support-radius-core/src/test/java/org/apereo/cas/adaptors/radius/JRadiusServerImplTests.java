@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class JRadiusServerImplTests {
 
     @Autowired
-    private JRadiusServerImpl radiusServer;
+    private RadiusServer radiusServer;
 
     /**
      * Presently this only tests component wiring.

@@ -2,7 +2,6 @@ package org.apereo.cas.monitor;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 
@@ -13,9 +12,9 @@ import java.sql.ResultSet;
  * @since 3.5.1
  */
 public class DataSourceMonitor extends AbstractPoolMonitor {
-    
+
     private JdbcTemplate jdbcTemplate;
-    
+
     private String validationQuery;
 
     /**
@@ -23,7 +22,7 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
      *
      * @param dataSource Data source to monitor.
      */
-    public DataSourceMonitor(@Nullable final DataSource dataSource) {
+    public DataSourceMonitor(final DataSource dataSource) {
         if (dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);
         } else {
@@ -45,12 +44,16 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
 
     @Override
     protected StatusCode checkPool() throws Exception {
-        return this.jdbcTemplate.query(this.validationQuery, (ResultSet rs) -> {
-            if (rs.next()) {
-                return StatusCode.OK;
-            }
-            return StatusCode.WARN;
-        });
+        try {
+            return this.jdbcTemplate.query(this.validationQuery, (ResultSet rs) -> {
+                if (rs.next()) {
+                    return StatusCode.OK;
+                }
+                return StatusCode.WARN;
+            });
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
 

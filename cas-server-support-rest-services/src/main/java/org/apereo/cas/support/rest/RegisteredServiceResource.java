@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,24 +31,26 @@ import java.util.Map;
 /**
  * {@link RestController} implementation of a REST API
  * that allows for registration of CAS services.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @RestController("registeredServiceResourceRestController")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RegisteredServiceResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceResource.class);
 
     private ServicesManager servicesManager;
-    
+
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     /**
      * Create new service.
      *
-     * @param tgtId ticket granting ticket id URI path param
+     * @param tgtId             ticket granting ticket id URI path param
      * @param serviceDataHolder the service to register and save in rest form
      * @return {@link ResponseEntity} representing RESTful response
      */
@@ -57,13 +60,13 @@ public class RegisteredServiceResource {
                                                 @PathVariable("tgtId") final String tgtId) {
         try {
 
-            if (StringUtils.isBlank(casProperties.getRestServices().getAttributeName()) 
+            if (StringUtils.isBlank(casProperties.getRestServices().getAttributeName())
                     || StringUtils.isBlank(casProperties.getRestServices().getAttributeValue())) {
                 throw new IllegalArgumentException("Attribute name and/or value must be configured");
             }
 
             final TicketGrantingTicket ticket =
-                this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+                    this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
             if (ticket == null || ticket.isExpired()) {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
@@ -92,7 +95,7 @@ public class RegisteredServiceResource {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    
+
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }

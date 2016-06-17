@@ -1,11 +1,17 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,19 +24,21 @@ import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link JpaServiceRegistryDaoImpl}
+ *
  * @author battags
  * @since 3.1.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = JpaServiceRegistryConfiguration.class,
+        locations = {"classpath:/jpaSpringContext.xml"})
 public class JpaServiceRegistryDaoImplTests {
 
+    @Autowired
+    @Qualifier("jpaServiceRegistryDao")
     private ServiceRegistryDao dao;
 
     @Before
     public void setUp() {
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
-        this.dao = ctx.getBean("serviceRegistryDao", ServiceRegistryDao.class);
-
         final List<RegisteredService> services = this.dao.load();
         for (final RegisteredService service : services) {
             this.dao.delete(service);

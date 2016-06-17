@@ -2,9 +2,11 @@ package org.apereo.cas.monitor;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import org.apereo.cas.monitor.config.EhCacheMonitorConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,7 +21,7 @@ import static org.junit.Assert.*;
  * @since 3.5.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/ehcacheMonitor-test.xml")
+@SpringApplicationConfiguration(classes = EhCacheMonitorConfiguration.class, locations= {"/ehcacheMonitor-test.xml"})
 public class EhCacheMonitorTests {
 
     @Autowired

@@ -12,3 +12,4 @@ dependencies {
     testCompile project(":cas-server-core-logout")
 }
 
+

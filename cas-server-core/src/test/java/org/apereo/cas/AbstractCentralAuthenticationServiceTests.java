@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -21,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
  * @since 3.0.0
  */
-@ContextConfiguration(locations = {
+@SpringApplicationConfiguration(locations = {
         "classpath:/core-context.xml"
 })
 @RunWith(SpringJUnit4ClassRunner.class)

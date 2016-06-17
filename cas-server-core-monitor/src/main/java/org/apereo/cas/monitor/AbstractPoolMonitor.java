@@ -52,7 +52,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
             description = "Validator thread interrupted during pool validation.";
         } catch (final TimeoutException e) {
             code = StatusCode.WARN;
-            description = String.format("Pool validation timed out.  Max wait is %s ms.", this.maxWait);
+            description = String.format("Pool validation timed out. Max wait is %s ms.", this.maxWait);
         } catch (final Exception e) {
             code = StatusCode.ERROR;
             description = e.getMessage();

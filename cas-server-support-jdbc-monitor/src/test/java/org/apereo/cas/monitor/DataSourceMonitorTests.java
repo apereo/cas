@@ -29,6 +29,7 @@ public class DataSourceMonitorTests {
     @Test
     public void verifyObserve() throws Exception {
         final DataSourceMonitor monitor = new DataSourceMonitor(this.dataSource);
+        monitor.setMaxWait(5000);
         monitor.setExecutor(Executors.newSingleThreadExecutor());
         monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
         final PoolStatus status = monitor.observe();

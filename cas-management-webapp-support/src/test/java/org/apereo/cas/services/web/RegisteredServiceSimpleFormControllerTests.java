@@ -2,7 +2,13 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeFilterMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeReleasePolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesRepositoryMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
@@ -26,6 +32,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,6 +68,13 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.repository.setBackingMap(attributes);
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
+        this.registeredServiceFactory.setAccessStrategyMapper(new DefaultAccessStrategyMapper());
+        this.registeredServiceFactory.setAttributeReleasePolicyMapper(
+                new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+                        new DefaultPrincipalAttributesRepositoryMapper()));
+        this.registeredServiceFactory.setProxyPolicyMapper(new DefaultProxyPolicyMapper());
+        this.registeredServiceFactory.setRegisteredServiceMapper(new DefaultRegisteredServiceMapper());
+        this.registeredServiceFactory.setUsernameAttributeProviderMapper(new DefaultUsernameAttributeProviderMapper());
         this.registeredServiceFactory.setFormDataPopulators(ImmutableList.of(new AttributeFormDataPopulator(this
                 .repository)));
         this.registeredServiceFactory.initializeDefaults();

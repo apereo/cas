@@ -4,15 +4,23 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.HazelcastInstanceConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
@@ -24,19 +32,22 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml")
-@ActiveProfiles("provided_hz_config")
+@SpringApplicationConfiguration(
+        locations = "classpath:HazelcastInstanceConfigurationTests-config.xml",
+        classes = {CasCoreTicketsConfiguration.class,
+                CasCoreUtilConfiguration.class, CasCoreAuthenticationConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasCoreLogoutConfiguration.class, HazelcastInstanceConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
+@EnableConfigurationProperties
 @DirtiesContext
 public class ProvidedHazelcastInstanceConfigurationTests {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProvidedHazelcastInstanceConfigurationTests.class);
 
     @Autowired
+    @Qualifier("hazelcast")
     private HazelcastInstance hzInstance;
-
-    public HazelcastInstance getHzInstance() {
-        return hzInstance;
-    }
 
     @Test
     public void hazelcastInstanceIsCreatedNormally() throws Exception {

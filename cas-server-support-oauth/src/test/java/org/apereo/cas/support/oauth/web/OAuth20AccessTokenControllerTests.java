@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.OAuthConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -34,6 +36,8 @@ import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -58,8 +62,9 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/oauth-context.xml")
+@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml")
 @DirtiesContext
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OAuth20AccessTokenControllerTests {
 
     private static final String CONTEXT = "/oauth2.0/";
@@ -93,7 +98,7 @@ public class OAuth20AccessTokenControllerTests {
     private static final String GOOD_PASSWORD = "test";
 
     private static final int DELTA = 2;
-
+    
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     private DefaultOAuthCodeFactory oAuthCodeFactory;
