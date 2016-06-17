@@ -90,6 +90,8 @@
                                 <entry key="mail" value="mail" />
                                 <entry key="displayName" value="displayName" />
                                 <entry key="entryUUID" value="entryUUID" />
+                                <entry key="cn" value="cn" />
+                                <entry key="sn" value="sn" />
                         </map>
                 </property>
         </bean>
