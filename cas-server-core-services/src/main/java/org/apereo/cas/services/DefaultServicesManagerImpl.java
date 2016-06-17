@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
@@ -146,8 +146,8 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      *
      * @param event the event
      */
-    @TransactionalEventListener
-    public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
+    @EventListener()
+    protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
         reload();
     }
 

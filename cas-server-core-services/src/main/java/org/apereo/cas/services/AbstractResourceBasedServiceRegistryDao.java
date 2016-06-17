@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
@@ -108,6 +109,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
     /**
      * Refreshes the services manager, forcing it to reload.
      */
+    @Transactional
     public void refresh() {
         this.eventPublisher.publishEvent(new CasRegisteredServicesRefreshEvent(this));
     }

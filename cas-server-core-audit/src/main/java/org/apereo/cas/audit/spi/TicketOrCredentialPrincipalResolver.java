@@ -33,7 +33,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     private CentralAuthenticationService centralAuthenticationService;
     
-    private PrincipalIdProvider principalIdProvider;
+    private PrincipalIdProvider principalIdProvider = authentication -> authentication.getPrincipal().getId();
 
     /**
      * Instantiates a new Ticket or credential principal resolver.

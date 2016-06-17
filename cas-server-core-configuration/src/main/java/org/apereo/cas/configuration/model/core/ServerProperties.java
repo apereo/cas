@@ -14,6 +14,24 @@ public class ServerProperties {
     
     private String name = "https://cas.example.org:8443";
     private String prefix = name.concat("/cas");
+    private Ajp ajp = new Ajp();
+    private Http http = new Http();
+
+    public Http getHttp() {
+        return http;
+    }
+
+    public void setHttp(final Http http) {
+        this.http = http;
+    }
+
+    public Ajp getAjp() {
+        return ajp;
+    }
+
+    public void setAjp(final Ajp ajp) {
+        this.ajp = ajp;
+    }
 
     public String getName() {
         return name;
@@ -37,5 +55,128 @@ public class ServerProperties {
 
     public String getLogoutUrl() {
         return getPrefix().concat("/logout");
+    }
+    
+    public static class Ajp {
+        private String protocol = "AJP/1.3";
+        private int port = 8009;
+        private boolean secure;
+        private boolean allowTrace;
+        private String scheme = "http";
+        private boolean enabled;
+        private int asyncTimeout = 5000;
+        private boolean enableLookups;
+        private int maxPostSize = 20971520;
+        private int proxyPort = -1;
+        private int redirectPort = -1;
+        
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public void setProtocol(final String protocol) {
+            this.protocol = protocol;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(final int port) {
+            this.port = port;
+        }
+
+        public boolean isSecure() {
+            return secure;
+        }
+
+        public void setSecure(final boolean secure) {
+            this.secure = secure;
+        }
+
+        public boolean isAllowTrace() {
+            return allowTrace;
+        }
+
+        public void setAllowTrace(final boolean allowTrace) {
+            this.allowTrace = allowTrace;
+        }
+
+        public String getScheme() {
+            return scheme;
+        }
+
+        public void setScheme(final String scheme) {
+            this.scheme = scheme;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getAsyncTimeout() {
+            return asyncTimeout;
+        }
+
+        public void setAsyncTimeout(final int asyncTimeout) {
+            this.asyncTimeout = asyncTimeout;
+        }
+
+        public boolean isEnableLookups() {
+            return enableLookups;
+        }
+
+        public void setEnableLookups(final boolean enableLookups) {
+            this.enableLookups = enableLookups;
+        }
+
+        public int getMaxPostSize() {
+            return maxPostSize;
+        }
+
+        public void setMaxPostSize(final int maxPostSize) {
+            this.maxPostSize = maxPostSize;
+        }
+
+        public int getProxyPort() {
+            return proxyPort;
+        }
+
+        public void setProxyPort(final int proxyPort) {
+            this.proxyPort = proxyPort;
+        }
+
+        public int getRedirectPort() {
+            return redirectPort;
+        }
+
+        public void setRedirectPort(final int redirectPort) {
+            this.redirectPort = redirectPort;
+        }
+    }
+    
+    public static class Http {
+        private boolean enabled = true;
+        private int port = 8080;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(final int port) {
+            this.port = port;
+        }
     }
 }
