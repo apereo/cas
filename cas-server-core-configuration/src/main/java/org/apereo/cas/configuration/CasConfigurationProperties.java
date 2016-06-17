@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas", ignoreUnknownFields = true)
+@ConfigurationProperties("cas")
 public class CasConfigurationProperties {
 
     private String misagh;
