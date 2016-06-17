@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.CasProtocolConstants;

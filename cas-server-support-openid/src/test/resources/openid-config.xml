@@ -36,6 +36,9 @@
         <ref bean="openIdValidateController"/>
     </util:list>
 
+    <bean class="org.thymeleaf.spring4.SpringTemplateEngine" />
+    <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties" />
+    
     <bean id="serverManager"
           class="org.openid4java.server.ServerManager"
           p:oPEndpointUrl="${server.prefix}/login"
@@ -88,6 +91,6 @@
         <entry key=".*Safari.*Pre.*" value="safari"/>
         <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
     </util:map>
-    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />
 
 </beans>

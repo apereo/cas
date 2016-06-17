@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.slf4j.Logger;

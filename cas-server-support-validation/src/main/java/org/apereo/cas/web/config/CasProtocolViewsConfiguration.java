@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.web.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.view.CasProtocolView;
