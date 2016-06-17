@@ -26,9 +26,6 @@ public class CasCookieConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("cookieCipherExecutor")
-    private CipherExecutor cookieCipherExecutor;
 
     @Bean
     @RefreshScope
@@ -37,16 +34,21 @@ public class CasCookieConfiguration {
                 casProperties.getWarningCookie());
     }
 
+    @Autowired
     @Bean
-    public CookieValueManager defaultCookieValueManager() {
-        return new DefaultCasCookieValueManager(this.cookieCipherExecutor);
+    public CookieValueManager defaultCookieValueManager(@Qualifier("cookieCipherExecutor")
+                                                        final CipherExecutor cookieCipherExecutor) {
+        return new DefaultCasCookieValueManager(cookieCipherExecutor);
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
+    public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator(@Qualifier("cookieCipherExecutor")
+                                                                               final CipherExecutor cookieCipherExecutor) {
         final CookieRetrievingCookieGenerator bean =
-                configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager()),
+                configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(
+                        defaultCookieValueManager(cookieCipherExecutor)),
                         casProperties.getTgc());
         bean.setCookieDomain(casProperties.getTgc().getDomain());
         bean.setRememberMeMaxAge(casProperties.getTgc().getRememberMeMaxAge());

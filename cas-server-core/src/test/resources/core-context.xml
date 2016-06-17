@@ -24,8 +24,8 @@
     <context:annotation-config/>
 
 
-    <context:property-placeholder properties-ref="casProperties"/>
-    <util:properties id="casProperties" location="classpath:cas.properties"/>
+    <context:property-placeholder properties-ref="casProperties" ignore-resource-not-found="true"/>
+    <util:properties id="casProperties" location="classpath:cas.properties" ignore-resource-not-found="true"/>
 
 
     <util:map id="authenticationHandlersResolvers">
@@ -288,7 +288,7 @@
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />
     <util:list id="validationServiceSelectionStrategies">
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
     </util:list>

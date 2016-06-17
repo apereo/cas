@@ -32,14 +32,15 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(
-        locations = "classpath:HazelcastInstanceConfigurationTests-config.xml",
-        classes = {CasCoreTicketsConfiguration.class,
-                CasCoreUtilConfiguration.class, CasCoreAuthenticationConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasCoreLogoutConfiguration.class, HazelcastInstanceConfiguration.class},
+@SpringApplicationConfiguration(classes = {
+        HazelcastInstanceConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreLogoutConfiguration.class},
+        locations="classpath:HazelcastInstanceConfigurationTests-config.xml",
         initializers = ConfigFileApplicationContextInitializer.class)
-@EnableConfigurationProperties
 @DirtiesContext
 public class ProvidedHazelcastInstanceConfigurationTests {
 

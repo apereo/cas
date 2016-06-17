@@ -60,7 +60,7 @@ public class CasCoreConfiguration {
             new AcceptAnyAuthenticationPolicyFactory();
     
     @Bean
-    public List validationServiceSelectionStrategies() {
+    public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
         final List list = new ArrayList<>();
         list.add(defaultValidationServiceSelectionStrategy());
         return list;
@@ -72,16 +72,16 @@ public class CasCoreConfiguration {
         return new DefaultValidationServiceSelectionStrategy();
     }
     
+    @Autowired
     @Bean
-    public CentralAuthenticationService centralAuthenticationService() {
+    public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
+                                                                     final List validationServiceSelectionStrategies) {
         final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
         impl.setTicketRegistry(this.ticketRegistry);
         impl.setServicesManager(this.servicesManager);
         impl.setLogoutManager(this.logoutManager);
         impl.setTicketFactory(this.ticketFactory);
-        
-        impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies());
-        
+        impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
         impl.setServiceContextAuthenticationPolicyFactory(this.serviceContextAuthenticationPolicyFactory);
         impl.setPrincipalFactory(this.principalFactory);
         return impl;

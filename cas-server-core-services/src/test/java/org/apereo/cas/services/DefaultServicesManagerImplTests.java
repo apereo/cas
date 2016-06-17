@@ -40,6 +40,7 @@ public class DefaultServicesManagerImplTests {
         dao.setRegisteredServices(list);
         this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
         this.defaultServicesManagerImpl.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+        this.defaultServicesManagerImpl.reload();
     }
 
     @Test
