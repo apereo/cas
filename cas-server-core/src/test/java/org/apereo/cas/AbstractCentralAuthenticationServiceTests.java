@@ -2,6 +2,9 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -24,7 +27,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
  * @since 3.0.0
  */
-@SpringApplicationConfiguration(locations = {
+@SpringApplicationConfiguration(
+   classes = {CasCoreServicesConfiguration.class, CasCoreUtilConfiguration.class},
+        locations = {
         "classpath:/core-context.xml"
 }, initializers = ConfigFileApplicationContextInitializer.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,7 +50,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     private AuthenticationManager authenticationManager;
 
     @Autowired(required = true)
-    private ServicesManager servicesManager;
+    private ReloadableServicesManager servicesManager;
 
     @Autowired
     private ArgumentExtractor argumentExtractor;

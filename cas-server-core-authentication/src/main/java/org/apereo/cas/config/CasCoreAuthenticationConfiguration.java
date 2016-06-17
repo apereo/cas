@@ -43,8 +43,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.ServerProperties;
 import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -113,7 +113,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired(required = false)
     @Qualifier("delegateTransformer")
-    private PrincipalNameTransformer delegate;
+    private PrincipalNameTransformer delegateTransformer;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
@@ -122,15 +122,7 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
-
-    @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
-    private HttpClient supportsTrustStoreSslSocketFactoryHttpClient;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ReloadableServicesManager servicesManager;
-
+    
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -163,8 +155,10 @@ public class CasCoreAuthenticationConfiguration {
         return new AcceptAnyAuthenticationPolicyFactory();
     }
 
+    @Autowired
     @Bean
-    public AuthenticationHandler acceptUsersAuthenticationHandler() {
+    public AuthenticationHandler acceptUsersAuthenticationHandler(@Qualifier("servicesManager")
+                                                                  final ServicesManager servicesManager) {
         final Pattern pattern = Pattern.compile("::");
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
@@ -204,12 +198,14 @@ public class CasCoreAuthenticationConfiguration {
         return new AllAuthenticationPolicy();
     }
 
+    @Autowired
     @RefreshScope
     @Bean
-    public AuthenticationContextValidator authenticationContextValidator() {
+    public AuthenticationContextValidator authenticationContextValidator(@Qualifier("servicesManager")
+                                                                         final ServicesManager servicesManager) {
         final AuthenticationContextValidator val = new AuthenticationContextValidator();
         val.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        val.setServicesManager(this.servicesManager);
+        val.setServicesManager(servicesManager);
         val.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         return val;
     }
@@ -220,18 +216,20 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("servicesManager")
+                                                                          final ServicesManager servicesManager) {
         final DefaultAuthenticationSystemSupport r = new DefaultAuthenticationSystemSupport();
-        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager());
+        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(servicesManager));
         r.setPrincipalElectionStrategy(principalElectionStrategy);
         return r;
     }
 
     @Bean
-    public AuthenticationTransactionManager defaultAuthenticationTransactionManager() {
+    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("servicesManager")
+                                                                                    final ServicesManager servicesManager) {
         final DefaultAuthenticationTransactionManager r =
                 new DefaultAuthenticationTransactionManager();
-        r.setAuthenticationManager(authenticationManager());
+        r.setAuthenticationManager(authenticationManager(servicesManager));
         return r;
     }
 
@@ -255,18 +253,23 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
+    public AuthenticationManager authenticationManager(@Qualifier("servicesManager")
+                                                       final ServicesManager servicesManager) {
         final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
 
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators);
         p.setHandlerResolverMap(authenticationHandlersResolvers);
-        p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver(servicesManager));
         p.setAuthenticationPolicy(authenticationPolicy);
         return p;
     }
 
+    @Autowired
     @Bean
-    public RegisteredServiceAuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
+    public RegisteredServiceAuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager
+    ) {
         final RegisteredServiceAuthenticationHandlerResolver r =
                 new RegisteredServiceAuthenticationHandlerResolver();
         r.setServicesManager(servicesManager);
@@ -321,9 +324,11 @@ public class CasCoreAuthenticationConfiguration {
         return p;
     }
 
+    @Autowired
     @RefreshScope
     @Bean
-    public AuthenticationHandler jaasAuthenticationHandler() {
+    public AuthenticationHandler jaasAuthenticationHandler(@Qualifier("servicesManager")
+                                                               final ServicesManager servicesManager) {
         final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
 
         h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
@@ -346,7 +351,11 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationHandler proxyAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier("servicesManager")
+                                                            final ServicesManager servicesManager,
+                                                            @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+                                                            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
         final HttpBasedServiceCredentialsAuthenticationHandler h =
                 new HttpBasedServiceCredentialsAuthenticationHandler();
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
@@ -388,7 +397,7 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
         final ConvertCasePrincipalNameTransformer t =
-                new ConvertCasePrincipalNameTransformer(this.delegate);
+                new ConvertCasePrincipalNameTransformer(this.delegateTransformer);
         t.setToUpperCase(casProperties.getPrincipalTransformation().isUppercase());
         return t;
     }

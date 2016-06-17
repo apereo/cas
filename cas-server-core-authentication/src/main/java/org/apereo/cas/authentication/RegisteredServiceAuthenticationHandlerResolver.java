@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
     /**
      * The Services manager.
      */
-    protected ReloadableServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
@@ -63,7 +64,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         return candidateHandlers;
     }
 
-    public void setServicesManager(final ReloadableServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 }

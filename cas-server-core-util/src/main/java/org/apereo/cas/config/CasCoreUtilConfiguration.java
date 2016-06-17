@@ -9,6 +9,7 @@ import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
 import org.apereo.cas.util.TGCCipherExecutor;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -57,35 +58,33 @@ public class CasCoreUtilConfiguration {
     }
 
     @Bean
-    public FactoryBean<SimpleHttpClient> httpClient() {
+    public SimpleHttpClientFactoryBean.DefaultHttpClient httpClient() {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c =
                 new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
-        c.setSslSocketFactory(this.trustStoreSslSocketFactory);
         return c;
     }
     
     @Bean
-    public FactoryBean<SimpleHttpClient> noRedirectHttpClient() {
-        final SimpleHttpClientFactoryBean c =
-                new SimpleHttpClientFactoryBean();
+    public HttpClient noRedirectHttpClient() throws Exception {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
+                new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
         c.setRedirectsEnabled(false);
         c.setCircularRedirectsAllowed(false);
         c.setSslSocketFactory(this.trustStoreSslSocketFactory);
-
-        return c;
+        return c.getObject();
     }
 
     @Bean
-    public FactoryBean<SimpleHttpClient> supportsTrustStoreSslSocketFactoryHttpClient() {
-        final SimpleHttpClientFactoryBean c = new SimpleHttpClientFactoryBean();
+    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
         c.setSslSocketFactory(this.trustStoreSslSocketFactory);
-        return c;
+        return c.getObject();
     }
 
     @Bean
