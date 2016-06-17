@@ -11,6 +11,12 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasOAuthConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
@@ -18,12 +24,12 @@ import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
@@ -42,7 +48,14 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/oauth-context.xml")
+@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml",
+        classes = {
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasOAuthConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreLogoutConfiguration.class,
+                CasCoreUtilConfiguration.class})
 @DirtiesContext
 public class OAuth20ProfileControllerTests {
 

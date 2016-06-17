@@ -2,6 +2,12 @@ package org.apereo.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasOAuthConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -14,11 +20,11 @@ import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -38,7 +44,14 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/oauth-context.xml")
+@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml",
+        classes = {
+                CasCoreAuthenticationConfiguration.class, 
+                CasCoreServicesConfiguration.class,
+                CasOAuthConfiguration.class, 
+                CasCoreTicketsConfiguration.class,
+                CasCoreLogoutConfiguration.class,
+                CasCoreUtilConfiguration.class})
 @DirtiesContext
 public class OAuth20AuthorizeControllerTests {
 
@@ -494,7 +507,7 @@ public class OAuth20AuthorizeControllerTests {
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setAttributeReleasePolicy(
-                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[] {FIRST_NAME_ATTRIBUTE})));
+                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{FIRST_NAME_ATTRIBUTE})));
         return registeredServiceImpl;
     }
 

@@ -130,7 +130,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1.0
      */
-    protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, 
+    protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
                                                                  final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
@@ -297,12 +297,21 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 try {
                     if (predicate.apply(value)) {
                         logger.debug("Attribute value predicate {} has successfully matched the [{}]", predicate, value);
+
+                        logger.debug("Attempting to verify mutlifactor authentication provider {} for {}",
+                                provider, service);
+
                         if (provider.verify(service)) {
+
+                            logger.debug("Provider {} is successfully verified", provider);
+
                             final String id = provider.getId();
                             final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                     buildEventAttributeMap(principal, service, provider));
                             builder.add(event);
                         }
+                    } else {
+                        logger.debug("Attribute value predicate {} could not match the [{}]", predicate, value);
                     }
                 } catch (final Exception e) {
                     logger.debug("Ignoring {} since no matching transition could be found", value);
@@ -310,6 +319,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             }
             return builder.build();
         }
+        logger.debug("Attribute value {} is not a multi-valued attribute", attributeValue);
         return null;
     }
 
@@ -319,22 +329,33 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                final RequestContext context,
                                                                final MultifactorAuthenticationProvider provider,
                                                                final Predicate predicate) {
+
         try {
             if (attributeValue instanceof String) {
                 logger.debug("Attribute value {} is a single-valued attribute", attributeValue);
                 if (predicate.apply(attributeValue)) {
                     logger.debug("Attribute value predicate {} has matched the [{}]", predicate, attributeValue);
+
+                    logger.debug("Attempting to verify mutlifactor authentication provider {} for {}",
+                            provider, service);
+
                     if (provider.verify(service)) {
+                        logger.debug("Provider {} is successfully verified", provider);
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
                         return ImmutableSet.of(event);
+                    } else {
+                        logger.debug("Provider {} could not be verified", provider);
                     }
+                } else {
+                    logger.debug("Attribute value predicate {} could not match the [{}]", predicate, attributeValue);
                 }
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+        logger.debug("Attribute value {} is not a single-valued attribute", attributeValue);
         return null;
     }
 
@@ -361,12 +382,12 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
         }
 
-        logger.debug("Locating principal attribute value for {}", attributeNames);
-
+        logger.debug("Locating principal attribute value for attribute(s): {}", attributeNames);
         for (final String attributeName : attributeNames) {
             final Object attributeValue = principal.getAttributes().get(attributeName);
             if (attributeValue == null) {
-                logger.debug("Attribute value for {} to determine event is not configured for {}", attributeName, principal.getId());
+                logger.debug("Attribute value for {} to determine event is not configured for {}",
+                        attributeName, principal.getId());
                 continue;
             }
 
@@ -375,14 +396,22 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final MultifactorAuthenticationProvider provider =
                     this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
-            Set<Event> results = resolveEventViaSinglePrincipalAttribute(principal, attributeValue, service, context, provider, predicate);
+            logger.debug("Located principal attribute value {} for {}", attributeValue, attributeNames);
+
+            Set<Event> results = resolveEventViaSinglePrincipalAttribute(principal, attributeValue,
+                    service, context, provider, predicate);
             if (results == null || results.isEmpty()) {
-                results = resolveEventViaMultivaluedPrincipalAttribute(principal, attributeValue, service, context, provider, predicate);
+                results = resolveEventViaMultivaluedPrincipalAttribute(principal, attributeValue,
+                        service, context, provider, predicate);
             }
             if (results != null && !results.isEmpty()) {
+                logger.debug("Resolved set of events based the principal attribute {} are {}",
+                        attributeName, results);
                 return results;
             }
         }
+        logger.debug("No set of events based the principal attribute(s) could be matched",
+                attributeNames);
         return null;
     }
 
