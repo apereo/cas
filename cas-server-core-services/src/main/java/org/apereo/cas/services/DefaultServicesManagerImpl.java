@@ -146,7 +146,7 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      *
      * @param event the event
      */
-    @EventListener()
+    @EventListener
     protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
         reload();
     }
