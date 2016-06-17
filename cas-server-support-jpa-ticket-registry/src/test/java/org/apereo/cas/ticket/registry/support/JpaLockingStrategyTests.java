@@ -3,11 +3,15 @@ package org.apereo.cas.ticket.registry.support;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -35,29 +39,31 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(locations = "classpath:/jpaSpringContext.xml")
 public class JpaLockingStrategyTests {
-    /** Number of clients contending for lock in concurrent test. */
+    /**
+     * Number of clients contending for lock in concurrent test.
+     */
     private static final int CONCURRENT_SIZE = 13;
-
-    /** Logger instance. */
+    
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
-
+    @Autowired
+    @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
 
-
+    @Autowired
+    @Qualifier("ticketEntityManagerFactory")
     private EntityManagerFactory factory;
 
-
+    @Autowired
+    @Qualifier("dataSourceTicket")
     private DataSource dataSource;
 
     @Before
     public void setUp() {
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
-        this.factory = ctx.getBean("ticketEntityManagerFactory", EntityManagerFactory.class);
-        this.txManager = ctx.getBean("ticketTransactionManager", PlatformTransactionManager.class);
-        this.dataSource = ctx.getBean("dataSourceTicket", DataSource.class);
+
     }
 
     /**
@@ -176,9 +182,9 @@ public class JpaLockingStrategyTests {
         lock.setUniqueId(uniqueId);
         lock.setLockTimeout(ttl);
         return (LockingStrategy) Proxy.newProxyInstance(
-               JpaLockingStrategy.class.getClassLoader(),
-               new Class[] {LockingStrategy.class},
-               new TransactionalLockInvocationHandler(lock, this.txManager));
+                JpaLockingStrategy.class.getClassLoader(),
+                new Class[]{LockingStrategy.class},
+                new TransactionalLockInvocationHandler(lock, this.txManager));
     }
 
     private String getOwner(final String appId) {
@@ -223,7 +229,7 @@ public class JpaLockingStrategyTests {
         private PlatformTransactionManager txManager;
 
         TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
-                                      final PlatformTransactionManager txManager) {
+                                           final PlatformTransactionManager txManager) {
             jpaLock = lock;
             this.txManager = txManager;
         }
