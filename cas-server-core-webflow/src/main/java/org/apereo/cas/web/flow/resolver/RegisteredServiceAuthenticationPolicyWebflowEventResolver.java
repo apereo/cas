@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
@@ -27,12 +28,19 @@ public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends A
             logger.debug("No service or authentication is available to determine event for principal");
             return null;
         }
-
+        
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy == null || policy.getMultifactorAuthenticationProviders().isEmpty()) {
             logger.debug("Authentication policy does not contain any multifactor authentication providers");
             return null;
         }
+
+        if (StringUtils.isNotBlank(policy.getPrincipalAttributeNameTrigger())
+                || StringUtils.isNotBlank(policy.getPrincipalAttributeValueToMatch())) {
+            logger.debug("Authentication policy for {} has defined principal attribute triggers. Skipping...");
+            return null;
+        }
+
         return resolveEventPerAuthenticationProvider(authentication.getPrincipal(), context, service);
     }
 }

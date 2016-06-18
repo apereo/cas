@@ -14,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,11 +40,23 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver selectiveResolver;
 
+    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
+
+    /**
+     * Tracks the current resolvers in an ordered list.
+     */
+    @PostConstruct
+    public void init() {
+        this.orderedResolvers.add(requestParameterResolver);
+        this.orderedResolvers.add(registeredServicePrincipalAttributeResolver);
+        this.orderedResolvers.add(principalAttributeResolver);
+        this.orderedResolvers.add(registeredServiceResolver);
+        this.orderedResolvers.add(selectiveResolver);
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
-
             final Credential credential = getCredentialFromContext(context);
             if (credential != null) {
                 final AuthenticationResultBuilder builder =
@@ -96,38 +111,21 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      */
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
                                                               final RegisteredService registeredService) {
-        logger.debug("Evaluating authentication policy for {} based on principal attribute requirements "
-                        + "only when accessing {}", registeredService.getServiceId(), service);
-        final Event serviceAttributeEvent =
-                this.registeredServicePrincipalAttributeResolver.resolveSingle(context);
-        logger.debug("Resulting event for {} is {}",
-                this.registeredServicePrincipalAttributeResolver.getClass().getSimpleName(),
-                serviceAttributeEvent);
-
-        logger.debug("Evaluating authentication policy based on principal attribute requirements for {}", service);
-        final Event attributeEvent = this.principalAttributeResolver.resolveSingle(context);
-
-        logger.debug("Evaluating authentication policy for registered service {}", service);
-        final Event serviceEvent = this.registeredServiceResolver.resolveSingle(context);
-
-        logger.debug("Evaluating authentication policy for {} based on request parameters", service);
-        final Event requestEvent = this.requestParameterResolver.resolveSingle(context);
 
         final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
-
-        if (requestEvent != null) {
-            eventBuilder.add(requestEvent);
-        }
-        if (serviceAttributeEvent != null) {
-            eventBuilder.add(serviceAttributeEvent);
-        }
-        if (attributeEvent != null) {
-            eventBuilder.add(attributeEvent);
-        }
-        if (serviceEvent != null) {
-            eventBuilder.add(serviceEvent);
-        }
-
+        this.orderedResolvers
+                .stream()
+                .forEach(r -> {
+                    logger.debug("Evaluating authentication policy via {} for registered service {} and service {}",
+                            r.getName(), registeredService.getServiceId(), service);
+                    final Event result = r.resolveSingle(context);
+                    logger.debug("Resulting event for {} is {}", r.getName(), result);
+                    if (result != null) {
+                        logger.debug("Recorded the resulting event {} for {} is {}", result, r.getName());
+                        eventBuilder.add(result);
+                    }
+                });
+        
         return eventBuilder.build();
     }
 
