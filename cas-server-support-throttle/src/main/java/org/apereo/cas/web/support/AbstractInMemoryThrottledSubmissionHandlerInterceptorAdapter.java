@@ -54,7 +54,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext(); ) {
+        for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext();) {
             final Entry<String, ZonedDateTime> entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
                 logger.trace("Removing entry for key {}", entry.getKey());

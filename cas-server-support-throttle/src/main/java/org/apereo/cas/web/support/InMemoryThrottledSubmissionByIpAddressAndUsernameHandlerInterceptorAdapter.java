@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.servlet.http.HttpServletRequest;
 
