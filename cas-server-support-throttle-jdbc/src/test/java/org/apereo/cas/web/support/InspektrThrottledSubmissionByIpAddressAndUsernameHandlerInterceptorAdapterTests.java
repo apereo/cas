@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
+@SpringApplicationConfiguration(locations = {
         "classpath:/core-context.xml",
         "classpath:/jpaTestApplicationContext.xml",
         "classpath:/inspektrThrottledSubmissionContext.xml"

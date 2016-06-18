@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casThrottlingConfiguration")
+@Configuration("casJdbcThrottlingConfiguration")
 public class CasJdbcThrottlingConfiguration {
 
     @Autowired
