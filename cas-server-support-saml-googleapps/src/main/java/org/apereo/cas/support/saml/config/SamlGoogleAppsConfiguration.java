@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlGoogleAppsApplicationContextWrapper;
-import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.web.BaseApplicationContextWrapper;
@@ -39,7 +38,7 @@ public class SamlGoogleAppsConfiguration {
 
     @Bean
     @RefreshScope
-    public ServiceFactory<GoogleAccountsService> googleAccountsServiceFactory() {
+    public ServiceFactory googleAccountsServiceFactory() {
         final GoogleAccountsServiceFactory factory = new GoogleAccountsServiceFactory();
         factory.setKeyAlgorithm(casProperties.getGoogleApps().getKeyAlgorithm());
         factory.setPrivateKeyLocation(casProperties.getGoogleApps().getPrivateKeyLocation());
