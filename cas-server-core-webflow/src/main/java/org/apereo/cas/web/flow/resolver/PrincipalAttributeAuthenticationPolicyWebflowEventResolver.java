@@ -39,7 +39,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getPrincipalAttributes())) {
+        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers())) {
             logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
             return null;
         }
@@ -53,7 +53,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
 
         final Collection<MultifactorAuthenticationProvider> providers = providerMap.values();
         return resolveEventViaPrincipalAttribute(principal,
-                org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getPrincipalAttributes()),
+                org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
                 service, context, providers,
                 input -> providers.stream()
                         .filter(provider -> provider.getId().equals(input))

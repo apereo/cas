@@ -58,7 +58,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
         
         final MultifactorAuthenticationProperties p = new MultifactorAuthenticationProperties();
         p.setRequestParameter(REQUEST_PARAM);
-        p.setPrincipalAttributes(P_ATTRS_12);
+        p.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);
 
         strategy.setMfaProperties(p);
         

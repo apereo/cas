@@ -12,7 +12,7 @@ public class MultifactorAuthenticationProperties {
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
-    private String principalAttributes = "memberOf,eduPersonPrimaryAffiliation";
+    private String globalPrincipalAttributeNameTriggers = "memberOf,eduPersonPrimaryAffiliation";
     
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
@@ -27,12 +27,12 @@ public class MultifactorAuthenticationProperties {
         this.requestParameter = requestParameter;
     }
 
-    public String getPrincipalAttributes() {
-        return principalAttributes;
+    public String getGlobalPrincipalAttributeNameTriggers() {
+        return globalPrincipalAttributeNameTriggers;
     }
 
-    public void setPrincipalAttributes(final String principalAttributes) {
-        this.principalAttributes = principalAttributes;
+    public void setGlobalPrincipalAttributeNameTriggers(final String globalPrincipalAttributeNameTriggers) {
+        this.globalPrincipalAttributeNameTriggers = globalPrincipalAttributeNameTriggers;
     }
 
     public Duo getDuo() {
