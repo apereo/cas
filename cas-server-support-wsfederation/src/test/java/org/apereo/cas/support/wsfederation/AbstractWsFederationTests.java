@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  * @author Misagh Moayyed
  * @since 4.2
- */w
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"classpath:/applicationContext.xml"},
         classes = {WsFederationAuthenticationConfiguration.class})
