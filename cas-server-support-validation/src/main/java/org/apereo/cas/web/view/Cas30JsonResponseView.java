@@ -52,6 +52,11 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
         final CasServiceResponse casResponse = new CasServiceResponse();

@@ -102,7 +102,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * Build metadata resolver aggregate.
      *
      */
-    protected void buildMetadataResolverAggregate() {
+    public void buildMetadataResolverAggregate() {
         buildMetadataResolverAggregate(null);
     }
 
@@ -136,17 +136,20 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
         try (final InputStream in = getResourceInputStream(resource, entityId)) {
             logger.debug("Parsing [{}]", resource.getFilename());
-            final Document document = this.configBean.getParserPool().parse(in);
+            
+            if (in.available() > 0) {
+                final Document document = this.configBean.getParserPool().parse(in);
 
-            final List<MetadataResolver> resolvers = buildSingleMetadataResolver(metadataFilter, resource, document);
-            this.metadataResolver = new ChainingMetadataResolver();
-            synchronized (this.lock) {
-                this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-                this.metadataResolver.setResolvers(resolvers);
-                logger.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
-                        resolvers.size());
-                this.metadataResolver.initialize();
-                logger.info("Metadata aggregate initialized successfully with size {}.", resolvers.size());
+                final List<MetadataResolver> resolvers = buildSingleMetadataResolver(metadataFilter, resource, document);
+                this.metadataResolver = new ChainingMetadataResolver();
+                synchronized (this.lock) {
+                    this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+                    this.metadataResolver.setResolvers(resolvers);
+                    logger.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
+                            resolvers.size());
+                    this.metadataResolver.initialize();
+                    logger.info("Metadata aggregate initialized successfully with size {}.", resolvers.size());
+                }
             }
         } catch (final Exception e) {
             logger.warn("Could not retrieve input stream from resource. Moving on...", e);

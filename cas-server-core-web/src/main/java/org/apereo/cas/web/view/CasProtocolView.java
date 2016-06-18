@@ -24,11 +24,16 @@ public class CasProtocolView extends ThymeleafView {
      * @param properties         the properties
      */
     public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
-                    final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
+                           final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
         super(templateName);
         setApplicationContext(applicationContext);
         setTemplateEngine(templateEngine);
         setCharacterEncoding(properties.getEncoding().displayName());
         setLocale(Locale.getDefault());
+    }
+
+    @Override
+    public String toString() {
+        return getTemplateName();
     }
 }

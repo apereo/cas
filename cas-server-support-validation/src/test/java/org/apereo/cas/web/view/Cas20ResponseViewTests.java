@@ -3,7 +3,10 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -21,11 +24,31 @@ import static org.junit.Assert.*;
 
 /**
  * Unit tests for {@link Cas20ResponseView}.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
 public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
 
+    @Autowired
+    @Qualifier("cas3ServiceJsonView")
+    private View cas3ServiceJsonView;
+
+    @Autowired
+    @Qualifier("cas2SuccessView")
+    private View cas2SuccessView;
+
+    @Autowired
+    @Qualifier("cas2ServiceFailureView")
+    private View cas2ServiceFailureView;
+
+
+    @Before
+    public void setup() {
+        this.serviceValidateController.setFailureView(cas2ServiceFailureView);
+        this.serviceValidateController.setSuccessView(cas2SuccessView);
+        this.serviceValidateController.setJsonView(cas3ServiceJsonView);
+    }
 
     @Test
     public void verifyView() throws Exception {
@@ -36,7 +59,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
         final Cas20ResponseView view = new Cas20ResponseView();
         final MockHttpServletResponse resp = new MockHttpServletResponse();
-        
+
         view.setView(new View() {
             @Override
             public String getContentType() {
@@ -50,7 +73,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         });
         view.render(modelAndView.getModel(), req, resp);
-        
+
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));

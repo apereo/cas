@@ -33,7 +33,7 @@ public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapt
     @Scheduled(initialDelayString="${cas.saml.mdui.startDelay:30000}",
                fixedDelayString = "${cas.saml.mdui.repeatInterval:900000}")
     @Override
-    protected void buildMetadataResolverAggregate() {
+    public void buildMetadataResolverAggregate() {
         super.buildMetadataResolverAggregate();
     }
 }

@@ -15,7 +15,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class WiringTests {
     @Test
     public void verifyWiring() {
-        try (final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("deployerConfigContext.xml")) {
+        try (final ClassPathXmlApplicationContext context = 
+                     new ClassPathXmlApplicationContext("deployerConfigContext.xml")) {
             Assert.assertTrue(context.getBeanDefinitionCount() > 0);
         }
     }

@@ -173,7 +173,8 @@ public class SamlMetadataUIConfiguration {
 
     private MetadataResolverAdapter getStaticMetadataResolverAdapter() {
         final StaticMetadataResolverAdapter adapter = new StaticMetadataResolverAdapter();
-        configureAdapter(adapter);
+        configureAdapter(adapter);        
+        adapter.buildMetadataResolverAggregate();
         return adapter;
     }
 }

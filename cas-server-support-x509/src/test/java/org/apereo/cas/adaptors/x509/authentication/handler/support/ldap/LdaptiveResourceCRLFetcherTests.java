@@ -1,29 +1,31 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support.ldap;
 
-import java.security.cert.X509Certificate;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AbstractX509LdapTests;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
+import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.security.cert.X509Certificate;
 
 
 /**
  * Test cases for {@link LdaptiveResourceCRLFetcher}
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/x509-ldap-context.xml")
+@SpringApplicationConfiguration(locations = "/x509-ldap-context.xml")
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
 
 
