@@ -5,11 +5,19 @@ import org.apereo.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInte
 import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
+import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
 import org.apereo.cas.web.support.NeverThrottledSubmissionHandlerInterceptorAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnJndi;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
@@ -27,12 +35,14 @@ public class CasThrottlingConfiguration {
     @Bean
     @RefreshScope
     public HandlerInterceptorAdapter inMemoryIpAddressUsernameThrottle() {
-        return configureInMemoryInterceptorAdaptor(new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter());
+        return configureInMemoryInterceptorAdaptor(
+                new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter());
     }
 
     @Bean
     public HandlerInterceptorAdapter inMemoryIpAddressThrottle() {
-        return configureInMemoryInterceptorAdaptor(new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter());
+        return configureInMemoryInterceptorAdaptor(
+                new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter());
     }
 
     @Bean
@@ -51,5 +61,12 @@ public class CasThrottlingConfiguration {
     private HandlerInterceptorAdapter
     configureInMemoryInterceptorAdaptor(final AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
         return configureThrottleHandlerInterceptorAdaptor(interceptorAdapter);
+    }
+
+    @ConditionalOnExpression("'${authenticationThrottle}' matches 'inMemory.+'")
+    @Bean
+    public InMemoryThrottledSubmissionCleaner inMemoryThrottledSubmissionCleaner(@Qualifier("authenticationThrottle")
+                                                                                 final HandlerInterceptor adapter) {
+        return new InMemoryThrottledSubmissionCleaner(adapter);
     }
 }

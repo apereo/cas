@@ -1,7 +1,5 @@
 package org.apereo.cas.web.support;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -48,8 +46,6 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      * This class relies on an external configuration to clean it up.
      * It ignores the threshold data in the parent class.
      */
-    @Scheduled(initialDelayString = "${cas.authn.throttle.startDelay:10000}",
-            fixedDelayString = "${cas.authn.throttle.repeatInterval:300000}")
     public void decrementCounts() {
 
         logger.info("Beginning audit cleanup...");

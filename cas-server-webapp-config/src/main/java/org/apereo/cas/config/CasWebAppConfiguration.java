@@ -169,7 +169,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         }
 
         if (casProperties.getServer().getHttp().isEnabled()) {
-            final Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+            final Connector connector = new Connector(casProperties.getServer().getHttp().getProtocol());
 
             int port = casProperties.getServer().getHttp().getPort();
             if (port <= 0) {

@@ -1,10 +1,12 @@
 package org.apereo.cas.support.rest.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.RegisteredServiceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  */
 @Configuration("restServicesConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestServicesConfiguration {
 
     @Autowired
@@ -25,11 +28,16 @@ public class RestServicesConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Bean
     public RegisteredServiceResource registeredServiceResourceRestController() {
         final RegisteredServiceResource r = new RegisteredServiceResource();
         r.setCentralAuthenticationService(centralAuthenticationService);
         r.setServicesManager(servicesManager);
+        r.setAttributeName(casProperties.getRestServices().getAttributeName());
+        r.setAttributeValue(casProperties.getRestServices().getAttributeValue());
         return r;
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.3.5
  */
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
-          extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
-
+        extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
+    
     @Override
     protected String constructKey(final HttpServletRequest request) {
         final String username = request.getParameter(getUsernameParameter());

@@ -3,7 +3,6 @@ package org.apereo.cas.support.rest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -12,7 +11,6 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,8 +42,32 @@ public class RegisteredServiceResource {
 
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private String attributeName;
+    private String attributeValue;
+
+    public ServicesManager getServicesManager() {
+        return servicesManager;
+    }
+
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    public void setAttributeName(final String attributeName) {
+        this.attributeName = attributeName;
+    }
+
+    public String getAttributeValue() {
+        return attributeValue;
+    }
+
+    public void setAttributeValue(final String attributeValue) {
+        this.attributeValue = attributeValue;
+    }
 
     /**
      * Create new service.
@@ -60,8 +82,7 @@ public class RegisteredServiceResource {
                                                 @PathVariable("tgtId") final String tgtId) {
         try {
 
-            if (StringUtils.isBlank(casProperties.getRestServices().getAttributeName())
-                    || StringUtils.isBlank(casProperties.getRestServices().getAttributeValue())) {
+            if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
                 throw new IllegalArgumentException("Attribute name and/or value must be configured");
             }
 
@@ -71,16 +92,16 @@ public class RegisteredServiceResource {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
             final Map<String, Object> attributes = ticket.getAuthentication().getPrincipal().getAttributes();
-            if (attributes.containsKey(casProperties.getRestServices().getAttributeName())) {
+            if (attributes.containsKey(this.attributeName)) {
                 final Collection<String> attributeValuesToCompare = new HashSet<>();
-                final Object value = attributes.get(casProperties.getRestServices().getAttributeName());
+                final Object value = attributes.get(this.attributeName);
                 if (value instanceof Collection) {
                     attributeValuesToCompare.addAll((Collection<String>) value);
                 } else {
                     attributeValuesToCompare.add(value.toString());
                 }
 
-                if (attributeValuesToCompare.contains(casProperties.getRestServices().getAttributeValue())) {
+                if (attributeValuesToCompare.contains(this.attributeValue)) {
                     final RegisteredService service = serviceDataHolder.getRegisteredService();
                     final RegisteredService savedService = this.servicesManager.save(service);
                     return new ResponseEntity<>(String.valueOf(savedService.getId()), HttpStatus.OK);
@@ -157,12 +178,4 @@ public class RegisteredServiceResource {
         this.servicesManager = servicesManager;
     }
 
-    /**
-     * Sets properties.
-     *
-     * @param properties the properties
-     */
-    public void setProperties(final RegisteredServiceRestProperties properties) {
-        this.casProperties.setRestServices(properties);
-    }
 }

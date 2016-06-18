@@ -48,7 +48,7 @@ public class CasCookieConfiguration {
                                                                                final CipherExecutor cookieCipherExecutor) {
         final CookieRetrievingCookieGenerator bean =
                 configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(
-                        defaultCookieValueManager(cookieCipherExecutor)),
+                                defaultCookieValueManager(cookieCipherExecutor)),
                         casProperties.getTgc());
         bean.setCookieDomain(casProperties.getTgc().getDomain());
         bean.setRememberMeMaxAge(casProperties.getTgc().getRememberMeMaxAge());
@@ -62,8 +62,8 @@ public class CasCookieConfiguration {
      * @param props           props
      * @return cookie gen
      */
-    private CookieRetrievingCookieGenerator configureCookieGenerator(final CookieRetrievingCookieGenerator cookieGenerator,
-                                                                     final AbstractCookieProperties props) {
+    private static CookieRetrievingCookieGenerator configureCookieGenerator(final CookieRetrievingCookieGenerator cookieGenerator,
+                                                                            final AbstractCookieProperties props) {
 
         cookieGenerator.setCookieName(props.getName());
         cookieGenerator.setCookiePath(props.getPath());

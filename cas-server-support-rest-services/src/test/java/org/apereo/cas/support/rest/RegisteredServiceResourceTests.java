@@ -1,7 +1,6 @@
 package org.apereo.cas.support.rest;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.TestUtils;
@@ -46,8 +45,8 @@ public class RegisteredServiceResourceTests {
     public void setUp() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.registeredServiceResource)
                 .defaultRequest(get("/")
-                .contextPath("/cas")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                        .contextPath("/cas")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .build();
     }
 
@@ -55,86 +54,79 @@ public class RegisteredServiceResourceTests {
     public void checkRegisteredServiceNotAuthorized() throws Exception {
         configureCasMockToCreateValidTGT();
 
-        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
-        props.setAttributeName("memberOf");
-        props.setAttributeValue("staff");
-        this.registeredServiceResource.setProperties(props);
-        
+
+        registeredServiceResource.setAttributeName("memberOf");
+        registeredServiceResource.setAttributeValue("staff");
+
+
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-1")
-            .param("serviceId", "serviceId")
-            .param("name", "name")
-            .param("description", "description")
-            .param("evaluationOrder", "1000")
-            .param("enabled", "false")
-            .param("ssoEnabled", "true"))
-            .andExpect(status().isBadRequest());
+                .param("serviceId", "serviceId")
+                .param("name", "name")
+                .param("description", "description")
+                .param("evaluationOrder", "1000")
+                .param("enabled", "false")
+                .param("ssoEnabled", "true"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void checkRegisteredServiceNormal() throws Exception {
         configureCasMockToCreateValidTGT();
 
+        registeredServiceResource.setAttributeName("memberOf");
+        registeredServiceResource.setAttributeValue("cas");
 
-        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
-        props.setAttributeName("memberOf");
-        props.setAttributeValue("cas");
-        this.registeredServiceResource.setProperties(props);
-        
+
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-1")
-            .param("serviceId", "serviceId")
-            .param("name", "name")
-            .param("description", "description")
-            .param("evaluationOrder", "1000")
-            .param("enabled", "false")
-            .param("ssoEnabled", "true"))
-            .andExpect(status().isOk());
+                .param("serviceId", "serviceId")
+                .param("name", "name")
+                .param("description", "description")
+                .param("evaluationOrder", "1000")
+                .param("enabled", "false")
+                .param("ssoEnabled", "true"))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void checkRegisteredServiceNoTgt() throws Exception {
 
-        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
-        props.setAttributeName("memberOf");
-        props.setAttributeValue("staff");
-        this.registeredServiceResource.setProperties(props);
-        
+
+        registeredServiceResource.setAttributeName("memberOf");
+        registeredServiceResource.setAttributeValue("staff");
+
+
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-1")
-                    .param("serviceId", "serviceId")
-                    .param("name", "name")
-                    .param("description", "description")
-                    .param("evaluationOrder", "1000")
-                    .param("enabled", "false")
-                    .param("ssoEnabled", "true"))
+                .param("serviceId", "serviceId")
+                .param("name", "name")
+                .param("description", "description")
+                .param("evaluationOrder", "1000")
+                .param("enabled", "false")
+                .param("ssoEnabled", "true"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void checkRegisteredServiceNoAttributeValue() throws Exception {
-        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
-        props.setAttributeName("Test");
-        props.setAttributeValue("");
-        this.registeredServiceResource.setProperties(props);
-        
+
+        registeredServiceResource.setAttributeName("Test");
+        registeredServiceResource.setAttributeValue("");
+
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
-            .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void checkRegisteredServiceNoAttributeName() throws Exception {
-        final RegisteredServiceRestProperties props = new RegisteredServiceRestProperties();
-        props.setAttributeValue("Test");
-        this.registeredServiceResource.setProperties(props);
-        
+        registeredServiceResource.setAttributeValue("Test");
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
-            .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void checkRegisteredServiceNoAttributes() throws Exception {
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
-            .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
-
 
 
     private void configureCasMockToCreateValidTGT() throws Exception {

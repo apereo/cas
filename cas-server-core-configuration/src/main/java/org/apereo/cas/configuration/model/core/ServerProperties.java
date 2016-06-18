@@ -172,6 +172,15 @@ public class ServerProperties {
     public static class Http {
         private boolean enabled = true;
         private int port = 8080;
+        private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public void setProtocol(final String protocol) {
+            this.protocol = protocol;
+        }
 
         public boolean isEnabled() {
             return enabled;

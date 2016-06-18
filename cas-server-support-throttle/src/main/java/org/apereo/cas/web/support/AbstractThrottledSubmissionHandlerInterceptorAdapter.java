@@ -25,7 +25,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private int failureThreshold;
     
     private int failureRangeInSeconds;
-
     
     private String usernameParameter;
 
