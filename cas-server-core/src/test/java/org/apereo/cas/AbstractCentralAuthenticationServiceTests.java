@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -58,7 +59,9 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     private TicketRegistrySupport ticketRegistrySupport;
 
-
+    @Autowired
+    private WebApplicationServiceFactory webApplicationServiceFactory;
+    
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -93,5 +96,9 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     public TicketRegistrySupport getTicketRegistrySupport() {
         return this.ticketRegistrySupport;
+    }
+
+    public WebApplicationServiceFactory getWebApplicationServiceFactory() {
+        return webApplicationServiceFactory;
     }
 }

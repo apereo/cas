@@ -22,6 +22,7 @@ import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.View;
  * @since 5.0.0
  */
 @Configuration("samlConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlConfiguration {
 
     @Autowired

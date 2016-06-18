@@ -293,4 +293,6 @@
     <util:list id="validationServiceSelectionStrategies">
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
     </util:list>
+    <bean class="org.thymeleaf.spring4.SpringTemplateEngine" />
+    <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties" />
 </beans>

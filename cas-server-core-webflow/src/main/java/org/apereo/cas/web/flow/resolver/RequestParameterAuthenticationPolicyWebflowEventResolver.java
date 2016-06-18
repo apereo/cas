@@ -27,8 +27,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-
+    
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);

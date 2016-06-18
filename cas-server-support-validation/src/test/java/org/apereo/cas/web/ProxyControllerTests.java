@@ -25,9 +25,8 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Before
     public void onSetUp() throws Exception {
         this.proxyController = new ProxyController();
-        this.proxyController
-        .setCentralAuthenticationService(getCentralAuthenticationService());
-
+        this.proxyController.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.proxyController.setWebApplicationServiceFactory(getWebApplicationServiceFactory());
         final StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.proxyController.setApplicationContext(context);

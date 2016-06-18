@@ -10,25 +10,7 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
     
-    <context:property-placeholder location="classpath:cas.properties"
-                                  ignore-resource-not-found="false"
-                                  ignore-unresolvable="false"/>
-
-    <context:component-scan base-package="org.apereo.cas"
-                            annotation-config="true" />
-    <context:annotation-config />
-
     <bean id="wsFedConfig" class="org.apereo.cas.support.wsfederation.WsFederationConfiguration">
         <property name="identityProviderUrl" value="https://adfs.example.com/adfs/ls/" />
         <property name="identityProviderIdentifier" value="http://adfs.example.edu/adfs/services/trust" />
@@ -64,20 +46,5 @@
             </map>
         </constructor-arg>
     </bean>
-
-
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators" />
-    <util:list id="monitorsList" />
-    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
-    <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-
-    <util:list id="serviceFactoryList" />
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
-    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
-    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    
 </beans>

@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.pac4j.http.credentials.password.NopPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  */
 @Configuration("stormpathAuthenticationConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class StormpathAuthenticationConfiguration {
 
     @Autowired

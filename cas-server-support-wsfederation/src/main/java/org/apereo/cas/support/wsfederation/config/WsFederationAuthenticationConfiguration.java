@@ -21,6 +21,7 @@ import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @Configuration("wsFederationConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class WsFederationAuthenticationConfiguration {
 
     @Autowired
@@ -109,7 +111,7 @@ public class WsFederationAuthenticationConfiguration {
         h.setServicesManager(servicesManager);
         return h;
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver adfsPrincipalResolver() {

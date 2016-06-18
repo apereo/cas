@@ -1,6 +1,18 @@
 package org.apereo.cas.support.saml;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CoreSamlConfiguration;
+import org.apereo.cas.config.SamlConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
+import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
@@ -9,8 +21,8 @@ import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -18,11 +30,24 @@ import static org.junit.Assert.*;
 
 /**
  * OpenSaml context loading tests.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/META-INF/spring/*-config.xml")
+@SpringApplicationConfiguration(locations = "classpath:/opensaml-config.xml",
+        classes = {CoreSamlConfiguration.class,
+                SamlConfiguration.class,
+                CasCoreWebConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasCoreValidationConfiguration.class,
+                CasProtocolViewsConfiguration.class,
+                CasValidationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreLogoutConfiguration.class,
+                CasCoreUtilConfiguration.class,
+                CasCoreConfiguration.class})
 @WebAppConfiguration
 public abstract class AbstractOpenSamlTests {
 

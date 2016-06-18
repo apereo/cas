@@ -13,7 +13,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * @since 3.0.0
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests
-extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+        extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {

@@ -66,11 +66,11 @@ public class SamlMetadataUIConfiguration {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
-    @Autowired
+    @Autowired(required=false)
     private FlowBuilderServices flowBuilderServices;
     
     @Autowired
@@ -124,8 +124,11 @@ public class SamlMetadataUIConfiguration {
         final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-            final String metadataFile = entry.split(DEFAULT_SEPARATOR)[0];
-            final String signingKey = entry.split(DEFAULT_SEPARATOR)[1];
+
+            final String[] arr = entry.split(DEFAULT_SEPARATOR);
+            
+            final String metadataFile = arr[0];
+            final String signingKey = arr.length > 1 ? arr[1] : null;
 
             final List<MetadataFilter> filters = new ArrayList<>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
