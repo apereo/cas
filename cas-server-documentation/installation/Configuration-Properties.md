@@ -12,11 +12,9 @@ references to the underlying modules that consume them.
 This section is meant as a guide only. Do not copy/paste the entire content into your CAS configuration; 
 rather pick only the properties that you need.
 
-
 ## Spring Boot & Cloud
 
-The following list of properties are controlled and provided to 
-CAS by [Spring Boot](https://github.com/spring-projects/spring-boot):
+The following list of properties are controlled and provided to CAS:
 
 ```properties
 ##
@@ -24,13 +22,34 @@ CAS by [Spring Boot](https://github.com/spring-projects/spring-boot):
 #
 server.context-path=/cas
 server.port=8443
+
 server.ssl.key-store=file:/etc/cas/thekeystore
 server.ssl.key-store-password=changeit
 server.ssl.key-password=changeit
+#server.ssl.ciphers= 
+#server.ssl.client-auth=
+#server.ssl.enabled=
+#server.ssl.key-alias=
+#server.ssl.key-store-provider=
+#server.ssl.key-store-type=
+#server.ssl.protocol=
+#server.ssl.trust-store=
+#server.ssl.trust-store-password=
+#server.ssl.trust-store-provider=
+#server.ssl.trust-store-type=
+
 server.tomcat.basedir=build/tomcat
 server.tomcat.accesslog.enabled=true
 server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
+server.tomcat.accesslog.suffix=.log
 server.tomcat.max-http-header-size=20971520
+server.tomcat.max-threads=5
+server.tomcat.port-header=X-Forwarded-Port
+server.tomcat.protocol-header=X-Forwarded-Proto
+server.tomcat.protocol-header-https-value=https
+server.tomcat.remote-ip-header=X-FORWARDED-FOR
+server.tomcat.uri-encoding=UTF-8
+
 server.use-forward-headers=true
 
 spring.http.encoding.charset=UTF-8
@@ -54,6 +73,7 @@ spring.cloud.bus.ack.enabled=true
 ##
 # CAS Admin Status Endpoints
 #
+cas.securityContext.adminpages.ip=.+
 endpoints.enabled=true
 endpoints.sensitive=true
 management.context-path=/status
@@ -85,6 +105,115 @@ server.context-parameters.isLog4jAutoInitializationDisabled=true
 spring.aop.auto=true
 spring.aop.proxy-target-class=true
 
+##
+# CAS Groovy Shell Console
+#
+# shell.command-refresh-interval=15
+# shell.command-path-patterns=classpath*:/commands/**
+# shell.auth.simple.user.name=
+# shell.auth.simple.user.password=
+# shell.ssh.enabled=true
+# shell.ssh.port=2000
+# shell.telnet.enabled=false
+# shell.telnet.port=5000
+# shell.ssh.auth-timeout=3000
+# shell.ssh.idle-timeout=30000
+
+##
+# CAS Server Context Configuration
+#
+server.context-path=/cas
+server.port=8443
+
+server.ssl.key-store=file:/etc/cas/thekeystore
+server.ssl.key-store-password=changeit
+server.ssl.key-password=changeit
+#server.ssl.ciphers= 
+#server.ssl.client-auth=
+#server.ssl.enabled=
+#server.ssl.key-alias=
+#server.ssl.key-store-provider=
+#server.ssl.key-store-type=
+#server.ssl.protocol=
+#server.ssl.trust-store=
+#server.ssl.trust-store-password=
+#server.ssl.trust-store-provider=
+#server.ssl.trust-store-type=
+
+server.tomcat.basedir=build/tomcat
+server.tomcat.accesslog.enabled=true
+server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
+server.tomcat.accesslog.suffix=.log
+server.tomcat.max-http-header-size=20971520
+server.tomcat.max-threads=5
+server.tomcat.port-header=X-Forwarded-Port
+server.tomcat.protocol-header=X-Forwarded-Proto
+server.tomcat.protocol-header-https-value=https
+server.tomcat.remote-ip-header=X-FORWARDED-FOR
+server.tomcat.uri-encoding=UTF-8
+
+server.use-forward-headers=true
+
+spring.http.encoding.charset=UTF-8
+spring.http.encoding.enabled=true
+spring.http.encoding.force=true
+
+##
+# CAS Cloud Amqp Bus Configuration
+#
+spring.cloud.bus.enabled=false
+spring.cloud.bus.refresh.enabled=true
+spring.cloud.bus.env.enabled=true
+spring.cloud.bus.destination=CasCloudBus
+spring.cloud.bus.ack.enabled=true
+# spring.activemq.broker-url=
+# spring.activemq.in-memory=
+# spring.activemq.pooled=
+# spring.activemq.user=
+# spring.activemq.password=
+
+##
+# CAS Admin Status Endpoints
+#
+cas.securityContext.adminpages.ip=.+
+endpoints.enabled=true
+endpoints.sensitive=true
+management.context-path=/status
+endpoints.restart.enabled=false
+endpoints.shutdown.enabled=false
+
+##
+# CAS Web Application Session Configuration
+#
+server.session.timeout=300
+server.session.cookie.http-only=true
+server.session.tracking-modes=COOKIE
+
+##
+# CAS Thymeleaf View Configuration
+#
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.cache=false
+
+##
+# CAS Log4j Configuration
+#
+# logging.config=file:/etc/cas/log4j2.xml
+server.context-parameters.isLog4jAutoInitializationDisabled=true
+
+##
+# CAS AspectJ Configuration
+#
+spring.aop.auto=true
+spring.aop.proxy-target-class=true
+
+##
+# CAS Authentication Attributes
+#
+cas.attrs.resolve.uid=uid
+cas.attrs.resolve.displayName=displayName
+cas.attrs.resolve.cn=commonName
+cas.attrs.resolve.affiliation=groupMembership
 
 ##
 # CAS Groovy Shell Console
@@ -99,44 +228,60 @@ spring.aop.proxy-target-class=true
 # shell.telnet.port=5000
 # shell.ssh.auth-timeout=3000
 # shell.ssh.idle-timeout=30000
-```
-
-## CAS Server
-
-The following list of properties are defined and controlled by the CAS project:
-
-```properties
-
-#####################################################
-
- _______ _______  ______     ______                   _                  
-(_______|_______)/ _____)   / _____)        _     _  (_)                 
- _       _______( (____    ( (____  _____ _| |_ _| |_ _ ____   ____  ___ 
-| |     |  ___  |\____ \    \____ \| ___ (_   _|_   _) |  _ \ / _  |/___)
-| |_____| |   | |_____) )   _____) ) ____| | |_  | |_| | | | ( (_| |___ |
- \______)_|   |_(______/   (______/|_____)  \__)  \__)_|_| |_|\___ (___/ 
-                                                             (_____|     
-
-#####################################################
 
 ##
-# CAS Authentication Attributes
+# CAS Component Aliasing and Selection
 #
-cas.attrs.resolve.uid=uid
-cas.attrs.resolve.displayName=displayNameN
-cas.attrs.resolve.cn=commonName
-cas.attrs.resolve.affiliation=groupMembership
-
-############################################################
+attributeRepository=stubAttributeRepository
+primaryAuthenticationHandler=acceptUsersAuthenticationHandler
+primaryPrincipalResolver=personDirectoryPrincipalResolver
+themeResolver=serviceThemeResolver
+serviceRegistryDao=jsonServiceRegistryDao
+ticketRegistry=defaultTicketRegistry
+ticketCipherExecutor=noOpCipherExecutor
+grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
+authenticationPolicy=anyAuthenticationPolicy
+authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
+authenticationThrottle=neverThrottle
+restAuthenticationThrottle=neverThrottle
+cookieCipherExecutor=tgcCipherExecutor
+cookieValueManager=defaultCookieValueManager
+principalFactory=defaultPrincipalFactory
+authenticationTransactionManager=defaultAuthenticationTransactionManager
+principalElectionStrategy=defaultPrincipalElectionStrategy
+auditTrailManager=slf4jAuditTrailManager
 
 ##
-# ServerProperties
+# Server Properties -> Http
 #
+# cas.server.http.port=8080
+# cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
+# cas.server.http.enabled=true
+
+##
+# Server Properties -> Ajp
+#
+# cas.server.ajp.secure=false
+# cas.server.ajp.enabled=false
+# cas.server.ajp.proxyPort=-1
+# cas.server.ajp.protocol=AJP/1.3
+# cas.server.ajp.asyncTimeout=5000
+# cas.server.ajp.scheme=http
+# cas.server.ajp.maxPostSize=20971520
+# cas.server.ajp.port=8009
+# cas.server.ajp.enableLookups=false
+# cas.server.ajp.redirectPort=-1
+# cas.server.ajp.allowTrace=false
+
+##
+# Server Properties
+#
+# cas.server.connectionTimeout=20000
 # cas.server.name=https://cas.example.org:8443
 # cas.server.prefix=https://cas.example.org:8443/cas
 
 ##
-# SamlMetadataUIProperties
+# Saml Metadata UI Properties
 #
 # cas.samlMetadataUi.requireValidMetadata=true
 # cas.samlMetadataUi.repeatInterval=120000
@@ -147,26 +292,32 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.samlMetadataUi.parameter=entityId
 
 ##
-# PrincipalTransformationProperties
+# Principal Transformation Properties
 #
 # cas.principalTransformation.suffix=
 # cas.principalTransformation.uppercase=false
 # cas.principalTransformation.prefix=
 
 ##
-# DatabaseProperties
+# Database Properties
 #
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
 
 ##
-# PasswordEncoderProperties
+# Password Encoder Properties
 #
 # cas.authn.passwordEncoder.characterEncoding=
 # cas.authn.passwordEncoder.encodingAlgorithm=
 
 ##
-# X509Properties
+# Person Dir Principal Resolver Properties
+#
+# cas.authn.x509.principal.principalAttribute=
+# cas.authn.x509.principal.returnNull=false
+
+##
+# X 509 Properties
 #
 # cas.authn.x509.checkKeyUsage=false
 # cas.authn.x509.revocationPolicyThreshold=172800
@@ -184,25 +335,37 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.x509.trustedIssuerDnPattern=
 
 ##
-# AbstractConfigProperties -> Config
+# Abstract Config Properties -> Config
 #
 # cas.authn.shiro.config.location=
 
 ##
-# ShiroAuthenticationProperties
+# Shiro Authentication Properties
 #
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
 
 ##
-# NtlmProperties
+# Ntlm Properties
 #
 # cas.authn.ntlm.includePattern=
 # cas.authn.ntlm.loadBalance=true
 # cas.authn.ntlm.domainController=
 
 ##
-# WsFederationProperties
+# Trusted Authentication Properties
+#
+# cas.authn.trusted.principalAttribute=
+# cas.authn.trusted.returnNull=false
+
+##
+# Person Dir Principal Resolver Properties
+#
+# cas.authn.wsfed.principal.principalAttribute=
+# cas.authn.wsfed.principal.returnNull=false
+
+##
+# Ws Federation Properties
 #
 # cas.authn.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
 # cas.authn.wsfed.identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
@@ -214,7 +377,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.wsfed.attributeResolverEnabled=true
 
 ##
-# MultifactorAuthenticationProperties -> GAuth
+# Multifactor Authentication Properties -> GAuth
 #
 # cas.authn.mfa.gauth.windowSize=3
 # cas.authn.mfa.gauth.issuer=
@@ -224,7 +387,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.mfa.gauth.rank=0
 
 ##
-# MultifactorAuthenticationProperties -> YubiKey
+# Multifactor Authentication Properties -> YubiKey
 #
 # cas.authn.mfa.yubikey.clientId=
 # cas.authn.mfa.yubikey.secretKey=
@@ -253,14 +416,14 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.mfa.radius.client.inetAddress=localhost
 
 ##
-# MultifactorAuthenticationProperties -> Radius
+# Multifactor Authentication Properties -> Radius
 #
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
 # cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
 
 ##
-# MultifactorAuthenticationProperties -> Duo
+# Multifactor Authentication Properties -> Duo
 #
 # cas.authn.mfa.duo.duoSecretKey=
 # cas.authn.mfa.duo.rank=0
@@ -269,25 +432,25 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.mfa.duo.duoApiHost=
 
 ##
-# MultifactorAuthenticationProperties
+# Multifactor Authentication Properties
 #
+# cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
-# cas.authn.mfa.principalAttributes=memberOf,eduPersonPrimaryAffiliation
 
 ##
-# AuthenticationExceptionsProperties
+# Authentication Exceptions Properties
 #
 # cas.authn.exceptions.exceptions=value1,value2,...
 
 ##
-# AcceptAuthenticationProperties
+# Accept Authentication Properties
 #
-# cas.authn.accept.users=casuser::Mellon
+# cas.authn.accept.users=
 
 ##
-# SamlIdPProperties -> Metadata
+# Saml IdP Properties -> Metadata
 #
 # cas.authn.samlIdp.metadata.cacheExpirationMinutes=30
 # cas.authn.samlIdp.metadata.failFast=true
@@ -296,13 +459,13 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
 
 ##
-# SamlIdPProperties -> Logout
+# Saml IdP Properties -> Logout
 #
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
 
 ##
-# SamlIdPProperties -> Response
+# Saml IdP Properties -> Response
 #
 # cas.authn.samlIdp.response.skewAllowance=0
 # cas.authn.samlIdp.response.signError=false
@@ -310,21 +473,21 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 
 ##
-# SamlIdPProperties
+# Saml IdP Properties
 #
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
 # cas.authn.samlIdp.hostName=cas.example.org
 # cas.authn.samlIdp.scope=example.org
 
 ##
-# OidcProperties
+# Oidc Properties
 #
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
 # cas.authn.oidc.skew=5
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
 
 ##
-# PasswordPolicyProperties
+# Password Policy Properties
 #
 # cas.authn.passwordPolicy.warnAll=false
 # cas.authn.passwordPolicy.url=https://password.example.edu/change
@@ -334,12 +497,24 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.passwordPolicy.warningAttributeValue=
 
 ##
-# OpenIdProperties
+# Person Dir Principal Resolver Properties
+#
+# cas.authn.openid.principal.principalAttribute=
+# cas.authn.openid.principal.returnNull=false
+
+##
+# Open Id Properties
 #
 # cas.authn.openid.enforceRpId=false
 
 ##
-# SpnegoProperties
+# Person Dir Principal Resolver Properties
+#
+# cas.authn.spnego.principal.principalAttribute=
+# cas.authn.spnego.principal.returnNull=false
+
+##
+# Spnego Properties
 #
 # cas.authn.spnego.kerberosConf=
 # cas.authn.spnego.mixedModeAuthentication=false
@@ -355,7 +530,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
 # cas.authn.spnego.jcifsDomainController=
 # cas.authn.spnego.dnsTimeout=2000
-# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction|ldapSpnegoClientAction|baseSpnegoClientAction
+# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
 # cas.authn.spnego.kerberosKdc=172.10.1.10
 # cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
 # cas.authn.spnego.jcifsDomain=
@@ -370,43 +545,43 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.spnego.spnegoAttributeName=distinguishedName
 
 ##
-# JaasAuthenticationProperties
+# Jaas Authentication Properties
 #
 # cas.authn.jaas.realm=CAS
 # cas.authn.jaas.kerberosKdcSystemProperty=
 # cas.authn.jaas.kerberosRealmSystemProperty=
 
 ##
-# StormpathProperties
+# Stormpath Properties
 #
 # cas.authn.stormpath.apiKey=
 # cas.authn.stormpath.secretkey=
 # cas.authn.stormpath.applicationId=
 
 ##
-# RemoteAddressAuthenticationProperties
+# Remote Address Authentication Properties
 #
 # cas.authn.remoteAddress.ipAddressRange=
 
 ##
-# AuthenticationPolicyProperties -> Any
+# Authentication Policy Properties -> Any
 #
 # cas.authn.policy.any.tryAll=false
 
 ##
-# AuthenticationPolicyProperties -> Req
+# Authentication Policy Properties -> Req
 #
 # cas.authn.policy.req.tryAll=false
 # cas.authn.policy.req.handlerName=handlerName
 
 ##
-# Pac4jProperties -> Cas
+# Pac 4j Properties -> Cas
 #
 # cas.authn.pac4j.cas.loginUrl=
 # cas.authn.pac4j.cas.protocol=
 
 ##
-# Pac4jProperties -> Facebook
+# Pac4j Properties -> Facebook
 #
 # cas.authn.pac4j.facebook.fields=
 # cas.authn.pac4j.facebook.id=
@@ -414,13 +589,13 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.pac4j.facebook.scope=
 
 ##
-# Pac4jProperties -> Twitter
+# Pac4j Properties -> Twitter
 #
 # cas.authn.pac4j.twitter.id=
 # cas.authn.pac4j.twitter.secret=
 
 ##
-# Pac4jProperties -> Oidc
+# Pac4j Properties -> Oidc
 #
 # cas.authn.pac4j.oidc.discoveryUri=
 # cas.authn.pac4j.oidc.maxClockSkew=
@@ -434,7 +609,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.pac4j.oidc.preferredJwsAlgorithm=
 
 ##
-# Pac4jProperties -> Saml
+# Pac4j Properties -> Saml
 #
 # cas.authn.pac4j.saml.keystorePassword=
 # cas.authn.pac4j.saml.privateKeyPassword=
@@ -444,12 +619,12 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 
 ##
-# Pac4jProperties
+# Pac4j Properties
 #
 # cas.authn.pac4j.typedIdUsed=false
 
 ##
-# RadiusProperties -> Server
+# Radius Properties -> Server
 #
 # cas.authn.radius.server.nasPortId=-1
 # cas.authn.radius.server.nasRealPort=-1
@@ -462,7 +637,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.radius.server.nasIdentifier=-1
 
 ##
-# RadiusProperties -> Client
+# Radius Properties -> Client
 #
 # cas.authn.radius.client.authenticationPort=1812
 # cas.authn.radius.client.sharedSecret=N0Sh@ar3d$ecReT
@@ -471,53 +646,53 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.radius.client.accountingPort=1813
 
 ##
-# RadiusProperties
+# Radius Properties
 #
 # cas.authn.radius.failoverOnException=false
 # cas.authn.radius.failoverOnAuthenticationFailure=false
 
 ##
-# OAuthProperties -> RefreshToken
+# OAuth Properties -> RefreshToken
 #
 # cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
 
 ##
-# OAuthProperties -> AccessToken
+# OAuth Properties -> AccessToken
 #
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
 ##
-# OAuthProperties -> Code
+# OAuth Properties -> Code
 #
 # cas.authn.oauth.code.timeToKillInSeconds=30
 # cas.authn.oauth.code.numberOfUses=1
 
 ##
-# FileAuthenticationProperties
+# File Authentication Properties
 #
 # cas.authn.file.separator=::
 # cas.authn.file.filename=
 
 ##
-# RejectAuthenticationProperties
+# Reject Authentication Properties
 #
 # cas.authn.reject.users=user1,user2
 
 ##
-# JdbcAuthenticationProperties -> Query
+# Jdbc Authentication Properties -> Query
 #
 # cas.authn.jdbc.query.sql=
 
 ##
-# JdbcAuthenticationProperties -> Search
+# Jdbc Authentication Properties -> Search
 #
 # cas.authn.jdbc.search.fieldUser=
 # cas.authn.jdbc.search.tableUsers=
 # cas.authn.jdbc.search.fieldPassword=
 
 ##
-# JdbcAuthenticationProperties -> Encode
+# Jdbc Authentication Properties -> Encode
 #
 # cas.authn.jdbc.encode.numberOfIterations=0
 # cas.authn.jdbc.encode.numberOfIterationsFieldName=numIterations
@@ -528,7 +703,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.jdbc.encode.passwordFieldName=password
 
 ##
-# MongoAuthenticationProperties
+# Mongo Authentication Properties
 #
 # cas.authn.mongo.mongoHostUri=mongodb://uri
 # cas.authn.mongo.usernameAttribute=username
@@ -537,14 +712,14 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.mongo.collectionName=users
 
 ##
-# ThrottleProperties -> Failure
+# Throttle Properties -> Failure
 #
 # cas.authn.throttle.failure.threshold=100
 # cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
 # cas.authn.throttle.failure.rangeSeconds=60
 
 ##
-# ThrottleProperties
+# Throttle Properties
 #
 # cas.authn.throttle.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
 # cas.authn.throttle.usernameParameter=username
@@ -553,19 +728,19 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.authn.throttle.appcode=CAS
 
 ##
-# LocaleProperties
+# Locale Properties
 #
 # cas.locale.paramName=locale
 # cas.locale.defaultValue=en
 
 ##
-# SsoProperties
+# Sso Properties
 #
 # cas.sso.missingService=true
 # cas.sso.renewedAuthn=true
 
 ##
-# TicketGrantingCookieProperties
+# Ticket Granting Cookie Properties
 #
 # cas.tgc.path=
 # cas.tgc.maxAge=-1
@@ -577,21 +752,21 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.tgc.rememberMeMaxAge=1209600
 
 ##
-# LdapAuthorizationProperties
+# Ldap Authorization Properties
 #
 # cas.ldapAuthz.rolePrefix=ROLE_
 # cas.ldapAuthz.allowMultipleResults=false
 # cas.ldapAuthz.searchFilter=
 # cas.ldapAuthz.baseDn=
-# cas.ldapAuthz.roleAttribute=
+# cas.ldapAuthz.roleAttribute=uugid
 
 ##
-# LogoutProperties
+# Logout Properties
 #
 # cas.logout.followServiceRedirects=false
 
 ##
-# ViewProperties -> Cas3
+# View Properties -> Cas3
 #
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
@@ -604,18 +779,18 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
 
 ##
-# ViewProperties -> Cas2
+# View Properties -> Cas2
 #
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
 
 ##
-# ClearpassProperties
+# Clearpass Properties
 #
 # cas.clearpass.cacheCredential=false
 
 ##
-# MessageBundleProperties
+# Message Bundle Properties
 #
 # cas.messageBundle.encoding=UTF-8
 # cas.messageBundle.fallbackSystemLocale=false
@@ -624,12 +799,12 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.messageBundle.baseNames=classpath:custom_messagesclasspath:messages
 
 ##
-# ShibbolethAttributeResolverProperties
+# Shibboleth Attribute Resolver Properties
 #
 # cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
 
 ##
-# AbstractJpaProperties -> Pool
+# Abstract Jpa Properties -> Pool
 #
 # cas.audit.jdbc.pool.suspension=false
 # cas.audit.jdbc.pool.minSize=6
@@ -638,7 +813,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.audit.jdbc.pool.maxWait=2000
 
 ##
-# AuditProperties -> Jdbc
+# Audit Properties -> Jdbc
 #
 # cas.audit.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.audit.jdbc.isolateInternalQueries=false
@@ -658,7 +833,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.audit.jdbc.idleTimeout=5000
 
 ##
-# AuditProperties
+# Audit Properties
 #
 # cas.audit.auditFormat=DEFAULT
 # cas.audit.ignoreAuditFailures=false
@@ -667,7 +842,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.audit.appCode=CAS
 
 ##
-# WarningCookieProperties
+# Warning Cookie Properties
 #
 # cas.warningCookie.path=
 # cas.warningCookie.maxAge=-1
@@ -676,29 +851,29 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.warningCookie.secure=true
 
 ##
-# HostProperties
+# Host Properties
 #
 # cas.host.name=
 
 ##
-# ThemeProperties
+# Theme Properties
 #
 # cas.theme.paramName=theme
 # cas.theme.defaultThemeName=cas-theme-default
 
 ##
-# AcceptableUsagePolicyProperties -> Ldap
+# Acceptable Usage Policy Properties -> Ldap
 #
 # cas.acceptableUsagePolicy.ldap.searchFilter=cn={0}
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
 
 ##
-# AcceptableUsagePolicyProperties
+# Acceptable Usage Policy Properties
 #
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 
 ##
-# AbstractJpaProperties -> Pool
+# Abstract Jpa Properties -> Pool
 #
 # cas.events.jpa.database.pool.suspension=false
 # cas.events.jpa.database.pool.minSize=6
@@ -724,38 +899,38 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.events.jpa.database.idleTimeout=5000
 
 ##
-# EventsProperties -> Mongodb
+# Events Properties -> Mongodb
 #
 # cas.events.mongodb.clientUri=
 # cas.events.mongodb.dropCollection=false
 # cas.events.mongodb.collection=MongoDbCasEventRepository
 
 ##
-# EventsProperties
+# Events Properties
 #
 # cas.events.trackGeolocation=false
 
 ##
-# HttpClientProperties -> Truststore
+# Http Client Properties -> Truststore
 #
 # cas.httpClient.truststore.psw=changeit
 # cas.httpClient.truststore.file=classpath:/truststore.jks
 
 ##
-# HttpClientProperties
+# Http Client Properties
 #
 # cas.httpClient.connectionTimeout=5000
 # cas.httpClient.asyncTimeout=5000
 # cas.httpClient.readTimeout=5000
 
 ##
-# MongoServiceRegistryProperties -> Conns
+# Mongo Service Registry Properties -> Conns
 #
 # cas.serviceRegistry.mongo.conns.lifetime=60000
 # cas.serviceRegistry.mongo.conns.perHost=10
 
 ##
-# MongoServiceRegistryProperties
+# Mongo Service Registry Properties
 #
 # cas.serviceRegistry.mongo.idleTimeout=30000
 # cas.serviceRegistry.mongo.port=27017
@@ -769,12 +944,12 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.serviceRegistry.mongo.host=localhost
 
 ##
-# AbstractConfigProperties -> Config
+# Abstract Config Properties -> Config
 #
 # cas.serviceRegistry.config.location=
 
 ##
-# LdapServiceRegistryProperties
+# Ldap Service Registry Properties
 #
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
 # cas.serviceRegistry.ldap.idAttribute=uid
@@ -782,7 +957,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.serviceRegistry.ldap.baseDn=dc=example,dc=org
 
 ##
-# CouchbaseServiceRegistryProperties
+# Couchbase Service Registry Properties
 #
 # cas.serviceRegistry.couchbase.nodeSet=localhost:8091
 # cas.serviceRegistry.couchbase.password=
@@ -791,7 +966,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.serviceRegistry.couchbase.timeout=10
 
 ##
-# AbstractJpaProperties -> Pool
+# Abstract Jpa Properties -> Pool
 #
 # cas.serviceRegistry.jpa.pool.suspension=false
 # cas.serviceRegistry.jpa.pool.minSize=6
@@ -800,7 +975,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 
 ##
-# JpaServiceRegistryProperties
+# Jpa Service Registry Properties
 #
 # cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.serviceRegistry.jpa.isolateInternalQueries=false
@@ -817,7 +992,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.serviceRegistry.jpa.idleTimeout=5000
 
 ##
-# ServiceRegistryProperties
+# Service Registry Properties
 #
 # cas.serviceRegistry.watcherEnabled=true
 # cas.serviceRegistry.repeatInterval=120000
@@ -825,13 +1000,13 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.serviceRegistry.initFromJson=true
 
 ##
-# ProxyTicketProperties
+# Proxy Ticket Properties
 #
 # cas.ticket.pt.timeToKillInSeconds=10
 # cas.ticket.pt.numberOfUses=1
 
 ##
-# AbstractJpaProperties -> Pool
+# Abstract Jpa Properties -> Pool
 #
 # cas.ticket.registry.jpa.pool.suspension=false
 # cas.ticket.registry.jpa.pool.minSize=6
@@ -840,7 +1015,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.jpa.pool.maxWait=2000
 
 ##
-# JpaTicketRegistryProperties
+# Jpa Ticket Registry Properties
 #
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
 # cas.ticket.registry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -859,7 +1034,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.jpa.idleTimeout=5000
 
 ##
-# CouchbaseTicketRegistryProperties
+# Couchbase Ticket Registry Properties
 #
 # cas.ticket.registry.couchbase.timeout=10
 # cas.ticket.registry.couchbase.nodeSet=localhost:8091
@@ -868,7 +1043,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.couchbase.bucket=default
 
 ##
-# HazelcastProperties -> Cluster
+# Hazelcast Properties -> Cluster
 #
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
 # cas.ticket.registry.hazelcast.cluster.maxNoHeartbeatSeconds=300
@@ -884,21 +1059,21 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.hazelcast.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
 
 ##
-# HazelcastProperties
+# Hazelcast Properties
 #
 # cas.ticket.registry.hazelcast.pageSize=500
 # cas.ticket.registry.hazelcast.mapName=tickets
 # cas.ticket.registry.hazelcast.configLocation=
 
 ##
-# TicketRegistryProperties -> InMemory
+# Ticket Registry Properties -> InMemory
 #
 # cas.ticket.registry.inMemory.loadFactor=1
 # cas.ticket.registry.inMemory.concurrency=20
 # cas.ticket.registry.inMemory.initialCapacity=1000
 
 ##
-# TicketRegistryProperties -> Cleaner
+# Ticket Registry Properties -> Cleaner
 #
 # cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
 # cas.ticket.registry.cleaner.startDelay=10000
@@ -906,7 +1081,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.cleaner.enabled=true
 
 ##
-# EhcacheProperties
+# Ehcache Properties
 #
 # cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
 # cas.ticket.registry.ehcache.maxElementsInMemory=10000
@@ -932,7 +1107,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.ehcache.diskPersistent=false
 
 ##
-# IgniteProperties -> TicketsCache
+# Ignite Properties -> TicketsCache
 #
 # cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
 # cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
@@ -940,7 +1115,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED
 
 ##
-# IgniteProperties
+# Ignite Properties
 #
 # cas.ticket.registry.ignite.keyAlgorithm=
 # cas.ticket.registry.ignite.protocol=
@@ -953,7 +1128,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.ignite.trustStoreFilePath=
 
 ##
-# MemcachedTicketRegistryProperties
+# Memcached Ticket Registry Properties
 #
 # cas.ticket.registry.memcached.servers=localhost:11211
 # cas.ticket.registry.memcached.locatorType=ARRAY_MOD
@@ -961,36 +1136,36 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.registry.memcached.hashAlgorithm=FNV1_64_HASH
 
 ##
-# ServiceTicketProperties
+# Service Ticket Properties
 #
 # cas.ticket.st.numberOfUses=1
 # cas.ticket.st.maxLength=20
 # cas.ticket.st.timeToKillInSeconds=10
 
 ##
-# CryptographyProperties -> Signing
+# Cryptography Properties -> Signing
 #
 # cas.ticket.signing.key=C@$W3bSecretKey!
 # cas.ticket.signing.keySize=512
 
 ##
-# TicketGrantingTicketProperties -> Timeout
+# Ticket Granting Ticket Properties -> Timeout
 #
 # cas.ticket.tgt.timeout.maxTimeToLiveInSeconds=28800
 
 ##
-# TicketGrantingTicketProperties -> ThrottledTimeout
+# Ticket Granting Ticket Properties -> ThrottledTimeout
 #
 # cas.ticket.tgt.throttledTimeout.timeToKillInSeconds=28800
 # cas.ticket.tgt.throttledTimeout.timeInBetweenUsesInSeconds=5
 
 ##
-# TicketGrantingTicketProperties -> HardTimeout
+# Ticket Granting Ticket Properties -> HardTimeout
 #
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 
 ##
-# TicketGrantingTicketProperties
+# Ticket Granting Ticket Properties
 #
 # cas.ticket.tgt.maxTimeToLiveInSeconds=28800
 # cas.ticket.tgt.maxLength=50
@@ -998,23 +1173,23 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.ticket.tgt.onlyTrackMostRecentSession=true
 
 ##
-# ProxyGrantingTicketProperties
+# Proxy Granting Ticket Properties
 #
 # cas.ticket.pgt.maxLength=50
 
 ##
-# CryptographyProperties -> Encryption
+# Cryptography Properties -> Encryption
 #
 # cas.ticket.encryption.keySize=16
 # cas.ticket.encryption.key=
 
 ##
-# TicketProperties
+# Ticket Properties
 #
 # cas.ticket.alg=AES
 
 ##
-# SamlResponseProperties
+# Saml Response Properties
 #
 # cas.samlResponse.ticketidSaml2=false
 # cas.samlResponse.skewAllowance=0
@@ -1022,7 +1197,7 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.samlResponse.issuer=localhost
 
 ##
-# AdminPagesSecurityProperties
+# Admin Pages Security Properties
 #
 # cas.adminPagesSecurity.adminRoles=ROLE_ADMIN
 # cas.adminPagesSecurity.ip=127\.0\.0\.1
@@ -1031,42 +1206,42 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.adminPagesSecurity.users=
 
 ##
-# MonitorProperties -> Warn
+# Monitor Properties -> Warn
 #
 # cas.monitor.tgt.warn.threshold=10
 # cas.monitor.tgt.warn.evictionThreshold=0
 
 ##
-# MonitorProperties -> Warn
+# Monitor Properties -> Warn
 #
 # cas.monitor.st.warn.threshold=10
 # cas.monitor.st.warn.evictionThreshold=0
 
 ##
-# MonitorProperties -> Warn
+# Monitor Properties -> Warn
 #
 # cas.monitor.warn.threshold=10
 # cas.monitor.warn.evictionThreshold=0
 
 ##
-# MonitorProperties -> DataSource
+# Monitor Properties -> DataSource
 #
 # cas.monitor.dataSource.validationQuery=SELECT 1
 
 ##
-# MonitorProperties
+# Monitor Properties
 #
-# cas.monitor.maxWait=0
+# cas.monitor.maxWait=5000
 # cas.monitor.freeMemThreshold=10
 
 ##
-# MaxmindProperties
+# Maxmind Properties
 #
 # cas.maxmind.cityDatabase=
 # cas.maxmind.countryDatabase=
 
 ##
-# ManagementWebappProperties
+# Management Webapp Properties
 #
 # cas.mgmt.adminRoles=
 # cas.mgmt.loginUrl=
@@ -1074,18 +1249,18 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.mgmt.defaultServiceUrl=
 
 ##
-# GoogleAnalyticsProperties
+# Google Analytics Properties
 #
 # cas.googleAnalytics.googleAnalyticsTrackingId=
 
 ##
-# HttpWebRequestProperties -> Web
+# Http Web Request Properties -> Web
 #
 # cas.httpWebRequest.web.forceEncoding=true
 # cas.httpWebRequest.web.encoding=UTF-8
 
 ##
-# HttpWebRequestProperties -> Header
+# Http Web Request Properties -> Header
 #
 # cas.httpWebRequest.header.xframe=false
 # cas.httpWebRequest.header.xss=false
@@ -1094,20 +1269,20 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.httpWebRequest.header.cache=false
 
 ##
-# HttpWebRequestProperties
+# Http Web Request Properties
 #
 # cas.httpWebRequest.allowMultiValueParameters=false
 # cas.httpWebRequest.onlyPostParams=username,password
 # cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
 
 ##
-# CryptographyProperties -> Signing
+# Cryptography Properties -> Signing
 #
 # cas.webflow.signing.key=C@$W3bSecretKey!
 # cas.webflow.signing.keySize=512
 
 ##
-# WebflowProperties -> Session
+# Webflow Properties -> Session
 #
 # cas.webflow.session.lockTimeout=30
 # cas.webflow.session.compress=false
@@ -1116,13 +1291,13 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.webflow.session.hzLocation=classpath:/hazelcast.xml
 
 ##
-# CryptographyProperties -> Encryption
+# Cryptography Properties -> Encryption
 #
 # cas.webflow.encryption.keySize=16
 # cas.webflow.encryption.key=
 
 ##
-# WebflowProperties
+# Webflow Properties
 #
 # cas.webflow.autoconfigure=true
 # cas.webflow.alwaysPauseRedirect=false
@@ -1131,35 +1306,34 @@ cas.attrs.resolve.affiliation=groupMembership
 # cas.webflow.alg=AES
 
 ##
-# PersonDirPrincipalResolverProperties
+# Person Dir Principal Resolver Properties
 #
 # cas.personDirectory.principalAttribute=
 # cas.personDirectory.returnNull=false
 
 ##
-# RegisteredServiceRestProperties
+# Registered Service Rest Properties
 #
 # cas.restServices.attributeName=
 # cas.restServices.attributeValue=
 
 ##
-# SloProperties
+# Slo Properties
 #
 # cas.slo.disabled=false
 # cas.slo.asynchronous=true
 
 ##
-# MetricsProperties
+# Metrics Properties
 #
 # cas.metrics.loggerName=perfStatsLogger
 # cas.metrics.refreshInterval=30
 
 ##
-# GoogleAppsProperties
+# Google Apps Properties
 #
 # cas.googleApps.publicKeyLocation=file:/etc/cas/public.key
 # cas.googleApps.keyAlgorithm=RSA
 # cas.googleApps.privateKeyLocation=file:/etc/cas/private.key
+
 ```
-
-
