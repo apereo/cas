@@ -5,12 +5,13 @@ title: CAS - Properties
 
 # CAS Properties
 
-Various properties can be specified inside CAS either inside configuration files or as command 
-line switches. This section provides a list common CAS properties and 
+Various properties can be specified in CAS [either inside configuration files or as command 
+line switches](Configuration-Management.md). This section provides a list common CAS properties and 
 references to the underlying modules that consume them.
 
-This section is meant as a guide only. Do not copy/paste the entire content into your CAS configuration; 
-rather pick only the properties that you need.
+<div class="alert alert-info"><strong> Be Selective</strong><p>
+This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings 
+into your CAS configuration; rather pick only the properties that you need.</p></div>
 
 ## Spring Boot & Cloud
 
@@ -26,119 +27,17 @@ server.port=8443
 server.ssl.key-store=file:/etc/cas/thekeystore
 server.ssl.key-store-password=changeit
 server.ssl.key-password=changeit
-#server.ssl.ciphers= 
-#server.ssl.client-auth=
-#server.ssl.enabled=
-#server.ssl.key-alias=
-#server.ssl.key-store-provider=
-#server.ssl.key-store-type=
-#server.ssl.protocol=
-#server.ssl.trust-store=
-#server.ssl.trust-store-password=
-#server.ssl.trust-store-provider=
-#server.ssl.trust-store-type=
-
-server.tomcat.basedir=build/tomcat
-server.tomcat.accesslog.enabled=true
-server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
-server.tomcat.accesslog.suffix=.log
-server.tomcat.max-http-header-size=20971520
-server.tomcat.max-threads=5
-server.tomcat.port-header=X-Forwarded-Port
-server.tomcat.protocol-header=X-Forwarded-Proto
-server.tomcat.protocol-header-https-value=https
-server.tomcat.remote-ip-header=X-FORWARDED-FOR
-server.tomcat.uri-encoding=UTF-8
-
-server.use-forward-headers=true
-
-spring.http.encoding.charset=UTF-8
-spring.http.encoding.enabled=true
-spring.http.encoding.force=true
-
-##
-# CAS Cloud Amqp Bus Configuration
-#
-spring.cloud.bus.enabled=false
-spring.cloud.bus.refresh.enabled=true
-spring.cloud.bus.env.enabled=true
-spring.cloud.bus.destination=CasCloudBus
-spring.cloud.bus.ack.enabled=true
-# spring.activemq.broker-url=
-# spring.activemq.in-memory=
-# spring.activemq.pooled=
-# spring.activemq.user=
-# spring.activemq.password=
-
-##
-# CAS Admin Status Endpoints
-#
-cas.securityContext.adminpages.ip=.+
-endpoints.enabled=true
-endpoints.sensitive=true
-management.context-path=/status
-endpoints.restart.enabled=false
-endpoints.shutdown.enabled=false
-
-##
-# CAS Web Application Session Configuration
-#
-server.session.timeout=300
-server.session.cookie.http-only=true
-server.session.tracking-modes=COOKIE
-
-##
-# CAS Thymeleaf View Configuration
-#
-spring.thymeleaf.encoding=UTF-8
-spring.thymeleaf.cache=false
-
-##
-# CAS Log4j Configuration
-#
-# logging.config=file:/etc/cas/log4j2.xml
-server.context-parameters.isLog4jAutoInitializationDisabled=true
-
-##
-# CAS AspectJ Configuration
-#
-spring.aop.auto=true
-spring.aop.proxy-target-class=true
-
-##
-# CAS Groovy Shell Console
-#
-# shell.command-refresh-interval=15
-# shell.command-path-patterns=classpath*:/commands/**
-# shell.auth.simple.user.name=
-# shell.auth.simple.user.password=
-# shell.ssh.enabled=true
-# shell.ssh.port=2000
-# shell.telnet.enabled=false
-# shell.telnet.port=5000
-# shell.ssh.auth-timeout=3000
-# shell.ssh.idle-timeout=30000
-
-##
-# CAS Server Context Configuration
-#
-server.context-path=/cas
-server.port=8443
-
-server.ssl.key-store=file:/etc/cas/thekeystore
-server.ssl.key-store-password=changeit
-server.ssl.key-password=changeit
-#server.ssl.ciphers= 
-#server.ssl.client-auth=
-#server.ssl.enabled=
-#server.ssl.key-alias=
-#server.ssl.key-store-provider=
-#server.ssl.key-store-type=
-#server.ssl.protocol=
-#server.ssl.trust-store=
-#server.ssl.trust-store-password=
-#server.ssl.trust-store-provider=
-#server.ssl.trust-store-type=
+# server.ssl.ciphers= 
+# server.ssl.client-auth=
+# server.ssl.enabled=
+# server.ssl.key-alias=
+# server.ssl.key-store-provider=
+# server.ssl.key-store-type=
+# server.ssl.protocol=
+# server.ssl.trust-store=
+# server.ssl.trust-store-password=
+# server.ssl.trust-store-provider=
+# server.ssl.trust-store-type=
 
 server.tomcat.basedir=build/tomcat
 server.tomcat.accesslog.enabled=true
@@ -335,9 +234,9 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.authn.x509.trustedIssuerDnPattern=
 
 ##
-# Abstract Config Properties -> Config
+# Shiro Config Properties -> Config
 #
-# cas.authn.shiro.config.location=
+# cas.authn.shiro.config.location=classpath:shiro.ini
 
 ##
 # Shiro Authentication Properties
@@ -804,7 +703,7 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
 
 ##
-# Abstract Jpa Properties -> Pool
+# Audit Jpa Properties -> Pool
 #
 # cas.audit.jdbc.pool.suspension=false
 # cas.audit.jdbc.pool.minSize=6
@@ -873,7 +772,7 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 
 ##
-# Abstract Jpa Properties -> Pool
+# Jpa Properties -> Pool
 #
 # cas.events.jpa.database.pool.suspension=false
 # cas.events.jpa.database.pool.minSize=6
@@ -944,7 +843,7 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.serviceRegistry.mongo.host=localhost
 
 ##
-# Abstract Config Properties -> Config
+# Service Registry Config Properties -> Config
 #
 # cas.serviceRegistry.config.location=
 
@@ -966,7 +865,7 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.serviceRegistry.couchbase.timeout=10
 
 ##
-# Abstract Jpa Properties -> Pool
+# Service Registry Jpa Properties -> Pool
 #
 # cas.serviceRegistry.jpa.pool.suspension=false
 # cas.serviceRegistry.jpa.pool.minSize=6
@@ -1006,7 +905,7 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.ticket.pt.numberOfUses=1
 
 ##
-# Abstract Jpa Properties -> Pool
+# Ticket Registry Jpa Properties -> Pool
 #
 # cas.ticket.registry.jpa.pool.suspension=false
 # cas.ticket.registry.jpa.pool.minSize=6
