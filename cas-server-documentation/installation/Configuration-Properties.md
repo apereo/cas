@@ -817,7 +817,7 @@ auditTrailManager=slf4jAuditTrailManager
 #
 # cas.audit.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.audit.jdbc.isolateInternalQueries=false
-# cas.audit.jdbc.url=
+# cas.audit.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
 # cas.audit.jdbc.failFast=true
 # cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.audit.jdbc.dialect=org.hibernate.dialect.HSQLDialect

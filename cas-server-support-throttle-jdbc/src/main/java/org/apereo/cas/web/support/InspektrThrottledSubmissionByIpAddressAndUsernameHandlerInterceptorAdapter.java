@@ -6,9 +6,7 @@ import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
