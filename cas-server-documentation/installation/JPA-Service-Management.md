@@ -18,15 +18,6 @@ Support is enabled by adding the following module into the Maven overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-
-## Configuration
-
-In `application.properties`:
-
-```properties
-serviceRegistryDao=jpaServiceRegistryDao
-```
-
 ## Auto Initialization
 
 Upon startup and if the services registry database is blank, 

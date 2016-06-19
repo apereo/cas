@@ -9,12 +9,6 @@ JSON files are
 expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant JSON files.
 
-In `application.properties`:
-
-```properties
-serviceRegistryDao=jsonServiceRegistryDao
-```
-
 A sample JSON file follows:
 
 ```json

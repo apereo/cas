@@ -17,13 +17,6 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 This implementation auto-configures most of the internal details.
-
-Enable the registry in `application.properties` via:
-
-```properties
-serviceRegistryDao=mongoServiceRegistryDao
-```
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Auto Initialization

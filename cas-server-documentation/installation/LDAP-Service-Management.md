@@ -23,12 +23,6 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-In `application.properties`:
-
-```properties
-serviceRegistryDao=ldapServiceRegistryDao
-```
-
 In local `deployerConfigContext.xml`:
 
 ```xml

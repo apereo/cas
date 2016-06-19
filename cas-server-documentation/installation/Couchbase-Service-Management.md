@@ -14,12 +14,6 @@ Couchbase integration is enabled by including the following dependency in the WA
 </dependency>
 ```
 
-Enable the registry in `application.properties` via:
-
-```properties
-serviceRegistryDao=couchbaseServiceRegistryDao
-```
-
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 
 [Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase 
 server to provide high availability to CAS.
