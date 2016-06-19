@@ -42,13 +42,13 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {
-        "classpath:/jdbc-audit-context.xml",
+        "classpath:/jdbc-audit-context.xml"
 }, classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,
         CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class}
-, initializers = ConfigFileApplicationContextInitializer.class)
+        CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
                 AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
