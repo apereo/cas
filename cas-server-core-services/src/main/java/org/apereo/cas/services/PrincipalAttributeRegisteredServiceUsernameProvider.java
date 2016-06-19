@@ -129,7 +129,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
         if (context != null) {
             LOGGER.debug("Located application context to locate the service registry entry");
-            final ReloadableServicesManager servicesManager = context.getBean(ReloadableServicesManager.class);
+            final ServicesManager servicesManager = context.getBean(ServicesManager.class);
             if (servicesManager != null) {
                 final RegisteredService registeredService = servicesManager.findServiceBy(service);
 

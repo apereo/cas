@@ -4,7 +4,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +39,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param registeredServiceFactory the registered service factory
      */
     public RegisteredServiceSimpleFormController(
-            final ReloadableServicesManager servicesManager,
+            final ServicesManager servicesManager,
             final RegisteredServiceFactory registeredServiceFactory) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;

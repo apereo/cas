@@ -11,19 +11,11 @@ import org.springframework.core.io.Resource;
  */
 
 public class ManagementWebappProperties {
-    private String defaultServiceUrl;
-    private String adminRoles;
-    private String loginUrl;
+    private String adminRoles = "ROLE_ADMIN";
+    private String serverName = "https://localhost:8443";
+    
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
-
-    public String getDefaultServiceUrl() {
-        return defaultServiceUrl;
-    }
-
-    public void setDefaultServiceUrl(final String defaultServiceUrl) {
-        this.defaultServiceUrl = defaultServiceUrl;
-    }
-
+    
     public String getAdminRoles() {
         return adminRoles;
     }
@@ -32,20 +24,20 @@ public class ManagementWebappProperties {
         this.adminRoles = adminRoles;
     }
 
-    public String getLoginUrl() {
-        return loginUrl;
-    }
-
-    public void setLoginUrl(final String loginUrl) {
-        this.loginUrl = loginUrl;
-    }
-
     public Resource getUserPropertiesFile() {
         return userPropertiesFile;
     }
 
     public void setUserPropertiesFile(final Resource userPropertiesFile) {
         this.userPropertiesFile = userPropertiesFile;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(final String serverName) {
+        this.serverName = serverName;
     }
 }
 

@@ -1142,10 +1142,9 @@ auditTrailManager=slf4jAuditTrailManager
 ##
 # Management Webapp Properties
 #
-# cas.mgmt.adminRoles=
-# cas.mgmt.loginUrl=
+# cas.mgmt.adminRoles=ROLE_ADMIN
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
-# cas.mgmt.defaultServiceUrl=
+# cas.mgmt.serverName=https://localhost:8443
 
 ##
 # Google Analytics Properties

@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
@@ -55,7 +55,7 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
     public void initializeServletApplicationContext() {
         final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + OAuthConstants.BASE_OAUTH20_URL + '/'
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-        final ReloadableServicesManager servicesManager = getServicesManager();
+        final ServicesManager servicesManager = getServicesManager();
         final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
 
         final RegisteredService svc = servicesManager.findServiceBy(callbackService);
@@ -68,7 +68,7 @@ public class OAuthApplicationContextWrapper extends BaseApplicationContextWrappe
             service.setEvaluationOrder(Integer.MIN_VALUE);
 
             addRegisteredServiceToServicesManager(service);
-            servicesManager.reload();
+            servicesManager.load();
         }
 
         this.validationServiceSelectionStrategies.add(0, this.oauth20ValidationServiceSelectionStrategy);

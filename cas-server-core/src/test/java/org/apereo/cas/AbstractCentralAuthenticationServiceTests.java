@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -51,7 +50,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     private AuthenticationManager authenticationManager;
 
     @Autowired(required = true)
-    private ReloadableServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
     @Autowired
     private ArgumentExtractor argumentExtractor;

@@ -22,7 +22,7 @@ public class ServiceRegistryInitializer {
     
     private ServiceRegistryDao jsonServiceRegistryDao;
 
-    private ReloadableServicesManager servicesManager;
+    private ServicesManager servicesManager;
     
     private boolean initFromJson;
 
@@ -31,7 +31,7 @@ public class ServiceRegistryInitializer {
 
     public ServiceRegistryInitializer(final ServiceRegistryDao jsonServiceRegistryDao,
                                       final ServiceRegistryDao serviceRegistryDao,
-                                      final ReloadableServicesManager servicesManager,
+                                      final ServicesManager servicesManager,
                                       final boolean initFromJson) {
         this.jsonServiceRegistryDao = jsonServiceRegistryDao;
         this.serviceRegistryDao = serviceRegistryDao;
@@ -58,7 +58,7 @@ public class ServiceRegistryInitializer {
                     LOGGER.debug("Initializing service registry database with the {} JSON service definition...", r);
                     this.serviceRegistryDao.save(r);
                 });
-                this.servicesManager.reload();
+                this.servicesManager.load();
             } else {
                 LOGGER.info("The service registry database will not be initialized from default JSON services. "
                         + "Since the service registry database is empty, CAS will refuse to authenticate services "

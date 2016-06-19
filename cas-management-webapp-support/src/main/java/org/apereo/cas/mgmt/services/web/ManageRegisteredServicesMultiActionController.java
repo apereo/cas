@@ -7,7 +7,7 @@ import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,7 +48,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param defaultServiceUrl        the default service url
      */
     public ManageRegisteredServicesMultiActionController(
-            final ReloadableServicesManager servicesManager,
+            final ServicesManager servicesManager,
             final RegisteredServiceFactory registeredServiceFactory,
             final String defaultServiceUrl) {
         super(servicesManager);
@@ -60,7 +60,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * Ensure default service exists.
      */
     private void ensureDefaultServiceExists() {
-        this.servicesManager.reload();
+        this.servicesManager.load();
         final Collection<RegisteredService> c = this.servicesManager.getAllServices();
         if (c == null) {
             throw new IllegalStateException("Services cannot be empty");
@@ -72,7 +72,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
             svc.setName("Services Management Web Application");
             svc.setDescription(svc.getName());
             this.servicesManager.save(svc);
-            this.servicesManager.reload();
+            this.servicesManager.load();
         }
     }
 

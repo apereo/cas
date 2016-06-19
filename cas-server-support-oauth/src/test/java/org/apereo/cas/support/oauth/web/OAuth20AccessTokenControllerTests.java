@@ -20,7 +20,6 @@ import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -836,12 +835,10 @@ public class OAuth20AccessTokenControllerTests {
 
     private void clearAllServices() {
         final Collection<RegisteredService> col = servicesManager.getAllServices();
-
         for (final RegisteredService r : col) {
             servicesManager.delete(r.getId());
         }
-
-        ((ReloadableServicesManager) servicesManager).reload();
+        servicesManager.load();
     }
 
     private static Authentication getAuthentication(final Principal principal) {

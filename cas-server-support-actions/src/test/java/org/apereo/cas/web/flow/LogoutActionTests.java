@@ -66,7 +66,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         this.serviceRegistryDao = new InMemoryServiceRegistryDaoImpl();
         this.serviceManager = new DefaultServicesManagerImpl(serviceRegistryDao);
         this.serviceManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
-        this.serviceManager.reload();
+        this.serviceManager.load();
 
         this.warnCookieGenerator.setCookieName("test");
 

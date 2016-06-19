@@ -4,7 +4,7 @@ import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
@@ -55,7 +55,7 @@ public class SamlIdPConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ReloadableServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")

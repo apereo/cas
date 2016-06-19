@@ -25,7 +25,7 @@ public class OidcRegisteredServiceTests {
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
-    
+
     @Test
     public void checkSaveMethod() {
         final OidcRegisteredService r = new OidcRegisteredService();

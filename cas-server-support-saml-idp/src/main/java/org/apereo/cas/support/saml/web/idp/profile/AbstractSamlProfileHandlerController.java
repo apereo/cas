@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -80,7 +80,7 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Services manager.
      */
-    protected ReloadableServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     /**
      * The Web application service factory.
@@ -176,7 +176,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
             logger.debug("Saving callback service [{}] into the registry", service);
             this.servicesManager.save(service);
-            this.servicesManager.reload();
+            this.servicesManager.load();
         }
         return callbackService;
     }
@@ -312,7 +312,7 @@ public abstract class AbstractSamlProfileHandlerController {
         this.parserPool = parserPool;
     }
 
-    public void setServicesManager(final ReloadableServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 

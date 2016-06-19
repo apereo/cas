@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class DefaultServicesManagerImpl implements ReloadableServicesManager, ApplicationEventPublisherAware {
+public class DefaultServicesManagerImpl implements ApplicationEventPublisherAware, ServicesManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
@@ -133,13 +133,6 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
         return r;
     }
 
-    @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:20000}",
-            fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
-    @Override
-    public void reload() {
-        LOGGER.debug("Reloading registered services.");
-        load();
-    }
 
     /**
      * Handle services manager refresh event.
@@ -148,12 +141,15 @@ public class DefaultServicesManagerImpl implements ReloadableServicesManager, Ap
      */
     @EventListener
     protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
-        reload();
+        load();
     }
 
     /**
      * Load services that are provided by the DAO.
      */
+    @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:20000}",
+            fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
+    @Override
     @PostConstruct
     public void load() {
         LOGGER.debug("Loading services from {}", this.serviceRegistryDao);

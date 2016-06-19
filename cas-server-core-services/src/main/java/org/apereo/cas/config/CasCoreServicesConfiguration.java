@@ -15,9 +15,9 @@ import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,7 +85,7 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    public ReloadableServicesManager servicesManager() {
+    public ServicesManager servicesManager() {
         final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl();
         impl.setServiceRegistryDao(this.serviceRegistryDao);
         return impl;

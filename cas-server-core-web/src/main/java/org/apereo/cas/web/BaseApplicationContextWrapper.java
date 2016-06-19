@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
@@ -92,8 +91,8 @@ public abstract class BaseApplicationContextWrapper implements ApplicationContex
         manager.save(svc);
     }
 
-    protected ReloadableServicesManager getServicesManager() {
-        return this.applicationContext.getBean("servicesManager", ReloadableServicesManager.class);
+    protected ServicesManager getServicesManager() {
+        return this.applicationContext.getBean("servicesManager", ServicesManager.class);
     }
         
     /**

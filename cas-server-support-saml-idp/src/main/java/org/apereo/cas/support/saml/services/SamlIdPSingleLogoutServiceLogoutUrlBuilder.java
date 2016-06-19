@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.client.util.URIBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 
@@ -21,7 +21,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
     /**
      * The Services manager.
      */
-    protected ReloadableServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     /**
      * The Saml registered service caching metadata resolver.
@@ -55,7 +55,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         return super.determineLogoutUrl(registeredService, singleLogoutService);
     }
 
-    public void setServicesManager(final ReloadableServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
