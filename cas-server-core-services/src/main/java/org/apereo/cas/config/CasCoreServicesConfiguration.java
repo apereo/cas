@@ -11,21 +11,24 @@ import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpCasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.services.DefaultRegisteredServiceCipherExecutor;
+import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
 
@@ -44,10 +47,6 @@ public class CasCoreServicesConfiguration {
 
     @Autowired
     private ApplicationContext context;
-
-    @Autowired
-    @Qualifier("serviceRegistryDao")
-    private ServiceRegistryDao serviceRegistryDao;
 
     @RefreshScope
     @Bean
@@ -68,8 +67,10 @@ public class CasCoreServicesConfiguration {
 
     @RefreshScope
     @Bean
-    public CasAttributeEncoder casAttributeEncoder() {
-        final DefaultCasAttributeEncoder e = new DefaultCasAttributeEncoder(servicesManager());
+    public CasAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao")
+                                                   final ServiceRegistryDao serviceRegistryDao) {
+        final DefaultCasAttributeEncoder e =
+                new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao));
         e.setCipherExecutor(registeredServiceCipherExecutor());
         return e;
     }
@@ -85,13 +86,15 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    public ServicesManager servicesManager() {
+    public ServicesManager servicesManager(@Qualifier("serviceRegistryDao")
+                                           final ServiceRegistryDao serviceRegistryDao) {
         final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl();
-        impl.setServiceRegistryDao(this.serviceRegistryDao);
+        impl.setServiceRegistryDao(serviceRegistryDao);
         return impl;
     }
 
-    @Bean
+    @ConditionalOnMissingBean(name = "serviceRegistryDao")
+    @Bean(name = {"serviceRegistryDao", "inMemoryServiceRegistryDao"})
     public ServiceRegistryDao inMemoryServiceRegistryDao() {
         final InMemoryServiceRegistryDaoImpl impl = new InMemoryServiceRegistryDaoImpl();
         if (context.containsBean("inMemoryRegisteredServices")) {
@@ -101,22 +104,33 @@ public class CasCoreServicesConfiguration {
         return impl;
     }
 
+    @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryDao jsonServiceRegistryDao() {
+    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("serviceRegistryDao")
+                                                                 final ServiceRegistryDao serviceRegistryDao) {
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
+                serviceRegistryDao, servicesManager(serviceRegistryDao),
+                casProperties.getServiceRegistry().isInitFromJson());
+    }
+
+    @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
+    @Bean
+    public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
-            final JsonServiceRegistryDao dao =
-                    new JsonServiceRegistryDao(casProperties.getServiceRegistry().getConfig().getLocation(),
-                            casProperties.getServiceRegistry().isWatcherEnabled());
-            return dao;
-        } catch (final Throwable e) {
+            return new EmbeddedServiceRegistryDao();
+        } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer() {
-        return new ServiceRegistryInitializer(jsonServiceRegistryDao(),
-                serviceRegistryDao, servicesManager(),
-                casProperties.getServiceRegistry().isInitFromJson());
+    public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
+        EmbeddedServiceRegistryDao() throws Exception {
+            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false);
+        }
+
+        @Override
+        protected String getExtension() {
+            return "json";
+        }
     }
 }

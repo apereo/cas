@@ -9,8 +9,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
-        
-        
         http://www.springframework.org/schema/data/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
@@ -69,7 +67,7 @@
           c:mongoDbFactory-ref="mongoDbFactory"
           c:mongoConverter-ref="mappingConverter"/>
 
-    <bean id="serviceRegistryDao" class="org.apereo.cas.services.MongoServiceRegistryDao"
+    <bean id="mongoServiceRegistryDao" class="org.apereo.cas.services.MongoServiceRegistryDao"
           c:collectionName="MongoServiceRegistryDao"
           c:mongoTemplate-ref="mongoTemplate"
           c:dropCollection="true"/>

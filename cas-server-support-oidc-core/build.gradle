@@ -4,4 +4,5 @@ dependencies {
     compile libraries.spring
     compile project(":cas-server-support-oauth-core")
     testCompile project(":cas-server-core-util")
+    testCompile project(path: ":cas-server-support-json-service-registry")
 }

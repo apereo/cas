@@ -38,7 +38,7 @@ public class LdapServiceRegistryConfiguration {
         return new DefaultLdapRegisteredServiceMapper();
     }
 
-    @Bean
+    @Bean(name = {"ldapServiceRegistryDao", "serviceRegistryDao"})
     @RefreshScope
     public ServiceRegistryDao ldapServiceRegistryDao() {
         final LdapServiceRegistryDao r = new LdapServiceRegistryDao();

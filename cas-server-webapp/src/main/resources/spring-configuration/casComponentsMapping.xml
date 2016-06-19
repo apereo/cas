@@ -16,8 +16,7 @@
     <alias name="${primaryPrincipalResolver}" alias="primaryPrincipalResolver" />
     <alias name="${attributeRepository}" alias="attributeRepository" />
     <alias name="${themeResolver}" alias="themeResolver" />
-    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
-    
+        
     <alias name="${ticketRegistry}" alias="ticketRegistry" />
     <alias name="${ticketCipherExecutor}" alias="ticketCipherExecutor" />
     

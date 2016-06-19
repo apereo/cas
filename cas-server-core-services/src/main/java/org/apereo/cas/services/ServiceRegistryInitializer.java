@@ -44,11 +44,6 @@ public class ServiceRegistryInitializer {
      */
     @PostConstruct
     public void initServiceRegistryIfNecessary() {
-
-        if (this.serviceRegistryDao.equals(this.jsonServiceRegistryDao)) {
-            return;
-        }
-
         final long size = this.serviceRegistryDao.size();
 
         if (size == 0) {

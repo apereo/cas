@@ -51,9 +51,7 @@ import java.nio.file.Path;
  * @since 4.1.0
  */
 public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
-
+    
     /**
      * File extension of registered service JSON files.
      */
@@ -84,8 +82,7 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
                                   final boolean enableWatcher) throws Exception {
         super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher);
     }
-
-
+    
     @Override
     protected String getExtension() {
         return FILE_EXTENSION;

@@ -40,7 +40,7 @@ public class CouchbaseServiceRegistryConfiguration {
         return factory;
     }
 
-    @Bean
+    @Bean(name = {"couchbaseServiceRegistryDao", "serviceRegistryDao"})
     @RefreshScope
     public ServiceRegistryDao couchbaseServiceRegistryDao() {
         final CouchbaseServiceRegistryDao c = new CouchbaseServiceRegistryDao();

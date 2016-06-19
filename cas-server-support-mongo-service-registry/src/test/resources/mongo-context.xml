@@ -70,7 +70,7 @@
           c:mongoDbFactory-ref="mongoDbFactory"
           c:mongoConverter-ref="mappingConverter"/>
 
-    <bean id="serviceRegistryDao" class="org.apereo.cas.services.MongoServiceRegistryDao"
+    <bean id="mongoServiceRegistryDao" class="org.apereo.cas.services.MongoServiceRegistryDao"
           c:collectionName="MongoServiceRegistryDao"
           c:dropCollection="true"
           c:mongoTemplate-ref="mongoTemplate" />

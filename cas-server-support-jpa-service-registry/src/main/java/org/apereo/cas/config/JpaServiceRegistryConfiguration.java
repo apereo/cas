@@ -79,7 +79,7 @@ public class JpaServiceRegistryConfiguration {
         return newHickariDataSource(casProperties.getServiceRegistry().getJpa());
     }
 
-    @Bean
+    @Bean(name = {"jpaServiceRegistryDao", "serviceRegistryDao"})
     public ServiceRegistryDao jpaServiceRegistryDao() {
         return new JpaServiceRegistryDaoImpl();
     }
