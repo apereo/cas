@@ -15,4 +15,5 @@ dependencies {
     testCompile project(":cas-server-core")
     testCompile project(":cas-server-support-cookie")
     testCompile project(path: ":cas-server-core", configuration: "tests")
+    testCompile libraries.inspektr
 }
