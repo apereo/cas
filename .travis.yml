@@ -31,9 +31,9 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
-- ./gradlew clean --parallel --stacktrace --max-workers=8
+- ./gradlew clean --parallel --stacktrace
 install:
-- ./gradlew build -DskipAspectJ=true --parallel -x test --max-workers=8
+- ./gradlew build -DskipAspectJ=true --parallel -x test
 script:
 - ./gradlew test -DskipAspectJ=true --stacktrace
 after_success:

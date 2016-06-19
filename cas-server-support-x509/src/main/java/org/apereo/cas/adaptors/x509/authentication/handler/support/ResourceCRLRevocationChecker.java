@@ -35,7 +35,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /** CRL refresh interval in seconds. */
-    private int refreshInterval;
+    private int refreshInterval = 3600;
     
     private CRLFetcher fetcher;
 
@@ -130,11 +130,15 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
                 }
             }
         };
-        this.scheduler.scheduleAtFixedRate(
-                scheduledFetcher, 
-                this.refreshInterval, 
-                this.refreshInterval, 
-                TimeUnit.SECONDS);
+        try {
+            this.scheduler.scheduleAtFixedRate(
+                    scheduledFetcher,
+                    this.refreshInterval,
+                    this.refreshInterval,
+                    TimeUnit.SECONDS);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
