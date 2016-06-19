@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-
 import org.cryptacular.util.CertUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,31 +29,38 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.0.0
- *
  */
 @RunWith(Parameterized.class)
 public class X509CredentialsAuthenticationHandlerTests {
 
-    /** Subject of test. */
+    /**
+     * Subject of test.
+     */
     private X509CredentialsAuthenticationHandler handler;
 
-    /** Test authentication credential. */
+    /**
+     * Test authentication credential.
+     */
     private Credential credential;
 
-    /** Expected result of supports test. */
+    /**
+     * Expected result of supports test.
+     */
     private boolean expectedSupports;
 
-    /** Expected authentication result. */
+    /**
+     * Expected authentication result.
+     */
     private Object expectedResult;
 
 
     /**
      * Creates a new test class instance with the given parameters.
      *
-     * @param handler Test authentication handler.
+     * @param handler    Test authentication handler.
      * @param credential Test credential.
-     * @param supports Expected result of supports test.
-     * @param result Expected result of authentication test.
+     * @param supports   Expected result of supports test.
+     * @param result     Expected result of authentication test.
      */
     public X509CredentialsAuthenticationHandlerTests(
             final X509CredentialsAuthenticationHandler handler,
@@ -71,9 +77,8 @@ public class X509CredentialsAuthenticationHandlerTests {
     /**
      * Gets the unit test parameters.
      *
-     * @return  Test parameter data.
-     *
-     * @throws Exception  On test data setup errors.
+     * @return Test parameter data.
+     * @throws Exception On test data setup errors.
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
@@ -85,20 +90,20 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Test case #1: Unsupported credential type
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {handler, new UsernamePasswordCredential(), false, null});
+        params.add(new Object[]{handler, new UsernamePasswordCredential(), false, null});
 
         // Test case #2:Valid certificate
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
-        params.add(new Object[] {handler, credential, true, new DefaultHandlerResult(handler, credential,
+        params.add(new Object[]{handler, credential, true, new DefaultHandlerResult(handler, credential,
                 new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #3: Expired certificate
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-expired.crt")),
                 true,
@@ -109,7 +114,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US");
         handler.setMaxPathLengthAllowUnspecified(true);
-        params.add(new Object[] {handler, new X509CertificateCredential(createCertificates("snake-oil.crt")),
+        params.add(new Object[]{handler, new X509CertificateCredential(createCertificates("snake-oil.crt")),
                 true, new FailedLoginException(),
         });
 
@@ -118,7 +123,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         handler.setSubjectDnPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US");
         handler.setMaxPathLengthAllowUnspecified(true);
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("snake-oil.crt")),
                 true,
@@ -130,7 +135,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         handler.setCheckKeyUsage(true);
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 credential,
                 true,
@@ -142,7 +147,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         handler.setCheckKeyUsage(true);
         handler.setRequireKeyUsage(true);
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true, new FailedLoginException(),
@@ -154,7 +159,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setCheckKeyUsage(true);
         handler.setRequireKeyUsage(true);
         credential = new X509CertificateCredential(createCertificates("user-valid-keyUsage.crt"));
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 credential,
                 true,
@@ -166,7 +171,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         handler.setCheckKeyUsage(true);
         handler.setRequireKeyUsage(true);
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-invalid-keyUsage.crt")),
                 true,
@@ -185,7 +190,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setRevocationChecker(checker);
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true,
@@ -198,7 +203,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         checker.init();
         handler.setRevocationChecker(checker);
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-revoked.crt")),
                 true,
@@ -214,7 +219,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         checker.setExpiredCRLPolicy(zeroThresholdPolicy);
         checker.init();
         handler.setRevocationChecker(checker);
-        params.add(new Object[] {
+        params.add(new Object[]{
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true,
@@ -242,7 +247,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             if (this.expectedResult instanceof Exception) {
                 assertEquals(this.expectedResult.getClass(), e.getClass());
             } else {
-                fail("Authentication failed when it should have succeeded.");
+                fail("Authentication failed when it should have succeeded: " + e.getMessage());
             }
         }
     }
@@ -255,14 +260,13 @@ public class X509CredentialsAuthenticationHandlerTests {
         assertEquals(this.expectedSupports, this.handler.supports(this.credential));
     }
 
-    protected static X509Certificate[] createCertificates(final String ... files) {
+    protected static X509Certificate[] createCertificates(final String... files) {
         final X509Certificate[] certs = new X509Certificate[files.length];
 
         int i = 0;
         for (final String file : files) {
             try {
-                certs[i++] = (X509Certificate) CertUtil.readCertificate(
-                        new ClassPathResource(file).getInputStream());
+                certs[i++] = CertUtil.readCertificate(new ClassPathResource(file).getInputStream());
             } catch (final Exception e) {
                 throw new RuntimeException("Error creating certificate at " + file, e);
             }

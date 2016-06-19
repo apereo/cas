@@ -36,9 +36,11 @@ import java.util.regex.Pattern;
  */
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    /** OID for KeyUsage X.509v3 extension field. */
+    /**
+     * OID for KeyUsage X.509v3 extension field.
+     */
     private static final String KEY_USAGE_OID = "2.5.29.15";
-    
+
     /**
      * Instance of Logging.
      */
@@ -141,7 +143,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         throw new FailedLoginException();
     }
-    
+
     public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {
         this.regExTrustedIssuerDnPattern = Pattern.compile(trustedIssuerDnPattern);
     }
@@ -179,7 +181,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         this.requireKeyUsage = requireKeyUsage;
     }
 
-    
+
     public void setSubjectDnPattern(
             final String subjectDnPattern) {
         this.regExSubjectDnPattern = Pattern.compile(subjectDnPattern);
@@ -303,9 +305,13 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private boolean doesNameMatchPattern(final Principal principal,
                                          final Pattern pattern) {
-        final String name = principal.getName();
-        final boolean result = pattern.matcher(name).matches();
-        logger.debug(String.format("%s matches %s == %s", pattern.pattern(), name, result));
-        return result;
+
+        if (pattern != null) {
+            final String name = principal.getName();
+            final boolean result = pattern.matcher(name).matches();
+            logger.debug(String.format("%s matches %s == %s", pattern.pattern(), name, result));
+            return result;
+        }
+        return true;
     }
 }
