@@ -2,13 +2,13 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.mock.MockService;
-import org.apereo.cas.ticket.registry.JpaTicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.registry.JpaTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,7 +37,7 @@ public class SessionMonitorJpaTests {
     @Before
     public void setUp() {
         final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
+                ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
         this.jpaRegistry = ctx.getBean("jpaTicketRegistry", TicketRegistry.class);
         this.monitor = new SessionMonitor();
     }
@@ -54,7 +54,9 @@ public class SessionMonitorJpaTests {
         assertEquals(StatusCode.OK, status.getCode());
     }
 
-    private void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
+    private static void addTicketsToRegistry(final TicketRegistry registry,
+                                             final int tgtCount,
+                                             final int stCount) {
         TicketGrantingTicketImpl ticket = null;
         for (int i = 0; i < tgtCount; i++) {
             ticket = new TicketGrantingTicketImpl(
@@ -65,14 +67,14 @@ public class SessionMonitorJpaTests {
         }
 
         if (ticket != null) {
-          for (int i = 0; i < stCount; i++) {
-              registry.addTicket(ticket.grantServiceTicket(
-                      GENERATOR.getNewTicketId("ST"),
-                      new MockService("junit"),
-                      TEST_EXP_POLICY,
-                      null,
-                      true));
-          }
+            for (int i = 0; i < stCount; i++) {
+                registry.addTicket(ticket.grantServiceTicket(
+                        GENERATOR.getNewTicketId("ST"),
+                        new MockService("junit"),
+                        TEST_EXP_POLICY,
+                        null,
+                        true));
+            }
         }
     }
 }

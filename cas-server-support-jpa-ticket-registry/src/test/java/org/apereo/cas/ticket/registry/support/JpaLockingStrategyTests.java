@@ -197,7 +197,8 @@ public class JpaLockingStrategyTests {
         return (String) results.get(0).get("unique_id");
     }
 
-    private void testConcurrency(final ExecutorService executor, final Collection<LockingStrategy> locks) throws Exception {
+    private static void testConcurrency(final ExecutorService executor, 
+                                        final Collection<LockingStrategy> locks) throws Exception {
         final List<Locker> lockers = new ArrayList<>(locks.size());
         lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
 

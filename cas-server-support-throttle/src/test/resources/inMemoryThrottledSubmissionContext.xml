@@ -13,7 +13,8 @@
     <util:properties id="casProperties"/>
 
     <bean id="memoryAddressThrottle"
-          class="org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"/>
+          class="org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"
+            p:failureRangeInSeconds="5" p:failureThreshold="10"/>
 
     <bean id="memoryAddressThrottleJobDetail"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
@@ -26,7 +27,8 @@
           p:repeatInterval="1000"/>
 
     <bean id="memoryAddressUserThrottle"
-          class="org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter"/>
+          class="org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter"
+          p:failureRangeInSeconds="5" p:failureThreshold="10"/>
 
     <bean id="memoryAddressUserThrottleJobDetail"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
