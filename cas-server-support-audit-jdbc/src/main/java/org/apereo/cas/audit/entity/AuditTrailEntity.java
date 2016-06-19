@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link AuditTrailEntity} that represents the audit table.
@@ -38,9 +38,9 @@ public class AuditTrailEntity {
 
     @Column(name = "APPLIC_CD")
     private String applicationCode;
-
-    @Column(name = "AUD_DATE", nullable = false)
-    private Date date;
+    
+    @Column(name = "AUD_DATE", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private ZonedDateTime date;
 
     public Long getId() {
         return this.id;
@@ -98,11 +98,11 @@ public class AuditTrailEntity {
         this.applicationCode = applicationCode;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return this.date;
     }
 
-    public void setDate(final Date date) {
+    public void setDate(final ZonedDateTime date) {
         this.date = date;
     }
 }

@@ -44,27 +44,22 @@ public class CasCoreAuditConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
-
+    
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect() {
+    public AuditTrailManagementAspect auditTrailManagementAspect(
+            @Qualifier("centralAuthenticationService")
+            final CentralAuthenticationService centralAuthenticationService, 
+            @Qualifier("auditTrailManager")
+            final AuditTrailManager auditTrailManager) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
-                auditablePrincipalResolver(),
-                ImmutableList.of(slf4jAuditTrailManager()), auditActionResolverMap(),
+                auditablePrincipalResolver(centralAuthenticationService),
+                ImmutableList.of(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
     }
-
-    /**
-     * Audit trail manager audit trail manager.
-     *
-     * @return the audit trail manager
-     */
+    
     @Bean
     public AuditTrailManager slf4jAuditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
@@ -134,9 +129,12 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public PrincipalResolver auditablePrincipalResolver() {
+    public PrincipalResolver auditablePrincipalResolver(
+            @Qualifier("centralAuthenticationService")
+            final CentralAuthenticationService centralAuthenticationService
+    ) {
         final TicketOrCredentialPrincipalResolver r =
-                new TicketOrCredentialPrincipalResolver(this.centralAuthenticationService);
+                new TicketOrCredentialPrincipalResolver(centralAuthenticationService);
         r.setPrincipalIdProvider(principalIdProvider());
         return new AssertionAsReturnValuePrincipalResolver(r);
     }

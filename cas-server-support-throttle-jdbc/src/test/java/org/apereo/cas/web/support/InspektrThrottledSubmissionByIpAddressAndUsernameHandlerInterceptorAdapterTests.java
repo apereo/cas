@@ -16,7 +16,6 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,13 +57,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-       
-    }
-
+    
     @Override
     protected AsyncHandlerInterceptor getThrottle() {
         return throttle;
@@ -87,7 +80,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         getThrottle().preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(), badCredentials(username)));
+            authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(), 
+                    badCredentials(username)));
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;
