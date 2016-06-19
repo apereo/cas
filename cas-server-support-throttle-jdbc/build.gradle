@@ -10,5 +10,7 @@ dependencies {
     compile project(":cas-server-support-throttle")
     testCompile project(path: ":cas-server-support-throttle", configuration: "tests")
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core")
+    testCompile project(path: ":cas-server-core-logout")
 }
 

@@ -1,26 +1,36 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
 import static org.junit.Assert.*;
 
@@ -32,38 +42,31 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {
-        "classpath:/core-context.xml",
-        "classpath:/jpaTestApplicationContext.xml",
-        "classpath:/inspektrThrottledSubmissionContext.xml"
-})
+        "classpath:/jdbc-audit-context.xml",
+}, classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,
+        CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class}
+, initializers = ConfigFileApplicationContextInitializer.class)
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
                 AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier("inspektrIpAddressUsernameThrottle")
-    private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
+    private HandlerInterceptorAdapter throttle;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private DataSource dataSource;
-
     @Override
     @Before
     public void setUp() throws Exception {
-        new JdbcTemplate(dataSource).execute("CREATE TABLE COM_AUDIT_TRAIL ( "
-                + "AUD_USER      VARCHAR(100)  NOT NULL, "
-                + "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, "
-                + "AUD_SERVER_IP VARCHAR(15)    NOT NULL, "
-                + "AUD_RESOURCE  VARCHAR(100)  NOT NULL, "
-                + "AUD_ACTION    VARCHAR(100)  NOT NULL, "
-                + "APPLIC_CD     VARCHAR(5)    NOT NULL, "
-                + "AUD_DATE      TIMESTAMP      NOT NULL)");
+       
     }
 
     @Override
-    protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
+    protected AsyncHandlerInterceptor getThrottle() {
         return throttle;
     }
 
@@ -93,7 +96,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         return null;
     }
 
-    private UsernamePasswordCredential badCredentials(final String username) {
+    private static UsernamePasswordCredential badCredentials(final String username) {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(username);
         credentials.setPassword("badpassword");

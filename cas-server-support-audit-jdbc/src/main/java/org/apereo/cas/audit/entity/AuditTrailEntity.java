@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 /**
  * This is {@link AuditTrailEntity} that represents the audit table.
@@ -14,33 +14,33 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Entity(name="COM_AUDIT_TRAIL")
+@Entity(name = "COM_AUDIT_TRAIL")
 public class AuditTrailEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="AUD_USER")
+    @Column(name = "AUD_USER")
     private String user;
 
-    @Column(name="AUD_CLIENT_IP")
+    @Column(name = "AUD_CLIENT_IP")
     private String clientIp;
 
-    @Column(name="AUD_SERVER_IP")
+    @Column(name = "AUD_SERVER_IP")
     private String serverIp;
 
-    @Column(name="AUD_RESOURCE")
+    @Column(name = "AUD_RESOURCE")
     private String resource;
 
-    @Column(name="AUD_ACTION")
+    @Column(name = "AUD_ACTION")
     private String action;
 
-    @Column(name="APPLIC_CD")
+    @Column(name = "APPLIC_CD")
     private String applicationCode;
 
-    @Column(name="AUD_DATE", nullable=false)
-    private ZonedDateTime date;
+    @Column(name = "AUD_DATE", nullable = false)
+    private Date date;
 
     public Long getId() {
         return this.id;
@@ -98,11 +98,11 @@ public class AuditTrailEntity {
         this.applicationCode = applicationCode;
     }
 
-    public ZonedDateTime getDate() {
+    public Date getDate() {
         return this.date;
     }
 
-    public void setDate(final ZonedDateTime date) {
+    public void setDate(final Date date) {
         this.date = date;
     }
 }

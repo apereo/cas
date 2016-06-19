@@ -8,6 +8,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +89,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
             final String remoteAddress = clientInfo.getClientIpAddress();
-
+            
             final List<Timestamp> failures = this.jdbcTemplate.query(
                     this.sqlQueryAudit,
                     new Object[]{remoteAddress, userToUse, this.authenticationFailureCode,

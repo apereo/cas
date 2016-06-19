@@ -43,7 +43,7 @@ public class CasSupportJdbcAuditConfiguration {
         return Beans.newEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                         Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
-                        "jpaEventRegistryContext",
+                        "jpaInspektrAuditContext",
                         new String[]{"org.apereo.cas.audit.entity"},
                         inspektrAuditTrailDataSource()),
                 casProperties.getAudit().getJdbc());

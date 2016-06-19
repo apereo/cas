@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import static org.junit.Assert.*;
 
@@ -43,10 +44,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     @Test
     public void verifyThrottle() throws Exception {
         final double rate = (double) FAILURE_THRESHOLD / (double) FAILURE_RANGE;
-        getThrottle().setFailureRangeInSeconds(FAILURE_RANGE);
-        getThrottle().setFailureThreshold(FAILURE_THRESHOLD);
-        getThrottle().afterPropertiesSet();
-
+        
         // Ensure that repeated logins BELOW threshold rate are allowed
         // Wait 7% more than threshold period
         int wait = (int) (1000.0 * 1.07 / rate);
@@ -79,5 +77,5 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     protected abstract MockHttpServletResponse loginUnsuccessfully(String username, String fromAddress) throws Exception;
 
-    protected abstract AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle();
+    protected abstract AsyncHandlerInterceptor getThrottle();
 }

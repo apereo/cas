@@ -16,7 +16,7 @@ public abstract class AbstractJpaProperties {
 
     private String driverClass = "org.hsqldb.jdbcDriver";
 
-    private String url;
+    private String url = "jdbc:hsqldb:mem:cas-hsql-database";
 
     private String user = "sa";
 
