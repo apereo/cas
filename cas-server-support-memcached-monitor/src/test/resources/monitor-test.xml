@@ -74,7 +74,7 @@
     </util:list>
     
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />
 
 </beans>

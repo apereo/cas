@@ -93,7 +93,7 @@
     
     <util:map id="serviceThemeResolverSupportedBrowsers" />
     
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />

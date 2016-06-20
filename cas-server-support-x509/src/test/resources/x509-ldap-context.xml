@@ -109,7 +109,7 @@
     <util:list id="authenticationMetadataPopulators" />
     
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     <util:list id="monitorsList" />
     
     <util:map id="uniqueIdGeneratorsMap"/>

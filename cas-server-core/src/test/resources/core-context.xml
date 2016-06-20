@@ -286,7 +286,7 @@
 
     
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />
     <util:list id="validationServiceSelectionStrategies">
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />

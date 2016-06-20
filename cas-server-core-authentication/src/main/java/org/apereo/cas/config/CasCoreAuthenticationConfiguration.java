@@ -78,11 +78,7 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     @Qualifier("authenticationPolicy")
     private AuthenticationPolicy authenticationPolicy;
-
-    @Autowired
-    @Qualifier("principalElectionStrategy")
-    private PrincipalElectionStrategy principalElectionStrategy;
-
+    
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
@@ -220,7 +216,7 @@ public class CasCoreAuthenticationConfiguration {
                                                                           final ServicesManager servicesManager) {
         final DefaultAuthenticationSystemSupport r = new DefaultAuthenticationSystemSupport();
         r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(servicesManager));
-        r.setPrincipalElectionStrategy(principalElectionStrategy);
+        r.setPrincipalElectionStrategy(defaultPrincipalElectionStrategy());
         return r;
     }
 
@@ -233,7 +229,7 @@ public class CasCoreAuthenticationConfiguration {
         return r;
     }
 
-    @Bean
+    @Bean(name={"defaultPrincipalElectionStrategy", "principalElectionStrategy"})
     public PrincipalElectionStrategy defaultPrincipalElectionStrategy() {
         final DefaultPrincipalElectionStrategy s = new DefaultPrincipalElectionStrategy();
         s.setPrincipalFactory(defaultPrincipalFactory());

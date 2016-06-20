@@ -43,6 +43,6 @@
     
     <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <util:list id="serviceFactoryList" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy"/>
+    
 
 </beans>

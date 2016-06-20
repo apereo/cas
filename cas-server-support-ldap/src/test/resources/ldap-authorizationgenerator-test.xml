@@ -24,6 +24,6 @@
     
     
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
 
 </beans>

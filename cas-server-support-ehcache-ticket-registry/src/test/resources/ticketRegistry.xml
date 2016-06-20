@@ -83,7 +83,7 @@
 
     <!-- CAS Context Core -->
     <alias name="defaultPrincipalFactory" alias="principalFactory"/>
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy"/>
+    
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators"/>

@@ -23,7 +23,7 @@
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />

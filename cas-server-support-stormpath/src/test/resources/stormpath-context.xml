@@ -39,5 +39,5 @@
     <util:list id="serviceFactoryList" />
     
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy"/>
+    
 </beans>

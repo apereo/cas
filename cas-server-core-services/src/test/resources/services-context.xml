@@ -250,7 +250,7 @@
     
     
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <util:map id="uniqueIdGeneratorsMap">
         <entry

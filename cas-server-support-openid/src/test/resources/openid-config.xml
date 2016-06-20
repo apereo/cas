@@ -62,7 +62,7 @@
     
     
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     <util:properties id="casProperties" />
 
     <util:list id="inMemoryRegisteredServices">

@@ -54,7 +54,7 @@
     <metrics:health-check-registry id="healthCheckMetrics" />
     
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
     
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />

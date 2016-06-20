@@ -29,7 +29,6 @@
     <alias name="${cookieCipherExecutor}" alias="cookieCipherExecutor" />
     
     <alias name="${authenticationTransactionManager}" alias="authenticationTransactionManager" />
-    <alias name="${principalElectionStrategy}" alias="principalElectionStrategy" />
     <alias name="${auditTrailManager}" alias="auditTrailManager" />
 
 </beans>
