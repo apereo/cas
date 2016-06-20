@@ -402,24 +402,15 @@ public class CasCoreAuthenticationConfiguration {
         return t;
     }
 
-    /**
-     * Stub attribute repository person attribute dao.
-     *
-     * @param factoryBean the factory bean
-     * @return the person attribute dao
-     */
+
+    @ConditionalOnMissingBean(name="attributeRepository")
     @Bean(name={"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
                                                        final FactoryBean<Properties> factoryBean) {
 
         return Beans.newAttributeRepository(factoryBean);
     }
-
-    /**
-     * Cas attributes to resolve factory bean.
-     *
-     * @return the factory bean
-     */
+    
     @Bean
     public FactoryBean<Properties> casAttributesToResolve() {
         final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();

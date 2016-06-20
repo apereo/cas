@@ -20,16 +20,8 @@
     </bean>
     <context:property-placeholder properties-ref="casProperties"/>
     <util:properties id="casProperties"/>
-
-    <context:component-scan base-package="org.apereo.cas" />
-    <context:annotation-config/>
-
-    <bean id="ticketRegistry" class="org.apereo.cas.ticket.registry.InfinispanTicketRegistry" />
-
-
+        
     <!-- CAS Context Core -->
-    
-    
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     
     <util:map id="authenticationHandlersResolvers"/>

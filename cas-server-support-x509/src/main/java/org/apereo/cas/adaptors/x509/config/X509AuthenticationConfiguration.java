@@ -54,11 +54,7 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
-    @Autowired
-    @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
-    
+
     @Autowired(required = false)
     @Qualifier("poolingLdaptiveResourceCRLConnectionConfig")
     private ConnectionConfig poolingLdaptiveResourceCRLConnectionConfig;
@@ -110,7 +106,7 @@ public class X509AuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("ldaptiveResourceCRLConnectionConfig")
     private ConnectionConfig ldaptiveResourceCRLConnectionConfig;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -122,10 +118,10 @@ public class X509AuthenticationConfiguration {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-    
+
     @Bean
     public RevocationPolicy allowRevocationPolicy() {
         return new AllowRevocationPolicy();
@@ -225,9 +221,11 @@ public class X509AuthenticationConfiguration {
         return a;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SubjectPrincipalResolver() {
+    public PrincipalResolver x509SubjectPrincipalResolver(@Qualifier("attributeRepository")
+                                                          final IPersonAttributeDao attributeRepository) {
         final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver();
         r.setDescriptor(casProperties.getAuthn().getX509().getPrincipalDescriptor());
         r.setAttributeRepository(attributeRepository);
@@ -237,9 +235,11 @@ public class X509AuthenticationConfiguration {
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SubjectDNPrincipalResolver() {
+    public PrincipalResolver x509SubjectDNPrincipalResolver(@Qualifier("attributeRepository")
+                                                            final IPersonAttributeDao attributeRepository) {
         final X509SubjectDNPrincipalResolver r = new X509SubjectDNPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
@@ -248,9 +248,13 @@ public class X509AuthenticationConfiguration {
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
+    public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver(
+            @Qualifier("attributeRepository")
+            final IPersonAttributeDao attributeRepository
+    ) {
         final X509SubjectAlternativeNameUPNPrincipalResolver r =
                 new X509SubjectAlternativeNameUPNPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
@@ -260,9 +264,12 @@ public class X509AuthenticationConfiguration {
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SerialNumberPrincipalResolver() {
+    public PrincipalResolver x509SerialNumberPrincipalResolver(
+            @Qualifier("attributeRepository")
+            final IPersonAttributeDao attributeRepository) {
         final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
@@ -275,7 +282,7 @@ public class X509AuthenticationConfiguration {
     public PrincipalFactory x509PrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {

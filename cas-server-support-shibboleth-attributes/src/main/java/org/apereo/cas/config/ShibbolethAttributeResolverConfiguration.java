@@ -61,7 +61,7 @@ public class ShibbolethAttributeResolverConfiguration {
         );
     }
     
-    @Bean
+    @Bean(name={"shibbolethPersonAttributeDao", "attributeRepository"})
     public IPersonAttributeDao shibbolethPersonAttributeDao() {
         final ShibbolethPersonAttributeDao d = new ShibbolethPersonAttributeDao();
         d.setAttributeResolver(attributeResolver());

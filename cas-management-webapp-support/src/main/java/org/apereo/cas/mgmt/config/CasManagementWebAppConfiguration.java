@@ -120,23 +120,14 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles()));
     }
 
-    /**
-     * Stub attribute repository person attribute dao.
-     *
-     * @param factoryBean the factory bean
-     * @return the person attribute dao
-     */
+    @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
                                                        final FactoryBean<Properties> factoryBean) {
         return Beans.newAttributeRepository(factoryBean);
     }
 
-    /**
-     * Cas attributes to resolve factory bean.
-     *
-     * @return the factory bean
-     */
+
     @Bean
     public FactoryBean<Properties> casAttributesToResolve() {
         final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
@@ -151,11 +142,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return client;
     }
 
-    /**
-     * Config config.
-     *
-     * @return the config
-     */
     @Bean
     public Config config() {
         final Config cfg = new Config(getDefaultServiceUrl(), casClient());
@@ -163,11 +149,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return cfg;
     }
 
-    /**
-     * Root controller controller.
-     *
-     * @return the controller
-     */
     @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {
@@ -208,61 +189,31 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return interceptor;
     }
 
-    /**
-     * Save service resource resolver parameters as string resource resolver.
-     *
-     * @return the parameters as string resource resolver
-     */
     @Bean
     public ParametersAsStringResourceResolver saveServiceResourceResolver() {
         return new ParametersAsStringResourceResolver();
     }
 
-    /**
-     * Delete service resource resolver service management resource resolver.
-     *
-     * @return the service management resource resolver
-     */
     @Bean
     public ServiceManagementResourceResolver deleteServiceResourceResolver() {
         return new ServiceManagementResourceResolver();
     }
 
-    /**
-     * Save service action resolver default audit action resolver.
-     *
-     * @return the default audit action resolver
-     */
     @Bean
     public DefaultAuditActionResolver saveServiceActionResolver() {
         return new DefaultAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
-    /**
-     * Delete service action resolver object creation audit action resolver.
-     *
-     * @return the object creation audit action resolver
-     */
     @Bean
     public ObjectCreationAuditActionResolver deleteServiceActionResolver() {
         return new ObjectCreationAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
-    /**
-     * Auditable principal resolver pac 4 j auditable principal resolver.
-     *
-     * @return the pac 4 j auditable principal resolver
-     */
     @Bean
     public Pac4jAuditablePrincipalResolver auditablePrincipalResolver() {
         return new Pac4jAuditablePrincipalResolver();
     }
 
-    /**
-     * Audit trail management aspect audit trail management aspect.
-     *
-     * @return the audit trail management aspect
-     */
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
@@ -271,22 +222,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 auditResourceResolverMap());
     }
 
-    /**
-     * Audit trail management.
-     *
-     * @return the audit trail management
-     */
     @Bean
     public AuditTrailManager auditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 
-
-    /**
-     * User properties properties.
-     *
-     * @return the properties
-     */
     @Bean
     public Properties userProperties() {
         try {
@@ -298,22 +238,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         }
     }
 
-    /**
-     * Authorization generator authorization generator.
-     *
-     * @return the authorization generator
-     */
     @ConditionalOnMissingBean(name = "authorizationGenerator")
     @Bean
     public AuthorizationGenerator authorizationGenerator() {
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
 
-    /**
-     * Locale resolver cookie locale resolver.
-     *
-     * @return the cookie locale resolver
-     */
     @Bean
     public CookieLocaleResolver localeResolver() {
         final CookieLocaleResolver resolver = new CookieLocaleResolver();
@@ -321,11 +251,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return resolver;
     }
 
-    /**
-     * Audit resource resolver map map.
-     *
-     * @return the map
-     */
     @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
@@ -334,11 +259,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return map;
     }
 
-    /**
-     * Audit action resolver map map.
-     *
-     * @return the map
-     */
     @Bean
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
@@ -353,21 +273,11 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**").excludePathPatterns("/callback*", "/logout*", "/authorizationFailure");
     }
 
-    /**
-     * Simple controller handler adapter simple controller handler adapter.
-     *
-     * @return the simple controller handler adapter
-     */
     @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-
-    /**
-     * Place holder configurer ..
-     *
-     * @return the property sources placeholder configurer
-     */
+    
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
