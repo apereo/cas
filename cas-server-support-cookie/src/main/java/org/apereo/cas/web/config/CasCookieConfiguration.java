@@ -7,6 +7,7 @@ import org.apereo.cas.web.WarningCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieValueManager;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
+import org.apereo.cas.web.support.NoOpCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,10 +36,13 @@ public class CasCookieConfiguration {
     }
 
     @Autowired
-    @Bean
+    @Bean(name={"defaultCookieValueManager", "cookieValueManager"})
     public CookieValueManager defaultCookieValueManager(@Qualifier("cookieCipherExecutor")
                                                         final CipherExecutor cookieCipherExecutor) {
-        return new DefaultCasCookieValueManager(cookieCipherExecutor);
+        if (casProperties.getTgc().isCipherEnabled()) {
+            return new DefaultCasCookieValueManager(cookieCipherExecutor);
+        }
+        return new NoOpCookieValueManager();
     }
 
     @Autowired

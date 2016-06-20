@@ -15,6 +15,8 @@ public class TicketGrantingCookieProperties extends AbstractCookieProperties {
 
     private String signingKey = "";
     
+    private boolean cipherEnabled = true;
+    
     public TicketGrantingCookieProperties() {
         super.setName("TGC");
     }
@@ -41,5 +43,13 @@ public class TicketGrantingCookieProperties extends AbstractCookieProperties {
 
     public void setRememberMeMaxAge(final int rememberMeMaxAge) {
         this.rememberMeMaxAge = rememberMeMaxAge;
+    }
+
+    public boolean isCipherEnabled() {
+        return cipherEnabled;
+    }
+
+    public void setCipherEnabled(final boolean cipherEnabled) {
+        this.cipherEnabled = cipherEnabled;
     }
 }

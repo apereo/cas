@@ -25,7 +25,6 @@
     <alias name="${authenticationThrottle}" alias="authenticationThrottle" />
     <alias name="${restAuthenticationThrottle}" alias="restAuthenticationThrottle" />
     
-    <alias name="${cookieValueManager}" alias="cookieValueManager" />
     <alias name="${cookieCipherExecutor}" alias="cookieCipherExecutor" />
     
     <alias name="${authenticationTransactionManager}" alias="authenticationTransactionManager" />

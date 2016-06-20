@@ -142,9 +142,7 @@ authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
 authenticationThrottle=neverThrottle
 restAuthenticationThrottle=neverThrottle
 cookieCipherExecutor=tgcCipherExecutor
-cookieValueManager=defaultCookieValueManager
 authenticationTransactionManager=defaultAuthenticationTransactionManager
-principalElectionStrategy=defaultPrincipalElectionStrategy
 auditTrailManager=slf4jAuditTrailManager
 
 ##
@@ -646,6 +644,7 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.tgc.encryptionKey=
 # cas.tgc.secure=true
 # cas.tgc.rememberMeMaxAge=1209600
+# cas.tgc.cipherEnabled=true
 
 ##
 # Ldap Authorization Properties
