@@ -11,7 +11,7 @@ import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
-import org.apereo.cas.configuration.model.core.rest.RegisteredServiceRestProperties;
+import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.core.slo.SloProperties;
 import org.apereo.cas.configuration.model.core.sso.SsoProperties;
@@ -81,8 +81,8 @@ public class CasConfigurationProperties {
     private MonitorProperties monitor = new MonitorProperties();
 
     @NestedConfigurationProperty
-    private RegisteredServiceRestProperties restServices = new RegisteredServiceRestProperties();
-
+    private RestProperties rest = new RestProperties();
+    
     @NestedConfigurationProperty
     private ServerProperties server = new ServerProperties();
 
@@ -148,8 +148,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private ThemeProperties theme = new ThemeProperties();
-
-
+    
     @NestedConfigurationProperty
     private LocaleProperties locale = new LocaleProperties();
 
@@ -189,6 +188,14 @@ public class CasConfigurationProperties {
 
     public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
         this.principalTransformation = principalTransformation;
+    }
+
+    public RestProperties getRest() {
+        return rest;
+    }
+
+    public void setRest(final RestProperties rest) {
+        this.rest = rest;
     }
 
     public EventsProperties getEvents() {
@@ -231,13 +238,6 @@ public class CasConfigurationProperties {
         this.monitor = monitor;
     }
 
-    public RegisteredServiceRestProperties getRestServices() {
-        return restServices;
-    }
-
-    public void setRestServices(final RegisteredServiceRestProperties restServices) {
-        this.restServices = restServices;
-    }
 
     public ServerProperties getServer() {
         return server;
@@ -446,5 +446,4 @@ public class CasConfigurationProperties {
     public void setAuthn(final AuthenticationProperties authn) {
         this.authn = authn;
     }
-
 }

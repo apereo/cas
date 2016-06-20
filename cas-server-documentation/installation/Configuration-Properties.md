@@ -137,7 +137,6 @@ primaryPrincipalResolver=personDirectoryPrincipalResolver
 grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 authenticationPolicy=anyAuthenticationPolicy
 authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
-restAuthenticationThrottle=neverThrottle
 
 ##
 # Server Properties -> Http
@@ -1230,8 +1229,9 @@ restAuthenticationThrottle=neverThrottle
 ##
 # Registered Service Rest Properties
 #
-# cas.restServices.attributeName=
-# cas.restServices.attributeValue=
+# cas.rest.attributeName=
+# cas.rest.attributeValue=
+# cas.rest.throttler=neverThrottle
 
 ##
 # Slo Properties

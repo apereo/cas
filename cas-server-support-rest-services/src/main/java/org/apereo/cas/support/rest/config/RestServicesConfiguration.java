@@ -36,8 +36,8 @@ public class RestServicesConfiguration {
         final RegisteredServiceResource r = new RegisteredServiceResource();
         r.setCentralAuthenticationService(centralAuthenticationService);
         r.setServicesManager(servicesManager);
-        r.setAttributeName(casProperties.getRestServices().getAttributeName());
-        r.setAttributeValue(casProperties.getRestServices().getAttributeValue());
+        r.setAttributeName(casProperties.getRest().getAttributeName());
+        r.setAttributeValue(casProperties.getRest().getAttributeValue());
         return r;
     }
 }

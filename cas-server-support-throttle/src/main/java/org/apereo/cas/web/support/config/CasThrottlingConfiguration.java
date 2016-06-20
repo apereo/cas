@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorA
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
-import org.apereo.cas.web.support.NeverThrottledSubmissionHandlerInterceptorAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,6 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link CasThrottlingConfiguration}.
@@ -59,7 +61,14 @@ public class CasThrottlingConfiguration {
 
     @Bean
     public HandlerInterceptorAdapter neverThrottle() {
-        return new NeverThrottledSubmissionHandlerInterceptorAdapter();
+        return new HandlerInterceptorAdapter() {
+            @Override
+            public boolean preHandle(final HttpServletRequest request,
+                                     final HttpServletResponse response,
+                                     final Object handler) throws Exception {
+                return true;
+            }
+        };
     }
 
     private AbstractThrottledSubmissionHandlerInterceptorAdapter
