@@ -31,11 +31,7 @@ import java.util.List;
 @Configuration("casCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreConfiguration {
-
-    @Autowired
-    @Qualifier("defaultPrincipalFactory")
-    private PrincipalFactory principalFactory;
-
+    
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -73,7 +69,9 @@ public class CasCoreConfiguration {
     @Autowired
     @Bean
     public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
-                                                                     final List validationServiceSelectionStrategies) {
+                                                                     final List validationServiceSelectionStrategies,
+                                                                     @Qualifier("principalFactory")
+                                                                     final PrincipalFactory principalFactory) {
         final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
         impl.setTicketRegistry(this.ticketRegistry);
         impl.setServicesManager(this.servicesManager);
@@ -81,7 +79,7 @@ public class CasCoreConfiguration {
         impl.setTicketFactory(this.ticketFactory);
         impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
         impl.setServiceContextAuthenticationPolicyFactory(this.serviceContextAuthenticationPolicyFactory);
-        impl.setPrincipalFactory(this.principalFactory);
+        impl.setPrincipalFactory(principalFactory);
         return impl;
     }
 }

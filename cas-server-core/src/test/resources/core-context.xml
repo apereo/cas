@@ -284,7 +284,7 @@
     <bean id="persistentIdGenerator" class="org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
           c:salt="casrox"  />
 
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />

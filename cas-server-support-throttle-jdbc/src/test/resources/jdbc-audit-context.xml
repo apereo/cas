@@ -15,7 +15,7 @@
     <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true" />
     <alias name="jdbcAuditTrailManager" alias="auditTrailManager" />
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>

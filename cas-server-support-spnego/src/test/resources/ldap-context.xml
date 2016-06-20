@@ -124,7 +124,7 @@
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     

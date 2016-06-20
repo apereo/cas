@@ -20,7 +20,7 @@
     <context:component-scan base-package="org.apereo.cas" />
 
     
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
@@ -37,5 +37,5 @@
           p:nodes-ref="nodesSet"
           p:timeout="${svcreg.couchbase.timeout:10}"
           p:password="${svcreg.couchbase.password:}"
-          p:bucket="${svcreg.couchbase.bucket:default}" />
+          p:bucketName="${svcreg.couchbase.bucket:default}" />
 </beans>

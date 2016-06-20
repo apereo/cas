@@ -52,7 +52,7 @@
     <util:list id="monitorsList" />
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     
