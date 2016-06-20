@@ -118,7 +118,7 @@
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
     </util:list>
     <util:list id="serviceFactoryList" />
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+   
     
     
     

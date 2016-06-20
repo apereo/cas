@@ -109,10 +109,15 @@ spring.aop.proxy-target-class=true
 ##
 # CAS Authentication Attributes
 #
-cas.attrs.resolve.uid=uid
-cas.attrs.resolve.displayName=displayName
-cas.attrs.resolve.cn=commonName
-cas.attrs.resolve.affiliation=groupMembership
+# cas.authn.attributes.uid=uid
+# cas.authn.attributes.displayName=displayName
+# cas.authn.attributes.cn=commonName
+# cas.authn.attributes.affiliation=groupMembership
+
+##
+# CAS Authentication Policy
+#
+# cas.authn.requiredHandlerAuthenticationPolicyEnabled=false
 
 ##
 # CAS Groovy Shell Console

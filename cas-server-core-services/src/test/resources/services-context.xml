@@ -37,9 +37,7 @@
     <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
     
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
     
-
     <util:list id="serviceFactoryList" value-type="org.apereo.cas.authentication.principal.ServiceFactory">
         <ref bean="webApplicationServiceFactory"/>
     </util:list>

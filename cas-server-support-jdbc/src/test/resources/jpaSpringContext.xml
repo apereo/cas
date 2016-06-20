@@ -32,7 +32,7 @@
   <util:list id="monitorsList" />
   <util:map id="uniqueIdGeneratorsMap"/>
   <util:list id="serviceFactoryList" />
-  <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+ 
   
 
 </beans>

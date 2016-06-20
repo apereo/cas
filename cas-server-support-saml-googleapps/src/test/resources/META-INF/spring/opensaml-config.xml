@@ -88,7 +88,7 @@
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
 
     <util:list id="serviceFactoryList" />
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+   
     
     
     <util:map id="serviceThemeResolverSupportedBrowsers" />

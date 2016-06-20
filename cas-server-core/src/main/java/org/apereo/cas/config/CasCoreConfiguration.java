@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CentralAuthenticationServiceImpl;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
+import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
@@ -33,6 +34,9 @@ import java.util.List;
 public class CasCoreConfiguration {
     
     @Autowired
+    private CasConfigurationProperties casProperties;
+    
+    @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
@@ -47,11 +51,14 @@ public class CasCoreConfiguration {
     @Autowired
     @Qualifier("defaultTicketFactory")
     private TicketFactory ticketFactory;
-
-    @Autowired
-    @Qualifier("authenticationPolicyFactory")
-    private ContextualAuthenticationPolicyFactory serviceContextAuthenticationPolicyFactory =
-            new AcceptAnyAuthenticationPolicyFactory();
+        
+    @Bean(name={"authenticationPolicyFactory", "defaultAuthenticationPolicyFactory"})
+    public ContextualAuthenticationPolicyFactory authenticationPolicyFactory() {
+        if (casProperties.getAuthn().isRequiredHandlerAuthenticationPolicyEnabled()) {
+            return new RequiredHandlerAuthenticationPolicyFactory();
+        }
+        return new AcceptAnyAuthenticationPolicyFactory();
+    }
     
     @Bean
     public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
@@ -78,7 +85,7 @@ public class CasCoreConfiguration {
         impl.setLogoutManager(this.logoutManager);
         impl.setTicketFactory(this.ticketFactory);
         impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
-        impl.setServiceContextAuthenticationPolicyFactory(this.serviceContextAuthenticationPolicyFactory);
+        impl.setServiceContextAuthenticationPolicyFactory(authenticationPolicyFactory());
         impl.setPrincipalFactory(principalFactory);
         return impl;
     }

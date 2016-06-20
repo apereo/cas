@@ -17,6 +17,5 @@
     
     <alias name="${grantingTicketExpirationPolicy}" alias="grantingTicketExpirationPolicy" />
     <alias name="${authenticationPolicy}" alias="authenticationPolicy" />
-    <alias name="${authenticationPolicyFactory}" alias="authenticationPolicyFactory" />
 
 </beans>
