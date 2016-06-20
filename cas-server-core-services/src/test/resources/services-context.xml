@@ -247,10 +247,6 @@
         </bean>
 
     </util:list>
-    
-    
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <util:map id="uniqueIdGeneratorsMap">
         <entry

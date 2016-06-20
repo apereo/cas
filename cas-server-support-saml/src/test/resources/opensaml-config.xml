@@ -53,7 +53,7 @@
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
     
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    
     
     
     <util:map id="uniqueIdGeneratorsMap"/>
@@ -67,7 +67,7 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
-    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />
+    
     <bean class="org.thymeleaf.spring4.SpringTemplateEngine" />
     <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties" />
 </beans>

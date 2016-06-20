@@ -73,8 +73,8 @@
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
     </util:list>
     
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     
-    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />
+    
+    
 
 </beans>

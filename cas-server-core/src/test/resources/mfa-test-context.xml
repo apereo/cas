@@ -49,7 +49,6 @@
         <entry key="eduPersonAffiliation" value="developer"/>
         <entry key="groupMembership" value="adopters"/>
     </util:map>
-w
 
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
 
@@ -127,10 +126,9 @@ w
             </map>
         </constructor-arg>
     </bean>
-    <alias name="defaultPrincipalFactory" alias="principalFactory"/>
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager"/>
+   
     
-    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor"/>
+    
     <util:list id="validationServiceSelectionStrategies">
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy"/>
     </util:list>

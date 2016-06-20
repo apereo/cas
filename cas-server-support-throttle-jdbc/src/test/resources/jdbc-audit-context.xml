@@ -16,7 +16,7 @@
     <alias name="jdbcAuditTrailManager" alias="auditTrailManager" />
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    
     
     <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     
@@ -39,7 +39,7 @@
     </bean>
     <util:list id="serviceFactoryList"/>
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
-    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor"/>
+    
 
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">

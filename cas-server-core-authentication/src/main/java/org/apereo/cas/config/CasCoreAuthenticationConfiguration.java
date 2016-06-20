@@ -220,7 +220,7 @@ public class CasCoreAuthenticationConfiguration {
         return r;
     }
 
-    @Bean
+    @Bean(name={"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
     public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("servicesManager")
                                                                                     final ServicesManager servicesManager) {
         final DefaultAuthenticationTransactionManager r =
@@ -264,8 +264,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public RegisteredServiceAuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
             @Qualifier("servicesManager")
-            final ServicesManager servicesManager
-    ) {
+            final ServicesManager servicesManager) {
         final RegisteredServiceAuthenticationHandlerResolver r =
                 new RegisteredServiceAuthenticationHandlerResolver();
         r.setServicesManager(servicesManager);

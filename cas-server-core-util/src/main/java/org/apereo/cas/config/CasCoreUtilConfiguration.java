@@ -6,9 +6,7 @@ import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowCipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
-import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
-import org.apereo.cas.util.TGCCipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +61,7 @@ public class CasCoreUtilConfiguration {
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
         return c;
     }
-    
+
     @Bean
     public HttpClient noRedirectHttpClient() throws Exception {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c =
@@ -89,20 +87,7 @@ public class CasCoreUtilConfiguration {
     public ApplicationContextAware applicationContextProvider() {
         return new ApplicationContextProvider();
     }
-
-    @Bean
-    public CipherExecutor noOpCipherExecutor() {
-        return new NoOpCipherExecutor();
-    }
-
-
-    @Bean
-    public CipherExecutor tgcCipherExecutor() {
-        return new TGCCipherExecutor(
-                casProperties.getTgc().getEncryptionKey(),
-                casProperties.getTgc().getSigningKey());
-    }
-
+    
     @Bean
     public static MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();

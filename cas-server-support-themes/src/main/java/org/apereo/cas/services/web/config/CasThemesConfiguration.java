@@ -127,7 +127,7 @@ public class CasThemesConfiguration {
         return r;
     }
 
-    @Bean
+    @Bean(name = {"serviceThemeResolver", "themeResolver"})
     public ThemeResolver serviceThemeResolver() {
         final ServiceThemeResolver resolver = new ServiceThemeResolver();
         resolver.setDefaultThemeName(casProperties.getTheme().getDefaultThemeName());

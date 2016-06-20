@@ -47,13 +47,9 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 
 ### Disable Encryption
 
-If you wish to turn off cookie encryption, adjust your configuration to be the following:
+If you wish to turn off cookie encryption, see the relevant list of CAS properties
+and [review this guide](Configuration-Properties.html).
 
-In `application.properties`:
-
-```properties
-cookieCipherExecutor=noOpCipherExecutor
-```
 
 ## Cookie Generation for Renewed Authentications
 

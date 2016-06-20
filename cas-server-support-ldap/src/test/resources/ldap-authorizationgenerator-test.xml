@@ -23,7 +23,7 @@
           p:searchFilter="${ldap.user.searchFilter}"/>
     
     
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    
     
 
 </beans>

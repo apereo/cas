@@ -49,6 +49,6 @@
         </property>
     </bean>
 
-    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor"/>
+    
   
 </beans>

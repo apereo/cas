@@ -50,7 +50,7 @@
     
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
     
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    
     
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService"

@@ -94,7 +94,7 @@
     <util:map id="serviceThemeResolverSupportedBrowsers" />
     
     
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
@@ -111,6 +111,5 @@
               p:id="100" p:name="Test" p:description="Another Test Service"
               p:serviceId="^.+" p:evaluationOrder="100" />
     </util:list>
-    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
 
 </beans>

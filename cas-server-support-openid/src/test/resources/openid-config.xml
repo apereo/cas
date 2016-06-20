@@ -61,7 +61,7 @@
     <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     
     
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    
     
     <util:properties id="casProperties" />
 
@@ -91,6 +91,6 @@
         <entry key=".*Safari.*Pre.*" value="safari"/>
         <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
     </util:map>
-    <alias name="tgcCipherExecutor" alias="cookieCipherExecutor" />
+    
 
 </beans>

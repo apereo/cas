@@ -15,8 +15,7 @@
     <alias name="${primaryAuthenticationHandler}" alias="primaryAuthenticationHandler" />
     <alias name="${primaryPrincipalResolver}" alias="primaryPrincipalResolver" />
     <alias name="${attributeRepository}" alias="attributeRepository" />
-    <alias name="${themeResolver}" alias="themeResolver" />
-    
+        
     <alias name="${ticketCipherExecutor}" alias="ticketCipherExecutor" />
     
     <alias name="${grantingTicketExpirationPolicy}" alias="grantingTicketExpirationPolicy" />
@@ -24,10 +23,6 @@
     <alias name="${authenticationPolicyFactory}" alias="authenticationPolicyFactory" />
     <alias name="${authenticationThrottle}" alias="authenticationThrottle" />
     <alias name="${restAuthenticationThrottle}" alias="restAuthenticationThrottle" />
-    
-    <alias name="${cookieCipherExecutor}" alias="cookieCipherExecutor" />
-    
-    <alias name="${authenticationTransactionManager}" alias="authenticationTransactionManager" />
     <alias name="${auditTrailManager}" alias="auditTrailManager" />
 
 </beans>
