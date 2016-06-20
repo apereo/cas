@@ -18,7 +18,7 @@
     
     
     
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
+    
     
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />

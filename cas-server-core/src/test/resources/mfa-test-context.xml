@@ -40,16 +40,7 @@
     <util:list id="authenticationMetadataPopulators">
         <ref bean="successfulHandlerMetaDataPopulator"/>
     </util:list>
-
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"
-          p:backingMap-ref="attrRepoBackingMap"/>
-
-    <util:map id="attrRepoBackingMap">
-        <entry key="uid" value="uid"/>
-        <entry key="eduPersonAffiliation" value="developer"/>
-        <entry key="groupMembership" value="adopters"/>
-    </util:map>
-
+    
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>

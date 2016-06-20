@@ -24,7 +24,6 @@
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     

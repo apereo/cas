@@ -12,7 +12,6 @@ import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.NoOpCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

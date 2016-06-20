@@ -14,7 +14,7 @@
         <property name="scopes">
             <map>
                 <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope"/>
                 </entry>
             </map>
         </property>
@@ -30,22 +30,12 @@
         <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
     </util:map>
     <util:list id="authenticationMetadataPopulators">
-        <ref bean="cacheCredentialsMetaDataPopulator" />
+        <ref bean="cacheCredentialsMetaDataPopulator"/>
     </util:list>
 
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"
-          p:backingMap-ref="attrRepoBackingMap"/>
 
     <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
-
-    <util:map id="attrRepoBackingMap">
-        <entry key="uid" value="uid"/>
-        <entry key="eduPersonAffiliation" value="developer"/>
-        <entry key="groupMembership" value="adopters"/>
-    </util:map>
-
-
-
+    
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
 
@@ -56,17 +46,14 @@
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
 
-
     <util:list id="serviceFactoryList" value-type="org.apereo.cas.authentication.principal.ServiceFactory">
-        <ref bean="webApplicationServiceFactory" />
+        <ref bean="webApplicationServiceFactory"/>
     </util:list>
 
     <util:list id="argumentExtractors">
         <ref bean="defaultArgumentExtractor"/>
     </util:list>
 
-
-    
 
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">
@@ -171,10 +158,11 @@
             <property name="serviceId" value="usernameAttributeProviderService"/>
             <property name="evaluationOrder" value="11"/>
             <property name="usernameAttributeProvider">
-                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider" c:usernameAttribute="cn" />
+                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                      c:usernameAttribute="cn"/>
             </property>
             <property name="attributeReleasePolicy">
-                <bean class="org.apereo.cas.services.ReturnAllAttributeReleasePolicy" />
+                <bean class="org.apereo.cas.services.ReturnAllAttributeReleasePolicy"/>
             </property>
         </bean>
 
@@ -247,7 +235,7 @@
         </bean>
 
     </util:list>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
     <util:map id="uniqueIdGeneratorsMap">
         <entry
                 key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"

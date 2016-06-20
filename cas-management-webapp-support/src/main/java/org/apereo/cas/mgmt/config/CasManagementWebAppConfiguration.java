@@ -126,7 +126,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @param factoryBean the factory bean
      * @return the person attribute dao
      */
-    @Bean
+    @Bean(name={"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
                                                        final FactoryBean<Properties> factoryBean) {
         try {

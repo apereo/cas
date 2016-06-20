@@ -56,7 +56,7 @@
     <util:list id="serviceFactoryList" />
     <util:list id="inMemoryRegisteredServices" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
+    
     
     
     

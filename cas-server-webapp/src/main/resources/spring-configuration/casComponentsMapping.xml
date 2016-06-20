@@ -14,7 +14,6 @@
 
     <alias name="${primaryAuthenticationHandler}" alias="primaryAuthenticationHandler" />
     <alias name="${primaryPrincipalResolver}" alias="primaryPrincipalResolver" />
-    <alias name="${attributeRepository}" alias="attributeRepository" />
         
     <alias name="${ticketCipherExecutor}" alias="ticketCipherExecutor" />
     
