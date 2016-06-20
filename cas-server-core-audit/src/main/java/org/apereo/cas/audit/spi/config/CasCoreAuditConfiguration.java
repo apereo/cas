@@ -21,6 +21,7 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,11 +45,11 @@ public class CasCoreAuditConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect(
             @Qualifier("centralAuthenticationService")
-            final CentralAuthenticationService centralAuthenticationService, 
+            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("auditTrailManager")
             final AuditTrailManager auditTrailManager) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
@@ -59,8 +60,9 @@ public class CasCoreAuditConfiguration {
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
     }
-    
-    @Bean
+
+    @ConditionalOnMissingBean(name = "auditTrailManager")
+    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
     public AuditTrailManager slf4jAuditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(casProperties.getAudit().isUseSingleLine());

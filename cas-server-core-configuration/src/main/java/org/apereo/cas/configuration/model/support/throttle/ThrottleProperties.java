@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+
 /**
  * Configuration properties class for cas.throttle.
  *
@@ -18,21 +20,21 @@ public class ThrottleProperties {
     private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
-
-    private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
-            + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
-
+    
     private Failure failure = new Failure();
-
+    private Jdbc jdbc = new Jdbc();
+    
     private String usernameParameter = DEFAULT_USERNAME_PARAMETER;
 
     private String appcode = DEFAULT_APPLICATION_CODE;
-
-    private String auditQuery = SQL_AUDIT_QUERY;
-
+    
     private int repeatInterval = 20000;
     private int startDelay = 10000;
-    
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
     public Failure getFailure() {
         return failure;
     }
@@ -56,15 +58,7 @@ public class ThrottleProperties {
     public void setAppcode(final String appcode) {
         this.appcode = appcode;
     }
-
-    public String getAuditQuery() {
-        return auditQuery;
-    }
-
-    public void setAuditQuery(final String auditQuery) {
-        this.auditQuery = auditQuery;
-    }
-
+    
     public int getRepeatInterval() {
         return repeatInterval;
     }
@@ -113,5 +107,21 @@ public class ThrottleProperties {
             this.rangeSeconds = rangeSeconds;
         }
     }
+
+    public static class Jdbc extends AbstractJpaProperties {
+        private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
+                + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
+        
+        private String auditQuery = SQL_AUDIT_QUERY;
+
+        public String getAuditQuery() {
+            return auditQuery;
+        }
+
+        public void setAuditQuery(final String auditQuery) {
+            this.auditQuery = auditQuery;
+        }
+    }
+    
     
 }

@@ -217,13 +217,13 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), ImmutableList.of(auditTrailManager()),
+                auditablePrincipalResolver(), ImmutableList.of(slf4jAuditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }
 
-    @Bean
-    public AuditTrailManager auditTrailManager() {
+    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
+    public AuditTrailManager slf4jAuditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 
@@ -277,7 +277,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-    
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();

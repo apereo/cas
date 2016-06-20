@@ -65,10 +65,7 @@
     <util:list id="argumentExtractors">
         <ref bean="defaultArgumentExtractor"/>
     </util:list>
-    <bean id="auditTrailManager"
-          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
-          p:entrySeparator="${cas.audit.singleline.separator:|}"
-          p:useSingleLine="${cas.audit.singleline:false}"/>
+
     <util:list id="validationServiceSelectionStrategies">
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
     </util:list>

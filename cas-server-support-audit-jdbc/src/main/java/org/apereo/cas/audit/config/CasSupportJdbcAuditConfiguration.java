@@ -27,8 +27,8 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    @Bean
+
+    @Bean(name = {"jdbcAuditTrailManager", "auditTrailManager"})
     public JdbcAuditTrailManager jdbcAuditTrailManager() {
         final JdbcAuditTrailManager t =
                 new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());

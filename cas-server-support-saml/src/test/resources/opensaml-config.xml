@@ -6,18 +6,16 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:metrics="http://www.ryantenney.com/schema/metrics"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-                           http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
-                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+                           http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd">
 
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">
             <map>
                 <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope"/>
                 </entry>
             </map>
         </property>
@@ -27,14 +25,14 @@
                                   ignore-unresolvable="false"/>
 
     <util:properties id="casProperties"/>
-    
+
     <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManagerImpl"
-            c:serviceRegistryDao-ref="serviceRegistryDao" />
+          c:serviceRegistryDao-ref="serviceRegistryDao"/>
 
     <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">
             <bean class="org.apereo.cas.services.RegexRegisteredService"
-                    p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
+                  p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description"/>
         </property>
     </bean>
 
@@ -42,32 +40,26 @@
           p:afterInitialization="true"/>
 
     <util:map id="serviceThemeResolverSupportedBrowsers"/>
-    
+
     <util:list id="argumentExtractors">
         <ref bean="defaultArgumentExtractor"/>
     </util:list>
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators" />
-    <util:list id="monitorsList" />
-    <metrics:metric-registry id="metrics" />
-    <metrics:health-check-registry id="healthCheckMetrics" />
-    
-    
-    
-    
-    <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <util:list id="authenticationMetadataPopulators"/>
+    <util:list id="monitorsList"/>
+    <metrics:metric-registry id="metrics"/>
+    <metrics:health-check-registry id="healthCheckMetrics"/>
 
-    <util:list id="serviceFactoryList" />
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+
+    <util:list id="serviceFactoryList"/>
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
     
-    <bean id="auditTrailManager"
-          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
-          p:entrySeparator="${cas.audit.singleline.separator:|}"
-          p:useSingleLine="${cas.audit.singleline:false}"/>
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
-    
-    <bean class="org.thymeleaf.spring4.SpringTemplateEngine" />
-    <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties" />
+
+    <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>
+    <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties"/>
 </beans>

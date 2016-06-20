@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -26,14 +27,11 @@ public class CasJdbcThrottlingConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("auditTrailManager")
-    private AuditTrailManager auditTrailManager;
-
-    @Autowired(required = false)
-    @Qualifier("inspektrAuditTrailDataSource")
-    private DataSource dataSource;
+    
+    @Bean
+    public DataSource inspektrAuditTrailDataSource() {
+        return Beans.newHickariDataSource(casProperties.getAuthn().getThrottle().getJdbc());
+    }
 
     private AbstractThrottledSubmissionHandlerInterceptorAdapter
     configureThrottleHandlerInterceptorAdaptor(final AbstractThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
@@ -43,14 +41,17 @@ public class CasJdbcThrottlingConfiguration {
         return interceptorAdapter;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public HandlerInterceptorAdapter inspektrIpAddressUsernameThrottle() {
+    public HandlerInterceptorAdapter inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager")
+                                                                       final AuditTrailManager auditTrailManager) {
         final InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter bean =
-                new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(this.auditTrailManager, this.dataSource);
+                new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(auditTrailManager,
+                        inspektrAuditTrailDataSource());
         bean.setApplicationCode(casProperties.getAuthn().getThrottle().getAppcode());
         bean.setAuthenticationFailureCode(casProperties.getAuthn().getThrottle().getFailure().getCode());
-        bean.setSqlQueryAudit(casProperties.getAuthn().getThrottle().getAuditQuery());
+        bean.setSqlQueryAudit(casProperties.getAuthn().getThrottle().getJdbc().getAuditQuery());
         return configureThrottleHandlerInterceptorAdaptor(bean);
     }
 

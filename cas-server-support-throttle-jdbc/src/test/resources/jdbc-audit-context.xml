@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     
-    <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true" />
-    <alias name="jdbcAuditTrailManager" alias="auditTrailManager" />
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    
-    
-    
-    
-    
-    <util:list id="authenticationMetadataPopulators" />
-    <util:list id="monitorsList" />
-    
-    <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver" />
+
+    <util:list id="authenticationMetadataPopulators"/>
+    <util:list id="monitorsList"/>
+
+    <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver"/>
     <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
     <util:map id="authenticationHandlersResolvers">
-        <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+        <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver"/>
     </util:map>
     <bean id="primaryAuthenticationHandler"
           class="org.apereo.cas.authentication.AcceptUsersAuthenticationHandler">
@@ -39,13 +32,13 @@
     </bean>
     <util:list id="serviceFactoryList"/>
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
-    
+
 
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">
             <map>
                 <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope"/>
                 </entry>
             </map>
         </property>
@@ -53,7 +46,7 @@
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService"
               p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
+              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001"/>
     </util:list>
 </beans>
 

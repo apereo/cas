@@ -140,7 +140,6 @@ authenticationPolicy=anyAuthenticationPolicy
 authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
 authenticationThrottle=neverThrottle
 restAuthenticationThrottle=neverThrottle
-auditTrailManager=slf4jAuditTrailManager
 
 ##
 # Server Properties -> Http
@@ -612,11 +611,40 @@ auditTrailManager=slf4jAuditTrailManager
 ##
 # Throttle Properties
 #
-# cas.authn.throttle.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
 # cas.authn.throttle.usernameParameter=username
 # cas.authn.throttle.startDelay=10000
 # cas.authn.throttle.repeatInterval=20000
 # cas.authn.throttle.appcode=CAS
+
+##
+# Throttle Jpa Properties -> Pool
+#
+# cas.authn.throttle.jdbc.pool.suspension=false
+# cas.authn.throttle.jdbc.pool.minSize=6
+# cas.authn.throttle.jdbc.pool.maxSize=18
+# cas.authn.throttle.jdbc.pool.maxIdleTime=1000
+# cas.authn.throttle.jdbc.pool.maxWait=2000
+
+##
+# Throttle Jpa Properties -> Jdbc
+#
+# cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
+# cas.authn.throttle.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.throttle.jdbc.isolateInternalQueries=false
+# cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.throttle.jdbc.failFast=true
+# cas.authn.throttle.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.throttle.jdbc.leakThreshold=10
+# cas.authn.throttle.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.throttle.jdbc.batchSize=1
+# cas.authn.throttle.jdbc.user=sa
+# cas.authn.throttle.jdbc.ddlAuto=create-drop
+# cas.authn.throttle.jdbc.maxAgeDays=180
+# cas.authn.throttle.jdbc.password=
+# cas.authn.throttle.jdbc.autocommit=false
+# cas.authn.throttle.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.throttle.jdbc.idleTimeout=5000
 
 ##
 # Locale Properties

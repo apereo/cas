@@ -22,6 +22,5 @@
     <alias name="${authenticationPolicyFactory}" alias="authenticationPolicyFactory" />
     <alias name="${authenticationThrottle}" alias="authenticationThrottle" />
     <alias name="${restAuthenticationThrottle}" alias="restAuthenticationThrottle" />
-    <alias name="${auditTrailManager}" alias="auditTrailManager" />
 
 </beans>

@@ -38,13 +38,7 @@
     
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
-
-
-    <bean id="auditTrailManager"
-          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
-          p:entrySeparator="${cas.audit.singleline.separator:|}"
-          p:useSingleLine="${cas.audit.singleline:false}"/>
-
+    
 
     <util:list id="serviceFactoryList" value-type="org.apereo.cas.authentication.principal.ServiceFactory">
         <ref bean="webApplicationServiceFactory"/>

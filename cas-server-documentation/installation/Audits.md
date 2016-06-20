@@ -45,10 +45,7 @@ SERVER IP ADDRESS: 192.168.200.22
 ## Database Audits
 
 If you intend to use a database
-for auditing functionality, adjust the audit manager mapping 
-in `application.properties` to match the configuration below.
-
-Enable the following module in your configuration overlay:
+for auditing functionality, enable the following module in your configuration:
 
 ```xml
 <dependency>
@@ -58,9 +55,6 @@ Enable the following module in your configuration overlay:
 </dependency>
 ```
 
-```properties
-auditTrailManager=jdbcAuditTrailManager
-```
 
 ### Configuration
 
