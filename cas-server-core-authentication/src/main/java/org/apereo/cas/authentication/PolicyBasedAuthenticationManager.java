@@ -50,7 +50,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
      * Authentication security policy.
      */
     
-    protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy();
+    protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy(false);
 
     /**
      * Instantiates a new Policy based authentication manager.

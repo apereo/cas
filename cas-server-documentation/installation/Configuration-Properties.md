@@ -136,12 +136,9 @@ spring.aop.proxy-target-class=true
 ##
 # CAS Component Aliasing and Selection
 #
-attributeRepository=stubAttributeRepository
 primaryAuthenticationHandler=acceptUsersAuthenticationHandler
 primaryPrincipalResolver=personDirectoryPrincipalResolver
 grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
-authenticationPolicy=anyAuthenticationPolicy
-authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
 
 ##
 # Server Properties -> Http
@@ -461,10 +458,26 @@ authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
 # cas.authn.policy.any.tryAll=false
 
 ##
+# Authentication Policy Properties -> All
+#
+# cas.authn.policy.all.enabled=true
+
+##
+# Authentication Policy Properties -> NotPrevented
+#
+# cas.authn.policy.notPrevented.enabled=true
+
+##
+# Authentication Policy Properties 
+#
+# cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
+
+##
 # Authentication Policy Properties -> Req
 #
 # cas.authn.policy.req.tryAll=false
 # cas.authn.policy.req.handlerName=handlerName
+# cas.authn.policy.req.enabled=true
 
 ##
 # Pac 4j Properties -> Cas

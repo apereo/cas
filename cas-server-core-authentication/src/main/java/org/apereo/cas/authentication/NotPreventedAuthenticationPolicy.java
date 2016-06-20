@@ -10,6 +10,10 @@ package org.apereo.cas.authentication;
  */
 public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 
+    public NotPreventedAuthenticationPolicy() {
+        super(true);
+    }
+
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) {
         final boolean fail = authentication.getFailures().values().stream()

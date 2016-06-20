@@ -34,7 +34,7 @@
 
     
     
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />

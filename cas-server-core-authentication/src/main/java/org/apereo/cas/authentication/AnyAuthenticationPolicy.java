@@ -12,6 +12,21 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
     private boolean tryAll;
 
     /**
+     * Instantiates a new Any authentication policy.
+     */
+    public AnyAuthenticationPolicy() {
+    }
+
+    /**
+     * Instantiates a new Any authentication policy.
+     *
+     * @param tryAll the try all
+     */
+    public AnyAuthenticationPolicy(final boolean tryAll) {
+        this.tryAll = tryAll;
+    }
+
+    /**
      * Sets the flag to try all credentials before the policy is satisfied.
      * This flag is disabled by default such that the policy is satisfied immediately upon the first
      * successfully authenticated credential. Defaults to {@code false}.

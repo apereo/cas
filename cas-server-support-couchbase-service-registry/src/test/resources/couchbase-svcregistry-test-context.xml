@@ -18,10 +18,7 @@
 
     <context:annotation-config/>
     <context:component-scan base-package="org.apereo.cas" />
-
     
-    
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />

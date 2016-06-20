@@ -22,7 +22,7 @@
     <alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    
     
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />

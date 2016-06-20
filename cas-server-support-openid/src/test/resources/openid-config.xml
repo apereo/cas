@@ -45,7 +45,7 @@
     <bean id="serverAssociations" class="org.openid4java.server.InMemoryServerAssociationStore"/>
 
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators"/>
     <util:list id="monitorsList"/>

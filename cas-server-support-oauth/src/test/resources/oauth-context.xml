@@ -25,7 +25,7 @@
     </bean>
     
     <!-- OAuth View -->
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>

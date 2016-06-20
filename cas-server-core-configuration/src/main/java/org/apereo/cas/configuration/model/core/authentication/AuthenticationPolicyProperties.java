@@ -9,9 +9,31 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 public class AuthenticationPolicyProperties {
 
+    private boolean requiredHandlerAuthenticationPolicyEnabled;
+    
     private Any any = new Any();
 
     private Req req = new Req();
+
+    private All all = new All();
+    
+    private NotPrevented notPrevented = new NotPrevented();
+
+    public All getAll() {
+        return all;
+    }
+
+    public void setAll(final All all) {
+        this.all = all;
+    }
+
+    public NotPrevented getNotPrevented() {
+        return notPrevented;
+    }
+
+    public void setNotPrevented(final NotPrevented notPrevented) {
+        this.notPrevented = notPrevented;
+    }
 
     public Any getAny() {
         return any;
@@ -29,9 +51,26 @@ public class AuthenticationPolicyProperties {
         this.req = req;
     }
 
-    /**
-     * Any.
-     */
+    public boolean isRequiredHandlerAuthenticationPolicyEnabled() {
+        return requiredHandlerAuthenticationPolicyEnabled;
+    }
+
+    public void setRequiredHandlerAuthenticationPolicyEnabled(final boolean v) {
+        this.requiredHandlerAuthenticationPolicyEnabled = v;
+    }
+    
+    public static class NotPrevented {
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+    
     public static class Any {
         private boolean tryAll;
 
@@ -44,10 +83,21 @@ public class AuthenticationPolicyProperties {
         }
     }
 
-    /**
-     * Req.
-     */
+    public static class All {
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+    
     public static class Req {
+        private boolean enabled;
+        
         private boolean tryAll;
         private String handlerName = "handlerName";
 
@@ -65,6 +115,14 @@ public class AuthenticationPolicyProperties {
 
         public void setHandlerName(final String handlerName) {
             this.handlerName = handlerName;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }

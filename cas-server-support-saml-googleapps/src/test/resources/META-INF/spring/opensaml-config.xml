@@ -79,7 +79,7 @@
           class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
 
 
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />

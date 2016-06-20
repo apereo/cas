@@ -16,6 +16,5 @@
     <alias name="${primaryPrincipalResolver}" alias="primaryPrincipalResolver" />
     
     <alias name="${grantingTicketExpirationPolicy}" alias="grantingTicketExpirationPolicy" />
-    <alias name="${authenticationPolicy}" alias="authenticationPolicy" />
 
 </beans>

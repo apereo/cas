@@ -37,8 +37,6 @@ public class AuthenticationProperties {
 
     private Map<String, String> attributes = new HashMap();
     
-    private boolean requiredHandlerAuthenticationPolicyEnabled;
-    
     @NestedConfigurationProperty
     private ThrottleProperties throttle = new ThrottleProperties();
     
@@ -334,12 +332,5 @@ public class AuthenticationProperties {
     public void setAttributes(final Map<String, String> attributes) {
         this.attributes = attributes;
     }
-
-    public boolean isRequiredHandlerAuthenticationPolicyEnabled() {
-        return requiredHandlerAuthenticationPolicyEnabled;
-    }
-
-    public void setRequiredHandlerAuthenticationPolicyEnabled(final boolean v) {
-        this.requiredHandlerAuthenticationPolicyEnabled = v;
-    }
+    
 }

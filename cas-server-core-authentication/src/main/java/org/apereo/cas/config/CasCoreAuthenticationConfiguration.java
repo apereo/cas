@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.AnyAuthenticationPolicy;
@@ -48,7 +47,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -60,7 +58,6 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -77,11 +74,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("authenticationPolicy")
-    private AuthenticationPolicy authenticationPolicy;
-    
+        
     @Autowired(required = false)
     @Qualifier("acceptPasswordEncoder")
     private PasswordEncoder acceptPasswordEncoder;
@@ -129,27 +122,28 @@ public class CasCoreAuthenticationConfiguration {
         h.setErrors(casProperties.getAuthn().getExceptions().getExceptions());
         return h;
     }
+    
 
-    @Bean
-    public AuthenticationPolicy requiredHandlerAuthenticationPolicy() {
-        final RequiredHandlerAuthenticationPolicy bean =
-                new RequiredHandlerAuthenticationPolicy(casProperties.getAuthn().getPolicy().getReq().getHandlerName());
-        bean.setTryAll(casProperties.getAuthn().getPolicy().getReq().isTryAll());
-        return bean;
+    @Bean(name={"authenticationPolicy", "defaultAuthenticationPolicy"})
+    public AuthenticationPolicy defaultAuthenticationPolicy() {
+        if (casProperties.getAuthn().getPolicy().getReq().isEnabled()) {
+            final RequiredHandlerAuthenticationPolicy bean =
+                    new RequiredHandlerAuthenticationPolicy(casProperties.getAuthn().getPolicy().getReq().getHandlerName());
+            bean.setTryAll(casProperties.getAuthn().getPolicy().getReq().isTryAll());
+            return bean;
+        }
+        
+        if (casProperties.getAuthn().getPolicy().getAll().isEnabled()) {
+            return new AllAuthenticationPolicy();
+        }
+
+        if (casProperties.getAuthn().getPolicy().getNotPrevented().isEnabled()) {
+            return new NotPreventedAuthenticationPolicy();
+        }
+
+        return new AnyAuthenticationPolicy(casProperties.getAuthn().getPolicy().getAny().isTryAll());
     }
-
-    @Bean
-    public AuthenticationPolicy anyAuthenticationPolicy() {
-        final AnyAuthenticationPolicy bean = new AnyAuthenticationPolicy();
-        bean.setTryAll(casProperties.getAuthn().getPolicy().getAny().isTryAll());
-        return bean;
-    }
-
-    @Bean
-    public ContextualAuthenticationPolicyFactory acceptAnyAuthenticationPolicyFactory() {
-        return new AcceptAnyAuthenticationPolicyFactory();
-    }
-
+    
     @Autowired
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler(@Qualifier("servicesManager")
@@ -187,11 +181,7 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
-    @Bean
-    public AuthenticationPolicy allAuthenticationPolicy() {
-        return new AllAuthenticationPolicy();
-    }
+    
 
     @Autowired
     @RefreshScope
@@ -255,7 +245,7 @@ public class CasCoreAuthenticationConfiguration {
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators);
         p.setHandlerResolverMap(authenticationHandlersResolvers);
         p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver(servicesManager));
-        p.setAuthenticationPolicy(authenticationPolicy);
+        p.setAuthenticationPolicy(defaultAuthenticationPolicy());
         return p;
     }
 

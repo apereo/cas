@@ -48,7 +48,7 @@
     <bean id="jpaLockingStrategy" class="org.apereo.cas.ticket.registry.support.JpaLockingStrategy"/>
 
     <!-- CAS Context Core -->
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators"/>
     <util:list id="monitorsList"/>

@@ -43,7 +43,7 @@
 
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
 
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    
     
 
 

@@ -10,7 +10,7 @@
 
     <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
 
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    
     
 
     <util:list id="authenticationMetadataPopulators"/>

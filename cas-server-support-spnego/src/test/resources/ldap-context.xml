@@ -120,7 +120,7 @@
           class="org.ldaptive.auth.SearchEntryResolver"
             />
 
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />
