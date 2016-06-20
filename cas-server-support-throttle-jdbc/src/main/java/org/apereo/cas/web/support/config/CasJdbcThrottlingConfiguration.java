@@ -42,7 +42,7 @@ public class CasJdbcThrottlingConfiguration {
     }
 
     @Autowired
-    @Bean
+    @Bean(name = {"inspektrIpAddressUsernameThrottle", "authenticationThrottle"})
     @RefreshScope
     public HandlerInterceptorAdapter inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager")
                                                                        final AuditTrailManager auditTrailManager) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     protected String constructKey(final HttpServletRequest request) {
         final String username = request.getParameter(getUsernameParameter());
 
-        if (username == null) {
+        if (StringUtils.isBlank(username)) {
             return request.getRemoteAddr();
         }
 

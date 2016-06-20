@@ -44,20 +44,21 @@ The _inspektr_ components, on the other hand, fully support stateless clusters.
 
 ## IP Address
 
-Uses a memory map to prevent successive failed login attempts from the same IP address. In `cas.propeties`:
+Uses a memory map to prevent successive failed login attempts from the same IP address. 
 
-```properties
-authenticationThrottle=inMemoryIpAddressThrottle
+```xml
+
 ```
 
 ## IP Address and Username
 
 Uses a memory map to prevent successive failed login attempts for 
-a particular username from the same IP address. In `application.properties`:
+a particular username from the same IP address.
 
-```properties
-authenticationThrottle=inMemoryIpAddressUsernameThrottle
+```xml
+
 ```
+
 
 ## Inspektr + JDBC
 
@@ -74,12 +75,6 @@ Enable the following module in your configuration overlay:
     <artifactId>cas-server-support-throttle-jdbc</artifactId>
     <version>${cas.version}</version>
 </dependency>
-```
-
-And then enable the throttling engine: 
-
-```properties
-authenticationThrottle=inspektrIpAddressUsernameThrottle
 ```
 
 For additional instructions on how to configure auditing via Inspektr,

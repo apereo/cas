@@ -14,18 +14,11 @@ public class ThrottleProperties {
     private static final String DEFAULT_APPLICATION_CODE = "CAS";
 
     private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
-
-    private static final int DEFAULT_FAILURE_THRESHOLD = 100;
-
-    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
-
-    private static final String DEFAULT_USERNAME_PARAMETER = "username";
-    
+        
     private Failure failure = new Failure();
     private Jdbc jdbc = new Jdbc();
     
-    private String usernameParameter = DEFAULT_USERNAME_PARAMETER;
-
+    private String usernameParameter;
     private String appcode = DEFAULT_APPLICATION_CODE;
     
     private int repeatInterval = 20000;
@@ -80,8 +73,8 @@ public class ThrottleProperties {
      */
     public static class Failure {
         private String code = DEFAULT_AUTHN_FAILED_ACTION;
-        private int threshold = DEFAULT_FAILURE_THRESHOLD;
-        private int rangeSeconds = DEFAULT_FAILURE_RANGE_IN_SECONDS;
+        private int threshold = -1;
+        private int rangeSeconds = -1;
 
         public String getCode() {
             return code;
