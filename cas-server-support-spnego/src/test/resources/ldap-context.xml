@@ -127,7 +127,7 @@
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <util:list id="validationServiceSelectionStrategies">

@@ -1,7 +1,6 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryState;
 
 /**
  * Monitors the status of a {@link TicketRegistry}

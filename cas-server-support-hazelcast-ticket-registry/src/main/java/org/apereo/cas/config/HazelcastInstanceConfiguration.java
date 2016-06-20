@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -55,7 +56,8 @@ public class HazelcastInstanceConfiguration {
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
 
-    @Bean
+    @ConditionalOnMissingBean(name = "ticketRegistry")
+    @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),

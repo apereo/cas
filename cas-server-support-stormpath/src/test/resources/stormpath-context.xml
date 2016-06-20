@@ -37,7 +37,7 @@
     <util:map id="uniqueIdGeneratorsMap"/>
     <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <util:list id="serviceFactoryList" />
-    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
+    
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy"/>
 </beans>

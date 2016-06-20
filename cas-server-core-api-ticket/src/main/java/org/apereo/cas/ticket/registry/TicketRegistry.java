@@ -14,7 +14,7 @@ import org.apereo.cas.ticket.Ticket;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public interface TicketRegistry extends TicketRegistryState {
+public interface TicketRegistry {
 
     /**
      * Add a ticket to the registry. Ticket storage is based on the ticket id.
@@ -66,5 +66,21 @@ public interface TicketRegistry extends TicketRegistryState {
      * @param ticket the ticket
      */
     void updateTicket(Ticket ticket);
+
+    /**
+     * Computes the number of SSO sessions stored in the ticket registry.
+     *
+     * @return Number of ticket-granting tickets in the registry at time of invocation
+     *         or {@link Integer#MIN_VALUE} if unknown.
+     */
+    long sessionCount();
+    
+    /**
+     * Computes the number of service tickets stored in the ticket registry.
+     *
+     * @return Number of service tickets in the registry at time of invocation
+     *         or {@link Integer#MIN_VALUE} if unknown.
+     */
+    long serviceTicketCount();
 
 }

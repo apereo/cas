@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.Couch
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
+import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -17,6 +18,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 public class TicketRegistryProperties {
 
+    @NestedConfigurationProperty
+    private InfinispanProperties infinispan = new InfinispanProperties();
     
     @NestedConfigurationProperty
     private CouchbaseTicketRegistryProperties couchbase =
@@ -102,6 +105,14 @@ public class TicketRegistryProperties {
 
     public void setMemcached(final MemcachedTicketRegistryProperties memcached) {
         this.memcached = memcached;
+    }
+
+    public InfinispanProperties getInfinispan() {
+        return infinispan;
+    }
+
+    public void setInfinispan(final InfinispanProperties infinispan) {
+        this.infinispan = infinispan;
     }
 
     public static class InMemory {

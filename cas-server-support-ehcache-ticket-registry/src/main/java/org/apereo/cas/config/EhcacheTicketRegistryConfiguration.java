@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -111,7 +112,8 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     @RefreshScope
-    @Bean
+    @ConditionalOnMissingBean(name = "ticketRegistry")
+    @Bean(name = {"ehcacheTicketRegistry", "ticketRegistry"})
     public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache")
                                                 final Cache ehcacheTicketsCache) {
         final EhCacheTicketRegistry r = new EhCacheTicketRegistry(ehcacheTicketsCache);

@@ -154,7 +154,8 @@ public class CasCoreTicketsConfiguration {
     }
 
     @RefreshScope
-    @Bean
+    @ConditionalOnMissingBean(name = "ticketRegistry")
+    @Bean(name = {"defaultTicketRegistry", "ticketRegistry"})
     public TicketRegistry defaultTicketRegistry() {
         final DefaultTicketRegistry r = new DefaultTicketRegistry(
                 casProperties.getTicket().getRegistry().getInMemory().getInitialCapacity(),

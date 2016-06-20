@@ -46,23 +46,8 @@ See the [full list of implementations](http://infinispan.org/cache-store-impleme
 
 ## Distributed Cache
 
-Enable the registry in `application.properties` via:
 
-```properties
-ticketRegistry=infinispanTicketRegistry
-```
-
-The above ticket registry expects a `infinispanTicketsCache` element to be available in the Spring context.
-This cache element may be chosen from one of the above implementations and configured.
-Here is an example:
-
-```xml
-<bean id="infinispanTicketsCache" factory-bean="cacheManager" factory-method="getCache" />
-<bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"
-          c:configurationFile="infinispan.xml"/>
-```
-
-...and a sample `infinispan.xml` configuration file:
+A sample `infinispan.xml` configuration file:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

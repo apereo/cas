@@ -111,7 +111,7 @@
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <util:list id="monitorsList" />
-    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <util:list id="validationServiceSelectionStrategies">

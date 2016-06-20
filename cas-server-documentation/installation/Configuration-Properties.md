@@ -135,7 +135,6 @@ attributeRepository=stubAttributeRepository
 primaryAuthenticationHandler=acceptUsersAuthenticationHandler
 primaryPrincipalResolver=personDirectoryPrincipalResolver
 themeResolver=serviceThemeResolver
-ticketRegistry=defaultTicketRegistry
 ticketCipherExecutor=noOpCipherExecutor
 grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 authenticationPolicy=anyAuthenticationPolicy
@@ -962,6 +961,12 @@ auditTrailManager=slf4jAuditTrailManager
 # cas.ticket.registry.hazelcast.pageSize=500
 # cas.ticket.registry.hazelcast.mapName=tickets
 # cas.ticket.registry.hazelcast.configLocation=
+
+##
+# Infinispan Properties
+#
+# cas.ticket.registry.infinispan.cacheName=
+# cas.ticket.registry.infinispan.configLocation=/infinispan.xml
 
 ##
 # Ticket Registry Properties -> InMemory

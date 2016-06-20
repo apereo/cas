@@ -45,7 +45,7 @@
     <util:list id="authenticationMetadataPopulators"/>
     <util:list id="monitorsList"/>
     <util:list id="inMemoryRegisteredServices" />
-    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
+    
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
 

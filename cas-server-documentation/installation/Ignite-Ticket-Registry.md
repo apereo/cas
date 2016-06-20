@@ -18,13 +18,8 @@ This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 
 
 ## Distributed Cache
-Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage subsystem. 
+Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage subsystem.
 
-Enable the registry in `application.properties` via:
-
-```properties
-ticketRegistry=igniteTicketRegistry
-```
 
 ## TLS Replication
 

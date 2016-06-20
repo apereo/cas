@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * This is a published and supported CAS Server API.
  * </p>
  */
-public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState {
+public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
     

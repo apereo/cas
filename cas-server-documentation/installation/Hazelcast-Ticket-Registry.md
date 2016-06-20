@@ -29,12 +29,6 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-Enable the registry in `application.properties` via:
-
-```properties
-ticketRegistry=hazelcastTicketRegistry
-```
-
 This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry
 implementation to retrieve Hazelcast's `IMap` instance for its distributed tickets storage. Some aspects of `HazelcastInstance`
 configuration in this auto-configuration mode are controlled by the following exposed properties which could be set via

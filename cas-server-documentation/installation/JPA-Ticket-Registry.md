@@ -30,12 +30,6 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-In `application.properties`:
-
-```properties
-ticketRegistry=jpaTicketRegistry
-```
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`

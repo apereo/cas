@@ -25,9 +25,7 @@
     <context:annotation-config/>
 
     <bean id="ticketRegistry" class="org.apereo.cas.ticket.registry.InfinispanTicketRegistry" />
-    <bean id="infinispanTicketsCache" factory-bean="cacheManager" factory-method="getCache" />
-    <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"
-          c:configurationFile="infinispan.xml"/>
+
 
     <!-- CAS Context Core -->
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
