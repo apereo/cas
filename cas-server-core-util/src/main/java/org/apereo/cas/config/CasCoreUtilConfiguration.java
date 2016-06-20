@@ -1,14 +1,18 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowCipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContextAware;
@@ -26,6 +30,8 @@ import javax.validation.MessageInterpolator;
 @Configuration("casCoreUtilConfiguration")
 public class CasCoreUtilConfiguration {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreUtilConfiguration.class);
+    
     @Autowired
     @Qualifier("trustStoreSslSocketFactory")
     private SSLConnectionSocketFactory trustStoreSslSocketFactory;
@@ -33,14 +39,21 @@ public class CasCoreUtilConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean
-    public CipherExecutor<byte[], byte[]> defaultTicketCipherExecutor() {
-        return new DefaultTicketCipherExecutor(
-                casProperties.getTicket().getEncryption().getKey(),
-                casProperties.getTicket().getSigning().getKey(),
-                casProperties.getTicket().getAlg(),
-                casProperties.getTicket().getSigning().getKeySize(),
-                casProperties.getTicket().getEncryption().getKeySize());
+    @Bean(name = {"defaultTicketCipherExecutor", "ticketCipherExecutor"})
+    public CipherExecutor defaultTicketCipherExecutor() {
+        if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getEncryption().getKey())
+                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getEncryption().getKey())) {
+            return new DefaultTicketCipherExecutor(
+                    casProperties.getTicket().getRegistry().getEncryption().getKey(),
+                    casProperties.getTicket().getRegistry().getSigning().getKey(),
+                    casProperties.getTicket().getRegistry().getAlg(),
+                    casProperties.getTicket().getRegistry().getSigning().getKeySize(),
+                    casProperties.getTicket().getRegistry().getEncryption().getKeySize());
+        }
+        LOGGER.info("Ticket registry encryption/signing is turned off and may NOT be safe in a clustered production environment. "
+                + "Consider using other choices to handle encryption, signing and verification of "
+                + "all appropriate values.");
+        return new NoOpCipherExecutor();
     }
 
     @Bean
@@ -48,7 +61,7 @@ public class CasCoreUtilConfiguration {
         return new WebflowCipherExecutor(
                 casProperties.getWebflow().getEncryption().getKey(),
                 casProperties.getWebflow().getSigning().getKey(),
-                casProperties.getTicket().getAlg(),
+                casProperties.getWebflow().getAlg(),
                 casProperties.getWebflow().getSigning().getKeySize(),
                 casProperties.getWebflow().getEncryption().getKeySize());
     }
@@ -87,7 +100,7 @@ public class CasCoreUtilConfiguration {
     public ApplicationContextAware applicationContextProvider() {
         return new ApplicationContextProvider();
     }
-    
+
     @Bean
     public static MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();

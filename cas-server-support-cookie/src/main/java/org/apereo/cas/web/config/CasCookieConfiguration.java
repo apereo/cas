@@ -11,6 +11,8 @@ import org.apereo.cas.web.support.CookieValueManager;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.NoOpCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +26,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCookieConfiguration")
 public class CasCookieConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCookieConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-
+    
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
@@ -37,7 +39,7 @@ public class CasCookieConfiguration {
     }
 
     @Autowired
-    @Bean(name={"defaultCookieValueManager", "cookieValueManager"})
+    @Bean(name = {"defaultCookieValueManager", "cookieValueManager"})
     public CookieValueManager defaultCookieValueManager() {
         if (casProperties.getTgc().isCipherEnabled()) {
             return new DefaultCasCookieValueManager(tgcCipherExecutor());
@@ -46,16 +48,21 @@ public class CasCookieConfiguration {
     }
 
     @RefreshScope
-    @Bean(name={"tgcCipherExecutor", "cookieCipherExecutor"})
+    @Bean(name = {"tgcCipherExecutor", "cookieCipherExecutor"})
     public CipherExecutor tgcCipherExecutor() {
         if (casProperties.getTgc().isCipherEnabled()) {
             return new TGCCipherExecutor(
                     casProperties.getTgc().getEncryptionKey(),
                     casProperties.getTgc().getSigningKey());
         }
+
+        LOGGER.info("Ticket-granting cookie encryption/signing is turned off and "
+                + "may NOT be safe in a production environment. "
+                + "Consider using other choices to handle encryption, signing and verification of "
+                + "all appropriate values.");
         return new NoOpCipherExecutor();
     }
-    
+
     @Autowired
     @Bean
     @RefreshScope

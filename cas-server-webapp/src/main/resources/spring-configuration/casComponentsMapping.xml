@@ -14,13 +14,10 @@
 
     <alias name="${primaryAuthenticationHandler}" alias="primaryAuthenticationHandler" />
     <alias name="${primaryPrincipalResolver}" alias="primaryPrincipalResolver" />
-        
-    <alias name="${ticketCipherExecutor}" alias="ticketCipherExecutor" />
     
     <alias name="${grantingTicketExpirationPolicy}" alias="grantingTicketExpirationPolicy" />
     <alias name="${authenticationPolicy}" alias="authenticationPolicy" />
     <alias name="${authenticationPolicyFactory}" alias="authenticationPolicyFactory" />
-    <alias name="${authenticationThrottle}" alias="authenticationThrottle" />
     <alias name="${restAuthenticationThrottle}" alias="restAuthenticationThrottle" />
 
 </beans>

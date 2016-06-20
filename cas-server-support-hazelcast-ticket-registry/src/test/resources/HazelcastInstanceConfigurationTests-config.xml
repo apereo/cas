@@ -27,5 +27,4 @@
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     
-    <alias name="noOpCipherExecutor" alias="ticketCipherExecutor" />
 </beans>

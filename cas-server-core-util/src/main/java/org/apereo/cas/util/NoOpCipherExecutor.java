@@ -11,18 +11,7 @@ import org.slf4j.LoggerFactory;
 public class NoOpCipherExecutor extends AbstractCipherExecutor<String, String> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoOpCipherExecutor.class);
-
-    /**
-     * Instantiates a new No-Op cipher executor.
-     * Issues a warning on safety.
-     */
-    public NoOpCipherExecutor() {
-        super(NoOpCipherExecutor.class.getName());
-        LOGGER.warn("[{}] does no encryption and may NOT be safe in a production environment. "
-                + "Consider using other choices, such as [{}] to handle encryption, signing and verification of "
-                + "all appropriate values.", this.getClass().getName(), BaseStringCipherExecutor.class.getName());
-    }
-
+    
     @Override
     public String encode(final String value) {
         return value;

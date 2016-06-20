@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class TicketProperties extends CryptographyProperties {
+public class TicketProperties {
 
     @NestedConfigurationProperty
     private ProxyGrantingTicketProperties pgt = new ProxyGrantingTicketProperties();

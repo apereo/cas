@@ -99,9 +99,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             final LDAPConnection c = getConnection();
             LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
-
             populateDefaultEntries(c);
-
             c.close();
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -111,11 +109,11 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
     /**
      * Instantiates a new Ldap directory server.
      */
-    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile, final File... schemaFile)
-        throws FileNotFoundException {
+    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile)
+            throws FileNotFoundException {
         this(new FileInputStream(properties),
-             new FileInputStream(ldifFile),
-             new FileInputStream(ldifFile));
+                new FileInputStream(ldifFile),
+                new FileInputStream(ldifFile));
     }
 
     private void populateDefaultEntries(final LDAPConnection c) throws Exception {
@@ -132,7 +130,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
         populateEntriesInternal(c);
     }
 
-    protected void populateEntriesInternal(final LDAPConnection c) {}
+    protected void populateEntriesInternal(final LDAPConnection c) {
+    }
 
     public String getBaseDn() {
         return this.directoryServer.getBaseDNs().get(0).toNormalizedString();

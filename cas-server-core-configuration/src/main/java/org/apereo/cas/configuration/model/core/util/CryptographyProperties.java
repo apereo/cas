@@ -43,7 +43,7 @@ public class CryptographyProperties {
      * Encryption.
      */
     public static class Encryption {
-        private String key;
+        private String key = "";
         private int keySize = 16;
 
         public String getKey() {
@@ -67,7 +67,7 @@ public class CryptographyProperties {
      * Signing.
      */
     public static class Signing {
-        private String key = "C@$W3bSecretKey!";
+        private String key = "";
         private int keySize = 512;
 
         public String getKey() {

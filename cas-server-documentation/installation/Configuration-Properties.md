@@ -134,11 +134,9 @@ cas.attrs.resolve.affiliation=groupMembership
 attributeRepository=stubAttributeRepository
 primaryAuthenticationHandler=acceptUsersAuthenticationHandler
 primaryPrincipalResolver=personDirectoryPrincipalResolver
-ticketCipherExecutor=noOpCipherExecutor
 grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 authenticationPolicy=anyAuthenticationPolicy
 authenticationPolicyFactory=acceptAnyAuthenticationPolicyFactory
-authenticationThrottle=neverThrottle
 restAuthenticationThrottle=neverThrottle
 
 ##
@@ -992,6 +990,15 @@ restAuthenticationThrottle=neverThrottle
 # cas.ticket.registry.infinispan.configLocation=/infinispan.xml
 
 ##
+# Ticket Registry Cryptography Properties -> Signing & Encryption
+#
+# cas.ticket.registry.signing.key=
+# cas.ticket.registry.signing.keySize=512
+# cas.ticket.registry.encryption.key=
+# cas.ticket.registry.encryption.keySize=16
+# cas.ticket.registry.alg=AES
+
+##
 # Ticket Registry Properties -> InMemory
 #
 # cas.ticket.registry.inMemory.loadFactor=1
@@ -1068,11 +1075,6 @@ restAuthenticationThrottle=neverThrottle
 # cas.ticket.st.maxLength=20
 # cas.ticket.st.timeToKillInSeconds=10
 
-##
-# Cryptography Properties -> Signing
-#
-# cas.ticket.signing.key=C@$W3bSecretKey!
-# cas.ticket.signing.keySize=512
 
 ##
 # Ticket Granting Ticket Properties -> Timeout
@@ -1102,17 +1104,6 @@ restAuthenticationThrottle=neverThrottle
 # Proxy Granting Ticket Properties
 #
 # cas.ticket.pgt.maxLength=50
-
-##
-# Cryptography Properties -> Encryption
-#
-# cas.ticket.encryption.keySize=16
-# cas.ticket.encryption.key=
-
-##
-# Ticket Properties
-#
-# cas.ticket.alg=AES
 
 ##
 # Saml Response Properties
