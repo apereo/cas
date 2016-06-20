@@ -58,7 +58,7 @@
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />

@@ -53,6 +53,6 @@
     <bean id="clientUri" class="com.mongodb.MongoClientURI"
           c:uri="mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas" />
 
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
 
 </beans>

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.util.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,7 +43,26 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-        
+
+    @Autowired
+    @Qualifier("cas3ServiceJsonView")
+    private View cas3ServiceJsonView;
+
+    @Autowired
+    @Qualifier("cas3SuccessView")
+    private View cas3SuccessView;
+
+    @Autowired
+    @Qualifier("cas3ServiceFailureView")
+    private View cas3ServiceFailureView;
+
+    @Before
+    public void setup() {
+        this.serviceValidateController.setFailureView(cas3ServiceFailureView);
+        this.serviceValidateController.setSuccessView(cas3SuccessView);
+        this.serviceValidateController.setJsonView(cas3ServiceJsonView);
+    }
+    
     private Map<?, ?> renderView() throws Exception{
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());

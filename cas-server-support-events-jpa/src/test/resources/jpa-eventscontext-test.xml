@@ -37,7 +37,7 @@
     <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
     <!-- CAS Context Core -->
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>

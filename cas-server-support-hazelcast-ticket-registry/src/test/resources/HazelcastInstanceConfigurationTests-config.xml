@@ -27,6 +27,6 @@
     <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
     <alias name="noOpCipherExecutor" alias="ticketCipherExecutor" />
 </beans>

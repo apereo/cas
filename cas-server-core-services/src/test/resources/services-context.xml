@@ -66,7 +66,7 @@
     </util:list>
 
 
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
 
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">

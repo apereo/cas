@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
@@ -16,7 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.AbstractView;
 
 import java.time.ZonedDateTime;
@@ -59,10 +57,9 @@ public abstract class AbstractCasView extends AbstractView {
      * Logger instance.
      **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
+    private String authenticationContextAttribute;
+    
     /**
      * Gets the assertion from the model.
      *
@@ -220,10 +217,10 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(
             final Map<String, Object> model) {
-        if (model.containsKey(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())) {
+        if (StringUtils.isNotBlank(authenticationContextAttribute)
+                && model.containsKey(this.authenticationContextAttribute)) {
             final Optional<MultifactorAuthenticationProvider> result =
-                    (Optional<MultifactorAuthenticationProvider>) 
-                            model.get(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+                    (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
             return result;
         }
         return Optional.empty();
@@ -419,6 +416,12 @@ public abstract class AbstractCasView extends AbstractView {
     public void setSuccessResponse(final boolean successResponse) {
         this.successResponse = successResponse;
     }
-    
-    
+
+    public String getAuthenticationContextAttribute() {
+        return authenticationContextAttribute;
+    }
+
+    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
+    }
 }

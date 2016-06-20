@@ -80,9 +80,7 @@
             key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"
             value-ref="serviceTicketUniqueIdGenerator" />
     </util:map>
-
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
-
+    
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">
             <property name="id" value="0"/>

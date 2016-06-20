@@ -28,7 +28,7 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.apereo.cas" />
 
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>

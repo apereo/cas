@@ -123,6 +123,10 @@ public class CasCoreServicesConfiguration {
         }
     }
 
+    /**
+     * The embedded service registry that processes built-in JSON service files
+     * on the classpath.
+     */
     public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
         EmbeddedServiceRegistryDao() throws Exception {
             super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false);

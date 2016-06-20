@@ -2,8 +2,6 @@ package org.apereo.cas.services;
 
 
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.nio.file.Path;
