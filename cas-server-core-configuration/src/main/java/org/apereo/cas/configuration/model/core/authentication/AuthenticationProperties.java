@@ -24,6 +24,9 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This is {@link AuthenticationProperties}.
  *
@@ -32,6 +35,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class AuthenticationProperties {
 
+    private Map<String, String> attributes = new HashMap();
+    
     @NestedConfigurationProperty
     private ThrottleProperties throttle = new ThrottleProperties();
     
@@ -318,5 +323,13 @@ public class AuthenticationProperties {
 
     public void setTrusted(final TrustedAuthenticationProperties trusted) {
         this.trusted = trusted;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(final Map<String, String> attributes) {
+        this.attributes = attributes;
     }
 }

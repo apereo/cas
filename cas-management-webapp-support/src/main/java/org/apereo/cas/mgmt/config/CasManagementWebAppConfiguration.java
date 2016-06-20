@@ -26,7 +26,6 @@ import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -45,7 +44,6 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -95,10 +93,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     private List formDataPopulators = new ArrayList<>();
 
     @Autowired
-    @Qualifier("attributeRepository")
-    private IPersonAttributeDao personAttributeDao;
-
-    @Autowired
     private ServerProperties serverProperties;
 
     @Autowired
@@ -122,18 +116,10 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
-                                                       final FactoryBean<Properties> factoryBean) {
-        return Beans.newAttributeRepository(factoryBean);
+    public IPersonAttributeDao stubAttributeRepository() {
+        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
     }
 
-
-    @Bean
-    public FactoryBean<Properties> casAttributesToResolve() {
-        final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
-        bean.setPrefix("cas.attrs.resolve.");
-        return bean;
-    }
 
     @Bean
     public CasClient casClient() {
@@ -313,8 +299,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public FormDataPopulator attributeFormDataPopulator() {
-        final AttributeFormDataPopulator p = new AttributeFormDataPopulator(this.personAttributeDao);
-        return p;
+        return new AttributeFormDataPopulator(stubAttributeRepository());
     }
 
     @Bean

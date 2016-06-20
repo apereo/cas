@@ -45,7 +45,6 @@ import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -83,10 +82,6 @@ public class CasCoreAuthenticationConfiguration {
     @Qualifier("authenticationPolicy")
     private AuthenticationPolicy authenticationPolicy;
     
-    @Autowired
-    @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
-
     @Autowired(required = false)
     @Qualifier("acceptPasswordEncoder")
     private PasswordEncoder acceptPasswordEncoder;
@@ -299,7 +294,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
-        bean.setAttributeRepository(attributeRepository);
+        bean.setAttributeRepository(stubAttributeRepository());
         bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
         bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
         bean.setPrincipalFactory(defaultPrincipalFactory());
@@ -405,16 +400,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name="attributeRepository")
     @Bean(name={"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
-                                                       final FactoryBean<Properties> factoryBean) {
-
-        return Beans.newAttributeRepository(factoryBean);
-    }
-    
-    @Bean
-    public FactoryBean<Properties> casAttributesToResolve() {
-        final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
-        bean.setPrefix("cas.attrs.resolve.");
-        return bean;
+    public IPersonAttributeDao stubAttributeRepository() {
+        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
     }
 }

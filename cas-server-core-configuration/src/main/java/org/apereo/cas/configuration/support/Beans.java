@@ -7,11 +7,12 @@ import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -82,7 +83,7 @@ public class Beans {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
-        
+
         if (StringUtils.isNotEmpty(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
@@ -100,13 +101,17 @@ public class Beans {
     /**
      * New attribute repository person attribute dao.
      *
-     * @param factoryBean the factory bean
+     * @param attributes the attributes
      * @return the person attribute dao
      */
-    public static IPersonAttributeDao newAttributeRepository(final FactoryBean<Properties> factoryBean) {
+    public static IPersonAttributeDao newAttributeRepository(final Map<String, String> attributes) {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            dao.setBackingMap(new HashMap(factoryBean.getObject()));
+            final Map pdirMap = new HashMap<>();
+            attributes.entrySet().forEach(entry -> {
+                pdirMap.put(entry.getKey(), Arrays.asList(entry.getValue()));
+            });
+            dao.setBackingMap(pdirMap);
             return dao;
         } catch (final Exception e) {
             throw new RuntimeException(e);
