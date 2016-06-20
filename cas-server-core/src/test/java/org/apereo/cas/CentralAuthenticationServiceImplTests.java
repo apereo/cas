@@ -459,7 +459,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         return new WebApplicationServiceFactory().createService(request);
     }
 
-    private Service getService() {
+    private static Service getService() {
         return getService(TestUtils.CONST_TEST_URL);
     }
 }
