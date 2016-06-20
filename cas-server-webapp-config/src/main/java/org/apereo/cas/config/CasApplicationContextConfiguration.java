@@ -3,15 +3,13 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * This is {@link CasApplicationContextConfiguration}.that attempts to create Spring-managed beans
@@ -36,6 +33,7 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("casApplicationContextConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasApplicationContextConfiguration {
     
     @Autowired
@@ -92,35 +90,5 @@ public class CasApplicationContextConfiguration {
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
         };
-    }
-
-    /**
-     * Stub attribute repository person attribute dao.
-     *
-     * @param factoryBean the factory bean
-     * @return the person attribute dao
-     */
-    @Bean(name={"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
-                                                   final FactoryBean<Properties> factoryBean) {
-        try {
-            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            dao.setBackingMap(new HashMap(factoryBean.getObject()));
-            return dao;
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Cas attributes to resolve factory bean.
-     *
-     * @return the factory bean
-     */
-    @Bean
-    public FactoryBean<Properties> casAttributesToResolve() {
-        final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
-        bean.setPrefix("cas.attrs.resolve.");
-        return bean;
     }
 }

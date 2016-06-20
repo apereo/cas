@@ -5,9 +5,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -91,5 +95,21 @@ public class Beans {
         properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
         bean.setJpaProperties(properties);
         return bean;
+    }
+
+    /**
+     * New attribute repository person attribute dao.
+     *
+     * @param factoryBean the factory bean
+     * @return the person attribute dao
+     */
+    public static IPersonAttributeDao newAttributeRepository(final FactoryBean<Properties> factoryBean) {
+        try {
+            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
+            dao.setBackingMap(new HashMap(factoryBean.getObject()));
+            return dao;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

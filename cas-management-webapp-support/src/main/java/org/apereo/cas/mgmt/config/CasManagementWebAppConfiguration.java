@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
@@ -35,7 +36,6 @@ import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.AuthorizationGenerator;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
@@ -126,16 +126,10 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @param factoryBean the factory bean
      * @return the person attribute dao
      */
-    @Bean(name={"stubAttributeRepository", "attributeRepository"})
+    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
                                                        final FactoryBean<Properties> factoryBean) {
-        try {
-            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            dao.setBackingMap(new HashMap(factoryBean.getObject()));
-            return dao;
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        return Beans.newAttributeRepository(factoryBean);
     }
 
     /**
@@ -392,7 +386,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         f.setProxyPolicyMapper(defaultProxyPolicyMapper());
         f.setRegisteredServiceMapper(defaultRegisteredServiceMapper());
         f.setUsernameAttributeProviderMapper(usernameAttributeProviderMapper());
-        
+
         this.formDataPopulators.add(attributeFormDataPopulator());
         f.setFormDataPopulators(this.formDataPopulators);
         return f;

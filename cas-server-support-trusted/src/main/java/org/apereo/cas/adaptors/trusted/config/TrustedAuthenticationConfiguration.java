@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,14 +29,11 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @Configuration("trustedAuthenticationConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TrustedAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -63,9 +61,11 @@ public class TrustedAuthenticationConfiguration {
         return h;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver trustedPrincipalResolver() {
+    public PrincipalResolver trustedPrincipalResolver(@Qualifier("attributeRepository")
+                                                      final IPersonAttributeDao attributeRepository) {
         final PrincipalBearingPrincipalResolver r = new PrincipalBearingPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(casProperties.getAuthn().getTrusted().getPrincipalAttribute());

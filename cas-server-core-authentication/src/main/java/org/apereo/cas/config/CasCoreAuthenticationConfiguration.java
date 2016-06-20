@@ -43,10 +43,13 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.PrefixedEnvironmentPropertiesFactoryBean;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -58,6 +61,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -398,4 +402,28 @@ public class CasCoreAuthenticationConfiguration {
         return t;
     }
 
+    /**
+     * Stub attribute repository person attribute dao.
+     *
+     * @param factoryBean the factory bean
+     * @return the person attribute dao
+     */
+    @Bean(name={"stubAttributeRepository", "attributeRepository"})
+    public IPersonAttributeDao stubAttributeRepository(@Qualifier("casAttributesToResolve")
+                                                       final FactoryBean<Properties> factoryBean) {
+
+        return Beans.newAttributeRepository(factoryBean);
+    }
+
+    /**
+     * Cas attributes to resolve factory bean.
+     *
+     * @return the factory bean
+     */
+    @Bean
+    public FactoryBean<Properties> casAttributesToResolve() {
+        final PrefixedEnvironmentPropertiesFactoryBean bean = new PrefixedEnvironmentPropertiesFactoryBean();
+        bean.setPrefix("cas.attrs.resolve.");
+        return bean;
+    }
 }
