@@ -4,7 +4,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 /**
  * Monitors the status of a {@link TicketRegistry}
- * that supports the {@link TicketRegistryState} interface for exposing internal
+ * for exposing internal
  * state information used in status reports.
  *
  * @author Marvin S. Addison
