@@ -45,14 +45,17 @@ public class JpaServiceRegistryDaoImplTests  {
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
-
+        r.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:/test.pub", "RSA"));
+        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("test"));
+        r.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+        
         final RegisteredService r2 = this.dao.save(r);
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
     }
-    
+        
     @Test
     public void verifySaveAttributeReleasePolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
