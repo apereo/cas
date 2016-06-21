@@ -9,13 +9,22 @@ package org.apereo.cas.configuration.model.core.ticket;
 
 public class TicketGrantingTicketProperties {
     private int maxLength = 50;
-    private int maxTimeToLiveInSeconds = 28800;
-    private int timeToKillInSeconds = 7200;
+    private int maxTimeToLiveInSeconds = 28_800;
+    private int timeToKillInSeconds = 7_200;
     private boolean onlyTrackMostRecentSession = true;
 
     private HardTimeout hardTimeout = new HardTimeout();
     private ThrottledTimeout throttledTimeout = new ThrottledTimeout();
     private Timeout timeout = new Timeout();
+    private RememberMe rememberMe = new RememberMe();
+
+    public RememberMe getRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(final RememberMe rememberMe) {
+        this.rememberMe = rememberMe;
+    }
 
     public Timeout getTimeout() {
         return timeout;
@@ -96,7 +105,6 @@ public class TicketGrantingTicketProperties {
             this.maxTimeToLiveInSeconds = maxTimeToLiveInSeconds;
         }
     }
-
     
     public static class ThrottledTimeout {
         private long timeToKillInSeconds;
@@ -116,6 +124,27 @@ public class TicketGrantingTicketProperties {
 
         public void setTimeInBetweenUsesInSeconds(final long timeInBetweenUsesInSeconds) {
             this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
+        }
+    }
+    
+    public static class RememberMe {
+        private boolean enabled;
+        private long timeToKillInSeconds = 1_209_600;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public long getTimeToKillInSeconds() {
+            return timeToKillInSeconds;
+        }
+
+        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
+            this.timeToKillInSeconds = timeToKillInSeconds;
         }
     }
 }

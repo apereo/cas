@@ -1278,6 +1278,12 @@ spring.aop.proxy-target-class=true
 # cas.ticket.st.timeToKillInSeconds=10
 ```
 
+## Ticket Granting Ticket Expiration Policy -> Remember Me
+
+```properties
+# cas.ticket.tgt.rememberMe.enabled=true
+# cas.ticket.tgt.rememberMe.timeToKillInSeconds=true
+```
 
 ## Ticket Granting Ticket Expiration Policy -> Timeout
 

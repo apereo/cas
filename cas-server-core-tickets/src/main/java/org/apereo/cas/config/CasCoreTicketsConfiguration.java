@@ -47,6 +47,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -80,14 +81,6 @@ public class CasCoreTicketsConfiguration {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
     
-    @Autowired(required = false)
-    @Qualifier("rememberMeExpirationPolicy")
-    private ExpirationPolicy rememberMeExpirationPolicy;
-
-    @Autowired(required = false)
-    @Qualifier("sessionExpirationPolicy")
-    private ExpirationPolicy sessionExpirationPolicy;
-
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
@@ -194,12 +187,28 @@ public class CasCoreTicketsConfiguration {
 
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
+        if (casProperties.getTicket().getTgt().getRememberMe().isEnabled()) {
+            final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy();
+            p.setRememberMeExpirationPolicy(
+                    new HardTimeoutExpirationPolicy(
+                            casProperties.getTicket().getTgt().getRememberMe().getTimeToKillInSeconds(),
+                            TimeUnit.SECONDS
+                    )
+            );
+            p.setSessionExpirationPolicy(buildTicketGrantingTicketExpirationPolicy());
+            return p;
+        }
+        
+        return buildTicketGrantingTicketExpirationPolicy();
+    }
+
+    private ExpirationPolicy buildTicketGrantingTicketExpirationPolicy() {
         if (casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds() < 0
                 && casProperties.getTicket().getTgt().getTimeToKillInSeconds() < 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
             return new NeverExpiresExpirationPolicy();
         }
-
+        
         if (casProperties.getTicket().getTgt().getTimeout().getMaxTimeToLiveInSeconds() > 0) {
             final TimeoutExpirationPolicy t = new TimeoutExpirationPolicy(
                     casProperties.getTicket().getTgt().getTimeout().getMaxTimeToLiveInSeconds(),
@@ -242,14 +251,6 @@ public class CasCoreTicketsConfiguration {
     }
 
     @Bean
-    public ExpirationPolicy rememberMeDelegatingExpirationPolicy() {
-        final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy();
-        p.setRememberMeExpirationPolicy(rememberMeExpirationPolicy);
-        p.setSessionExpirationPolicy(sessionExpirationPolicy);
-        return p;
-    }
-
-    @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
                 casProperties.getTicket().getSt().getNumberOfUses(),
@@ -278,7 +279,7 @@ public class CasCoreTicketsConfiguration {
             }
         };
     }
-
+        
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
