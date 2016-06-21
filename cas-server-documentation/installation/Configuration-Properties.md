@@ -791,6 +791,61 @@ grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 # cas.host.name=
 
 ##
+# Monitor Properties -> Ticket Granting Tickets
+#
+# cas.monitor.tgt.warn.threshold=10
+# cas.monitor.tgt.warn.evictionThreshold=0
+
+##
+# Monitor Properties -> Service Tickets
+#
+# cas.monitor.st.warn.threshold=10
+# cas.monitor.st.warn.evictionThreshold=0
+
+##
+# Monitor Properties -> Cache (Ehcache, Hazelcast, etc) Monitors
+#
+# cas.monitor.warn.threshold=10
+# cas.monitor.warn.evictionThreshold=0
+
+##
+# Monitor Properties -> JDBC DataSource
+#
+# cas.monitor.jdbc.validationQuery=SELECT 1
+# cas.monitor.jdbc.maxWait=5000
+# cas.monitor.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.monitor.jdbc.isolateInternalQueries=false
+# cas.monitor.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.monitor.jdbc.failFast=true
+# cas.monitor.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.monitor.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.monitor.jdbc.leakThreshold=10
+# cas.monitor.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.monitor.jdbc.batchSize=1
+# cas.monitor.jdbc.user=sa
+# cas.monitor.jdbc.ddlAuto=create-drop
+# cas.monitor.jdbc.maxAgeDays=180
+# cas.monitor.jdbc.password=
+# cas.monitor.jdbc.autocommit=false
+# cas.monitor.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.monitor.jdbc.idleTimeout=5000
+
+##
+# Monitor Properties -> LDAP Connection
+#
+# cas.monitor.ldap.pool.suspension=false
+# cas.monitor.ldap.pool.minSize=6
+# cas.monitor.ldap.pool.maxSize=18
+# cas.monitor.ldap.pool.maxIdleTime=1000
+# cas.monitor.ldap.pool.maxWait=2000
+# cas.monitor.ldap.maxWait=5000
+
+##
+# Monitor Memory Properties
+#
+# cas.monitor.freeMemThreshold=10
+
+##
 # Theme Properties
 #
 # cas.theme.paramName=theme
@@ -1140,39 +1195,12 @@ grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 # cas.adminPagesSecurity.users=
 
 ##
-# Monitor Properties -> Warn
-#
-# cas.monitor.tgt.warn.threshold=10
-# cas.monitor.tgt.warn.evictionThreshold=0
-
-##
-# Monitor Properties -> Warn
-#
-# cas.monitor.st.warn.threshold=10
-# cas.monitor.st.warn.evictionThreshold=0
-
-##
-# Monitor Properties -> Warn
-#
-# cas.monitor.warn.threshold=10
-# cas.monitor.warn.evictionThreshold=0
-
-##
-# Monitor Properties -> DataSource
-#
-# cas.monitor.dataSource.validationQuery=SELECT 1
-
-##
-# Monitor Properties
-#
-# cas.monitor.maxWait=5000
-# cas.monitor.freeMemThreshold=10
-
-##
-# Maxmind Properties
+# Maxmind GeoTracking Properties
 #
 # cas.maxmind.cityDatabase=
 # cas.maxmind.countryDatabase=
+
+
 
 ##
 # Management Webapp Properties

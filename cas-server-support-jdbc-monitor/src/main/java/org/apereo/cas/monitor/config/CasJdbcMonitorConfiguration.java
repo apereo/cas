@@ -34,7 +34,7 @@ public class CasJdbcMonitorConfiguration {
             final ExecutorService executor) {
         final JdbcDataSourceMonitor m = new JdbcDataSourceMonitor(monitorDataSource());
         m.setValidationQuery(casProperties.getMonitor().getJdbc().getValidationQuery());
-        m.setMaxWait(casProperties.getMonitor().getMaxWait());
+        m.setMaxWait(casProperties.getMonitor().getJdbc().getMaxWait());
         m.setExecutor(executor);
         return m;
     }

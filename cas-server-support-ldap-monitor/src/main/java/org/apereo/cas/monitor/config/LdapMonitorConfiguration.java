@@ -46,7 +46,7 @@ public class LdapMonitorConfiguration {
         final PooledLdapConnectionFactoryMonitor m =
                 new PooledLdapConnectionFactoryMonitor(connectionFactory,
                         new SearchValidator());
-        m.setMaxWait(casProperties.getMonitor().getMaxWait());
+        m.setMaxWait(casProperties.getMonitor().getLdap().getMaxWait());
         m.setExecutor(executor);
         return m;
     }

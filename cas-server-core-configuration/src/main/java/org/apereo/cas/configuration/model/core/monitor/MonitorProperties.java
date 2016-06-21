@@ -25,22 +25,12 @@ public class MonitorProperties {
     
     private Ldap ldap = new Ldap();
     
-    private int maxWait = 5000;
-
     public Jdbc getJdbc() {
         return jdbc;
     }
 
     public void setJdbc(final Jdbc jdbc) {
         this.jdbc = jdbc;
-    }
-
-    public int getMaxWait() {
-        return maxWait;
-    }
-
-    public void setMaxWait(final int maxWait) {
-        this.maxWait = maxWait;
     }
     
     public Warn getWarn() {
@@ -139,6 +129,8 @@ public class MonitorProperties {
     }
 
     public static class Ldap {
+        private int maxWait = 5000;
+        
         private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
         public ConnectionPoolingProperties getPool() {
@@ -148,11 +140,20 @@ public class MonitorProperties {
         public void setPool(final ConnectionPoolingProperties pool) {
             this.pool = pool;
         }
+
+        public int getMaxWait() {
+            return maxWait;
+        }
+
+        public void setMaxWait(final int maxWait) {
+            this.maxWait = maxWait;
+        }
     }
     
     public static class Jdbc extends AbstractJpaProperties {
         private String validationQuery = "SELECT 1";
-
+        private int maxWait = 5000;
+        
         public String getValidationQuery() {
             return validationQuery;
         }
@@ -160,5 +161,14 @@ public class MonitorProperties {
         public void setValidationQuery(final String validationQuery) {
             this.validationQuery = validationQuery;
         }
+
+        public int getMaxWait() {
+            return maxWait;
+        }
+
+        public void setMaxWait(final int maxWait) {
+            this.maxWait = maxWait;
+        }
+
     }
 }
