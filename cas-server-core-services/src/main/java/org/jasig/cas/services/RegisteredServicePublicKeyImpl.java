@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
-import java.io.Serializable;
 import java.security.PublicKey;
 
 /**
@@ -18,7 +17,7 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
+public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
