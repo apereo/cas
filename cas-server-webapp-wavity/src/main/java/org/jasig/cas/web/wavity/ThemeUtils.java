@@ -113,7 +113,7 @@ public final class ThemeUtils {
 		
 		// Create initial context
 		LdapContext ctx;
-		String ldapSearchBase = "cn=acme,o=tenants,dc=wavity,dc=com";
+		String ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
 		String searchFilter = "jpegPhoto=*";
 		SearchControls searchControls = new SearchControls();
 		searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);

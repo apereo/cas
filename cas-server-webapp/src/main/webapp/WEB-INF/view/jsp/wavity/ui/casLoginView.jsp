@@ -80,8 +80,8 @@
 	    }
 
 		String tenantLogo = ThemeUtils.fetchTenantLogo(request, tenantName);
-		String appLogo = ThemeUtils.fetchAppLogo(request, appName); 
-		
+		// String appLogo = ThemeUtils.fetchAppLogo(request, appName); 
+		String appLogo = null;
 	    %>
 
 		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
