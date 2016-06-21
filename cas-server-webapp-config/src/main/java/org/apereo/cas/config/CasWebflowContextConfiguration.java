@@ -67,7 +67,7 @@ public class CasWebflowContextConfiguration {
 
     @Autowired
     @Qualifier("webflowCipherExecutor")
-    private CipherExecutor<byte[], byte[]> webflowCipherExecutor;
+    private CipherExecutor webflowCipherExecutor;
 
     @Autowired
     @Qualifier("authenticationThrottle")
@@ -160,22 +160,24 @@ public class CasWebflowContextConfiguration {
             return new CipherBean() {
                 @Override
                 public byte[] encrypt(final byte[] bytes) {
-                    return CasWebflowContextConfiguration.this.webflowCipherExecutor.encode(bytes);
+                    return (byte[]) CasWebflowContextConfiguration.this.webflowCipherExecutor.encode(bytes);
                 }
 
                 @Override
                 public void encrypt(final InputStream inputStream, final OutputStream outputStream) {
-                    throw new RuntimeException(new OperationNotSupportedException("Encrypting input stream is not supported"));
+                    throw new RuntimeException(
+                            new OperationNotSupportedException("Encrypting input stream is not supported"));
                 }
 
                 @Override
                 public byte[] decrypt(final byte[] bytes) {
-                    return CasWebflowContextConfiguration.this.webflowCipherExecutor.decode(bytes);
+                    return (byte[]) CasWebflowContextConfiguration.this.webflowCipherExecutor.decode(bytes);
                 }
 
                 @Override
                 public void decrypt(final InputStream inputStream, final OutputStream outputStream) {
-                    throw new RuntimeException(new OperationNotSupportedException("Decrypting input stream is not supported"));
+                    throw new RuntimeException(
+                            new OperationNotSupportedException("Decrypting input stream is not supported"));
                 }
             };
         } catch (final Exception e) {

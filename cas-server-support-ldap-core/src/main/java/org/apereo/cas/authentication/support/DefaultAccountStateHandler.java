@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.DefaultMessageDescriptor;
+import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.InvalidLoginLocationException;
 import org.apereo.cas.authentication.InvalidLoginTimeException;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -62,7 +61,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         this.errorMap.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
         this.errorMap.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        this.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new CredentialExpiredException());
+        this.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new AccountPasswordMustChangeException());
     }
 
     @Override

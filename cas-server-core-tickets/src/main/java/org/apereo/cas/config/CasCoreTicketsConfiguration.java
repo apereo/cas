@@ -70,12 +70,16 @@ public class CasCoreTicketsConfiguration {
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
-    private CipherExecutor<byte[], byte[]> cipherExecutor;
+    private CipherExecutor cipherExecutor;
 
     @Autowired
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
 
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+    
     @Autowired(required = false)
     @Qualifier("rememberMeExpirationPolicy")
     private ExpirationPolicy rememberMeExpirationPolicy;
@@ -150,7 +154,6 @@ public class CasCoreTicketsConfiguration {
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "ticketRegistry")
     @Bean(name = {"defaultTicketRegistry", "ticketRegistry"})
     public TicketRegistry defaultTicketRegistry() {
         final DefaultTicketRegistry r = new DefaultTicketRegistry(
@@ -164,7 +167,7 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
         final DefaultTicketRegistrySupport s = new DefaultTicketRegistrySupport();
-        s.setTicketRegistry(defaultTicketRegistry());
+        s.setTicketRegistry(this.ticketRegistry);
         return s;
     }
 
@@ -279,10 +282,9 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
-
         c.setLockingStrategy(lockingStrategy());
         c.setLogoutManager(logoutManager);
-        c.setTicketRegistry(defaultTicketRegistry());
+        c.setTicketRegistry(this.ticketRegistry);
         return c;
     }
 

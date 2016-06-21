@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +31,7 @@ public class CouchbaseTicketRegistryConfiguration {
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
-    private CipherExecutor<byte[], byte[]> cipherExecutor;
+    private CipherExecutor cipherExecutor;
 
     @RefreshScope
     @Bean
@@ -49,7 +48,6 @@ public class CouchbaseTicketRegistryConfiguration {
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "ticketRegistry")
     @Bean(name = {"couchbaseTicketRegistry", "ticketRegistry"})
     public CouchbaseTicketRegistry couchbaseTicketRegistry() {
         final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry();

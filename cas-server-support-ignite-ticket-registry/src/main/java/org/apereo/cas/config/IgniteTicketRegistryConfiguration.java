@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -81,7 +80,7 @@ public class IgniteTicketRegistryConfiguration {
         return config;
     }
 
-    @ConditionalOnMissingBean(name = "ticketRegistry")
+    
     @Bean(name = {"igniteTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry igniteTicketRegistry() {

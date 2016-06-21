@@ -123,9 +123,9 @@ public final class SerializationUtils {
      * @since 4.2
      */
     public static <T> T decodeAndSerializeObject(final byte[] object,
-                                                 final CipherExecutor<byte[], byte[]> cipher,
+                                                 final CipherExecutor cipher,
                                                  final Class<? extends Serializable> type) {
-        final byte[] decoded = cipher.decode(object);
+        final byte[] decoded = (byte[]) cipher.decode(object);
         return deserializeAndCheckObject(decoded, type);
     }
 

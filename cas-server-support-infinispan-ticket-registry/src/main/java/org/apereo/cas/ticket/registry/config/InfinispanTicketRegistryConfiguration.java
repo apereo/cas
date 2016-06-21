@@ -10,7 +10,6 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,12 +29,12 @@ public class InfinispanTicketRegistryConfiguration {
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
-    private CipherExecutor<byte[], byte[]> cipherExecutor;
+    private CipherExecutor cipherExecutor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name = "ticketRegistry")
+    
     @Bean(name = {"infinispanTicketRegistry", "ticketRegistry"})
     public TicketRegistry infinispanTicketRegistry() {
         final InfinispanTicketRegistry r = new InfinispanTicketRegistry();

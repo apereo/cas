@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +32,7 @@ public class MemcachedTicketRegistryConfiguration {
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
-    private CipherExecutor<byte[], byte[]> cipherExecutor;
+    private CipherExecutor cipherExecutor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -62,7 +61,7 @@ public class MemcachedTicketRegistryConfiguration {
         return new KryoTranscoder();
     }
 
-    @ConditionalOnMissingBean(name = "ticketRegistry")
+    
     @Bean(name = {"memcachedTicketRegistry", "ticketRegistry"})
     public TicketRegistry memcachedTicketRegistry() throws Exception {
         final MemCacheTicketRegistry registry =

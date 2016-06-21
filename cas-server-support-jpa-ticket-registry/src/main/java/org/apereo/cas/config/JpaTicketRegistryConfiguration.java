@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.InetAddressUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +40,7 @@ public class JpaTicketRegistryConfiguration {
     @Nullable
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
-    private CipherExecutor<byte[], byte[]> cipherExecutor;
+    private CipherExecutor cipherExecutor;
     
     /**
      * Jpa packages to scan string [].
@@ -100,7 +99,7 @@ public class JpaTicketRegistryConfiguration {
         return newHickariDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
-    @ConditionalOnMissingBean(name = "ticketRegistry")
+    
     @Bean(name = {"jpaTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry jpaTicketRegistry() {

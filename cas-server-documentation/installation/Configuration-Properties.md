@@ -13,11 +13,10 @@ references to the underlying modules that consume them.
 This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings 
 into your CAS configuration; rather pick only the properties that you need.</p></div>
 
-## Spring Boot & Cloud
-
 The following list of properties are controlled and provided to CAS:
 
 ```properties
+
 ##
 # CAS Server Context Configuration
 #
@@ -132,13 +131,6 @@ spring.aop.proxy-target-class=true
 # shell.telnet.port=5000
 # shell.ssh.auth-timeout=3000
 # shell.ssh.idle-timeout=30000
-
-##
-# CAS Component Aliasing and Selection
-#
-primaryAuthenticationHandler=acceptUsersAuthenticationHandler
-primaryPrincipalResolver=personDirectoryPrincipalResolver
-grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 
 ##
 # Server Properties -> Http
@@ -1167,10 +1159,11 @@ grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 ##
 # Ticket Granting Ticket Properties
 #
-# cas.ticket.tgt.maxTimeToLiveInSeconds=28800
-# cas.ticket.tgt.maxLength=50
-# cas.ticket.tgt.timeToKillInSeconds=7200
+# cas.ticket.tgt.maxTimeToLiveInSeconds=28800 (Set to a negative value to never expire tickets)
+# cas.ticket.tgt.timeToKillInSeconds=7200 (Set to a negative value to never expire tickets)
+#
 # cas.ticket.tgt.onlyTrackMostRecentSession=true
+# cas.ticket.tgt.maxLength=50
 
 ##
 # Proxy Granting Ticket Properties
@@ -1199,8 +1192,6 @@ grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
 #
 # cas.maxmind.cityDatabase=
 # cas.maxmind.countryDatabase=
-
-
 
 ##
 # Management Webapp Properties
