@@ -30,8 +30,8 @@
   <util:map id="authenticationHandlersResolvers"/>
   <util:list id="authenticationMetadataPopulators" />
   
-  <util:map id="uniqueIdGeneratorsMap"/>
-  <util:list id="serviceFactoryList" />
+  
+  
  
   
 

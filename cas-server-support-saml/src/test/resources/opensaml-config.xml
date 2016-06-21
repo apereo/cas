@@ -52,10 +52,10 @@
     <metrics:health-check-registry id="healthCheckMetrics"/>
 
 
-    <util:map id="uniqueIdGeneratorsMap"/>
+    
     
 
-    <util:list id="serviceFactoryList"/>
+    
     
     
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>

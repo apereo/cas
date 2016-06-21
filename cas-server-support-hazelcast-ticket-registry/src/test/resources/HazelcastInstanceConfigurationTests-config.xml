@@ -18,10 +18,10 @@
         </property>
     </bean>
 
-    <util:list id="serviceFactoryList"/>
+    
     <alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
     
-    <util:map id="uniqueIdGeneratorsMap"/>
+    
     
     
     <util:map id="authenticationHandlersResolvers"/>

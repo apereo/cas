@@ -39,24 +39,12 @@
 
 
     <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
-
-
     
-    
-
-    <util:list id="serviceFactoryList">
-        <ref bean="webApplicationServiceFactory"/>
-    </util:list>
 
     <util:list id="argumentExtractors">
         <ref bean="defaultArgumentExtractor"/>
     </util:list>
-
-    <util:map id="uniqueIdGeneratorsMap">
-        <entry
-                key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-                value-ref="serviceTicketUniqueIdGenerator"/>
-    </util:map>
+    
 
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">

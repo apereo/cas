@@ -46,10 +46,10 @@
     
     <util:list id="inMemoryRegisteredServices" />
     
-    <util:map id="uniqueIdGeneratorsMap"/>
+    
     
 
-    <util:list id="serviceFactoryList"/>
+    
     
     
 

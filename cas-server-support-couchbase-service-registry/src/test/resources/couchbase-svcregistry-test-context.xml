@@ -22,10 +22,6 @@
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
     
-    <util:map id="uniqueIdGeneratorsMap"/>
-    
-    <util:list id="serviceFactoryList" />
-
     <bean id="nodesSet" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
         <constructor-arg type="java.lang.String" value="${svcreg.couchbase.nodes:127.0.0.1:8091}"/>
     </bean>

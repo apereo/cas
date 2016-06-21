@@ -17,7 +17,7 @@
     
 
     <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver"/>
-    <util:map id="uniqueIdGeneratorsMap"/>
+    
     
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver"/>
@@ -30,7 +30,7 @@
             </map>
         </property>
     </bean>
-    <util:list id="serviceFactoryList"/>
+    
     
 
 

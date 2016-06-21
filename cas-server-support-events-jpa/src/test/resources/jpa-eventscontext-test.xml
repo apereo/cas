@@ -40,9 +40,9 @@
     <util:list id="authenticationMetadataPopulators"/>
 
 
-    <util:map id="uniqueIdGeneratorsMap"/>
     
-    <util:list id="serviceFactoryList"/>
+    
+    
 
 
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
