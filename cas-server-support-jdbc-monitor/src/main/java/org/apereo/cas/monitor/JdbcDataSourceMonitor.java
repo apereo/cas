@@ -11,7 +11,7 @@ import java.sql.ResultSet;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-public class DataSourceMonitor extends AbstractPoolMonitor {
+public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -22,7 +22,7 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
      *
      * @param dataSource Data source to monitor.
      */
-    public DataSourceMonitor(final DataSource dataSource) {
+    public JdbcDataSourceMonitor(final DataSource dataSource) {
         if (dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);
         } else {

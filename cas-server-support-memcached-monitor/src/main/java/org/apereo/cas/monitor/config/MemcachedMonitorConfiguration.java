@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Nullable;
-
 /**
  * This is {@link MemcachedMonitorConfiguration}.
  *
@@ -18,14 +16,11 @@ import javax.annotation.Nullable;
  */
 @Configuration("memcachedMonitorConfiguration")
 public class MemcachedMonitorConfiguration {
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("memcachedClient")
-    private MemcachedClientIF memcachedClient;
     
+    @Autowired
     @Bean
-    public Monitor memcachedMonitor() {
+    public Monitor memcachedMonitor(@Qualifier("memcachedClient")
+                                    final MemcachedClientIF memcachedClient) {
         final MemcachedMonitor m = new MemcachedMonitor();
         m.setMemcachedClient(memcachedClient);
         return m;

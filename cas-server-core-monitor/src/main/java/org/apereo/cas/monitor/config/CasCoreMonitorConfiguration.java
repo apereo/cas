@@ -8,12 +8,16 @@ import org.apereo.cas.monitor.SessionMonitor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreMonitorConfiguration}.
@@ -22,11 +26,8 @@ import java.util.Collections;
  * @since 5.0.0
  */
 @Configuration("casCoreMonitorConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreMonitorConfiguration {
-
-    @Autowired
-    @Qualifier("monitorsList")
-    private Collection monitors = Collections.emptySet();
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -35,10 +36,20 @@ public class CasCoreMonitorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @ConditionalOnMissingBean(name = "healthCheckMonitor")
     @Bean
     public Monitor healthCheckMonitor() {
+        final Map<String, Monitor> beans = applicationContext.getBeansOfType(Monitor.class, false, true);
+        final Collection monitors = beans.entrySet()
+                .stream()
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toSet());
+
         final HealthCheckMonitor bean = new HealthCheckMonitor();
-        bean.setMonitors(this.monitors);
+        bean.setMonitors(monitors);
         return bean;
     }
 

@@ -123,7 +123,7 @@
     
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
-    <util:list id="monitorsList" />
+    
     
     
     

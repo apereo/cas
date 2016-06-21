@@ -46,11 +46,6 @@
     
     <alias name="requiredHandlerAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
     
-    <util:list id="monitorsList" value-type="org.apereo.cas.monitor.Monitor">
-        <ref bean="memoryMonitor"/>
-        <ref bean="sessionMonitor"/>
-    </util:list>
-
     <util:list id="serviceFactoryList" value-type="org.apereo.cas.authentication.principal.ServiceFactory">
         <ref bean="webApplicationServiceFactory"/>
     </util:list>

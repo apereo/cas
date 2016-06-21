@@ -1,15 +1,16 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.monitor.DataSourceMonitor;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.monitor.JdbcDataSourceMonitor;
 import org.apereo.cas.monitor.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.util.concurrent.ExecutorService;
 
@@ -25,19 +26,28 @@ public class CasJdbcMonitorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Nullable
-    @Autowired(required=false)
-    @Qualifier("pooledConnectionFactoryMonitorExecutorService")
-    private ExecutorService executor;
-    
     @Autowired
     @Bean
     @RefreshScope
-    public Monitor dataSourceMonitor(@Qualifier("monitorDataSource") final DataSource dataSource) {
-        final DataSourceMonitor m = new DataSourceMonitor(dataSource);
-        m.setValidationQuery(casProperties.getMonitor().getDataSource().getValidationQuery());
+    public Monitor dataSourceMonitor(
+            @Qualifier("pooledJdbcMonitorExecutorService")
+            final ExecutorService executor) {
+        final JdbcDataSourceMonitor m = new JdbcDataSourceMonitor(monitorDataSource());
+        m.setValidationQuery(casProperties.getMonitor().getJdbc().getValidationQuery());
         m.setMaxWait(casProperties.getMonitor().getMaxWait());
-        m.setExecutor(this.executor);
+        m.setExecutor(executor);
         return m;
+    }
+
+    @RefreshScope
+    @Bean
+    public ThreadPoolExecutorFactoryBean pooledJdbcMonitorExecutorService() {
+        return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getJdbc().getPool());
+    }
+
+    @RefreshScope
+    @Bean
+    public DataSource monitorDataSource() {
+        return Beans.newHickariDataSource(casProperties.getMonitor().getJdbc());
     }
 }

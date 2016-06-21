@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link DataSourceMonitor}.
+ * Unit test for {@link JdbcDataSourceMonitor}.
  *
  * @author Marvin S. Addison
  * @since 3.5.1
@@ -28,7 +28,7 @@ public class DataSourceMonitorTests {
 
     @Test
     public void verifyObserve() throws Exception {
-        final DataSourceMonitor monitor = new DataSourceMonitor(this.dataSource);
+        final JdbcDataSourceMonitor monitor = new JdbcDataSourceMonitor(this.dataSource);
         monitor.setMaxWait(5000);
         monitor.setExecutor(Executors.newSingleThreadExecutor());
         monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");

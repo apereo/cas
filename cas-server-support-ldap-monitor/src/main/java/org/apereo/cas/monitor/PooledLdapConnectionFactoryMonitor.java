@@ -10,7 +10,7 @@ import org.ldaptive.pool.Validator;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
+public class PooledLdapConnectionFactoryMonitor extends AbstractPoolMonitor {
 
     /** Source of connections to validate. */
     private PooledConnectionFactory connectionFactory;
@@ -22,7 +22,7 @@ public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
     /**
      * Instantiates a new Pooled connection factory monitor.
      */
-    public PooledConnectionFactoryMonitor() {}
+    public PooledLdapConnectionFactoryMonitor() {}
 
     /**
      * Creates a new instance that monitors the given pooled connection factory.
@@ -30,7 +30,7 @@ public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
      * @param  factory  Connection factory to monitor.
      * @param  validator  Validates connections from the factory.
      */
-    public PooledConnectionFactoryMonitor(
+    public PooledLdapConnectionFactoryMonitor(
             final PooledConnectionFactory factory, final Validator<Connection> validator) {
         this.connectionFactory = factory;
         this.validator = validator;

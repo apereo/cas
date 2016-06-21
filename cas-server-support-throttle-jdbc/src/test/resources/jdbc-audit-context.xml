@@ -14,7 +14,7 @@
     
 
     <util:list id="authenticationMetadataPopulators"/>
-    <util:list id="monitorsList"/>
+    
 
     <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver"/>
     <util:map id="uniqueIdGeneratorsMap"/>

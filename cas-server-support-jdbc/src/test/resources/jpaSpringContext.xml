@@ -29,7 +29,7 @@
   
   <util:map id="authenticationHandlersResolvers"/>
   <util:list id="authenticationMetadataPopulators" />
-  <util:list id="monitorsList" />
+  
   <util:map id="uniqueIdGeneratorsMap"/>
   <util:list id="serviceFactoryList" />
  

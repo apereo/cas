@@ -19,13 +19,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("ehcacheMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class EhCacheMonitorConfiguration {
-
-    @Autowired(required = false)
-    @Qualifier("ehcacheTicketsCache")
-    private Cache ehcacheTicketsCache;
-
+    
+    @Autowired
     @Bean
-    public Monitor ehcacheMonitor() {
+    public Monitor ehcacheMonitor(@Qualifier("ehcacheTicketsCache")
+                                  final Cache ehcacheTicketsCache) {
         return new EhCacheMonitor(ehcacheTicketsCache);
     }
 }

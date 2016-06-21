@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
+
 /**
  * Common properties for all jpa configs.
  *
@@ -22,7 +24,7 @@ public abstract class AbstractJpaProperties {
 
     private String password = "";
 
-    private Pool pool = new Pool();
+    private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
     private int idleTimeout = 5000;
 
@@ -92,11 +94,11 @@ public abstract class AbstractJpaProperties {
         this.password = password;
     }
 
-    public Pool getPool() {
+    public ConnectionPoolingProperties getPool() {
         return pool;
     }
 
-    public void setPool(final Pool pool) {
+    public void setPool(final ConnectionPoolingProperties pool) {
         this.pool = pool;
     }
 
@@ -146,56 +148,5 @@ public abstract class AbstractJpaProperties {
 
     public void setAutocommit(final boolean autocommit) {
         this.autocommit = autocommit;
-    }
-
-    /**
-     * Pool props.
-     */
-    public static class Pool {
-        private int minSize = 6;
-        private int maxSize = 18;
-        private int maxIdleTime = 1000;
-        private int maxWait = 2000;
-        private boolean suspension;
-
-        public boolean isSuspension() {
-            return suspension;
-        }
-
-        public void setSuspension(final boolean suspension) {
-            this.suspension = suspension;
-        }
-
-        public int getMinSize() {
-            return minSize;
-        }
-
-        public void setMinSize(final int minSize) {
-            this.minSize = minSize;
-        }
-
-        public int getMaxSize() {
-            return maxSize;
-        }
-
-        public void setMaxSize(final int maxSize) {
-            this.maxSize = maxSize;
-        }
-
-        public int getMaxIdleTime() {
-            return maxIdleTime;
-        }
-
-        public void setMaxIdleTime(final int maxIdleTime) {
-            this.maxIdleTime = maxIdleTime;
-        }
-
-        public int getMaxWait() {
-            return maxWait;
-        }
-
-        public void setMaxWait(final int maxWait) {
-            this.maxWait = maxWait;
-        }
     }
 }

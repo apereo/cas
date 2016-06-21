@@ -43,7 +43,7 @@
     
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators"/>
-    <util:list id="monitorsList"/>
+    
     <util:list id="inMemoryRegisteredServices" />
     
     <util:map id="uniqueIdGeneratorsMap"/>

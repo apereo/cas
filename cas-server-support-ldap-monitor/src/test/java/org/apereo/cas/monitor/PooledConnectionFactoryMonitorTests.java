@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link PooledConnectionFactoryMonitor} class.
+ * Unit test for {@link PooledLdapConnectionFactoryMonitor} class.
  * @author Marvin S. Addison
  * @since 4.0.0
  */
@@ -22,7 +22,7 @@ public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @Autowired
     @Qualifier("pooledLdapConnectionFactoryMonitor")
-    private PooledConnectionFactoryMonitor monitor;
+    private PooledLdapConnectionFactoryMonitor monitor;
 
     @BeforeClass
     public static void bootstrap() throws Exception {

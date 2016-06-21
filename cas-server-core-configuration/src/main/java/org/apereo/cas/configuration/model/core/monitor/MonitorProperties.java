@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -19,9 +21,19 @@ public class MonitorProperties {
 
     private Warn warn = new Warn();
 
-    private DataSource dataSource = new DataSource();
-
+    private Jdbc jdbc = new Jdbc();
+    
+    private Ldap ldap = new Ldap();
+    
     private int maxWait = 5000;
+
+    public Jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(final Jdbc jdbc) {
+        this.jdbc = jdbc;
+    }
 
     public int getMaxWait() {
         return maxWait;
@@ -30,16 +42,7 @@ public class MonitorProperties {
     public void setMaxWait(final int maxWait) {
         this.maxWait = maxWait;
     }
-
-
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    public void setDataSource(final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
+    
     public Warn getWarn() {
         return warn;
     }
@@ -70,6 +73,14 @@ public class MonitorProperties {
 
     public void setSt(final St st) {
         this.st = st;
+    }
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
     }
 
     public static class St {
@@ -127,7 +138,19 @@ public class MonitorProperties {
         }
     }
 
-    public static class DataSource {
+    public static class Ldap {
+        private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
+
+        public ConnectionPoolingProperties getPool() {
+            return pool;
+        }
+
+        public void setPool(final ConnectionPoolingProperties pool) {
+            this.pool = pool;
+        }
+    }
+    
+    public static class Jdbc extends AbstractJpaProperties {
         private String validationQuery = "SELECT 1";
 
         public String getValidationQuery() {
@@ -138,6 +161,4 @@ public class MonitorProperties {
             this.validationQuery = validationQuery;
         }
     }
-
-
 }

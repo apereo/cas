@@ -7,8 +7,10 @@ import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.springframework.context.annotation.Bean;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -71,6 +73,20 @@ public class Beans {
         return bean;
     }
 
+    /**
+     * New thread pool executor factory bean thread pool executor factory bean.
+     *
+     * @param config the config
+     * @return the thread pool executor factory bean
+     */
+    public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
+        final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
+        bean.setCorePoolSize(config.getMinSize());
+        bean.setMaxPoolSize(config.getMaxSize());
+        bean.setKeepAliveSeconds(config.getMaxWait());
+        return bean;
+    }
+    
     /**
      * New entity manager factory bean.
      *
