@@ -10,18 +10,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
-import java.io.Serializable;
 import java.security.PublicKey;
 
 /**
  * Represents a public key for a CAS registered service.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
+public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePublicKeyImpl.class);
 
     private String location;
 
@@ -33,12 +33,13 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
      * Instantiates a new Registered service public key impl.
      * Required for proper serialization.
      */
-    public RegisteredServicePublicKeyImpl() {}
+    public RegisteredServicePublicKeyImpl() {
+    }
 
     /**
      * Instantiates a new Registered service public key impl.
      *
-     * @param location the location
+     * @param location  the location
      * @param algorithm the algorithm
      */
     public RegisteredServicePublicKeyImpl(final String location, final String algorithm) {
@@ -86,7 +87,7 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
             factory.setSingleton(false);
             return factory.getObject();
         } catch (final Exception e) {
-           logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
