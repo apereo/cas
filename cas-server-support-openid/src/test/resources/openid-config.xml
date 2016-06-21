@@ -47,7 +47,7 @@
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
     
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators"/>
+    
     
 
     

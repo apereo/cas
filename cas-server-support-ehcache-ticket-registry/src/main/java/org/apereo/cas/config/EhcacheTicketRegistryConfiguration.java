@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,6 +28,7 @@ import javax.annotation.Nullable;
  * @since 5.0.0
  */
 @Configuration("ehcacheTicketRegistryConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class EhcacheTicketRegistryConfiguration {
 
     @Autowired

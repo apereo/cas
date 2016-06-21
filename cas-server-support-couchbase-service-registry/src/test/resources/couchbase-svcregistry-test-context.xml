@@ -20,7 +20,7 @@
     <context:component-scan base-package="org.apereo.cas" />
     
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators" />
+    
     
     <bean id="nodesSet" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
         <constructor-arg type="java.lang.String" value="${svcreg.couchbase.nodes:127.0.0.1:8091}"/>

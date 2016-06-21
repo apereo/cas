@@ -11,8 +11,13 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
@@ -24,21 +29,22 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
+@SpringApplicationConfiguration(locations={"classpath:/jpaSpringContext.xml"})
 public class SessionMonitorJpaTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
+    @Autowired
+    @Qualifier("jpaTicketRegistry")
     private TicketRegistry jpaRegistry;
 
     private SessionMonitor monitor;
 
     @Before
     public void setUp() {
-        final ClassPathXmlApplicationContext ctx = new
-                ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
-        this.jpaRegistry = ctx.getBean("jpaTicketRegistry", TicketRegistry.class);
         this.monitor = new SessionMonitor();
     }
 

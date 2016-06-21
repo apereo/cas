@@ -31,7 +31,6 @@
     <context:annotation-config/>
     
     <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao"/>
-
     <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
           id="dataSourceService"
           p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
@@ -42,18 +41,6 @@
     <!-- CAS Context Core -->
     
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators"/>
-    
-    <util:list id="inMemoryRegisteredServices" />
-    
-    
-    
-
-    
-    
-    
-
-    
     
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
 

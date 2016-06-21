@@ -60,7 +60,7 @@
     
     
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators" />
+    
     
     
     

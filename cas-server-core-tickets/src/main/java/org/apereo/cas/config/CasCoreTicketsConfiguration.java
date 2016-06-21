@@ -47,6 +47,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -83,11 +84,7 @@ public class CasCoreTicketsConfiguration {
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
-
-    @Autowired
-    @Qualifier("uniqueIdGeneratorsMap")
-    private Map uniqueTicketIdGeneratorsForService;
-
+    
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         final DefaultProxyGrantingTicketFactory f = new DefaultProxyGrantingTicketFactory();
@@ -101,7 +98,7 @@ public class CasCoreTicketsConfiguration {
     public ProxyTicketFactory defaultProxyTicketFactory() {
         final DefaultProxyTicketFactory f = new DefaultProxyTicketFactory();
         f.setProxyTicketExpirationPolicy(proxyTicketExpirationPolicy());
-        f.setUniqueTicketIdGeneratorsForService(uniqueTicketIdGeneratorsForService);
+        f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap());
         return f;
     }
 
@@ -109,7 +106,7 @@ public class CasCoreTicketsConfiguration {
     public DefaultServiceTicketFactory defaultServiceTicketFactory() {
         final DefaultServiceTicketFactory f = new DefaultServiceTicketFactory();
         f.setServiceTicketExpirationPolicy(serviceTicketExpirationPolicy());
-        f.setUniqueTicketIdGeneratorsForService(uniqueTicketIdGeneratorsForService);
+        f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap());
         f.setTrackMostRecentSession(casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
         return f;
     }
@@ -264,6 +261,14 @@ public class CasCoreTicketsConfiguration {
                 TimeUnit.SECONDS.toMillis(casProperties.getTicket().getPt().getTimeToKillInSeconds()));
     }
 
+    @Bean
+    public Map uniqueIdGeneratorsMap() {
+        final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
+        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl", 
+                serviceTicketUniqueIdGenerator());
+        return map;
+    }
+    
     @ConditionalOnMissingBean(name = "lockingStrategy")
     @Bean
     public LockingStrategy lockingStrategy() {

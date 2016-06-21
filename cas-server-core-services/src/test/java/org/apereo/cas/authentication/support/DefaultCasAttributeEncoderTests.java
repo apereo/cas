@@ -2,7 +2,9 @@ package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.TestUtils;
 import org.junit.Before;
@@ -27,7 +29,9 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = CasCoreServicesConfiguration.class, locations= {"/services-context.xml"})
+@SpringApplicationConfiguration(classes = {CasCoreServicesConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, CasCoreUtilConfiguration.class}, 
+        locations= {"/services-context.xml"})
 public class DefaultCasAttributeEncoderTests {
 
     private Map<String, Object> attributes;

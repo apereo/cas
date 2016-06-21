@@ -38,7 +38,7 @@
         </property>
     </bean>
     <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver" />
-    <util:list id="authenticationMetadataPopulators" />
+    
     
     
     

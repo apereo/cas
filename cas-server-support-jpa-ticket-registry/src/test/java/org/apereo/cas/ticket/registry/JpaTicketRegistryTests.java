@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -10,6 +9,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -17,12 +17,14 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,6 +46,8 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(locations = "classpath:/jpaSpringContext.xml")
 public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
@@ -61,17 +65,13 @@ public class JpaTicketRegistryTests {
     /** Logger instance. */
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
 
+    @Autowired
+    @Qualifier("jpaTicketRegistry")
     private TicketRegistry jpaTicketRegistry;
-
-    @Before
-    public void setUp() {
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
-        this.jpaTicketRegistry = ctx.getBean("jpaTicketRegistry", TicketRegistry.class);
-        this.txManager = ctx.getBean("ticketTransactionManager", PlatformTransactionManager.class);
-    }
 
     @Test
     public void verifyTicketCreationAndDeletion() throws Exception {

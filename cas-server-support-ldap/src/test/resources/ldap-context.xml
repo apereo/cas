@@ -21,8 +21,6 @@
             </map>
         </property>
     </bean>
-    <context:component-scan base-package="org.apereo.cas" />
-    <context:annotation-config />
     <context:property-placeholder location="classpath:/ldap.properties"/>
 
     <ldaptive:pooled-connection-factory
@@ -42,22 +40,7 @@
             prunePeriod="${ldap.pool.prunePeriod}"
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
     />
-
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
-
     
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators" />
-    
-    
-    
-    
-
-    
-    <util:list id="inMemoryRegisteredServices" />
-   
-    
-    
-    
     
 </beans>

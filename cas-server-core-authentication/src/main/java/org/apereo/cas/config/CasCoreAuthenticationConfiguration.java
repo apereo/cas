@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
-import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulator;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
@@ -191,12 +190,7 @@ public class CasCoreAuthenticationConfiguration {
         val.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         return val;
     }
-
-    @Bean
-    public AuthenticationMetaDataPopulator cacheCredentialsMetaDataPopulator() {
-        return new CacheCredentialsMetaDataPopulator();
-    }
-
+    
     @Bean
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("servicesManager")
                                                                           final ServicesManager servicesManager) {

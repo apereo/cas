@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,7 +52,12 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-        return new DefaultMultifactorTriggerSelectionStrategy();
+        final DefaultMultifactorTriggerSelectionStrategy s = new DefaultMultifactorTriggerSelectionStrategy();
+        
+        s.setGlobalPrincipalAttributeNameTriggers(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
+        s.setRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
+        
+        return s;
     }
 
     @RefreshScope
@@ -123,6 +129,13 @@ public class CasCoreServicesConfiguration {
         }
     }
 
+    @Bean
+    public List serviceFactoryList() {
+        final List<ServiceFactory> list = new ArrayList<>();
+        list.add(webApplicationServiceFactory());
+        return list;
+    }
+    
     /**
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.

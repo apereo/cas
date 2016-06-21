@@ -13,7 +13,7 @@
     
     
 
-    <util:list id="authenticationMetadataPopulators"/>
+    
     
 
     <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver"/>

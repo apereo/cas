@@ -46,7 +46,7 @@
     </util:list>
     
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators"/>
+    
     
     <metrics:metric-registry id="metrics"/>
     <metrics:health-check-registry id="healthCheckMetrics"/>

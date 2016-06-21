@@ -5,10 +5,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        
-        
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
@@ -23,10 +20,7 @@
 
     <context:property-placeholder properties-ref="casProperties"/>
     <util:properties id="casProperties"/>
-
-
-    <context:component-scan base-package="org.apereo.cas"/>
-    <context:annotation-config/>
+    
 
     <import resource="classpath:jpaTicketRegistryContext.xml"/>
 
@@ -43,14 +37,13 @@
 
 
     <bean id="jpaTicketRegistry" class="org.apereo.cas.ticket.registry.JpaTicketRegistry"/>
-    <alias name="jpaTicketRegistry" alias="ticketRegistry"/>
 
     <bean id="jpaLockingStrategy" class="org.apereo.cas.ticket.registry.support.JpaLockingStrategy"/>
 
     <!-- CAS Context Core -->
     
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators"/>
+    
     
     
     

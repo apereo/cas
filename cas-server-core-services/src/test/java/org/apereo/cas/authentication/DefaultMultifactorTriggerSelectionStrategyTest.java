@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -55,13 +54,10 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     @Before
     public void setUp() {
         strategy = new DefaultMultifactorTriggerSelectionStrategy();
-        
-        final MultifactorAuthenticationProperties p = new MultifactorAuthenticationProperties();
-        p.setRequestParameter(REQUEST_PARAM);
-        p.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);
 
-        strategy.setMfaProperties(p);
-        
+        strategy.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);
+        strategy.setRequestParameter(REQUEST_PARAM);
+
         when(MFA_PROVIDER_1.getId()).thenReturn(MFA_PROVIDER_ID_1);
         when(MFA_PROVIDER_2.getId()).thenReturn(MFA_PROVIDER_ID_2);
     }
@@ -171,11 +167,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
 
         return service;
     }
-
-    private Principal mockPrincipal() {
-        return principalFactory.createPrincipal("user");
-    }
-
+    
     private Principal mockPrincipal(final String attrName, final String... attrValues) {
         return principalFactory.createPrincipal("user",
                 ImmutableMap.of(attrName, attrValues.length == 1 ? attrValues[0] : Lists.newArrayList(attrValues)));

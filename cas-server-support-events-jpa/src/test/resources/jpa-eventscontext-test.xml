@@ -37,7 +37,7 @@
     <!-- CAS Context Core -->
 
     <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators"/>
+    
 
 
     

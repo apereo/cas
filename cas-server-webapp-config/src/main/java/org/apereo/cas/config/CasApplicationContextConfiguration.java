@@ -1,10 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +17,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link CasApplicationContextConfiguration}.that attempts to create Spring-managed beans
@@ -37,14 +31,6 @@ import java.util.Map;
 public class CasApplicationContextConfiguration {
     
     @Autowired
-    @Qualifier("serviceTicketUniqueIdGenerator")
-    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
-    
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-    @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor defaultArgumentExtractor;
     
@@ -52,28 +38,14 @@ public class CasApplicationContextConfiguration {
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
-    
-    @Bean
-    public List serviceFactoryList() {
-        final List<ServiceFactory> list = new ArrayList<>();
-        list.add(this.webApplicationServiceFactory);
-        return list;
-    }
-    
+        
     @Bean
     public List argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
         list.add(this.defaultArgumentExtractor);
         return list;
     }
-    
-    @Bean
-    public Map uniqueIdGeneratorsMap() {
-        final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
-        map.put(SimpleWebApplicationServiceImpl.class.getName(), this.serviceTicketUniqueIdGenerator);
-        return map;
-    }
-    
+        
     @Bean
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
