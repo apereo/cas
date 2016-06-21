@@ -55,6 +55,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
+
     @Autowired(required = false)
     @Qualifier("acceptPasswordEncoder")
     private PasswordEncoder acceptPasswordEncoder;
@@ -104,13 +105,9 @@ public class CasCoreAuthenticationConfiguration {
     private PrincipalNameTransformer delegateTransformer;
 
     @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
-
-    @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
-    
+
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -122,9 +119,9 @@ public class CasCoreAuthenticationConfiguration {
         h.setErrors(casProperties.getAuthn().getExceptions().getExceptions());
         return h;
     }
-    
 
-    @Bean(name={"authenticationPolicy", "defaultAuthenticationPolicy"})
+
+    @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
     public AuthenticationPolicy defaultAuthenticationPolicy() {
         if (casProperties.getAuthn().getPolicy().getReq().isEnabled()) {
             final RequiredHandlerAuthenticationPolicy bean =
@@ -132,7 +129,7 @@ public class CasCoreAuthenticationConfiguration {
             bean.setTryAll(casProperties.getAuthn().getPolicy().getReq().isTryAll());
             return bean;
         }
-        
+
         if (casProperties.getAuthn().getPolicy().getAll().isEnabled()) {
             return new AllAuthenticationPolicy();
         }
@@ -143,7 +140,7 @@ public class CasCoreAuthenticationConfiguration {
 
         return new AnyAuthenticationPolicy(casProperties.getAuthn().getPolicy().getAny().isTryAll());
     }
-    
+
     @Autowired
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler(@Qualifier("servicesManager")
@@ -181,7 +178,7 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
 
     @Autowired
     @RefreshScope
@@ -209,7 +206,7 @@ public class CasCoreAuthenticationConfiguration {
         return r;
     }
 
-    @Bean(name={"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
+    @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
     public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("servicesManager")
                                                                                     final ServicesManager servicesManager) {
         final DefaultAuthenticationTransactionManager r =
@@ -218,7 +215,7 @@ public class CasCoreAuthenticationConfiguration {
         return r;
     }
 
-    @Bean(name={"defaultPrincipalElectionStrategy", "principalElectionStrategy"})
+    @Bean(name = {"defaultPrincipalElectionStrategy", "principalElectionStrategy"})
     public PrincipalElectionStrategy defaultPrincipalElectionStrategy() {
         final DefaultPrincipalElectionStrategy s = new DefaultPrincipalElectionStrategy();
         s.setPrincipalFactory(defaultPrincipalFactory());
@@ -238,11 +235,17 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
+    public List authenticationMetadataPopulators() {
+        return Arrays.asList(successfulHandlerMetaDataPopulator(),
+                rememberMeAuthenticationMetaDataPopulator());
+    }
+
+    @Bean
     public AuthenticationManager authenticationManager(@Qualifier("servicesManager")
                                                        final ServicesManager servicesManager) {
         final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
 
-        p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators);
+        p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators());
         p.setHandlerResolverMap(authenticationHandlersResolvers);
         p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver(servicesManager));
         p.setAuthenticationPolicy(defaultAuthenticationPolicy());
@@ -313,7 +316,7 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler(@Qualifier("servicesManager")
-                                                               final ServicesManager servicesManager) {
+                                                           final ServicesManager servicesManager) {
         final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
 
         h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
@@ -388,8 +391,8 @@ public class CasCoreAuthenticationConfiguration {
     }
 
 
-    @ConditionalOnMissingBean(name="attributeRepository")
-    @Bean(name={"stubAttributeRepository", "attributeRepository"})
+    @ConditionalOnMissingBean(name = "attributeRepository")
+    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository() {
         return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
     }

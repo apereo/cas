@@ -11,9 +11,4 @@
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
         <entry key-ref="acceptUsersAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
     </util:map>
-
-    <util:list id="authenticationMetadataPopulators">
-        <ref bean="successfulHandlerMetaDataPopulator"/>
-        <ref bean="rememberMeAuthenticationMetaDataPopulator"/>
-    </util:list>
 </beans>

@@ -369,4 +369,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new HashMap<>();
     }
 
+    @Bean
+    public List authenticationMetadataPopulators() { return new ArrayList<>(); }
 }
