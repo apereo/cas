@@ -70,7 +70,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             JsonViewUtils.render(model, response);
 
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             bean.setStatus(HttpServletResponse.SC_OK);
             JsonViewUtils.render(bean, response);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

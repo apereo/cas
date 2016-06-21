@@ -141,7 +141,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             final byte[] cipherData = cipher.doFinal(cred64);
             return new String(cipherData);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

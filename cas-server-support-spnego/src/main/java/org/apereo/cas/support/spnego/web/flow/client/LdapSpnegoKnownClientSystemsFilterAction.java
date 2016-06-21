@@ -115,7 +115,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
         } catch (final LdapException e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         } finally {
             if (connection != null) {
                 connection.close();

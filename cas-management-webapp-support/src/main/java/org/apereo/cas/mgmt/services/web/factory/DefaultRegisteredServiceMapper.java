@@ -203,7 +203,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             
             return regSvc;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
     

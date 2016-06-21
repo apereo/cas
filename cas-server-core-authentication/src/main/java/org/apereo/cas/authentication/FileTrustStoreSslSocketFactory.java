@@ -100,7 +100,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

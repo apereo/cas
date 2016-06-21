@@ -151,7 +151,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
             encoder.encode();
             return samlResponse;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

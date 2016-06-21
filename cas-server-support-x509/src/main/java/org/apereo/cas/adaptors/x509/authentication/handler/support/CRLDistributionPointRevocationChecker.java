@@ -145,7 +145,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                     } catch (final Exception e) {
                         logger.error("Error fetching CRL at {}", url, e);
                         if (this.throwOnFetchFailure) {
-                            throw new RuntimeException(e);
+                            throw Throwables.propagate(e);
                         }
                     }
                 }
@@ -156,7 +156,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 }
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         logger.debug("Found {} CRLs", listOfLocations.size());
@@ -176,7 +176,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
         } catch (final Exception e) {
             logger.warn("Failed to add the crl entry [{}] to the cache", crl);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

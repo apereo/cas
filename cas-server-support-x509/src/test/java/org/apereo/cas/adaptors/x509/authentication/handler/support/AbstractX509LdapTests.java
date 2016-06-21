@@ -31,7 +31,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
             getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
             populateCertificateRevocationListAttribute();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

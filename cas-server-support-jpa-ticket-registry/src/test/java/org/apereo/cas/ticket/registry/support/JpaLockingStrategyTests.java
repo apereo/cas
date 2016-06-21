@@ -206,7 +206,7 @@ public class JpaLockingStrategyTests {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+                throw Throwables.propagate(e);
             }
         }).count();
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
@@ -218,7 +218,7 @@ public class JpaLockingStrategyTests {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+                throw Throwables.propagate(e);
             }
         }).count();
         assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);

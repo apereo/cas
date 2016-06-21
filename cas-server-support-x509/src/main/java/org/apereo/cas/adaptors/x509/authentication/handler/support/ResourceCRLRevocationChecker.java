@@ -112,7 +112,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
             final Set<X509CRL> results = this.fetcher.fetch(getResources());
             ResourceCRLRevocationChecker.this.addCrls(results);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         // Set up the scheduler to fetch periodically to implement refresh
@@ -137,7 +137,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
                     this.refreshInterval,
                     TimeUnit.SECONDS);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
     }

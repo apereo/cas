@@ -203,7 +203,7 @@ public class WsFederationHelper {
 
             return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

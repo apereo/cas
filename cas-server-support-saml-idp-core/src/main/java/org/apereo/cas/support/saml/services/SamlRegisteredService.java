@@ -105,7 +105,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
             samlRegisteredService.setMetadataSignatureLocation(this.metadataSignatureLocation);
             samlRegisteredService.setEncryptAssertions(this.encryptAssertions);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

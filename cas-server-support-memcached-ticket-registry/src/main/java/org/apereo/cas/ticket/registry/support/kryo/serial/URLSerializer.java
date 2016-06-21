@@ -22,7 +22,7 @@ public class URLSerializer extends Serializer<URL> {
         try {
             return new URL(url);
         } catch (final MalformedURLException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

@@ -158,7 +158,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
                 logger.debug("Shiro configuration is not defined");
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

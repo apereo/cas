@@ -57,7 +57,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             createGoogleAppsPrivateKey();
             createGoogleAppsPublicKey();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

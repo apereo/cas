@@ -40,7 +40,7 @@ public class EncodedTicket implements Ticket {
             this.id = encodedTicketId;
             this.encodedTicket = encodedTicket.read();
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

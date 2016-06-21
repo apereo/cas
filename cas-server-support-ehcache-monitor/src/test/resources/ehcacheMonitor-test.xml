@@ -31,7 +31,7 @@
         <property name="cacheManagerName" value="cacheManager"/>
     </bean>
 
-    <bean id="testCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <bean id="ehcacheTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
         <property name="cacheManager" ref="cacheManager"/>
         <property name="cacheName" value="testCache"/>
         <property name="diskExpiryThreadIntervalSeconds" value="0"/>
@@ -44,9 +44,5 @@
         <property name="timeToIdle" value="300"/>
         <property name="timeToLive" value="300"/>
     </bean>
-
-    <bean id="monitor" class="org.apereo.cas.monitor.EhCacheMonitor"
-          c:ehcacheTicketsCache-ref="testCache"/>
-
 
 </beans>

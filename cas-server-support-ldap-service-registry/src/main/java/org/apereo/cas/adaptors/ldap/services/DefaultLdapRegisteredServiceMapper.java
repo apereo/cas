@@ -58,7 +58,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
             return new LdapEntry(newDn, attrs);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -74,7 +74,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
             return null;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

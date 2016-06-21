@@ -129,7 +129,7 @@ public class Beans {
             dao.setBackingMap(pdirMap);
             return dao;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.mgmt.config;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
@@ -220,7 +221,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             p.load(casProperties.getMgmt().getUserPropertiesFile().getInputStream());
             return p;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

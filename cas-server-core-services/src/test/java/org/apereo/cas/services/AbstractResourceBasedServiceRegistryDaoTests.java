@@ -271,7 +271,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 this.dao.delete(r2);
                 Thread.sleep(2000);
             } catch (final InterruptedException e) {
-                throw new RuntimeException(e);
+                throw Throwables.propagate(e);
             }
             assertNull(this.dao.findServiceById(r2.getId()));
         });

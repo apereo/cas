@@ -40,7 +40,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         try {
             return new URL("https://");
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
             final Class<T> clazz = (Class<T>) Class.forName(className);
             return kryo.readObject(input, clazz);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

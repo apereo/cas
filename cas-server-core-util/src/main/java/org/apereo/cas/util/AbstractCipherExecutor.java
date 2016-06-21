@@ -52,7 +52,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             jws.setKey(this.signingKey);
             return jws.getCompactSerialization().getBytes();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             }
             return null;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

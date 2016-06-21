@@ -63,7 +63,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
                 return cipher.doFinal(data.getBytes(UTF8_ENCODING));
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
         return null;
     }

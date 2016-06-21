@@ -31,7 +31,7 @@ public final class JsonViewUtils {
             final MediaType jsonMimeType = MediaType.APPLICATION_JSON;
             jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -46,7 +46,7 @@ public final class JsonViewUtils {
             response.setStatus(HttpServletResponse.SC_OK);
             render(map, response);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
     }

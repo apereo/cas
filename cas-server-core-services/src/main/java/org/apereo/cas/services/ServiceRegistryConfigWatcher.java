@@ -53,7 +53,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
             this.serviceRegistryDao.getServiceRegistryDirectory().register(this.watcher, kinds);
             LOGGER.debug("Watching service registry directory at {}", this.serviceRegistryDao.getServiceRegistryDirectory());
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

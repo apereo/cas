@@ -126,7 +126,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             this.couchbase.shutdown();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

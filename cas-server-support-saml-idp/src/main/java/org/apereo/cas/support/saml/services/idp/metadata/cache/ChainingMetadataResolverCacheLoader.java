@@ -160,7 +160,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             buildSingleMetadataResolver(metadataProvider, service);
             metadataResolvers.add(metadataProvider);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

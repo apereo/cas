@@ -181,7 +181,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             return pswEnc;
 
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
     @Entity(name="users")

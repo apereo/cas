@@ -68,7 +68,7 @@ public class GoogleAuthenticatorQRGeneratorController {
             }
             ImageIO.write(image, "png", stream);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

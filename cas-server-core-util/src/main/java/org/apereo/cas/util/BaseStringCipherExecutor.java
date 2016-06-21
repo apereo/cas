@@ -164,7 +164,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
             logger.debug("Decrypting value...");
             return jwe.getPayload();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

@@ -262,7 +262,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                     def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
             return event;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -353,7 +353,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 }
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
         logger.debug("Attribute value {} is not a single-valued attribute", attributeValue);
         return null;
@@ -484,7 +484,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
 
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

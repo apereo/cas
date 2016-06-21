@@ -45,7 +45,7 @@ public class HazelcastSessionConfiguration {
                     .setProperty("hazelcast.max.no.heartbeat.seconds", "300");
             return Hazelcast.newHazelcastInstance(config);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

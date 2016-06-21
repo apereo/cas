@@ -187,7 +187,7 @@ public class JpaTicketRegistryTests {
                     TestUtils.getAuthentication(),
                     EXP_POLICY_PGT);
         } catch (final AbstractTicketException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

@@ -229,7 +229,7 @@ public abstract class AbstractSamlProfileHandlerController {
             logger.debug("Decoded SAML object [{}] from http request", object.getElementQName());
             return (T) object;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

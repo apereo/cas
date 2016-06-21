@@ -37,7 +37,7 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
             try {
                 ((InitializableComponent) this.attributeResolver).initialize();
             } catch (final ComponentInitializationException e) {
-                throw new RuntimeException(e);
+                throw Throwables.propagate(e);
             }
         }
     }
@@ -60,7 +60,7 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
 
             return new NamedPersonImpl(uid, attributes);
         } catch (final ResolutionException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

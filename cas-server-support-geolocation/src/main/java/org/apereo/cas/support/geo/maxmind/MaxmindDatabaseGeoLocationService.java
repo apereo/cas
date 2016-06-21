@@ -49,7 +49,7 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
                                 .withCache(new CHMCache()).build();
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

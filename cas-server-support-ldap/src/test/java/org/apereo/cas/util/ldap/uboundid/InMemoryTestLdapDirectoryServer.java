@@ -102,7 +102,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             populateDefaultEntries(c);
             c.close();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

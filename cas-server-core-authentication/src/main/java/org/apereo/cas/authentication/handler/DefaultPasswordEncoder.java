@@ -55,7 +55,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
 
             return DigestUtils.digest(this.encodingAlgorithm, password.getBytes(encodingCharToUse));
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

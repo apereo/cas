@@ -88,7 +88,7 @@ public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredS
             return factory.getObject();
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
