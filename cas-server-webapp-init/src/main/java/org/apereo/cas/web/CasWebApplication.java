@@ -24,7 +24,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @since 5.0.0
  */
 @ImportResource(locations = {
-        "classpath:/spring-configuration/*.xml",
         "classpath:/spring-configuration/*.groovy",
         "classpath:/deployerConfigContext.xml",
         "classpath*:/META-INF/spring/*.xml"})

@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
-import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
@@ -28,7 +27,6 @@ import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -370,5 +368,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public List authenticationMetadataPopulators() { return new ArrayList<>(); }
+    public List authenticationMetadataPopulators() {
+        return new ArrayList<>(); 
+    }
 }

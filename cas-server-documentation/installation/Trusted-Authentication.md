@@ -17,17 +17,3 @@ Trusted authentication handler support is enabled by including the following dep
   <version>${cas.version}</version>
 </dependency>
 ```
-
-
-## Configure Trusted Authentication Handler
-Update `deployerConfigContext.xml` according to the following template:
-
-```xml
-...
-<entry key-ref="principalBearingCredentialsAuthenticationHandler"
-       value-ref="trustedPrincipalResolver" />
-<util:list id="authenticationMetadataPopulators">
-  <ref bean="successfulHandlerMetaDataPopulator" />
-</util:list>
-...
-```
