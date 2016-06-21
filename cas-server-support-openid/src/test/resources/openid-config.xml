@@ -51,7 +51,7 @@
     
 
     <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    
 
     <util:list id="serviceFactoryList"/>
     

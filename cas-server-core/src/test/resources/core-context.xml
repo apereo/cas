@@ -41,7 +41,7 @@
     <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
 
 
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    
     
 
     <util:list id="serviceFactoryList">

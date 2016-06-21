@@ -18,7 +18,7 @@
 
     <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver"/>
     <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver"/>
     </util:map>

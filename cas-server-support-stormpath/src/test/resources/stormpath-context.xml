@@ -38,6 +38,6 @@
     
     <util:list id="serviceFactoryList" />
     
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    
     
 </beans>

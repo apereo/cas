@@ -41,7 +41,7 @@
         <ref bean="successfulHandlerMetaDataPopulator"/>
     </util:list>
     
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    
 
     
     <alias name="requiredHandlerAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>

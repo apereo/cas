@@ -20,7 +20,7 @@
 
     <util:list id="serviceFactoryList"/>
     <alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    
     <util:map id="uniqueIdGeneratorsMap"/>
     
     

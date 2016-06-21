@@ -74,7 +74,7 @@ public class TicketGrantingTicketProperties {
     }
 
     public static class HardTimeout {
-        private long timeToKillInSeconds = 28800;
+        private long timeToKillInSeconds;
 
         public long getTimeToKillInSeconds() {
             return timeToKillInSeconds;
@@ -86,7 +86,7 @@ public class TicketGrantingTicketProperties {
     }
 
     public static class Timeout {
-        private int maxTimeToLiveInSeconds = 28800;
+        private int maxTimeToLiveInSeconds;
 
         public int getMaxTimeToLiveInSeconds() {
             return maxTimeToLiveInSeconds;
@@ -99,8 +99,8 @@ public class TicketGrantingTicketProperties {
 
     
     public static class ThrottledTimeout {
-        private long timeToKillInSeconds = 28800;
-        private long timeInBetweenUsesInSeconds = 5;
+        private long timeToKillInSeconds;
+        private long timeInBetweenUsesInSeconds;
 
         public long getTimeToKillInSeconds() {
             return timeToKillInSeconds;

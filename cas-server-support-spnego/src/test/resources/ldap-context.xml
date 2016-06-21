@@ -129,7 +129,7 @@
     
     
     <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    
     <util:list id="validationServiceSelectionStrategies">
         <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
     </util:list>

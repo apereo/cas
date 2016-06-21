@@ -227,7 +227,7 @@
         </bean>
 
     </util:list>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    
     <util:map id="uniqueIdGeneratorsMap">
         <entry
                 key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"

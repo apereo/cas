@@ -14,7 +14,6 @@ public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
     /** Serializable Unique ID. */
     private static final long serialVersionUID = 3836547698242303540L;
 
-
     /**
      * Instantiates a new Always expires expiration policy.
      */
