@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
@@ -168,7 +169,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
         }
     }
 
-    private String generateOctetJsonWebKeyOfSize(final int size) {
+    private static String generateOctetJsonWebKeyOfSize(final int size) {
         final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
         final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
         return params.get(JSON_WEB_KEY).toString();

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 
+import com.google.common.base.Throwables;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.util.CertUtils;

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;

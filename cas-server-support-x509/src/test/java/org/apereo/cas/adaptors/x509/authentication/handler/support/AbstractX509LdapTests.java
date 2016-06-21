@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import com.google.common.base.Throwables;
 import com.unboundid.ldap.sdk.LDAPException;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.util.EncodingUtils;

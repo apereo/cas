@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Throwables;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;

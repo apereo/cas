@@ -1,5 +1,6 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceLogoutTypeEditBean;
@@ -212,7 +213,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
      *
      * @param logoutType the reg svc
      */
-    private LogoutType parseLogoutType(final String logoutType) {
+    private static LogoutType parseLogoutType(final String logoutType) {
         if (StringUtils.equalsIgnoreCase(logoutType, RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
             return LogoutType.BACK_CHANNEL;
         } else if (StringUtils.equalsIgnoreCase(logoutType, RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {

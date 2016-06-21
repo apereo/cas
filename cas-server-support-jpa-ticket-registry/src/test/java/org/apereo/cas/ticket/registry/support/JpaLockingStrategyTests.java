@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.support;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.junit.Before;
 import org.junit.Test;

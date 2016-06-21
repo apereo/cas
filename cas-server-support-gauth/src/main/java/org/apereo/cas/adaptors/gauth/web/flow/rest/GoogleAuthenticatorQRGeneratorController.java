@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.gauth.web.flow.rest;
 
+import com.google.common.base.Throwables;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;

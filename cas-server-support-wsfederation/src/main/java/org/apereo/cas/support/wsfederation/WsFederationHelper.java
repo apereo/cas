@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.util.DateTimeUtils;

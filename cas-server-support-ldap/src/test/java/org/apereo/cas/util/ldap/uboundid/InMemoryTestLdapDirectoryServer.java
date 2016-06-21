@@ -1,5 +1,6 @@
 package org.apereo.cas.util.ldap.uboundid;
 
+import com.google.common.base.Throwables;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;

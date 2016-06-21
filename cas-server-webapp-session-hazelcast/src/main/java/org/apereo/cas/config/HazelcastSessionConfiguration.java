@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.base.Throwables;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;

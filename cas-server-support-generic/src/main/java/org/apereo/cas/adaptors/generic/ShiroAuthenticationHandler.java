@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 
 import org.apache.shiro.SecurityUtils;

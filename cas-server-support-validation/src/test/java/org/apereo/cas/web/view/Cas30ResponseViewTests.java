@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;

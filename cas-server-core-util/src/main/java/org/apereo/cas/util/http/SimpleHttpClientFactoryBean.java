@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 import org.apache.http.ConnectionReuseStrategy;

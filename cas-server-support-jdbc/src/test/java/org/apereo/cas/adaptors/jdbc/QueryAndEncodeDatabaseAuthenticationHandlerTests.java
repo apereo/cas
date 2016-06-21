@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.TestUtils;

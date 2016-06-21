@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir.support;
 
+import com.google.common.base.Throwables;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;

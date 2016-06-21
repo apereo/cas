@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -12,15 +13,10 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategy;
-import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
-import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredServicePublicKey;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 
 import java.net.URL;
 
@@ -83,11 +79,11 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setRequiredHandlers(kryo.readObject(input, ImmutableSet.class));
         svc.setTheme(kryo.readObject(input, String.class));
 
-        svc.setPublicKey(readObjectByReflection(kryo, input, RegisteredServicePublicKey.class));
-        svc.setProxyPolicy(readObjectByReflection(kryo, input, RegisteredServiceProxyPolicy.class));
-        svc.setAttributeReleasePolicy(readObjectByReflection(kryo, input, RegisteredServiceAttributeReleasePolicy.class));
-        svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input, RegisteredServiceUsernameAttributeProvider.class));
-        svc.setAccessStrategy(readObjectByReflection(kryo, input, RegisteredServiceAccessStrategy.class));
+        svc.setPublicKey(readObjectByReflection(kryo, input));
+        svc.setProxyPolicy(readObjectByReflection(kryo, input));
+        svc.setAttributeReleasePolicy(readObjectByReflection(kryo, input));
+        svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input));
+        svc.setAccessStrategy(readObjectByReflection(kryo, input));
 
         return svc;
     }
@@ -115,7 +111,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      * @param type  the type
      * @return the t
      */
-    private static <T> T readObjectByReflection(final Kryo kryo, final Input input, final Class<? extends T> type) {
+    private static <T> T readObjectByReflection(final Kryo kryo, final Input input) {
         try {
             final String className = kryo.readObject(input, String.class);
             final Class<T> clazz = (Class<T>) Class.forName(className);

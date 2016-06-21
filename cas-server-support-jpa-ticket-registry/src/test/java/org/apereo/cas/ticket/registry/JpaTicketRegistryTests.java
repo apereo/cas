@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import com.google.common.base.Throwables;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;

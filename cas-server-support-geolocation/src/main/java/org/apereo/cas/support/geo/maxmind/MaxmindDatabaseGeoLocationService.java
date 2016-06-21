@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo.maxmind;
 
+import com.google.common.base.Throwables;
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;

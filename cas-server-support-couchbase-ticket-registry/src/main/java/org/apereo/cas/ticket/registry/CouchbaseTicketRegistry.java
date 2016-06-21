@@ -6,6 +6,7 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,32 +37,33 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final String END_TOKEN = "\u02ad";
 
     private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
-    
+
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
             VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
-    private static final List<View> ALL_VIEWS = Arrays.asList(new View[] {
+    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{
             ALL_TICKETS_VIEW
     });
     private static final String UTIL_DOCUMENT = "statistics";
-        
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     private CouchbaseClientFactory couchbase;
 
     /**
      * Default constructor.
      */
-    public CouchbaseTicketRegistry() {}
+    public CouchbaseTicketRegistry() {
+    }
 
     @Override
     public void updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), 
+                    SerializableDocument.create(ticket.getId(),
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
@@ -74,7 +77,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), 
+                    SerializableDocument.create(ticket.getId(),
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
@@ -110,8 +113,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void initialize() {
-        
-        System.setProperty("com.couchbase.queryEnabled", 
+
+        System.setProperty("com.couchbase.queryEnabled",
                 Boolean.toString(casProperties.getTicket().getRegistry().getCouchbase().isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
@@ -137,7 +140,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("getTickets() not supported.");
+        return new ArrayList<>();
     }
 
     @Override
@@ -171,12 +174,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         if (iterator.hasNext()) {
             final ViewRow res = iterator.next();
             return (Integer) res.value();
-        } 
-        
+        }
+
         return 0;
     }
-    
-    
+
+
     public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
         this.couchbase = couchbase;
     }

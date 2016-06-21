@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.base.Throwables;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.slf4j.Logger;

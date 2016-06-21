@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
