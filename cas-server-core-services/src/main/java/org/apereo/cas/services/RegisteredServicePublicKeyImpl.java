@@ -22,7 +22,7 @@ import java.security.PublicKey;
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePublicKeyImpl.class);
 
     private String location;
 
@@ -87,7 +87,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
             factory.setSingleton(false);
             return factory.getObject();
         } catch (final Exception e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             throw Throwables.propagate(e);
         }
     }
