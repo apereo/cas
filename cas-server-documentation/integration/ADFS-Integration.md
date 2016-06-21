@@ -17,9 +17,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-## Components
-
-### WsFed Configuration
+## WsFed Configuration
 
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
 and made it available to CAS at a location that can be resolved at runtime.
@@ -50,7 +48,8 @@ cas.wsfed.idp.signingcerts=classpath:adfs-signing.crt
 ```
 
 
-### Modifying ADFS Claims
+## Modifying ADFS Claims
+
 The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but before they are inserted into the CAS user principal. For this to happen, you need
 to put together an implementation of `WsFederationAttributeMutator` that changes and manipulates ADFS claims:
 
@@ -75,7 +74,7 @@ The mutator then needs to be declared in your configuration:
 Finally, ensure that the attributes sent from ADFS are available and mapped in
 your `attributeRepository` configuration.
 
-### Handling CAS Logout
+## Handling CAS Logout
 
 An optional step, it is recommended that the `casLogoutView.jsp` be replace to redirect to ADFS's logout page.
 
