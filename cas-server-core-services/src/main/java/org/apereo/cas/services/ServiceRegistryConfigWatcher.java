@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -49,7 +49,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();
             final WatchEvent.Kind[] kinds = (WatchEvent.Kind[])
-                    Arrays.asList(ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY).toArray();
+                    Lists.newArrayList(ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY).toArray();
             LOGGER.debug("Created service registry watcher for events of type {}", kinds);
             this.serviceRegistryDao.getServiceRegistryDirectory().register(this.watcher, kinds);
             LOGGER.debug("Watching service registry directory at {}", this.serviceRegistryDao.getServiceRegistryDirectory());

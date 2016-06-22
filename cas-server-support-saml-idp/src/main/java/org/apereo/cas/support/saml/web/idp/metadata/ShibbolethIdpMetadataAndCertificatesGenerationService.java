@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import net.shibboleth.idp.installer.metadata.MetadataGenerator;
 import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
@@ -12,7 +13,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,7 +130,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setHostName(this.hostName);
         generator.setCertificateFile(this.encryptionCertFile);
         generator.setPrivateKeyFile(this.encryptionCertKeyFile);
-        generator.setURISubjectAltNames(Arrays.asList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Lists.newArrayList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 
@@ -144,7 +144,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setHostName(this.hostName);
         generator.setCertificateFile(this.signingCertFile);
         generator.setPrivateKeyFile(this.signingKeyFile);
-        generator.setURISubjectAltNames(Arrays.asList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Lists.newArrayList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 

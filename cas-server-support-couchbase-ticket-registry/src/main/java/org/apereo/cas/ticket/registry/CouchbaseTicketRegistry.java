@@ -7,6 +7,7 @@ import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +42,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
-    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{
+    private static final List<View> ALL_VIEWS = Lists.newArrayList(new View[]{
             ALL_TICKETS_VIEW
     });
     private static final String UTIL_DOCUMENT = "statistics";

@@ -4,8 +4,12 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -21,18 +25,26 @@ import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 @SpringApplicationConfiguration(
-        classes = {CasCoreServicesConfiguration.class, CasCoreUtilConfiguration.class,
-                CasCoreLogoutConfiguration.class, CasCoreValidationConfiguration.class},
+        classes = {CasCoreServicesConfiguration.class, 
+                CasCoreUtilConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreWebConfiguration.class,
+                CasCoreLogoutConfiguration.class, 
+                CasCoreValidationConfiguration.class},
         locations = {
                 "classpath:/core-context.xml"
         }, initializers = ConfigFileApplicationContextInitializer.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -6,6 +6,7 @@ import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casFiltersConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasFiltersConfiguration {
 
     @Autowired

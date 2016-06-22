@@ -61,7 +61,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             final String serverKeyStorePath = keystoreFile.getCanonicalPath();
             final SSLUtil serverSSLUtil = new SSLUtil(
-                    new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), new TrustStoreTrustManager(serverKeyStorePath));
+                    new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), 
+                    new TrustStoreTrustManager(serverKeyStorePath));
             final SSLUtil clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
             config.setListenerConfigs(
                     InMemoryListenerConfig.createLDAPConfig("LDAP", // Listener name
@@ -94,14 +95,24 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             try (final OutputStream outputStream = new FileOutputStream(ldif)) {
                 IOUtils.copy(ldifFile, outputStream);
             }
-
             this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());
-            this.directoryServer.restartServer();
-
-            final LDAPConnection c = getConnection();
-            LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
-            populateDefaultEntries(c);
-            c.close();
+            
+            int retryCount = 5;
+            while (retryCount > 0) {
+                try {
+                    this.directoryServer.restartServer();
+                    final LDAPConnection c = getConnection();
+                    LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
+                    populateDefaultEntries(c);
+                    c.close();
+                    retryCount = 0;
+                } catch (final Throwable e) {
+                    Thread.sleep(2000);
+                    retryCount--;
+                }
+            }
+            
+ 
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

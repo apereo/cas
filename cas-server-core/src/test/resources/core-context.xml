@@ -16,36 +16,22 @@
         <property name="scopes">
             <map>
                 <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope"/>
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
                 </entry>
             </map>
         </property>
     </bean>
-
-    <context:component-scan base-package="org.apereo.cas"/>
-    <context:annotation-config/>
-
     <aop:aspectj-autoproxy proxy-target-class="true"/>
-    <context:property-placeholder properties-ref="casProperties" ignore-resource-not-found="true"/>
-    <util:properties id="casProperties" location="classpath:cas.properties" ignore-resource-not-found="true"/>
-
+    
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
         <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
     </util:map>
-    <util:list id="authenticationMetadataPopulators">
-        <ref bean="cacheCredentialsMetaDataPopulator"/>
-    </util:list>
 
 
-    <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
+    <bean id="primaryAuthenticationHandler" 
+          class="org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
     
-
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
-    
-
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">
             <property name="id" value="0"/>
@@ -232,14 +218,6 @@
         </bean>
     </util:list>
 
-
-    <util:map id="serviceThemeResolverSupportedBrowsers">
-        <entry key=".*iPhone.*" value="iphone"/>
-        <entry key=".*Android.*" value="android"/>
-        <entry key=".*Safari.*Pre.*" value="safari"/>
-        <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
-    </util:map>
-
     <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"/>
 
     <bean id="cachingPrincipalAttributeRepository"
@@ -250,11 +228,7 @@
     <bean id="persistentIdGenerator"
           class="org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
           c:salt="casrox"/>
-
-
-    <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy"/>
-    </util:list>
+    
     <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>
     <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties"/>
 </beans>

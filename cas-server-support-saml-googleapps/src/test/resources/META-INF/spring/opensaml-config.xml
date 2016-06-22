@@ -83,24 +83,7 @@
     <util:map id="authenticationHandlersResolvers"/>
     
     
-    
-    
-    
 
-    
-   
-    
-    
-    <util:map id="serviceThemeResolverSupportedBrowsers" />
-    
-    
-    
-    <metrics:metric-registry id="metrics" />
-    <metrics:health-check-registry id="healthCheckMetrics" />
-    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
     
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService"

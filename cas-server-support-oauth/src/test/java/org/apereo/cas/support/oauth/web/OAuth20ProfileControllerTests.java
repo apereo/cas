@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
@@ -34,7 +35,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +128,7 @@ public class OAuth20ProfileControllerTests {
     public void verifyOK() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
@@ -164,7 +164,7 @@ public class OAuth20ProfileControllerTests {
     public void verifyOKWithAuthorizationHeader() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);

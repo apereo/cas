@@ -7,6 +7,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -22,6 +23,7 @@ import java.net.URL;
  */
 @Configuration("hazelcastSessionConfiguration")
 @EnableHazelcastHttpSession
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastSessionConfiguration {
     
     @Autowired

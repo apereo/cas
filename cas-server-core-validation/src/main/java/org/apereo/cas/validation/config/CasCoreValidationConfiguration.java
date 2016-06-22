@@ -1,9 +1,11 @@
 package org.apereo.cas.validation.config;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.validation.Cas10ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.ValidationSpecification;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Scope;
  * @since 5.0.0
  */
 @Configuration("casCoreValidationConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreValidationConfiguration {
     
     @Bean

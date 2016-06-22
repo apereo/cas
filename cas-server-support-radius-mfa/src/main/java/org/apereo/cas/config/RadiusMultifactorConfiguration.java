@@ -24,6 +24,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("radiusMfaConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RadiusMultifactorConfiguration {
 
     @Autowired

@@ -44,13 +44,7 @@
     
     <util:map id="authenticationHandlersResolvers"/>
     
-    
-    
-    
-    <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
-    </util:list>
-    
+ 
     
     
     

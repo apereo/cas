@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
@@ -20,7 +21,6 @@ import java.net.URLDecoder;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -115,7 +115,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
 
         final URI[] urls = getDistributionPoints(cert);
-        logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Arrays.asList(urls));
+        logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Lists.newArrayList(urls));
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
         boolean stopFetching = false;
 

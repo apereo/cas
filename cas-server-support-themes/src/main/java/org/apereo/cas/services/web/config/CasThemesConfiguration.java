@@ -7,6 +7,7 @@ import org.apereo.cas.services.web.ServiceThemeResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ThemeResolver;
@@ -38,6 +39,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casThemesConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasThemesConfiguration {
 
     @Autowired

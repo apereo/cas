@@ -5,6 +5,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -24,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -78,9 +78,9 @@ public class StatisticsController implements ServletContextAware {
         final double difference = this.upTimeStartDate.until(ZonedDateTime.now(ZoneOffset.UTC), ChronoUnit.MILLIS);
 
         modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<>(
-                        Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
+                        Lists.newArrayList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
                                 NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
-                new LinkedList<>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
+                new LinkedList<>(Lists.newArrayList("day", "hour", "minute", "second", "millisecond"))));
 
         modelAndView.addObject("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
         modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));

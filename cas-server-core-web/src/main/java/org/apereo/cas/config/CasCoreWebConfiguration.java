@@ -8,11 +8,13 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +24,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("casCoreWebConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreWebConfiguration {
 
     @Autowired
@@ -56,5 +59,12 @@ public class CasCoreWebConfiguration {
         bean.setUseCodeAsDefaultMessage(casProperties.getMessageBundle().isUseCodeMessage());
         bean.setBasenames(casProperties.getMessageBundle().getBaseNames());
         return bean;
+    }
+
+    @Bean
+    public List argumentExtractors() {
+        final List<ArgumentExtractor> list = new ArrayList<>();
+        list.add(defaultArgumentExtractor());
+        return list;
     }
 }

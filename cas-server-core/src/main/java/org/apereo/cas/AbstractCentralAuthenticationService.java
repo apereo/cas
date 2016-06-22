@@ -6,7 +6,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -206,22 +205,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
         return c;
     }
-
-    /**
-     * Gets the authentication satisfied by policy.
-     *
-     * @param authenticationResult the authentication result
-     * @param context              the context
-     * @return the authentication satisfied by policy
-     * @throws AbstractTicketException the ticket exception
-     */
-    protected Authentication getAuthenticationSatisfiedByPolicy(
-            final AuthenticationResult authenticationResult,
-            final ServiceContext context) throws AbstractTicketException {
-
-        return getAuthenticationSatisfiedByPolicy(authenticationResult.getAuthentication(), context);
-    }
-
+    
     /**
      * Gets the authentication satisfied by policy.
      *

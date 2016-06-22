@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.view.CasProtocolView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
  * @since 5.0.0
  */
 @Configuration("casProtocolViewsConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasProtocolViewsConfiguration {
 
     @Autowired

@@ -1,10 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +13,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasApplicationContextConfiguration}.that attempts to create Spring-managed beans
@@ -30,22 +25,11 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasApplicationContextConfiguration {
     
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
-    private ArgumentExtractor defaultArgumentExtractor;
-    
     @Bean
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
-        
-    @Bean
-    public List argumentExtractors() {
-        final List<ArgumentExtractor> list = new ArrayList<>();
-        list.add(this.defaultArgumentExtractor);
-        return list;
-    }
-        
+            
     @Bean
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();

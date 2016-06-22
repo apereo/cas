@@ -12,6 +12,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ import java.util.Collections;
  */
 @Configuration("shibbolethAttributeResolverConfiguration")
 @ComponentScan("org.apereo.cas.persondir.support")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ShibbolethAttributeResolverConfiguration {
     
     @Autowired(required = false)

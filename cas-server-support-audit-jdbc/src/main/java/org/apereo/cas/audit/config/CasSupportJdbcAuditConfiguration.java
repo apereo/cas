@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -23,6 +24,7 @@ import javax.sql.DataSource;
  */
 @Configuration("casJdbcAuditConfiguration")
 @EnableAspectJAutoProxy
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportJdbcAuditConfiguration {
 
     @Autowired

@@ -22,11 +22,6 @@
         </property>
     </bean>
     
-    <context:component-scan base-package="org.apereo.cas" />
-    <context:annotation-config />
-    <context:property-placeholder location="cas.properties" ignore-resource-not-found="true" />
-    <util:properties id="casProperties" />
-
     <bean
           id="memcachedClient"
           class="net.spy.memcached.spring.MemcachedClientFactoryBean"
@@ -46,32 +41,7 @@
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
-
     
     <util:map id="authenticationHandlersResolvers"/>
     
-    
-    
-    
-    
-
-    
-   
-    
-    
-    <util:map id="serviceThemeResolverSupportedBrowsers" />
-    <metrics:metric-registry id="metrics" />
-    <metrics:health-check-registry id="healthCheckMetrics" />
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
-
-    <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
-    </util:list>
-    
-    
-    
-    
-
 </beans>

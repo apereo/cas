@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 @Configuration("igniteConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class IgniteTicketRegistryConfiguration {
 
     @Autowired

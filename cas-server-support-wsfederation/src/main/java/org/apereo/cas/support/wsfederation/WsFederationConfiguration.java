@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import com.google.common.collect.Lists;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -166,7 +166,7 @@ public class WsFederationConfiguration implements Serializable {
      * @param signingCertificateResources a list of certificate files to read in.
      */
     public void setSigningCertificateResources(final Resource... signingCertificateResources) {
-        this.signingCertificateResources = Arrays.asList(signingCertificateResources);
+        this.signingCertificateResources = Lists.newArrayList(signingCertificateResources);
         createSigningWallet(this.signingCertificateResources);
     }
 

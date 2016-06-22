@@ -10,15 +10,7 @@
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
-
-
-    <context:property-placeholder location="classpath:cloud.properties"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="false"/>
-
-    <context:annotation-config/>
-    <context:component-scan base-package="org.apereo.cas"/>
-
+    
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
         <property name="scopes">
             <map>
@@ -38,15 +30,6 @@
 
     <util:map id="authenticationHandlersResolvers"/>
     
-
-
-    
-    
-    
-
-
-    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
-
     <import resource="classpath:META-INF/spring/jpa-events-context.xml"/>
 
 </beans>

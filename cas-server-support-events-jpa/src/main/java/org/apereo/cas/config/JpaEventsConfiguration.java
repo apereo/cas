@@ -7,6 +7,7 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ import javax.sql.DataSource;
  * @since 5.0.0
  */
 @Configuration("jpaEventsConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JpaEventsConfiguration {
 
     @Autowired

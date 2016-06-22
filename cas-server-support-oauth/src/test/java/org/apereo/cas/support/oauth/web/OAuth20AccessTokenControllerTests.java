@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -49,7 +50,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -326,7 +326,7 @@ public class OAuth20AccessTokenControllerTests {
 
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
@@ -795,7 +795,7 @@ public class OAuth20AccessTokenControllerTests {
     private static Principal createPrincipal() {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         return org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);

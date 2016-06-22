@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  */
 @Configuration("casCoreLogoutConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreLogoutConfiguration {
 
     @Autowired

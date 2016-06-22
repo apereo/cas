@@ -491,6 +491,14 @@
         <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
         <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
     </module>
+
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="Arrays\.asList\(.+"/>
+        <property name="message" value="Use Lists.newArrayList() instead."/>
+    </module>
+    
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
         <property name="severity" value="error"/>

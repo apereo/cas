@@ -6,11 +6,15 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.TestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -28,6 +32,8 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = {CasSupportActionsConfiguration.class, 
+        CasCoreWebflowConfiguration.class, CasCookieConfiguration.class})
 public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired

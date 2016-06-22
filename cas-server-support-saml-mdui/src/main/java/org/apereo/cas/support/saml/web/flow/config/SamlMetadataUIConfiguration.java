@@ -31,6 +31,7 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -52,6 +53,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("samlMetadataUIConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlMetadataUIConfiguration {
 
     private static final String DEFAULT_SEPARATOR = "::";

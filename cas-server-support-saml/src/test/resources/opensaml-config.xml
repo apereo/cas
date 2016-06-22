@@ -39,26 +39,11 @@
     <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
-    <util:map id="serviceThemeResolverSupportedBrowsers"/>
-
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
-    
     <util:map id="authenticationHandlersResolvers"/>
     
     
-    <metrics:metric-registry id="metrics"/>
-    <metrics:health-check-registry id="healthCheckMetrics"/>
-
-
     
     
-
-    
-    
-    
-    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
 
     <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>
     <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties"/>

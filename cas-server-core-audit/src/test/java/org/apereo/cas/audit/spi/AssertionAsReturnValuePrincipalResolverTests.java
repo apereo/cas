@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
@@ -11,8 +12,6 @@ import org.apereo.cas.validation.ImmutableAssertion;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -37,7 +36,7 @@ public class AssertionAsReturnValuePrincipalResolverTests extends AbstractCentra
         final JoinPoint jp = mock(JoinPoint.class);
         final Assertion returnedAssertion =
                 new ImmutableAssertion(authnResult.getAuthentication(),
-                        Arrays.asList(authn), authnResult.getService(), true);
+                        Lists.newArrayList(authn), authnResult.getService(), true);
 
         final String result = res.resolveFrom(jp, returnedAssertion);
         assertNotNull(result);

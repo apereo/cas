@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.LegacyValidateController;
 import org.apereo.cas.web.ProxyController;
@@ -25,6 +24,7 @@ import org.apereo.cas.web.view.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
@@ -36,6 +36,7 @@ import org.springframework.web.servlet.View;
  * @since 5.0.0
  */
 @Configuration("casValidationConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasValidationConfiguration {
     
     @Autowired
@@ -56,10 +57,6 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("defaultValidationServiceSelectionStrategy")
-    private ValidationServiceSelectionStrategy defaultStrategy;
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")

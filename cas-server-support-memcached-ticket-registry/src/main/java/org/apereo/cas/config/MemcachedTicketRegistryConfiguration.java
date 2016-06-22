@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import javax.annotation.Nullable;
  * @since 5.0.0
  */
 @Configuration("memcachedConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MemcachedTicketRegistryConfiguration {
 
     @Nullable

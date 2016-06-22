@@ -5,6 +5,7 @@ import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.util.StringUtils;
  * @since 5.0.0
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseServiceRegistryConfiguration {
 
     @Autowired

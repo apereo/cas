@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -248,7 +248,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     private static Map<String, Object> getPrincipalAttributes() {
         final Map<String, Object> map = new HashMap<>();
         map.put("cn", "cas");
-        map.put("givenName", Arrays.asList("cas", "KAZ"));
+        map.put("givenName", Lists.newArrayList("cas", "KAZ"));
         map.put("sn", "surname");
         map.put("phone", "123-456-7890");
 

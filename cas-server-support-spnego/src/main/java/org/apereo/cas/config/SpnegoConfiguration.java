@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.collect.Lists;
 import jcifs.spnego.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -25,12 +26,11 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
-
-import java.util.Arrays;
 
 /**
  * This is {@link SpnegoConfiguration}.
@@ -39,9 +39,9 @@ import java.util.Arrays;
  * @since 5.0.0
  */
 @Configuration("spnegoConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoConfiguration {
-
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -175,7 +175,7 @@ public class SpnegoConfiguration {
                 new SpnegoNegociateCredentialsAction();
         a.setMixedModeAuthentication(casProperties.getAuthn().getSpnego().isMixedModeAuthentication());
         a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
-        a.setSupportedBrowsers(Arrays.asList(casProperties.getAuthn().getSpnego().getSupportedBrowsers()));
+        a.setSupportedBrowsers(Lists.newArrayList(casProperties.getAuthn().getSpnego().getSupportedBrowsers()));
         return a;
     }
 

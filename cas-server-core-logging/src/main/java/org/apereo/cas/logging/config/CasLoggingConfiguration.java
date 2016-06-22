@@ -1,11 +1,13 @@
 package org.apereo.cas.logging.config;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.web.ThreadContextMDCServletFilter;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,6 +22,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Configuration("casLoggingConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasLoggingConfiguration {
 
     @Autowired

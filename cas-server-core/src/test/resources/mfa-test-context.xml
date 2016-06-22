@@ -13,23 +13,12 @@
         <property name="scopes">
             <map>
                 <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope"/>
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
                 </entry>
             </map>
         </property>
     </bean>
-
-    <context:component-scan base-package="org.apereo.cas"/>
-    <context:annotation-config/>
-
-    <context:property-placeholder properties-ref="propertiesMfa"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="false"/>
-
-    <util:properties id="propertiesMfa">
-        <prop key="cas.authn.policy.any.tryAll">true</prop>
-    </util:properties>
-
+    
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
         <entry key-ref="passwordHandler" value-ref="personDirectoryPrincipalResolver"/>
@@ -37,18 +26,10 @@
             <null/>
         </entry>
     </util:map>
-    <util:list id="authenticationMetadataPopulators">
-        <ref bean="successfulHandlerMetaDataPopulator"/>
-    </util:list>
+
     
     <alias name="requiredHandlerAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
     
-
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
-    
-
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService"
               p:id="1"
@@ -95,10 +76,4 @@
             </map>
         </constructor-arg>
     </bean>
-   
-    
-    
-    <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy"/>
-    </util:list>
 </beans>

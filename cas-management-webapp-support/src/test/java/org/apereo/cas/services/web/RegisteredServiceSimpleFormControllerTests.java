@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
 import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
@@ -32,7 +33,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +61,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Before
     public void setUp() throws Exception {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("test", Arrays.asList(new Object[] {"test"}));
+        attributes.put("test", Lists.newArrayList(new Object[] {"test"}));
 
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);

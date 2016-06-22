@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.collect.Lists;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -12,6 +13,7 @@ import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +22,6 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -30,6 +31,7 @@ import java.util.Collections;
  * @since 5.0.0
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfiguration {
 
     @Autowired
@@ -90,7 +92,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Override
     public CustomConversions customConversions() {
-        return new CustomConversions(Arrays.asList(
+        return new CustomConversions(Lists.newArrayList(
                 new BaseConverters.LoggerConverter(),
                 new BaseConverters.ClassConverter(),
                 new BaseConverters.CommonsLogConverter(),

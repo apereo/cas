@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casMetricsConfiguration")
 @EnableMetrics
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
     
     @Autowired

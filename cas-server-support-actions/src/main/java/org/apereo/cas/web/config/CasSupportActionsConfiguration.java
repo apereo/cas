@@ -24,6 +24,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -38,6 +39,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @Configuration("casSupportActionsConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportActionsConfiguration {
 
     @Autowired

@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import com.google.common.collect.Lists;
 import org.springframework.core.io.Resource;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -62,7 +62,7 @@ public class HazelcastProperties {
         private int port = 5701;
         private boolean multicastEnabled;
         private boolean tcpipEnabled = true;
-        private List<String> members = Arrays.asList("localhost");
+        private List<String> members = Lists.newArrayList("localhost");
         private int maxHeapSizePercentage = 85;
         private String maxSizePolicy = "USED_HEAP_PERCENTAGE";
         private String evictionPolicy = "LRU";

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -12,7 +13,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -125,7 +125,7 @@ public class Beans {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
             final Map pdirMap = new HashMap<>();
             attributes.entrySet().forEach(entry -> {
-                pdirMap.put(entry.getKey(), Arrays.asList(entry.getValue()));
+                pdirMap.put(entry.getKey(), Lists.newArrayList(entry.getValue()));
             });
             dao.setBackingMap(pdirMap);
             return dao;

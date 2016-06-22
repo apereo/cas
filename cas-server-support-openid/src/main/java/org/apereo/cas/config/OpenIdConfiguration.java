@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -29,11 +30,13 @@ import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +44,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
-import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -51,6 +53,7 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("openidConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
@@ -129,7 +132,7 @@ public class OpenIdConfiguration {
     @Bean
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Arrays.asList(
+        controller.setDelegates(Lists.newArrayList(
                 smartOpenIdAssociationController(),
                 openIdValidateController()));
         return controller;
@@ -186,6 +189,7 @@ public class OpenIdConfiguration {
         final ServerManager manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
+        manager.setSharedAssociations(new InMemoryServerAssociationStore());
         LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServer().getLoginUrl());
         return manager;
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
@@ -54,7 +55,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -230,7 +230,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public List authenticationMetadataPopulators() {
-        return Arrays.asList(successfulHandlerMetaDataPopulator(),
+        return Lists.newArrayList(successfulHandlerMetaDataPopulator(),
                 rememberMeAuthenticationMetaDataPopulator());
     }
 

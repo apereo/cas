@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -14,7 +15,6 @@ import org.springframework.util.Assert;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,7 +60,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param handlers One or more authentication handlers.
      */
     protected AbstractAuthenticationManager(final AuthenticationHandler ... handlers) {
-        this(Arrays.asList(handlers));
+        this(Lists.newArrayList(handlers));
     }
 
     /**

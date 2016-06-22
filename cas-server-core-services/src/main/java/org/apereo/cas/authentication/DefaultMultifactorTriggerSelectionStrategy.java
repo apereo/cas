@@ -59,7 +59,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null 
+        if (!provider.isPresent() && principal != null
                 && StringUtils.hasText(globalPrincipalAttributeNameTriggers)) {
             provider = StreamSupport.stream(ATTR_NAMES.split(globalPrincipalAttributeNameTriggers).spliterator(), false)
                     // principal.getAttribute(name).values

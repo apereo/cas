@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
+import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,11 +14,13 @@ import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link PooledLdapConnectionFactoryMonitor} class.
+ *
  * @author Marvin S. Addison
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations={"/ldap-context.xml", "/ldap-poolmonitor-test.xml"})
+@SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/ldap-poolmonitor-test.xml"},
+        classes = {LdapMonitorConfiguration.class})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @Autowired

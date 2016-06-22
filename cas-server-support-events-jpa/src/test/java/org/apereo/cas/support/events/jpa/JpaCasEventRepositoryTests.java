@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import org.apereo.cas.config.JpaEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.junit.runner.RunWith;
@@ -14,7 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 5.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations={"classpath:/jpa-eventscontext-test.xml"})
+@SpringApplicationConfiguration(locations = {"classpath:/jpa-eventscontext-test.xml"},
+        classes = JpaEventsConfiguration.class)
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired
