@@ -7,10 +7,12 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.cryptacular.util.CertUtil;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.FailedLoginException;
@@ -272,6 +274,14 @@ public class X509CredentialsAuthenticationHandlerTests {
             }
         }
         return certs;
+    }
+
+    @Test
+    public void verifyWiring() {
+        try (final ClassPathXmlApplicationContext context =
+                     new ClassPathXmlApplicationContext("x509-authn-context.xml")) {
+            Assert.assertTrue(context.getBeanDefinitionCount() > 0);
+        }
     }
 }
 
