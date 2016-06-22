@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -18,6 +20,7 @@ import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
+import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +41,9 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @SpringApplicationConfiguration(
-        classes = {CasCoreValidationConfiguration.class, CasProtocolViewsConfiguration.class},
+        classes = {CasCoreValidationConfiguration.class, CasProtocolViewsConfiguration.class,
+                CasCoreValidationConfiguration.class, CasCoreWebConfiguration.class,
+                CasCoreUtilConfiguration.class, CasValidationConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
@@ -60,7 +65,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController.setArgumentExtractor(getArgumentExtractor());
         this.serviceValidateController.setServicesManager(getServicesManager());
         this.serviceValidateController.setValidationSpecification(new Cas20WithoutProxyingValidationSpecification());
-        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(new DefaultMultifactorTriggerSelectionStrategy());
+        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(
+                new DefaultMultifactorTriggerSelectionStrategy());
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {

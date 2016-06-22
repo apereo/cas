@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
@@ -13,6 +12,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
+import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulator;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
@@ -55,6 +55,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,7 +191,7 @@ public class CasCoreAuthenticationConfiguration {
         val.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         return val;
     }
-    
+
     @Bean
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("servicesManager")
                                                                           final ServicesManager servicesManager) {
@@ -230,8 +231,14 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public List authenticationMetadataPopulators() {
-        return Lists.newArrayList(successfulHandlerMetaDataPopulator(),
-                rememberMeAuthenticationMetaDataPopulator());
+        final List list = new ArrayList<>();
+        list.add(successfulHandlerMetaDataPopulator());
+        list.add(rememberMeAuthenticationMetaDataPopulator());
+
+        if (casProperties.getClearpass().isCacheCredential()) {
+            list.add(new CacheCredentialsMetaDataPopulator());
+        }
+        return list;
     }
 
     @Bean

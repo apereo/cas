@@ -1,8 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
-import org.apereo.cas.web.ClearpassApplicationContextWrapper;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
@@ -33,16 +31,7 @@ public class CasCoreWebConfiguration {
     @Autowired
     @Qualifier("serviceFactoryList")
     private List serviceFactoryList;
-
-    @Bean
-    @RefreshScope
-    public BaseApplicationContextWrapper clearpassApplicationContextWrapper() {
-        final ClearpassApplicationContextWrapper w =
-                new ClearpassApplicationContextWrapper();
-        w.setCacheCredential(casProperties.getClearpass().isCacheCredential());
-        return w;
-    }
-
+    
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {
         final DefaultArgumentExtractor a = new DefaultArgumentExtractor(serviceFactoryList);

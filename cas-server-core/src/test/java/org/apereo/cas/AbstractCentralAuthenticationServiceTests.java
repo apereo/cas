@@ -38,7 +38,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
                 CasCoreConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreWebConfiguration.class,
-                CasCoreLogoutConfiguration.class, 
+                CasCoreLogoutConfiguration.class,
                 CasCoreValidationConfiguration.class},
         locations = {
                 "classpath:/core-context.xml"
