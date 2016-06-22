@@ -93,7 +93,7 @@ public class AuthenticationExceptionHandler {
      * <p>This implementation relies on Spring's property source configurer, SpEL, and conversion service
      * infrastructure facilities to convert and inject the collection from cas.properties.
      * 
-     * <p>This method is thread-safe. It should only be called by the Spring container during 
+     * <p>This method is thread-safe. It should only be called by the Spring container during
      * application context bootstrap
      * or unit tests.
      *

@@ -33,7 +33,6 @@ import javax.validation.MessageInterpolator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * This is {@link CasWebAppConfiguration}.
