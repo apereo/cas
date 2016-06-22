@@ -35,6 +35,16 @@ public final class ThemeUtils {
 	private static final String JPEG_PHOTO_PATH = "themes/wavity/res/lib/custom/img/LogInScreen";
 	
     /**
+     * Tenants API suffix
+     */
+    private static final String ENTRY_TYPE_TENANTS = "Tenants";
+    
+    /**
+     * Service API suffix
+     */
+    private static final String ENTRY_TYPE_SERVICE = "CloudServices";
+	
+    /**
      * logger
      */
     private static final Logger logger = LoggerFactory.getLogger(ThemeUtils.class);
@@ -55,7 +65,7 @@ public final class ThemeUtils {
      */
     public static final String fetchTenantLogo(HttpServletRequest request, String tenantName) {
     	if (!hasJpegPhoto(request, tenantName)) {
-    		fetchJpegPhotoFromLdap(request, tenantName);
+    		fetchJpegPhotoFromLdap(request, tenantName, ENTRY_TYPE_TENANTS);
     	}
     	return getJpegPhotoFullPath(request, tenantName);
     }
@@ -68,7 +78,7 @@ public final class ThemeUtils {
      */
     public static final String fetchAppLogo(HttpServletRequest request, String appName) {
     	if (!hasJpegPhoto(request, appName)) {
-    		fetchJpegPhotoFromLdap(request, appName);
+    		fetchJpegPhotoFromLdap(request, appName, ENTRY_TYPE_SERVICE);
     	}
     	return getJpegPhotoFullPath(request, appName);
     }
@@ -116,8 +126,9 @@ public final class ThemeUtils {
 	 * 
 	 * @param request the object of http servlet request.
 	 * @param name the name of tenant or app.
+	 * @param type the type of LDAP entry.
 	 */
-	private static final void fetchJpegPhotoFromLdap(HttpServletRequest request, String name) {
+	private static final void fetchJpegPhotoFromLdap(HttpServletRequest request, String name, String type) {
 		// Set up environment for creating initial context
 		Hashtable<String, String> env = new Hashtable<String, String>(11);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
@@ -131,7 +142,14 @@ public final class ThemeUtils {
 		
 		// Create initial context
 		LdapContext ctx;
+		
+		// Set the LDAP search base as tenants by default
 		String ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
+		
+		// Change the LDAP search base in case of CloudServices 
+		if (type.equals(ENTRY_TYPE_SERVICE)) {
+			ldapSearchBase = String.format("wavityCloudServiceName=%s,o=Cloud Services,dc=wavity,dc=com", name.toLowerCase());
+		}
 		String searchFilter = "jpegPhoto=*";
 		SearchControls searchControls = new SearchControls();
 		searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
