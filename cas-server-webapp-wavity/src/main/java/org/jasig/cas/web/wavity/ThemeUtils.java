@@ -121,7 +121,7 @@ public final class ThemeUtils {
      * @return whether the photo file exists or not.
      */
 	private static final boolean hasJpegPhoto(HttpServletRequest request, String name) {
-		File file = new File(getJpegPhotoRealPath(request, name));
+		final File file = new File(getJpegPhotoRealPath(request, name));
 		return file.exists();
 	}
     
@@ -134,7 +134,7 @@ public final class ThemeUtils {
 	 */
 	private static final void fetchJpegPhotoFromLdap(HttpServletRequest request, String name, String type) {
 		// Set up environment for creating initial context
-		Hashtable<String, String> env = new Hashtable<String, String>(11);
+		final Hashtable<String, String> env = new Hashtable<String, String>(11);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		env.put(Context.PROVIDER_URL, "ldap://localhost:1389");
 		env.put("java.naming.ldap.attributes.binary", "jpegPhoto");
@@ -145,10 +145,10 @@ public final class ThemeUtils {
 		env.put(Context.SECURITY_CREDENTIALS, "secret");
 		
 		// Create initial context
-		LdapContext ctx;
+		final LdapContext ctx;
 		
 		// Set the LDAP search base as tenants by default
-		String ldapSearchBase;
+		final String ldapSearchBase;
 		
 		// Change the LDAP search base in case of CloudServices 
 		if (type.equals(ENTRY_TYPE_TENANTS)) {
@@ -158,13 +158,13 @@ public final class ThemeUtils {
 		} else {
 			ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
 		}
-		String searchFilter = "jpegPhoto=*";
-		SearchControls searchControls = new SearchControls();
+		final String searchFilter = "jpegPhoto=*";
+		final SearchControls searchControls = new SearchControls();
 		searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
 		
 		try {
 			ctx = new InitialLdapContext(env, null);
-			NamingEnumeration<SearchResult> results = ctx.search(ldapSearchBase, searchFilter, searchControls);
+			final NamingEnumeration<SearchResult> results = ctx.search(ldapSearchBase, searchFilter, searchControls);
 			SearchResult searchResult = null;
 			if (results.hasMoreElements()) {
 				searchResult = results.nextElement();
@@ -174,14 +174,14 @@ public final class ThemeUtils {
 				return;
 			}
 			// Get all attributes
-			Attributes attrs = searchResult.getAttributes();
+			final Attributes attrs = searchResult.getAttributes();
 			
 			// See what we got
-			Attribute attr = attrs.get("jpegPhoto");
+			final Attribute attr = attrs.get("jpegPhoto");
 			if (attr != null) {
-				byte[] jpegByte = (byte[]) attr.get();
-				String jpegPhotoRealPath = getJpegPhotoRealPath(request, name);
-				FileOutputStream fileOut = new FileOutputStream(jpegPhotoRealPath);
+				final byte[] jpegByte = (byte[]) attr.get();
+				final String jpegPhotoRealPath = getJpegPhotoRealPath(request, name);
+				final FileOutputStream fileOut = new FileOutputStream(jpegPhotoRealPath);
 				fileOut.write(jpegByte);
 				fileOut.close();
 			}
