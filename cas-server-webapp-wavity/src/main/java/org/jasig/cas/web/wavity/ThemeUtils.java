@@ -63,7 +63,7 @@ public final class ThemeUtils {
      * @param tenantName
      * @return JSON string | null
      */
-    public static final String fetchTenantLogo(HttpServletRequest request, String tenantName) {
+    public static final String fetchTenantLogo(final HttpServletRequest request, final String tenantName) {
     	if (!hasJpegPhoto(request, tenantName)) {
     		fetchJpegPhotoFromLdap(request, tenantName, ENTRY_TYPE_TENANTS);
     	}
@@ -76,7 +76,7 @@ public final class ThemeUtils {
      * @param appName
      * @return JSON string | null
      */
-    public static final String fetchAppLogo(HttpServletRequest request, String appName) {
+    public static final String fetchAppLogo(final HttpServletRequest request, final String appName) {
     	if (!hasJpegPhoto(request, appName)) {
     		fetchJpegPhotoFromLdap(request, appName, ENTRY_TYPE_SERVICE);
     	}
@@ -90,7 +90,7 @@ public final class ThemeUtils {
      * @param name the name of tenant or app.
      * @return the string of JPEG photo full path.
      */
-    private static final String getJpegPhotoFullPath(HttpServletRequest request, String name) {
+    private static final String getJpegPhotoFullPath(final HttpServletRequest request, final String name) {
     	final String contextPath = request.getContextPath();
 		final String fullPath = String.format("%s/%s/%s.jpeg", contextPath, JPEG_PHOTO_PATH, name.toLowerCase());
 		// In case there's no jpegPhoto in LDAP entry, can't get the image even if we searched it.
@@ -107,7 +107,7 @@ public final class ThemeUtils {
      * @param name the name of tenant or app.
      * @return the string of JPEG photo full path.
      */
-    private static final String getJpegPhotoRealPath(HttpServletRequest request, String name) {
+    private static final String getJpegPhotoRealPath(final HttpServletRequest request, final String name) {
     	final String realPath = request.getServletContext().getRealPath("/");
     	final String fullPath = String.format("%s%s/%s.jpeg", realPath, JPEG_PHOTO_PATH, name.toLowerCase());
     	return fullPath;
@@ -120,7 +120,7 @@ public final class ThemeUtils {
      * @param name the name of app or tenant.
      * @return whether the photo file exists or not.
      */
-	private static final boolean hasJpegPhoto(HttpServletRequest request, String name) {
+	private static final boolean hasJpegPhoto(final HttpServletRequest request, final String name) {
 		final File file = new File(getJpegPhotoRealPath(request, name));
 		return file.exists();
 	}
@@ -132,7 +132,7 @@ public final class ThemeUtils {
 	 * @param name the name of tenant or app.
 	 * @param type the type of LDAP entry.
 	 */
-	private static final void fetchJpegPhotoFromLdap(HttpServletRequest request, String name, String type) {
+	private static final void fetchJpegPhotoFromLdap(final HttpServletRequest request, final String name, final String type) {
 		// Set up environment for creating initial context
 		final Hashtable<String, String> env = new Hashtable<String, String>(11);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
