@@ -77,8 +77,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             config.setEnforceSingleStructuralObjectClass(false);
             config.setEnforceAttributeSyntaxCompliance(true);
-
-
+            config.setMaxConnections(-1);
+         
             final File file = File.createTempFile("ldap", "schema");
             try (final OutputStream outputStream = new FileOutputStream(file)) {
                 IOUtils.copy(schemaFile, outputStream);
