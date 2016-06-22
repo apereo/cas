@@ -10,14 +10,12 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.wsfederation.WsFedApplicationContextWrapper;
 import org.apereo.cas.support.wsfederation.WsFederationAttributeMutator;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFederationAuthenticationHandler;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
 import org.apereo.cas.support.wsfederation.web.flow.WsFederationAction;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +26,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * This is {@link WsFederationAuthenticationConfiguration}.
@@ -70,12 +71,11 @@ public class WsFederationAuthenticationConfiguration {
     private AuthenticationSystemSupport authenticationSystemSupport =
             new DefaultAuthenticationSystemSupport();
 
-    @Bean
-    public BaseApplicationContextWrapper wsFedApplicationContextWrapper() {
-        return new WsFedApplicationContextWrapper(adfsAuthNHandler(), adfsPrincipalResolver(),
-                casProperties.getAuthn().getWsfed().isAttributeResolverEnabled());
-    }
 
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+    
     @Bean
     @RefreshScope
     public WsFederationConfiguration wsFedConfig() {
@@ -141,5 +141,15 @@ public class WsFederationAuthenticationConfiguration {
         a.setWsFederationHelper(wsFederationHelper());
 
         return a;
+    }
+
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        
+        if (!casProperties.getAuthn().getWsfed().isAttributeResolverEnabled()) {
+            authenticationHandlersResolvers.put(adfsAuthNHandler(), null);
+        } else {
+            authenticationHandlersResolvers.put(adfsAuthNHandler(), adfsPrincipalResolver());
+        }
     }
 }

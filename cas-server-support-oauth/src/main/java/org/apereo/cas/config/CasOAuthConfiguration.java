@@ -1,15 +1,17 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.OAuthApplicationContextWrapper;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
+import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.support.oauth.ticket.accesstoken.OAuthAccessTokenExpirationPolicy;
@@ -35,7 +37,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
@@ -59,6 +60,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -77,7 +79,7 @@ import java.util.regex.Pattern;
 public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String CAS_OAUTH_CLIENT = "CasOAuthClient";
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -112,7 +114,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
-    
+
     @Bean
     public Config oauthSecConfig() {
         final CasClient oauthCasClient = new CasClient(casProperties.getServer().getLoginUrl()) {
@@ -242,16 +244,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor())
                 .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat("*"));
-    }
-
-    @Bean
-    @RefreshScope
-    public BaseApplicationContextWrapper oauthApplicationContextWrapper() {
-        final OAuthApplicationContextWrapper w = new OAuthApplicationContextWrapper();
-        w.setOauth20ValidationServiceSelectionStrategy(oauth20ValidationServiceSelectionStrategy());
-        w.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
-        w.setWebApplicationServiceFactory(webApplicationServiceFactory);
-        return w;
     }
 
     @Bean
@@ -408,9 +400,31 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         c.setConfig(oauthSecConfig());
         return c;
     }
-    
+
     @Bean
     public UniqueTicketIdGenerator accessTokenIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
+    }
+
+    @PostConstruct
+    public void initializeServletApplicationContext() {
+        final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + OAuthConstants.BASE_OAUTH20_URL + '/'
+                + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+
+        final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
+        final RegisteredService svc = servicesManager.findServiceBy(callbackService);
+
+        if (svc == null || !svc.getServiceId().equals(oAuthCallbackUrl)) {
+            final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
+            service.setName("OAuth Callback url");
+            service.setDescription("OAuth Wrapper Callback Url");
+            service.setServiceId(oAuthCallbackUrl);
+            service.setEvaluationOrder(Integer.MIN_VALUE);
+
+            servicesManager.save(service);
+            servicesManager.load();
+        }
+
+        this.validationServiceSelectionStrategies.add(0, oauth20ValidationServiceSelectionStrategy());
     }
 }

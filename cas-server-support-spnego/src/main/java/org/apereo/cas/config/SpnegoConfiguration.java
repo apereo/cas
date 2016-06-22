@@ -3,14 +3,12 @@ package org.apereo.cas.config;
 import com.google.common.collect.Lists;
 import jcifs.spnego.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.spnego.SpnegoApplicationContextWrapper;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
@@ -20,7 +18,6 @@ import org.apereo.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction;
 import org.apereo.cas.support.spnego.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.support.spnego.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchRequest;
@@ -32,6 +29,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
+import java.util.Map;
+
 /**
  * This is {@link SpnegoConfiguration}.
  *
@@ -41,14 +41,14 @@ import org.springframework.webflow.execution.Action;
 @Configuration("spnegoConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoConfiguration {
-    
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
-    @Autowired
-    @Qualifier("successfulHandlerMetaDataPopulator")
-    private AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator;
 
     @Autowired(required = false)
     @Qualifier("spnegoClientActionConnectionFactory")
@@ -65,7 +65,7 @@ public class SpnegoConfiguration {
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -75,16 +75,6 @@ public class SpnegoConfiguration {
         return new Authentication();
     }
 
-    @Bean
-    public BaseApplicationContextWrapper spnegoApplicationContextWrapper() {
-        final SpnegoApplicationContextWrapper w = new SpnegoApplicationContextWrapper();
-
-        w.setSpnegoHandler(spnegoHandler());
-        w.setSpnegoPrincipalResolver(spnegoPrincipalResolver());
-        w.setSuccessfulHandlerMetaDataPopulator(successfulHandlerMetaDataPopulator);
-
-        return w;
-    }
 
     @Bean
     @RefreshScope
@@ -139,7 +129,7 @@ public class SpnegoConfiguration {
     public PrincipalFactory ntlmPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver spnegoPrincipalResolver() {
@@ -213,5 +203,10 @@ public class SpnegoConfiguration {
         l.setAlternativeRemoteHostAttribute(casProperties.getAuthn().getSpnego().getAlternativeRemoteHostAttribute());
         l.setTimeout(casProperties.getAuthn().getSpnego().getDnsTimeout());
         return l;
+    }
+
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        authenticationHandlersResolvers.put(spnegoHandler(), spnegoPrincipalResolver());
     }
 }

@@ -8,11 +8,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.pac4j.Pac4jApplicationContextWrapper;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.ClientAction;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -27,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,6 +57,14 @@ public class Pac4jConfiguration {
     private IndirectClient[] clients;
 
     @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("authenticationMetadataPopulators")
+    private List authenticationMetadataPopulators;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
@@ -70,17 +77,7 @@ public class Pac4jConfiguration {
     public Pac4jProperties pac4jProperties() {
         return new Pac4jProperties();
     }
-
-    @Bean
-    public BaseApplicationContextWrapper pac4jApplicationContextWrapper() {
-        final Pac4jApplicationContextWrapper w = new Pac4jApplicationContextWrapper();
-
-        w.setClientAuthenticationHandler(clientAuthenticationHandler());
-        w.setClientAuthenticationMetaDataPopulator(clientAuthenticationMetaDataPopulator());
-
-        return w;
-    }
-
+    
     @Bean
     public AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator() {
         return new ClientAuthenticationMetaDataPopulator();
@@ -178,5 +175,11 @@ public class Pac4jConfiguration {
             throw new IllegalArgumentException("At least one pac4j client must be defined");
         }
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
+    }
+
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        authenticationHandlersResolvers.put(clientAuthenticationHandler(), null);
+        authenticationMetadataPopulators.add(0, clientAuthenticationMetaDataPopulator());
     }
 }

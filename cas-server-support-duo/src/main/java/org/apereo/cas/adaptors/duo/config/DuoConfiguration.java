@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.duo.DuoApplicationContextWrapper;
 import org.apereo.cas.adaptors.duo.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.DuoAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.duo.DuoAuthenticationService;
@@ -20,7 +19,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -36,6 +34,10 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link DuoConfiguration}.
@@ -59,7 +61,7 @@ public class DuoConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
     @Autowired
     @Qualifier("builder")
     private FlowBuilderServices builder;
@@ -92,21 +94,21 @@ public class DuoConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-    
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("authenticationMetadataPopulators")
+    private List authenticationMetadataPopulators;
+
     @Bean
     public FlowDefinitionRegistry duoFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-duo/*-webflow.xml");
         return builder.build();
-    }
-
-    @Bean
-    public BaseApplicationContextWrapper duoApplicationContextWrapper() {
-        final DuoApplicationContextWrapper w = new DuoApplicationContextWrapper();
-        w.setAuthenticationHandler(duoAuthenticationHandler());
-        w.setPopulator(duoAuthenticationMetaDataPopulator());
-        return w;
     }
 
     @Bean
@@ -122,7 +124,7 @@ public class DuoConfiguration {
     public PrincipalFactory duoPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
@@ -179,4 +181,9 @@ public class DuoConfiguration {
         return r;
     }
 
+    @PostConstruct
+    protected void initializeServletApplicationContext() {
+        this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
+        authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
+    }
 }

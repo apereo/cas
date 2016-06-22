@@ -3,16 +3,17 @@ package org.apereo.cas.support.saml.config;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlGoogleAppsApplicationContextWrapper;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * This is {@link SamlGoogleAppsConfiguration}.
@@ -29,15 +30,17 @@ public class SamlGoogleAppsConfiguration {
     private OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
+    @Qualifier("serviceFactoryList")
+    private List serviceFactoryList;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Bean
-    public BaseApplicationContextWrapper samlGoogleAppsApplicationContextWrapper() {
-        final SamlGoogleAppsApplicationContextWrapper w = new SamlGoogleAppsApplicationContextWrapper();
-        w.setGoogleAccountsServiceFactory(googleAccountsServiceFactory());
-        return w;
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        serviceFactoryList.add(0, googleAccountsServiceFactory());
     }
-
+    
     @Bean
     @RefreshScope
     public ServiceFactory googleAccountsServiceFactory() {

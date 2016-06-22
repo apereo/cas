@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
-import org.apereo.cas.adaptors.radius.web.RadiusApplicationContextWrapper;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -13,7 +12,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,8 +19,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This this {@link RadiusConfiguration}.
@@ -33,6 +33,10 @@ import java.util.List;
 @Configuration("radiusConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RadiusConfiguration {
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -125,11 +129,9 @@ public class RadiusConfiguration {
         return h;
     }
 
-    @Bean
-    public BaseApplicationContextWrapper radiusApplicationContextWrapper() {
-        final RadiusApplicationContextWrapper w = new RadiusApplicationContextWrapper();
-        w.setAuthenticationHandler(radiusAuthenticationHandler());
-        return w;
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        authenticationHandlersResolvers.put(radiusAuthenticationHandler(), null);
     }
 }
 

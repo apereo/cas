@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorApplicationContextWrapper;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
@@ -23,7 +22,6 @@ import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -39,6 +37,10 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link GoogleAuthentiacatorConfiguration}.
@@ -92,6 +94,14 @@ public class GoogleAuthentiacatorConfiguration {
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("authenticationMetadataPopulators")
+    private List authenticationMetadataPopulators;
+    
     /**
      * Yubikey flow registry flow definition registry.
      *
@@ -105,17 +115,7 @@ public class GoogleAuthentiacatorConfiguration {
         builder.addFlowLocationPattern("/mfa-gauth/*-webflow.xml");
         return builder.build();
     }
-
-
-    @Bean
-    public BaseApplicationContextWrapper googleAuthenticatorApplicationContextWrapper() {
-        final GoogleAuthenticatorApplicationContextWrapper w =
-                new GoogleAuthenticatorApplicationContextWrapper();
-        w.setAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
-        w.setPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
-        return w;
-    }
-
+    
     @Bean
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
@@ -204,5 +204,11 @@ public class GoogleAuthentiacatorConfiguration {
         a.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
         a.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
         return a;
+    }
+
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        authenticationHandlersResolvers.put(googleAuthenticatorAuthenticationHandler(), null);
+        authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
     }
 }

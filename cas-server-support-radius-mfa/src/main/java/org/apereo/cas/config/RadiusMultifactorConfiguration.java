@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
-import org.apereo.cas.adaptors.radius.web.RadiusMultifactorApplicationContextWrapper;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
@@ -18,7 +17,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -35,8 +33,10 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link RadiusMultifactorConfiguration}.
@@ -55,6 +55,10 @@ public class RadiusMultifactorConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
     @Qualifier("builder")
     private FlowBuilderServices builder;
 
@@ -64,7 +68,7 @@ public class RadiusMultifactorConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -98,7 +102,8 @@ public class RadiusMultifactorConfiguration {
     @RefreshScope
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
+        final FlowDefinitionRegistryBuilder builder =
+                new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-radius/*-webflow.xml");
         return builder.build();
@@ -153,7 +158,8 @@ public class RadiusMultifactorConfiguration {
         a.setPrincipalFactory(radiusTokenPrincipalFactory());
         a.setServicesManager(servicesManager);
         a.setServers(radiusTokenServers());
-        a.setFailoverOnAuthenticationFailure(casProperties.getAuthn().getMfa().getRadius().isFailoverOnAuthenticationFailure());
+        a.setFailoverOnAuthenticationFailure(
+                casProperties.getAuthn().getMfa().getRadius().isFailoverOnAuthenticationFailure());
         a.setFailoverOnException(casProperties.getAuthn().getMfa().getRadius().isFailoverOnException());
 
         return a;
@@ -163,14 +169,7 @@ public class RadiusMultifactorConfiguration {
     public PrincipalFactory radiusTokenPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
-    @Bean
-    public BaseApplicationContextWrapper radiusMultifactorApplicationContextWrapper() {
-        final RadiusMultifactorApplicationContextWrapper w =
-                new RadiusMultifactorApplicationContextWrapper();
-        w.setAuthenticationHandler(radiusTokenAuthenticationHandler());
-        return w;
-    }
+
 
     @Bean
     public Action radiusAuthenticationWebflowAction() {
@@ -200,5 +199,10 @@ public class RadiusMultifactorConfiguration {
         w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         w.setFlowBuilderServices(flowBuilderServices);
         return w;
+    }
+
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        authenticationHandlersResolvers.put(radiusTokenAuthenticationHandler(), null);
     }
 }

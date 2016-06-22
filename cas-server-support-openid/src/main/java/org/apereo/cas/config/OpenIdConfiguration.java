@@ -10,9 +10,9 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.openid.OpenIdApplicationContextWrapper;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
+import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.support.openid.web.OpenIdProviderController;
 import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
@@ -26,7 +26,6 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractDelegateController;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -44,6 +43,9 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -124,6 +126,24 @@ public class OpenIdConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("authenticationMetadataPopulators")
+    private List authenticationMetadataPopulators;
+
+    @Autowired
+    @Qualifier("uniqueIdGeneratorsMap")
+    private Map uniqueIdGeneratorsMap;
+
+
+    @Autowired
+    @Qualifier("serviceFactoryList")
+    private List serviceFactoryList;
+
+
     /**
      * Openid delegating controller delegating controller.
      *
@@ -194,15 +214,6 @@ public class OpenIdConfiguration {
         return manager;
     }
 
-    @Bean
-    public BaseApplicationContextWrapper openIdApplicationContextWrapper() {
-        final OpenIdApplicationContextWrapper w = new OpenIdApplicationContextWrapper();
-        w.setOpenIdCredentialsAuthenticationHandler(openIdCredentialsAuthenticationHandler());
-        w.setOpenIdPrincipalResolver(openIdPrincipalResolver());
-        w.setOpenIdServiceFactory(openIdServiceFactory());
-        w.setServiceTicketUniqueIdGenerator(this.serviceTicketUniqueIdGenerator);
-        return w;
-    }
 
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
@@ -270,4 +281,12 @@ public class OpenIdConfiguration {
     }
 
 
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        authenticationHandlersResolvers.put(openIdCredentialsAuthenticationHandler(),
+                openIdPrincipalResolver());
+        uniqueIdGeneratorsMap.put(OpenIdService.class.getCanonicalName(),
+                this.serviceTicketUniqueIdGenerator);
+        serviceFactoryList.add(0, openIdServiceFactory());
+    }
 }

@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.adaptors.yubikey.YubiKeyApplicationContextWrapper;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
@@ -18,7 +17,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.BaseApplicationContextWrapper;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -35,6 +33,10 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This is {@link YubiKeyConfiguration}.
  *
@@ -44,6 +46,14 @@ import org.springframework.webflow.execution.Action;
 @Configuration("yubikeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class YubiKeyConfiguration {
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("authenticationMetadataPopulators")
+    private List authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
@@ -103,17 +113,7 @@ public class YubiKeyConfiguration {
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
     }
-
-    @Bean
-    public BaseApplicationContextWrapper yubiKeyApplicationContextWrapper() {
-        final YubiKeyApplicationContextWrapper y = new YubiKeyApplicationContextWrapper();
-
-        y.setAuthenticationHandler(yubikeyAuthenticationHandler());
-        y.setPopulator(yubikeyAuthenticationMetaDataPopulator());
-
-        return y;
-    }
-
+    
     @Bean
     public PrincipalFactory yubikeyPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -182,5 +182,11 @@ public class YubiKeyConfiguration {
         r.setTicketRegistrySupport(ticketRegistrySupport);
         r.setWarnCookieGenerator(warnCookieGenerator);
         return r;
+    }
+
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
+        authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
     }
 }
