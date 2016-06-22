@@ -2,7 +2,10 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
@@ -17,6 +20,7 @@ import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,9 +31,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -48,9 +54,22 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
+    @Qualifier("acceptUsersAuthenticationHandler")
+    private AuthenticationHandler acceptUsersAuthenticationHandler;
+
+
     @Bean
     public WebContentInterceptor webContentInterceptor() {
-        
+
         final WebContentInterceptor interceptor = new WebContentInterceptor();
         interceptor.setCacheSeconds(0);
         interceptor.setAlwaysUseFullPath(true);
@@ -61,7 +80,8 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public RequiresAuthenticationInterceptor requiresAuthenticationStatusInterceptor() {
         return new RequiresAuthenticationInterceptor(new
-                Config(new IpClient(new IpRegexpAuthenticator(casProperties.getAdminPagesSecurity().getIp()))), "IpClient");
+                Config(new IpClient(new IpRegexpAuthenticator(casProperties.getAdminPagesSecurity().getIp()))),
+                "IpClient");
     }
 
     @RefreshScope
@@ -71,7 +91,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
             if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLoginUrl())
                     && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getService())
                     && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getAdminRoles())) {
-                
+
                 final IndirectClient client = new CasClient(casProperties.getAdminPagesSecurity().getLoginUrl());
                 final Properties properties = new Properties();
                 properties.load(this.casProperties.getAdminPagesSecurity().getUsers().getInputStream());
@@ -142,5 +162,19 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         return mapping -> mapping.setInterceptors(new Object[]{
                 statusInterceptor()
         });
+    }
+
+    @PostConstruct
+    public void init() {
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
+            LOGGER.warn("\n\n*************************!!STOP!!************************************\n"
+                    + "CAS is configured to accept a static list of credentials for authentication. \n"
+                    + "While this is generally useful for demo purposes, it is STRONGLY recommended \n"
+                    + "that you DISABLE this authentication method (by REMOVING the static list from \n"
+                    + "your configuration) and switch to a mode that is more d for production such as\n"
+                    + "LDAP/JDBC authentication. \n"
+                    + "*********************************************************************\n\n");
+            this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+        }
     }
 }

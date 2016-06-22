@@ -408,6 +408,7 @@ public class CasCoreAuthenticationConfiguration {
         return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
     }
 
+    @ConditionalOnMissingBean(name="authenticationHandlersResolvers")
     @Bean
     public Map authenticationHandlersResolvers(@Qualifier("servicesManager")
                                                final ServicesManager servicesManager,
@@ -415,23 +416,6 @@ public class CasCoreAuthenticationConfiguration {
                                                final HttpClient httpClient) {
         final Map map = new HashMap<>();
         map.put(proxyAuthenticationHandler(servicesManager, httpClient), proxyPrincipalResolver());
-
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
-            
-            LOGGER.warn("\n\n*************************!!STOP!!************************************\n"
-                      + "CAS is configured to accept a static list of credentials for authentication. \n"
-                      + "While this is generally useful for demo purposes, it is STRONGLY recommended \n"
-                      + "that you DISABLE this authentication method (by REMOVING the static list from \n" 
-                      + "your configuration) and switch to a mode that is more d for production\n"
-                      + "such as LDAP/JDBC authentication. \n"
-                      + "*********************************************************************\n\n");
-            
-            map.put(acceptUsersAuthenticationHandler(servicesManager), personDirectoryPrincipalResolver()); 
-        }
-        
-        if (this.applicationContext.containsBean("authenticationHandlersAndResolvers")) {
-            
-        }
         return map;
     }
 }
