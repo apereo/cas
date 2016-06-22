@@ -108,7 +108,7 @@ public final class ThemeUtils {
 		// Set up environment for creating initial context
 		Hashtable<String, String> env = new Hashtable<String, String>(11);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://wavitydevelopmentldap:389");
+		env.put(Context.PROVIDER_URL, "ldap://localhost:1389");
 		env.put("java.naming.ldap.attributes.binary", "jpegPhoto");
 		
 		// Create initial context
