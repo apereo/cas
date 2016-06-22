@@ -3,6 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -23,28 +25,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 @SpringApplicationConfiguration(
-        classes = {CasCoreServicesConfiguration.class, 
+        classes = {CasCoreServicesConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
+                RefreshAutoConfiguration.class,
                 CasCoreValidationConfiguration.class},
         locations = {
                 "classpath:/core-context.xml"
         }, initializers = ConfigFileApplicationContextInitializer.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -72,7 +77,16 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     @Autowired
     private WebApplicationServiceFactory webApplicationServiceFactory;
-    
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -111,5 +125,11 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     public WebApplicationServiceFactory getWebApplicationServiceFactory() {
         return webApplicationServiceFactory;
+    }
+
+    @PostConstruct
+    public void init() {
+        authenticationHandlersResolvers.put(new SimpleTestUsernamePasswordAuthenticationHandler(),
+                personDirectoryPrincipalResolver);
     }
 }

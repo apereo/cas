@@ -11,16 +11,7 @@
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <context:property-placeholder location="classpath:cas.properties"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="false"/>
-
-    <context:annotation-config/>
-    <context:component-scan base-package="org.apereo.cas" />
-    
-    <util:map id="authenticationHandlersResolvers"/>
-    
+        
     
     <bean id="nodesSet" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
         <constructor-arg type="java.lang.String" value="${svcreg.couchbase.nodes:127.0.0.1:8091}"/>

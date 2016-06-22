@@ -9,27 +9,6 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope"/>
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <context:property-placeholder properties-ref="casProperties"/>
-    <util:properties id="casProperties"/>
-
-    <util:map id="authenticationHandlersResolvers">
-        <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
-        <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
-    </util:map>
-    
-    <bean id="primaryAuthenticationHandler" 
-          class="org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
     
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">

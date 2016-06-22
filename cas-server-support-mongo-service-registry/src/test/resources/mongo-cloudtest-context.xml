@@ -11,15 +11,7 @@
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/data/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
-
-
-    <context:property-placeholder location="classpath:cloud.properties"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="false"/>
-
-    <context:annotation-config/>
-    <context:component-scan base-package="org.apereo.cas.services"/>
-
+    
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
     <mongo:mapping-converter>
@@ -80,14 +72,4 @@
 
     <bean id="clientUri" class="com.mongodb.MongoClientURI"
           c:uri="mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas"/>
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope"/>
-                </entry>
-            </map>
-        </property>
-    </bean>
 </beans>

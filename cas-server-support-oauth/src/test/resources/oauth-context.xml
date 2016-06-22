@@ -13,32 +13,6 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <!-- OAuth View -->
-    
-    <util:map id="authenticationHandlersResolvers">
-        <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
-    </util:map>
-    <bean id="primaryAuthenticationHandler"
-          class="org.apereo.cas.authentication.AcceptUsersAuthenticationHandler">
-        <property name="users">
-            <map>
-                <entry key="test" value="test"/>
-            </map>
-        </property>
-    </bean>
-    <alias name="personDirectoryPrincipalResolver" alias="primaryPrincipalResolver" />
-    
     
     
     <util:list id="inMemoryRegisteredServices">

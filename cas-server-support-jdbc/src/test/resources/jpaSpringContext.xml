@@ -14,25 +14,6 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-
-
-  <context:property-placeholder properties-ref="casProperties"/>
-  <util:properties id="casProperties"/>
-
-
-  <context:component-scan base-package="org.apereo.cas" />
-  <context:annotation-config/>
-
-
-  <!-- CAS Context Core -->
-  
-  <util:map id="authenticationHandlersResolvers"/>
-  
-  
-  
-  
- 
   
 
 </beans>
