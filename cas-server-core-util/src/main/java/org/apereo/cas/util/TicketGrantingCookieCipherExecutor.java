@@ -1,13 +1,13 @@
 package org.apereo.cas.util;
 
 /**
- * This is {@link TGCCipherExecutor} that reads TGC keys from the CAS config
+ * This is {@link TicketGrantingCookieCipherExecutor} that reads TGC keys from the CAS config
  * and presents a cipher.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class TGCCipherExecutor extends BaseStringCipherExecutor {
+public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor {
 
     /**
      * Instantiates a new Tgc cipher executor.
@@ -15,8 +15,8 @@ public class TGCCipherExecutor extends BaseStringCipherExecutor {
      * @param secretKeyEncryption the secret key encryption
      * @param secretKeySigning    the secret key signing
      */
-    public TGCCipherExecutor(final String secretKeyEncryption,
-                             final String secretKeySigning) {
+    public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
+                                              final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
 }

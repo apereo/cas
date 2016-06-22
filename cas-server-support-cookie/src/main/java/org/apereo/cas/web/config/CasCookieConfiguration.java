@@ -4,7 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.util.NoOpCipherExecutor;
-import org.apereo.cas.util.TGCCipherExecutor;
+import org.apereo.cas.util.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.web.WarningCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieValueManager;
@@ -53,7 +53,7 @@ public class CasCookieConfiguration {
     @Bean(name = {"tgcCipherExecutor", "cookieCipherExecutor"})
     public CipherExecutor tgcCipherExecutor() {
         if (casProperties.getTgc().isCipherEnabled()) {
-            return new TGCCipherExecutor(
+            return new TicketGrantingCookieCipherExecutor(
                     casProperties.getTgc().getEncryptionKey(),
                     casProperties.getTgc().getSigningKey());
         }

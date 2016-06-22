@@ -1,10 +1,11 @@
 package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
+import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.Closeable;
 import java.io.File;
@@ -19,7 +20,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static java.nio.file.StandardWatchEventKinds.*;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * This is {@link ServiceRegistryConfigWatcher} that watches the json config directory
@@ -31,28 +34,31 @@ import static java.nio.file.StandardWatchEventKinds.*;
 class ServiceRegistryConfigWatcher implements Runnable, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryConfigWatcher.class);
 
-    private AtomicBoolean running = new AtomicBoolean(false);
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
-    private Lock readLock = this.lock.readLock();
+    private final AtomicBoolean running = new AtomicBoolean(false);
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock readLock = this.lock.readLock();
 
-    private WatchService watcher;
+    private final WatchService watcher;
 
-    private AbstractResourceBasedServiceRegistryDao serviceRegistryDao;
+    private final ResourceBasedServiceRegistryDao serviceRegistryDao;
+
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * Instantiates a new Json service registry config watcher.
      *
      * @param serviceRegistryDao the registry to callback
      */
-    ServiceRegistryConfigWatcher(final AbstractResourceBasedServiceRegistryDao serviceRegistryDao) {
+    ServiceRegistryConfigWatcher(final ResourceBasedServiceRegistryDao serviceRegistryDao,
+                                 final ApplicationEventPublisher eventPublisher) {
         try {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();
-            final WatchEvent.Kind[] kinds = (WatchEvent.Kind[])
-                    Lists.newArrayList(ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY).toArray();
+            final WatchEvent.Kind[] kinds = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
             LOGGER.debug("Created service registry watcher for events of type {}", kinds);
-            this.serviceRegistryDao.getServiceRegistryDirectory().register(this.watcher, kinds);
-            LOGGER.debug("Watching service registry directory at {}", this.serviceRegistryDao.getServiceRegistryDirectory());
+            this.serviceRegistryDao.getWatchableResource().register(this.watcher, kinds);
+            
+            this.applicationEventPublisher = eventPublisher;
         } catch (final IOException e) {
             throw Throwables.propagate(e);
         }
@@ -126,15 +132,15 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
      * @param file the file
      */
     private void handleModifyEvent(final File file) {
-        final RegisteredService newService = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
+        final RegisteredService newService = this.serviceRegistryDao.load(file);
         if (newService == null) {
             LOGGER.warn("New service definition could not be loaded from [{}]", file.getAbsolutePath());
         } else {
             final RegisteredService oldService = this.serviceRegistryDao.findServiceById(newService.getId());
 
             if (!newService.equals(oldService)) {
-                this.serviceRegistryDao.updateRegisteredService(newService);
-                this.serviceRegistryDao.refresh();
+                this.serviceRegistryDao.update(newService);
+                this.applicationEventPublisher.publishEvent(new CasRegisteredServicesRefreshEvent(this));
             } else {
                 LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
                         + "in the event processing pipeline", newService.getId(), file.getName());
@@ -147,7 +153,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
      */
     private void handleDeleteEvent() {
         this.serviceRegistryDao.load();
-        this.serviceRegistryDao.refresh();
+        this.applicationEventPublisher.publishEvent(new CasRegisteredServicesRefreshEvent(this));
     }
 
     /**
@@ -157,7 +163,7 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
      */
     private void handleCreateEvent(final File file) {
         //load the entry and add it to the map
-        final RegisteredService service = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
+        final RegisteredService service = this.serviceRegistryDao.load(file);
         if (service == null) {
             LOGGER.warn("No service definition was loaded from [{}]", file);
             return;
@@ -169,8 +175,8 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
                     service.getServiceId(), service.getId(), file.getAbsolutePath());
 
         }
-        this.serviceRegistryDao.updateRegisteredService(service);
-        this.serviceRegistryDao.refresh();
+        this.serviceRegistryDao.update(service);
+        this.applicationEventPublisher.publishEvent(new CasRegisteredServicesRefreshEvent(this));
     }
 
     @Override

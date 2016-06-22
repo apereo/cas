@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.LockedOutputStream;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.StringSerializer;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
@@ -22,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.Watchable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,20 +33,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractResourceBasedServiceRegistryDao implements ServiceRegistryDao {
+public abstract class AbstractResourceBasedServiceRegistryDao implements ResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceBasedServiceRegistryDao.class);
 
     /**
+     * The Service registry directory.
+     */
+    protected Path serviceRegistryDirectory;
+    
+    /**
      * Map of service ID to registered service.
      */
     private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<>();
-
-    /**
-     * The Service registry directory.
-     */
-    private Path serviceRegistryDirectory;
-
+    
     /**
      * The Registered service json serializer.
      */
@@ -59,7 +58,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-
+    
     /**
      * Instantiates a new service registry dao.
      *
@@ -98,22 +97,17 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
         this.registeredServiceSerializer = registeredServiceJsonSerializer;
 
         if (enableWatcher) {
-            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this);
+
+            LOGGER.info("Watching service registry directory at {}", configDirectory);
+            
+            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, this.eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
             this.serviceRegistryWatcherThread.start();
             LOGGER.debug("Started service registry watcher thread");
         }
     }
-
-    /**
-     * Refreshes the services manager, forcing it to reload.
-     */
-    @Transactional
-    public void refresh() {
-        this.eventPublisher.publishEvent(new CasRegisteredServicesRefreshEvent(this));
-    }
-
+    
     /**
      * Destroy the watch service thread.
      */
@@ -121,19 +115,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
     public void destroy() {
         this.serviceRegistryConfigWatcher.close();
         this.serviceRegistryWatcherThread.interrupt();
-    }
-
-    /**
-     * Insert registered service into the existing map.
-     *
-     * @param service the service
-     */
-    public void updateRegisteredService(final RegisteredService service) {
-        this.serviceMap.put(service.getId(), service);
-    }
-
-    public Path getServiceRegistryDirectory() {
-        return this.serviceRegistryDirectory;
     }
 
     @Override
@@ -174,7 +155,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
         final int[] errorCount = {0};
         final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
         c.stream().filter(file -> file.length() > 0).forEach(file -> {
-            final RegisteredService service = loadRegisteredServiceFromFile(file);
+            final RegisteredService service = load(file);
             if (service == null) {
                 LOGGER.warn("Could not load service definition from file {}", file);
                 errorCount[0]++;
@@ -204,7 +185,8 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      * @param file the file
      * @return the registered service, or null if file cannot be read, is not found, is empty or parsing error occurs.
      */
-    public RegisteredService loadRegisteredServiceFromFile(final File file) {
+    @Override
+    public RegisteredService load(final File file) {
         if (!file.canRead()) {
             LOGGER.warn("[{}] is not readable. Check file permissions", file.getName());
             return null;
@@ -278,4 +260,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Service
      */
     protected abstract String getExtension();
 
+    @Override
+    public <T extends Watchable> T getWatchableResource() {
+        final Watchable watchable = this.serviceRegistryDirectory;
+        return (T) watchable;
+    }
+
+    @Override
+    public void update(final RegisteredService service) {
+        this.serviceMap.put(service.getId(), service);
+    }
 }

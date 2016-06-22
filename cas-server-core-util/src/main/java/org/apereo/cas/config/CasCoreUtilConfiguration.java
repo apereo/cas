@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
-import org.apereo.cas.WebflowCipherExecutor;
+import org.apereo.cas.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.NoOpCipherExecutor;
@@ -52,7 +52,7 @@ public class CasCoreUtilConfiguration {
                     casProperties.getTicket().getRegistry().getSigning().getKeySize(),
                     casProperties.getTicket().getRegistry().getEncryption().getKeySize());
         }
-        LOGGER.info("Ticket registry encryption/signing is turned off and may NOT be safe in a clustered production environment. "
+        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "all appropriate values.");
         return new NoOpCipherExecutor();
@@ -60,7 +60,7 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
-        return new WebflowCipherExecutor(
+        return new WebflowConversationStateCipherExecutor(
                 casProperties.getWebflow().getEncryption().getKey(),
                 casProperties.getWebflow().getSigning().getKey(),
                 casProperties.getWebflow().getAlg(),

@@ -11,9 +11,12 @@
        http://www.springframework.org/schema/lang/spring-lang.xsd
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <util:map id="authenticationHandlersResolvers">
-        <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
-        <entry key-ref="acceptUsersAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
+    
+    <!--
+    <util:map id="authenticationHandlersAndResolvers">
+        <entry key-ref="authenticationHandlerId1" value-ref="principalResolverId" />
+        <entry key-ref="authenticationHandlerId2" value="#{null}" />
     </util:map>
+    -->
+    
 </beans>

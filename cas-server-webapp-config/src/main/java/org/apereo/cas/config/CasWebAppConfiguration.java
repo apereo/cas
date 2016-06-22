@@ -33,6 +33,7 @@ import javax.validation.MessageInterpolator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * This is {@link CasWebAppConfiguration}.
@@ -135,6 +136,11 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(rootController());
+        
+        final Map urls = new HashMap();
+        urls.put("/", rootController());
+        
+        mapping.setUrlMap(urls);
         return mapping;
     }
 

@@ -47,11 +47,14 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -73,6 +76,8 @@ import java.util.regex.Pattern;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationConfiguration {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationConfiguration.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -105,9 +110,8 @@ public class CasCoreAuthenticationConfiguration {
     private PrincipalNameTransformer delegateTransformer;
 
     @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
-
+    private ConfigurableApplicationContext applicationContext;
+    
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -194,19 +198,23 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("servicesManager")
-                                                                          final ServicesManager servicesManager) {
+                                                                          final ServicesManager servicesManager,
+                                                                          @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+                                                                          final HttpClient httpClient) {
         final DefaultAuthenticationSystemSupport r = new DefaultAuthenticationSystemSupport();
-        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(servicesManager));
+        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(servicesManager, httpClient));
         r.setPrincipalElectionStrategy(defaultPrincipalElectionStrategy());
         return r;
     }
 
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
     public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier("servicesManager")
-                                                                                    final ServicesManager servicesManager) {
+                                                                                    final ServicesManager servicesManager,
+                                                                                    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+                                                                                    final HttpClient httpClient) {
         final DefaultAuthenticationTransactionManager r =
                 new DefaultAuthenticationTransactionManager();
-        r.setAuthenticationManager(authenticationManager(servicesManager));
+        r.setAuthenticationManager(authenticationManager(servicesManager, httpClient));
         return r;
     }
 
@@ -243,11 +251,13 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(@Qualifier("servicesManager")
-                                                       final ServicesManager servicesManager) {
+                                                       final ServicesManager servicesManager,
+                                                       @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+                                                       final HttpClient httpClient) {
         final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
 
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators());
-        p.setHandlerResolverMap(authenticationHandlersResolvers);
+        p.setHandlerResolverMap(authenticationHandlersResolvers(servicesManager, httpClient));
         p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver(servicesManager));
         p.setAuthenticationPolicy(defaultAuthenticationPolicy());
         return p;
@@ -396,5 +406,32 @@ public class CasCoreAuthenticationConfiguration {
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository() {
         return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
+    }
+
+    @Bean
+    public Map authenticationHandlersResolvers(@Qualifier("servicesManager")
+                                               final ServicesManager servicesManager,
+                                               @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+                                               final HttpClient httpClient) {
+        final Map map = new HashMap<>();
+        map.put(proxyAuthenticationHandler(servicesManager, httpClient), proxyPrincipalResolver());
+
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
+            
+            LOGGER.warn("\n\n*************************!!STOP!!************************************\n"
+                      + "CAS is configured to accept a static list of credentials for authentication. \n"
+                      + "While this is generally useful for demo purposes, it is STRONGLY recommended \n"
+                      + "that you DISABLE this authentication method (by REMOVING the static list from \n" 
+                      + "your configuration) and switch to a mode that is more d for production\n"
+                      + "such as LDAP/JDBC authentication. \n"
+                      + "*********************************************************************\n\n");
+            
+            map.put(acceptUsersAuthenticationHandler(servicesManager), personDirectoryPrincipalResolver()); 
+        }
+        
+        if (this.applicationContext.containsBean("authenticationHandlersAndResolvers")) {
+            
+        }
+        return map;
     }
 }

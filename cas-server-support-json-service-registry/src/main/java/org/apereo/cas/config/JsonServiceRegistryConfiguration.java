@@ -26,7 +26,8 @@ public class JsonServiceRegistryConfiguration {
     public ServiceRegistryDao jsonServiceRegistryDao() {
         try {
             final JsonServiceRegistryDao dao =
-                    new JsonServiceRegistryDao(casProperties.getServiceRegistry().getConfig().getLocation(),
+                    new JsonServiceRegistryDao(
+                            casProperties.getServiceRegistry().getConfig().getLocation(),
                             casProperties.getServiceRegistry().isWatcherEnabled());
             return dao;
         } catch (final Throwable e) {
