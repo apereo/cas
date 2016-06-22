@@ -2,7 +2,7 @@ package org.apereo.cas.web.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.cookie.AbstractCookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.TGCCipherExecutor;
 import org.apereo.cas.web.WarningCookieRetrievingCookieGenerator;
@@ -85,7 +85,7 @@ public class CasCookieConfiguration {
      * @return cookie gen
      */
     private static CookieRetrievingCookieGenerator configureCookieGenerator(final CookieRetrievingCookieGenerator cookieGenerator,
-                                                                            final AbstractCookieProperties props) {
+                                                                            final CookieProperties props) {
 
         cookieGenerator.setCookieName(props.getName());
         cookieGenerator.setCookiePath(props.getPath());

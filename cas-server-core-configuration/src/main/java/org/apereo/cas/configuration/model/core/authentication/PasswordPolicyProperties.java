@@ -14,16 +14,12 @@ public class PasswordPolicyProperties {
     private String warningAttributeValue;
     private String warningAttributeName;
     private boolean displayWarningOnMatch = true;
-    
+
     private boolean warnAll;
 
     private int warningDays = DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS;
 
     private String url = "https://password.example.edu/change";
-
-    public boolean getWarnAll() {
-        return warnAll;
-    }
 
     public void setWarnAll(final boolean warnAll) {
         this.warnAll = warnAll;

@@ -43,6 +43,8 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreServicesConfiguration {
 
+    private static final String BEAN_NAME_SERVICE_REGISTRY_DAO = "serviceRegistryDao";
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -112,7 +114,7 @@ public class CasCoreServicesConfiguration {
 
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("serviceRegistryDao")
+    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO)
                                                                  final ServiceRegistryDao serviceRegistryDao) {
         return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
                 serviceRegistryDao, servicesManager(serviceRegistryDao),

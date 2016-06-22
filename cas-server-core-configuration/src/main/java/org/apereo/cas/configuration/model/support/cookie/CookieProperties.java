@@ -6,7 +6,7 @@ package org.apereo.cas.configuration.model.support.cookie;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public abstract class AbstractCookieProperties {
+public class CookieProperties {
 
     private String name;
 

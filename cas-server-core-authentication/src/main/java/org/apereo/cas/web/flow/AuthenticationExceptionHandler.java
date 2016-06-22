@@ -86,14 +86,15 @@ public class AuthenticationExceptionHandler {
 
     /**
      * Sets the list of custom exceptions that this class knows how to handle.
-     * <p>
-     * This implementation adds the provided list of exceptions to the default list
+     * 
+     * <p>This implementation adds the provided list of exceptions to the default list
      * or just returns if the provided list is empty.
-     * <p>
-     * This implementation relies on Spring's property source configurer, SpEL, and conversion service
+     * 
+     * <p>This implementation relies on Spring's property source configurer, SpEL, and conversion service
      * infrastructure facilities to convert and inject the collection from cas.properties.
-     * <p>
-     * This method is thread-safe. It should only be called by the Spring container during application context bootstrap
+     * 
+     * <p>This method is thread-safe. It should only be called by the Spring container during 
+     * application context bootstrap
      * or unit tests.
      *
      * @param errors List of errors in order of descending precedence.
@@ -130,7 +131,8 @@ public class AuthenticationExceptionHandler {
      * @return true if any custom errors have been added, false otherwise.
      */
     final boolean containsCustomErrors() {
-        return !(DEFAULT_ERROR_LIST.size() == this.errors.size()) && this.errors.containsAll(DEFAULT_ERROR_LIST);
+        return DEFAULT_ERROR_LIST.size() != this.errors.size()
+                && this.errors.containsAll(DEFAULT_ERROR_LIST);
     }
 
     /**

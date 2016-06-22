@@ -7,7 +7,7 @@ package org.apereo.cas.configuration.model.support.cookie;
  * @since 5.0.0
  */
 
-public class TicketGrantingCookieProperties extends AbstractCookieProperties {
+public class TicketGrantingCookieProperties extends CookieProperties {
 
     private int rememberMeMaxAge = 1209600;
 

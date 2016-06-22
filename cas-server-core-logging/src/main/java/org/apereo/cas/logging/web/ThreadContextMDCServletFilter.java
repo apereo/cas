@@ -26,10 +26,9 @@ import java.util.TimeZone;
  * @since 5.0.0
  */
 public class ThreadContextMDCServletFilter implements Filter {
-    private FilterConfig filterConfig;
 
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private TicketRegistrySupport ticketRegistrySupport;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final TicketRegistrySupport ticketRegistrySupport;
     
     public ThreadContextMDCServletFilter(final TicketRegistrySupport ticketRegistrySupport, 
                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
@@ -37,9 +36,13 @@ public class ThreadContextMDCServletFilter implements Filter {
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
+    /**
+     * Does nothing.
+     * @param filterConfig filter initial configuration. Ignored.
+     * @throws ServletException never thrown in this case.
+     */
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        this.filterConfig = filterConfig;
     }
 
     @Override
@@ -90,6 +93,9 @@ public class ThreadContextMDCServletFilter implements Filter {
         }
     }
 
+    /**
+     * Does nothing.
+     */
     @Override
     public void destroy() {
     }

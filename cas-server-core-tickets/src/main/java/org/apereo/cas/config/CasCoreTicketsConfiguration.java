@@ -278,6 +278,9 @@ public class CasCoreTicketsConfiguration {
                 return true;
             }
 
+            /**
+             * Does nothing.
+             */
             @Override
             public void release() {
             }

@@ -7,7 +7,7 @@ package org.apereo.cas.configuration.model.support.cookie;
  * @since 5.0.0
  */
 
-public class WarningCookieProperties extends AbstractCookieProperties {
+public class WarningCookieProperties extends CookieProperties {
 
     public WarningCookieProperties() {
         super.setName("CASPRIVACY");
