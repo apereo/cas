@@ -93,6 +93,10 @@ public final class ThemeUtils {
     private static final String getJpegPhotoFullPath(HttpServletRequest request, String name) {
     	final String contextPath = request.getContextPath();
 		final String fullPath = String.format("%s/%s/%s.jpeg", contextPath, JPEG_PHOTO_PATH, name.toLowerCase());
+		// In case there's no jpegPhoto in LDAP entry, can't get the image even if we searched it.
+		if (!hasJpegPhoto(request, name)) {
+			return null;
+		}
 		return fullPath;
     }
     
@@ -144,11 +148,15 @@ public final class ThemeUtils {
 		LdapContext ctx;
 		
 		// Set the LDAP search base as tenants by default
-		String ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
+		String ldapSearchBase;
 		
 		// Change the LDAP search base in case of CloudServices 
-		if (type.equals(ENTRY_TYPE_SERVICE)) {
+		if (type.equals(ENTRY_TYPE_TENANTS)) {
+			ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
+		} else if (type.equals(ENTRY_TYPE_SERVICE)) {
 			ldapSearchBase = String.format("wavityCloudServiceName=%s,o=Cloud Services,dc=wavity,dc=com", name.toLowerCase());
+		} else {
+			ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
 		}
 		String searchFilter = "jpegPhoto=*";
 		SearchControls searchControls = new SearchControls();
