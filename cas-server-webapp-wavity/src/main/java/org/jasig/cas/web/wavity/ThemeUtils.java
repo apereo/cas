@@ -87,6 +87,19 @@ public final class ThemeUtils {
     }
     
     /**
+     * Gets the real path in the file system of the JPEG photo.
+     * 
+     * @param request the object of http servlet request.
+     * @param name the name of tenant or app.
+     * @return the string of JPEG photo full path.
+     */
+    private static final String getJpegPhotoRealPath(HttpServletRequest request, String name) {
+    	final String realPath = request.getServletContext().getRealPath("/");
+    	final String fullPath = String.format("%s%s/%s.jpeg", realPath, JPEG_PHOTO_PATH, name.toLowerCase());
+    	return fullPath;
+    }
+    
+    /**
      * Checks if there is downloaded JPEG photo file.
      * 
      * @param request the object of http servlet request.
@@ -94,7 +107,7 @@ public final class ThemeUtils {
      * @return whether the photo file exists or not.
      */
 	private static final boolean hasJpegPhoto(HttpServletRequest request, String name) {
-		File file = new File(getJpegPhotoFullPath(request, name));
+		File file = new File(getJpegPhotoRealPath(request, name));
 		return file.exists();
 	}
     
@@ -111,6 +124,11 @@ public final class ThemeUtils {
 		env.put(Context.PROVIDER_URL, "ldap://localhost:1389");
 		env.put("java.naming.ldap.attributes.binary", "jpegPhoto");
 		
+		// Authenticate LDAP
+		env.put(Context.SECURITY_AUTHENTICATION, "simple");
+		env.put(Context.SECURITY_PRINCIPAL, "uid=admin,ou=system");
+		env.put(Context.SECURITY_CREDENTIALS, "secret");
+		
 		// Create initial context
 		LdapContext ctx;
 		String ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
@@ -126,7 +144,7 @@ public final class ThemeUtils {
 				searchResult = results.nextElement();
 			}
 			if (searchResult == null) {
-				logger.error("There happened an error while building the request URL");
+				logger.error("No search result found");
 				return;
 			}
 			// Get all attributes
@@ -136,8 +154,8 @@ public final class ThemeUtils {
 			Attribute attr = attrs.get("jpegPhoto");
 			if (attr != null) {
 				byte[] jpegByte = (byte[]) attr.get();
-				String jpegPhotoFullPath = getJpegPhotoFullPath(request, name);
-				FileOutputStream fileOut = new FileOutputStream(jpegPhotoFullPath);
+				String jpegPhotoRealPath = getJpegPhotoRealPath(request, name);
+				FileOutputStream fileOut = new FileOutputStream(jpegPhotoRealPath);
 				fileOut.write(jpegByte);
 				fileOut.close();
 			}
