@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = "classpath:ticketRegistry.xml", 
-        classes = EhcacheTicketRegistryConfiguration.class)
+        classes = {EhcacheTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public class EhCacheTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;

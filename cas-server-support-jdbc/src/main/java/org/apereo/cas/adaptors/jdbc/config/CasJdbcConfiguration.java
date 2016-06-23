@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.sql.DataSource;
 
 /**
  * This is {@link CasJdbcConfiguration}.
@@ -31,74 +30,58 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasJdbcConfiguration {
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordEncoder")
     private PasswordEncoder queryAndEncodePasswordEncoder;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("queryAndEncodePrincipalNameTransformer")
     private PrincipalNameTransformer queryAndEncodePrincipalNameTransformer;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration;
-    
-    @Autowired(required=false)
+
+    @Autowired(required = false)
     @Qualifier("searchModePasswordEncoder")
     private PasswordEncoder searchModePasswordEncoder;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("searchModePrincipalNameTransformer")
     private PrincipalNameTransformer searchModePrincipalNameTransformer;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("searchModePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration searchModePasswordPolicyConfiguration;
-    
-    @Autowired(required=false)
+
+    @Autowired(required = false)
     @Qualifier("queryPasswordEncoder")
     private PasswordEncoder queryPasswordEncoder;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("queryPrincipalNameTransformer")
     private PrincipalNameTransformer queryPrincipalNameTransformer;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("queryPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryPasswordPolicyConfiguration;
-    
-    @Autowired(required = false)
-    @Qualifier("searchModeDatabaseDataSource")
-    private DataSource searchModeDatabaseDataSource;
 
     @Autowired(required = false)
-    @Qualifier("queryEncodeDatabaseDataSource")
-    private DataSource queryEncodeDatabaseDataSource;
-    
-    @Autowired(required = false)
-    @Qualifier("bindSearchDatabaseDataSource")
-    private DataSource bindSearchDatabaseDataSource;
-    
-    @Autowired(required=false)
     @Qualifier("bindSearchPasswordEncoder")
     private PasswordEncoder bindSearchPasswordEncoder;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("bindSearchPrincipalNameTransformer")
     private PrincipalNameTransformer bindSearchPrincipalNameTransformer;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("bindSearchPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration bindSearchPasswordPolicyConfiguration;
-    
-    @Autowired(required = false)
-    @Qualifier("queryDatabaseDataSource")
-    private DataSource queryDatabaseDataSource;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -107,7 +90,8 @@ public class CasJdbcConfiguration {
     public AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler() {
         final BindModeSearchDatabaseAuthenticationHandler h =
                 new BindModeSearchDatabaseAuthenticationHandler();
-        h.setDataSource(this.bindSearchDatabaseDataSource);
+
+        h.setDataSource(Beans.newHickariDataSource(casProperties.getAuthn().getJdbc().getBind()));
 
         if (bindSearchPasswordEncoder != null) {
             h.setPasswordEncoder(bindSearchPasswordEncoder);
@@ -136,7 +120,7 @@ public class CasJdbcConfiguration {
         h.setSaltFieldName(casProperties.getAuthn().getJdbc().getEncode().getSaltFieldName());
         h.setSql(casProperties.getAuthn().getJdbc().getEncode().getSql());
         h.setStaticSalt(casProperties.getAuthn().getJdbc().getEncode().getStaticSalt());
-        h.setDataSource(queryEncodeDatabaseDataSource);
+        h.setDataSource(Beans.newHickariDataSource(casProperties.getAuthn().getJdbc().getEncode()));
 
         if (queryAndEncodePasswordEncoder != null) {
             h.setPasswordEncoder(queryAndEncodePasswordEncoder);
@@ -158,7 +142,7 @@ public class CasJdbcConfiguration {
     public AuthenticationHandler queryDatabaseAuthenticationHandler() {
         final QueryDatabaseAuthenticationHandler h =
                 new QueryDatabaseAuthenticationHandler();
-        h.setDataSource(queryDatabaseDataSource);
+        h.setDataSource(Beans.newHickariDataSource(casProperties.getAuthn().getJdbc().getQuery()));
         h.setSql(casProperties.getAuthn().getJdbc().getQuery().getSql());
 
         if (queryPasswordEncoder != null) {
@@ -173,7 +157,7 @@ public class CasJdbcConfiguration {
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
-        
+
         return h;
     }
 
@@ -182,7 +166,7 @@ public class CasJdbcConfiguration {
     public AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler() {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler();
 
-        h.setDataSource(searchModeDatabaseDataSource);
+        h.setDataSource(Beans.newHickariDataSource(casProperties.getAuthn().getJdbc().getSearch()));
         h.setFieldPassword(casProperties.getAuthn().getJdbc().getSearch().getFieldPassword());
         h.setFieldUser(casProperties.getAuthn().getJdbc().getSearch().getFieldUser());
         h.setTableUsers(casProperties.getAuthn().getJdbc().getSearch().getTableUsers());

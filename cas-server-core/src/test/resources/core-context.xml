@@ -198,17 +198,12 @@
             <property name="evaluationOrder" value="100"/>
         </bean>
     </util:list>
-
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"/>
-
+    
     <bean id="cachingPrincipalAttributeRepository"
           class="org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
           c:timeUnit="SECONDS"
           c:expiryDuration="20"/>
-
-    <bean id="persistentIdGenerator"
-          class="org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
-          c:salt="casrox"/>
+    
     
     <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>
     <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties"/>

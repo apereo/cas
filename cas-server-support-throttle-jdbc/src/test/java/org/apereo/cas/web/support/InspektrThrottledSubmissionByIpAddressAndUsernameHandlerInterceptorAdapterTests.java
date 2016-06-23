@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,11 +46,11 @@ import static org.junit.Assert.*;
 }, classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,
         CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
+        CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
-                AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+        AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier("inspektrIpAddressUsernameThrottle")
@@ -57,7 +58,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    
+
     @Override
     protected AsyncHandlerInterceptor getThrottle() {
         return throttle;
@@ -80,7 +81,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         getThrottle().preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(), 
+            authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(),
                     badCredentials(username)));
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);

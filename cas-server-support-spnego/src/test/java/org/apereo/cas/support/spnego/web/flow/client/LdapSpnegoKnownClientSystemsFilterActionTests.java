@@ -9,6 +9,7 @@ import org.ldaptive.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -26,7 +27,7 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations="/ldap-context.xml")
+@SpringApplicationConfiguration(locations="/ldap-context.xml", classes = {RefreshAutoConfiguration.class})
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
 
     @Autowired

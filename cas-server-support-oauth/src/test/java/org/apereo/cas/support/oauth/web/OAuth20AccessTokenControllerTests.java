@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -69,6 +70,7 @@ import static org.junit.Assert.*;
         classes = {CasCoreServicesConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasOAuthConfiguration.class,
+                RefreshAutoConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreLogoutConfiguration.class})

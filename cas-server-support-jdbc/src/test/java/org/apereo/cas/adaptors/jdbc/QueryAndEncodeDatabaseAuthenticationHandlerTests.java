@@ -1,20 +1,24 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.TestUtils;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.PasswordEncoder;
+import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,20 +36,22 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
+        classes = {RefreshAutoConfiguration.class})
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
 
+    @Autowired
+    @Qualifier("dataSource")
     private DataSource dataSource;
 
     @Before
     public void setUp() throws Exception {
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
-
-        this.dataSource = ctx.getBean("dataSource", DataSource.class);
+        
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
@@ -185,7 +191,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             throw Throwables.propagate(e);
         }
     }
-    @Entity(name="users")
+
+    @Entity(name = "users")
     public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

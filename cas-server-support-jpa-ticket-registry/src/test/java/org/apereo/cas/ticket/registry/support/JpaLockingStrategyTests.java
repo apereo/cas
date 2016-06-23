@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry.support;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -41,7 +43,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/jpaSpringContext.xml")
+@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class})
 public class JpaLockingStrategyTests {
     /**
      * Number of clients contending for lock in concurrent test.

@@ -9,7 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
@@ -28,8 +30,8 @@ import static org.junit.Assert.*;
  * @since 3.1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = JpaServiceRegistryConfiguration.class,
-        locations = {"classpath:/jpaSpringContext.xml"})
+@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired

@@ -20,6 +20,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.oauth.credentials.OAuthCredentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
@@ -30,7 +31,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
  * @since 4.1.0
  *
  */
-@SpringApplicationConfiguration
+@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class})
 public class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";

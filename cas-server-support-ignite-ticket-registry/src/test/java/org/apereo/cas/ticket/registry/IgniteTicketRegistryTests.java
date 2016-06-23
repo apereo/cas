@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -14,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -30,13 +33,13 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "/ticketRegistry.xml")
+@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, IgniteTicketRegistryConfiguration.class}
+        , initializers = ConfigFileApplicationContextInitializer.class)
 public class IgniteTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
 
     @Autowired
     @Qualifier("ticketRegistry")

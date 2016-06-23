@@ -131,7 +131,7 @@ spring.aop.proxy-target-class=true
 ### Authentication Policy
 
 ```properties
-# cas.authn.requiredHandlerAuthenticationPolicyEnabled=false
+# cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
 ```
 
 
@@ -656,6 +656,22 @@ spring.aop.proxy-target-class=true
 ## Jdbc Authentication -> Query
 
 ```properties
+# cas.authn.jdbc.query.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.query.isolateInternalQueries=false
+# cas.authn.jdbc.query.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.query.failFast=true
+# cas.authn.jdbc.query.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.query.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.query.leakThreshold=10
+# cas.authn.jdbc.query.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.query.batchSize=1
+# cas.authn.jdbc.query.user=sa
+# cas.authn.jdbc.query.ddlAuto=create-drop
+# cas.authn.jdbc.query.maxAgeDays=180
+# cas.authn.jdbc.query.password=
+# cas.authn.jdbc.query.autocommit=false
+# cas.authn.jdbc.query.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.query.idleTimeout=5000
 # cas.authn.jdbc.query.sql=
 ```
 
@@ -665,6 +681,43 @@ spring.aop.proxy-target-class=true
 # cas.authn.jdbc.search.fieldUser=
 # cas.authn.jdbc.search.tableUsers=
 # cas.authn.jdbc.search.fieldPassword=
+# cas.authn.jdbc.search.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.search.isolateInternalQueries=false
+# cas.authn.jdbc.search.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.search.failFast=true
+# cas.authn.jdbc.search.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.search.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.search.leakThreshold=10
+# cas.authn.jdbc.search.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.search.batchSize=1
+# cas.authn.jdbc.search.user=sa
+# cas.authn.jdbc.search.ddlAuto=create-drop
+# cas.authn.jdbc.search.maxAgeDays=180
+# cas.authn.jdbc.search.password=
+# cas.authn.jdbc.search.autocommit=false
+# cas.authn.jdbc.search.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.search.idleTimeout=5000
+```
+
+## Jdbc Authentication -> Bind
+
+```properties
+# cas.authn.jdbc.encode.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.encode.isolateInternalQueries=false
+# cas.authn.jdbc.encode.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.encode.failFast=true
+# cas.authn.jdbc.encode.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.encode.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.encode.leakThreshold=10
+# cas.authn.jdbc.encode.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.encode.batchSize=1
+# cas.authn.jdbc.encode.user=sa
+# cas.authn.jdbc.encode.ddlAuto=create-drop
+# cas.authn.jdbc.encode.maxAgeDays=180
+# cas.authn.jdbc.encode.password=
+# cas.authn.jdbc.encode.autocommit=false
+# cas.authn.jdbc.encode.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.encode.idleTimeout=5000
 ```
 
 ## Jdbc Authentication -> Encode
@@ -677,6 +730,22 @@ spring.aop.proxy-target-class=true
 # cas.authn.jdbc.encode.sql=
 # cas.authn.jdbc.encode.algorithmName=
 # cas.authn.jdbc.encode.passwordFieldName=password
+# cas.authn.jdbc.encode.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.encode.isolateInternalQueries=false
+# cas.authn.jdbc.encode.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.encode.failFast=true
+# cas.authn.jdbc.encode.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.encode.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.encode.leakThreshold=10
+# cas.authn.jdbc.encode.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.encode.batchSize=1
+# cas.authn.jdbc.encode.user=sa
+# cas.authn.jdbc.encode.ddlAuto=create-drop
+# cas.authn.jdbc.encode.maxAgeDays=180
+# cas.authn.jdbc.encode.password=
+# cas.authn.jdbc.encode.autocommit=false
+# cas.authn.jdbc.encode.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.encode.idleTimeout=5000
 ```
 
 ## Mongo Authentication

@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"classpath:/jpa-eventscontext-test.xml"},
-        classes = JpaEventsConfiguration.class)
+        classes = {JpaEventsConfiguration.class, RefreshAutoConfiguration.class})
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired

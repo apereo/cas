@@ -22,14 +22,31 @@ import java.util.Map;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.0.0
  */
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    
-    /** The list of users we will accept. */
+
+    /**
+     * The list of users we will accept.
+     */
     private Map<String, String> users;
+
+    /**
+     * Instantiates a new Accept users authentication handler.
+     */
+    public AcceptUsersAuthenticationHandler() {
+        this(new HashMap<>());
+    }
     
+    /**
+     * Instantiates a new Accept users authentication handler.
+     *
+     * @param users the users
+     */
+    public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
+        this.users = users;
+    }
+
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
@@ -42,7 +59,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
         if (cachedPassword == null) {
             logger.debug("{} was not found in the map.", username);
-           throw new AccountNotFoundException(username + " not found in backing map.");
+            throw new AccountNotFoundException(username + " not found in backing map.");
         }
 
         if (!this.getPasswordEncoder().matches(credential.getPassword(), cachedPassword)) {

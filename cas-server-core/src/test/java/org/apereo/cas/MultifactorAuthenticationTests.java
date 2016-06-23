@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import com.google.common.collect.ImmutableMap;
+import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -28,7 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.PostConstruct;
+
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -44,14 +52,18 @@ import static org.junit.Assert.*;
 @SpringApplicationConfiguration(locations = {"/mfa-test-context.xml"},
         classes = {CasCoreAuthenticationConfiguration.class, CasCoreServicesConfiguration.class,
                 CasCoreUtilConfiguration.class, CasCoreConfiguration.class,
-                CasCoreLogoutConfiguration.class,
+                CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
                 CasCoreTicketsConfiguration.class, CasCoreValidationConfiguration.class},
-initializers = ConfigFileApplicationContextInitializer.class)
+        initializers = ConfigFileApplicationContextInitializer.class)
+@TestPropertySource(properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 public class MultifactorAuthenticationTests {
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");
 
-
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+    
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -60,6 +72,16 @@ public class MultifactorAuthenticationTests {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
+    @PostConstruct
+    public void init() {
+        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(
+                ImmutableMap.of("alice", "alice", "bob", "bob", "mallory", "mallory")
+        ), null);
+        authenticationHandlersResolvers.put(new TestOneTimePasswordAuthenticationHandler(
+                ImmutableMap.of("alice", "31415", "bob", "62831", "mallory", "14142")
+        ), null);
+    }
+    
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));
@@ -127,8 +149,10 @@ public class MultifactorAuthenticationTests {
         // Confirm the authentication in the assertion is the one that satisfies security policy
         final Assertion assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
         assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
-        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("passwordHandler"));
-        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("oneTimePasswordHandler"));
+        assertTrue(assertion.getPrimaryAuthentication()
+                .getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
+        assertTrue(assertion.getPrimaryAuthentication()
+                .getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
         assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(
                 AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }

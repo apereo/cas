@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+
 /**
  * This is {@link JdbcAuthenticationProperties}.
  *
@@ -11,6 +13,15 @@ public class JdbcAuthenticationProperties {
     private Search search = new Search();
     private Encode encode = new Encode();
     private Query query = new Query();
+    private Bind bind = new Bind();
+
+    public Bind getBind() {
+        return bind;
+    }
+
+    public void setBind(final Bind bind) {
+        this.bind = bind;
+    }
 
     public Query getQuery() {
         return query;
@@ -36,7 +47,7 @@ public class JdbcAuthenticationProperties {
         this.search = search;
     }
 
-    public static class Query {
+    public static class Query extends AbstractJpaProperties {
         private String sql;
 
         public String getSql() {
@@ -47,7 +58,10 @@ public class JdbcAuthenticationProperties {
             this.sql = sql;
         }
     }
-    public static class Search {
+    
+    public static class Bind extends AbstractJpaProperties {}
+    
+    public static class Search extends AbstractJpaProperties {
         private String fieldUser;
 
         private String fieldPassword;
@@ -79,7 +93,7 @@ public class JdbcAuthenticationProperties {
         }
     }
     
-    public static class Encode {
+    public static class Encode extends AbstractJpaProperties {
         private String algorithmName;
         private String sql;
         private String passwordFieldName = "password";

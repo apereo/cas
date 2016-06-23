@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -39,6 +40,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
                 CasValidationConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 CasCoreConfiguration.class,
+                RefreshAutoConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreValidationConfiguration.class,

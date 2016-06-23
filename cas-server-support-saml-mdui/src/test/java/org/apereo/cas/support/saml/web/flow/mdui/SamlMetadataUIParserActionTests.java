@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -28,7 +29,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(
-        classes = {SamlMetadataUIConfiguration.class},
+        classes = {SamlMetadataUIConfiguration.class, RefreshAutoConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 @WebAppConfiguration
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
