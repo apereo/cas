@@ -962,7 +962,7 @@ ext.libraries = [
                 }
         ],
         springcloud          : [
-                dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigClientVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -984,7 +984,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigServerVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-config-server:$springCloudConfigVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -1010,7 +1010,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudStarterVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudConfigVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -1031,7 +1031,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContextVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudConfigVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -1053,7 +1053,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-bus-amqp:$springCloudBusAmqpVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-bus-amqp:$springCloudConfigVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
