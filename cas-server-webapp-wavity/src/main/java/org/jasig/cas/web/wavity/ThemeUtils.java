@@ -136,13 +136,8 @@ public final class ThemeUtils {
 		// Set up environment for creating initial context
 		final Hashtable<String, String> env = new Hashtable<String, String>(11);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://localhost:1389");
+		env.put(Context.PROVIDER_URL, "ldap://wavitydevelopmentldap:389");
 		env.put("java.naming.ldap.attributes.binary", "jpegPhoto");
-		
-		// Authenticate LDAP
-		env.put(Context.SECURITY_AUTHENTICATION, "simple");
-		env.put(Context.SECURITY_PRINCIPAL, "uid=admin,ou=system");
-		env.put(Context.SECURITY_CREDENTIALS, "secret");
 		
 		// Create initial context
 		final LdapContext ctx;
@@ -150,7 +145,7 @@ public final class ThemeUtils {
 		// Set the LDAP search base as tenants by default
 		final String ldapSearchBase;
 		
-		// Change the LDAP search base in case of CloudServices 
+		// Change the LDAP search base considering the entry type. 
 		if (type.equals(ENTRY_TYPE_TENANTS)) {
 			ldapSearchBase = String.format("cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
 		} else if (type.equals(ENTRY_TYPE_SERVICE)) {
