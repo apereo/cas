@@ -289,6 +289,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.wsfed.tolerance=10000
 # cas.authn.wsfed.identityAttribute=upn
 # cas.authn.wsfed.attributeResolverEnabled=true
+# cas.authn.wsfed.autoRedirect=true
 ```
 
 ## Multifactor Authentication -> GAuth

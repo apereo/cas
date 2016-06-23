@@ -20,6 +20,7 @@ public class WsFederationProperties {
     private int tolerance = 10000;
     private String attributesType = "WSFED";
     private boolean attributeResolverEnabled = true;
+    private boolean autoRedirect = true;
 
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
@@ -94,5 +95,13 @@ public class WsFederationProperties {
 
     public void setAttributesType(final String attributesType) {
         this.attributesType = attributesType;
+    }
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
     }
 }

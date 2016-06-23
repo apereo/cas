@@ -21,6 +21,8 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     private static final String WS_FEDERATION_ACTION = "wsFederationAction";
     private static final String WS_FEDERATION_REDIRECT = "wsFederationRedirect";
 
+    private boolean autoRedirect = true;
+    
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
@@ -45,5 +47,13 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
                 break;
             }
         }
+    }
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
     }
 }
