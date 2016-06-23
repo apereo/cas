@@ -20,7 +20,7 @@ The service registry component of CAS has the ability to allow for configuration
 `usernameAttributeProvider` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process.
 
 * Ensure the attribute is available and resolved for the principal
-* Set the `usernameAttributeProvider` property of the given service to once of the attribute providers below
+* Set the `usernameAttributeProvider` property of the given service to one of the attribute providers below
 
 ### Default
 The default configuration which need not explicitly be defined, simply returns the resolved
