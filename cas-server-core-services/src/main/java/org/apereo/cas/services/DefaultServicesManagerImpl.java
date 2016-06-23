@@ -9,8 +9,8 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class DefaultServicesManagerImpl implements ApplicationEventPublisherAware, ServicesManager {
+public class DefaultServicesManagerImpl implements ServicesManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
@@ -70,7 +70,7 @@ public class DefaultServicesManagerImpl implements ApplicationEventPublisherAwar
         this.serviceRegistryDao.delete(r);
         this.services.remove(id);
 
-        this.eventPublisher.publishEvent(new CasRegisteredServiceDeletedEvent(this, r));
+        publishEvent(new CasRegisteredServiceDeletedEvent(this, r));
         return r;
     }
 
@@ -129,21 +129,10 @@ public class DefaultServicesManagerImpl implements ApplicationEventPublisherAwar
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
-        this.eventPublisher.publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+        publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
     }
-
-
-    /**
-     * Handle services manager refresh event.
-     *
-     * @param event the event
-     */
-    @EventListener
-    protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
-        load();
-    }
-
+    
     /**
      * Load services that are provided by the DAO.
      */
@@ -162,10 +151,20 @@ public class DefaultServicesManagerImpl implements ApplicationEventPublisherAwar
                 this.serviceRegistryDao);
 
     }
-
-
-    @Override
-    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
-        this.eventPublisher = applicationEventPublisher;
+    
+    /**
+     * Handle services manager refresh event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
+        load();
+    }
+    
+    private void publishEvent(final ApplicationEvent event) {
+        if (this.eventPublisher != null) {
+            this.eventPublisher.publishEvent(event);
+        }
     }
 }

@@ -61,7 +61,7 @@ public class CasCookieConfiguration {
         LOGGER.info("Ticket-granting cookie encryption/signing is turned off and "
                 + "may NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
-                + "all appropriate values.");
+                + "ticket-granting cookies.");
         return new NoOpCipherExecutor();
     }
 

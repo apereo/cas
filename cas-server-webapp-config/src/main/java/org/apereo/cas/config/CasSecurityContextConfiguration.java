@@ -168,17 +168,16 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @PostConstruct
     public void init() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
-
             try {
                 final String header = FigletFont.convertOneLine("!!STOP!!");
-                LOGGER.warn("\n\n" + header + '\n'
-                        + "CAS is configured to accept a static list of credentials for authentication. \n"
-                        + "While this is generally useful for demo purposes, it is STRONGLY recommended \n"
-                        + "that you DISABLE this authentication method (by REMOVING the static list from \n"
-                        + "your configuration) and switch to a mode that is more d for production such as\n"
-                        + "LDAP/JDBC authentication. \n"
-                        + "*********************************************************************\n\n");
-                this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+                LOGGER.warn('\n' + header
+                        + "CAS is configured to accept a static list of credentials for authentication. "
+                        + "While this is generally useful for demo purposes, it is STRONGLY recommended "
+                        + "that you DISABLE this authentication method (by REMOVING the static list from "
+                        + "your configuration) and switch to a mode that is more d for production such as "
+                        + "LDAP/JDBC authentication. \n\n");
+                this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, 
+                        personDirectoryPrincipalResolver);
             } catch (final Exception e) {
                 throw Throwables.propagate(e);
             }

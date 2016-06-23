@@ -422,6 +422,8 @@ subprojects {
                 
         compileOnly libraries.javax
         
+        optional libraries.springbootconfigmetadata
+        
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektraspects
             aspectpath libraries.inspektraspects
@@ -443,6 +445,8 @@ subprojects {
             mavenDeployer projectMavenDeployer
         }
     }
+
+    compileJava.dependsOn(processResources)
 }
 
 task wrapper(type: Wrapper, description: "Gradle wrapper") {

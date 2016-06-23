@@ -52,9 +52,10 @@ public class CasCoreUtilConfiguration {
                     casProperties.getTicket().getRegistry().getSigning().getKeySize(),
                     casProperties.getTicket().getRegistry().getEncryption().getKeySize());
         }
-        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a clustered production environment. "
+        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a "
+                + "clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
-                + "all appropriate values.");
+                + "ticket registry tickets.");
         return new NoOpCipherExecutor();
     }
 

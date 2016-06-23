@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolverTests}.
@@ -44,7 +42,6 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         dao.setRegisteredServices(list);
 
         this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
-        this.defaultServicesManagerImpl.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.defaultServicesManagerImpl.load();
 
         final AcceptUsersAuthenticationHandler handler1 = new AcceptUsersAuthenticationHandler();

@@ -22,11 +22,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.spockframework.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -60,10 +63,13 @@ import static org.junit.Assert.*;
                 CasCoreConfiguration.class,
                 CasCoreAuditConfiguration.class,
                 ThymeleafAutoConfiguration.class,
+                AopAutoConfiguration.class,
                 RefreshAutoConfiguration.class
                 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;

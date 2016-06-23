@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.method.P;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -119,10 +120,12 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     logger.debug("Evaluating authentication policy via {} for registered service {} and service {}",
                             r.getName(), registeredService.getServiceId(), service);
                     final Event result = r.resolveSingle(context);
-                    logger.debug("Resulting event for {} is {}", r.getName(), result);
+                    
                     if (result != null) {
                         logger.debug("Recorded the resulting event {} for {} is {}", result, r.getName());
                         eventBuilder.add(result);
+                    } else {
+                        logger.debug("Resulting event for {} is blank/ignored", r.getName());
                     }
                 });
         

@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;

@@ -524,6 +524,17 @@ public final class WebUtils {
     }
 
     /**
+     * Put static authentication into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putStaticAuthenticationIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("staticAuthentication", value);
+    }
+    
+    
+    /**
      * Put tracking id into flow scope.
      *
      * @param context the context

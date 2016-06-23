@@ -835,6 +835,14 @@ ext.libraries = [
             exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
+        springbootconfigmetadata : [
+                dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                }        
+        ],
         springboot           : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

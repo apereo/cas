@@ -189,9 +189,11 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         tomcat.getAdditionalTomcatConnectors()
                 .stream()
                 .filter(connector -> connector.getProtocolHandler() instanceof AbstractProtocol)
-                .forEach(connector -> ((AbstractProtocol) connector.getProtocolHandler())
-                        .setConnectionTimeout(casProperties.getServer().getConnectionTimeout()));
-
+                .forEach(connector -> {
+                    final AbstractProtocol handler = (AbstractProtocol) connector.getProtocolHandler();
+                    handler.setSoTimeout(casProperties.getServer().getConnectionTimeout());
+                    handler.setConnectionTimeout(casProperties.getServer().getConnectionTimeout());
+                });
         return tomcat;
     }
 }

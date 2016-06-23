@@ -55,6 +55,8 @@ public class InitialFlowSetupAction extends AbstractAction {
     /** If no authentication request from a service is present, halt and warn the user. */
     private boolean enableFlowOnAbsentServiceRequest = true;
 
+    private boolean staticAuthentication;
+    
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -84,6 +86,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
+        WebUtils.putStaticAuthenticationIntoFlowScope(context, this.staticAuthentication);
         
         final Service service = WebUtils.getService(this.argumentExtractors, context);
 
@@ -158,5 +161,13 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     public void setGoogleAnalyticsTrackingId(final String googleAnalyticsTrackingId) {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
+    }
+
+    public boolean isStaticAuthentication() {
+        return staticAuthentication;
+    }
+
+    public void setStaticAuthentication(final boolean staticAuthentication) {
+        this.staticAuthentication = staticAuthentication;
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -141,6 +142,9 @@ public class CasSupportActionsConfiguration {
         bean.setWarnCookieGenerator(this.warnCookieGenerator);
         bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
         bean.setTrackGeoLocation(casProperties.getEvents().isTrackGeolocation());
+        bean.setStaticAuthentication(
+                StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers()) 
+                || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
         return bean;
     }
 
