@@ -76,7 +76,7 @@ A given JSON file for instance could be formatted as such in CAS:
     Generic service definition that applies to https/imaps urls 
     that wish to register with CAS for authentication.
   */
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "name" : "HTTPS and IMAPS",
   "id" : 10000001,
