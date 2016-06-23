@@ -9,12 +9,13 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collection;
 
@@ -26,24 +27,18 @@ import static org.junit.Assert.*;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"classpath:HazelcastTicketRegistryTests-context.xml"},
         classes = {RefreshAutoConfiguration.class})
 public class HazelcastTicketRegistryTests {
     @Autowired
     @Qualifier("hzTicketRegistry1")
-    private HazelcastTicketRegistry hzTicketRegistry1;
+    private TicketRegistry hzTicketRegistry1;
 
     @Autowired
     @Qualifier("hzTicketRegistry2")
-    private HazelcastTicketRegistry hzTicketRegistry2;
-
-
-    @After
-    public void after() {
-        this.hzTicketRegistry1.shutdown();
-        this.hzTicketRegistry2.shutdown();
-    }
-
+    private TicketRegistry hzTicketRegistry2;
+    
     public void setHzTicketRegistry1(final HazelcastTicketRegistry hzTicketRegistry1) {
         this.hzTicketRegistry1 = hzTicketRegistry1;
     }

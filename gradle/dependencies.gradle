@@ -41,7 +41,8 @@ ext.libraries = [
                     force = true
                 },
                 "org.apache.commons:commons-lang3:$commonsLangVersion",
-                "org.jooq:jool:$joolVersion"
+                "org.jooq:jool:$joolVersion",
+                "com.github.lalyos:jfiglet:$jfigletVersion"
         ],
         ehcache              : [
                 dependencies.create("net.sf.ehcache:ehcache:$ehcacheVersion") {

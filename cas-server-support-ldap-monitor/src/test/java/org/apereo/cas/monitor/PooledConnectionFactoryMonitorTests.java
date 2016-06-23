@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
@@ -20,12 +21,12 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/ldap-poolmonitor-test.xml"},
-        classes = {LdapMonitorConfiguration.class})
+        classes = {LdapMonitorConfiguration.class, RefreshAutoConfiguration.class})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
     @Autowired
     @Qualifier("pooledLdapConnectionFactoryMonitor")
-    private PooledLdapConnectionFactoryMonitor monitor;
+    private Monitor monitor;
 
     @BeforeClass
     public static void bootstrap() throws Exception {

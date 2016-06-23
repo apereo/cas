@@ -22,6 +22,7 @@ import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -43,17 +44,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml",
-        classes = {
-                CasCoreAuthenticationConfiguration.class, 
-                CasCoreServicesConfiguration.class,
-                CasOAuthConfiguration.class, 
-                CasCoreTicketsConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreUtilConfiguration.class})
-@DirtiesContext
-public class OAuth20AuthorizeControllerTests {
+public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     private static final String ID = "id";
     private static final String FIRST_NAME_ATTRIBUTE = "firstName";

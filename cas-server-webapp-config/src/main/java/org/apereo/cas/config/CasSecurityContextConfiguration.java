@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import com.github.lalyos.jfiglet.FigletFont;
+import com.google.common.base.Throwables;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -166,14 +168,20 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @PostConstruct
     public void init() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
-            LOGGER.warn("\n\n*************************!!STOP!!************************************\n"
-                    + "CAS is configured to accept a static list of credentials for authentication. \n"
-                    + "While this is generally useful for demo purposes, it is STRONGLY recommended \n"
-                    + "that you DISABLE this authentication method (by REMOVING the static list from \n"
-                    + "your configuration) and switch to a mode that is more d for production such as\n"
-                    + "LDAP/JDBC authentication. \n"
-                    + "*********************************************************************\n\n");
-            this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+
+            try {
+                final String header = FigletFont.convertOneLine("!!STOP!!");
+                LOGGER.warn("\n\n" + header + '\n'
+                        + "CAS is configured to accept a static list of credentials for authentication. \n"
+                        + "While this is generally useful for demo purposes, it is STRONGLY recommended \n"
+                        + "that you DISABLE this authentication method (by REMOVING the static list from \n"
+                        + "your configuration) and switch to a mode that is more d for production such as\n"
+                        + "LDAP/JDBC authentication. \n"
+                        + "*********************************************************************\n\n");
+                this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
+            } catch (final Exception e) {
+                throw Throwables.propagate(e);
+            }
         }
     }
 }

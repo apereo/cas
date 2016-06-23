@@ -22,6 +22,7 @@ import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -38,6 +39,7 @@ import static org.junit.Assert.*;
 @SpringApplicationConfiguration(locations = "classpath:/opensaml-config.xml",
         classes = {CoreSamlConfiguration.class,
                 SamlConfiguration.class,
+                RefreshAutoConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasCoreValidationConfiguration.class,

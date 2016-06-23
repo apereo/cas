@@ -1,6 +1,8 @@
 package org.apereo.cas.web.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 /**
  * Unit test for {@link InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter}.
@@ -13,10 +15,11 @@ public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTest
 extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
-    private InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter throttle;
+    @Qualifier("inMemoryIpAddressThrottle")
+    private AsyncHandlerInterceptor throttle;
 
     @Override
-    protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
+    protected AsyncHandlerInterceptor getThrottle() {
         return throttle;
     }
 }

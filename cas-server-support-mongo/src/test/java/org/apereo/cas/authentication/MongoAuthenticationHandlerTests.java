@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,9 @@ import static org.junit.Assert.*;
  * @since 4.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/mongo-context.xml",
-        classes = {CasMongoAuthenticationConfiguration.class, RefreshAutoConfiguration.class})
+@SpringApplicationConfiguration(
+        classes = {CasMongoAuthenticationConfiguration.class, CasCoreServicesConfiguration.class,
+                RefreshAutoConfiguration.class})
 public class MongoAuthenticationHandlerTests {
 
     @Autowired

@@ -9,6 +9,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
  * @author Jonathan Johnson
  * @since 4.1.0
  */
-public class HazelcastTicketRegistry extends AbstractTicketRegistry {
+public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
 
     private IMap<String, Ticket> registry;
 
@@ -130,7 +132,11 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     @PreDestroy
     public void shutdown() {
         logger.info("Shutting down Hazelcast instance {}", this.hazelcastInstance.getConfig().getInstanceName());
-        this.hazelcastInstance.shutdown();
+        try {
+            this.hazelcastInstance.shutdown();
+        } catch (final Throwable e) {
+            logger.debug(e.getMessage());
+        }
     }
 
     public void setRegistry(final IMap<String, Ticket> registry) {
@@ -139,5 +145,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
 
     public void setHazelcastInstance(final HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
+    }
+
+    @Override
+    public void close() throws IOException {
+        shutdown();
     }
 }

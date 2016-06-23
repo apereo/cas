@@ -64,19 +64,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ComponentScan(basePackages = {"org.pac4j.springframework", "org.apereo.cas"})
-@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml",
-        classes = {CasCoreServicesConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasOAuthConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreLogoutConfiguration.class})
-@DirtiesContext
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class OAuth20AccessTokenControllerTests {
+public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     private static final String CONTEXT = "/oauth2.0/";
 
@@ -584,10 +572,8 @@ public class OAuth20AccessTokenControllerTests {
 
     @Test
     public void verifyUserAuthWithRefreshToken() throws Exception {
-
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
-
         internalVerifyUserAuth(true, false);
     }
 

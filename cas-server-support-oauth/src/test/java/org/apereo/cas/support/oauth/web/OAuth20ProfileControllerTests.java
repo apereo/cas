@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -47,17 +48,8 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml",
-        classes = {
-                CasCoreAuthenticationConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasOAuthConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreUtilConfiguration.class})
-@DirtiesContext
-public class OAuth20ProfileControllerTests {
+
+public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     private static final String CONTEXT = "/oauth2.0/";
 
