@@ -841,7 +841,9 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
-                }        
+                    exclude(group: "org.json", module: "json")
+                },
+                "org.json:json:$jsonVersion"
         ],
         springboot           : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {

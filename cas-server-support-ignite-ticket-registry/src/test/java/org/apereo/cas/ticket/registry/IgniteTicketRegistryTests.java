@@ -33,8 +33,8 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, IgniteTicketRegistryConfiguration.class}
-        , initializers = ConfigFileApplicationContextInitializer.class)
+@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, IgniteTicketRegistryConfiguration.class}, 
+        initializers = ConfigFileApplicationContextInitializer.class)
 public class IgniteTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;

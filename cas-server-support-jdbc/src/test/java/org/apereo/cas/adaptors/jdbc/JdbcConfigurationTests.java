@@ -21,8 +21,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
-        classes = {RefreshAutoConfiguration.class, CasJdbcConfiguration.class, CasCoreServicesConfiguration.class}
-        , initializers = ConfigFileApplicationContextInitializer.class)
+        classes = {RefreshAutoConfiguration.class, CasJdbcConfiguration.class, CasCoreServicesConfiguration.class}, 
+        initializers = ConfigFileApplicationContextInitializer.class)
 public class JdbcConfigurationTests {
     
     @Autowired
