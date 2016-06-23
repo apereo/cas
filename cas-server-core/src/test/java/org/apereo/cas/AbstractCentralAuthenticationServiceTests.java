@@ -23,10 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.PostConstruct;
@@ -45,11 +48,14 @@ import java.util.Map;
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,
+                AopAutoConfiguration.class,
                 CasCoreValidationConfiguration.class},
         locations = {
                 "classpath:/core-context.xml"
         }, initializers = ConfigFileApplicationContextInitializer.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@EnableAspectJAutoProxy
+@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());

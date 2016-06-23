@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.AbstractMemcachedTests;
+import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
@@ -19,7 +21,8 @@ import java.io.IOException;
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "/monitor-test.xml")
+@SpringApplicationConfiguration(locations = "/monitor-test.xml", classes = {RefreshAutoConfiguration.class,
+        MemcachedMonitorConfiguration.class})
 public class MemcachedMonitorTests extends AbstractMemcachedTests {
 
     @Autowired
