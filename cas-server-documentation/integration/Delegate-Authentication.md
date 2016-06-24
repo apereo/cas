@@ -8,9 +8,11 @@ title: CAS - Delegate authentication
 </p>
 
 # Overview
-The CAS server implements the CAS protocol on server side and may even behave like an OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
+The CAS server implements the CAS protocol on server side and may even behave like an 
+OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
 
-But the CAS server can also act as a client using the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
+But the CAS server can also act as a client using 
+the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
 
 * Another CAS server
 * An OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
@@ -31,7 +33,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Configuration
 
-### Register Providers
+### Register Providersw
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. 
 If you want to delegate the CAS authentication to Twitter for example, you have to add an 

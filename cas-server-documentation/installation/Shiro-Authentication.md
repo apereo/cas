@@ -26,12 +26,6 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-In `application.properties`:
-
-```properties
-primaryAuthenticationHandler=shiroAuthenticationHandler
-```
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:

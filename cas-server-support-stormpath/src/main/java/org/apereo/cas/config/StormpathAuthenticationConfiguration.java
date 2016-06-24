@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.http.credentials.password.NopPasswordEncoder;
@@ -14,6 +15,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * This is {@link StormpathAuthenticationConfiguration}.
@@ -44,7 +48,15 @@ public class StormpathAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+    
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
 
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+    
     @Bean
     public PrincipalFactory stormpathPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -70,5 +82,11 @@ public class StormpathAuthenticationConfiguration {
         handler.setPrincipalFactory(stormpathPrincipalFactory());
         handler.setServicesManager(servicesManager);
         return handler;
+    }
+
+    @PostConstruct
+    public void initializeAuthenticationHandler() {
+        this.authenticationHandlersResolvers.put(stormpathAuthenticationHandler(),
+                personDirectoryPrincipalResolver);
     }
 }

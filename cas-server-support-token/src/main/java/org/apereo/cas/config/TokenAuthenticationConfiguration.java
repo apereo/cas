@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.support.TokenAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.token.TokenAuthenticationAction;
@@ -16,6 +17,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * This is {@link TokenAuthenticationConfiguration}.
@@ -31,6 +35,13 @@ public class TokenAuthenticationConfiguration {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -48,7 +59,7 @@ public class TokenAuthenticationConfiguration {
     public PrincipalFactory tokenPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         final TokenAuthenticationHandler h = new TokenAuthenticationHandler();
@@ -66,5 +77,11 @@ public class TokenAuthenticationConfiguration {
         a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
         a.setCentralAuthenticationService(this.centralAuthenticationService);
         return a;
+    }
+
+    @PostConstruct
+    public void initializeAuthenticationHandler() {
+        this.authenticationHandlersResolvers.put(tokenAuthenticationHandler(),
+                personDirectoryPrincipalResolver);
     }
 }

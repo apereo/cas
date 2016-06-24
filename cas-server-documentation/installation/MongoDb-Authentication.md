@@ -4,12 +4,8 @@ title: CAS - MongoDb Authentication
 ---
 
 # MongoDb Authentication
+
 Verify and authenticate credentials against a [MongoDb](https://www.mongodb.org/) instance.
-
-```properties
-primaryAuthenticationHandler=mongoAuthenticationHandler
-```
-
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -22,4 +18,5 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 The following settings are applicable:
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, 
+please [review this guide](Configuration-Properties.html).

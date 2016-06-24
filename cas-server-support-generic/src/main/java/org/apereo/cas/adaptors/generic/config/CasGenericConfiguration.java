@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -26,6 +27,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * This is {@link CasGenericConfiguration}.
@@ -92,7 +96,15 @@ public class CasGenericConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
@@ -204,6 +216,26 @@ public class CasGenericConfiguration {
     @Bean
     public PrincipalFactory remoteAddressPrincipalFactory() {
         return new DefaultPrincipalFactory();
+    }
+
+    @PostConstruct
+    public void initializeAuthenticationHandler() {
+        if (casProperties.getAuthn().getShiro().getConfig().getLocation() != null)
+            this.authenticationHandlersResolvers.put(
+                    shiroAuthenticationHandler(),
+                    personDirectoryPrincipalResolver);
+
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers())) {
+            this.authenticationHandlersResolvers.put(
+                    rejectUsersAuthenticationHandler(),
+                    personDirectoryPrincipalResolver);
+        }
+
+        if (casProperties.getAuthn().getFile().getFilename() != null) {
+            this.authenticationHandlersResolvers.put(
+                    fileAuthenticationHandler(),
+                    personDirectoryPrincipalResolver);
+        }
     }
 
 }

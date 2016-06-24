@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
  * This is {@link CasMongoAuthenticationConfiguration}.
@@ -40,10 +44,17 @@ public class CasMongoAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
 
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {
@@ -78,5 +89,12 @@ public class CasMongoAuthenticationConfiguration {
         mongo.setServicesManager(servicesManager);
 
         return mongo;
+    }
+
+
+    @PostConstruct
+    public void initializeAuthenticationHandler() {
+        this.authenticationHandlersResolvers.put(mongoAuthenticationHandler(),
+                personDirectoryPrincipalResolver);
     }
 }

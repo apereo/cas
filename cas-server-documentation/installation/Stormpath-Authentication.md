@@ -4,6 +4,7 @@ title: CAS - Stormpath Authentication
 ---
 
 # Stormpath Authentication
+
 Verify and authenticate credentials against the [Stormpath](https://stormpath.com/) Cloud Identity.
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -14,12 +15,6 @@ Support is enabled by including the following dependency in the WAR overlay:
   <artifactId>cas-server-support-stormpath</artifactId>
   <version>${cas.version}</version>
 </dependency>
-```
-
-In `application.properties`:
-
-```properties
-primaryAuthenticationHandler=stormpathAuthenticationHandler
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
