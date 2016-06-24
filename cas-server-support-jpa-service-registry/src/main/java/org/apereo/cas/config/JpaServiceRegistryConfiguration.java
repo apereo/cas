@@ -32,7 +32,7 @@ import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
  */
 @Configuration("jpaServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class JpaServiceRegistryConfiguration {
 
     @Autowired

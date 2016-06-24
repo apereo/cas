@@ -213,8 +213,8 @@ def projectMavenDeployer = {
                 releases {
                     enabled true
                 }
-           }
-           repository {
+            }
+            repository {
                 id "uniconiam"
                 url "https://dl.bintray.com/uniconiam/maven"
                 releases {
@@ -253,7 +253,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-    
+
     gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
 
     signing {
@@ -277,7 +277,7 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-    
+
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;
@@ -287,7 +287,7 @@ subprojects {
     */
     conf2ScopeMappings.mappings.remove(configurations.findByName("testCompile"))
     conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntime"))
-    
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -300,7 +300,7 @@ subprojects {
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
         maven { url "http://repo.spring.io/milestone" }
-        maven { url "https://dl.bintray.com/uniconiam/maven"}
+        maven { url "https://dl.bintray.com/uniconiam/maven" }
     }
 
     test {
@@ -342,7 +342,7 @@ subprojects {
         archives resourcesJar
         archives testJar
     }
-    
+
 
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
@@ -350,7 +350,7 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-    
+
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
@@ -360,13 +360,13 @@ subprojects {
     tasks.jar.onlyIf {
         project.buildDate != null || !project.buildJarFile.exists()
     }
-    
+
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                       "Implementation-Vendor": project.group,
-                       "Created-By": project.group,
-                       "Implementation-Version": project.version)
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Version": project.version)
         }
     }
 
@@ -390,7 +390,7 @@ subprojects {
         includePlugins = false
         includeSubProjects = true
     }
-    
+
     findbugs {
         toolVersion = "${findbugsVersion}"
         sourceSets = [sourceSets.main]
@@ -419,11 +419,12 @@ subprojects {
         compile libraries.commons
         compile libraries.jodatime
         compile libraries.inspektr
-                
+
         compileOnly libraries.javax
-        
-        optional libraries.springbootconfigmetadata
-        
+
+        if (Boolean.getBoolean("genConfigMetadata")) {
+            optional libraries.springbootconfigmetadata
+        }
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektraspects
             aspectpath libraries.inspektraspects
@@ -446,7 +447,9 @@ subprojects {
         }
     }
 
-    compileJava.dependsOn(processResources)
+    if (Boolean.getBoolean("genConfigMetadata")) {
+        compileJava.dependsOn(processResources)
+    }
 }
 
 task wrapper(type: Wrapper, description: "Gradle wrapper") {
@@ -459,7 +462,7 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, 
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc,
         description: "Aggregate all Javadocs into a single directory") {
     classifier = "javadoc"
     from javadoc

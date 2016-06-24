@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthentic
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
@@ -24,7 +25,9 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +39,9 @@ import java.util.Map;
 public class AuthenticationProperties {
 
     private Map<String, String> attributes = new HashMap();
+
+    @NestedConfigurationProperty
+    private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
     
     @NestedConfigurationProperty
     private ThrottleProperties throttle = new ThrottleProperties();
@@ -332,5 +338,12 @@ public class AuthenticationProperties {
     public void setAttributes(final Map<String, String> attributes) {
         this.attributes = attributes;
     }
-    
+
+    public List<LdapAuthenticationProperties> getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final List<LdapAuthenticationProperties> ldap) {
+        this.ldap = ldap;
+    }
 }
