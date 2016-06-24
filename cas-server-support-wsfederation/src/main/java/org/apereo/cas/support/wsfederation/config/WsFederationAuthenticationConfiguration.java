@@ -139,7 +139,8 @@ public class WsFederationAuthenticationConfiguration {
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setConfiguration(wsFedConfig());
         a.setWsFederationHelper(wsFederationHelper());
-
+        a.setServicesManager(this.servicesManager);
+        
         return a;
     }
 

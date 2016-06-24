@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentMap;
  * @since 3.0.0
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
-        extends AbstractThrottledSubmissionHandlerInterceptorAdapter 
+        extends AbstractThrottledSubmissionHandlerInterceptorAdapter
         implements InMemoryThrottledSubmissionHandlerInterceptor {
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
