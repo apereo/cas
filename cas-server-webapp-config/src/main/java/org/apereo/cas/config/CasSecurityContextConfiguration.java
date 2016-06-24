@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
-import com.github.lalyos.jfiglet.FigletFont;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.AsciiArtUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
@@ -168,19 +167,14 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @PostConstruct
     public void init() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
-            try {
-                final String header = FigletFont.convertOneLine("!!STOP!!");
-                LOGGER.warn('\n' + header
-                        + "CAS is configured to accept a static list of credentials for authentication. "
-                        + "While this is generally useful for demo purposes, it is STRONGLY recommended "
-                        + "that you DISABLE this authentication method (by REMOVING the static list from "
-                        + "your configuration) and switch to a mode that is more d for production such as "
-                        + "LDAP/JDBC authentication. \n\n");
-                this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, 
-                        personDirectoryPrincipalResolver);
-            } catch (final Exception e) {
-                throw Throwables.propagate(e);
-            }
+            final String header =
+                    "\nCAS is configured to accept a static list of credentials for authentication. "
+                    + "While this is generally useful for demo purposes, it is STRONGLY recommended "
+                    + "that you DISABLE this authentication method (by REMOVING the static list from "
+                    + "your configuration) and switch to a mode that is more suitable for production. \n";
+            AsciiArtUtils.printAsciiArt(LOGGER, "STOP!", header);
+            this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler,
+                    personDirectoryPrincipalResolver);
         }
     }
 }

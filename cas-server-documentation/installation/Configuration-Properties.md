@@ -134,7 +134,6 @@ spring.aop.proxy-target-class=true
 # cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
 ```
 
-
 ### CAS Groovy Shell Console
 
 ```properties
@@ -150,7 +149,7 @@ spring.aop.proxy-target-class=true
 # shell.ssh.idle-timeout=30000
 ```
 
-### CAS Server HTTP
+### CAS Server Embedded Tomcat HTTP
 
 ```properties
 # cas.server.http.port=8080
@@ -158,7 +157,7 @@ spring.aop.proxy-target-class=true
 # cas.server.http.enabled=true
 ```
 
-### CAS Server AJP
+### CAS Server Embedded Tomcat AJP
 
 ```properties
 # cas.server.ajp.secure=false
@@ -202,7 +201,7 @@ spring.aop.proxy-target-class=true
 # cas.principalTransformation.prefix=
 ```
 
-### Database
+### Database Global
 
 ```properties
 # cas.jdbc.showSql=true
@@ -242,18 +241,12 @@ spring.aop.proxy-target-class=true
 # cas.authn.x509.trustedIssuerDnPattern=
 ```
 
-
-## Shiro Authentication
-
-```properties
-# cas.authn.shiro.config.location=classpath:shiro.ini
-```
-
 ## Shiro Authentication
 
 ```properties
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
+# cas.authn.shiro.config.location=classpath:shiro.ini
 ```
 
 ## NTLM Authentication
@@ -292,7 +285,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.wsfed.autoRedirect=true
 ```
 
-## Multifactor Authentication -> GAuth
+## Multifactor Authentication -> Google Authenticator
 
 ```properties
 # cas.authn.mfa.gauth.windowSize=3
@@ -336,7 +329,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.mfa.radius.client.inetAddress=localhost
 ```
 
-## Multifactor Authentication -> Radius
+## Multifactor Authentication -> Radius Global
 
 ```properties
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
@@ -429,14 +422,14 @@ spring.aop.proxy-target-class=true
 # cas.authn.passwordPolicy.warningAttributeValue=
 ```
 
-## Open Id Principal Resolution
+## OpenID Principal Resolution
 
 ```properties
 # cas.authn.openid.principal.principalAttribute=
 # cas.authn.openid.principal.returnNull=false
 ```
 
-## Open Id
+## OpenID
 
 ```properties
 # cas.authn.openid.enforceRpId=false
@@ -521,18 +514,18 @@ spring.aop.proxy-target-class=true
 # cas.authn.policy.notPrevented.enabled=true
 ```
 
-## Authentication Policy Global
-
-```properties
-# cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
-```
-
 ## Authentication Policy -> Required
 
 ```properties
 # cas.authn.policy.req.tryAll=false
 # cas.authn.policy.req.handlerName=handlerName
 # cas.authn.policy.req.enabled=true
+```
+
+## Authentication Policy Global
+
+```properties
+# cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
 ```
 
 ## Pac4j -> CAS
@@ -573,7 +566,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.pac4j.oidc.preferredJwsAlgorithm=
 ```
 
-## Pac4j -> Saml
+## Pac4j -> SAML
 
 ```properties
 # cas.authn.pac4j.saml.keystorePassword=
@@ -632,7 +625,7 @@ spring.aop.proxy-target-class=true
 ```properties
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
-
+```
 
 ## OAuth -> Code Expiration Policy
 
@@ -654,7 +647,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.reject.users=user1,user2
 ```
 
-## Jdbc Authentication -> Query
+## JDBC Authentication -> Query
 
 ```properties
 # cas.authn.jdbc.query.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -676,7 +669,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.jdbc.query.sql=
 ```
 
-## Jdbc Authentication -> Search
+## JDBC Authentication -> Search
 
 ```properties
 # cas.authn.jdbc.search.fieldUser=
@@ -700,7 +693,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.jdbc.search.idleTimeout=5000
 ```
 
-## Jdbc Authentication -> Bind
+## JDBC Authentication -> Bind
 
 ```properties
 # cas.authn.jdbc.encode.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -721,7 +714,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.jdbc.encode.idleTimeout=5000
 ```
 
-## Jdbc Authentication -> Encode
+## JDBC Authentication -> Encode
 
 ```properties
 # cas.authn.jdbc.encode.numberOfIterations=0
@@ -776,16 +769,6 @@ spring.aop.proxy-target-class=true
 # cas.authn.throttle.appcode=CAS
 ```
 
-## Throttle JPA -> Pool
-
-```properties
-# cas.authn.throttle.jdbc.pool.suspension=false
-# cas.authn.throttle.jdbc.pool.minSize=6
-# cas.authn.throttle.jdbc.pool.maxSize=18
-# cas.authn.throttle.jdbc.pool.maxIdleTime=1000
-# cas.authn.throttle.jdbc.pool.maxWait=2000
-```
-
 ## Throttle JPA
 
 ```properties
@@ -806,6 +789,12 @@ spring.aop.proxy-target-class=true
 # cas.authn.throttle.jdbc.autocommit=false
 # cas.authn.throttle.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.authn.throttle.jdbc.idleTimeout=5000
+
+# cas.authn.throttle.jdbc.pool.suspension=false
+# cas.authn.throttle.jdbc.pool.minSize=6
+# cas.authn.throttle.jdbc.pool.maxSize=18
+# cas.authn.throttle.jdbc.pool.maxIdleTime=1000
+# cas.authn.throttle.jdbc.pool.maxWait=2000
 ```
 
 ## Locale
@@ -839,7 +828,7 @@ spring.aop.proxy-target-class=true
 ## Ldap Authentication
 
 ```properties
-# cas.authn.ldap[0].ldapUrl=ldaps://...
+# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
 # cas.authn.ldap[0].connectTimeout=5000
@@ -893,26 +882,17 @@ spring.aop.proxy-target-class=true
 # cas.logout.followServiceRedirects=false
 ```
 
-## View -> Cas3
-
-```properties
-# cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
-# cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
-# cas.view.cas3.releaseProtocolAttributes=true
-```
-
-## Cas2 -> Proxy
-
-```properties
-# cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
-# cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
-```
-
-## View -> Cas2
+## Views
 
 ```properties
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
+# cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
+# cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
+
+# cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
+# cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
+# cas.view.cas3.releaseProtocolAttributes=true
 ```
 
 ## Clearpass
@@ -937,16 +917,6 @@ spring.aop.proxy-target-class=true
 # cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
 ```
 
-## Audit JPA Pooling
-
-```properties
-# cas.audit.jdbc.pool.suspension=false
-# cas.audit.jdbc.pool.minSize=6
-# cas.audit.jdbc.pool.maxSize=18
-# cas.audit.jdbc.pool.maxIdleTime=1000
-# cas.audit.jdbc.pool.maxWait=2000
-```
-
 ## Audit -> JPA
 
 ```properties
@@ -966,6 +936,12 @@ spring.aop.proxy-target-class=true
 # cas.audit.jdbc.autocommit=false
 # cas.audit.jdbc.driverClass=org.hsqldb.jdbcDriver
 # cas.audit.jdbc.idleTimeout=5000
+
+# cas.audit.jdbc.pool.suspension=false
+# cas.audit.jdbc.pool.minSize=6
+# cas.audit.jdbc.pool.maxSize=18
+# cas.audit.jdbc.pool.maxIdleTime=1000
+# cas.audit.jdbc.pool.maxWait=2000
 ```
 
 ## Audit Global
@@ -1038,7 +1014,7 @@ spring.aop.proxy-target-class=true
 # cas.monitor.jdbc.idleTimeout=5000
 ```
 
-## Monitor -> LDAP Connection
+## Monitor -> LDAP Connection Pool
 
 ```properties
 # cas.monitor.ldap.pool.suspension=false
@@ -1055,7 +1031,7 @@ spring.aop.proxy-target-class=true
 # cas.monitor.freeMemThreshold=10
 ```
 
-## Theme
+## Themes
 
 ```properties
 # cas.theme.paramName=theme
@@ -1075,15 +1051,6 @@ spring.aop.proxy-target-class=true
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 ```
 
-## Events Jpa Pooling
-
-```properties
-# cas.events.jpa.database.pool.suspension=false
-# cas.events.jpa.database.pool.minSize=6
-# cas.events.jpa.database.pool.maxSize=18
-# cas.events.jpa.database.pool.maxIdleTime=1000
-# cas.events.jpa.database.pool.maxWait=2000
-```
 
 ## Events Jpa Database
 
@@ -1101,6 +1068,12 @@ spring.aop.proxy-target-class=true
 # cas.events.jpa.database.autocommit=false
 # cas.events.jpa.database.driverClass=org.hsqldb.jdbcDriver
 # cas.events.jpa.database.idleTimeout=5000
+
+# cas.events.jpa.database.pool.suspension=false
+# cas.events.jpa.database.pool.minSize=6
+# cas.events.jpa.database.pool.maxSize=18
+# cas.events.jpa.database.pool.maxIdleTime=1000
+# cas.events.jpa.database.pool.maxWait=2000
 ```
 
 ## Events -> Mongodb
