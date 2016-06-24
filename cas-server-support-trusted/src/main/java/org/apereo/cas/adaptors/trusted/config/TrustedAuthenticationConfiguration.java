@@ -22,6 +22,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
+import java.util.Map;
+
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
  *
@@ -51,6 +54,14 @@ public class TrustedAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
+
     @Bean
     @RefreshScope
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
@@ -61,13 +72,11 @@ public class TrustedAuthenticationConfiguration {
         return h;
     }
 
-    @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver trustedPrincipalResolver(@Qualifier("attributeRepository")
-                                                      final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver trustedPrincipalResolver() {
         final PrincipalBearingPrincipalResolver r = new PrincipalBearingPrincipalResolver();
-        r.setAttributeRepository(attributeRepository);
+        r.setAttributeRepository(this.attributeRepository);
         r.setPrincipalAttributeName(casProperties.getAuthn().getTrusted().getPrincipalAttribute());
         r.setReturnNullIfNoAttributes(casProperties.getAuthn().getTrusted().isReturnNull());
         r.setPrincipalFactory(trustedPrincipalFactory());
@@ -78,7 +87,6 @@ public class TrustedAuthenticationConfiguration {
     public PrincipalFactory trustedPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
 
     @Bean
     @RefreshScope
@@ -104,5 +112,11 @@ public class TrustedAuthenticationConfiguration {
         a.setPrincipalFactory(trustedPrincipalFactory());
         a.setWarnCookieGenerator(warnCookieGenerator);
         return a;
+    }
+
+    @PostConstruct
+    public void initializeAuthenticationHandler() {
+        this.authenticationHandlersResolvers.put(principalBearingCredentialsAuthenticationHandler(),
+                trustedPrincipalResolver());
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
+import javax.annotation.PostConstruct;
+
 /**
  * This is {@link TrustedAuthenticationWebflowConfiguration}.
  *
@@ -39,5 +41,4 @@ public class TrustedAuthenticationWebflowConfiguration {
         w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
-
 }

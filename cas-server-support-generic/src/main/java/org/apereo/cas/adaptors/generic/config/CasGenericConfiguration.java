@@ -92,8 +92,7 @@ public class CasGenericConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-
+    
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
