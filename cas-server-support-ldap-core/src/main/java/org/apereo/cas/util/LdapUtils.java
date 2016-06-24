@@ -24,6 +24,7 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
+import org.ldaptive.referral.DeleteReferralHandler;
 import org.ldaptive.referral.ModifyReferralHandler;
 import org.ldaptive.referral.SearchReferralHandler;
 import org.slf4j.Logger;
@@ -303,6 +304,7 @@ public final class LdapUtils {
         try (final Connection connection = createConnection(connectionFactory)) {
             final DeleteOperation delete = new DeleteOperation(connection);
             final DeleteRequest request = new DeleteRequest(entry.getDn());
+            request.setReferralHandler(new DeleteReferralHandler());
             final Response<Void> res = delete.execute(request);
             return res.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
