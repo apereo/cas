@@ -654,96 +654,96 @@ spring.aop.proxy-target-class=true
 ## JDBC Authentication -> Query
 
 ```properties
-# cas.authn.jdbc.query.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.query.isolateInternalQueries=false
-# cas.authn.jdbc.query.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.query.failFast=true
-# cas.authn.jdbc.query.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.query.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.query.leakThreshold=10
-# cas.authn.jdbc.query.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.query.batchSize=1
-# cas.authn.jdbc.query.user=sa
-# cas.authn.jdbc.query.ddlAuto=create-drop
-# cas.authn.jdbc.query.maxAgeDays=180
-# cas.authn.jdbc.query.password=
-# cas.authn.jdbc.query.autocommit=false
-# cas.authn.jdbc.query.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.query.idleTimeout=5000
-# cas.authn.jdbc.query.sql=
+# cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.query[0].isolateInternalQueries=false
+# cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.query[0].failFast=true
+# cas.authn.jdbc.query[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.query[0].leakThreshold=10
+# cas.authn.jdbc.query[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.query[0].batchSize=1
+# cas.authn.jdbc.query[0].user=sa
+# cas.authn.jdbc.query[0].ddlAuto=create-drop
+# cas.authn.jdbc.query[0].maxAgeDays=180
+# cas.authn.jdbc.query[0].password=
+# cas.authn.jdbc.query[0].autocommit=false
+# cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.query[0].idleTimeout=5000
+# cas.authn.jdbc.query[0].sql=
 ```
 
 ## JDBC Authentication -> Search
 
 ```properties
-# cas.authn.jdbc.search.fieldUser=
-# cas.authn.jdbc.search.tableUsers=
-# cas.authn.jdbc.search.fieldPassword=
-# cas.authn.jdbc.search.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.search.isolateInternalQueries=false
-# cas.authn.jdbc.search.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.search.failFast=true
-# cas.authn.jdbc.search.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.search.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.search.leakThreshold=10
-# cas.authn.jdbc.search.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.search.batchSize=1
-# cas.authn.jdbc.search.user=sa
-# cas.authn.jdbc.search.ddlAuto=create-drop
-# cas.authn.jdbc.search.maxAgeDays=180
-# cas.authn.jdbc.search.password=
-# cas.authn.jdbc.search.autocommit=false
-# cas.authn.jdbc.search.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.search.idleTimeout=5000
+# cas.authn.jdbc.search[0].fieldUser=
+# cas.authn.jdbc.search[0].tableUsers=
+# cas.authn.jdbc.search[0].fieldPassword=
+# cas.authn.jdbc.search[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.search[0].isolateInternalQueries=false
+# cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.search[0].failFast=true
+# cas.authn.jdbc.search[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.search[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.search[0].leakThreshold=10
+# cas.authn.jdbc.search[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.search[0].batchSize=1
+# cas.authn.jdbc.search[0].user=sa
+# cas.authn.jdbc.search[0].ddlAuto=create-drop
+# cas.authn.jdbc.search[0].maxAgeDays=180
+# cas.authn.jdbc.search[0].password=
+# cas.authn.jdbc.search[0].autocommit=false
+# cas.authn.jdbc.search[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.search[0].idleTimeout=5000
 ```
 
 ## JDBC Authentication -> Bind
 
 ```properties
-# cas.authn.jdbc.encode.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.encode.isolateInternalQueries=false
-# cas.authn.jdbc.encode.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.encode.failFast=true
-# cas.authn.jdbc.encode.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.encode.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.encode.leakThreshold=10
-# cas.authn.jdbc.encode.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.encode.batchSize=1
-# cas.authn.jdbc.encode.user=sa
-# cas.authn.jdbc.encode.ddlAuto=create-drop
-# cas.authn.jdbc.encode.maxAgeDays=180
-# cas.authn.jdbc.encode.password=
-# cas.authn.jdbc.encode.autocommit=false
-# cas.authn.jdbc.encode.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.encode.idleTimeout=5000
+# cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.bind[0].isolateInternalQueries=false
+# cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.bind[0].failFast=true
+# cas.authn.jdbc.bind[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.bind[0].leakThreshold=10
+# cas.authn.jdbc.bind[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.bind[0].batchSize=1
+# cas.authn.jdbc.bind[0].user=sa
+# cas.authn.jdbc.bind[0].ddlAuto=create-drop
+# cas.authn.jdbc.bind[0].maxAgeDays=180
+# cas.authn.jdbc.bind[0].password=
+# cas.authn.jdbc.bind[0].autocommit=false
+# cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.bind[0].idleTimeout=5000
 ```
 
 ## JDBC Authentication -> Encode
 
 ```properties
-# cas.authn.jdbc.encode.numberOfIterations=0
-# cas.authn.jdbc.encode.numberOfIterationsFieldName=numIterations
-# cas.authn.jdbc.encode.saltFieldName=salt
-# cas.authn.jdbc.encode.staticSalt=
-# cas.authn.jdbc.encode.sql=
-# cas.authn.jdbc.encode.algorithmName=
-# cas.authn.jdbc.encode.passwordFieldName=password
-# cas.authn.jdbc.encode.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.encode.isolateInternalQueries=false
-# cas.authn.jdbc.encode.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.encode.failFast=true
-# cas.authn.jdbc.encode.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.encode.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.encode.leakThreshold=10
-# cas.authn.jdbc.encode.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.encode.batchSize=1
-# cas.authn.jdbc.encode.user=sa
-# cas.authn.jdbc.encode.ddlAuto=create-drop
-# cas.authn.jdbc.encode.maxAgeDays=180
-# cas.authn.jdbc.encode.password=
-# cas.authn.jdbc.encode.autocommit=false
-# cas.authn.jdbc.encode.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.encode.idleTimeout=5000
+# cas.authn.jdbc.encode[0].numberOfIterations=0
+# cas.authn.jdbc.encode[0].numberOfIterationsFieldName=numIterations
+# cas.authn.jdbc.encode[0].saltFieldName=salt
+# cas.authn.jdbc.encode[0].staticSalt=
+# cas.authn.jdbc.encode[0].sql=
+# cas.authn.jdbc.encode[0].algorithmName=
+# cas.authn.jdbc.encode[0].passwordFieldName=password
+# cas.authn.jdbc.encode[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.encode[0].isolateInternalQueries=false
+# cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.encode[0].failFast=true
+# cas.authn.jdbc.encode[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.encode[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.encode[0].leakThreshold=10
+# cas.authn.jdbc.encode[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.encode[0].batchSize=1
+# cas.authn.jdbc.encode[0].user=sa
+# cas.authn.jdbc.encode[0].ddlAuto=create-drop
+# cas.authn.jdbc.encode[0].maxAgeDays=180
+# cas.authn.jdbc.encode[0].password=
+# cas.authn.jdbc.encode[0].autocommit=false
+# cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.encode[0].idleTimeout=5000
 ```
 
 ## Mongo Authentication

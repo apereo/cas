@@ -2,6 +2,9 @@ package org.apereo.cas.configuration.model.support.jdbc;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This is {@link JdbcAuthenticationProperties}.
  *
@@ -10,41 +13,41 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
  */
 
 public class JdbcAuthenticationProperties {
-    private Search search = new Search();
-    private Encode encode = new Encode();
-    private Query query = new Query();
-    private Bind bind = new Bind();
+    private List<Search> search = new ArrayList();
+    private List<Encode> encode = new ArrayList();
+    private List<Query> query = new ArrayList();
+    private List<Bind> bind = new ArrayList();
 
-    public Bind getBind() {
-        return bind;
-    }
-
-    public void setBind(final Bind bind) {
-        this.bind = bind;
-    }
-
-    public Query getQuery() {
-        return query;
-    }
-
-    public void setQuery(final Query query) {
-        this.query = query;
-    }
-
-    public Encode getEncode() {
-        return encode;
-    }
-
-    public void setEncode(final Encode encode) {
-        this.encode = encode;
-    }
-
-    public Search getSearch() {
+    public List<Search> getSearch() {
         return search;
     }
 
-    public void setSearch(final Search search) {
+    public void setSearch(final List<Search> search) {
         this.search = search;
+    }
+
+    public List<Encode> getEncode() {
+        return encode;
+    }
+
+    public void setEncode(final List<Encode> encode) {
+        this.encode = encode;
+    }
+
+    public List<Query> getQuery() {
+        return query;
+    }
+
+    public void setQuery(final List<Query> query) {
+        this.query = query;
+    }
+
+    public List<Bind> getBind() {
+        return bind;
+    }
+
+    public void setBind(final List<Bind> bind) {
+        this.bind = bind;
     }
 
     public static class Query extends AbstractJpaProperties {
