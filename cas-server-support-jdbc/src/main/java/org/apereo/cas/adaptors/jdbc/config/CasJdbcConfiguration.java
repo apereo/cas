@@ -121,7 +121,7 @@ public class CasJdbcConfiguration {
                 personDirectoryPrincipalResolver));
     }
 
-    public AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Bind b) {
+    private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Bind b) {
         final BindModeSearchDatabaseAuthenticationHandler h =
                 new BindModeSearchDatabaseAuthenticationHandler();
 
@@ -142,7 +142,7 @@ public class CasJdbcConfiguration {
         return h;
     }
 
-    public AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
+    private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
         final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler();
 
         h.setAlgorithmName(b.getAlgorithmName());
@@ -169,9 +169,7 @@ public class CasJdbcConfiguration {
         return h;
     }
 
-    @Bean
-    @RefreshScope
-    public AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
+    private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
         final QueryDatabaseAuthenticationHandler h =
                 new QueryDatabaseAuthenticationHandler();
         h.setDataSource(Beans.newHickariDataSource(b));

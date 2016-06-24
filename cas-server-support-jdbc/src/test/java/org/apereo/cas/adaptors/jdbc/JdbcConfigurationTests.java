@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.jdbc.config.CasJdbcConfiguration;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.spockframework.util.Assert;
@@ -23,31 +24,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
         classes = {RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
+                CasCoreUtilConfiguration.class,
                 CasJdbcConfiguration.class, CasCoreServicesConfiguration.class}, 
         initializers = ConfigFileApplicationContextInitializer.class)
 public class JdbcConfigurationTests {
     
-    @Autowired
-    @Qualifier("searchModeSearchDatabaseAuthenticationHandler")
-    private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler;
-
-    @Autowired
-    @Qualifier("queryDatabaseAuthenticationHandler")
-    private AuthenticationHandler queryDatabaseAuthenticationHandler;
-
-    @Autowired
-    @Qualifier("queryAndEncodeDatabaseAuthenticationHandler")
-    private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler;
-
-    @Autowired
-    @Qualifier("bindModeSearchDatabaseAuthenticationHandler")
-    private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler;
-    
     @Test
     public void verifyConfiguration() {
-        Assert.notNull(this.searchModeSearchDatabaseAuthenticationHandler);
-        Assert.notNull(this.queryDatabaseAuthenticationHandler);
-        Assert.notNull(this.queryAndEncodeDatabaseAuthenticationHandler);
-        Assert.notNull(this.bindModeSearchDatabaseAuthenticationHandler);
+        
     }
 }
