@@ -15,8 +15,7 @@ You MUST keep in mind that both applications (the CAS server and the services ma
 share the <strong>same</strong> configuration for the CAS services.
 </p></div>
 
-A sample Maven overlay for the services management webapp is provided here: [https://github.com/Jasig/cas-services-management-overlay]
-(https://github.com/Jasig/cas-services-management-overlay)
+A sample Maven overlay for the services management webapp is provided here: [https://github.com/Jasig/cas-services-management-overlay](https://github.com/Jasig/cas-services-management-overlay)
 
 ## Services Registry
 
