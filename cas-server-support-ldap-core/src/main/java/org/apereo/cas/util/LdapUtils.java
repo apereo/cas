@@ -24,6 +24,8 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
+import org.ldaptive.referral.ModifyReferralHandler;
+import org.ldaptive.referral.SearchReferralHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,6 +172,7 @@ public final class LdapUtils {
         try (final Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
             final SearchRequest request = createSearchRequest(baseDn, filter);
+            request.setReferralHandler(new SearchReferralHandler());
             return searchOperation.execute(request);
         }
     }
@@ -237,6 +240,7 @@ public final class LdapUtils {
                             new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{})))).collect(Collectors.toList());
             final ModifyRequest request = new ModifyRequest(currentDn,
                     mods.toArray(new AttributeModification[]{}));
+            request.setReferralHandler(new ModifyReferralHandler());
             operation.execute(request);
             return true;
         } catch (final LdapException e) {
