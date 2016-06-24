@@ -14,7 +14,7 @@
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
 * [Authentication](#authentication)
-    *   [Authentication](/$version/installation/Configuring-Authentication-Components.html)
+    *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
     *   [Database](/$version/installation/Database-Authentication.html)
     *   [JAAS](/$version/installation/JAAS-Authentication.html)
     *   [X.509](/$version/installation/X509-Authentication.html)
@@ -39,7 +39,7 @@
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
 
 * [Ticketing](#ticketing)
-    *   [Ticketing](/$version/installation/Configuring-Ticketing-Components.html)
+    *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
     *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)
     *   [Ehcache](/$version/installation/Ehcache-Ticket-Registry.html)
     *   [Memcached](/$version/installation/Memcached-Ticket-Registry.html)
