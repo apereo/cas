@@ -33,12 +33,12 @@ public class CasThrottlingConfiguration {
     @ConditionalOnMissingBean(name = "authenticationThrottle")
     @Bean(name = {"defaultAuthenticationThrottle", "authenticationThrottle"})
     public ThrottledSubmissionHandlerInterceptor defaultAuthenticationThrottle() {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getThrottle().getUsernameParameter())) {
-            return inMemoryIpAddressUsernameThrottle();
-        }
 
         if (casProperties.getAuthn().getThrottle().getFailure().getThreshold() > 0
                 && casProperties.getAuthn().getThrottle().getFailure().getRangeSeconds() > 0) {
+            if (StringUtils.isNotBlank(casProperties.getAuthn().getThrottle().getUsernameParameter())) {
+                return inMemoryIpAddressUsernameThrottle();
+            }
             return inMemoryIpAddressThrottle();
         }
         return neverThrottle();

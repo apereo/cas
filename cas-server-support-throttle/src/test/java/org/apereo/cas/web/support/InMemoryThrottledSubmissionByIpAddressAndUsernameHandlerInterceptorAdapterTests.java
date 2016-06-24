@@ -8,7 +8,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@TestPropertySource(properties = "cas.authn.throttle.username-parameter=username")
+@TestPropertySource(locations={"classpath:/inmemoryuser.properties"})
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests
 extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
 }
