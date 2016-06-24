@@ -35,7 +35,7 @@ before_install:
 install:
 - ./gradlew build -DskipAspectJ=true --parallel -x test
 script:
-- travis_wait ./gradlew test -DskipAspectJ=true --stacktrace
+- travis_wait ./gradlew test -DskipAspectJ=true --stacktrace --parallel
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh

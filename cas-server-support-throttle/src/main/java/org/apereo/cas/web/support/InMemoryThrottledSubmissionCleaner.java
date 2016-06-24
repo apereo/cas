@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * This is {@link InMemoryThrottledSubmissionCleaner}.
@@ -11,12 +10,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 public class InMemoryThrottledSubmissionCleaner implements Runnable {
 
-    private final AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter throttlingAdapter;
+    private final ThrottledSubmissionHandlerInterceptor throttlingAdapter;
 
-    public InMemoryThrottledSubmissionCleaner(
-            final HandlerInterceptor throttlingAdapter) {
-        this.throttlingAdapter = (AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter)
-                throttlingAdapter;
+    public InMemoryThrottledSubmissionCleaner(final ThrottledSubmissionHandlerInterceptor throttlingAdapter) {
+        this.throttlingAdapter = throttlingAdapter;
     }
 
     /**
@@ -26,6 +23,6 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
     @Scheduled(initialDelayString = "${cas.authn.throttle.startDelay:10000}",
             fixedDelayString = "${cas.authn.throttle.repeatInterval:300000}")
     public void run() {
-        this.throttlingAdapter.decrementCounts();
+        this.throttlingAdapter.decrement();
     }
 }

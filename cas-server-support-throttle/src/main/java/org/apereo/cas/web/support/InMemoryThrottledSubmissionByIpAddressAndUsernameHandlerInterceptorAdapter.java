@@ -16,7 +16,7 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
     
     @Override
-    protected String constructKey(final HttpServletRequest request) {
+    public String constructKey(final HttpServletRequest request) {
         final String username = request.getParameter(getUsernameParameter());
 
         if (StringUtils.isBlank(username)) {
@@ -28,7 +28,7 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
 
     @Override
-    protected String getName() {
+    public String getName() {
         return "inMemoryIpAddressUsernameThrottle";
     }
 }

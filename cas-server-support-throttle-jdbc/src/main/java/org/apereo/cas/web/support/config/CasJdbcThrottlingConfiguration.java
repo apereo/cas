@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,7 +12,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.sql.DataSource;
 
@@ -27,7 +27,7 @@ public class CasJdbcThrottlingConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public DataSource inspektrAuditTrailDataSource() {
         return Beans.newHickariDataSource(casProperties.getAuthn().getThrottle().getJdbc());
@@ -44,8 +44,8 @@ public class CasJdbcThrottlingConfiguration {
     @Autowired
     @Bean(name = {"inspektrIpAddressUsernameThrottle", "authenticationThrottle"})
     @RefreshScope
-    public HandlerInterceptorAdapter inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager")
-                                                                       final AuditTrailManager auditTrailManager) {
+    public ThrottledSubmissionHandlerInterceptor inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager")
+                                                                                   final AuditTrailManager auditTrailManager) {
         final InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter bean =
                 new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(auditTrailManager,
                         inspektrAuditTrailDataSource());

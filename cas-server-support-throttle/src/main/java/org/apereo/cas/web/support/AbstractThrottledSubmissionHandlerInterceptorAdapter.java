@@ -18,7 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
+public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
+        extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -115,23 +116,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
                 request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
                 this.failureThreshold);
     }
-
-    /**
-     * Record submission failure.
-     *
-     * @param request the request
-     */
-    protected abstract void recordSubmissionFailure(HttpServletRequest request);
-
-    /**
-     * Determine whether threshold has been exceeded.
-     *
-     * @param request the request
-     * @return true, if successful
-     */
-    protected abstract boolean exceedsThreshold(HttpServletRequest request);
-
-
+        
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -144,10 +129,4 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         
     }
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    protected abstract String getName();
 }

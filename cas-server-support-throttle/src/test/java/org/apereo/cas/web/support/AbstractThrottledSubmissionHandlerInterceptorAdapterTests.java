@@ -10,12 +10,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import static org.junit.Assert.*;
 
@@ -26,13 +31,14 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, CasThrottlingConfiguration.class},
+@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class,
+        AopAutoConfiguration.class, CasThrottlingConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
+@EnableScheduling
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
-
-    protected static final int FAILURE_RANGE = 5;
-
-    protected static final int FAILURE_THRESHOLD = 10;
+    
 
     protected static final String IP_ADDRESS = "1.2.3.4";
 
@@ -40,6 +46,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    @Qualifier("authenticationThrottle")
+    protected ThrottledSubmissionHandlerInterceptor throttle;
+    
     @Before
     public void setUp() throws Exception {
         ClientInfoHolder.setClientInfo(CLIENT_INFO);
@@ -52,23 +62,16 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     @Test
     public void verifyThrottle() throws Exception {
-        final double rate = (double) FAILURE_THRESHOLD / (double) FAILURE_RANGE;
-        
         // Ensure that repeated logins BELOW threshold rate are allowed
-        // Wait 7% more than threshold period
-        int wait = (int) (1000.0 * 1.07 / rate);
-        failLoop(3, wait, HttpStatus.SC_UNAUTHORIZED);
+        failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 
         // Ensure that repeated logins ABOVE threshold rate are throttled
-        // Wait 7% less than threshold period
-        wait = (int) (1000.0 * 0.93 / rate);
-        failLoop(3, wait, HttpStatus.SC_FORBIDDEN);
+        failLoop(3, 200, HttpStatus.SC_FORBIDDEN);
 
         // Ensure that slowing down relieves throttle
-        // Wait 7% more than threshold period
-        wait = (int) (1000.0 * 1.07 / rate);
-        Thread.sleep(wait);
-        failLoop(3, wait, HttpStatus.SC_UNAUTHORIZED);
+        throttle.decrement();
+        Thread.sleep(1000);
+        failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
     }
 
 
@@ -79,12 +82,13 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         for (int i = 0; i < trials; i++) {
             logger.debug("Waiting for {} ms", period);
             Thread.sleep(period);
-            assertEquals(expected, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
+            
+            final MockHttpServletResponse status = loginUnsuccessfully("mog", "1.2.3.4");
+            assertEquals(expected, status.getStatus());
         }
     }
 
 
     protected abstract MockHttpServletResponse loginUnsuccessfully(String username, String fromAddress) throws Exception;
-
-    protected abstract AsyncHandlerInterceptor getThrottle();
+    
 }

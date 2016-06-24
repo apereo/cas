@@ -25,8 +25,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.servlet.AsyncHandlerInterceptor;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -51,19 +49,11 @@ import static org.junit.Assert.*;
         initializers = ConfigFileApplicationContextInitializer.class)
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
-
+    
     @Autowired
-    @Qualifier("inspektrIpAddressUsernameThrottle")
-    private HandlerInterceptorAdapter throttle;
-
-    @Autowired
+    @Qualifier("authenticationManager")
     private AuthenticationManager authenticationManager;
-
-    @Override
-    protected AsyncHandlerInterceptor getThrottle() {
-        return throttle;
-    }
-
+    
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
             throws Exception {
@@ -78,13 +68,13 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        getThrottle().preHandle(request, response, null);
+        throttle.preHandle(request, response, null);
 
         try {
             authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(),
                     badCredentials(username)));
         } catch (final AuthenticationException e) {
-            getThrottle().postHandle(request, response, null, null);
+            throttle.postHandle(request, response, null, null);
             return response;
         }
         fail("Expected AbstractAuthenticationException");

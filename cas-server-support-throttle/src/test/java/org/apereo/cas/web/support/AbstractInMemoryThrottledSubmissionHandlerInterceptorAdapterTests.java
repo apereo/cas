@@ -26,8 +26,8 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         context.setCurrentEvent(new Event("", "error"));
         request.setAttribute("flowRequestContext", context);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        getThrottle().preHandle(request, response, null);
-        getThrottle().postHandle(request, response, null, null);
+        throttle.preHandle(request, response, null);
+        throttle.postHandle(request, response, null, null);
         return response;
     }
 }

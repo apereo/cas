@@ -80,7 +80,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     }
 
     @Override
-    protected boolean exceedsThreshold(final HttpServletRequest request) {
+    public boolean exceedsThreshold(final HttpServletRequest request) {
         if (this.dataSource != null && this.jdbcTemplate != null) {
             final String userToUse = constructUsername(request, getUsernameParameter());
             final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
@@ -108,7 +108,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     }
 
     @Override
-    protected void recordSubmissionFailure(final HttpServletRequest request) {
+    public void recordSubmissionFailure(final HttpServletRequest request) {
         recordThrottle(request);
     }
 
@@ -161,12 +161,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @param usernameParameter the username parameter
      * @return the string
      */
-    protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
+    private static String constructUsername(final HttpServletRequest request, final String usernameParameter) {
         return request.getParameter(usernameParameter);
     }
 
     @Override
-    protected String getName() {
+    public String getName() {
         return "inspektrIpAddressUsernameThrottle";
     }
 }

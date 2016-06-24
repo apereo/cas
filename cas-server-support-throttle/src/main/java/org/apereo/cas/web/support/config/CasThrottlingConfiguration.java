@@ -7,6 +7,7 @@ import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorA
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,11 +15,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link CasThrottlingConfiguration}.
@@ -36,7 +32,7 @@ public class CasThrottlingConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationThrottle")
     @Bean(name = {"defaultAuthenticationThrottle", "authenticationThrottle"})
-    public HandlerInterceptorAdapter defaultAuthenticationThrottle() {
+    public ThrottledSubmissionHandlerInterceptor defaultAuthenticationThrottle() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getThrottle().getUsernameParameter())) {
             return inMemoryIpAddressUsernameThrottle();
         }
@@ -49,27 +45,25 @@ public class CasThrottlingConfiguration {
     }
 
     @Bean
-    @RefreshScope
-    public HandlerInterceptorAdapter inMemoryIpAddressUsernameThrottle() {
+    public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottle")
+                                              final ThrottledSubmissionHandlerInterceptor adapter) {
+        return new InMemoryThrottledSubmissionCleaner(adapter);
+    }
+
+    private ThrottledSubmissionHandlerInterceptor inMemoryIpAddressUsernameThrottle() {
         return configureInMemoryInterceptorAdaptor(
                 new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter());
     }
 
-    @Bean
-    public HandlerInterceptorAdapter inMemoryIpAddressThrottle() {
+
+    private ThrottledSubmissionHandlerInterceptor inMemoryIpAddressThrottle() {
         return configureInMemoryInterceptorAdaptor(
                 new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter());
     }
 
-    @Bean
-    public HandlerInterceptorAdapter neverThrottle() {
-        return new HandlerInterceptorAdapter() {
-            @Override
-            public boolean preHandle(final HttpServletRequest request,
-                                     final HttpServletResponse response,
-                                     final Object handler) throws Exception {
-                return true;
-            }
+
+    private static ThrottledSubmissionHandlerInterceptor neverThrottle() {
+        return new ThrottledSubmissionHandlerInterceptor() {
         };
     }
 
@@ -81,18 +75,9 @@ public class CasThrottlingConfiguration {
         return interceptorAdapter;
     }
 
-    private HandlerInterceptorAdapter
+    private ThrottledSubmissionHandlerInterceptor
     configureInMemoryInterceptorAdaptor(final AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
         return configureThrottleHandlerInterceptorAdaptor(interceptorAdapter);
     }
 
-    @Bean
-    public Runnable inMemoryThrottledSubmissionCleaner(@Qualifier("authenticationThrottle")
-                                                       final HandlerInterceptor adapter) {
-        if (adapter instanceof AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter) {
-            return new InMemoryThrottledSubmissionCleaner(adapter);
-        }
-        return () -> {
-        };
-    }
 }

@@ -17,37 +17,30 @@ import java.util.concurrent.ConcurrentMap;
  * @since 3.0.0
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
-        extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
+        extends AbstractThrottledSubmissionHandlerInterceptorAdapter 
+        implements InMemoryThrottledSubmissionHandlerInterceptor {
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
     private ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
 
     @Override
-    protected boolean exceedsThreshold(final HttpServletRequest request) {
+    public boolean exceedsThreshold(final HttpServletRequest request) {
         final ZonedDateTime last = this.ipMap.get(constructKey(request));
         return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
     }
 
     @Override
-    protected void recordSubmissionFailure(final HttpServletRequest request) {
+    public void recordSubmissionFailure(final HttpServletRequest request) {
         this.ipMap.put(constructKey(request), ZonedDateTime.now(ZoneOffset.UTC));
     }
-
-    /**
-     * Construct key to be used by the throttling agent to track requests.
-     *
-     * @param request the request
-     * @return the string
-     */
-    protected abstract String constructKey(HttpServletRequest request);
-
+    
     /**
      * This class relies on an external configuration to clean it up.
      * It ignores the threshold data in the parent class.
      */
-    public void decrementCounts() {
-
+    @Override
+    public void decrement() {
         logger.info("Beginning audit cleanup...");
 
         final Set<Entry<String, ZonedDateTime>> keys = this.ipMap.entrySet();

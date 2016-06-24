@@ -15,12 +15,12 @@ public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter
              extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
     
     @Override
-    protected String constructKey(final HttpServletRequest request) {
+    public String constructKey(final HttpServletRequest request) {
         return ClientInfoHolder.getClientInfo().getClientIpAddress();
     }
 
     @Override
-    protected String getName() {
+    public String getName() {
         return "inMemoryIpAddressThrottle";
     }
 }
