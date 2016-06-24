@@ -71,6 +71,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
 
     /**
+     * Default ctor.
+     */
+    public LdapAuthenticationHandler() {
+    }
+
+    /**
      * Creates a new authentication handler that delegates to the given authenticator.
      *
      * @param  authenticator  Ldaptive authenticator component.
@@ -144,6 +150,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public void setAdditionalAttributes(final List<String> additionalAttributes) {
         this.additionalAttributes = additionalAttributes;
+    }
+
+    public void setAuthenticator(final Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     @Override

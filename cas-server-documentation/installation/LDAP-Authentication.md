@@ -17,6 +17,7 @@ LDAP integration is enabled by including the following dependency in the overlay
 
 ## Configuration
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## LDAP Password Policy Enforcement
 
@@ -56,25 +57,9 @@ about password management. If you are looking for that sort of capability integr
     <li><a href="http://code.google.com/p/pwm/">http://code.google.com/p/pwm/</a></li>‎
 </ul></p></div>
 
-
-#### Default
-
-The default account state handler, that calculates the password expiration warning period,
-maps LDAP errors to the CAS workflow.
-
-#### Optional
-
-Supports both opt-in and opt-out warnings on a per-user basis.
-
-```xml
-<alias name="optionalWarningAccountStateHandler" alias="passwordPolicyConfiguration" />
-```
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
 ## Troubleshooting
 
-To enable additional logging, modify the log4j configuration file to add the following:
+To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
 <Logger name="org.ldaptive" level="debug" additivity="false">

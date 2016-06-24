@@ -836,6 +836,47 @@ spring.aop.proxy-target-class=true
 # cas.tgc.cipherEnabled=true
 ```
 
+## Ldap Authentication
+
+```properties
+# cas.authn.ldap[0].ldapUrl=ldaps://...
+# cas.authn.ldap[0].useSsl=true
+# cas.authn.ldap[0].useStartTls=false
+# cas.authn.ldap[0].connectTimeout=5000
+# cas.authn.ldap[0].baseDn=dc=example,dc=org
+# cas.authn.ldap[0].userFilter=cn={user}
+# cas.authn.ldap[0].subtreeSearch=true
+# cas.authn.ldap[0].usePasswordPolicy=true
+# cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.ldap[0].bindCredential=Password
+
+# cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
+# cas.authn.ldap[0].principalAttributeId=uid
+# cas.authn.ldap[0].principalAttributeList=sn,cn,givenName
+# cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
+# cas.authn.ldap[0].additionalAttributes=
+# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
+
+# cas.authn.ldap[0].trustCertificates=
+# cas.authn.ldap[0].keystore=
+# cas.authn.ldap[0].keystorePassword=
+# cas.authn.ldap[0].keystoreType=JKS|JCEKS|PKCS12
+
+# cas.authn.ldap[0].minPoolSize=3
+# cas.authn.ldap[0].maxPoolSize=10
+# cas.authn.ldap[0].validateOnCheckout=true
+# cas.authn.ldap[0].validatePeriodically=true
+# cas.authn.ldap[0].validatePeriod=600
+
+# cas.authn.ldap[0].failFast=true
+# cas.authn.ldap[0].idleTime=500
+# cas.authn.ldap[0].prunePeriod=600
+# cas.authn.ldap[0].blockWaitTime=5000
+
+# cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.ldap[0].allowMultipleDns=false
+```
+
 ## Ldap Authorization
 
 ```properties

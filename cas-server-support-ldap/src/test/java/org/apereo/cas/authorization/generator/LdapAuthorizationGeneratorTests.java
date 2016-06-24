@@ -2,7 +2,11 @@ package org.apereo.cas.authorization.generator;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
+import org.apereo.cas.config.LdapCoreConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +29,10 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {LdapAuthenticationConfiguration.class, RefreshAutoConfiguration.class}, 
+@SpringApplicationConfiguration(classes = {LdapAuthenticationConfiguration.class,
+        LdapCoreConfiguration.class,
+        RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesConfiguration.class, CasCoreUtilConfiguration.class}, 
         locations={"/ldap-context.xml", "/ldap-authorizationgenerator-test.xml"})
 public class LdapAuthorizationGeneratorTests extends AbstractLdapTests {
 

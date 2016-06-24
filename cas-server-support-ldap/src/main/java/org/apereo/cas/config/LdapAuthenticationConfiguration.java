@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
@@ -20,6 +21,10 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
+import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -42,6 +47,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link LdapAuthenticationConfiguration}.
@@ -74,6 +80,10 @@ public class LdapAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("ldapPasswordPolicyConfiguration")
+    private PasswordPolicyConfiguration ldapPasswordPolicyConfiguration;
+
     @Bean
     @RefreshScope
     public AuthorizationGenerator ldapAuthorizationGenerator() {
@@ -95,9 +105,7 @@ public class LdapAuthenticationConfiguration {
     public void initLdapAuthenticationHandlers() {
         casProperties.getAuthn().getLdap().forEach(l -> {
             if (l.getType() != null) {
-                final LdapAuthenticationHandler handler =
-                        new LdapAuthenticationHandler(getAuthenticator(l));
-
+                final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
                 handler.setServicesManager(servicesManager);
                 handler.setAdditionalAttributes(l.getAdditionalAttributes());
                 handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
@@ -108,6 +116,20 @@ public class LdapAuthenticationConfiguration {
                 handler.setPrincipalAttributeMap(attributes);
 
                 handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
+
+                final Authenticator authenticator = getAuthenticator(l);
+                if (l.isUsePasswordPolicy()) {
+                    authenticator.setAuthenticationResponseHandlers(
+                            new ActiveDirectoryAuthenticationResponseHandler(
+                                    TimeUnit.DAYS.convert(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays(),
+                                            TimeUnit.MILLISECONDS)
+                            ),
+                            new PasswordPolicyAuthenticationResponseHandler(),
+                            new PasswordExpirationAuthenticationResponseHandler());
+
+                    handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
+                }
+                handler.setAuthenticator(authenticator);
                 this.authenticationHandlersResolvers.put(handler, null);
             }
         });
@@ -117,54 +139,30 @@ public class LdapAuthenticationConfiguration {
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.AD) {
             return getActiveDirectoryAuthenticator(l);
         }
-        if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.ANONYMOUS) {
-            return getAnonymousAuthenticator(l);
-        }
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.DIRECT) {
             return getDirectBindAuthenticator(l);
         }
-        return getAuthenticatedSearchAuthenticator(l);
+        return getAuthenticatedOrAnonSearchAuthenticator(l);
     }
 
-    private static Authenticator getAuthenticatedSearchAuthenticator(final LdapAuthenticationProperties l) {
-
+    private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final LdapAuthenticationProperties l) {
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(getPooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
-
-        final PooledBindAuthenticationHandler handler =
-                new PooledBindAuthenticationHandler(getPooledConnectionFactory(l));
-
-        return new Authenticator(resolver, handler);
+        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
-        final PooledBindAuthenticationHandler handler =
-                new PooledBindAuthenticationHandler(getPooledConnectionFactory(l));
         final FormatDnResolver resolver = new FormatDnResolver(l.getBaseDn());
-        return new Authenticator(resolver, handler);
-    }
-
-    private static Authenticator getAnonymousAuthenticator(final LdapAuthenticationProperties l) {
-        final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
-        resolver.setBaseDn(l.getBaseDn());
-        resolver.setSubtreeSearch(l.isSubtreeSearch());
-        resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(getPooledConnectionFactory(l));
-        resolver.setUserFilter(l.getUserFilter());
-
-        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler();
-        handler.setConnectionFactory(getPooledConnectionFactory(l));
-        return new Authenticator(resolver, handler);
+        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
     }
 
     private static Authenticator getActiveDirectoryAuthenticator(final LdapAuthenticationProperties l) {
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
-        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(getPooledConnectionFactory(l));
-        final Authenticator authn = new Authenticator(resolver, handler);
+        final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
 
         final SearchEntryResolver entryResolver = new SearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
@@ -173,6 +171,12 @@ public class LdapAuthenticationConfiguration {
         authn.setEntryResolver(new SearchEntryResolver());
 
         return authn;
+    }
+
+    private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final LdapAuthenticationProperties l) {
+        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(getPooledConnectionFactory(l));
+        handler.setAuthenticationControls(new PasswordPolicyControl());
+        return handler;
     }
 
     private static PooledConnectionFactory getPooledConnectionFactory(
@@ -203,7 +207,7 @@ public class LdapAuthenticationConfiguration {
         } else {
             cc.setSslConfig(new SslConfig());
         }
-        
+
         if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
             cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {

@@ -38,7 +38,7 @@ public class LdapAuthenticationProperties {
     private String userFilter;
     private boolean subtreeSearch = true;
 
-
+    private boolean usePasswordPolicy = true;
     private String dnFormat;
     private String principalAttributeId = "uid";
     private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
@@ -73,6 +73,14 @@ public class LdapAuthenticationProperties {
 
     private String bindDn;
     private String bindCredential;
+
+    public boolean isUsePasswordPolicy() {
+        return usePasswordPolicy;
+    }
+
+    public void setUsePasswordPolicy(final boolean usePasswordPolicy) {
+        this.usePasswordPolicy = usePasswordPolicy;
+    }
 
     public String getBindDn() {
         return bindDn;

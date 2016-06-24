@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.support.AccountStateHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,20 +23,32 @@ public class LdapCoreConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
-    public AccountStateHandler accountStateHandler() {
+    public static DefaultAccountStateHandler accountStateHandler() {
         return new DefaultAccountStateHandler();
-    }
-    
-    @Bean
-    public PasswordPolicyConfiguration ldapPasswordPolicyConfiguration() {
-        return new LdapPasswordPolicyConfiguration(this.casProperties.getAuthn().getPasswordPolicy());
     }
 
     @Bean
-    @RefreshScope
-    public AccountStateHandler optionalWarningAccountStateHandler() {
-        return new OptionalWarningAccountStateHandler();
+    public PasswordPolicyConfiguration ldapPasswordPolicyConfiguration() {
+        final LdapPasswordPolicyConfiguration pp =
+                new LdapPasswordPolicyConfiguration(this.casProperties.getAuthn().getPasswordPolicy());
+
+        if (StringUtils.isNotBlank(optionalWarningAccountStateHandler().getWarnAttributeName())
+                && StringUtils.isNotBlank(optionalWarningAccountStateHandler().getWarningAttributeValue())) {
+            pp.setAccountStateHandler(optionalWarningAccountStateHandler());
+        }
+        pp.setAccountStateHandler(accountStateHandler());
+        return pp;
+    }
+
+    private OptionalWarningAccountStateHandler optionalWarningAccountStateHandler() {
+        final OptionalWarningAccountStateHandler h = new OptionalWarningAccountStateHandler();
+
+        h.setWarnAttributeName(casProperties.getAuthn().getPasswordPolicy().getWarningAttributeName());
+        h.setWarningAttributeValue(casProperties.getAuthn().getPasswordPolicy().getWarningAttributeValue());
+        h.setDisplayWarningOnMatch(casProperties.getAuthn().getPasswordPolicy().isDisplayWarningOnMatch());
+
+        return h;
     }
 }
