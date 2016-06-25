@@ -881,6 +881,10 @@ no search is required to compute the DN needed for a bind operation. There are t
 1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
+Note that CAS will automatically create the appropriate components internally
+based on the settings specified below. If you wish to authenticate against more than one LDAP
+server, simply increment the index and specify the settings for the latter LDAP. 
+
 ```properties
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
 # cas.authn.ldap[0].useSsl=true
@@ -1184,7 +1188,7 @@ no search is required to compute the DN needed for a bind operation. There are t
 ## Service Registry Config -> Config
 
 ```properties
-# cas.serviceRegistry.config.location=
+# cas.serviceRegistry.config.location=classpath:/services
 ```
 
 ## Ldap Service Registry
