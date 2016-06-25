@@ -25,6 +25,7 @@
     *   [SPNEGO](/$version/installation/SPNEGO-Authentication.html)
     *   [Remote Address](/$version/installation/Remote-Address-Authentication.html)
     *   [YubiKey](/$version/installation/YubiKey-Authentication.html)
+    *   [Trusted](/$version/installation/Trusted-Authentication.html)
     *   [JWT](/$version/installation/JWT-Authentication.html)
     *   [Stormpath](/$version/installation/Stormpath-Authentication.html)
     *   [Basic](/$version/installation/Basic-Authentication.html)
