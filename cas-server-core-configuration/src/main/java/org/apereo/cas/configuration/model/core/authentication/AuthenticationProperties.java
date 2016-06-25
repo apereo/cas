@@ -16,6 +16,7 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
+import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
@@ -40,6 +41,9 @@ public class AuthenticationProperties {
 
     private Map<String, String> attributes = new HashMap();
 
+    @NestedConfigurationProperty
+    private RestAuthenticationProperties rest = new RestAuthenticationProperties();
+    
     @NestedConfigurationProperty
     private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
     
@@ -345,5 +349,13 @@ public class AuthenticationProperties {
 
     public void setLdap(final List<LdapAuthenticationProperties> ldap) {
         this.ldap = ldap;
+    }
+
+    public RestAuthenticationProperties getRest() {
+        return rest;
+    }
+
+    public void setRest(final RestAuthenticationProperties rest) {
+        this.rest = rest;
     }
 }
