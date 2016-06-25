@@ -219,7 +219,8 @@ public class LdapAuthenticationConfiguration {
 
         if (l.getProviderClass() != null) {
             try {
-                bindCf.setProvider(Provider.class.cast(ClassUtils.getClass(l.getProviderClass())));
+                final Class clazz = ClassUtils.getClass(l.getProviderClass());
+                bindCf.setProvider(Provider.class.cast(clazz.newInstance()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

@@ -16,6 +16,16 @@ public class SamlCore {
 
     private boolean ticketidSaml2;
     
+    private String securityManager = "com.sun.org.apache.xerces.internal.util.SecurityManager";
+
+    public String getSecurityManager() {
+        return securityManager;
+    }
+
+    public void setSecurityManager(final String securityManager) {
+        this.securityManager = securityManager;
+    }
+
     public String getIssuer() {
         return issuer;
     }
