@@ -530,11 +530,18 @@ Control how principal identifiers are transformed during the resolution phase.
 
 ## Authentication Policy -> Any
 
+Satisfied if any handler succeeds. Supports a tryAll flag to avoid short circuiting 
+and try every handler even if one prior succeeded. 
+
 ```properties
 # cas.authn.policy.any.tryAll=false
 ```
 
 ## Authentication Policy -> All
+
+Satisfied if and only if all given credentials are successfully authenticated. 
+Support for multiple credentials is new in CAS and this handler 
+would only be acceptable in a multi-factor authentication situation.
 
 ```properties
 # cas.authn.policy.all.enabled=true
@@ -547,6 +554,8 @@ Control how principal identifiers are transformed during the resolution phase.
 ```
 
 ## Authentication Policy -> Required
+
+Satisfied if an only if a specified handler successfully authenticates its credential. 
 
 ```properties
 # cas.authn.policy.req.tryAll=false
@@ -858,6 +867,19 @@ Control how principal identifiers are transformed during the resolution phase.
 ```
 
 ## Ldap Authentication
+
+CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP. 
+There are numerous directory architectures and we provide configuration for four common cases.
+
+- Active Directory - Users authenticate with sAMAccountName.
+- Authenticated Search - Manager bind/search followed by user simple bind.
+- Anonymous Search - Anonymous search followed by user simple bind.
+
+- Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
+no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
+
+1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
+2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 ```properties
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
