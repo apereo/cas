@@ -874,10 +874,8 @@ There are numerous directory architectures and we provide configuration for four
 - Active Directory - Users authenticate with sAMAccountName.
 - Authenticated Search - Manager bind/search followed by user simple bind.
 - Anonymous Search - Anonymous search followed by user simple bind.
-
 - Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
 no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
-
 1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
