@@ -48,7 +48,7 @@ public class SamlGoogleAppsConfiguration {
         factory.setKeyAlgorithm(casProperties.getGoogleApps().getKeyAlgorithm());
         factory.setPrivateKeyLocation(casProperties.getGoogleApps().getPrivateKeyLocation());
         factory.setPublicKeyLocation(casProperties.getGoogleApps().getPublicKeyLocation());
-        factory.setSkewAllowance(casProperties.getSamlResponse().getSkewAllowance());
+        factory.setSkewAllowance(casProperties.getSamlCore().getSkewAllowance());
         factory.setBuilder(googleSaml20ObjectBuilder());
         return factory;
     }

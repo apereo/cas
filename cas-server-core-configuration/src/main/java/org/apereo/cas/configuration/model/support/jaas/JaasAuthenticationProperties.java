@@ -8,7 +8,7 @@ package org.apereo.cas.configuration.model.support.jaas;
  */
 
 public class JaasAuthenticationProperties {
-    private String realm = "CAS";
+    private String realm;
     private String kerberosRealmSystemProperty;
     private String kerberosKdcSystemProperty;
 

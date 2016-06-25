@@ -1,13 +1,13 @@
 package org.apereo.cas.configuration.model.support.saml;
 
 /**
- * This is {@link SamlResponseProperties}.
+ * This is {@link SamlCore}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 
-public class SamlResponseProperties {
+public class SamlCore {
     private int skewAllowance;
 
     private String attributeNamespace = "http://www.ja-sig.org/products/cas/";

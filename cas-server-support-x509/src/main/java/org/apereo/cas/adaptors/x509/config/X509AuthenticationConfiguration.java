@@ -41,6 +41,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
+import javax.annotation.PostConstruct;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -52,6 +54,18 @@ import java.util.Set;
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509AuthenticationConfiguration {
+
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
+    @Qualifier("authenticationHandlersResolvers")
+    private Map authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -123,6 +137,7 @@ public class X509AuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
+
 
     @Bean
     public RevocationPolicy allowRevocationPolicy() {
@@ -226,8 +241,7 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SubjectPrincipalResolver(@Qualifier("attributeRepository")
-                                                          final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SubjectPrincipalResolver() {
         final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver();
         r.setDescriptor(casProperties.getAuthn().getX509().getPrincipalDescriptor());
         r.setAttributeRepository(attributeRepository);
@@ -240,8 +254,7 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SubjectDNPrincipalResolver(@Qualifier("attributeRepository")
-                                                            final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SubjectDNPrincipalResolver() {
         final X509SubjectDNPrincipalResolver r = new X509SubjectDNPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
@@ -253,10 +266,7 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver(
-            @Qualifier("attributeRepository")
-            final IPersonAttributeDao attributeRepository
-    ) {
+    public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
         final X509SubjectAlternativeNameUPNPrincipalResolver r =
                 new X509SubjectAlternativeNameUPNPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
@@ -269,9 +279,7 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public PrincipalResolver x509SerialNumberPrincipalResolver(
-            @Qualifier("attributeRepository")
-            final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SerialNumberPrincipalResolver() {
         final X509SerialNumberPrincipalResolver r = new X509SerialNumberPrincipalResolver();
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(casProperties.getAuthn().getX509().getPrincipal().getPrincipalAttribute());
@@ -295,5 +303,31 @@ public class X509AuthenticationConfiguration {
         r.setValueDelimiter(casProperties.getAuthn().getX509().getValueDelimiter());
 
         return r;
+    }
+
+    @PostConstruct
+    public void initializeAuthenticationHandler() {
+        PrincipalResolver resolver = personDirectoryPrincipalResolver;
+        if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
+            switch (casProperties.getAuthn().getX509().getPrincipalType()) {
+                case SERIAL_NO:
+                    resolver = x509SerialNumberPrincipalResolver();
+                    break;
+                case SERIAL_NO_DN:
+                    resolver = x509SerialNumberAndIssuerDNPrincipalResolver();
+                    break;
+                case SUBJECT:
+                    resolver = x509SubjectPrincipalResolver();
+                    break;
+                case SUBJECT_ALT_NAME:
+                    resolver = x509SubjectAlternativeNameUPNPrincipalResolver();
+                    break;
+                case SUBJECT_DN:
+                    resolver = x509SubjectDNPrincipalResolver();
+                    break;
+            }
+        }
+
+        this.authenticationHandlersResolvers.put(x509CredentialsAuthenticationHandler(), resolver);
     }
 }

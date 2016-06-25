@@ -13,6 +13,32 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class X509Properties {
 
     /**
+     * The  Principal types.
+     */
+    public enum PrincipalTypes {
+        /**
+         * Create principal by subject.
+         */
+        SUBJECT,
+        /**
+         * Create principal by subject DN.
+         */
+        SUBJECT_DN,
+        /**
+         * Create principal by serial no.
+         */
+        SERIAL_NO,
+        /**
+         * Create principal by serial no & DN.
+         */
+        SERIAL_NO_DN,
+        /**
+         * Create principal by subject alternative name.
+         */
+        SUBJECT_ALT_NAME
+    }
+    
+    /**
      * Default setting to limit the number of intermediate certificates.
      */
     private static final int DEFAULT_MAXPATHLENGTH = 1;
@@ -39,7 +65,9 @@ public class X509Properties {
     private int refreshIntervalSeconds = 3600;
     private String principalDescriptor;
     private boolean throwOnFetchFailure;
-
+    private PrincipalTypes principalType;
+    
+    
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
     
@@ -186,6 +214,14 @@ public class X509Properties {
     public String getSerialNumberPrefix() {
 
         return serialNumberPrefix;
+    }
+
+    public PrincipalTypes getPrincipalType() {
+        return principalType;
+    }
+
+    public void setPrincipalType(final PrincipalTypes principalType) {
+        this.principalType = principalType;
     }
 
     public void setSerialNumberPrefix(final String serialNumberPrefix) {

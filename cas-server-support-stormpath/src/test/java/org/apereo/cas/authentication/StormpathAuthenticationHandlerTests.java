@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.StormpathAuthenticationConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +25,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(
         classes = {StormpathAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreUtilConfiguration.class,
                 CasCoreServicesConfiguration.class, RefreshAutoConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 public class StormpathAuthenticationHandlerTests {

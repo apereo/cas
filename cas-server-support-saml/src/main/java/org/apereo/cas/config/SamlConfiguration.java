@@ -111,9 +111,9 @@ public class SamlConfiguration {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(this.casAttributeEncoder);
-        view.setIssuer(casProperties.getSamlResponse().getIssuer());
-        view.setSkewAllowance(casProperties.getSamlResponse().getSkewAllowance());
-        view.setDefaultAttributeNamespace(casProperties.getSamlResponse().getAttributeNamespace());
+        view.setIssuer(casProperties.getSamlCore().getIssuer());
+        view.setSkewAllowance(casProperties.getSamlCore().getSkewAllowance());
+        view.setDefaultAttributeNamespace(casProperties.getSamlCore().getAttributeNamespace());
         view.setSamlObjectBuilder(saml10ObjectBuilder());
         view.setCasAttributeEncoder(casAttributeEncoder);
         return view;
@@ -156,7 +156,7 @@ public class SamlConfiguration {
     public SamlCompliantUniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
         final SamlCompliantUniqueTicketIdGenerator gen =
                 new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
-        gen.setSaml2compliant(casProperties.getSamlResponse().isTicketidSaml2());
+        gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
         return gen;
     }
 

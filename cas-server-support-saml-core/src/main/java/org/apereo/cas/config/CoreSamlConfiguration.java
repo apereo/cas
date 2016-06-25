@@ -1,9 +1,10 @@
 package org.apereo.cas.config;
 
-import com.sun.org.apache.xerces.internal.util.SecurityManager;
+import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
@@ -13,6 +14,7 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +40,9 @@ public class CoreSamlConfiguration {
      */
     private static final int POOL_SIZE = 100;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     /**
      * Velocity engine velocity engine factory bean.
      *
@@ -55,7 +60,6 @@ public class CoreSamlConfiguration {
         properties.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         properties.put("string.resource.loader.class", StringResourceLoader.class.getName());
         properties.put("file.resource.loader.class", FileResourceLoader.class.getName());
-
         properties.put("file.resource.loader.path", FileUtils.getTempDirectory().getAbsolutePath());
         properties.put("file.resource.loader.cache", false);
         bean.setOverrideLogging(false);
@@ -92,8 +96,12 @@ public class CoreSamlConfiguration {
         pool.setNamespaceAware(true);
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("http://apache.org/xml/properties/security-manager",
-                new SecurityManager());
+        try {
+            final Class clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
+            attributes.put("http://apache.org/xml/properties/security-manager", clazz.newInstance());
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
         pool.setBuilderAttributes(attributes);
 
         final Map<String, Boolean> features = new HashMap<>();

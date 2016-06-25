@@ -48,6 +48,7 @@ import java.util.Map;
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
                 AopAutoConfiguration.class,
                 CasCoreValidationConfiguration.class},
         locations = {

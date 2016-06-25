@@ -3,16 +3,14 @@ layout: default
 title: CAS - Whitelist Authentication
 ---
 
-
 # Whitelist Authentication
-Whitelist authentication components fall into two categories: Those that accept a set of credentials stored directly in the configuration and those that accept a set of credentials from a file resource on the server.
 
-These are:
-* `AcceptUsersAuthenticationHandler`
-* `FileAuthenticationHandler`
+Whitelist authentication components fall into two categories: 
+Those that accept a set of credentials stored directly in the configuration and those 
+that accept a set of credentials from a file resource on the server.
 
+## Configuration
 
-## Authentication Components
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -23,25 +21,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-In `application.properties`:
-
-```properties
-primaryAuthenticationHandler=acceptUsersAuthenticationHandler
-```
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-
-### `FileAuthenticationHandler`
-
-```xml
-<alias name="fileAuthenticationHandler" alias="primaryAuthenticationHandler" />
-```
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-
-#### Example Password File
+## Example Password File
 
 ```bash
 scott::password

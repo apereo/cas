@@ -72,10 +72,9 @@ import java.util.regex.Pattern;
 @Configuration("casCoreAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationConfiguration {
-    
+
     private static final String BEAN_NAME_HTTP_CLIENT = "supportsTrustStoreSslSocketFactoryHttpClient";
-    private static final String BEAN_NAME_SERVICES_MANAGER = "servicesManager";
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -106,7 +105,11 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("delegateTransformer")
     private PrincipalNameTransformer delegateTransformer;
-        
+    
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -142,8 +145,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     @Bean
-    public AuthenticationHandler acceptUsersAuthenticationHandler(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                                                  final ServicesManager servicesManager) {
+    public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final Pattern pattern = Pattern.compile("::");
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
@@ -178,12 +180,10 @@ public class CasCoreAuthenticationConfiguration {
         return new DefaultPrincipalFactory();
     }
 
-
     @Autowired
     @RefreshScope
     @Bean
-    public AuthenticationContextValidator authenticationContextValidator(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                                                         final ServicesManager servicesManager) {
+    public AuthenticationContextValidator authenticationContextValidator() {
         final AuthenticationContextValidator val = new AuthenticationContextValidator();
         val.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         val.setServicesManager(servicesManager);
@@ -192,24 +192,20 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                                                          final ServicesManager servicesManager,
-                                                                          @Qualifier(BEAN_NAME_HTTP_CLIENT)
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_HTTP_CLIENT)
                                                                           final HttpClient httpClient) {
         final DefaultAuthenticationSystemSupport r = new DefaultAuthenticationSystemSupport();
-        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(servicesManager, httpClient));
+        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(httpClient));
         r.setPrincipalElectionStrategy(defaultPrincipalElectionStrategy());
         return r;
     }
 
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
-    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                                                                    final ServicesManager servicesManager,
-                                                                                    @Qualifier(BEAN_NAME_HTTP_CLIENT)
+    public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier(BEAN_NAME_HTTP_CLIENT)
                                                                                     final HttpClient httpClient) {
         final DefaultAuthenticationTransactionManager r =
                 new DefaultAuthenticationTransactionManager();
-        r.setAuthenticationManager(authenticationManager(servicesManager, httpClient));
+        r.setAuthenticationManager(authenticationManager(httpClient));
         return r;
     }
 
@@ -245,24 +241,21 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                                       final ServicesManager servicesManager,
-                                                       @Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                                       final HttpClient httpClient) {
+    public AuthenticationManager authenticationManager(
+            @Qualifier(BEAN_NAME_HTTP_CLIENT)
+            final HttpClient httpClient) {
         final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
 
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators());
-        p.setHandlerResolverMap(authenticationHandlersResolvers(servicesManager, httpClient));
-        p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver(servicesManager));
+        p.setHandlerResolverMap(authenticationHandlersResolvers(httpClient));
+        p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
         p.setAuthenticationPolicy(defaultAuthenticationPolicy());
         return p;
     }
 
     @Autowired
     @Bean
-    public RegisteredServiceAuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
-            @Qualifier(BEAN_NAME_SERVICES_MANAGER)
-            final ServicesManager servicesManager) {
+    public RegisteredServiceAuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         final RegisteredServiceAuthenticationHandlerResolver r =
                 new RegisteredServiceAuthenticationHandlerResolver();
         r.setServicesManager(servicesManager);
@@ -321,8 +314,7 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     @RefreshScope
     @Bean
-    public AuthenticationHandler jaasAuthenticationHandler(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                                           final ServicesManager servicesManager) {
+    public AuthenticationHandler jaasAuthenticationHandler() {
         final JaasAuthenticationHandler h = new JaasAuthenticationHandler();
 
         h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
@@ -346,9 +338,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     @Autowired
-    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                                            final ServicesManager servicesManager,
-                                                            @Qualifier(BEAN_NAME_HTTP_CLIENT)
+    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_HTTP_CLIENT)
                                                             final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
         final HttpBasedServiceCredentialsAuthenticationHandler h =
                 new HttpBasedServiceCredentialsAuthenticationHandler();
@@ -403,14 +393,18 @@ public class CasCoreAuthenticationConfiguration {
         return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
     }
 
-    @ConditionalOnMissingBean(name="authenticationHandlersResolvers")
+    @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
     @Bean
-    public Map authenticationHandlersResolvers(@Qualifier(BEAN_NAME_SERVICES_MANAGER)
-                                               final ServicesManager servicesManager,
-                                               @Qualifier(BEAN_NAME_HTTP_CLIENT)
+    public Map authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT)
                                                final HttpClient httpClient) {
         final Map map = new HashMap<>();
-        map.put(proxyAuthenticationHandler(servicesManager, httpClient), proxyPrincipalResolver());
+        map.put(proxyAuthenticationHandler(httpClient), proxyPrincipalResolver());
+
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
+            map.put(jaasAuthenticationHandler(),
+                    personDirectoryPrincipalResolver());
+        }
+
         return map;
     }
 }

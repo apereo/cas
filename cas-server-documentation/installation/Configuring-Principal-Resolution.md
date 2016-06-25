@@ -36,14 +36,9 @@ configuration for two common examples:
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## PrincipalResolver vs. AuthenticationHandler
+
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
 `PrincipalResolver` in any situation where the former provides adequate functionality.
 If the principal that is resolved by the authentication handler
-suffices, then a `null` value may be passed in place of the resolver bean id:
+suffices, then a `null` value may be passed in place of the resolver bean id in the final map.
 
-```xml
-<util:map id="authenticationHandlersResolvers">
-    ...
-    <entry key-ref="primaryAuthenticationHandler" value="#{null}" />
-</util:map>
-```

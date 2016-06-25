@@ -220,10 +220,11 @@ public class CasGenericConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        if (casProperties.getAuthn().getShiro().getConfig().getLocation() != null)
+        if (casProperties.getAuthn().getShiro().getConfig().getLocation() != null) {
             this.authenticationHandlersResolvers.put(
                     shiroAuthenticationHandler(),
                     personDirectoryPrincipalResolver);
+        }
 
         if (StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers())) {
             this.authenticationHandlersResolvers.put(

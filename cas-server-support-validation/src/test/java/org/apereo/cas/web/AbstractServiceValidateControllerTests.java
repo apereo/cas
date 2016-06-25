@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
@@ -43,6 +44,7 @@ import static org.junit.Assert.*;
 @SpringApplicationConfiguration(
         classes = {CasCoreValidationConfiguration.class, CasProtocolViewsConfiguration.class,
                 CasCoreValidationConfiguration.class, CasCoreWebConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class, CasValidationConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 @RunWith(SpringJUnit4ClassRunner.class)

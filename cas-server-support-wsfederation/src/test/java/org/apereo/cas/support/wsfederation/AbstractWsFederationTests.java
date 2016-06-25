@@ -1,5 +1,8 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
 import org.junit.runner.RunWith;
@@ -15,7 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"classpath:/applicationContext.xml"},
-        classes = {WsFederationAuthenticationConfiguration.class})
+        classes = {WsFederationAuthenticationConfiguration.class, CasCoreAuthenticationConfiguration.class,
+                CasCoreServicesConfiguration.class, CasCoreUtilConfiguration.class})
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
     @Autowired

@@ -218,12 +218,13 @@ spring.aop.proxy-target-class=true
 # cas.authn.passwordEncoder.characterEncoding=
 # cas.authn.passwordEncoder.encodingAlgorithm=
 ```
-
+                    
 ### X509 Principal Resolution
 
 ```properties
 # cas.authn.x509.principal.principalAttribute=
 # cas.authn.x509.principal.returnNull=false
+# cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
 
 ### X509 
@@ -1415,10 +1416,11 @@ spring.aop.proxy-target-class=true
 ## Saml Response
 
 ```properties
-# cas.samlResponse.ticketidSaml2=false
-# cas.samlResponse.skewAllowance=0
-# cas.samlResponse.attributeNamespace=http://www.ja-sig.org/products/cas/
-# cas.samlResponse.issuer=localhost
+# cas.samlCore.ticketidSaml2=false
+# cas.samlCore.skewAllowance=0
+# cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
+# cas.samlCore.issuer=localhost
+# cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
 ```
 
 ## Maxmind GeoTracking

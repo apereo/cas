@@ -1,15 +1,11 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.adaptors.jdbc.config.CasJdbcConfiguration;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.spockframework.util.Assert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
