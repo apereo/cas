@@ -1,4 +1,4 @@
-package org.apereo.cas.audit.spi;
+package org.apereo.cas.mgmt.services.audit;
 
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 

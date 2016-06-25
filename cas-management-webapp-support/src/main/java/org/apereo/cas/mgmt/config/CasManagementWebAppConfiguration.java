@@ -3,7 +3,7 @@ package org.apereo.cas.mgmt.config;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
+import org.apereo.cas.mgmt.services.audit.ServiceManagementResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;

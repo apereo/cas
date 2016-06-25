@@ -12,14 +12,9 @@ dependencies {
     runtime libraries.groovy
     compile project(":cas-server-core-configuration")
     compile project(":cas-server-core-services")
-    compile project(":cas-server-core-util")
-    compile project(":cas-server-core-logging")
-    compile project(":cas-server-core-logout")
-    compile project(":cas-server-core-audit")
     compile project(":cas-server-support-oauth-core")
     compile project(":cas-server-support-saml-idp-core")
     compile project(":cas-server-support-oidc-core")
     compile project(":cas-server-support-grouper")
     compile project(":cas-server-support-json-service-registry")
-    compile project(":cas-server-support-cookie")
 }
