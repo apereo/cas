@@ -29,7 +29,7 @@ public class X509Properties {
          */
         SERIAL_NO,
         /**
-         * Create principal by serial no & DN.
+         * Create principal by serial no and DN.
          */
         SERIAL_NO_DN,
         /**

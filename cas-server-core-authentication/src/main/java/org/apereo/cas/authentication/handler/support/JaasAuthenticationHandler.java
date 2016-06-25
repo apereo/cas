@@ -21,14 +21,12 @@ import java.util.Set;
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
  * authentication to JAAS.
  * <p>
- * <p>
  * Using the JAAS Authentication Handler requires you to configure the
  * appropriate JAAS modules. You can specify the location of a jass.conf file
  * using the following VM parameter:
  * <pre>
  * -Djava.security.auth.login.config=$PATH_TO_JAAS_CONF/jaas.conf
  * </pre>
- * <p>
  * <p>
  * This example jaas.conf would try Kerberos based authentication, then try LDAP
  * authentication:
