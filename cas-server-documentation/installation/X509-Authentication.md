@@ -28,8 +28,6 @@ X.509 support is enabled by including the following dependency in the WAR overla
 CAS provides an X.509 authentication handler, a handful of X.509-specific principal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
 
-### Authentication
-
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
 by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on

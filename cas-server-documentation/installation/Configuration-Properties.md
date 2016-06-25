@@ -21,6 +21,8 @@ The following list of properties are controlled by and provided to CAS.
 
 ### Server Context
 
+The following properties are related to the embedded Tomcat container that ships with CAS. 
+
 ```properties
 server.context-path=/cas
 server.port=8443
@@ -54,6 +56,44 @@ server.tomcat.uri-encoding=UTF-8
 server.use-forward-headers=true
 ```
 
+### CAS Server Embedded Tomcat HTTP
+
+Enable HTTP connections for the embedded Tomcat container.
+
+```properties
+# cas.server.http.port=8080
+# cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
+# cas.server.http.enabled=true
+```
+
+### CAS Server Embedded Tomcat AJP
+
+Enable the AJP connector for the embedded Tomcat container.
+
+```properties
+# cas.server.ajp.secure=false
+# cas.server.ajp.enabled=false
+# cas.server.ajp.proxyPort=-1
+# cas.server.ajp.protocol=AJP/1.3
+# cas.server.ajp.asyncTimeout=5000
+# cas.server.ajp.scheme=http
+# cas.server.ajp.maxPostSize=20971520
+# cas.server.ajp.port=8009
+# cas.server.ajp.enableLookups=false
+# cas.server.ajp.redirectPort=-1
+# cas.server.ajp.allowTrace=false
+```
+
+### CAS Server
+
+Identify the CAS server. `name` and `prefix` are always required settings. 
+
+```properties
+# cas.server.connectionTimeout=20000
+# cas.server.name=https://cas.example.org:8443
+# cas.server.prefix=https://cas.example.org:8443/cas
+```
+
 ### HTTP Encoding
 
 ```properties
@@ -79,13 +119,16 @@ spring.cloud.bus.ack.enabled=true
 
 ### Admin Status Endpoints
 
+The following properties describe access controls and settings to the `/status`
+endpoint of CAS which provide administrative functionality and oversight into the CAS software.
+
 ```properties
-cas.securityContext.adminpages.ip=.+
-endpoints.enabled=true
-endpoints.sensitive=true
-management.context-path=/status
-endpoints.restart.enabled=false
-endpoints.shutdown.enabled=false
+# cas.securityContext.adminpages.ip=.+
+# endpoints.enabled=true
+# endpoints.sensitive=true
+# management.context-path=/status
+# endpoints.restart.enabled=false
+# endpoints.shutdown.enabled=false
 
 # cas.adminPagesSecurity.adminRoles=ROLE_ADMIN
 # cas.adminPagesSecurity.ip=127\.0\.0\.1
@@ -95,6 +138,8 @@ endpoints.shutdown.enabled=false
 ```
 
 ### Web Application Session
+
+Control the web application session behavior.
 
 ```properties
 server.session.timeout=300
@@ -111,7 +156,9 @@ spring.thymeleaf.cache=false
 
 ### Logging
 
-```
+Control the location and other settings of the CAS logging configuration. 
+
+```properties
 # logging.config=file:/etc/cas/log4j2.xml
 server.context-parameters.isLog4jAutoInitializationDisabled=true
 ```
@@ -119,11 +166,14 @@ server.context-parameters.isLog4jAutoInitializationDisabled=true
 ### AspectJ Configuration
 
 ```properties
-spring.aop.auto=true
-spring.aop.proxy-target-class=true
+# spring.aop.auto=true
+# spring.aop.proxy-target-class=true
 ```
 
 ### Authentication Attributes
+
+Set of authentication attributes that are retrieved by the principal resolution process,
+unless noted otherwise by the specific authentication scheme. 
 
 ```properties
 # cas.authn.attributes.uid=uid
@@ -133,6 +183,9 @@ spring.aop.proxy-target-class=true
 ```
 
 ### Authentication Policy
+
+Global authentication policy that is applied when
+CAS attempts to vend and validate tickets. 
 
 ```properties
 # cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
@@ -153,37 +206,6 @@ spring.aop.proxy-target-class=true
 # shell.ssh.idle-timeout=30000
 ```
 
-### CAS Server Embedded Tomcat HTTP
-
-```properties
-# cas.server.http.port=8080
-# cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
-# cas.server.http.enabled=true
-```
-
-### CAS Server Embedded Tomcat AJP
-
-```properties
-# cas.server.ajp.secure=false
-# cas.server.ajp.enabled=false
-# cas.server.ajp.proxyPort=-1
-# cas.server.ajp.protocol=AJP/1.3
-# cas.server.ajp.asyncTimeout=5000
-# cas.server.ajp.scheme=http
-# cas.server.ajp.maxPostSize=20971520
-# cas.server.ajp.port=8009
-# cas.server.ajp.enableLookups=false
-# cas.server.ajp.redirectPort=-1
-# cas.server.ajp.allowTrace=false
-```
-
-### CAS Server
-
-```properties
-# cas.server.connectionTimeout=20000
-# cas.server.name=https://cas.example.org:8443
-# cas.server.prefix=https://cas.example.org:8443/cas
-```
 
 ### Saml Metadata UI
 
@@ -198,6 +220,8 @@ spring.aop.proxy-target-class=true
 ```
 
 ### Principal Transformation
+
+Control how principal identifiers are transformed during the resolution phase. 
 
 ```properties
 # cas.principalTransformation.suffix=
@@ -269,13 +293,6 @@ spring.aop.proxy-target-class=true
 # cas.authn.trusted.returnNull=false
 ```
 
-## WS Federation Principal Resolution
-
-```properties
-# cas.authn.wsfed.principal.principalAttribute=
-# cas.authn.wsfed.principal.returnNull=false
-```
-
 ## WS Federation
 
 ```properties
@@ -288,6 +305,22 @@ spring.aop.proxy-target-class=true
 # cas.authn.wsfed.identityAttribute=upn
 # cas.authn.wsfed.attributeResolverEnabled=true
 # cas.authn.wsfed.autoRedirect=true
+```
+
+## WS Federation Principal Resolution
+
+```properties
+# cas.authn.wsfed.principal.principalAttribute=
+# cas.authn.wsfed.principal.returnNull=false
+```
+
+## Multifactor Authentication Global
+
+```properties
+# cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
+# cas.authn.mfa.requestParameter=authn_method
+# cas.authn.mfa.globalFailureMode=CLOSED
+# cas.authn.mfa.authenticationContextAttribute=authnContextClass
 ```
 
 ## Multifactor Authentication -> Google Authenticator
@@ -353,14 +386,7 @@ spring.aop.proxy-target-class=true
 # cas.authn.mfa.duo.duoApiHost=
 ```
 
-## Multifactor Authentication Global
 
-```properties
-# cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
-# cas.authn.mfa.requestParameter=authn_method
-# cas.authn.mfa.globalFailureMode=CLOSED
-# cas.authn.mfa.authenticationContextAttribute=authnContextClass
-```
 
 ## Authentication Exceptions
 
@@ -384,6 +410,15 @@ spring.aop.proxy-target-class=true
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
 ```
 
+
+## Saml IdP
+
+```properties
+# cas.authn.samlIdp.entityId=https://cas.example.org/idp
+# cas.authn.samlIdp.hostName=cas.example.org
+# cas.authn.samlIdp.scope=example.org
+```
+
 ## Saml IdP -> Logout
 
 ```properties
@@ -398,14 +433,6 @@ spring.aop.proxy-target-class=true
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
-```
-
-## Saml IdP
-
-```properties
-# cas.authn.samlIdp.entityId=https://cas.example.org/idp
-# cas.authn.samlIdp.hostName=cas.example.org
-# cas.authn.samlIdp.scope=example.org
 ```
 
 ## OIDC
