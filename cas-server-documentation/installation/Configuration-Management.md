@@ -42,9 +42,26 @@ All CAS settings can be overridden via the above outlined strategies.
 the CAS configuration, you should configure access 
 to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
-## Settings
+## Auto Configuration Strategy
 
 To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration 
+and presence of feature-specific dedicated modules. This generally SHOULD relieve the deployer
+from manually massaging the application context via XML configuration files. 
+
+The idea is twofold:
+
+- Declare your intention for a given CAS feature by declaring the appropriate module in your overlay.
+- Optionally, configure the appropiate properties and settings.
+
+CAS will automatically take care of injecting appropriate beans and other components into the runtime application context,
+Depending on the presence of a module and/or its settings configured by the deployer.
+
+<div class="alert alert-info"><strong>No XML</strong><p>Again, the entire point of 
+the auto-configuration strategy is ensure deployers aren't swimming in a sea of XML files
+configuring beans and such. CAS should take care of it all. If you find an instance where
+this claim does not hold, consider that a "bug" and file a feature request.</a></p></div>
 
 ## Embedded
 

@@ -6,4 +6,3 @@ beans {
 
     metrics.'annotation-driven'('metric-registry':'metrics','health-check-registry':'healthCheckMetrics')
 }
-

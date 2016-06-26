@@ -116,9 +116,17 @@
         <module name="AvoidStarImport">
             <property name="severity" value="error"/>
             <property name="excludes"
-                      value="java.io,java.net,java.lang.Math,org.junit.Assert,org.mockito.Mockito,
-                      org.mockito.Matchers,org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
+                      value="java.io,
+                      java.net,
+                      java.lang.Math,
+                      org.junit.Assert,
+                      org.mockito.Mockito,
+                      org.mockito.Matchers,
+                      org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
                       org.springframework.test.web.servlet.result.MockMvcResultMatchers,
+                      org.springframework.test.web.client.ExpectedCount,
+                      org.springframework.test.web.client.match.MockRestRequestMatchers,
+                      org.springframework.test.web.client.response.MockRestResponseCreators,
                       java.nio.file.StandardWatchEventKinds"/>
             <property name="allowStaticMemberImports" value="false"/>
         </module>

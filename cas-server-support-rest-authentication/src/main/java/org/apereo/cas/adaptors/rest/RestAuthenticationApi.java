@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.rest;
 
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
-import java.security.Principal;
 
 /**
  * This is {@link RestAuthenticationApi}.
@@ -46,9 +46,9 @@ public class RestAuthenticationApi {
      * @param c the credential
      * @return the response entity
      */
-    public ResponseEntity<Principal> authenticate(final UsernamePasswordCredential c) {
-        final HttpEntity<Principal> entity = new HttpEntity<>(createHeaders(c));
-        return restTemplate.exchange(authenticationUri, HttpMethod.GET, entity, Principal.class);
+    public ResponseEntity<SimplePrincipal> authenticate(final UsernamePasswordCredential c) {
+        final HttpEntity<SimplePrincipal> entity = new HttpEntity<>(createHeaders(c));
+        return restTemplate.exchange(authenticationUri, HttpMethod.POST, entity, SimplePrincipal.class);
     }
 
     /**

@@ -1562,6 +1562,12 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.personDirectory.returnNull=false
 ```
 
+## REST Authentication
+
+```properties
+# cas.authn.rest.uri=https://...
+```
+
 ## REST
 
 ```properties

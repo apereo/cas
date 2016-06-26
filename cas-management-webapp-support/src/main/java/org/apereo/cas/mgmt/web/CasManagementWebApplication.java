@@ -1,7 +1,6 @@
 package org.apereo.cas.mgmt.web;
 
 import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mgmt.config.CasManagementWebAppConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
@@ -16,7 +15,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 
 /**
  * This is {@link CasManagementWebApplication}.

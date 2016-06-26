@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -28,6 +29,7 @@ import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.util.Map;
 
+
 /**
  * This is {@link CasRestAuthenticationConfiguration}.
  *
@@ -51,32 +53,51 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    public AuthenticationHandler restAuthenticationHandler() {
+    public RestTemplate restAuthenticationTemplate() {
         try {
-            final RestAuthenticationHandler r = new RestAuthenticationHandler();
-            final RestAuthenticationApi api = new RestAuthenticationApi();
-            api.setAuthenticationUri(casProperties.getAuthn().getRest().getUri());
             final URI casHost = new URI(casProperties.getServer().getName());
             final HttpHost host = new HttpHost(casHost.getHost(), casHost.getPort(), casHost.getScheme());
             final ClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactoryBasicAuth(host);
-            api.setRestTemplate(new RestTemplate(factory));
-            r.setApi(api);
-            return r;
+            return new RestTemplate(factory);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    @PostConstruct
-    protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(restAuthenticationHandler(), personDirectoryPrincipalResolver);
+    @Bean
+    @RefreshScope
+    public RestAuthenticationApi restAuthenticationApi() {
+        final RestAuthenticationApi api = new RestAuthenticationApi();
+        api.setAuthenticationUri(casProperties.getAuthn().getRest().getUri());
+        api.setRestTemplate(restAuthenticationTemplate());
+        return api;
     }
 
-    public static class HttpComponentsClientHttpRequestFactoryBasicAuth extends HttpComponentsClientHttpRequestFactory {
+    @Bean
+    @RefreshScope
+    public AuthenticationHandler restAuthenticationHandler() {
+        final RestAuthenticationHandler r = new RestAuthenticationHandler();
+        r.setApi(restAuthenticationApi());
+        return r;
+    }
+
+    @PostConstruct
+    protected void initializeRootApplicationContext() {
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
+            authenticationHandlersResolvers.put(restAuthenticationHandler(), personDirectoryPrincipalResolver);
+        }
+    }
+
+    private static class HttpComponentsClientHttpRequestFactoryBasicAuth extends HttpComponentsClientHttpRequestFactory {
 
         private final HttpHost host;
 
-        public HttpComponentsClientHttpRequestFactoryBasicAuth(final HttpHost host) {
+        /**
+         * Instantiates a new Http components client http request factory basic auth.
+         *
+         * @param host the host
+         */
+        HttpComponentsClientHttpRequestFactoryBasicAuth(final HttpHost host) {
             super();
             this.host = host;
         }
