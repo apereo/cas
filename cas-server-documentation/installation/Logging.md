@@ -15,7 +15,7 @@ messages related to Spring framework, etc. For debugging and diagnostic purposes
 these levels to  `DEBUG`.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though,
-you probably want to run them both as `WARN`.</p></div>
+you probably want to run them both as <code>WARN</code>.</p></div>
 
 ## Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
@@ -59,11 +59,11 @@ SERVER IP ADDRESS: ...
 ```
 
 Certain number of characters are left at the trailing end of the ticket id to assist with
-troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration.
+troubleshooting and diagnostics.
 
 ## AsyncLoggers Shutdown with Tomcat
 
-Log4j automatically inserts itself into the runtime application context in a Servlet 3 environment (i.e. Tomcat 8.x) and will clean up 
+Log4j automatically inserts itself into the runtime application context (i.e. Tomcat) and will clean up 
 the logging context once the container is instructed to shut down. However, Tomcat ignores all JAR files named `log4j*.jar`, which prevents 
 this feature from working. You may need to change the `catalina.properties` and remove `log4j*.jar` from the `jarsToSkip` property. 
 You may need to do something similar on other containers if they skip scanning Log4j JAR files.

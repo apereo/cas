@@ -1,0 +1,17 @@
+/**
+ * View Configuration Styles
+ */
+
+#viewConfigError {
+  display: none;
+}
+
+#view-configuration {
+  display: none;
+}
+
+.confirmView, .loginMessageView {
+  .btn-row {
+    text-align: center;
+  }
+}

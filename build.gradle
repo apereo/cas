@@ -10,6 +10,13 @@ ext {
     sonatypePassword = System.getProperty("sonatypePassword")
 }
 
+def isArtifactSigningRequired = {
+    if (publishReleases && sonatypeUsername != null && sonatypePassword != null) {
+        return true
+    }
+    return false
+}
+
 def projectMavenDeployer = {
     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
@@ -247,9 +254,11 @@ allprojects {
     gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
 
     signing {
-        required = (publishReleases && sonatypeUsername != null && sonatypePassword != null)
+        required = isArtifactSigningRequired
         sign configurations.archives
     }
+
+    signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 }
 
 subprojects {
@@ -332,14 +341,26 @@ subprojects {
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
     }
+
+    ext.buildDate = null
+    ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
+    
+    compileJava.doLast {
+        buildDate = java.time.ZonedDateTime.now()
+        jar.manifest {
+            attributes("Implementation-Date": project.buildDate)
+        }
+    }
+    tasks.jar.onlyIf {
+        project.buildDate != null || !project.buildJarFile.exists()
+    }
     
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Date": java.time.ZonedDateTime.now(),
-                    "Implementation-Version": project.version)
+                       "Implementation-Vendor": project.group,
+                       "Created-By": project.group,
+                       "Implementation-Version": project.version)
         }
     }
 

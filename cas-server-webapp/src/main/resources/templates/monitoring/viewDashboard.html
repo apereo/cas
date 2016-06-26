@@ -14,7 +14,12 @@
                 <h2 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h2>
                 <ul>
                     <li><a href="/cas/status">Status</a></li>
-                    <li><a href="/cas/status/autoconfig">Auto Configuration</a></li>
+                    <li>
+                        <a href="/cas/status/autoconfig" class="casTooltip">
+                            Auto Configuration
+                            <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.autoconfiguration}"></span>
+                        </a>
+                    </li>
                     <li><a href="/cas/status/beans">Beans</a></li>
                     <li><a href="/cas/status/mappings">Endpoint Mappings</a></li>
                     <li><a href="/cas/status/configprops">Configuration Properties</a></li>
