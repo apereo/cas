@@ -29,5 +29,6 @@ dependencies {
     }
     compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
     compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+    compile group: 'org.springframework', name: 'spring-tx', version:springVersion
 }
 

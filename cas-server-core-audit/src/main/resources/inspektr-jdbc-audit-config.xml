@@ -28,7 +28,7 @@
     <bean id="inspektrAuditTrailDataSource"
           class="com.mchange.v2.c3p0.ComboPooledDataSource"
           p:driverClass="${cas.audit.database.driverClass:org.hsqldb.jdbcDriver}"
-          p:jdbcUrl="${cas.audit.database.url:jdbc:hsqldb:hsql://localhost}"
+          p:jdbcUrl="${cas.audit.database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
           p:user="${cas.audit.database.user:sa}"
           p:password="${cas.audit.database.password:}"
           p:initialPoolSize="${cas.audit.database.pool.minSize:6}"

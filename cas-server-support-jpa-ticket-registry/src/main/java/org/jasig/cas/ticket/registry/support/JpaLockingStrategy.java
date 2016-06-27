@@ -146,7 +146,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      *
      * @return  Current lock owner or null if no one presently owns lock.
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = "ticketTransactionManager")
     public String getOwner() {
         final Lock lock = entityManager.find(Lock.class, applicationId);
         if (lock != null) {
