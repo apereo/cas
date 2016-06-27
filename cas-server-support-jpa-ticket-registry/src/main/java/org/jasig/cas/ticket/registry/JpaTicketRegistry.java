@@ -41,7 +41,7 @@ import java.util.UUID;
  */
 @Component("jpaTicketRegistry")
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Transactional(readOnly = false, transactionManager = "ticketTransactionManager")
 public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Value("${ticket.registry.cleaner.repeatinterval:300}")
