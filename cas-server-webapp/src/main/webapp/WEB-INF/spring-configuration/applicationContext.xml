@@ -84,5 +84,7 @@
             </props>
         </property>
     </bean>
-
+    
+    <bean id="ticketTransactionManager" 
+          class="org.jasig.cas.util.PseudoTransactionManager" />
 </beans>

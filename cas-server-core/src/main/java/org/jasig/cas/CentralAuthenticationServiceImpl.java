@@ -64,7 +64,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Component("centralAuthenticationService")
-@Transactional(readOnly = false)
+@Transactional(readOnly = false, transactionManager = "ticketTransactionManager")
 public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
     private static final long serialVersionUID = -8943828074939533986L;
