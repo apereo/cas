@@ -37,7 +37,7 @@ This page documents the steps that a release engineer should take for cutting a 
 {% highlight bash %}
 mkdir casrelease
 cd casrelease
-git clone git@github.com:Jasig/cas.git
+git clone git@github.com:Apereo/cas.git
 {% endhighlight %}
 
 - Ensure conformity before release by executing the following goals from the project root:
@@ -86,8 +86,8 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 
 ## Housekeeping
 
-- Close [the milestone](https://github.com/Jasig/cas/milestones) for this release.
-- Find [the release](https://github.com/Jasig/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
+- Close [the milestone](https://github.com/Apereo/cas/milestones) for this release.
+- Find [the release](https://github.com/Apereo/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
 
 To generate the changelog and release notes, use the below steps:
 
@@ -96,7 +96,7 @@ To generate the changelog and release notes, use the below steps:
 3. Execute the following command:
 
 {% highlight bash %}
-github-changes -o Jasig -r cas -b x.y.z -k <TOKEN> -a --use-commit-body
+github-changes -o Apereo -r cas -b x.y.z -k <TOKEN> -a --use-commit-body
 {% endhighlight %}
 
 Note that `x.y.z` is the name of the branch that is released. The output will be saved in `ChangeLog.md` file. Comb
