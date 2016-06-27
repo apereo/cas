@@ -149,7 +149,7 @@
                                     <tbody>
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.server.label}" />
-                                        <td th:text="${#httpServletRequest.getServerName() + '   ' + #httpServletRequest.getLocalAddr()}" />
+                                        <td th:text="${#httpServletRequest.getServerName() + '-' + #httpServletRequest.getLocalAddr()}" />
                                     </tr>
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.casticketsuffix.label}" />
@@ -158,10 +158,6 @@
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.starttime.label}" />
                                         <td th:text="${startTime}" />
-                                    </tr>
-                                    <tr>
-                                        <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.uptime.label}" />
-                                        <td id="upTime" th:text="${upTime}" />
                                     </tr>
                                     <tr>
                                         <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.memory.label}" />

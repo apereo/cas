@@ -163,12 +163,10 @@ public class StatisticsController implements ServletContextAware {
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
         modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
-        modelAndView.addObject("upTime", 
-                getAvailability(httpServletRequest, httpServletResponse).get("upTime"));
-        
-        modelAndView.addObject("startTime",
-                this.upTimeStartDate.toEpochSecond());
+        modelAndView.getModel().putAll(getAvailability(httpServletRequest, httpServletResponse));
+        modelAndView.addObject("startTime", this.upTimeStartDate.toLocalDateTime());
                 
+        modelAndView.getModel().putAll(getMemoryStats(httpServletRequest, httpServletResponse));
         return modelAndView;
     }
 
