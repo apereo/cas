@@ -5,6 +5,16 @@ title: CAS - Troubleshooting Guide
 
 # Troubleshooting Guide
 
+## Not Receiving Attributes
+If your client application is not receiving attributes, you will need to make sure:
+
+1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
+2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation.
+3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
+4. The CAS server is authorize to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
+
+Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+
 ## Application Not Authorized
 You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match for the requested application url.
 
@@ -109,7 +119,7 @@ Java support for wildcard certificates is limited to hosts strictly in the same 
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
 ```
 
-The above error occurs mainly in Oracle JDK 7 CAS Server installations. In JDK7, SNI (Server Name Indication) is enabled by default. When the HTTPD Server does not send the correct Server Name back, the JDK HTTP Connection refuses to connect and the exception stated above is thrown.
+The above error occurs mainly in Oracle JDK CAS Server installations. In JDK, SNI (Server Name Indication) is enabled by default. When the HTTPD Server does not send the correct Server Name back, the JDK HTTP Connection refuses to connect and the exception stated above is thrown.
 
 You must ensure your HTTPD Server is sending back the correct hostname. E.g. in Apache HTTPD, you must set the ServerAlias in the SSL vhost:
 
@@ -118,7 +128,7 @@ ServerName your.ssl-server.name
 ServerAlias your.ssl-server.name
 ```
 
-Alternatively, you can disable the SNI detection in JDK7, by adding this flag to the Java options of your CAS Servers' application server configuration:
+Alternatively, you can disable the SNI detection in JDK, by adding this flag to the Java options of your CAS Servers' application server configuration:
 ```bash
 -Djsse.enableSNIExtension=false
 ```
