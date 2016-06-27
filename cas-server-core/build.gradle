@@ -33,11 +33,6 @@ dependencies {
   compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
     exclude(group: 'commons-logging', module: 'commons-logging')
   }
-  compile(group: 'org.springframework.integration', name: 'spring-integration-core', version:springVersion) {
-    exclude(group: 'org.springframework', module: 'spring-beans')
-    exclude(group: 'org.springframework', module: 'spring-context')
-    exclude(group: 'org.springframework', module: 'spring-core')
-  }
   compile group: 'org.springframework', name: 'spring-beans', version:springVersion
   compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
   compile group: 'org.springframework', name: 'spring-context-support', version:springVersion

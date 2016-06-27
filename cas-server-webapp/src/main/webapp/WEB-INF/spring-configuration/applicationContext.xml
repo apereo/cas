@@ -86,5 +86,5 @@
     </bean>
     
     <bean id="ticketTransactionManager" 
-          class="org.springframework.integration.transaction.PseudoTransactionManager" />
+          class="org.jasig.cas.util.PseudoTransactionManager" />
 </beans>
