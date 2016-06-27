@@ -10,11 +10,11 @@ coarse-grained execution paths e.g. Spring-managed beans method executions by us
 and Spring-managed `@Aspect`-style aspects.
 
 ## Configuration
-CAS server auto-configures all the relevant Inspektr components with Spring `@Configuration` class. All the available configuration
-options that are injected to Inspektr classes are available to deployers via relevant properties in `application.properties`
+CAS server auto-configures all the relevant Inspektr components. All the available configuration
+options that are injected into Inspektr are available to deployers via relevant properties in `application.properties`
 
 ### File-based Audits
-By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager` and are routed to
+By default, audit messages appear in log files via SLF4J and are routed to
 a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
 
 ```properties
