@@ -48,7 +48,7 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
         return getTicket().getSupplementalAuthentications();
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly=false, transactionManager = "ticketTransactionManager")
     @Override
     public ServiceTicket grantServiceTicket(final String id, final Service service,
                                             final ExpirationPolicy expirationPolicy, final boolean credentialsProvided,
@@ -59,7 +59,7 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
         return t;
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly=false, transactionManager = "ticketTransactionManager")
     @Override
     public void markTicketExpired() {
         this.getTicket().markTicketExpired();

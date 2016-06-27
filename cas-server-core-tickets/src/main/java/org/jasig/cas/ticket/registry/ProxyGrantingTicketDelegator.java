@@ -29,7 +29,7 @@ public final class ProxyGrantingTicketDelegator extends TicketGrantingTicketDele
         super(ticketRegistry, ticketGrantingTicket, callback);
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly=false, transactionManager = "ticketTransactionManager")
     @Override
     public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                         final boolean onlyTrackMostRecentSession) {

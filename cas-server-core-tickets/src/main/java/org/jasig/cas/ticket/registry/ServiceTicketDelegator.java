@@ -47,7 +47,7 @@ public class ServiceTicketDelegator<T extends ServiceTicket> extends AbstractTic
         return b;
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly=false, transactionManager = "ticketTransactionManager")
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
                                                         final Authentication authentication,
