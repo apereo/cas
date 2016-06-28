@@ -51,7 +51,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         this.orderedResolvers.add(registeredServicePrincipalAttributeResolver);
         this.orderedResolvers.add(principalAttributeResolver);
         this.orderedResolvers.add(registeredServiceResolver);
-        this.orderedResolvers.add(selectiveResolver);
     }
 
     @Override
@@ -115,11 +114,12 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
         this.orderedResolvers
                 .stream()
+                .filter(r -> r != null)
                 .forEach(r -> {
                     logger.debug("Evaluating authentication policy via {} for registered service {} and service {}",
                             r.getName(), registeredService.getServiceId(), service);
                     final Event result = r.resolveSingle(context);
-                    
+
                     if (result != null) {
                         logger.debug("Recorded the resulting event {} for {} is {}", result, r.getName());
                         eventBuilder.add(result);
@@ -127,7 +127,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                         logger.debug("Resulting event for {} is blank/ignored", r.getName());
                     }
                 });
-        
+
         return eventBuilder.build();
     }
 
@@ -147,28 +147,23 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
 
-    public void setRequestParameterResolver(
-            final CasWebflowEventResolver r) {
+    public void setRequestParameterResolver(final CasWebflowEventResolver r) {
         this.requestParameterResolver = r;
     }
 
-    public void setRegisteredServiceResolver(
-            final CasWebflowEventResolver r) {
+    public void setRegisteredServiceResolver(final CasWebflowEventResolver r) {
         this.registeredServiceResolver = r;
     }
 
-    public void setPrincipalAttributeResolver(
-            final CasWebflowEventResolver r) {
+    public void setPrincipalAttributeResolver(final CasWebflowEventResolver r) {
         this.principalAttributeResolver = r;
     }
 
-    public void setRegisteredServicePrincipalAttributeResolver(
-            final CasWebflowEventResolver r) {
+    public void setRegisteredServicePrincipalAttributeResolver(final CasWebflowEventResolver r) {
         this.registeredServicePrincipalAttributeResolver = r;
     }
 
-    public void setSelectiveResolver(
-            final CasWebflowEventResolver r) {
+    public void setSelectiveResolver(final CasWebflowEventResolver r) {
         this.selectiveResolver = r;
     }
 }

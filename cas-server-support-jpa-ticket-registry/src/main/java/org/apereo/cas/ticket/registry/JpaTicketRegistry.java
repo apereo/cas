@@ -141,6 +141,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return true;
+        }
+        
         final int failureCount;
 
         if (ticket instanceof OAuthToken) {

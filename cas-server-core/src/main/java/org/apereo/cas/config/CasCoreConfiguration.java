@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.List;
  */
 @Configuration("casCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableTransactionManagement
 public class CasCoreConfiguration {
     
     @Autowired

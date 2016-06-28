@@ -164,7 +164,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         return serviceTicket;
     }
 
-    private Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
                                                                 final TicketGrantingTicket ticketGrantingTicket)
             throws MixedPrincipalException {
         Authentication currentAuthentication = null;

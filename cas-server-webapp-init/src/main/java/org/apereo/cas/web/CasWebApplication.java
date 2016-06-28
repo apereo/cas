@@ -6,6 +6,7 @@ import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfi
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * This is {@link CasWebApplication}.
@@ -31,6 +33,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
                 DataSourceAutoConfiguration.class,
+                DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
 @ComponentScan(basePackages = {"org.apereo.cas", "org.pac4j.springframework"},
@@ -39,6 +42,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigServer
 @EnableAsync
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableTransactionManagement
 public class CasWebApplication {
     /**
      * Instantiates a new Cas web application.

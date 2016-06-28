@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
 
@@ -41,6 +42,7 @@ import java.util.List;
  */
 @Configuration("casSupportActionsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableTransactionManagement
 public class CasSupportActionsConfiguration {
 
     @Autowired

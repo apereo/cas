@@ -45,6 +45,7 @@ import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
+@EnableTransactionManagement
 public class CasCoreTicketsConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketsConfiguration.class);
@@ -296,6 +298,7 @@ public class CasCoreTicketsConfiguration {
         return c;
     }
 
+    @ConditionalOnMissingBean(name = "ticketTransactionManager")
     @Bean
     public PlatformTransactionManager ticketTransactionManager() {
         return new PseudoTransactionManager();

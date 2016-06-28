@@ -5,11 +5,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -39,9 +42,9 @@ public class TerminateSessionAction extends AbstractAction {
      * Creates a new instance with the given parameters.
      */
     public TerminateSessionAction() {}
-
+    
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) throws Exception {
         return terminate(requestContext);
     }
 
@@ -54,20 +57,25 @@ public class TerminateSessionAction extends AbstractAction {
      */
     public Event terminate(final RequestContext context) {
         // in login's webflow : we can get the value from context as it has already been stored
-        String tgtId = WebUtils.getTicketGrantingTicketId(context);
-        // for logout, we need to get the cookie's value
-        if (tgtId == null) {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-            tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        try {
+            String tgtId = WebUtils.getTicketGrantingTicketId(context);
+            // for logout, we need to get the cookie's value
+            if (tgtId == null) {
+                final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+                tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+            }
+            if (tgtId != null) {
+                final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
+                WebUtils.putLogoutRequests(context, logoutRequests);
+            }
+            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            this.ticketGrantingTicketCookieGenerator.removeCookie(response);
+            this.warnCookieGenerator.removeCookie(response);
+            return this.eventFactorySupport.success(this);
+
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-        if (tgtId != null) {
-            final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
-            WebUtils.putLogoutRequests(context, logoutRequests);
-        }
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-        this.ticketGrantingTicketCookieGenerator.removeCookie(response);
-        this.warnCookieGenerator.removeCookie(response);
-        return this.eventFactorySupport.success(this);
     }
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {

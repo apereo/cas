@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Nullable;
@@ -35,7 +36,7 @@ import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
  */
 @Configuration("jpaTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class JpaTicketRegistryConfiguration {
 
     @Autowired
@@ -83,7 +84,7 @@ public class JpaTicketRegistryConfiguration {
      * @return the jpa transaction manager
      */
     @Bean
-    public JpaTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory")
+    public PlatformTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory")
                                                           final EntityManagerFactory emf) {
 
         

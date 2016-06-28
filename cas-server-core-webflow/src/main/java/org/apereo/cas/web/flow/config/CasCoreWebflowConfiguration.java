@@ -86,12 +86,16 @@ public class CasCoreWebflowConfiguration {
 
         r.setPrincipalAttributeResolver(
                 principalAttributeAuthenticationPolicyWebflowEventResolver());
-        r.setPrincipalAttributeResolver(
+        
+        r.setRegisteredServiceResolver(
                 registeredServiceAuthenticationPolicyWebflowEventResolver());
+        
         r.setRegisteredServicePrincipalAttributeResolver(
                 registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
+        
         r.setRequestParameterResolver(
                 requestParameterAuthenticationPolicyWebflowEventResolver());
+        
         r.setSelectiveResolver(
                 selectiveAuthenticationProviderWebflowEventResolver());
 

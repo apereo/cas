@@ -163,7 +163,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
+    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager", 
+            noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)

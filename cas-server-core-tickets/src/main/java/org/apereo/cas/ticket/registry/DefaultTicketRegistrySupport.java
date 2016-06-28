@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
+@Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
 
