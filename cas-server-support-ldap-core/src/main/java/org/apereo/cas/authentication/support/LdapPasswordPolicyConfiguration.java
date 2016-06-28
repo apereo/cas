@@ -26,8 +26,7 @@ public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration
         return this.accountStateHandler;
     }
     
-    public void setAccountStateHandler(
-            final AccountStateHandler accountStateHandler) {
+    public void setAccountStateHandler(final AccountStateHandler accountStateHandler) {
         this.accountStateHandler = accountStateHandler;
     }
 }

@@ -1,23 +1,27 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.springframework.util.LinkedCaseInsensitiveMap;
+
+import javax.security.auth.login.LoginException;
+import java.util.Map;
+
 /**
  * Configuration properties class for password.policy.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 public class PasswordPolicyProperties {
 
-    private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
-
+    private Map<String, Class<LoginException>> policyAttributes = new LinkedCaseInsensitiveMap<>();
+    
     private String warningAttributeValue;
     private String warningAttributeName;
     private boolean displayWarningOnMatch = true;
 
     private boolean warnAll;
 
-    private int warningDays = DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS;
+    private int warningDays = 30;
 
     private String url = "https://password.example.edu/change";
 
@@ -67,5 +71,13 @@ public class PasswordPolicyProperties {
 
     public boolean isWarnAll() {
         return warnAll;
+    }
+
+    public Map<String, Class<LoginException>> getPolicyAttributes() {
+        return policyAttributes;
+    }
+
+    public void setPolicyAttributes(final Map<String, Class<LoginException>> policyAttributes) {
+        this.policyAttributes = policyAttributes;
     }
 }

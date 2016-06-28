@@ -25,8 +25,10 @@ public class LdapCoreConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public static DefaultAccountStateHandler accountStateHandler() {
-        return new DefaultAccountStateHandler();
+    public DefaultAccountStateHandler accountStateHandler() {
+        final DefaultAccountStateHandler handler = new DefaultAccountStateHandler();
+        configureHandler(handler);
+        return handler;
     }
 
     @Bean
@@ -34,21 +36,28 @@ public class LdapCoreConfiguration {
         final LdapPasswordPolicyConfiguration pp =
                 new LdapPasswordPolicyConfiguration(this.casProperties.getAuthn().getPasswordPolicy());
 
-        if (StringUtils.isNotBlank(optionalWarningAccountStateHandler().getWarnAttributeName())
-                && StringUtils.isNotBlank(optionalWarningAccountStateHandler().getWarningAttributeValue())) {
-            pp.setAccountStateHandler(optionalWarningAccountStateHandler());
+        final OptionalWarningAccountStateHandler opt = optionalWarningAccountStateHandler();
+        if (StringUtils.isNotBlank(opt.getWarnAttributeName()) && StringUtils.isNotBlank(opt.getWarningAttributeValue())) {
+            pp.setAccountStateHandler(opt);
+        } else {
+            pp.setAccountStateHandler(accountStateHandler());
         }
-        pp.setAccountStateHandler(accountStateHandler());
         return pp;
     }
 
-    private OptionalWarningAccountStateHandler optionalWarningAccountStateHandler() {
+    @Bean
+    public OptionalWarningAccountStateHandler optionalWarningAccountStateHandler() {
         final OptionalWarningAccountStateHandler h = new OptionalWarningAccountStateHandler();
 
         h.setWarnAttributeName(casProperties.getAuthn().getPasswordPolicy().getWarningAttributeName());
         h.setWarningAttributeValue(casProperties.getAuthn().getPasswordPolicy().getWarningAttributeValue());
         h.setDisplayWarningOnMatch(casProperties.getAuthn().getPasswordPolicy().isDisplayWarningOnMatch());
 
+        configureHandler(h);
         return h;
+    }
+
+    private void configureHandler(final DefaultAccountStateHandler handler) {
+        handler.setAttributesToErrorMap(casProperties.getAuthn().getPasswordPolicy().getPolicyAttributes());
     }
 }

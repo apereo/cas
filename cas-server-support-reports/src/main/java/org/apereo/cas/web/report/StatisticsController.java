@@ -5,7 +5,6 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -151,7 +150,7 @@ public class StatisticsController implements ServletContextAware {
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
+        modelAndView.addObject("casTicketSuffix", casProperties.getHost().getName());
         modelAndView.getModel().putAll(getAvailability(httpServletRequest, httpServletResponse));
         modelAndView.addObject("startTime", this.upTimeStartDate.toLocalDateTime());
                 

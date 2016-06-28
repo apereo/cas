@@ -452,6 +452,9 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.passwordPolicy.warningDays=30
 # cas.authn.passwordPolicy.warningAttributeName=
 # cas.authn.passwordPolicy.warningAttributeValue=
+
+# cas.authn.passwordPolicy.policyAttributes.accountLocked=org.apereo.cas.authentication.AccountDisabledException
+# cas.authn.passwordPolicy.policyAttributes.mustUpdatePassword=org.apereo.cas.authentication.AccountPasswordMustChangeException
 ```
 
 ## OpenID Principal Resolution
