@@ -19,7 +19,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
     private int jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
     
     public JpaTicketRegistryProperties() {
-        super.setUrl("jdbc:hsqldb:hsql://localhost:9001");
+        super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
     }
     
     public boolean isJpaLockingTgtEnabled() {

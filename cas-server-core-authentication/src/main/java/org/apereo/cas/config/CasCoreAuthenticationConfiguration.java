@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -255,7 +256,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     @Bean
-    public RegisteredServiceAuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
+    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         final RegisteredServiceAuthenticationHandlerResolver r =
                 new RegisteredServiceAuthenticationHandlerResolver();
         r.setServicesManager(servicesManager);
@@ -370,7 +371,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @RefreshScope
     @Bean
-    public DefaultPasswordEncoder defaultPasswordEncoder() {
+    public PasswordEncoder defaultPasswordEncoder() {
         final DefaultPasswordEncoder e = new DefaultPasswordEncoder();
         e.setCharacterEncoding(casProperties.getAuthn().getPasswordEncoder().getCharacterEncoding());
         e.setEncodingAlgorithm(casProperties.getAuthn().getPasswordEncoder().getEncodingAlgorithm());

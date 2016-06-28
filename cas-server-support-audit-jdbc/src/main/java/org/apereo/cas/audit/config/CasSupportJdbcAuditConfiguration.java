@@ -3,8 +3,10 @@ package org.apereo.cas.audit.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
+import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -33,7 +36,7 @@ public class CasSupportJdbcAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean(name = {"jdbcAuditTrailManager", "auditTrailManager"})
-    public JdbcAuditTrailManager jdbcAuditTrailManager() {
+    public AuditTrailManager jdbcAuditTrailManager() {
         final JdbcAuditTrailManager t =
                 new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
@@ -54,12 +57,12 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
-    public MaxAgeWhereClauseMatchCriteria auditCleanupCriteria() {
+    public WhereClauseMatchCriteria auditCleanupCriteria() {
         return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
     }
 
     @Bean
-    public DataSourceTransactionManager inspektrAuditTransactionManager() {
+    public PlatformTransactionManager inspektrAuditTransactionManager() {
         return new DataSourceTransactionManager(inspektrAuditTrailDataSource());
     }
 
