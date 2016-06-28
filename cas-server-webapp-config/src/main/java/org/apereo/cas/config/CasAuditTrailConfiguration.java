@@ -2,6 +2,10 @@ package org.apereo.cas.config;
 
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.spi.AssertionAsReturnValuePrincipalResolver;
+import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
+import org.apereo.cas.audit.spi.ServiceResourceResolver;
+import org.apereo.cas.audit.spi.TicketOrCredentialPrincipalResolver;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;

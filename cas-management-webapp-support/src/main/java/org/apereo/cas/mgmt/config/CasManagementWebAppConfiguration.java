@@ -2,6 +2,7 @@ package org.apereo.cas.mgmt.config;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
+import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
