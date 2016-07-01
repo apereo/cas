@@ -7,7 +7,10 @@ dependencies {
     exclude(group: 'org.javassist', module: 'javassist')
     exclude(group: 'xml-apis', module: 'xml-apis')  
   }
-  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
+  compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+  compile group: 'org.javassist', name: 'javassist', version:javassistVersion
   compile group: 'org.springframework', name: 'spring-tx', version:springVersion
   compile project(':cas-server-core-authentication')
   compile project(':cas-server-core-util')
