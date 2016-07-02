@@ -154,7 +154,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 Then, adjust `cas-servlet.xml` with the following:
 
 ```xml
-<bean id="samlDynamicMetadataUIParserAction"
+<bean id="samlMetadataUIParserAction"
   class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
   c:entityIdParameterName="entityId"
   c:metadataAdapter-ref="metadataAdapter"/>
