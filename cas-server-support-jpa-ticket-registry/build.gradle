@@ -10,7 +10,8 @@ dependencies {
     compile libraries.spring
     compile libraries.quartz
     compile libraries.hibernate    
-    runtime libraries.javaximpl 
+    runtime libraries.javaximpl
+    runtime project(":cas-server-support-jdbc-drivers")
     testCompile project(path: ":cas-server-core-util", configuration: "tests")
     testCompile libraries.tests
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")

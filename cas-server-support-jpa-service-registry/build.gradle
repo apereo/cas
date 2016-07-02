@@ -8,6 +8,7 @@ dependencies {
     compile libraries.quartz
     compile libraries.hibernate    
     runtime libraries.javaximpl
+    runtime project(":cas-server-support-jdbc-drivers")
     compileOnly libraries.springcloud
     testCompile libraries.tests
     testCompile project(":cas-server-core-authentication")

@@ -7,7 +7,8 @@ dependencies {
     compileOnly libraries.springcloud
     compile libraries.spring
     runtime libraries.hibernate
-
+    runtime project(":cas-server-support-jdbc-drivers")
+    
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
     testCompile project(path: ":cas-server-core-events", configuration: "tests")

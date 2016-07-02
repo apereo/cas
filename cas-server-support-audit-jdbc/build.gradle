@@ -8,5 +8,7 @@ dependencies {
     compile libraries.spring
     compile libraries.hibernate
     compile project(":cas-server-core-util")
+    
+    runtime project(":cas-server-support-jdbc-drivers")
 }
 
