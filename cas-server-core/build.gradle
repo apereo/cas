@@ -70,7 +70,7 @@ dependencies {
     exclude(group: 'org.javassist', module: 'javassist')
     exclude(group: 'xml-apis', module: 'xml-apis')  
   }
-  testCompile group: 'javassist', name: 'javassist', version:javassistVersion
+  testCompile group: 'org.javassist', name: 'javassist', version:javassistVersion
   testCompile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:inspektrVersion) {
     exclude(group: 'org.slf4j', module: 'slf4j-api')
     exclude(group: 'org.springframework', module: 'spring-web')

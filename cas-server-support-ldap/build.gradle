@@ -19,7 +19,9 @@ dependencies {
         exclude(group: 'org.slf4j', module: 'slf4j-api')
     }
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
-    compile group: 'org.reflections', name: 'reflections', version: reflectionsVersion
+    compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
     compile group: 'org.ldaptive', name: 'ldaptive-beans', version: ldaptiveVersion
     compile group: 'org.springframework', name: 'spring-expression', version: springVersion
     compile group: 'joda-time', name: 'joda-time', version: jodaTimeVersion

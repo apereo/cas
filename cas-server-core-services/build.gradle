@@ -21,7 +21,10 @@ dependencies {
     exclude(group: 'org.slf4j', module: 'slf4j-api')
     exclude(group: 'c3p0', module: 'c3p0')
   }
-  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
+  compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+  compile group: 'org.javassist', name: 'javassist', version:javassistVersion
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-events')
   compile project(':cas-server-core-web')
