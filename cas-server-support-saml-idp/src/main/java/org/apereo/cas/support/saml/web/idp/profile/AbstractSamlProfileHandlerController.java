@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
@@ -29,10 +30,12 @@ import org.apereo.cas.util.EncodingUtils;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
+import org.jasig.cas.client.util.URIBuilder;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +47,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.security.SecureRandom;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * A parent controller to handle SAML requests.
@@ -61,7 +66,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * The server properties.
      */
     @Autowired
-    protected CasConfigurationProperties casProperrties;
+    protected CasConfigurationProperties casProperties;
 
     /**
      * The Saml object signer.
@@ -102,6 +107,11 @@ public abstract class AbstractSamlProfileHandlerController {
      * The Response builder.
      */
     protected SamlProfileSamlResponseBuilder responseBuilder;
+
+    /**
+     * Maps authentication contexts to what CAS can support.
+     */
+    protected Map<String, String> authenticationContextClassMappings = new CaseInsensitiveMap<>();
 
     /**
      * Post constructor placeholder for additional
@@ -164,7 +174,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Service registerCallback(final String callbackUrl) {
         final Service callbackService = this.webApplicationServiceFactory.createService(
-                casProperrties.getServer().getPrefix().concat(callbackUrl));
+                casProperties.getServer().getPrefix().concat(callbackUrl));
         logger.debug("Initialized callback service [{}]", callbackService);
 
         if (!this.servicesManager.matchesExistingService(callbackService)) {
@@ -240,7 +250,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param assertion the assertion
      */
     protected void logCasValidationAssertion(final Assertion assertion) {
-        logger.warn("CAS Assertion Valid: [{}]", assertion.isValid());
+        logger.info("CAS Assertion Valid: [{}]", assertion.isValid());
         logger.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
         logger.debug("CAS Assertion AuthN Date: [{}]", assertion.getAuthenticationDate());
         logger.debug("CAS Assertion ValidFrom Date: [{}]", assertion.getValidFromDate());
@@ -263,14 +273,46 @@ public abstract class AbstractSamlProfileHandlerController {
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url [{}]", serviceUrl);
 
-        final String urlToRedirectTo = CommonUtils.constructRedirectUrl(casProperrties.getServer().getLoginUrl(),
+        final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
                 CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
                 authnRequest.isPassive());
+
+        final String urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
 
         logger.debug("Redirecting SAML authN request to \"[{}]\"", urlToRedirectTo);
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
 
+    }
+
+    /**
+     * Build redirect url by requested authn context.
+     *
+     * @param initialUrl   the initial url
+     * @param authnRequest the authn request
+     * @param request      the request
+     * @return the redirect url
+     */
+    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
+                                                             final HttpServletRequest request) {
+
+        if (authnRequest.getRequestedAuthnContext() == null || this.authenticationContextClassMappings.isEmpty()) {
+            return initialUrl;
+        }
+        final Optional<AuthnContextClassRef> p =
+                authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().stream().filter(ref -> {
+                    final String clazz = ref.getAuthnContextClassRef();
+                    return this.authenticationContextClassMappings.containsKey(clazz);
+                }).findFirst();
+
+        if (p.isPresent()) {
+            final String mappedClazz = this.authenticationContextClassMappings.get(p.get().getAuthnContextClassRef());
+            final URIBuilder builder = new URIBuilder(initialUrl);
+            builder.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), mappedClazz);
+            return builder.build().toString();
+        }
+
+        return initialUrl;
     }
 
     /**
@@ -297,7 +339,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
             logger.debug("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                    url, casProperrties.getServer().getName(),
+                    url, casProperties.getServer().getName(),
                     CasProtocolConstants.PARAMETER_SERVICE,
                     CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
@@ -332,6 +374,14 @@ public abstract class AbstractSamlProfileHandlerController {
 
     public void setResponseBuilder(final SamlProfileSamlResponseBuilder responseBuilder) {
         this.responseBuilder = responseBuilder;
+    }
+
+    public Map<String, String> getAuthenticationContextClassMappings() {
+        return authenticationContextClassMappings;
+    }
+
+    public void setAuthenticationContextClassMappings(final Map<String, String> authenticationContextClassMappings) {
+        this.authenticationContextClassMappings = authenticationContextClassMappings;
     }
 }
 
