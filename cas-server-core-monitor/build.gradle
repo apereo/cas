@@ -4,7 +4,10 @@ dependencies {
   compile project(':cas-server-core-api-monitor')
   compile project(':cas-server-core-api-ticket')
   compile group: 'com.google.guava', name: 'guava', version:guavaVersion
-  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
+  compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+  compile group: 'org.javassist', name: 'javassist', version:javassistVersion
   compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
     exclude(group: 'commons-logging', module: 'commons-logging')
   }

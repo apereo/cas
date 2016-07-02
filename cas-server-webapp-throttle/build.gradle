@@ -34,7 +34,9 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
     compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
     compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
-    compile group: 'org.reflections', name: 'reflections', version: reflectionsVersion
+    compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
     compile group: 'org.springframework', name: 'spring-context', version: springVersion
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-util')
