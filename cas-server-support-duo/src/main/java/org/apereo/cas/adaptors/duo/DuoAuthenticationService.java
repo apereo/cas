@@ -114,4 +114,8 @@ public class DuoAuthenticationService {
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }
+    
+    public String getDuoApiHost() {
+        return casProperties.getAuthn().getMfa().getDuo().getDuoApiHost();
+    }
 }

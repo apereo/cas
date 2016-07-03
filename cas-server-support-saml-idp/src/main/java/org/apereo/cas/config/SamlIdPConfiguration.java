@@ -41,6 +41,7 @@ import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The {@link SamlIdPConfiguration}.
@@ -81,6 +82,10 @@ public class SamlIdPConfiguration {
     @javax.annotation.Resource(name = "webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    @Autowired(required = false)
+    @Qualifier("authenticationContextClassMappings")
+    private Map authenticationContextClassMappings;
+        
     @Autowired(required = false)
     @Qualifier("overrideDataEncryptionAlgorithms")
     private List overrideDataEncryptionAlgorithms;
@@ -290,6 +295,17 @@ public class SamlIdPConfiguration {
         c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
         c.setServicesManager(servicesManager);
         c.setWebApplicationServiceFactory(webApplicationServiceFactory);
+
+        c.setLogoutUrl(casProperties.getServer().getLogoutUrl());
+        c.setForceSignedLogoutRequests(casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests());
+        c.setSingleLogoutCallbacksDisabled(casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
+
+        c.setLoginUrl(casProperties.getServer().getLoginUrl());
+        c.setServerName(casProperties.getServer().getName());
+        c.setServerPrefix(casProperties.getServer().getPrefix());
+        c.setAuthenticationContextRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
+        
+        c.setAuthenticationContextClassMappings(this.authenticationContextClassMappings);
         return c;
     }
 
@@ -304,6 +320,17 @@ public class SamlIdPConfiguration {
         c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
         c.setServicesManager(servicesManager);
         c.setWebApplicationServiceFactory(webApplicationServiceFactory);
+
+        c.setLoginUrl(casProperties.getServer().getLoginUrl());
+        c.setServerName(casProperties.getServer().getName());
+        c.setServerPrefix(casProperties.getServer().getPrefix());
+        c.setAuthenticationContextRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
+
+        c.setAuthenticationContextClassMappings(this.authenticationContextClassMappings);
+        c.setLogoutUrl(casProperties.getServer().getLogoutUrl());
+        c.setForceSignedLogoutRequests(casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests());
+        c.setSingleLogoutCallbacksDisabled(casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
+
         return c;
     }
 
@@ -318,6 +345,17 @@ public class SamlIdPConfiguration {
         c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
         c.setServicesManager(servicesManager);
         c.setWebApplicationServiceFactory(webApplicationServiceFactory);
+
+        c.setAuthenticationContextClassMappings(this.authenticationContextClassMappings);
+        c.setLoginUrl(casProperties.getServer().getLoginUrl());
+        c.setServerName(casProperties.getServer().getName());
+        c.setServerPrefix(casProperties.getServer().getPrefix());
+        c.setAuthenticationContextRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
+        
+        c.setLogoutUrl(casProperties.getServer().getLogoutUrl());
+        c.setForceSignedLogoutRequests(casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests());
+        c.setSingleLogoutCallbacksDisabled(casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
+        
         return c;
     }
 }

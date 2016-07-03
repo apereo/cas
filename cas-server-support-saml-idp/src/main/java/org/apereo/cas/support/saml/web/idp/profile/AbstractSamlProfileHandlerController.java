@@ -10,7 +10,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -30,7 +29,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.util.URIBuilder;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -39,7 +37,6 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -61,13 +58,8 @@ import java.util.Optional;
  */
 public abstract class AbstractSamlProfileHandlerController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * The server properties.
-     */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
-
+    
+    
     /**
      * The Saml object signer.
      */
@@ -113,6 +105,20 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Map<String, String> authenticationContextClassMappings = new CaseInsensitiveMap<>();
 
+    private String serverPrefix;
+    
+    private String serverName;
+    
+    private String authenticationContextRequestParameter;
+    
+    private String loginUrl;
+
+    private String logoutUrl;
+    
+    private boolean forceSignedLogoutRequests;
+    
+    private boolean singleLogoutCallbacksDisabled;
+    
     /**
      * Post constructor placeholder for additional
      * extensions. This method is called after
@@ -174,7 +180,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Service registerCallback(final String callbackUrl) {
         final Service callbackService = this.webApplicationServiceFactory.createService(
-                casProperties.getServer().getPrefix().concat(callbackUrl));
+                this.serverPrefix.concat(callbackUrl));
         logger.debug("Initialized callback service [{}]", callbackService);
 
         if (!this.servicesManager.matchesExistingService(callbackService)) {
@@ -273,7 +279,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url [{}]", serviceUrl);
 
-        final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
+        final String initialUrl = CommonUtils.constructRedirectUrl(this.loginUrl,
                 CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
                 authnRequest.isPassive());
 
@@ -307,9 +313,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
         if (p.isPresent()) {
             final String mappedClazz = this.authenticationContextClassMappings.get(p.get().getAuthnContextClassRef());
-            final URIBuilder builder = new URIBuilder(initialUrl);
-            builder.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), mappedClazz);
-            return builder.build().toString();
+            return initialUrl + '&' + this.authenticationContextRequestParameter + '=' + mappedClazz;
         }
 
         return initialUrl;
@@ -339,7 +343,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
             logger.debug("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                    url, casProperties.getServer().getName(),
+                    url, this.serverName,
                     CasProtocolConstants.PARAMETER_SERVICE,
                     CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
@@ -382,6 +386,62 @@ public abstract class AbstractSamlProfileHandlerController {
 
     public void setAuthenticationContextClassMappings(final Map<String, String> authenticationContextClassMappings) {
         this.authenticationContextClassMappings = authenticationContextClassMappings;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(final String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public String getServerPrefix() {
+        return serverPrefix;
+    }
+
+    public void setServerPrefix(final String serverPrefix) {
+        this.serverPrefix = serverPrefix;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(final String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getAuthenticationContextRequestParameter() {
+        return authenticationContextRequestParameter;
+    }
+
+    public void setAuthenticationContextRequestParameter(final String authenticationContextRequestParameter) {
+        this.authenticationContextRequestParameter = authenticationContextRequestParameter;
+    }
+
+    public boolean isSingleLogoutCallbacksDisabled() {
+        return singleLogoutCallbacksDisabled;
+    }
+
+    public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
+        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
+    }
+
+    public boolean isForceSignedLogoutRequests() {
+        return forceSignedLogoutRequests;
+    }
+
+    public void setForceSignedLogoutRequests(final boolean forceSignedLogoutRequests) {
+        this.forceSignedLogoutRequests = forceSignedLogoutRequests;
+    }
+
+    public String getLogoutUrl() {
+        return logoutUrl;
+    }
+
+    public void setLogoutUrl(final String logoutUrl) {
+        this.logoutUrl = logoutUrl;
     }
 }
 

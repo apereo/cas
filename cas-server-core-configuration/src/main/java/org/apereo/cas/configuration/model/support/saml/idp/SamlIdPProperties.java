@@ -71,7 +71,7 @@ public class SamlIdPProperties {
         private boolean failFast = true;
         private boolean requireValidMetadata = true;
         private long cacheExpirationMinutes = 30;
-        private File location = new File("file:/etc/cas/saml");
+        private File location = new File("/etc/cas/saml");
         private String privateKeyAlgName = "RSA";
         
         public boolean isFailFast() {
