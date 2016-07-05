@@ -60,7 +60,6 @@ public class JRadiusServerImpl implements RadiusServer {
     
     private long nasPortId = -1;
     
-/*    private long nasIdentifier = -1; */
      private String nasIdentifier;
     
     private long nasRealPort = -1;
@@ -110,9 +109,6 @@ public class JRadiusServerImpl implements RadiusServer {
         if (this.nasPortId != -1) {
             attributeList.add(new Attr_NASPortId(this.nasPortId));
         }
-/**        if (this.nasIdentifier != -1) {
-            attributeList.add(new Attr_NASIdentifier(this.nasIdentifier));
-        }*/
         if (this.nasRealPort != -1) {
             attributeList.add(new Attr_NASRealPort(this.nasRealPort));
         }
@@ -195,7 +191,6 @@ public class JRadiusServerImpl implements RadiusServer {
      * @param nasIdentifier the new nas identifier
      * @since 4.1.0
      */
-/*    public void setNasIdentifier(final long nasIdentifier) { */
     public void setNasIdentifier(final String nasIdentifier) {
         this.nasIdentifier = nasIdentifier;
     }

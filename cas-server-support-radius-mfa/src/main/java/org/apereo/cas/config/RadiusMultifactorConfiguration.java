@@ -42,8 +42,6 @@ public class RadiusMultifactorConfiguration {
     /**
      * The Nas identifier.
      */
-/*    @Value("${cas.mfa.radius.server.nasIdentifier:-1}")
-    private long nasIdentifier; */
    @Value("${cas.mfa.radius.server.nasIdentifier:}")
     private String nasIdentifier;
 
