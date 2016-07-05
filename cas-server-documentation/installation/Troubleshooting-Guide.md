@@ -5,6 +5,16 @@ title: CAS - Troubleshooting Guide
 
 # Troubleshooting Guide
 
+## Not Receiving Attributes
+If your client application is not receiving attributes, you will need to make sure:
+
+1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
+2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation.
+3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
+4. The CAS server is authorize to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
+
+Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+
 ## Login Form Clearing Credentials
 You may encounter an issue where upon submission of credentials on the login form, the screen clears the input data and asks the user again to repopulate the form. The CAS Server log may also indicate the received login ticket is invalid and therefore unable to accept the authentication request.
 
