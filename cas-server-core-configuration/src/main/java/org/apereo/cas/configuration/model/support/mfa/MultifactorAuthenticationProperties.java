@@ -166,7 +166,7 @@ public class MultifactorAuthenticationProperties {
         public static class Server {
             private String protocol = "EAP_MSCHAPv2";
             private int retries = 3;
-            private long nasIdentifier = -1;
+            private String nasIdentifier;
             private long nasPort = -1;
             private long nasPortId = -1;
             private long nasRealPort = -1;
@@ -190,11 +190,11 @@ public class MultifactorAuthenticationProperties {
                 this.retries = retries;
             }
 
-            public long getNasIdentifier() {
+            public String getNasIdentifier() {
                 return nasIdentifier;
             }
 
-            public void setNasIdentifier(final long nasIdentifier) {
+            public void setNasIdentifier(final String nasIdentifier) {
                 this.nasIdentifier = nasIdentifier;
             }
 
