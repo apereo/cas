@@ -56,11 +56,11 @@ public class JRadiusServerImpl implements RadiusServer {
     
     private String nasIpv6Address;
     
+    private String nasIdentifier;
+
     private long nasPort = -1;
     
     private long nasPortId = -1;
-    
-    private String nasIdentifier;
     
     private long nasRealPort = -1;
     

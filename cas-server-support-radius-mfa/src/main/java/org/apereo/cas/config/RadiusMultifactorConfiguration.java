@@ -40,12 +40,6 @@ public class RadiusMultifactorConfiguration {
     private int retries;
 
     /**
-     * The Nas identifier.
-     */
-    @Value("${cas.mfa.radius.server.nasIdentifier:}")
-    private String nasIdentifier;
-
-    /**
      * The Nas port.
      */
     @Value("${cas.mfa.radius.server.nasPort:-1}")
@@ -68,6 +62,12 @@ public class RadiusMultifactorConfiguration {
      */
     @Value("${cas.mfa.radius.server.nasPortType:-1}")
     private int nasPortType;
+
+    /**
+     * The Nas identifier.
+     */
+    @Value("${cas.mfa.radius.server.nasIdentifier:}")
+    private String nasIdentifier;
 
     /**
      * The Nas ip.
