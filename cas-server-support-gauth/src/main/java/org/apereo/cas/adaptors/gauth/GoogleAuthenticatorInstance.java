@@ -6,11 +6,11 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorException;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleAuthenticatorInstance}.
@@ -18,19 +18,11 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("googleAuthenticatorInstance")
 public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
 
-    @Value("${cas.mfa.gauth.code.digits:6}")
-    private int codeDigits;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
-    @Value("#{${cas.mfa.gauth.time.step:30}*1000}")
-    private long timeStepSizeInMillis;
-
-    @Value("${cas.mfa.gauth.window:3}")
-    private int windowSize;
-    
     private GoogleAuthenticator googleAuthenticator;
 
     /**
@@ -41,9 +33,9 @@ public class GoogleAuthenticatorInstance implements IGoogleAuthenticator {
         final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr =
                 new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
-        bldr.setCodeDigits(this.codeDigits);
-        bldr.setTimeStepSizeInMillis(this.timeStepSizeInMillis);
-        bldr.setWindowSize(this.windowSize);
+        bldr.setCodeDigits(casProperties.getAuthn().getMfa().getGauth().getCodeDigits());
+        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()));
+        bldr.setWindowSize(casProperties.getAuthn().getMfa().getGauth().getWindowSize());
         bldr.setKeyRepresentation(KeyRepresentation.BASE32);
 
         this.googleAuthenticator = new GoogleAuthenticator(bldr.build());

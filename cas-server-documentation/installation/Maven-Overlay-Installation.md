@@ -4,6 +4,7 @@ title: CAS - Maven Overlay Installation
 ---
 
 # Maven Overlay Installation
+
 CAS installation is a fundamentally source-oriented process, and we recommend a
 [Maven WAR overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) project to organize
 customizations such as component configuration and UI design.
@@ -18,6 +19,7 @@ The following list of CAS components are those most often customized by deployer
 1. Authentication handlers (i.e. `LdapAuthenticationHandler`)
 2. Storage backend (i.e. `MemcachedTicketRegistry`)
 3. View layer files (HTML/CSS/Javascript)
+4. Logging (`log4j2.xml`)
 
 Every aspect of CAS can be controlled by
 adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
@@ -31,15 +33,18 @@ file contains a straightforward description of states and transitions in the flo
 the most common configuration concern beyond component configuration in the Spring XML configuration files. 
 
 ## Spring Configuration
+
 CAS server depends heavily on the Spring framework. Two modes of configuration are available. Note that both modes
 can be used at the same time. 
 
 ### XML
+
 There is a `deployerConfigContext.xml` which is mostly expected by CAS adopters to be 
 included in the overlay for environment-specific CAS settings.
 
 ### Groovy
-The CAS application context is able to load any `.groovy` file under the `spring-configuration` directory. 
+
+The CAS application context is able to load a `deployerConfigContext.groovy`. 
 For advanced use cases, CAS beans can be dynamically defined via the Groovy programming language. 
 As an example, here is an `exampleBean` defined inside a `applicationContext.groovy` file:
 
@@ -84,6 +89,7 @@ class ExampleMessenger implements Messenger {
 ```
 
 ## Custom and Third-Party Source
+
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
 to include third-party source by Maven dependency references. Including third-party source is trivial; simply include
 the relevant dependency in the overlay `pom.xml` file. In order to include custom Java source, it should be included

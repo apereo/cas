@@ -1,5 +1,6 @@
 package org.apereo.cas.util.ldap.uboundid;
 
+import com.google.common.base.Throwables;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -60,7 +61,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             final String serverKeyStorePath = keystoreFile.getCanonicalPath();
             final SSLUtil serverSSLUtil = new SSLUtil(
-                    new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), new TrustStoreTrustManager(serverKeyStorePath));
+                    new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()), 
+                    new TrustStoreTrustManager(serverKeyStorePath));
             final SSLUtil clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
             config.setListenerConfigs(
                     InMemoryListenerConfig.createLDAPConfig("LDAP", // Listener name
@@ -75,8 +77,8 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
 
             config.setEnforceSingleStructuralObjectClass(false);
             config.setEnforceAttributeSyntaxCompliance(true);
-
-
+            config.setMaxConnections(-1);
+         
             final File file = File.createTempFile("ldap", "schema");
             try (final OutputStream outputStream = new FileOutputStream(file)) {
                 IOUtils.copy(schemaFile, outputStream);
@@ -93,29 +95,37 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             try (final OutputStream outputStream = new FileOutputStream(ldif)) {
                 IOUtils.copy(ldifFile, outputStream);
             }
-
             this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());
-            this.directoryServer.restartServer();
-
-            final LDAPConnection c = getConnection();
-            LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
-
-            populateDefaultEntries(c);
-
-            c.close();
+            
+            int retryCount = 5;
+            while (retryCount > 0) {
+                try {
+                    this.directoryServer.restartServer();
+                    final LDAPConnection c = getConnection();
+                    LOGGER.debug("Connected to {}:{}", c.getConnectedAddress(), c.getConnectedPort());
+                    populateDefaultEntries(c);
+                    c.close();
+                    retryCount = 0;
+                } catch (final Throwable e) {
+                    Thread.sleep(2000);
+                    retryCount--;
+                }
+            }
+            
+ 
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
     /**
      * Instantiates a new Ldap directory server.
      */
-    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile, final File... schemaFile)
-        throws FileNotFoundException {
+    public InMemoryTestLdapDirectoryServer(final File properties, final File ldifFile)
+            throws FileNotFoundException {
         this(new FileInputStream(properties),
-             new FileInputStream(ldifFile),
-             new FileInputStream(ldifFile));
+                new FileInputStream(ldifFile),
+                new FileInputStream(ldifFile));
     }
 
     private void populateDefaultEntries(final LDAPConnection c) throws Exception {
@@ -132,13 +142,14 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
         populateEntriesInternal(c);
     }
 
-    protected void populateEntriesInternal(final LDAPConnection c) {}
+    protected void populateEntriesInternal(final LDAPConnection c) {
+    }
 
     public String getBaseDn() {
         return this.directoryServer.getBaseDNs().get(0).toNormalizedString();
     }
 
-    public  Collection<LdapEntry> getLdapEntries() {
+    public Collection<LdapEntry> getLdapEntries() {
         return this.ldapEntries;
     }
 

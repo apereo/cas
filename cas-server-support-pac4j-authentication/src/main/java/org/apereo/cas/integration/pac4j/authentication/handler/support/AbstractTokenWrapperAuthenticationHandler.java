@@ -18,18 +18,17 @@ import java.security.GeneralSecurityException;
  */
 public abstract class AbstractTokenWrapperAuthenticationHandler extends
         AbstractWrapperAuthenticationHandler<BasicIdentifiableCredential, TokenCredentials> {
-
+        
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
-    
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /**
      * Default constructor.
      */
     public AbstractTokenWrapperAuthenticationHandler() {
-        setTypedIdUsed(false);
+        
     }
 
 

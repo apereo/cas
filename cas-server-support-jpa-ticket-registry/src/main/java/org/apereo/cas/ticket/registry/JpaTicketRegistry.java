@@ -10,12 +10,8 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.registry.support.LockingStrategy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -33,20 +29,22 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.2.1
  */
-@RefreshScope
-@Component("jpaTicketRegistry")
+@EnableTransactionManagement(proxyTargetClass = true)
+@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
-    @Autowired
-    @Qualifier("jpaLockingStrategy")
-    private LockingStrategy jpaLockingStrategy;
-
-    @Value("${ticketreg.database.jpa.locking.tgt.enabled:true}")
+    private static final String TABLE_OAUTH_TICKETS = OAuthCodeImpl.class.getSimpleName();
+    private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
+    private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
+    
     private boolean lockTgt = true;
-
     
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
+
+    public void setLockTgt(final boolean lockTgt) {
+        this.lockTgt = lockTgt;
+    }
 
     @Override
     public void updateTicket(final Ticket ticket) {
@@ -64,8 +62,9 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * Removes the ticket.
      *
      * @param ticket the ticket
+     * @return true if ticket was removed
      */
-    private boolean removeTicket(final Ticket ticket) {
+    public boolean removeTicket(final Ticket ticket) {
         try {
             final ZonedDateTime creationDate = ticket.getCreationTime();
             logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
@@ -88,7 +87,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @param ticketId the ticket id
      * @return the raw ticket
      */
-    private Ticket getRawTicket(final String ticketId) {
+    public Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
                     || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
@@ -109,10 +108,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = this.entityManager
-                .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
+                .createQuery("select t from " + TABLE_TICKET_GRANTING_TICKETS + " t", 
+                        TicketGrantingTicketImpl.class)
                 .getResultList();
         final List<ServiceTicketImpl> sts = this.entityManager
-                .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
+                .createQuery("select s from " + TABLE_SERVICE_TICKETS + " s", ServiceTicketImpl.class)
                 .getResultList();
 
         final List<Ticket> tickets = new ArrayList<>(tgts);
@@ -129,17 +129,22 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long sessionCount() {
         return countToLong(this.entityManager.createQuery(
-                "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
+                "select count(t) from " + TABLE_TICKET_GRANTING_TICKETS + " t").getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        return countToLong(this.entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+        return countToLong(this.entityManager.createQuery("select count(t) from " 
+                + TABLE_SERVICE_TICKETS + " t").getSingleResult());
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return true;
+        }
+        
         final int failureCount;
 
         if (ticket instanceof OAuthToken) {
@@ -154,25 +159,53 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return failureCount == 0;
     }
 
-    <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, final Class<T> clazz) {
+    /**
+     * Gets ticket query result list.
+     *
+     * @param <T>      the type parameter
+     * @param ticketId the ticket id
+     * @param query    the query
+     * @param clazz    the clazz
+     * @return the ticket query result list
+     */
+    public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, 
+                                                               final Class<T> clazz) {
         return this.entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
                 .getResultList();
     }
 
-    private int deleteOAuthTokens(final String ticketId) {
+    /**
+     * Delete o auth tokens int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
+    public int deleteOAuthTokens(final String ticketId) {
         final List<OAuthCodeImpl> oAuthCodeImpls = getTicketQueryResultList(ticketId,
-                "select o from OAuthCodeImpl o where o.id = :id", OAuthCodeImpl.class);
+                "select o from " + TABLE_OAUTH_TICKETS + " o where o.id = :id", OAuthCodeImpl.class);
         return deleteTicketsFromResultList(oAuthCodeImpls);
     }
 
-    private int deleteServiceTickets(final String ticketId) {
+    /**
+     * Delete service tickets int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
+    public int deleteServiceTickets(final String ticketId) {
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
-                "select s from ServiceTicketImpl s where s.id = :id", ServiceTicketImpl.class);
+                "select s from " + TABLE_SERVICE_TICKETS + " s where s.id = :id", ServiceTicketImpl.class);
         return deleteTicketsFromResultList(serviceTicketImpls);
     }
 
-    private int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
+    /**
+     * Delete tickets from result list int.
+     *
+     * @param serviceTicketImpls the service ticket impls
+     * @return the int
+     */
+    public int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
         int failureCount = 0;
         for (final Ticket serviceTicketImpl : serviceTicketImpls) {
             if (!removeTicket(serviceTicketImpl)) {
@@ -182,19 +215,29 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return failureCount;
     }
 
-    private int deleteTicketGrantingTickets(final String ticketId) {
+    /**
+     * Delete ticket granting tickets int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
+    public int deleteTicketGrantingTickets(final String ticketId) {
         int failureCount = 0;
 
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
-                "select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
+                "select s from " 
+                + TABLE_SERVICE_TICKETS
+                + " s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
         failureCount += deleteTicketsFromResultList(serviceTicketImpls);
 
         List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
-                "select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
+                "select t from " + TABLE_TICKET_GRANTING_TICKETS
+                + " t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
         failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
 
         ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
-                "select t from TicketGrantingTicketImpl t where t.id = :id", TicketGrantingTicketImpl.class);
+                "select t from " + TABLE_TICKET_GRANTING_TICKETS
+                + " t where t.id = :id", TicketGrantingTicketImpl.class);
         failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
 
         return failureCount;
@@ -209,22 +252,5 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static long countToLong(final Object result) {
         return ((Number) result).longValue();
     }
-
-    @Override
-    protected void postCleanupTickets() {
-        logger.debug("Releasing ticket cleanup lock.");
-        this.jpaLockingStrategy.release();
-        logger.info("Finished ticket cleanup.");
-    }
-
-    @Override
-    protected boolean preCleanupTickets() {
-        logger.debug("Attempting to acquire ticket cleanup lock.");
-        if (!this.jpaLockingStrategy.acquire()) {
-            logger.warn("Could not obtain lock. Aborting cleanup.");
-            return false;
-        }
-        logger.debug("Acquired lock. Proceeding with cleanup.");
-        return super.preCleanupTickets();
-    }
+    
 }

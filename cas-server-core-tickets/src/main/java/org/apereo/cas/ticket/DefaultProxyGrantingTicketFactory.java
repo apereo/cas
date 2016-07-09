@@ -5,10 +5,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -17,8 +13,6 @@ import javax.annotation.Resource;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("defaultProxyGrantingTicketFactory")
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -27,13 +21,9 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * Used to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    
-    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Expiration policy for ticket granting tickets. */
-    
-    @Resource(name="grantingTicketExpirationPolicy")
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     @Override

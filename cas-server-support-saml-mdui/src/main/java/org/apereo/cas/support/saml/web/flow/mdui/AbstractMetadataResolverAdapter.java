@@ -12,7 +12,6 @@ import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,15 +37,12 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Metadata resources along with filters to perform validation. */
-    
     protected Map<Resource, MetadataFilterChain> metadataResources;
 
     /** Whether the metadata resolver should require valid metadata. Default is true. */
     protected boolean requireValidMetadata = true;
 
     /** The openSAML config bean. **/
-    @Autowired
-    
     protected OpenSamlConfigBean configBean;
 
     private ChainingMetadataResolver metadataResolver;
@@ -106,7 +102,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * Build metadata resolver aggregate.
      *
      */
-    protected void buildMetadataResolverAggregate() {
+    public void buildMetadataResolverAggregate() {
         buildMetadataResolverAggregate(null);
     }
 
@@ -140,17 +136,20 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
         try (final InputStream in = getResourceInputStream(resource, entityId)) {
             logger.debug("Parsing [{}]", resource.getFilename());
-            final Document document = this.configBean.getParserPool().parse(in);
+            
+            if (in.available() > 0) {
+                final Document document = this.configBean.getParserPool().parse(in);
 
-            final List<MetadataResolver> resolvers = buildSingleMetadataResolver(metadataFilter, resource, document);
-            this.metadataResolver = new ChainingMetadataResolver();
-            synchronized (this.lock) {
-                this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-                this.metadataResolver.setResolvers(resolvers);
-                logger.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
-                        resolvers.size());
-                this.metadataResolver.initialize();
-                logger.info("Metadata aggregate initialized successfully with size {}.", resolvers.size());
+                final List<MetadataResolver> resolvers = buildSingleMetadataResolver(metadataFilter, resource, document);
+                this.metadataResolver = new ChainingMetadataResolver();
+                synchronized (this.lock) {
+                    this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+                    this.metadataResolver.setResolvers(resolvers);
+                    logger.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
+                            resolvers.size());
+                    this.metadataResolver.initialize();
+                    logger.info("Metadata aggregate initialized successfully with size {}.", resolvers.size());
+                }
             }
         } catch (final Exception e) {
             logger.warn("Could not retrieve input stream from resource. Moving on...", e);
@@ -188,5 +187,13 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         }
         resolvers.add(metadataProvider);
         return resolvers;
+    }
+
+    public void setMetadataResources(final Map<Resource, MetadataFilterChain> metadataResources) {
+        this.metadataResources = metadataResources;
+    }
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
     }
 }

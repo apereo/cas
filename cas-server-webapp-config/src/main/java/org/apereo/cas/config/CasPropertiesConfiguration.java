@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.web.context.ConfigurableWebEnvironment;
 
 import javax.annotation.PostConstruct;
 import java.util.Properties;
@@ -18,10 +20,11 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("casPropertiesConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPropertiesConfiguration {
     @Autowired
-    private ConfigurableWebEnvironment environment;
-    
+    private ConfigurableEnvironment environment;
+
     /**
      * Place holder configurer property sources placeholder configurer.
      *

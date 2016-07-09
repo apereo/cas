@@ -5,8 +5,12 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -18,11 +22,12 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1.0
  */
+@SpringApplicationConfiguration(classes = {CasSupportActionsConfiguration.class,
+        CasCoreWebflowConfiguration.class, CasCookieConfiguration.class})
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test
     public void verifyNullTicket() throws Exception {
-
         final MockRequestContext ctx = new MockRequestContext();
         final TicketGrantingTicketCheckAction action = new
                 TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());

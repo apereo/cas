@@ -8,10 +8,6 @@ import java.io.Serializable;
  * Ticket to be.
  *
  * @author Scott Battaglia
- *
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  * @see Ticket
  * @since 3.0.0
  */

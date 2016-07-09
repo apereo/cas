@@ -1,0 +1,7 @@
+description = "Apereo CAS central configuration module providing type-safe configuration domain model to the rest of CAS server"
+dependencies {
+    compile libraries.springboot
+    compile libraries.spring
+    compile libraries.hibernate
+    compile libraries.persondirectory
+}

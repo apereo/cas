@@ -49,7 +49,7 @@ public class DuoWeb {
         try {
             duo_sig = signVals(skey, username, ikey, DUO_PREFIX, DUO_EXPIRE, time);
             app_sig = signVals(akey, username, ikey, APP_PREFIX, APP_EXPIRE, time);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ERR_UNKNOWN;
         }
 
@@ -68,8 +68,8 @@ public class DuoWeb {
         final String auth_sig = sigs[0];
         final String app_sig = sigs[1];
 
-        String auth_user = parseVals(skey, auth_sig, AUTH_PREFIX, ikey, time);
-        String app_user = parseVals(akey, app_sig, APP_PREFIX, ikey, time);
+        final String auth_user = parseVals(skey, auth_sig, AUTH_PREFIX, ikey, time);
+        final String app_user = parseVals(akey, app_sig, APP_PREFIX, ikey, time);
 
         if (!auth_user.equals(app_user)) {
             throw new DuoWebException("Authentication failed.");

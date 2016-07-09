@@ -17,22 +17,8 @@ when you use the above ticket registries. It requires explicit configuration bef
 
 ## Configuration
 
-Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. 
-
-```properties
-#CAS components mappings
-ticketCipherExecutor=defaultTicketCipherExecutor
-```
-
-The settings, algorithms and secret keys used for the cipher may be controlled via `application.properties`:
-
-```properties
-# Secret key to use when encrypting tickets in a distributed ticket registry.
-# ticket.encryption.secretkey=C@$W3bSecretKey!
-#
-# Secret key to use when signing tickets in a distributed ticket registry.
-# By default, must be a octet string of size 512.
-# ticket.signing.secretkey=szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w
-```
+Each ticket registry configuration supports a cipher component that needs to be configured by the deployer.
+The settings, algorithms and secret keys used for the cipher may be controlled via `application.properties`.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Additionally, [Ignite](Ignite-Ticket-Registry.html) may be configured to use TLS for replication transport.

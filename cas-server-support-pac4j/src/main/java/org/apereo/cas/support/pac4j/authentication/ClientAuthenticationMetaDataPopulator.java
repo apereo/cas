@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This class is a meta data populator for authentication. The client name associated to the authentication is added
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Component;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
-@Component("clientAuthenticationMetaDataPopulator")
 public class ClientAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     /***

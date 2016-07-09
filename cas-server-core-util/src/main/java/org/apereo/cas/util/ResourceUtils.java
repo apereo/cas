@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -132,7 +133,7 @@ public final class ResourceUtils {
             }
             return new FileSystemResource(destination);
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

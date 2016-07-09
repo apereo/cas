@@ -1,9 +1,32 @@
 package org.apereo.cas.mgmt.config;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.audit.spi.ServiceManagementResourceResolver;
+import org.apereo.cas.mgmt.services.audit.ServiceManagementResourceResolver;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
+import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
+import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
+import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
+import org.apereo.cas.mgmt.services.web.factory.AttributeFilterMapper;
+import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
+import org.apereo.cas.mgmt.services.web.factory.AttributeReleasePolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeFilterMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeReleasePolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesRepositoryMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
+import org.apereo.cas.mgmt.services.web.factory.FormDataPopulator;
+import org.apereo.cas.mgmt.services.web.factory.PrincipalAttributesRepositoryMapper;
+import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -12,7 +35,7 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
-import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.AuthorizationGenerator;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
@@ -24,12 +47,12 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,6 +69,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -59,90 +83,65 @@ import java.util.Properties;
  * @since 5.0.0
  */
 @Configuration("casManagementWebAppConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
     private static final String AUDIT_ACTION_SUFFIX_SUCCESS = "_SUCCESS";
 
-    @Value("${user.details.file.location:classpath:user-details.properties}")
-    private Resource userPropertiesFile;
-
-    @Value("${cas-management.securityContext.serviceProperties.adminRoles}")
-    private String roles;
-
-    @Value("${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}")
-    private String loginUrl;
-
-    @Value("${cas-management.securityContext.serviceProperties.service}")
-    private String callbackUrl;
+    @Autowired(required = false)
+    @Qualifier("formDataPopulators")
+    private List formDataPopulators = new ArrayList<>();
 
     @Autowired
-    @Qualifier("auditablePrincipalResolver")
-    private PrincipalResolver principalResolver;
+    private ServerProperties serverProperties;
 
-    @javax.annotation.Resource(name = "auditResourceResolverMap")
-    private Map auditResourceResolverMap;
-
-    @javax.annotation.Resource(name = "auditActionResolverMap")
-    private Map auditActionResolverMap;
-
-    @Value("${cas-management.viewResolver.basename:default_views}")
-    private String baseName;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     /**
      * A character encoding filter.
      *
      * @return the character encoding filter
      */
-    @Bean(name = "characterEncodingFilter")
+    @Bean
     public CharacterEncodingFilter characterEncodingFilter() {
         return new CharacterEncodingFilter("UTF-8", true);
     }
 
-    /**
-     * Require any role authorizer require any role authorizer.
-     *
-     * @return the require any role authorizer
-     */
-    @Bean(name = "requireAnyRoleAuthorizer")
+
+    @Bean
     public RequireAnyRoleAuthorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(this.roles));
+        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles()));
     }
 
-    /**
-     * Cas client cas client.
-     *
-     * @return the cas client
-     */
-    @Bean(name = "casClient")
+    @ConditionalOnMissingBean(name = "attributeRepository")
+    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
+    public IPersonAttributeDao stubAttributeRepository() {
+        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
+    }
+
+
+    @Bean
     public CasClient casClient() {
-        final CasClient client = new CasClient(this.loginUrl);
+        final CasClient client = new CasClient(casProperties.getServer().getLoginUrl());
         client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }
 
-    /**
-     * Config config.
-     *
-     * @return the config
-     */
-    @Bean(name = "config")
+    @Bean
     public Config config() {
-        final Config cfg = new Config(this.callbackUrl, casClient());
+        final Config cfg = new Config(getDefaultServiceUrl(), casClient());
         cfg.setAuthorizer(requireAnyRoleAuthorizer());
         return cfg;
     }
 
-    /**
-     * Root controller controller.
-     *
-     * @return the controller
-     */
-    @Bean(name = "rootController")
+    @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                         final HttpServletResponse response)
                     throws Exception {
                 final String url = request.getContextPath() + "/manage.html";
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
@@ -151,12 +150,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
-    /**
-     * Handler mapping c simple url handler mapping.
-     *
-     * @return the simple url handler mapping
-     */
-    @Bean(name = "handlerMappingC")
+    @Bean
     public SimpleUrlHandlerMapping handlerMappingC() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setOrder(1);
@@ -169,12 +163,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return mapping;
     }
 
-    /**
-     * Cas management security interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
-    @Bean(name = "casManagementSecurityInterceptor")
+    @Bean
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
         final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(config(), "CasClient",
                 "securityHeaders,csrfToken,RequireAnyRoleAuthorizer") {
@@ -187,125 +176,69 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return interceptor;
     }
 
-    /**
-     * Save service resource resolver parameters as string resource resolver.
-     *
-     * @return the parameters as string resource resolver
-     */
-    @Bean(name = "saveServiceResourceResolver")
+    @Bean
     public ParametersAsStringResourceResolver saveServiceResourceResolver() {
         return new ParametersAsStringResourceResolver();
     }
 
-    /**
-     * Delete service resource resolver service management resource resolver.
-     *
-     * @return the service management resource resolver
-     */
-    @Bean(name = "deleteServiceResourceResolver")
+    @Bean
     public ServiceManagementResourceResolver deleteServiceResourceResolver() {
         return new ServiceManagementResourceResolver();
     }
 
-    /**
-     * Save service action resolver default audit action resolver.
-     *
-     * @return the default audit action resolver
-     */
-    @Bean(name = "saveServiceActionResolver")
+    @Bean
     public DefaultAuditActionResolver saveServiceActionResolver() {
         return new DefaultAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
-    /**
-     * Delete service action resolver object creation audit action resolver.
-     *
-     * @return the object creation audit action resolver
-     */
-    @Bean(name = "deleteServiceActionResolver")
+    @Bean
     public ObjectCreationAuditActionResolver deleteServiceActionResolver() {
         return new ObjectCreationAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
-    /**
-     * Auditable principal resolver pac 4 j auditable principal resolver.
-     *
-     * @return the pac 4 j auditable principal resolver
-     */
-    @Bean(name = "auditablePrincipalResolver")
+    @Bean
     public Pac4jAuditablePrincipalResolver auditablePrincipalResolver() {
         return new Pac4jAuditablePrincipalResolver();
     }
 
-    /**
-     * Audit trail management aspect audit trail management aspect.
-     *
-     * @return the audit trail management aspect
-     */
-    @Bean(name = "auditTrailManagementAspect")
+    @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                this.principalResolver, ImmutableList.of(auditTrailManager()),
-                this.auditActionResolverMap,
-                this.auditResourceResolverMap);
+                auditablePrincipalResolver(), ImmutableList.of(slf4jAuditTrailManager()),
+                auditActionResolverMap(),
+                auditResourceResolverMap());
     }
 
-    /**
-     * Audit trail management.
-     *
-     * @return the audit trail management
-     */
-    @Bean(name = "auditTrailManager")
-    public AuditTrailManager auditTrailManager() {
+    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
+    public AuditTrailManager slf4jAuditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
 
-
-    /**
-     * User properties properties.
-     *
-     * @return the properties
-     */
-    @Bean(name = "userProperties")
+    @Bean
     public Properties userProperties() {
         try {
-            final Properties properties = new Properties();
-            properties.load(this.userPropertiesFile.getInputStream());
-            return properties;
+            final Properties p = new Properties();
+            p.load(casProperties.getMgmt().getUserPropertiesFile().getInputStream());
+            return p;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
-    /**
-     * Authorization generator authorization generator.
-     *
-     * @return the authorization generator
-     */
-    @ConditionalOnBean(name = "authorizationGenerator")
-    @Bean(name = "authorizationGenerator")
+    @ConditionalOnMissingBean(name = "authorizationGenerator")
+    @Bean
     public AuthorizationGenerator authorizationGenerator() {
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
 
-    /**
-     * Locale resolver cookie locale resolver.
-     *
-     * @return the cookie locale resolver
-     */
-    @Bean(name = "localeResolver")
+    @Bean
     public CookieLocaleResolver localeResolver() {
         final CookieLocaleResolver resolver = new CookieLocaleResolver();
         resolver.setDefaultLocale(Locale.ENGLISH);
         return resolver;
     }
 
-    /**
-     * Audit resource resolver map map.
-     *
-     * @return the map
-     */
-    @Bean(name = "auditResourceResolverMap")
+    @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_RESOURCE_RESOLVER", deleteServiceResourceResolver());
@@ -313,12 +246,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return map;
     }
 
-    /**
-     * Audit action resolver map map.
-     *
-     * @return the map
-     */
-    @Bean(name = "auditActionResolverMap")
+    @Bean
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_ACTION_RESOLVER", deleteServiceActionResolver());
@@ -332,24 +260,115 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**").excludePathPatterns("/callback*", "/logout*", "/authorizationFailure");
     }
 
-    /**
-     * Simple controller handler adapter simple controller handler adapter.
-     *
-     * @return the simple controller handler adapter
-     */
     @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
 
-    /**
-     * Place holder configurer ..
-     *
-     * @return the property sources placeholder configurer
-     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
+    @Bean
+    public AccessStrategyMapper defaultAccessStrategyMapper() {
+        return new DefaultAccessStrategyMapper();
+    }
+
+    @Bean
+    public RegisteredServiceFactory registeredServiceFactory() {
+        final DefaultRegisteredServiceFactory f = new DefaultRegisteredServiceFactory();
+        f.setAccessStrategyMapper(defaultAccessStrategyMapper());
+        f.setAttributeReleasePolicyMapper(defaultAttributeReleasePolicyMapper());
+        f.setProxyPolicyMapper(defaultProxyPolicyMapper());
+        f.setRegisteredServiceMapper(defaultRegisteredServiceMapper());
+        f.setUsernameAttributeProviderMapper(usernameAttributeProviderMapper());
+
+        this.formDataPopulators.add(attributeFormDataPopulator());
+        f.setFormDataPopulators(this.formDataPopulators);
+        return f;
+    }
+
+
+    @Bean
+    public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
+        final DefaultAttributeReleasePolicyMapper m = new DefaultAttributeReleasePolicyMapper();
+        m.setAttributeFilterMapper(defaultAttributeFilterMapper());
+        m.setPrincipalAttributesRepositoryMapper(defaultPrincipalAttributesRepositoryMapper());
+        return m;
+    }
+
+    @Bean
+    public FormDataPopulator attributeFormDataPopulator() {
+        return new AttributeFormDataPopulator(stubAttributeRepository());
+    }
+
+    @Bean
+    public DefaultUsernameAttributeProviderMapper usernameAttributeProviderMapper() {
+        return new DefaultUsernameAttributeProviderMapper();
+    }
+
+    @Bean
+    public RegisteredServiceMapper defaultRegisteredServiceMapper() {
+        return new DefaultRegisteredServiceMapper();
+    }
+
+    @Bean
+    public ProxyPolicyMapper defaultProxyPolicyMapper() {
+        return new DefaultProxyPolicyMapper();
+    }
+
+    @Bean
+    public AttributeFilterMapper defaultAttributeFilterMapper() {
+        return new DefaultAttributeFilterMapper();
+    }
+
+    @Bean
+    public PrincipalAttributesRepositoryMapper defaultPrincipalAttributesRepositoryMapper() {
+        return new DefaultPrincipalAttributesRepositoryMapper();
+    }
+
+    @Bean
+    public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager) {
+
+        final ManageRegisteredServicesMultiActionController c =
+                new ManageRegisteredServicesMultiActionController(
+                        servicesManager,
+                        registeredServiceFactory(),
+                        getDefaultServiceUrl());
+        return c;
+    }
+
+    @Bean
+    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(
+            @Qualifier("servicesManager")
+            final ServicesManager servicesManager) {
+        final RegisteredServiceSimpleFormController c = new RegisteredServiceSimpleFormController(
+                servicesManager,
+                registeredServiceFactory()
+        );
+        return c;
+    }
+
+    private String getDefaultServiceUrl() {
+        return casProperties.getMgmt().getServerName()
+                .concat(serverProperties.getContextPath()).concat("/callback");
+    }
+
+    @Bean
+    public List serviceFactoryList() {
+        return new ArrayList();
+    }
+    
+    @Bean
+    public Map uniqueIdGeneratorsMap() {
+        return new HashMap<>();
+    }
+
+    @Bean
+    public List authenticationMetadataPopulators() {
+        return new ArrayList<>(); 
+    }
 }

@@ -1,8 +1,12 @@
 package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,28 +22,11 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  * @since 5.0.0
  */
 @Configuration("mongoDbEventsConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbEventsConfiguration {
 
-    /**
-     * The Client uri.
-     */
-    @Value("${mongodb.events.clienturi:}")
-    private String clientUri;
-
-    /**
-     * Client uri mongo client uri.
-     *
-     * @return the mongo client uri
-     */
-    @RefreshScope
-    @Bean(name = "clientUri")
-    public MongoClientURI clientUri() {
-        if (StringUtils.isBlank(this.clientUri)) {
-            throw new RuntimeException("MongoDb Client URI must be defined for CAS events");
-        }
-        return new MongoClientURI(this.clientUri);
-    }
-
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     /**
      * Persistence exception translation post processor persistence exception translation post processor.
@@ -47,7 +34,7 @@ public class MongoDbEventsConfiguration {
      * @return the persistence exception translation post processor
      */
     @RefreshScope
-    @Bean(name = "persistenceExceptionTranslationPostProcessor")
+    @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
@@ -58,7 +45,7 @@ public class MongoDbEventsConfiguration {
      * @return the mongo template
      */
     @RefreshScope
-    @Bean(name = "mongoEventsTemplate")
+    @Bean
     public MongoTemplate mongoEventsTemplate() {
         return new MongoTemplate(mongoAuthNEventsDbFactory());
     }
@@ -69,14 +56,20 @@ public class MongoDbEventsConfiguration {
      * @return the simple mongo db factory
      */
     @RefreshScope
-    @Bean(name = "mongoAuthNEventsDbFactory")
+    @Bean
     public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
-
         try {
-            return new SimpleMongoDbFactory(clientUri());
+            return new SimpleMongoDbFactory(new MongoClientURI(casProperties.getEvents().getMongodb().getClientUri()));
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new BeanCreationException(e.getMessage(), e);
         }
     }
 
+    @Bean
+    public CasEventRepository casEventRepository() {
+        return new MongoDbCasEventRepository(
+                mongoEventsTemplate(),
+                casProperties.getEvents().getMongodb().getCollection(),
+                casProperties.getEvents().getMongodb().isDropCollection());
+    }
 }

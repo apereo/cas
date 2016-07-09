@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -12,10 +13,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,22 +24,19 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("samlProfileSamlAuthNStatementBuilder")
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder
         implements SamlProfileObjectBuilder<AuthnStatement> {
 
     private static final long serialVersionUID = 8761566449790497226L;
 
-    @Value("${cas.samlidp.response.skewAllowance:0}")
-    private int skewAllowance;
-
     @Autowired
-    @Qualifier("defaultAuthnContextClassRefBuilder")
+    private CasConfigurationProperties casProperties;
+    
     private AuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     @Override
-    public AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, 
+                                final HttpServletResponse response,
                                       final Assertion assertion, final SamlRegisteredService service,
                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
@@ -69,7 +63,8 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
             DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()));
         if (assertion.getValidUntilDate() != null) {
             final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
-            statement.setSessionNotOnOrAfter(DateTimeUtils.dateTimeOf(dt.plusSeconds(this.skewAllowance)));
+            statement.setSessionNotOnOrAfter(
+                    DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance())));
         }
         statement.setSubjectLocality(buildSubjectLocality(assertion, authnRequest, adaptor));
         return statement;
@@ -85,9 +80,14 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @throws SamlException the saml exception
      */
     protected SubjectLocality buildSubjectLocality(final Assertion assertion, final AuthnRequest authnRequest,
-                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) 
+            throws SamlException {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
         subjectLocality.setAddress(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
         return subjectLocality;
+    }
+
+    public void setAuthnContextClassRefBuilder(final AuthnContextClassRefBuilder authnContextClassRefBuilder) {
+        this.authnContextClassRefBuilder = authnContextClassRefBuilder;
     }
 }

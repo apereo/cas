@@ -1,11 +1,20 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import javax.annotation.Nullable;
 
 /**
  * This is {@link CouchbaseTicketRegistryConfiguration}.
@@ -14,46 +23,49 @@ import org.springframework.util.StringUtils;
  * @since 5.0.0
  */
 @Configuration("couchbaseTicketRegistryConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseTicketRegistryConfiguration {
 
-    /**
-     * The Node set.
-     */
-    @Value("${ticketreg.couchbase.nodes:localhost:8091}")
-    private String nodeSet;
-
-    /**
-     * The Timeout.
-     */
-    @Value("${ticketreg.couchbase.timeout:10}")
-    private int timeout;
-
-    /**
-     * The Password.
-     */
-    @Value("${ticketreg.couchbase.password:}")
-    private String password;
-
-    /**
-     * The Bucket.
-     */
-    @Value("${ticketreg.couchbase.bucket:default}")
-    private String bucket;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
 
-    /**
-     * Ticket registry couchbase client factory couchbase client factory.
-     *
-     * @return the couchbase client factory
-     */
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor cipherExecutor;
+
     @RefreshScope
-    @Bean(name = "ticketRegistryCouchbaseClientFactory")
+    @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
+
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(this.nodeSet));
-        factory.setTimeout(this.timeout);
-        factory.setBucketName(this.bucket);
-        factory.setPassword(this.password);
+        factory.setNodes(StringUtils.commaDelimitedListToSet(
+                casProperties.getTicket().getRegistry().getCouchbase().getNodeSet()));
+        factory.setTimeout(casProperties.getTicket().getRegistry().getCouchbase().getTimeout());
+        factory.setBucketName(casProperties.getTicket().getRegistry().getCouchbase().getBucket());
+        factory.setPassword(casProperties.getTicket().getRegistry().getCouchbase().getPassword());
+
         return factory;
+    }
+
+    @RefreshScope
+    @Bean(name = {"couchbaseTicketRegistry", "ticketRegistry"})
+    public CouchbaseTicketRegistry couchbaseTicketRegistry() {
+        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry();
+        c.setCouchbaseClientFactory(ticketRegistryCouchbaseClientFactory());
+        c.setCipherExecutor(cipherExecutor);
+        return c;
+    }
+
+    @Bean
+    public TicketRegistryCleaner ticketRegistryCleaner() {
+        final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner() {
+            @Override
+            protected boolean isCleanerSupported() {
+                return false;
+            }
+        };
+        return c;
     }
 }

@@ -1,14 +1,10 @@
 package org.apereo.cas.authentication.handler;
 
-import org.apereo.cas.util.DigestUtils;
-
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -22,24 +18,22 @@ import java.nio.charset.Charset;
  * @author Stephen More
  * @since 3.1
  */
-@RefreshScope
-@Component("defaultPasswordEncoder")
 public class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
-
+    
     private String encodingAlgorithm;
-
-    @Value("${cas.authn.password.encoding.char:}")
     private String characterEncoding;
+    
+    public DefaultPasswordEncoder() {
+    }
 
     /**
      * Instantiates a new default password encoder.
      *
      * @param encodingAlgorithm the encoding algorithm
      */
-    @Autowired
-    public DefaultPasswordEncoder(@Value("${cas.authn.password.encoding.alg:}") final String encodingAlgorithm) {
+    public DefaultPasswordEncoder(final String encodingAlgorithm) {
         this.encodingAlgorithm = encodingAlgorithm;
     }
 
@@ -62,17 +56,21 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
 
             return DigestUtils.digest(this.encodingAlgorithm, password.getBytes(encodingCharToUse));
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-        final String encodedRawPassword = (rawPassword != null) ? encode(rawPassword.toString()) : null;
+        final String encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
         return StringUtils.equals(encodedRawPassword, encodedPassword);
     }
 
     public void setCharacterEncoding(final String characterEncoding) {
         this.characterEncoding = characterEncoding;
+    }
+
+    public void setEncodingAlgorithm(final String encodingAlgorithm) {
+        this.encodingAlgorithm = encodingAlgorithm;
     }
 }

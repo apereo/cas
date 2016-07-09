@@ -7,10 +7,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import java.net.InetAddress;
@@ -25,8 +21,6 @@ import java.security.GeneralSecurityException;
  * @since 3.2.1
  *
  */
-@RefreshScope
-@Component("remoteAddressAuthenticationHandler")
 public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
@@ -105,8 +99,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      *
      * @param ipAddressRange the IP address range that should be allowed trusted logins
      */
-    @Autowired
-    public void setIpNetworkRange(@Value("${ip.address.range:}") final String ipAddressRange) {
+    public void setIpNetworkRange(final String ipAddressRange) {
 
         if (StringUtils.isNotBlank(ipAddressRange)) {
 

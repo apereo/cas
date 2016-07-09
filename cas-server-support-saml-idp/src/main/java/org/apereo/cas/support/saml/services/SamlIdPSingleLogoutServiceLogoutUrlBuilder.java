@@ -1,17 +1,12 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.client.util.URIBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.metadata.SingleLogoutService;
-import org.opensaml.saml.saml2.metadata.impl.SingleLogoutServiceBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.net.URL;
 
@@ -26,15 +21,11 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
     /**
      * The Services manager.
      */
-    @Autowired
-    @Qualifier("servicesManager")
-    protected ReloadableServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     /**
      * The Saml registered service caching metadata resolver.
      */
-    @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Override
@@ -64,10 +55,12 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         return super.determineLogoutUrl(registeredService, singleLogoutService);
     }
 
-    private static SingleLogoutService getSingleLogoutService(final String endpoint) {
-        final SingleLogoutService acs = new SingleLogoutServiceBuilder().buildObject();
-        acs.setBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        acs.setLocation(endpoint);
-        return acs;
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setSamlRegisteredServiceCachingMetadataResolver(
+            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
+        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
     }
 }

@@ -3,12 +3,11 @@ package org.apereo.cas.web.flow.resolver;
 import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,13 +23,11 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("requestParameterAuthenticationPolicyWebflowEventResolver")
 public class RequestParameterAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Value("${cas.mfa.request.parameter:authn_method}")
-    private String parameterName;
-
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
@@ -41,9 +38,9 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             return null;
         }
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final String[] values = request.getParameterValues(this.parameterName);
+        final String[] values = request.getParameterValues(casProperties.getAuthn().getMfa().getRequestParameter());
         if (values != null && values.length > 0) {
-            logger.debug("Received request parameter {} as {}", this.parameterName, values);
+            logger.debug("Received request parameter {} as {}", casProperties.getAuthn().getMfa().getRequestParameter(), values);
 
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     getAllMultifactorAuthenticationProvidersFromApplicationContext();
@@ -72,7 +69,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             }
 
         }
-        logger.debug("No value could be found for request parameter {}", this.parameterName);
+        logger.debug("No value could be found for request parameter {}", casProperties.getAuthn().getMfa().getRequestParameter());
         return null;
     }
 }

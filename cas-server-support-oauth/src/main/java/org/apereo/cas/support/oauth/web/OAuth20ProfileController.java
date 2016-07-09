@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.pac4j.core.context.HttpConstants;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,6 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
 @Controller("profileController")
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
 

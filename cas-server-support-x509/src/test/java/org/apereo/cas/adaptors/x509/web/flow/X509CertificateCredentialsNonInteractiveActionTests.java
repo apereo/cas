@@ -3,6 +3,9 @@ package org.apereo.cas.adaptors.x509.web.flow;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.AbstractCentralAuthenticationService;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
@@ -45,8 +48,12 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
                 getCentralAuthenticationService();
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
-                .setAuthenticationManager(authenticationManager);
+        this.action.setAuthenticationSystemSupport(
+                new DefaultAuthenticationSystemSupport(
+                        new DefaultAuthenticationTransactionManager(authenticationManager),
+                        new DefaultPrincipalElectionStrategy()
+                )
+        );
 
     }
 

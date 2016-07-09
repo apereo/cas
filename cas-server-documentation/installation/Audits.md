@@ -4,28 +4,26 @@ title: CAS - Audit Configuration
 ---
 
 # Audits
+
 CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes
 and statistics. The Inspektr project allows for non-intrusive auditing and logging of the
 coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations
 and Spring-managed `@Aspect`-style aspects.
 
-## Configuration
-CAS server auto-configures all the relevant Inspektr components. All the available configuration
-options that are injected into Inspektr are available to deployers via relevant properties in `application.properties`
 
-### File-based Audits
-By default, audit messages appear in log files via SLF4J and are routed to
+CAS server auto-configures all the relevant Inspektr components. 
+All the available configuration
+options that are injected to Inspektr classes are available to 
+deployers via relevant properties in `application.properties`
+
+## File-based Audits
+
 a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
 
-```properties
-# cas.audit.singleline=true
-# cas.audit.singleline.separator=|
-# cas.audit.format=DEFAULT
-# cas.audit.ignore.failures=false
-# cas.audit.appcode=CAS
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-#### Sample Log Output
+### Sample Log Output
+
 ```bash
 WHO: org.apereo.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
 WHAT: supplied credentials: org.apereo.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
@@ -44,36 +42,20 @@ CLIENT IP ADDRESS: 172.16.5.181
 SERVER IP ADDRESS: 192.168.200.22
 ```
 
-### Database Audits
+## Database Audits
+
 If you intend to use a database
-for auditing functionality, adjust the audit manager mapping in `application.properties` to match the configuration below:
-
-```properties
-#CAS components mappings
-auditTrailManager=jdbcAuditTrailManager
-```
-
-and also include this import in local `deployerConfigContext.xml`:
+for auditing functionality, enable the following module in your configuration:
 
 ```xml
-<import resource="classpath:inspektr-jdbc-audit-config.xml" />
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
 ```
 
-#### Database Audit Configuration
-Configuration consists of:
 
-```properties
-#cas.audit.max.agedays=
-#cas.audit.database.dialect=
-#cas.audit.database.batchSize=
-#cas.audit.database.ddl.auto=
-#cas.audit.database.gen.ddl=
-#cas.audit.database.show.sql=
-#cas.audit.database.driverClass=
-#cas.audit.database.url=
-#cas.audit.database.user=
-#cas.audit.database.password=
-#cas.audit.database.pool.maxSize=
-#cas.audit.database.pool.maxIdleTime=
-#cas.audit.database.pool.maxWait=
-```
+### Configuration
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

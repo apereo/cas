@@ -2,13 +2,12 @@ package org.apereo.cas.web.flow.resolver;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,12 +23,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("principalAttributeAuthenticationPolicyWebflowEventResolver")
 public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Value("${cas.mfa.principal.attributes:}")
-    private String attributeName;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
@@ -42,7 +39,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(this.attributeName)) {
+        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers())) {
             logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
             return null;
         }
@@ -56,7 +53,7 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
 
         final Collection<MultifactorAuthenticationProvider> providers = providerMap.values();
         return resolveEventViaPrincipalAttribute(principal,
-                org.springframework.util.StringUtils.commaDelimitedListToSet(this.attributeName),
+                org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
                 service, context, providers,
                 input -> providers.stream()
                         .filter(provider -> provider.getId().equals(input))

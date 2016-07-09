@@ -9,7 +9,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GoogleAuthenticatorAccount  implements Serializable {
+public class GoogleAuthenticatorAccount implements Serializable {
     private static final long serialVersionUID = -8289105320642735252L;
     
     private String secretKey;

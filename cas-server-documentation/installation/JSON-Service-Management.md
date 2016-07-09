@@ -9,19 +9,6 @@ JSON files are
 expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant JSON files.
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-serviceRegistryDao=jsonServiceRegistryDao
-```
-
-Path to the JSON service definitions directory is controlled via:
-
-```properties
-service.registry.config.location=classpath:services
-```
-
 A sample JSON file follows:
 
 ```json
@@ -33,6 +20,8 @@ A sample JSON file follows:
   "evaluationOrder" : 0
 }
 ```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have

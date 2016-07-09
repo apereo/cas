@@ -10,20 +10,6 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <context:property-placeholder location="classpath:cas.properties"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="false"/>
     
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:ehcache-failsafe.xml"/>
@@ -31,7 +17,7 @@
         <property name="cacheManagerName" value="cacheManager"/>
     </bean>
 
-    <bean id="testCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <bean id="ehcacheTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
         <property name="cacheManager" ref="cacheManager"/>
         <property name="cacheName" value="testCache"/>
         <property name="diskExpiryThreadIntervalSeconds" value="0"/>
@@ -44,9 +30,5 @@
         <property name="timeToIdle" value="300"/>
         <property name="timeToLive" value="300"/>
     </bean>
-
-    <bean id="monitor" class="org.apereo.cas.monitor.EhCacheMonitor"
-          c:ehcacheTicketsCache-ref="testCache"/>
-
 
 </beans>

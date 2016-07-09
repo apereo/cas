@@ -2,10 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -17,8 +14,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("defaultArgumentExtractor")
 public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     /**
@@ -26,7 +21,7 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
      */
     public DefaultArgumentExtractor() {
     }
-    
+
     /**
      * Instantiates a new argument extractor.
      *
@@ -59,10 +54,4 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
             return null;
         });
     }
-
-    @Resource(name="serviceFactoryList")
-    public void setServiceFactoryList(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
-        this.serviceFactoryList = serviceFactoryList;
-    }
-
 }

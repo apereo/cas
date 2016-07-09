@@ -22,8 +22,8 @@
           p:baseDn="${ldap.baseDn}"
           p:searchFilter="${ldap.user.searchFilter}"/>
     
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    
+    
+    
 
 </beans>

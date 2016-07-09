@@ -1,8 +1,6 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.services.web.view.AbstractCasView;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,33 +28,4 @@ public class Cas10ResponseView extends AbstractCasView {
             response.getWriter().print("no\n\n");
         }
     }
-
-    /**
-     * The type Success.
-     */
-    @RefreshScope
-    @Component("cas1ServiceSuccessView")
-    public static class Success extends Cas10ResponseView {
-        /**
-         * Instantiates a new Success.
-         */
-        public Success() {
-            super.setSuccessResponse(true);
-        }
-    }
-
-    /**
-     * The type Failure.
-     */
-    @RefreshScope
-    @Component("cas1ServiceFailureView")
-    public static class Failure extends Cas10ResponseView {
-        /**
-         * Instantiates a new Failure.
-         */
-        public Failure() {
-            super.setSuccessResponse(false);
-        }
-    }
-
 }

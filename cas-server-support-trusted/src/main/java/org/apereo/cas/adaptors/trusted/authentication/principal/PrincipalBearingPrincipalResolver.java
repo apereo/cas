@@ -2,8 +2,6 @@ package org.apereo.cas.adaptors.trusted.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Extracts the Principal out of PrincipalBearingCredential. It is very simple
@@ -13,8 +11,6 @@ import org.springframework.stereotype.Component;
  * @author Andrew Petro
  * @since 3.0.0
  */
-@RefreshScope
-@Component("trustedPrincipalResolver")
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override

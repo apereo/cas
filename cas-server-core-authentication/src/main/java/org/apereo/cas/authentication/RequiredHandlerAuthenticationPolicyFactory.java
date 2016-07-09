@@ -2,8 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Produces {@link ContextualAuthenticationPolicy} instances that are satisfied iff the given {@link Authentication}
@@ -13,8 +11,6 @@ import org.springframework.stereotype.Component;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("requiredHandlerAuthenticationPolicyFactory")
 public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 
     @Override

@@ -12,18 +12,12 @@ import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Fetches a CRL from an LDAP instance.
  * @author Daniel Fisher
  * @since 4.1
  */
-@RefreshScope
-@Component("poolingLdaptiveResourceCRLFetcher")
 public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetcher {
 
     /** Connection pool template. */
@@ -33,7 +27,7 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
     private Map<String, PooledConnectionFactory> connectionPoolMap = new HashMap<>();
 
     /** Serialization support. */
-    protected PoolingLdaptiveResourceCRLFetcher() {}
+    public PoolingLdaptiveResourceCRLFetcher() {}
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -114,22 +108,11 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
         pc.setValidatePeriod(config.getValidatePeriod());
         return pc;
     }
-
-    @Autowired(required=false)
-    public void setConnectionPool(@Qualifier("poolingLdaptiveConnectionPool")  final BlockingConnectionPool connectionPool) {
+    
+    public void setConnectionPool(final BlockingConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
+    
 
-    @Autowired(required = false)
-    @Override
-    public void setSearchExecutor(@Qualifier("poolingLdaptiveResourceCRLSearchExecutor") final SearchExecutor searchExecutor) {
-        super.setSearchExecutor(searchExecutor);
-    }
-
-    @Autowired(required=false)
-    @Override
-    public void setConnectionConfig(@Qualifier("poolingLdaptiveResourceCRLConnectionConfig") final ConnectionConfig connectionConfig) {
-        super.setConnectionConfig(connectionConfig);
-    }
 
 }

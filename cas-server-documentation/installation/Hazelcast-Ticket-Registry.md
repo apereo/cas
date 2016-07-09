@@ -5,9 +5,17 @@ title: CAS - Hazelcast Ticket Registry
 
 # Hazelcast Ticket Registry
 
-Hazelcast Ticket Registry is a distributed ticket registry implementation based on [Hazelcast distributed grid library](http://hazelcast.org/). The registry implementation is cluster-aware and is able to auto-join a cluster of all the CAS nodes that expose this registry. Hazelcast will use port auto-increment feature to assign a TCP port to each member of a cluster starting from initially provided arbitrary port (`5701` by default).
+Hazelcast Ticket Registry is a distributed ticket registry implementation 
+based on [Hazelcast distributed grid library](http://hazelcast.org/). The registry implementation is 
+cluster-aware and is able to auto-join a cluster of all the CAS nodes that expose this registry. 
+Hazelcast will use port auto-increment feature to assign a TCP port to each member of a cluster starting 
+from initially provided arbitrary port (`5701` by default).
 
-Hazelcast will evenly distribute the ticket data among all the members of a cluster in a very efficient manner. Also, by default, the data collection on each node is configured with 1 backup copy, so that Hazelcast will use it to make strong data consistency guarantees i.e. the loss of data on live nodes will not occur should any other *primary data owner* members die. The data will be re-partitioned among the remaining live cluster members.
+Hazelcast will evenly distribute the ticket data among all the members of a cluster in a very 
+efficient manner. Also, by default, the data collection on each node is configured with 1 backup copy, 
+so that Hazelcast will use it to make strong data consistency guarantees i.e. the loss of data on 
+live nodes will not occur should any other *primary data owner* members die. The data will be 
+re-partitioned among the remaining live cluster members.
 
 This ticket registry implementation is enabled by simply including the module in the Maven overlay pom:
 
@@ -21,47 +29,19 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-Enable the registry in `application.properties` via:
-
-```properties
-#CAS components mappings
-ticketRegistry=hazelcastTicketRegistry
-```
-
 This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry
 implementation to retrieve Hazelcast's `IMap` instance for its distributed tickets storage. Some aspects of `HazelcastInstance`
 configuration in this auto-configuration mode are controlled by the following exposed properties which could be set via
 an external `application.properties` file (with sensible defaults for all the properties if not explicitly set):
 
-```properties
-# hz.config.location=file:/etc/cas/hazelcast.xml
-# hz.mapname=tickets
-# hz.cluster.logging.type=slf4j
-# hz.cluster.portAutoIncrement=true
-# hz.cluster.port=5701
-# hz.cluster.members=cas1.example.com,cas2.example.com
-# hz.cluster.tcpip.enabled=true
-# hz.cluster.multicast.enabled=false
-# hz.cluster.max.heapsize.percentage=85
-# hz.cluster.max.heartbeat.seconds=5
-# hz.cluster.eviction.percentage=10
-# hz.cluster.eviction.policy=LRU
-# hz.cluster.instance.name=${host.name}
-# hz.cluster.logging.type=slf4j
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Should the more fine-grained configuration need arise, there is an option to use a native Hazelcast configuration XML format
 where all the configuration options for `HazelcastInstance` exposed by Hazelcast are available. In order to trigger this configuration mode,
 there are two basic steps required:
 
 * Place native `hazelcast.xml` file containing the custom configuration for Hazelcast Instance into an external filesystem location
-  of choice (`/etc/cas/hazelcast.xml` by convention).
-
-* Indicate the location of the external native config file by the following property:
-
-```properties
-hz.config.location=file:/etc/cas/hazelcast.xml
-```
+  of choice (`/etc/cas/hazelcast.xml` by convention) and configure the location in the list of CAS properties.
 
 Here's a simple example of `hazelcast.xml` that configures AWS cluster join strategy instead of a default TCP/IP one:
 
@@ -127,7 +107,8 @@ Here's a simple example of `hazelcast.xml` that configures AWS cluster join stra
 </hazelcast>
 ```
 
-For more information on the Hazelcast configuration options available, refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#hazelcast-configuration)
+For more information on the Hazelcast configuration options available, 
+refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#hazelcast-configuration)
 
 ## Logging
 To enable additional logging for the registry, configure the log4j configuration file to add the following

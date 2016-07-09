@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 
@@ -11,7 +10,6 @@ import org.springframework.webflow.engine.Flow;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("trustedWebflowConfigurer")
 public class TrustedAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
@@ -21,7 +19,8 @@ public class TrustedAuthenticationWebflowConfigurer extends AbstractCasWebflowCo
                 createEvaluateAction("principalFromRemoteUserAction"));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
+                getStartState(flow).getId()));
         setStartState(flow, actionState);
     }
 }

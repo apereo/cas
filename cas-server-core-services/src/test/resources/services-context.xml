@@ -9,65 +9,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    <context:component-scan base-package="org.apereo.cas"/>
-    <context:annotation-config/>
-
-    <context:property-placeholder properties-ref="casProperties"/>
-    <util:properties id="casProperties"/>
-
-    <util:map id="authenticationHandlersResolvers">
-        <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
-        <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
-    </util:map>
-    <util:list id="authenticationMetadataPopulators">
-        <ref bean="cacheCredentialsMetaDataPopulator" />
-    </util:list>
-
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"
-          p:backingMap-ref="attrRepoBackingMap"/>
-
-    <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
-
-    <util:map id="attrRepoBackingMap">
-        <entry key="uid" value="uid"/>
-        <entry key="eduPersonAffiliation" value="developer"/>
-        <entry key="groupMembership" value="adopters"/>
-    </util:map>
-
-
-
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
-
-
-    <bean id="auditTrailManager"
-          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
-          p:entrySeparator="${cas.audit.singleline.separator:|}"
-          p:useSingleLine="${cas.audit.singleline:false}"/>
-
-
-
-    <util:list id="serviceFactoryList" value-type="org.apereo.cas.authentication.principal.ServiceFactory">
-        <ref bean="webApplicationServiceFactory" />
-    </util:list>
-
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
-
-
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
-
+    
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">
             <property name="id" value="0"/>
@@ -171,10 +113,11 @@
             <property name="serviceId" value="usernameAttributeProviderService"/>
             <property name="evaluationOrder" value="11"/>
             <property name="usernameAttributeProvider">
-                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider" c:usernameAttribute="cn" />
+                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                      c:usernameAttribute="cn"/>
             </property>
             <property name="attributeReleasePolicy">
-                <bean class="org.apereo.cas.services.ReturnAllAttributeReleasePolicy" />
+                <bean class="org.apereo.cas.services.ReturnAllAttributeReleasePolicy"/>
             </property>
         </bean>
 
@@ -247,15 +190,5 @@
         </bean>
 
     </util:list>
-    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-    <util:map id="uniqueIdGeneratorsMap">
-        <entry
-                key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-                value-ref="serviceTicketUniqueIdGenerator"/>
-    </util:map>
 
 </beans>

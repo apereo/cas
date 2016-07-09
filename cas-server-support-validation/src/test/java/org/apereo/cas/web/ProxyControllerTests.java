@@ -25,9 +25,8 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Before
     public void onSetUp() throws Exception {
         this.proxyController = new ProxyController();
-        this.proxyController
-        .setCentralAuthenticationService(getCentralAuthenticationService());
-
+        this.proxyController.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.proxyController.setWebApplicationServiceFactory(getWebApplicationServiceFactory());
         final StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.proxyController.setApplicationContext(context);
@@ -77,7 +76,8 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         request.addParameter("pgt", ticket.getId());
         request.addParameter("targetService", "service");
 
-        final Map<String, Object> map = this.proxyController.handleRequestInternal(request,  new MockHttpServletResponse()).getModel();
+        final Map<String, Object> map = this.proxyController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getModel();
         assertTrue(!map.containsKey("ticket"));
     }
 }

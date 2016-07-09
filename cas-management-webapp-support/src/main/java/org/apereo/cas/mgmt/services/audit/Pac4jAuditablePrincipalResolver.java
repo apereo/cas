@@ -10,7 +10,7 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-public class Pac4jAuditablePrincipalResolver  implements PrincipalResolver {
+public class Pac4jAuditablePrincipalResolver implements PrincipalResolver {
 
     public Pac4jAuditablePrincipalResolver() {
     }

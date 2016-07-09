@@ -1,6 +1,6 @@
 
-description = 'Apereo CAS WS-Federation Webflow Support'
+description = "Apereo CAS WS-Federation Webflow Support"
 dependencies {
-    compile project(':cas-server-core-webflow')
-    compile project(':cas-server-support-wsfederation')
+    compile project(":cas-server-core-webflow")
+    compile project(":cas-server-support-wsfederation")
 }

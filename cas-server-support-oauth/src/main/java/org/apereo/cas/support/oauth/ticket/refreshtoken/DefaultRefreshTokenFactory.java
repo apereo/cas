@@ -9,10 +9,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Default OAuth refresh token factory.
@@ -20,22 +16,14 @@ import org.springframework.stereotype.Component;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultRefreshTokenFactory")
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    
-    @Autowired(required = false)
-    @Qualifier("refreshTokenIdGenerator")
     protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for refresh tokens. */
-    
-    @Autowired
-    @Qualifier("refreshTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
