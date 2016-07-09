@@ -106,9 +106,11 @@ INFO [org.jasig.cas.web.CasWebApplication] - <Started CasWebApplication in 21.48
 CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
-The Jetty instance is pre-configured to listen to debugger requests on port `5000`. Create a remote debugger configuration in your IDE that connects to this port and you will be able to step into the code.
+
+The Tomcat instance is pre-configured to listen to debugger requests on port `5000`. Create a remote debugger configuration in your IDE that connects to this port and you will be able to step into the code.
 
 ### Dependency Updates
+
 CAS integrates with [VersionEye](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) to report back the version of dependencies used and those that may be outdated.
 
 In order to get a full report on dependencies, adjust the following:
