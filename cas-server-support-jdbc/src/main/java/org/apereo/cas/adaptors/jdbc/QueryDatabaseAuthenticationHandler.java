@@ -4,17 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 
 /**
@@ -29,8 +23,6 @@ import java.security.GeneralSecurityException;
  *
  * @since 3.0.0
  */
-@RefreshScope
-@Component("queryDatabaseAuthenticationHandler")
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     
@@ -63,17 +55,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
-    /**
-     * @param sql The sql to set.
-     */
-    @Autowired
-    public void setSql(@Value("${cas.jdbc.authn.query.sql:}") final String sql) {
+    public void setSql(final String sql) {
         this.sql = sql;
-    }
-
-    @Override
-    @Autowired(required = false)
-    public void setDataSource(@Qualifier("queryDatabaseDataSource") final DataSource dataSource) {
-        super.setDataSource(dataSource);
     }
 }

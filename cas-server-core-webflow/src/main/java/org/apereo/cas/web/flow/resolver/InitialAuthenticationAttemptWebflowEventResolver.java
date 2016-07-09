@@ -6,19 +6,18 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,35 +28,34 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("initialAuthenticationAttemptWebflowEventResolver")
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    @Autowired
-    @Qualifier("requestParameterAuthenticationPolicyWebflowEventResolver")
-    private CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver;
+    private CasWebflowEventResolver requestParameterResolver;
 
-    @Autowired
-    @Qualifier("registeredServiceAuthenticationPolicyWebflowEventResolver")
-    private CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver;
+    private CasWebflowEventResolver registeredServiceResolver;
 
-    @Autowired
-    @Qualifier("principalAttributeAuthenticationPolicyWebflowEventResolver")
-    private CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver;
+    private CasWebflowEventResolver principalAttributeResolver;
 
-    @Autowired
-    @Qualifier("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
-    private CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
+    private CasWebflowEventResolver registeredServicePrincipalAttributeResolver;
 
-    @Autowired
-    @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
-    private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
+    private CasWebflowEventResolver selectiveResolver;
 
+    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
+
+    /**
+     * Tracks the current resolvers in an ordered list.
+     */
+    @PostConstruct
+    public void init() {
+        this.orderedResolvers.add(requestParameterResolver);
+        this.orderedResolvers.add(registeredServicePrincipalAttributeResolver);
+        this.orderedResolvers.add(principalAttributeResolver);
+        this.orderedResolvers.add(registeredServiceResolver);
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
-
             final Credential credential = getCredentialFromContext(context);
             if (credential != null) {
                 final AuthenticationResultBuilder builder =
@@ -78,7 +76,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
                 if (!resolvedEvents.isEmpty()) {
                     putResolvedEventsAsAttribute(context, resolvedEvents);
-                    final Event finalResolvedEvent = this.selectiveAuthenticationProviderWebflowEventResolver.resolveSingle(context);
+                    final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                     if (finalResolvedEvent != null) {
                         return ImmutableSet.of(finalResolvedEvent);
                     }
@@ -112,34 +110,23 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      */
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
                                                               final RegisteredService registeredService) {
-        logger.debug("Evaluating authentication policy for {} based on principal attribute requirements only when accessing {}",
-               registeredService.getServiceId(),  service);
-        final Event serviceAttributeEvent =
-                this.registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
-
-        logger.debug("Evaluating authentication policy based on principal attribute requirements for {}", service);
-        final Event attributeEvent = this.principalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
-
-        logger.debug("Evaluating authentication policy for {}", service);
-        final Event serviceEvent = this.registeredServiceAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
-
-        logger.debug("Evaluating authentication policy for {} based on request parameters", service);
-        final Event requestEvent = this.requestParameterAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
 
         final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
+        this.orderedResolvers
+                .stream()
+                .filter(r -> r != null)
+                .forEach(r -> {
+                    logger.debug("Evaluating authentication policy via {} for registered service {} and service {}",
+                            r.getName(), registeredService.getServiceId(), service);
+                    final Event result = r.resolveSingle(context);
 
-        if (requestEvent != null) {
-            eventBuilder.add(requestEvent);
-        }
-        if (serviceAttributeEvent != null) {
-            eventBuilder.add(serviceAttributeEvent);
-        }
-        if (attributeEvent != null) {
-            eventBuilder.add(attributeEvent);
-        }
-        if (serviceEvent != null) {
-            eventBuilder.add(serviceEvent);
-        }
+                    if (result != null) {
+                        logger.debug("Recorded the resulting event {} for {} is {}", result, r.getName());
+                        eventBuilder.add(result);
+                    } else {
+                        logger.debug("Resulting event for {} is blank/ignored", r.getName());
+                    }
+                });
 
         return eventBuilder.build();
     }
@@ -160,4 +147,23 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
 
+    public void setRequestParameterResolver(final CasWebflowEventResolver r) {
+        this.requestParameterResolver = r;
+    }
+
+    public void setRegisteredServiceResolver(final CasWebflowEventResolver r) {
+        this.registeredServiceResolver = r;
+    }
+
+    public void setPrincipalAttributeResolver(final CasWebflowEventResolver r) {
+        this.principalAttributeResolver = r;
+    }
+
+    public void setRegisteredServicePrincipalAttributeResolver(final CasWebflowEventResolver r) {
+        this.registeredServicePrincipalAttributeResolver = r;
+    }
+
+    public void setSelectiveResolver(final CasWebflowEventResolver r) {
+        this.selectiveResolver = r;
+    }
 }

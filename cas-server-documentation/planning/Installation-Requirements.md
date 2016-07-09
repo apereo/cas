@@ -35,7 +35,7 @@ following are known to work well and should receive first-class support on the
 ## Apache Maven
 CAS uses Maven for building and creating a deployable package for installation into a Java servlet container. Maven is
 also strongly recommended for configuration management required for the CAS installation process. CAS is fundamentally
-a complex software product that becomes embedded and tighly integrated into the software environment of an institution.
+a complex software product that becomes embedded and tightly integrated into the software environment of an institution.
 For this reason it tends to require customization well beyond turnkey solutions, and the integration requirements tend
 to change over time. A source-based installation process like
 [Maven WAR overlay](../installation/Maven-Overlay-Installation.html) provides a straightforward and flexible solution

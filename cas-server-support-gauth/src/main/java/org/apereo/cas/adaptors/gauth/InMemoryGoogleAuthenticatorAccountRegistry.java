@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("defaultGoogleAuthenticatorAccountRegistry")
 public class InMemoryGoogleAuthenticatorAccountRegistry implements GoogleAuthenticatorAccountRegistry {
     
     private Map<String, GoogleAuthenticatorAccount> accounts;

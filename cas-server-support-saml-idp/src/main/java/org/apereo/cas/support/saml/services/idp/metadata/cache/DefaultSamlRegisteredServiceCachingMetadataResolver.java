@@ -6,11 +6,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
@@ -23,16 +18,12 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultSamlRegisteredServiceCachingMetadataResolver")
-public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
+public class DefaultSamlRegisteredServiceCachingMetadataResolver
+        implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
-
-    @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
+    
     private long metadataCacheExpirationMinutes;
-
-    @Autowired
-    @Qualifier("chainingMetadataResolverCacheLoader")
+    
     private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
 
     private LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
@@ -41,6 +32,7 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
      * Instantiates a new Saml registered service caching metadata resolver.
      */
     public DefaultSamlRegisteredServiceCachingMetadataResolver() {}
+    
 
     @PostConstruct
     private void init() {
@@ -56,7 +48,8 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
             resolver = this.cache.get(service);
             return resolver;
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Metadata resolver could not be located from metadata " + service.getMetadataLocation(), e);
+            throw new IllegalArgumentException("Metadata resolver could not be located from metadata " 
+                    + service.getMetadataLocation(), e);
         } finally {
             if (resolver != null) {
                 LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}] for [{}] minute(s)",
@@ -65,5 +58,13 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
                         this.metadataCacheExpirationMinutes);
             }
         }
+    }
+
+    public void setChainingMetadataResolverCacheLoader(final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
+        this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
+    }
+
+    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
+        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
     }
 }

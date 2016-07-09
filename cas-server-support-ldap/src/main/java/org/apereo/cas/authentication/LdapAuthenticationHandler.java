@@ -55,7 +55,6 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Performs LDAP authentication given username/password.
      **/
-    
     private Authenticator authenticator;
 
     /** Component name. */
@@ -70,6 +69,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
+
+    /**
+     * Default ctor.
+     */
+    public LdapAuthenticationHandler() {
+    }
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -145,6 +150,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public void setAdditionalAttributes(final List<String> additionalAttributes) {
         this.additionalAttributes = additionalAttributes;
+    }
+
+    public void setAuthenticator(final Authenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     @Override

@@ -16,8 +16,7 @@ public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     @Autowired
     private OpenIdPostUrlHandlerMapping handlerMapping;
-
-
+    
     @Test
     public void verifyNoMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();

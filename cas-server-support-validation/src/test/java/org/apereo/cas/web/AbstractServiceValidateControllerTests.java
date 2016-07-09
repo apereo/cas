@@ -3,24 +3,34 @@ package org.apereo.cas.web;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
-import org.apereo.cas.mock.MockValidationSpecification;
-import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
+import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
+import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +41,17 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@SpringApplicationConfiguration(
+        classes = {CasCoreValidationConfiguration.class, CasProtocolViewsConfiguration.class,
+                CasCoreValidationConfiguration.class, CasCoreWebConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreUtilConfiguration.class, CasValidationConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
-
     private static final Service SERVICE = TestUtils.getService();
-    protected AbstractServiceValidateController serviceValidateController;
 
+    protected AbstractServiceValidateController serviceValidateController;
 
     @Before
     public void onSetUp() throws Exception {
@@ -51,7 +67,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController.setArgumentExtractor(getArgumentExtractor());
         this.serviceValidateController.setServicesManager(getServicesManager());
         this.serviceValidateController.setValidationSpecification(new Cas20WithoutProxyingValidationSpecification());
-        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(new DefaultMultifactorTriggerSelectionStrategy());
+        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(
+                new DefaultMultifactorTriggerSelectionStrategy());
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
@@ -96,24 +113,22 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", SERVICE.getId());
         request.addParameter("ticket", sId.getId());
 
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
-                this.serviceValidateController.handleRequestInternal(request,
-                        new MockHttpServletResponse()).getViewName());
+        assertTrue(this.serviceValidateController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
+
     }
 
     @Test
     public void verifyValidServiceTicketInvalidSpec() throws Exception {
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
-                this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
-                        new MockHttpServletResponse()).getViewName());
+        assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
     }
 
     @Test
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
         this.serviceValidateController.setValidationSpecification(new MockValidationSpecification(false));
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
-                this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
-                        new MockHttpServletResponse()).getViewName());
+        assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
     }
 
     @Test
@@ -132,9 +147,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", SERVICE.getId());
         request.addParameter("ticket", sId.getId());
 
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
-                this.serviceValidateController.handleRequestInternal(request,
-                        new MockHttpServletResponse()).getViewName());
+        assertFalse(this.serviceValidateController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
     }
 
     @Test
@@ -153,17 +167,16 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("ticket", sId.getId());
         request.addParameter("pgtUrl", "https://www.github.com");
 
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
-                this.serviceValidateController.handleRequestInternal(request,
-                        new MockHttpServletResponse()).getViewName());
+        assertTrue(this.serviceValidateController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
     }
 
     @Test
     public void verifyValidServiceTicketWithSecurePgtUrl() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final ModelAndView modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
-        
+        assertTrue(modelAndView.getView().toString().contains("Success"));
+
     }
 
     @Test
@@ -183,10 +196,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("pgtUrl", "duh");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertTrue(modelAndView.getView().toString().contains("Success"));
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
-    
+
     @Test
     public void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
         final AuthenticationResult ctx = TestUtils
@@ -203,10 +216,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("pgtUrl", "https://www.github.com");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertTrue(modelAndView.getView().toString().contains("Success"));
         assertNotNull(modelAndView.getModel().get("pgtIou"));
     }
-    
+
     @Test
     public void verifyValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Exception {
         final AuthenticationResult ctx = TestUtils
@@ -227,18 +240,18 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
             public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
                 return null;
             }
-            
+
             @Override
             public boolean canHandle(final Credential credential) {
                 return true;
             }
         });
-        
+
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
+        assertFalse(modelAndView.getView().toString().contains("Success"));
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
-    
+
     @Test
     public void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
         final String origSvc = "http://www.jasig.org?param=hello+world";
@@ -249,22 +262,21 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
-        
+
 
         final ServiceTicket sId = getCentralAuthenticationService()
                 .grantServiceTicket(tId.getId(), svc, ctx);
 
         final String reqSvc = "http://WWW.JASIG.ORG?PARAM=hello%20world";
-        
+
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
-        
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
-                this.serviceValidateController.handleRequestInternal(request,
-                        new MockHttpServletResponse()).getViewName());
+
+        assertTrue(this.serviceValidateController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
     }
-    
+
     @Test
     public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
         final Service svc = TestUtils.getService("http://www.jasig.org?param=hello+world");
@@ -282,12 +294,11 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
-        
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
-                this.serviceValidateController.handleRequestInternal(request,
-                        new MockHttpServletResponse()).getViewName());
+
+        assertTrue(this.serviceValidateController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
     }
-    
+
     @Test
     public void verifyValidServiceTicketAndPgtUrlMismatch() throws Exception {
         final Service svc = TestUtils.getService("proxyService");
@@ -303,9 +314,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", svc.getId());
         request.addParameter("ticket", sId.getId());
         request.addParameter("pgtUrl", "http://www.github.com");
-        
+
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
+        assertFalse(modelAndView.getView().toString().contains("Success"));
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 
@@ -324,7 +335,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("format", ValidationResponseType.JSON.name());
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(modelAndView.getViewName(), AbstractServiceValidateController.DEFAULT_SERVICE_VIEW_NAME_JSON);
+        assertTrue(modelAndView.getView().toString().contains("Json"));
     }
 
     @Test
@@ -345,7 +356,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("format", "NOTHING");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(modelAndView.getViewName(), AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME);
+        assertFalse(modelAndView.getView().toString().contains("Success"));
     }
 
     protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {

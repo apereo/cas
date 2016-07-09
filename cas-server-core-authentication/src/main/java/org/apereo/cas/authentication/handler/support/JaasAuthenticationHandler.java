@@ -4,11 +4,6 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
@@ -25,7 +20,6 @@ import java.util.Set;
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
  * authentication to JAAS.
- *
  * <p>
  * Using the JAAS Authentication Handler requires you to configure the
  * appropriate JAAS modules. You can specify the location of a jass.conf file
@@ -33,7 +27,6 @@ import java.util.Set;
  * <pre>
  * -Djava.security.auth.login.config=$PATH_TO_JAAS_CONF/jaas.conf
  * </pre>
- *
  * <p>
  * This example jaas.conf would try Kerberos based authentication, then try LDAP
  * authentication:
@@ -55,39 +48,39 @@ import java.util.Set;
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- *
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
  * @since 3.0.0
  */
-@RefreshScope
-@Component("jaasAuthenticationHandler")
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-    /** If no realm is specified, we default to CAS. */
-    private static final String DEFAULT_REALM = "CAS";
-
+    
     /**
      * System property key to specify kerb5 realm.
      */
     private static final String SYS_PROP_KRB5_REALM = "java.security.krb5.realm";
-    
+
     /**
      * System property key to specify kerb5 kdc.
      */
     private static final String SYS_PROP_KERB5_KDC = "java.security.krb5.kdc";
-    
-    /** The realm that contains the login module information. */
-    
-    private String realm = DEFAULT_REALM;
 
-    /** System property value to overwrite the realm in krb5 config. */
+    /**
+     * The realm that contains the login module information.
+     */
+
+    private String realm = "CAS";
+
+    /**
+     * System property value to overwrite the realm in krb5 config.
+     */
     private String kerberosRealmSystemProperty;
-    
-    /** System property value to overwrite the kdc in krb5 config. */
+
+    /**
+     * System property value to overwrite the kdc in krb5 config.
+     */
     private String kerberosKdcSystemProperty;
-    
+
     /**
      * Instantiates a new Jaas authentication handler,
      * and attempts to load/verify the configuration.
@@ -109,7 +102,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             logger.debug("Setting kerberos system property {} to {}", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
-        
+
         final String username = credential.getUsername();
         final String password = getPasswordEncoder().encode(credential.getPassword());
         final LoginContext lc = new LoginContext(
@@ -131,8 +124,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         return createHandlerResult(credential, principal, null);
     }
 
-    @Autowired
-    public void setRealm(@Value("${cas.authn.jaas.realm:" + DEFAULT_REALM + '}') final String realm) {
+    public void setRealm(final String realm) {
         this.realm = realm;
     }
 
@@ -147,14 +139,13 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
      * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
      * then the default values used for these items are implementation-specific.
+     *
      * @param kerberosRealmSystemProperty system property to indicate realm.
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
-     *      Oracle documentation</a>
+     * Oracle documentation</a>
      * @since 4.1.0
      */
-    @Autowired
-    public void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
-                                                         final String kerberosRealmSystemProperty) {
+    public void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
     }
 
@@ -169,17 +160,16 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
      * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
      * then the default values used for these items are implementation-specific.
+     *
      * @param kerberosKdcSystemProperty system property to indicate kdc
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
-     *      Oracle documentation</a>
+     * Oracle documentation</a>
      * @since 4.1.0
      */
-    @Autowired
-    public void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
-                                                       final String kerberosKdcSystemProperty) {
+    public void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }
-    
+
     /**
      * A simple JAAS CallbackHandler which accepts a Name String and Password
      * String in the constructor. Only NameCallbacks and PasswordCallbacks are
@@ -188,10 +178,14 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     protected static class UsernamePasswordCallbackHandler implements CallbackHandler {
 
-        /** The username of the principal we are trying to authenticate. */
+        /**
+         * The username of the principal we are trying to authenticate.
+         */
         private String userName;
 
-        /** The password of the principal we are trying to authenticate. */
+        /**
+         * The password of the principal we are trying to authenticate.
+         */
         private String password;
 
         /**
@@ -201,14 +195,14 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
          * @param password Password to be used for authentication
          */
         protected UsernamePasswordCallbackHandler(final String userName,
-            final String password) {
+                                                  final String password) {
             this.userName = userName;
             this.password = password;
         }
 
         @Override
         public void handle(final Callback[] callbacks)
-            throws UnsupportedCallbackException {
+                throws UnsupportedCallbackException {
             Arrays.stream(callbacks).filter(callback -> {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);

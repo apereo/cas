@@ -4,11 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -20,8 +16,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("acceptableUsagePolicyFormAction")
 public class AcceptableUsagePolicyFormAction extends AbstractAction {
 
     /**
@@ -30,10 +24,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     private static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
     
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
-    @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    
     private AcceptableUsagePolicyRepository repository;
 
     /**
@@ -69,6 +60,9 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
         return error();
     }
 
+    public void setRepository(final AcceptableUsagePolicyRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {

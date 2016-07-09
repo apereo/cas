@@ -5,6 +5,9 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
@@ -32,8 +35,6 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
 
     @Before
     public void setUp() throws Exception {
-
-
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
         this.action.setPrincipalFactory(new DefaultPrincipalFactory());
 
@@ -46,8 +47,12 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                 getCentralAuthenticationService();
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
-                .setAuthenticationManager(authenticationManager);
+        this.action.setAuthenticationSystemSupport(
+                new DefaultAuthenticationSystemSupport(
+                        new DefaultAuthenticationTransactionManager(authenticationManager),
+                        new DefaultPrincipalElectionStrategy()
+                )
+        );
     }
 
     @Test

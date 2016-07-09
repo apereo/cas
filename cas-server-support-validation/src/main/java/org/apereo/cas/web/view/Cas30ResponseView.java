@@ -1,16 +1,11 @@
 package org.apereo.cas.web.view;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,22 +21,20 @@ import java.util.Set;
  * Renders and prepares CAS3 views. This view is responsible
  * to simply just prep the base model, and delegates to
  * a the real view to render the final output.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
 public class Cas30ResponseView extends Cas20ResponseView {
 
-    @Value("${cas.attrs.protocol.release:true}")
     private boolean releaseProtocolAttributes = true;
 
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
 
     /**
      * Instantiates a new Abstract cas response view.
      */
-    protected Cas30ResponseView() {
+    public Cas30ResponseView() {
         super();
     }
 
@@ -55,7 +48,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.putAll(getCasPrincipalAttributes(model, registeredService));
-        
+
         if (this.releaseProtocolAttributes) {
             attributes.putAll(getCasProtocolAuthenticationAttributes(model, registeredService));
         }
@@ -74,7 +67,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @return the cas authentication attributes
      */
     protected Map<String, Object> getCasProtocolAuthenticationAttributes(final Map<String, Object> model,
-                                                                 final RegisteredService registeredService) {
+                                                                         final RegisteredService registeredService) {
 
         final Map<String, Object> filteredAuthenticationAttributes = new HashMap<>(getAuthenticationAttributes(model));
 
@@ -85,8 +78,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 Collections.singleton(isRememberMeAuthentication(model)));
 
-        final Optional<MultifactorAuthenticationProvider> contextProvider = getSatisfiedMultifactorAuthenticationProvider(model);
-        if (contextProvider.isPresent()) {
+        final Optional<MultifactorAuthenticationProvider> contextProvider = 
+                getSatisfiedMultifactorAuthenticationProvider(model);
+        if (contextProvider.isPresent() && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute,
                     Collections.singleton(contextProvider.get().getId()));
         }
@@ -101,7 +95,8 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @param registeredService the registered service
      * @return the cas principal attributes
      */
-    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, final RegisteredService registeredService) {
+    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, 
+                                                            final RegisteredService registeredService) {
         return super.getPrincipalAttributesAsMultiValuedAttributes(model);
     }
 
@@ -113,7 +108,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @param registeredService the registered service
      */
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
-                                                     final Map<String, Object> attributes, 
+                                                     final Map<String, Object> attributes,
                                                      final RegisteredService registeredService) {
         final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
         super.putIntoModel(model,
@@ -136,24 +131,11 @@ public class Cas30ResponseView extends Cas20ResponseView {
                 formattedAttributes);
     }
 
-    /**
-     * The type Success.
-     */
-    @RefreshScope
-    @Component("cas3ServiceSuccessView")
-    public static class Success extends Cas30ResponseView {
-        /**
-         * Instantiates a new Success.
-         */
-        public Success() {
-            super();
-        }
+    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
+    }
 
-        @Autowired(required=false)
-        @Override
-        public void setView(@Qualifier("cas3SuccessView") final View view) {
-            super.setView(view);
-        }
-        
+    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
     }
 }

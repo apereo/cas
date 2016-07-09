@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  */
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
-    private RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
+    private RememberMeAuthenticationMetaDataPopulator p = new RememberMeAuthenticationMetaDataPopulator();
 
     @Test
     public void verifyWithTrueRememberMeCredentials() {

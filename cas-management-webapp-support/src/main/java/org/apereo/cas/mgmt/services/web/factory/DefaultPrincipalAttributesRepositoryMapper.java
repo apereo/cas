@@ -11,8 +11,6 @@ import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Default mapper for converting {@link PrincipalAttributesRepository} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -20,14 +18,7 @@ import org.springframework.stereotype.Component;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component(DefaultPrincipalAttributesRepositoryMapper.BEAN_NAME)
 public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttributesRepositoryMapper {
-    /**
-     * Name of this bean within the Spring context.
-     */
-    public static final String BEAN_NAME = "defaultPrincipalAttributesRepositoryMapper";
-
     @Override
     public void mapPrincipalRepository(final PrincipalAttributesRepository pr, final RegisteredServiceEditBean.ServiceData bean) {
         final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();

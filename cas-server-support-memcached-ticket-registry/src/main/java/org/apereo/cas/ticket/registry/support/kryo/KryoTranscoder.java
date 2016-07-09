@@ -41,8 +41,6 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.authentication.DefaultAuthentication;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
@@ -69,8 +67,6 @@ import java.util.regex.Pattern;
  * @since 3.0.0
  */
 @SuppressWarnings("rawtypes")
-@RefreshScope
-@Component("kryoTranscoder")
 public class KryoTranscoder implements Transcoder<Object> {
 
     /**

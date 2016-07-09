@@ -5,10 +5,6 @@ import org.apereo.cas.util.DigestUtils;
 
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -22,8 +18,6 @@ import java.security.SecureRandom;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("samlServiceTicketUniqueIdGenerator")
 public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /** Assertion handles are randomly-generated 20-byte identifiers. */
@@ -36,7 +30,6 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
     private byte[] sourceIdDigest;
 
     /** Flag to indicate SAML2 compliance. Default is SAML1.1. */
-    @Value("${cas.saml.ticketid.saml2:false}")
     private boolean saml2compliant;
 
     /** Random generator to construct the AssertionHandle. */
@@ -47,8 +40,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      *
      * @param sourceId the source id
      */
-    @Autowired
-    public SamlCompliantUniqueTicketIdGenerator(@Value("${server.name}") final String sourceId) {
+    public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
         try {
             this.sourceIdDigest = DigestUtils.rawDigest("SHA", sourceId.getBytes("8859_1"));
         } catch (final Exception e) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.logout.DefaultLogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
@@ -34,7 +35,6 @@ import org.springframework.webflow.test.MockFlowExecutionKey;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.Inflater;
@@ -129,7 +129,7 @@ public class FrontChannelLogoutActionTests {
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(TICKET_ID,
                 service,
                 new URL(TEST_URL));
-        final Event event = getLogoutEvent(Arrays.asList(logoutRequest));
+        final Event event = getLogoutEvent(Lists.newArrayList(logoutRequest));
 
         assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
         final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);

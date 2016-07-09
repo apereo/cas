@@ -1,22 +1,18 @@
 package org.apereo.cas.support.wsfederation;
 
+import com.google.common.collect.Lists;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +23,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("wsFedConfig")
 public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
@@ -52,35 +46,21 @@ public class WsFederationConfiguration implements Serializable {
          */
         BOTH
     }
-
     
-    @Value("${cas.wsfed.idp.idattribute:upn}")
     private String identityAttribute;
-
     
-    @Value("${cas.wsfed.idp.id:https://adfs.example.org/adfs/services/trust}")
     private String identityProviderIdentifier;
 
-    
-    @Value("${cas.wsfed.idp.url:https://adfs.example.org/adfs/ls/}")
     private String identityProviderUrl;
-
     
-    @Value("#{'${cas.wsfed.idp.signingcerts:classpath:adfs-signing.crt}'.split(',')}")
-    private List<Resource> signingCertificateResources;
-
+    private List<Resource> signingCertificateResources = new ArrayList<>();
     
-    @Value("${cas.wsfed.rp.id:urn:cas:localhost}")
     private String relyingPartyIdentifier;
-
-    @Value("${cas.wsfed.idp.tolerance:10000}")
+    
     private int tolerance;
-
-    @Value("${cas.wsfed.idp.attribute.resolver.type:WSFED}")
+    
     private WsFedPrincipalResolutionAttributesType attributesType;
-
-    @Autowired(required=false)
-    @Qualifier("wsfedAttributeMutator")
+    
     private WsFederationAttributeMutator attributeMutator;
 
     private List<Credential> signingWallet;
@@ -186,7 +166,7 @@ public class WsFederationConfiguration implements Serializable {
      * @param signingCertificateResources a list of certificate files to read in.
      */
     public void setSigningCertificateResources(final Resource... signingCertificateResources) {
-        this.signingCertificateResources = Arrays.asList(signingCertificateResources);
+        this.signingCertificateResources = Lists.newArrayList(signingCertificateResources);
         createSigningWallet(this.signingCertificateResources);
     }
 
@@ -236,6 +216,10 @@ public class WsFederationConfiguration implements Serializable {
 
     public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {
         this.attributesType = attributesType;
+    }
+    
+    public void setSigningCertificateResources(final List<Resource> signingCertificateResources) {
+        this.signingCertificateResources = signingCertificateResources;
     }
 
     /**

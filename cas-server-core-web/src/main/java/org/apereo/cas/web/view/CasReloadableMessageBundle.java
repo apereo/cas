@@ -3,11 +3,7 @@ package org.apereo.cas.web.view;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -29,8 +25,6 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RefreshScope
-@Component("messageSource")
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
     private String[] basenames;
@@ -69,40 +63,28 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     }
 
     @Override
-    @Autowired
-    public void setBasenames(
-        @Value("#{T(java.util.Arrays)"
-            + ".asList('${message.bundle.basenames:classpath:custom_messages,classpath:messages}')}")
-             final String... basenames) {
+    public void setBasenames(final String... basenames) {
         this.basenames = basenames;
         super.setBasenames(basenames);
     }
 
     @Override
-    @Autowired
-    public void setDefaultEncoding(@Value("${message.bundle.encoding:UTF-8}")
-                                   final String defaultEncoding) {
+    public void setDefaultEncoding(final String defaultEncoding) {
         super.setDefaultEncoding(defaultEncoding);
     }
 
     @Override
-    @Autowired
-    public void setCacheSeconds(@Value("${message.bundle.cacheseconds:180}")
-                                final int cacheSeconds) {
+    public void setCacheSeconds(final int cacheSeconds) {
         super.setCacheSeconds(cacheSeconds);
     }
 
     @Override
-    @Autowired
-    public void setFallbackToSystemLocale(@Value("${message.bundle.fallback.systemlocale:false}")
-                                          final boolean fallbackToSystemLocale) {
+    public void setFallbackToSystemLocale(final boolean fallbackToSystemLocale) {
         super.setFallbackToSystemLocale(fallbackToSystemLocale);
     }
 
     @Override
-    @Autowired
-    public void setUseCodeAsDefaultMessage(@Value("${message.bundle.usecode.message:true}")
-                                           final boolean useCodeAsDefaultMessage) {
+    public void setUseCodeAsDefaultMessage(final boolean useCodeAsDefaultMessage) {
         super.setUseCodeAsDefaultMessage(useCodeAsDefaultMessage);
     }
 }

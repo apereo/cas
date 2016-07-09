@@ -78,7 +78,7 @@ public interface CentralAuthenticationService {
      * @throws InvalidTicketException the invalid ticket exception
      * @since 4.1.0
      */
-    <T extends Ticket> T getTicket(String ticketId,  Class<T> clazz)
+    <T extends Ticket> T getTicket(String ticketId, Class<T> clazz)
             throws InvalidTicketException;
 
     /**
@@ -134,7 +134,7 @@ public interface CentralAuthenticationService {
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ProxyTicket grantProxyTicket(
-             String proxyGrantingTicket,  Service service)
+             String proxyGrantingTicket, Service service)
             throws AbstractTicketException;
 
     /**

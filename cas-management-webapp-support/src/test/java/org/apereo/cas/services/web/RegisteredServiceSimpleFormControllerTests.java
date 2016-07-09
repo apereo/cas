@@ -1,32 +1,35 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
-import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegisteredService;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.apereo.cas.mgmt.services.web.factory.AttributeFormDataPopulator;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeFilterMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeReleasePolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesRepositoryMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
+import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
+import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
-import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -55,19 +58,24 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Before
     public void setUp() throws Exception {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("test", Arrays.asList(new Object[] {"test"}));
+        attributes.put("test", Lists.newArrayList(new Object[] {"test"}));
 
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
+        this.registeredServiceFactory.setAccessStrategyMapper(new DefaultAccessStrategyMapper());
+        this.registeredServiceFactory.setAttributeReleasePolicyMapper(
+                new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+                        new DefaultPrincipalAttributesRepositoryMapper()));
+        this.registeredServiceFactory.setProxyPolicyMapper(new DefaultProxyPolicyMapper());
+        this.registeredServiceFactory.setRegisteredServiceMapper(new DefaultRegisteredServiceMapper());
+        this.registeredServiceFactory.setUsernameAttributeProviderMapper(new DefaultUsernameAttributeProviderMapper());
         this.registeredServiceFactory.setFormDataPopulators(ImmutableList.of(new AttributeFormDataPopulator(this
                 .repository)));
         this.registeredServiceFactory.initializeDefaults();
 
-        this.manager = new DefaultServicesManagerImpl(
-                new InMemoryServiceRegistryDaoImpl());
-        this.manager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+        this.manager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
     }
 
@@ -76,10 +84,6 @@ public class RegisteredServiceSimpleFormControllerTests {
         final BindingResult result = mock(BindingResult.class);
         when(result.getModel()).thenReturn(new HashMap<>());
         when(result.hasErrors()).thenReturn(true);
-        
-        final ModelMap model = new ModelMap();
-        //this.controller.onSubmit(mock(RegisteredService.class), result, model, new MockHttpServletRequest());
-        
         assertTrue(result.hasErrors());
     }
 
@@ -201,7 +205,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof  MockRegisteredService));
+        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
     }
 
     @Test

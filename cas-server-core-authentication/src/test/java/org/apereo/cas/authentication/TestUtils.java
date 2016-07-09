@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication;
 
 import com.google.common.collect.ImmutableList;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
@@ -27,9 +27,7 @@ public final class TestUtils {
     public static final String CONST_USERNAME = "test";
 
     public static final String CONST_TEST_URL = "https://google.com";
-
-    public static final String CONST_TEST_URL2 = "https://example.com";
-
+    
     public static final String CONST_GOOD_URL = "https://github.com/";
 
     private static final String CONST_PASSWORD = "test1";
@@ -88,7 +86,7 @@ public final class TestUtils {
     }
 
     public static IPersonAttributeDao getAttributeRepository() {
-        final Map<String, List<Object>>  attributes = new HashMap<>();
+        final Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("uid", (List) ImmutableList.of(CONST_USERNAME));
         attributes.put("cn", (List) ImmutableList.of(CONST_USERNAME.toUpperCase()));
         attributes.put("givenName", (List) ImmutableList.of(CONST_USERNAME));

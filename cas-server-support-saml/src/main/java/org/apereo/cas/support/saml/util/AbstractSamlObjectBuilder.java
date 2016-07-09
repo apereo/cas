@@ -17,9 +17,9 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -75,17 +75,18 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static final int RANDOM_ID_SIZE = 16;
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
-    
+
     private static final long serialVersionUID = -6833230731146922780L;
     private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
-    /** Logger instance. **/
+    /**
+     * Logger instance.
+     **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Config bean.
      */
-    @Autowired
     protected OpenSamlConfigBean configBean;
 
     public void setConfigBean(final OpenSamlConfigBean configBean) {
@@ -95,7 +96,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * Create a new SAML object.
      *
-     * @param <T> the generic type
+     * @param <T>        the generic type
      * @param objectType the object type
      * @return the t
      */
@@ -130,7 +131,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * New attribute value.
      *
-     * @param value the value
+     * @param value       the value
      * @param elementName the element name
      * @return the xS string
      */
@@ -168,7 +169,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param writer the writer
      * @return the xml string
      */
-    public String marshalSamlXmlObject(final XMLObject object, final StringWriter writer)  {
+    public String marshalSamlXmlObject(final XMLObject object, final StringWriter writer) {
         try {
             final MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
             final Marshaller marshaller = marshallerFactory.getMarshaller(object);
@@ -194,12 +195,12 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * Sign SAML response.
      *
      * @param samlResponse the SAML response
-     * @param privateKey the private key
-     * @param publicKey the public key
+     * @param privateKey   the private key
+     * @param publicKey    the public key
      * @return the response
      */
     public String signSamlResponse(final String samlResponse,
-                                         final PrivateKey privateKey, final PublicKey publicKey) {
+                                   final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXml(samlResponse);
 
         if (doc != null) {
@@ -234,11 +235,11 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      *
      * @param element the element
      * @param privKey the priv key
-     * @param pubKey the pub key
+     * @param pubKey  the pub key
      * @return the element
      */
     private org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey,
-                                                    final PublicKey pubKey) {
+                                             final PublicKey pubKey) {
         try {
             final String providerName = System.getProperty("jsr105Provider",
                     SIGNATURE_FACTORY_PROVIDER_CLASS);
@@ -289,15 +290,14 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             // Create a KeyInfo and add the KeyValue to it
             final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections
                     .singletonList(keyValuePair));
-            // Convert the JDOM document to w3c (Java XML signature API requires
-            // w3c representation)
-            final org.w3c.dom.Element w3cElement = toDom(element);
+            // Convert the JDOM document to w3c (Java XML signature API requires w3c representation)
+            final Element w3cElement = toDom(element);
 
             // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
             // location of the resulting XMLSignature's parent element
             final DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
 
-            final org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
+            final Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
             dsc.setNextSibling(xmlSigInsertionPoint);
 
             // Marshal, generate (and sign) the enveloped signature
@@ -320,8 +320,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the xml signature insert location
      */
     private static Node getXmlSignatureInsertLocation(final org.w3c.dom.Element elem) {
-        org.w3c.dom.Node insertLocation = null;
-        org.w3c.dom.NodeList nodeList = elem.getElementsByTagNameNS(
+        final Node insertLocation;
+        NodeList nodeList = elem.getElementsByTagNameNS(
                 SAMLConstants.SAML20P_NS, "Extensions");
         if (nodeList.getLength() != 0) {
             insertLocation = nodeList.item(nodeList.getLength() - 1);
@@ -338,7 +338,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param element the element
      * @return the org.w3c.dom. element
      */
-    private org.w3c.dom.Element toDom(final org.jdom.Element element) {
+    private Element toDom(final org.jdom.Element element) {
         return toDom(element.getDocument()).getDocumentElement();
     }
 
@@ -371,9 +371,9 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param e the e
      * @return the element
      */
-    private static org.jdom.Element toJdom(final org.w3c.dom.Element e) {
-        return  new DOMBuilder().build(e);
+    private static org.jdom.Element toJdom(final Element e) {
+        return new DOMBuilder().build(e);
     }
-    
+
 }
 

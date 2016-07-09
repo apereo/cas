@@ -1,35 +1,24 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryState;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * Monitors the status of a {@link TicketRegistry}
- * that supports the {@link TicketRegistryState} interface for exposing internal
+ * for exposing internal
  * state information used in status reports.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RefreshScope
-@Component("sessionMonitor")
 public class SessionMonitor implements Monitor<SessionStatus> {
+
     /** Ticket registry instance that exposes state info. */
-    
-    @Resource(name="ticketRegistry")
-    private TicketRegistryState registryState;
+    private TicketRegistry registryState;
 
     /** Threshold above which warnings are issued for session count. */
-    @Value("${cas.monitor.tgt.warn.threshold:10000}")
     private int sessionCountWarnThreshold = -1;
 
     /** Threshold above which warnings are issued for service ticket count. */
-    @Value("${cas.monitor.st.warn.threshold:5000}")
     private int serviceTicketCountWarnThreshold = -1;
 
 
@@ -37,7 +26,7 @@ public class SessionMonitor implements Monitor<SessionStatus> {
      * Sets the ticket registry that exposes state information that may be queried by this monitor.
      * @param state the ticket registry state instance
      */
-    public void setTicketRegistry(final TicketRegistryState state) {
+    public void setTicketRegistry(final TicketRegistry state) {
         this.registryState = state;
     }
 

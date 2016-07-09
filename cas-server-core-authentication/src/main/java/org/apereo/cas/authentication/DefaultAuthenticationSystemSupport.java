@@ -1,10 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link DefaultAuthenticationSystemSupport}.
@@ -13,17 +9,20 @@ import org.springframework.stereotype.Component;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@RefreshScope
-@Component("defaultAuthenticationSystemSupport")
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
-    @Autowired(required = false)
-    @Qualifier("defaultAuthenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager = new DefaultAuthenticationTransactionManager();
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
-    @Autowired(required = false)
-    @Qualifier("principalElectionStrategy")
-    private PrincipalElectionStrategy principalElectionStrategy = new DefaultPrincipalElectionStrategy();
+    private PrincipalElectionStrategy principalElectionStrategy;
+
+    public DefaultAuthenticationSystemSupport() {
+    }
+
+    public DefaultAuthenticationSystemSupport(final AuthenticationTransactionManager authenticationTransactionManager,
+                                              final PrincipalElectionStrategy principalElectionStrategy) {
+        this.authenticationTransactionManager = authenticationTransactionManager;
+        this.principalElectionStrategy = principalElectionStrategy;
+    }
 
     @Override
     public AuthenticationTransactionManager getAuthenticationTransactionManager() {

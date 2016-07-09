@@ -1,42 +1,42 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
-import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
-import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.util.EncodingUtils;
+import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
+import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
+import org.jasig.cas.client.util.CommonUtils;
+import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +44,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.security.SecureRandom;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * A parent controller to handle SAML requests.
@@ -56,18 +58,16 @@ import java.security.SecureRandom;
  */
 public abstract class AbstractSamlProfileHandlerController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
+    
     /**
      * The Saml object signer.
      */
-    @Autowired
-    @Qualifier("samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
      * The Parser pool.
      */
-    @Autowired
     protected ParserPool parserPool;
 
     /**
@@ -76,60 +76,49 @@ public abstract class AbstractSamlProfileHandlerController {
     protected Service callbackService;
 
     /**
-     * The Cas server name.
-     */
-    
-    @Value("${server.name}")
-    protected String casServerName;
-
-    /**
-     * The Cas server prefix.
-     */
-    
-    @Value("${server.prefix}")
-    protected String casServerPrefix;
-
-    /**
-     * The Cas server login url.
-     */
-    
-    @Value("${server.prefix}/login")
-    protected String casServerLoginUrl;
-
-    /**
      * The Services manager.
      */
-    @Autowired
-    @Qualifier("servicesManager")
-    protected ReloadableServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     /**
      * The Web application service factory.
      */
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-    
+
     /**
      * The Saml registered service caching metadata resolver.
      */
-    @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     /**
      * The Config bean.
      */
-    @Autowired
     protected OpenSamlConfigBean configBean;
-    
+
     /**
      * The Response builder.
      */
-    @Autowired
-    @Qualifier("samlProfileSamlResponseBuilder")
     protected SamlProfileSamlResponseBuilder responseBuilder;
 
+    /**
+     * Maps authentication contexts to what CAS can support.
+     */
+    protected Map<String, String> authenticationContextClassMappings = new CaseInsensitiveMap<>();
+
+    private String serverPrefix;
+    
+    private String serverName;
+    
+    private String authenticationContextRequestParameter;
+    
+    private String loginUrl;
+
+    private String logoutUrl;
+    
+    private boolean forceSignedLogoutRequests;
+    
+    private boolean singleLogoutCallbacksDisabled;
+    
     /**
      * Post constructor placeholder for additional
      * extensions. This method is called after
@@ -152,7 +141,6 @@ public abstract class AbstractSamlProfileHandlerController {
         return SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
     }
-
 
     /**
      * Gets registered service and verify.
@@ -191,7 +179,8 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the service
      */
     protected Service registerCallback(final String callbackUrl) {
-        final Service callbackService = this.webApplicationServiceFactory.createService(this.casServerPrefix.concat(callbackUrl));
+        final Service callbackService = this.webApplicationServiceFactory.createService(
+                this.serverPrefix.concat(callbackUrl));
         logger.debug("Initialized callback service [{}]", callbackService);
 
         if (!this.servicesManager.matchesExistingService(callbackService)) {
@@ -204,7 +193,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
             logger.debug("Saving callback service [{}] into the registry", service);
             this.servicesManager.save(service);
-            this.servicesManager.reload();
+            this.servicesManager.load();
         }
         return callbackService;
     }
@@ -220,7 +209,7 @@ public abstract class AbstractSamlProfileHandlerController {
         logger.debug("Retrieving authentication request from scope");
         final String requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
         final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes("UTF-8"));
-        final AuthnRequest authnRequest = (AuthnRequest) 
+        final AuthnRequest authnRequest = (AuthnRequest)
                 XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
         return authnRequest;
     }
@@ -257,7 +246,7 @@ public abstract class AbstractSamlProfileHandlerController {
             logger.debug("Decoded SAML object [{}] from http request", object.getElementQName());
             return (T) object;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -267,7 +256,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param assertion the assertion
      */
     protected void logCasValidationAssertion(final Assertion assertion) {
-        logger.warn("CAS Assertion Valid: [{}]", assertion.isValid());
+        logger.info("CAS Assertion Valid: [{}]", assertion.isValid());
         logger.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
         logger.debug("CAS Assertion AuthN Date: [{}]", assertion.getAuthenticationDate());
         logger.debug("CAS Assertion ValidFrom Date: [{}]", assertion.getValidFromDate());
@@ -290,14 +279,44 @@ public abstract class AbstractSamlProfileHandlerController {
         final String serviceUrl = constructServiceUrl(request, response, authnRequest);
         logger.debug("Created service url [{}]", serviceUrl);
 
-        final String urlToRedirectTo = CommonUtils.constructRedirectUrl(this.casServerLoginUrl,
+        final String initialUrl = CommonUtils.constructRedirectUrl(this.loginUrl,
                 CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
                 authnRequest.isPassive());
+
+        final String urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
 
         logger.debug("Redirecting SAML authN request to \"[{}]\"", urlToRedirectTo);
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
 
+    }
+
+    /**
+     * Build redirect url by requested authn context.
+     *
+     * @param initialUrl   the initial url
+     * @param authnRequest the authn request
+     * @param request      the request
+     * @return the redirect url
+     */
+    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
+                                                             final HttpServletRequest request) {
+
+        if (authnRequest.getRequestedAuthnContext() == null || this.authenticationContextClassMappings.isEmpty()) {
+            return initialUrl;
+        }
+        final Optional<AuthnContextClassRef> p =
+                authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().stream().filter(ref -> {
+                    final String clazz = ref.getAuthnContextClassRef();
+                    return this.authenticationContextClassMappings.containsKey(clazz);
+                }).findFirst();
+
+        if (p.isPresent()) {
+            final String mappedClazz = this.authenticationContextClassMappings.get(p.get().getAuthnContextClassRef());
+            return initialUrl + '&' + this.authenticationContextRequestParameter + '=' + mappedClazz;
+        }
+
+        return initialUrl;
     }
 
     /**
@@ -309,13 +328,13 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the string
      * @throws SamlException the saml exception
      */
-    protected String constructServiceUrl(final HttpServletRequest request, 
+    protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
                                          final AuthnRequest authnRequest)
             throws SamlException {
         try (final StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
-            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, 
+            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
                     SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
 
             final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes("UTF-8"));
@@ -324,12 +343,105 @@ public abstract class AbstractSamlProfileHandlerController {
 
             logger.debug("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                    url, this.casServerName,
+                    url, this.serverName,
                     CasProtocolConstants.PARAMETER_SERVICE,
                     CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
+    }
+
+    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
+        this.samlObjectSigner = samlObjectSigner;
+    }
+
+    public void setParserPool(final ParserPool parserPool) {
+        this.parserPool = parserPool;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setWebApplicationServiceFactory(final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+    }
+
+    public void setSamlRegisteredServiceCachingMetadataResolver(
+            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
+        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
+    }
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
+    }
+
+    public void setResponseBuilder(final SamlProfileSamlResponseBuilder responseBuilder) {
+        this.responseBuilder = responseBuilder;
+    }
+
+    public Map<String, String> getAuthenticationContextClassMappings() {
+        return authenticationContextClassMappings;
+    }
+
+    public void setAuthenticationContextClassMappings(final Map<String, String> authenticationContextClassMappings) {
+        this.authenticationContextClassMappings = authenticationContextClassMappings;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(final String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public String getServerPrefix() {
+        return serverPrefix;
+    }
+
+    public void setServerPrefix(final String serverPrefix) {
+        this.serverPrefix = serverPrefix;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(final String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getAuthenticationContextRequestParameter() {
+        return authenticationContextRequestParameter;
+    }
+
+    public void setAuthenticationContextRequestParameter(final String authenticationContextRequestParameter) {
+        this.authenticationContextRequestParameter = authenticationContextRequestParameter;
+    }
+
+    public boolean isSingleLogoutCallbacksDisabled() {
+        return singleLogoutCallbacksDisabled;
+    }
+
+    public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
+        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
+    }
+
+    public boolean isForceSignedLogoutRequests() {
+        return forceSignedLogoutRequests;
+    }
+
+    public void setForceSignedLogoutRequests(final boolean forceSignedLogoutRequests) {
+        this.forceSignedLogoutRequests = forceSignedLogoutRequests;
+    }
+
+    public String getLogoutUrl() {
+        return logoutUrl;
+    }
+
+    public void setLogoutUrl(final String logoutUrl) {
+        this.logoutUrl = logoutUrl;
     }
 }
 

@@ -8,8 +8,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,8 +21,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
 public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver
         extends RegisteredServiceAuthenticationPolicyWebflowEventResolver {
     @Override

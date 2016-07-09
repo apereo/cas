@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.config.InfinispanTicketRegistryConfiguration;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Assert;
@@ -11,7 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
@@ -22,7 +24,8 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/infinispan-springcache-tests.xml")
+@SpringApplicationConfiguration(
+        classes = {RefreshAutoConfiguration.class, InfinispanTicketRegistryConfiguration.class})
 public class InfinispanTicketRegistryTests {
 
     @Autowired
@@ -69,7 +72,7 @@ public class InfinispanTicketRegistryTests {
         assertNull(infinispanTicketRegistry.getTicket(""));
     }
 
-    private Ticket getTicket() {
+    private static Ticket getTicket() {
         final Authentication authentication = TestUtils.getAuthentication();
         return new TicketGrantingTicketImpl("123", authentication, new NeverExpiresExpirationPolicy());
     }

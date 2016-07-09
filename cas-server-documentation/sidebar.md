@@ -11,6 +11,7 @@
 * [Installation](#installation)
     *   [Maven Overlay](/$version/installation/Maven-Overlay-Installation.html)
     *   [Configuration Management](/$version/installation/Configuration-Management.html)
+    *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Docker](/$version/installation/Docker-Installation.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
@@ -27,6 +28,7 @@
     *   [YubiKey](/$version/installation/YubiKey-Authentication.html)
     *   [Trusted](/$version/installation/Trusted-Authentication.html)
     *   [JWT](/$version/installation/JWT-Authentication.html)
+    *   [Rest](/$version/installation/Rest-Authentication.html)
     *   [Stormpath](/$version/installation/Stormpath-Authentication.html)
     *   [Basic](/$version/installation/Basic-Authentication.html)
     *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)

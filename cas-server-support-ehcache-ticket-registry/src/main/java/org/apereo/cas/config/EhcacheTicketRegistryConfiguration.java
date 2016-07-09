@@ -1,17 +1,25 @@
 package org.apereo.cas.config;
 
 import com.google.common.collect.ImmutableSet;
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.ResourceUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
+
+import javax.annotation.Nullable;
 
 /**
  * This is {@link EhcacheTicketRegistryConfiguration}.
@@ -20,144 +28,27 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 @Configuration("ehcacheTicketRegistryConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class EhcacheTicketRegistryConfiguration {
 
-    /**
-     * The Loader async.
-     */
-    @Value("${ehcache.cache.loader.async:true}")
-    private boolean loaderAsync;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
-    /**
-     * The Max chunk size.
-     */
-    @Value("${ehcache.cache.loader.chunksize:5000000}")
-    private int maxChunkSize;
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor cipherExecutor;
 
-    /**
-     * The Maximum batch size.
-     */
-    @Value("${ehcache.repl.async.batch.size:100}")
-    private int maximumBatchSize;
-
-    /**
-     * The Replication interval.
-     */
-    @Value("${ehcache.repl.async.interval:10000}")
-    private int replicationInterval;
-
-    /**
-     * The Replicate puts.
-     */
-    @Value("${ehcache.repl.sync.puts:true}")
-    private boolean replicatePuts;
-
-    /**
-     * The Replicate updates via copy.
-     */
-    @Value("${ehcache.repl.sync.updatescopy:true}")
-    private boolean replicateUpdatesViaCopy;
-
-    /**
-     * The Replicate removals.
-     */
-    @Value("${ehcache.repl.sync.removals:true}")
-    private boolean replicateRemovals;
-
-    /**
-     * The Replicate updates.
-     */
-    @Value("${ehcache.repl.sync.updates:true}")
-    private boolean replicateUpdates;
-
-    /**
-     * The Replicate puts via copy.
-     */
-    @Value("${ehcache.repl.sync.putscopy:true}")
-    private boolean replicatePutsViaCopy;
-
-    /**
-     * The Config location.
-     */
-    @Value("${ehcache.config.file:classpath:ehcache-replicated.xml}")
-    private Resource configLocation;
-
-    /**
-     * The Shared.
-     */
-    @Value("${ehcache.cachemanager.shared:false}")
-    private boolean shared;
-
-    /**
-     * The Cache manager name.
-     */
-    @Value("${ehcache.cachemanager.name:ticketRegistryCacheManager}")
-    private String cacheManagerName;
-
-    /**
-     * The Service tickets cache name.
-     */
-    @Value("${ehcache.cache.name:org.apereo.cas.ticket.TicketCache}")
-    private String cacheName;
-    
-    /**
-     * The Disk expiry thread interval seconds.
-     */
-    @Value("${ehcache.disk.expiry.interval.seconds:0}")
-    private int diskExpiryThreadIntervalSeconds;
-
-    /**
-     * The Disk persistent.
-     */
-    @Value("${ehcache.disk.persistent:false}")
-    private boolean diskPersistent;
-
-    /**
-     * The Eternal.
-     */
-    @Value("${ehcache.eternal:false}")
-    private boolean eternal;
-
-    /**
-     * The Max elements in memory.
-     */
-    @Value("${ehcache.max.elements.memory:10000}")
-    private int maxElementsInMemory;
-
-    /**
-     * The Max elements on disk.
-     */
-    @Value("${ehcache.max.elements.disk:0}")
-    private int maxElementsOnDisk;
-
-    /**
-     * The Memory store eviction policy.
-     */
-    @Value("${ehcache.eviction.policy:LRU}")
-    private String memoryStoreEvictionPolicy;
-
-    /**
-     * The Overflow to disk.
-     */
-    @Value("${ehcache.overflow.disk:false}")
-    private boolean overflowToDisk;
-
-    @Value("${ehcache.timeIdle:0}")
-    private int cacheTimeToIdle;
-
-    @Value("${ehcache.timeAlive:" + Integer.MAX_VALUE + '}')
-    private int cacheTimeToLive;
-
-    /**
-     * Ticket rmi synchronous cache replicator rmi synchronous cache replicator.
-     *
-     * @return the rmi synchronous cache replicator
-     */
     @RefreshScope
-    @Bean(name = "ticketRMISynchronousCacheReplicator")
+    @Bean
     public RMISynchronousCacheReplicator ticketRMISynchronousCacheReplicator() {
-        return new RMISynchronousCacheReplicator(this.replicatePuts, this.replicatePutsViaCopy,
-                this.replicateUpdates, this.replicateUpdatesViaCopy, this.replicateRemovals);
+
+        return new RMISynchronousCacheReplicator(
+                casProperties.getTicket().getRegistry().getEhcache().isReplicatePuts(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicatePutsViaCopy(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicateUpdates(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicateUpdatesViaCopy(),
+                casProperties.getTicket().getRegistry().getEhcache().isReplicateRemovals());
     }
 
     /**
@@ -166,9 +57,10 @@ public class EhcacheTicketRegistryConfiguration {
      * @return the rmi bootstrap cache loader
      */
     @RefreshScope
-    @Bean(name = "ticketCacheBootstrapCacheLoader")
+    @Bean
     public RMIBootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
-        return new RMIBootstrapCacheLoader(this.loaderAsync, this.maxChunkSize);
+        return new RMIBootstrapCacheLoader(casProperties.getTicket().getRegistry().getEhcache().isLoaderAsync(),
+                casProperties.getTicket().getRegistry().getEhcache().getMaxChunkSize());
     }
 
 
@@ -178,12 +70,13 @@ public class EhcacheTicketRegistryConfiguration {
      * @return the eh cache manager factory bean
      */
     @RefreshScope
-    @Bean(name = "cacheManager")
+    @Bean
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-        bean.setConfigLocation(ResourceUtils.prepareClasspathResourceIfNeeded(this.configLocation));
-        bean.setShared(this.shared);
-        bean.setCacheManagerName(this.cacheManagerName);
+        bean.setConfigLocation(ResourceUtils.prepareClasspathResourceIfNeeded(
+                casProperties.getTicket().getRegistry().getEhcache().getConfigLocation()));
+        bean.setShared(casProperties.getTicket().getRegistry().getEhcache().isShared());
+        bean.setCacheManagerName(casProperties.getTicket().getRegistry().getEhcache().getCacheManagerName());
 
         return bean;
     }
@@ -195,27 +88,36 @@ public class EhcacheTicketRegistryConfiguration {
      * @return the eh cache factory bean
      */
     @RefreshScope
-    @Bean(name = "ehcacheTicketsCache")
-    public EhCacheFactoryBean ehcacheTicketsCache(final CacheManager manager) {
+    @Bean
+    public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager")
+                                                  final CacheManager manager) {
         final EhCacheFactoryBean bean = new EhCacheFactoryBean();
-        bean.setCacheName(this.cacheName);
+        bean.setCacheName(casProperties.getTicket().getRegistry().getEhcache().getCacheName());
         bean.setCacheEventListeners(ImmutableSet.of(ticketRMISynchronousCacheReplicator()));
-        bean.setTimeToIdle(this.cacheTimeToIdle);
-        bean.setTimeToLive(this.cacheTimeToLive);
+        bean.setTimeToIdle(casProperties.getTicket().getRegistry().getEhcache().getCacheTimeToIdle());
+        bean.setTimeToLive(casProperties.getTicket().getRegistry().getEhcache().getCacheTimeToLive());
 
         bean.setCacheManager(manager);
         bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
 
-        bean.setDiskExpiryThreadIntervalSeconds(this.diskExpiryThreadIntervalSeconds);
-        bean.setDiskPersistent(this.diskPersistent);
-        bean.setEternal(this.eternal);
-        bean.setMaxElementsInMemory(this.maxElementsInMemory);
-        bean.setMaxElementsOnDisk(this.maxElementsOnDisk);
-        bean.setMemoryStoreEvictionPolicy(this.memoryStoreEvictionPolicy);
-        bean.setOverflowToDisk(this.overflowToDisk);
-        
+        bean.setDiskExpiryThreadIntervalSeconds(
+                casProperties.getTicket().getRegistry().getEhcache().getDiskExpiryThreadIntervalSeconds());
+        bean.setDiskPersistent(casProperties.getTicket().getRegistry().getEhcache().isDiskPersistent());
+        bean.setEternal(casProperties.getTicket().getRegistry().getEhcache().isEternal());
+        bean.setMaxElementsInMemory(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsInMemory());
+        bean.setMaxElementsOnDisk(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsOnDisk());
+        bean.setMemoryStoreEvictionPolicy(casProperties.getTicket().getRegistry().getEhcache().getMemoryStoreEvictionPolicy());
+        bean.setOverflowToDisk(casProperties.getTicket().getRegistry().getEhcache().isOverflowToDisk());
+
         return bean;
     }
-    
 
+    @RefreshScope
+    @Bean(name = {"ehcacheTicketRegistry", "ticketRegistry"})
+    public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache")
+                                                final Cache ehcacheTicketsCache) {
+        final EhCacheTicketRegistry r = new EhCacheTicketRegistry(ehcacheTicketsCache);
+        r.setCipherExecutor(cipherExecutor);
+        return r;
+    }
 }

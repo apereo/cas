@@ -7,7 +7,8 @@ import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -23,7 +24,8 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/ldap-context.xml", "/authn-context.xml"})
+@SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/authn-context.xml"},
+        classes = {RefreshAutoConfiguration.class})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @Autowired
@@ -53,7 +55,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         }
     }
 
-    @Test(expected=FailedLoginException.class)
+    @Test(expected = FailedLoginException.class)
     public void verifyAuthenticateFailure() throws Exception {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
@@ -63,7 +65,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         }
     }
 
-    @Test(expected=AccountNotFoundException.class)
+    @Test(expected = AccountNotFoundException.class)
     public void verifyAuthenticateNotFound() throws Exception {
         this.handler.authenticate(new UsernamePasswordCredential("notfound", "somepwd"));
         fail("Should have thrown FailedLoginException.");

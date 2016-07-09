@@ -25,7 +25,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     
     @Before
     public void setUp() throws Exception {
-        view =  new Saml10FailureResponseView();
+        view = new Saml10FailureResponseView();
         final Saml10ObjectBuilder builder = new Saml10ObjectBuilder();
         builder.setConfigBean(this.configBean);
         this.view.setSamlObjectBuilder(builder);
@@ -33,7 +33,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     
     @Test
     public void verifyResponse() throws Exception {
-        final MockHttpServletRequest request =  new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addParameter("TARGET", "service");
 

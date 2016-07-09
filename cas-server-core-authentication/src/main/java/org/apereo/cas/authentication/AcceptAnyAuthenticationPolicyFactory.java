@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.ServiceContext;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Produces authentication policies that passively satisfy any given {@link Authentication}.
@@ -10,8 +8,6 @@ import org.springframework.stereotype.Component;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("acceptAnyAuthenticationPolicyFactory")
 public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 
     @Override

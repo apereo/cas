@@ -1,9 +1,5 @@
 package org.apereo.cas.validation;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 /**
  * Validation specification for the CAS 2.0 protocol. This specification extends
  * the Cas20ProtocolValidationSpecification, checking for the presence of
@@ -14,9 +10,6 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("cas20WithoutProxyProtocolValidationSpecification")
-@Scope(value = "prototype")
 public class Cas20WithoutProxyingValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
     /**

@@ -9,8 +9,6 @@ import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
@@ -36,10 +34,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
 
     /** The password policy configuration to be used by extensions. */
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
-    
-    /**
-     * {@inheritDoc}
-     **/
+
     @Override
     protected HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
@@ -48,7 +43,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
             throw new AccountNotFoundException("Username is null.");
         }
         
-        final String transformedUsername= this.principalNameTransformer.transform(userPass.getUsername());
+        final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (transformedUsername == null) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
@@ -87,27 +82,15 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         return this.passwordPolicyConfiguration;
     }
 
-    /**
-     * Sets the PasswordEncoder to be used with this class.
-     *
-     * @param passwordEncoder the PasswordEncoder to use when encoding
-     * passwords.
-     */
-    @Autowired(required=false)
-    public void setPasswordEncoder(@Qualifier("passwordEncoder")
-                                             final PasswordEncoder passwordEncoder) {
+    public void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Autowired(required=false)
-    public void setPrincipalNameTransformer(@Qualifier("principalNameTransformer")
-                                                      final PrincipalNameTransformer principalNameTransformer) {
+    public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
 
-    @Autowired(required=false)
-    public void setPasswordPolicyConfiguration(@Qualifier("passwordPolicyConfiguration")
-                                                         final PasswordPolicyConfiguration passwordPolicyConfiguration) {
+    public void setPasswordPolicyConfiguration(final PasswordPolicyConfiguration passwordPolicyConfiguration) {
         this.passwordPolicyConfiguration = passwordPolicyConfiguration;
     }
 

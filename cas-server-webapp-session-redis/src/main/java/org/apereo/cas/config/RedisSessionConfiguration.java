@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
@@ -11,5 +13,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  */
 @Configuration("redisSessionConfiguration")
 @EnableRedisHttpSession
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisSessionConfiguration {
 }

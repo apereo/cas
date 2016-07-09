@@ -28,38 +28,9 @@ Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi
 replication for distributed caches composed of two or more nodes. To learn more about RMI
 replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 
-Enable the registry in `application.properties` via:
-
-```properties
-#CAS components mappings
-ticketRegistry=ehcacheTicketRegistry
-```
-
 #### Configuration
-```properties
-# ehcache.config.file=classpath:ehcache-replicated.xml
-# ehcache.cachemanager.shared=false
-# ehcache.cachemanager.name=ticketRegistryCacheManager
-# ehcache.disk.expiry.interval.seconds=0
-# ehcache.disk.persistent=false
-# ehcache.eternal=false
-# ehcache.max.elements.memory=10000
-# ehcache.max.elements.disk=0
-# ehcache.eviction.policy=LRU
-# ehcache.overflow.disk=false
-# ehcache.cache.loader.async=true
-# ehcache.cache.loader.chunksize=5000000
-# ehcache.repl.async.interval=10000
-# ehcache.repl.async.batch.size=100
-# ehcache.repl.sync.puts=true
-# ehcache.repl.sync.putscopy=true
-# ehcache.repl.sync.updates=true
-# ehcache.repl.sync.updatescopy=true
-# ehcache.repl.sync.removals=true
-# ehcache.cache.name=org.apereo.cas.ticket.ServiceTicket
-# ehcache.cache.timeIdle=0
-# ehcache.cache.timeAlive=9000
-```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
 
@@ -90,6 +61,7 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
 ```
 
 ### Eviction Policy
+
 Ehcache manages the internal eviction policy of cached objects via the idle and alive settings.
 These settings control the general policy of the cache that is used to store various ticket types. In general,
 you need to ensure the cache is alive long enough to support the individual expiration policy of tickets, and let

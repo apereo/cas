@@ -1,8 +1,10 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -11,36 +13,28 @@ import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedProxyingException;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.AbstractTicketValidationException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
+import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.Pair;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.UnauthorizedProxyingException;
-import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.AbstractTicketValidationException;
-import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
-import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.ValidationSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,71 +56,36 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@RefreshScope
-@Component("serviceValidateController")
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
-    /** View if Service Ticket Validation Fails. */
-    public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
-
-    /** View if Service Ticket Validation Succeeds. */
-    public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
-
-    /** JSON View if Service Ticket Validation Succeeds and if service requires JSON. */
-    public static final String DEFAULT_SERVICE_VIEW_NAME_JSON = "cas3ServiceJsonView";
-
-    @Autowired
-    private ApplicationContext context;
-
     
     private ValidationSpecification validationSpecification;
-
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
-    /** Implementation of Service Manager. */
-    
-    @Autowired
-    @Qualifier("servicesManager")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+            
     private ServicesManager servicesManager;
     
-    /** The CORE which we will delegate all requests to. */
-    
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The proxy handler we want to use with the controller. */
-    
     private ProxyHandler proxyHandler;
 
     /** The view to redirect to on a successful validation. */
-    
-    private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
+    private View successView;
 
     /** The view to redirect to on a validation failure. */
-    
-    private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
+    private View failureView;
 
     /** Extracts parameters from Request object. */
-    
-    @Autowired
-    @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
-
     
-    @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
-    private String authenticationContextAttribute;
-
-    @Autowired
-    @Qualifier("authenticationContextValidator")
+        
     private AuthenticationContextValidator authenticationContextValidator;
+    
+    private View jsonView;
 
+    private String authnContextAttribute;
+    
     /**
      * Instantiates a new Service validate controller.
      */
@@ -141,7 +100,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the credentials or null if there was an error or no credentials
      * provided.
      */
-    protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, final HttpServletRequest request) {
+    protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, 
+                                                          final HttpServletRequest request) {
         final String pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.hasText(pgtUrl)) {
             try {
@@ -173,7 +133,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         // resolve MFA auth context for this request
         final Map<String, MultifactorAuthenticationProvider> providers = 
-                this.context.getBeansOfType(MultifactorAuthenticationProvider.class);
+                this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
         final Authentication authentication = assertion.getPrimaryAuthentication();
         final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
                 service, authentication.getPrincipal());
@@ -257,7 +217,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @return the model and view
      */
-    protected ModelAndView handleTicketValidation(final HttpServletRequest request, final WebApplicationService service, 
+    protected ModelAndView handleTicketValidation(final HttpServletRequest request, 
+                                                  final WebApplicationService service, 
                                                   final String serviceTicketId) {
         TicketGrantingTicket proxyGrantingTicketId = null;
         final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
@@ -344,12 +305,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @param assertion the assertion
      */
-    protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
+    protected void onSuccessfulValidation(final String serviceTicketId, 
+                                          final Assertion assertion) {
         // template method with nothing to do.
     }
 
     /**
-     * Generate error view, set to {@link #setFailureView(String)}.
+     * Generate error view.
      *
      * @param code the code
      * @param description the description
@@ -363,7 +325,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                            final WebApplicationService service) {
 
         final ModelAndView modelAndView = getModelAndView(request, false, service);
-        final String convertedDescription = this.context.getMessage(description, args,
+        final String convertedDescription = this.applicationContext.getMessage(description, args,
             description, request.getLocale());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, code);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, convertedDescription);
@@ -385,7 +347,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
         
         if (type == ValidationResponseType.JSON) {
-            return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
+            return new ModelAndView(this.jsonView);
         }
         
         return new ModelAndView(isSuccess ? this.successView : this.failureView);
@@ -417,7 +379,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         if (contextProvider.isPresent()) {
-            modelAndView.addObject(this.authenticationContextAttribute, contextProvider);
+            modelAndView.addObject(this.authnContextAttribute, contextProvider);
         }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
@@ -438,7 +400,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return Collections.emptyMap();  
     }
-
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
@@ -473,7 +434,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * @param failureView The failureView to set.
      */
-    public void setFailureView(final String failureView) {
+    public void setFailureView(final View failureView) {
         this.failureView = failureView;
     }
 
@@ -481,14 +442,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Return the failureView.
      * @return the failureView
      */
-    public String getFailureView() {
+    public View getFailureView() {
         return this.failureView;
     }
 
     /**
      * @param successView The successView to set.
      */
-    public void setSuccessView(final String successView) {
+    public void setSuccessView(final View successView) {
         this.successView = successView;
     }
 
@@ -496,9 +457,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Return the successView.
      * @return the successView
      */
-    public String getSuccessView() {
+    public View getSuccessView() {
         return this.successView;
     }
+    
     /**
      * @param proxyHandler The proxyHandler to set.
      */
@@ -539,8 +501,16 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
+    
+    public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {
+        this.authenticationContextValidator = authenticationContextValidator;
+    }
 
-    public void setApplicationContext(final ApplicationContext context) {
-        this.context = context;
+    public void setJsonView(final View jsonView) {
+        this.jsonView = jsonView;
+    }
+
+    public void setAuthnContextAttribute(final String authnContextAttribute) {
+        this.authnContextAttribute = authnContextAttribute;
     }
 }

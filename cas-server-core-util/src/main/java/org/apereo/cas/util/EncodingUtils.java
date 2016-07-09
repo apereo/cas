@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Throwables;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -84,7 +86,7 @@ public final class EncodingUtils {
         try {
             return URLEncoder.encode(value, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -98,7 +100,7 @@ public final class EncodingUtils {
         try {
             return URLDecoder.decode(value, "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

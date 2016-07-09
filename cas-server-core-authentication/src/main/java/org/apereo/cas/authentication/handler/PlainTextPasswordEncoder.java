@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication.handler;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Default password encoder for the case where no password encoder is needed.
@@ -11,8 +9,6 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("plainTextPasswordEncoder")
 public class PlainTextPasswordEncoder implements PasswordEncoder {
 
     @Override

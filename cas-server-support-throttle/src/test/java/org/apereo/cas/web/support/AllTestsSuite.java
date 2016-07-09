@@ -11,8 +11,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class,
-        InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class,
-        InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class
+        InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class
 })
 public class AllTestsSuite {
 }

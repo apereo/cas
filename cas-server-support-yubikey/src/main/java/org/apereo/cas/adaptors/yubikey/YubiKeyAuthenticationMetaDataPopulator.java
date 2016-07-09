@@ -6,11 +6,6 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link YubiKeyAuthenticationMetaDataPopulator} which inserts the
@@ -19,20 +14,12 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("yubikeyAuthenticationMetaDataPopulator")
 public class YubiKeyAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    
     private String authenticationContextAttribute;
 
-    @Autowired
-    @Qualifier("yubikeyAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
-
-    @Autowired
-    @Qualifier("yubikeyAuthenticationProvider")
     private MultifactorAuthenticationProvider provider;
 
     @Override
@@ -46,6 +33,18 @@ public class YubiKeyAuthenticationMetaDataPopulator implements AuthenticationMet
     @Override
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);
+    }
+
+    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
+    }
+
+    public void setAuthenticationHandler(final AuthenticationHandler authenticationHandler) {
+        this.authenticationHandler = authenticationHandler;
+    }
+
+    public void setProvider(final MultifactorAuthenticationProvider provider) {
+        this.provider = provider;
     }
 }
 
