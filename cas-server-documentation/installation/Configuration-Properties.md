@@ -24,36 +24,36 @@ The following list of properties are controlled by and provided to CAS.
 The following properties are related to the embedded Tomcat container that ships with CAS. 
 
 ```properties
-server.context-path=/cas
+server.contextPath=/cas
 server.port=8443
-server.ssl.key-store=file:/etc/cas/thekeystore
-server.ssl.key-store-password=changeit
-server.ssl.key-password=changeit
+server.ssl.keyStore=file:/etc/cas/thekeystore
+server.ssl.keyStorePassword=changeit
+server.ssl.keyPassword=changeit
 # server.ssl.ciphers=
-# server.ssl.client-auth=
+# server.ssl.clientAuth=
 # server.ssl.enabled=
-# server.ssl.key-alias=
-# server.ssl.key-store-provider=
-# server.ssl.key-store-type=
+# server.ssl.keyAlias=
+# server.ssl.keyStoreProvider=
+# server.ssl.keyStoreType=
 # server.ssl.protocol=
-# server.ssl.trust-store=
-# server.ssl.trust-store-password=
-# server.ssl.trust-store-provider=
-# server.ssl.trust-store-type=
+# server.ssl.trustStore=
+# server.ssl.trustStorePassword=
+# server.ssl.trustStoreProvider=
+# server.ssl.trustStoreType=
 
 server.tomcat.basedir=build/tomcat
 server.tomcat.accesslog.enabled=true
 server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
 server.tomcat.accesslog.suffix=.log
-server.tomcat.max-http-header-size=20971520
-server.tomcat.max-threads=5
-server.tomcat.port-header=X-Forwarded-Port
-server.tomcat.protocol-header=X-Forwarded-Proto
-server.tomcat.protocol-header-https-value=https
-server.tomcat.remote-ip-header=X-FORWARDED-FOR
-server.tomcat.uri-encoding=UTF-8
+server.tomcat.maxHttpHeaderSize=20971520
+server.tomcat.maxThreads=5
+server.tomcat.portHeader=X-Forwarded-Port
+server.tomcat.protocolHeader=X-Forwarded-Proto
+server.tomcat.protocolHeaderHttpsValue=https
+server.tomcat.remoteIpHeader=X-FORWARDED-FOR
+server.tomcat.uriEncoding=UTF-8
 
-server.use-forward-headers=true
+server.useForwardHeaders=true
 ```
 
 ### CAS Server Embedded Tomcat HTTP
