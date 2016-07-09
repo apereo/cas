@@ -149,25 +149,7 @@ in the Maven overlay must include a reference to the Maven Java compiler so clas
 
 <build>
     <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.3</version>
-            <configuration>
-                <warName>cas</warName>
-                <overlays>
-                    <overlay>
-                        <groupId>org.apereo.cas</groupId>
-                        <artifactId>cas-server-webapp</artifactId>
-                        <excludes>
-                            <exclude>WEB-INF/application.properties</exclude>
-                            <exclude>WEB-INF/classes/log4j2.xml</exclude>
-                            <exclude>...</exclude>
-                        </excludes>
-                    </overlay>
-                </overlays>
-            </configuration>
-        </plugin>
+...
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -177,7 +159,7 @@ in the Maven overlay must include a reference to the Maven Java compiler so clas
                 <target>${java.target.version}</target>
             </configuration>
         </plugin>
-
+...
     </plugins>
     <finalName>cas</finalName>
 </build>
