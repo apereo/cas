@@ -3,7 +3,7 @@ layout: default
 title: CAS Properties
 ---
 
-## CAS Properties
+## CAS PropertiesJ
 
 Various properties can be specified in CAS [either inside configuration files or as command 
 line switches](Configuration-Management.md). This section provides a list common CAS properties and 
@@ -19,7 +19,7 @@ and `CAS_SOME_PROPERTY` are all valid names.
 
 The following list of properties are controlled by and provided to CAS.
 
-### Server Context
+### Embedded Tomcat
 
 The following properties are related to the embedded Tomcat container that ships with CAS. 
 
@@ -56,21 +56,16 @@ server.tomcat.uriEncoding=UTF-8
 server.useForwardHeaders=true
 ```
 
-### CAS Server Embedded Tomcat HTTP
+### Embedded Tomcat HTTP/AJP
 
-Enable HTTP connections for the embedded Tomcat container.
+Enable HTTP/AJP connections for the embedded Tomcat container.
 
 ```properties
 # cas.server.http.port=8080
 # cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
 # cas.server.http.enabled=true
-```
+# cas.server.connectionTimeout=20000
 
-### CAS Server Embedded Tomcat AJP
-
-Enable the AJP connector for the embedded Tomcat container.
-
-```properties
 # cas.server.ajp.secure=false
 # cas.server.ajp.enabled=false
 # cas.server.ajp.proxyPort=-1
@@ -89,20 +84,15 @@ Enable the AJP connector for the embedded Tomcat container.
 Identify the CAS server. `name` and `prefix` are always required settings. 
 
 ```properties
-# cas.server.connectionTimeout=20000
 # cas.server.name=https://cas.example.org:8443
 # cas.server.prefix=https://cas.example.org:8443/cas
 ```
 
-### HTTP Encoding
-
-```properties
-spring.http.encoding.charset=UTF-8
-spring.http.encoding.enabled=true
-spring.http.encoding.force=true
-```
 
 ### Cloud Config AMQP Bus
+
+CAS uses the Spring Cloud Bus to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a 
+distributed system with a lightweight message broker
 
 ```properties
 spring.cloud.bus.enabled=false
@@ -126,7 +116,7 @@ endpoint of CAS which provide administrative functionality and oversight into th
 # cas.securityContext.adminpages.ip=.+
 # endpoints.enabled=true
 # endpoints.sensitive=true
-# management.context-path=/status
+# management.contextPath=/status
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
 
@@ -143,11 +133,11 @@ Control the web application session behavior.
 
 ```properties
 server.session.timeout=300
-server.session.cookie.http-only=true
-server.session.tracking-modes=COOKIE
+server.session.cookie.httpOnly=true
+server.session.trackingModes=COOKIE
 ```
 
-### Thymeleaf View
+### Thymeleaf View Management
 
 ```properties
 spring.thymeleaf.encoding=UTF-8
@@ -160,14 +150,14 @@ Control the location and other settings of the CAS logging configuration.
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
-server.context-parameters.isLog4jAutoInitializationDisabled=true
+server.contextParameters.isLog4jAutoInitializationDisabled=true
 ```
 
 ### AspectJ Configuration
 
 ```properties
 # spring.aop.auto=true
-# spring.aop.proxy-target-class=true
+# spring.aop.proxyTargetClass=true
 ```
 
 ### Authentication Attributes
@@ -194,16 +184,16 @@ CAS attempts to vend and validate tickets.
 ### CAS Groovy Shell Console
 
 ```properties
-# shell.command-refresh-interval=15
-# shell.command-path-patterns=classpath*:/commands/**
+# shell.commandRefreshInterval=15
+# shell.commandPathPatterns=classpath*:/commands/**
 # shell.auth.simple.user.name=
 # shell.auth.simple.user.password=
 # shell.ssh.enabled=true
 # shell.ssh.port=2000
 # shell.telnet.enabled=false
 # shell.telnet.port=5000
-# shell.ssh.auth-timeout=3000
-# shell.ssh.idle-timeout=30000
+# shell.ssh.authTimeout=3000
+# shell.ssh.idleTimeout=30000
 ```
 
 
@@ -229,14 +219,14 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.principalTransformation.prefix=
 ```
 
-### Database Global
+### Hibernate & JDBC 
 
 ```properties
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
 ```
 
-### Password Encoder
+### Authentication Password Encoding
 
 ```properties
 # cas.authn.passwordEncoder.characterEncoding=
@@ -251,7 +241,7 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
 
-### X509 
+### X509 Authentication
 
 ```properties
 # cas.authn.x509.checkKeyUsage=false
@@ -293,7 +283,7 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.trusted.returnNull=false
 ```
 
-## WS Federation
+## WS-Fed Authentication
 
 ```properties
 # cas.authn.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
@@ -307,14 +297,14 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.wsfed.autoRedirect=true
 ```
 
-## WS Federation Principal Resolution
+## WS-Fed Principal Resolution
 
 ```properties
 # cas.authn.wsfed.principal.principalAttribute=
 # cas.authn.wsfed.principal.returnNull=false
 ```
 
-## Multifactor Authentication Global
+## Multifactor Authentication
 
 ```properties
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
@@ -343,9 +333,19 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.mfa.yubikey.rank=0
 ```
 
-## Multifactor Authentication Radius -> Server
+## Multifactor Authentication -> Radius
 
 ```properties
+# cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
+# cas.authn.mfa.radius.failoverOnException=false
+# cas.authn.mfa.radius.rank=0
+
+# cas.authn.mfa.radius.client.socketTimeout=0
+# cas.authn.mfa.radius.client.sharedSecret=N0Sh@ar3d$ecReT
+# cas.authn.mfa.radius.client.authenticationPort=1812
+# cas.authn.mfa.radius.client.accountingPort=1813
+# cas.authn.mfa.radius.client.inetAddress=localhost
+
 # cas.authn.mfa.radius.server.retries=3
 # cas.authn.mfa.radius.server.nasPortType=-1
 # cas.authn.mfa.radius.server.protocol=EAP_MSCHAPv2
@@ -355,24 +355,6 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.mfa.radius.server.nasPort=-1
 # cas.authn.mfa.radius.server.nasIpAddress=
 # cas.authn.mfa.radius.server.nasIpv6Address=
-```
-
-## Multifactor Authentication Radius -> Client
-
-```properties
-# cas.authn.mfa.radius.client.socketTimeout=0
-# cas.authn.mfa.radius.client.sharedSecret=N0Sh@ar3d$ecReT
-# cas.authn.mfa.radius.client.authenticationPort=1812
-# cas.authn.mfa.radius.client.accountingPort=1813
-# cas.authn.mfa.radius.client.inetAddress=localhost
-```
-
-## Multifactor Authentication -> Radius Global
-
-```properties
-# cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
-# cas.authn.mfa.radius.failoverOnException=false
-# cas.authn.mfa.radius.rank=0
 ```
 
 
@@ -386,9 +368,10 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.mfa.duo.duoApiHost=
 ```
 
-
-
 ## Authentication Exceptions
+
+Map custom authentication exceptions in the CAS webflow
+and link them to custom messages defined in message bundles. 
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
@@ -464,7 +447,7 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.openid.principal.returnNull=false
 ```
 
-## OpenID
+## OpenID Authentication
 
 ```properties
 # cas.authn.openid.enforceRpId=false
@@ -477,7 +460,7 @@ Control how principal identifiers are transformed during the resolution phase.
 # cas.authn.spnego.principal.returnNull=false
 ```
 
-## SPNEGO
+## SPNEGO Authentication
 
 ```properties
 # cas.authn.spnego.kerberosConf=
@@ -566,13 +549,23 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 # cas.authn.policy.req.enabled=true
 ```
 
-## Authentication Policy Global
+## Authentication Policy
 
 ```properties
 # cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
 ```
 
+## Pac4j
+
+Act as a proxy, and delegate authentication to external identity providers.
+
+```properties
+# cas.authn.pac4j.typedIdUsed=false
+```
+
 ## Pac4j -> CAS
+
+Delegate authentication to an external CAS server.
 
 ```properties
 # cas.authn.pac4j.cas.loginUrl=
@@ -580,6 +573,8 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 ```
 
 ## Pac4j -> Facebook
+
+Delegate authentication to Facebook.
 
 ```properties
 # cas.authn.pac4j.facebook.fields=
@@ -590,12 +585,16 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 
 ## Pac4j -> Twitter
 
+Delegate authentication to Twitter.
+
 ```properties
 # cas.authn.pac4j.twitter.id=
 # cas.authn.pac4j.twitter.secret=
 ```
 
 ## Pac4j -> OIDC
+
+Delegate authentication to an external OpenID Connect server.
 
 ```properties
 # cas.authn.pac4j.oidc.discoveryUri=
@@ -612,6 +611,8 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 
 ## Pac4j -> SAML
 
+Delegate authentication to an external SAML2 IdP.
+
 ```properties
 # cas.authn.pac4j.saml.keystorePassword=
 # cas.authn.pac4j.saml.privateKeyPassword=
@@ -621,13 +622,7 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
 
-## Pac4j Global
-
-```properties
-# cas.authn.pac4j.typedIdUsed=false
-```
-
-## Radius Authentication -> Server
+## Radius Authentication
 
 ```properties
 # cas.authn.radius.server.nasPortId=-1
@@ -639,21 +634,13 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 # cas.authn.radius.server.nasIpAddress=
 # cas.authn.radius.server.nasIpv6Address=
 # cas.authn.radius.server.nasIdentifier=-1
-```
 
-## Radius Authentication -> Client
-
-```properties
 # cas.authn.radius.client.authenticationPort=1812
 # cas.authn.radius.client.sharedSecret=N0Sh@ar3d$ecReT
 # cas.authn.radius.client.socketTimeout=0
 # cas.authn.radius.client.inetAddress=localhost
 # cas.authn.radius.client.accountingPort=1813
-```
 
-## Radius Authentication Global
-
-```properties
 # cas.authn.radius.failoverOnException=false
 # cas.authn.radius.failoverOnAuthenticationFailure=false
 ```
@@ -693,6 +680,8 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 
 ## JDBC Authentication -> Query
 
+Authenticates a user by comparing the (hashed) user password against the password on record determined by a configurable database query.
+
 ```properties
 # cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.authn.jdbc.query[0].isolateInternalQueries=false
@@ -714,6 +703,8 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 ```
 
 ## JDBC Authentication -> Search
+
+Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
 
 ```properties
 # cas.authn.jdbc.search[0].fieldUser=
@@ -739,6 +730,8 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 
 ## JDBC Authentication -> Bind
 
+Authenticates a user by attempting to create a database connection using the username and (hashed) password.
+
 ```properties
 # cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.authn.jdbc.bind[0].isolateInternalQueries=false
@@ -759,6 +752,14 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 ```
 
 ## JDBC Authentication -> Encode
+
+A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded 
+password using the public salt value. Assumes everything is inside the same database table. Supports settings for 
+number of iterations as well as private salt.
+
+This password encoding method, combines the private Salt and the public salt which it prepends to the password before hashing. 
+If multiple iterations are used, the bytecode Hash of the first iteration is rehashed without the salt values. The final hash 
+is converted to Hex before comparing it to the database value.
 
 ```properties
 # cas.authn.jdbc.encode[0].numberOfIterations=0
@@ -796,24 +797,20 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 # cas.authn.mongo.collectionName=users
 ```
 
-## Throttle -> Failure Parameters
-
-```properties
-# cas.authn.throttle.failure.threshold=100
-# cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
-# cas.authn.throttle.failure.rangeSeconds=60
-```
-
-## Throttle Global
+## Authentication Throttling
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
 # cas.authn.throttle.startDelay=10000
 # cas.authn.throttle.repeatInterval=20000
 # cas.authn.throttle.appcode=CAS
+
+# cas.authn.throttle.failure.threshold=100
+# cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
+# cas.authn.throttle.failure.rangeSeconds=60
 ```
 
-## Throttle JPA
+## Authentication Throttle via JPA
 
 ```properties
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
@@ -848,7 +845,7 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 # cas.locale.defaultValue=en
 ```
 
-## Global SSO
+## Global SSO Behavior
 
 ```properties
 # cas.sso.missingService=true
@@ -1023,13 +1020,18 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.warningCookie.secure=true
 ```
 
-## Host
+## CAS Host
+
+A CAS host is automatically appended to the ticket ids generated by CAS.
+If none is specified, one is automatically detected and used by CAS. 
 
 ```properties
 # cas.host.name=
 ```
 
 ## Monitor -> Ticket Granting Tickets
+
+Decide how CAS should monitor the generation of TGTs. 
 
 ```properties
 # cas.monitor.tgt.warn.threshold=10
@@ -1038,6 +1040,8 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ## Monitor -> Service Tickets
 
+Decide how CAS should monitor the generation of STs. 
+
 ```properties
 # cas.monitor.st.warn.threshold=10
 # cas.monitor.st.warn.evictionThreshold=0
@@ -1045,12 +1049,17 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ## Monitor -> Cache (Ehcache, Hazelcast, etc) Monitors
 
+Decide how CAS should monitor the internal state of various cache storage services.
+
 ```properties
 # cas.monitor.warn.threshold=10
 # cas.monitor.warn.evictionThreshold=0
 ```
 
 ## Monitor -> JDBC DataSource
+
+Decide how CAS should monitor the internal state of JDBC connections used
+for authentication or attribute retrieval.
 
 ```properties
 # cas.monitor.jdbc.validationQuery=SELECT 1
@@ -1075,6 +1084,9 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ## Monitor -> LDAP Connection Pool
 
+Decide how CAS should monitor the internal state of LDAP connections
+used for authentication, etc.
+
 ```properties
 # cas.monitor.ldap.pool.suspension=false
 # cas.monitor.ldap.pool.minSize=6
@@ -1085,6 +1097,8 @@ server, simply increment the index and specify the settings for the latter LDAP.
 ```
 
 ## Monitor Memory
+
+Decide how CAS should monitor the internal state of JVM memory available at runtime.
 
 ```properties
 # cas.monitor.freeMemThreshold=10
@@ -1097,21 +1111,26 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.theme.defaultThemeName=cas-theme-default
 ```
 
+## Acceptable Usage Policy
+
+Decide how CAS should attempt to determine whether AUP is accepted. 
+
+```properties
+# cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
+```
+
 ## Acceptable Usage Policy -> Ldap
+
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
 
 ```properties
 # cas.acceptableUsagePolicy.ldap.searchFilter=cn={0}
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
 ```
 
-## Acceptable Usage Policy
+## Events JPA Database
 
-```properties
-# cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
-```
-
-
-## Events Jpa Database
+Decide how CAS should store authentication events.
 
 ```properties
 # cas.events.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1137,6 +1156,9 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ## Events -> Mongodb
 
+
+Decide how CAS should store authentication events.
+
 ```properties
 # cas.events.mongodb.clientUri=
 # cas.events.mongodb.dropCollection=false
@@ -1145,16 +1167,12 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ## Events
 
+Decide how CAS should track authentication events. 
+
 ```properties
 # cas.events.trackGeolocation=false
-
-
-## Http Client -> Truststore
-
-```properties
-# cas.httpClient.truststore.psw=changeit
-# cas.httpClient.truststore.file=classpath:/truststore.jks
 ```
+
 
 ## Http Client
 
@@ -1164,11 +1182,11 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.httpClient.readTimeout=5000
 ```
 
-## Mongo Service Registry -> Connection
+## Http Client -> Truststore
 
 ```properties
-# cas.serviceRegistry.mongo.conns.lifetime=60000
-# cas.serviceRegistry.mongo.conns.perHost=10
+# cas.httpClient.truststore.psw=changeit
+# cas.httpClient.truststore.file=classpath:/truststore.jks
 ```
 
 ## Mongo Service Registry
@@ -1184,15 +1202,23 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.mongo.userId=
 # cas.serviceRegistry.mongo.writeConcern=NORMAL
 # cas.serviceRegistry.mongo.host=localhost
+
+# cas.serviceRegistry.mongo.conns.lifetime=60000
+# cas.serviceRegistry.mongo.conns.perHost=10
 ```
 
-## Service Registry Config -> Config
+## Service Registry
+
+If the underlying service registry is using local system resources
+to locate service definitions, decide how those resources should be found.
 
 ```properties
 # cas.serviceRegistry.config.location=classpath:/services
 ```
 
 ## Ldap Service Registry
+
+Control how CAS services should be found inside an LDAP instance.
 
 ```properties
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
@@ -1203,6 +1229,9 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ## Couchbase Service Registry
 
+
+Control how CAS services should be found inside a Couchbase instance.
+
 ```properties
 # cas.serviceRegistry.couchbase.nodeSet=localhost:8091
 # cas.serviceRegistry.couchbase.password=
@@ -1211,17 +1240,9 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.couchbase.timeout=10
 ```
 
-## Jpa Service Registry Pooling
+## JPA Service Registry
 
-```properties
-# cas.serviceRegistry.jpa.pool.suspension=false
-# cas.serviceRegistry.jpa.pool.minSize=6
-# cas.serviceRegistry.jpa.pool.maxSize=18
-# cas.serviceRegistry.jpa.pool.maxIdleTime=1000
-# cas.serviceRegistry.jpa.pool.maxWait=2000
-```
-
-## Jpa Service Registry
+Control how CAS services should be found inside a database instance
 
 ```properties
 # cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1237,6 +1258,12 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.jpa.autocommit=false
 # cas.serviceRegistry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.serviceRegistry.jpa.idleTimeout=5000
+
+# cas.serviceRegistry.jpa.pool.suspension=false
+# cas.serviceRegistry.jpa.pool.minSize=6
+# cas.serviceRegistry.jpa.pool.maxSize=18
+# cas.serviceRegistry.jpa.pool.maxIdleTime=1000
+# cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
 ## Service Registry Global
@@ -1248,24 +1275,15 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.initFromJson=true
 ```
 
-## Proxy Ticket
+## Proxy Tickets
 
 ```properties
 # cas.ticket.pt.timeToKillInSeconds=10
 # cas.ticket.pt.numberOfUses=1
 ```
 
-## Jpa Ticket Registry Pooling
 
-```properties
-# cas.ticket.registry.jpa.pool.suspension=false
-# cas.ticket.registry.jpa.pool.minSize=6
-# cas.ticket.registry.jpa.pool.maxSize=18
-# cas.ticket.registry.jpa.pool.maxIdleTime=1000
-# cas.ticket.registry.jpa.pool.maxWait=2000
-```
-
-## Jpa Ticket Registry
+## JPA Ticket Registry
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
@@ -1283,6 +1301,12 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.jpa.autocommit=false
 # cas.ticket.registry.jpa.driverClass=org.hsqldb.jdbcDriver
 # cas.ticket.registry.jpa.idleTimeout=5000
+
+# cas.ticket.registry.jpa.pool.suspension=false
+# cas.ticket.registry.jpa.pool.minSize=6
+# cas.ticket.registry.jpa.pool.maxSize=18
+# cas.ticket.registry.jpa.pool.maxIdleTime=1000
+# cas.ticket.registry.jpa.pool.maxWait=2000
 ```
 
 ## Couchbase Ticket Registry
@@ -1295,9 +1319,13 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.couchbase.bucket=default
 ```
 
-## Hazelcast Ticket Registry -> Cluster
+## Hazelcast Ticket Registry
 
 ```properties
+# cas.ticket.registry.hazelcast.pageSize=500
+# cas.ticket.registry.hazelcast.mapName=tickets
+# cas.ticket.registry.hazelcast.configLocation=
+
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
 # cas.ticket.registry.hazelcast.cluster.maxNoHeartbeatSeconds=300
 # cas.ticket.registry.hazelcast.cluster.multicastEnabled=false
@@ -1312,14 +1340,6 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.hazelcast.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
 ```
 
-## Hazelcast Ticket Registry
-
-```properties
-# cas.ticket.registry.hazelcast.pageSize=500
-# cas.ticket.registry.hazelcast.mapName=tickets
-# cas.ticket.registry.hazelcast.configLocation=
-```
-
 ## Infinispan Ticket Registry
 
 ```properties
@@ -1328,6 +1348,10 @@ server, simply increment the index and specify the settings for the latter LDAP.
 ```
 
 ## Ticket Registry Cryptography -> Signing & Encryption
+
+Decide whether the underlying ticket registry should
+encrypt and sign ticket objects in transition. This is mostly applicable
+to registry choices that are designed to share tickets across multiple CAS nodes.
 
 ```properties
 # cas.ticket.registry.signing.key=
@@ -1381,15 +1405,6 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.ehcache.diskPersistent=false
 ```
 
-## Ignite Ticket Registry -> TicketsCache
-
-```properties
-# cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
-# cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
-# cas.ticket.registry.ignite.ticketsCache.cacheName=TicketsCache
-# cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED
-```
-
 ## Ignite Ticket Registry
 
 ```properties
@@ -1402,6 +1417,11 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.ignite.trustStoreType=
 # cas.ticket.registry.ignite.igniteAddresses=localhost:47500
 # cas.ticket.registry.ignite.trustStoreFilePath=
+
+# cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
+# cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
+# cas.ticket.registry.ignite.ticketsCache.cacheName=TicketsCache
+# cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED
 ```
 
 ## Memcached Ticket Registry
@@ -1415,46 +1435,17 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ## Service Ticket Expiration Policy
 
+Controls the expiration policy of service tickets, as well as other properties
+applicable to STs. 
+
 ```properties
-# cas.ticket.st.numberOfUses=1
 # cas.ticket.st.maxLength=20
+
+# cas.ticket.st.numberOfUses=1
 # cas.ticket.st.timeToKillInSeconds=10
 ```
 
-## Ticket Granting Ticket Expiration Policy -> Remember Me
-
-```properties
-# cas.ticket.tgt.rememberMe.enabled=true
-# cas.ticket.tgt.rememberMe.timeToKillInSeconds=true
-```
-
-## Ticket Granting Ticket Expiration Policy -> Timeout
-
-```properties
-# cas.ticket.tgt.timeout.maxTimeToLiveInSeconds=28800
-```
-
-## Ticket Granting Ticket Expiration Policy -> ThrottledTimeout
-
-```properties
-# cas.ticket.tgt.throttledTimeout.timeToKillInSeconds=28800
-# cas.ticket.tgt.throttledTimeout.timeInBetweenUsesInSeconds=5
-```
-
-## Ticket Granting Ticket Expiration Policy -> HardTimeout
-
-```properties
-# cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
-```
-
-## Ticket Granting Ticket Expiration Policy
-
-```properties
-# cas.ticket.tgt.maxTimeToLiveInSeconds=28800 (Set to a negative value to never expire tickets)
-# cas.ticket.tgt.timeToKillInSeconds=7200 (Set to a negative value to never expire tickets)
-```
-
-## Ticket Granting Ticket Global
+## Ticket Granting Ticket
 
 ```properties
 # cas.ticket.tgt.onlyTrackMostRecentSession=true
@@ -1465,6 +1456,47 @@ server, simply increment the index and specify the settings for the latter LDAP.
 
 ```properties
 # cas.ticket.pgt.maxLength=50
+```
+
+## TGT Expiration Policy -> Remember Me
+
+```properties
+# cas.ticket.tgt.rememberMe.enabled=true
+# cas.ticket.tgt.rememberMe.timeToKillInSeconds=true
+```
+
+## TGT Expiration Policy -> Timeout
+
+The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
+
+```properties
+# cas.ticket.tgt.timeout.maxTimeToLiveInSeconds=28800
+```
+
+## TGT Expiration Policy -> Throttled Timeout
+
+The throttled timeout policy extends the Timeout policy with the concept of throttling where a ticket may be used at most every N seconds.
+
+```properties
+# cas.ticket.tgt.throttledTimeout.timeToKillInSeconds=28800
+# cas.ticket.tgt.throttledTimeout.timeInBetweenUsesInSeconds=5
+```
+
+## TGT Expiration Policy -> Hard Timeout
+
+The hard timeout policy provides for finite ticket lifetime as measured from the time of creation.
+
+```properties
+# cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
+```
+
+## TGT Expiration Policy
+
+Provides a hard-time out as well as a sliding window.
+
+```properties
+# cas.ticket.tgt.maxTimeToLiveInSeconds=28800 (Set to a negative value to never expire tickets)
+# cas.ticket.tgt.timeToKillInSeconds=7200 (Set to a negative value to never expire tickets)
 ```
 
 ## Saml Response
@@ -1492,20 +1524,13 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.mgmt.serverName=https://localhost:8443
 ```
 
-## Google Analytics
+## Google Analytics Integration
 
 ```properties
 # cas.googleAnalytics.googleAnalyticsTrackingId=
 ```
 
-## Http Web Request -> Web
-
-```properties
-# cas.httpWebRequest.web.forceEncoding=true
-# cas.httpWebRequest.web.encoding=UTF-8
-```
-
-## Http Web Request -> Header
+## Http Web Requests
 
 ```properties
 # cas.httpWebRequest.header.xframe=false
@@ -1513,24 +1538,36 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.httpWebRequest.header.hsts=false
 # cas.httpWebRequest.header.xcontent=false
 # cas.httpWebRequest.header.cache=false
-```
 
-## Http Web Request Global
+# cas.httpWebRequest.web.forceEncoding=true
+# cas.httpWebRequest.web.encoding=UTF-8
 
-```properties
 # cas.httpWebRequest.allowMultiValueParameters=false
 # cas.httpWebRequest.onlyPostParams=username,password
 # cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
+
+spring.http.encoding.charset=UTF-8
+spring.http.encoding.enabled=true
+spring.http.encoding.force=true
 ```
 
-## Webflow Cryptography -> Signing
+
+## Webflow Cryptography -> Encryption & Signing
 
 ```properties
-# cas.webflow.signing.key=C@$W3bSecretKey!
+# cas.webflow.signing.key=
 # cas.webflow.signing.keySize=512
+
+# cas.webflow.encryption.keySize=16
+# cas.webflow.encryption.key=
+
+# cas.webflow.alg=AES
 ```
 
-## Webflow -> Session
+## Webflow -> Session Management
+
+Control how Spring Webflow's conversational session state should be managed by CAS. 
+
 
 ```properties
 # cas.webflow.session.lockTimeout=30
@@ -1540,14 +1577,6 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.webflow.session.hzLocation=classpath:/hazelcast.xml
 ```
 
-## Webflow Cryptography -> Encryption
-
-```properties
-# cas.webflow.encryption.keySize=16
-# cas.webflow.encryption.key=
-
-```
-
 ## Webflow Global
 
 ```properties
@@ -1555,7 +1584,6 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
-# cas.webflow.alg=AES
 ```
 
 ## Principal Resolution Global
@@ -1571,7 +1599,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.authn.rest.uri=https://...
 ```
 
-## REST
+## REST API
 
 ```properties
 # cas.rest.attributeName=
