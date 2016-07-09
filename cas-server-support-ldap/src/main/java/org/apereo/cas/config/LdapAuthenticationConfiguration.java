@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -73,6 +74,10 @@ public class LdapAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
 
@@ -130,7 +135,12 @@ public class LdapAuthenticationConfiguration {
                     handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
                 }
                 handler.setAuthenticator(authenticator);
-                this.authenticationHandlersResolvers.put(handler, null);
+
+                if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
+                    this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
+                } else {
+                    this.authenticationHandlersResolvers.put(handler, null);
+                }
             }
         });
     }
