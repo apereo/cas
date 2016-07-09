@@ -3,7 +3,7 @@ layout: default
 title: CAS Properties
 ---
 
-## CAS PropertiesJ
+## CAS Properties
 
 Various properties can be specified in CAS [either inside configuration files or as command 
 line switches](Configuration-Management.md). This section provides a list common CAS properties and 
@@ -56,7 +56,7 @@ server.tomcat.uriEncoding=UTF-8
 server.useForwardHeaders=true
 ```
 
-### Embedded Tomcat HTTP
+### CAS Server Embedded Tomcat HTTP
 
 Enable HTTP connections for the embedded Tomcat container.
 
@@ -66,7 +66,7 @@ Enable HTTP connections for the embedded Tomcat container.
 # cas.server.http.enabled=true
 ```
 
-### Embedded Tomcat AJP
+### CAS Server Embedded Tomcat AJP
 
 Enable the AJP connector for the embedded Tomcat container.
 
@@ -126,7 +126,7 @@ endpoint of CAS which provide administrative functionality and oversight into th
 # cas.securityContext.adminpages.ip=.+
 # endpoints.enabled=true
 # endpoints.sensitive=true
-# management.contextPath=/status
+# management.context-path=/status
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
 
@@ -143,8 +143,8 @@ Control the web application session behavior.
 
 ```properties
 server.session.timeout=300
-server.session.cookie.httpOnly=true
-server.session.trackingModes=COOKIE
+server.session.cookie.http-only=true
+server.session.tracking-modes=COOKIE
 ```
 
 ### Thymeleaf View
@@ -160,14 +160,14 @@ Control the location and other settings of the CAS logging configuration.
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
-server.contextParameters.isLog4jAutoInitializationDisabled=true
+server.context-parameters.isLog4jAutoInitializationDisabled=true
 ```
 
 ### AspectJ Configuration
 
 ```properties
 # spring.aop.auto=true
-# spring.aop.proxyTargetClass=true
+# spring.aop.proxy-target-class=true
 ```
 
 ### Authentication Attributes
@@ -194,16 +194,16 @@ CAS attempts to vend and validate tickets.
 ### CAS Groovy Shell Console
 
 ```properties
-# shell.commandRefreshInterval=15
-# shell.commandPathPatterns=classpath*:/commands/**
+# shell.command-refresh-interval=15
+# shell.command-path-patterns=classpath*:/commands/**
 # shell.auth.simple.user.name=
 # shell.auth.simple.user.password=
 # shell.ssh.enabled=true
 # shell.ssh.port=2000
 # shell.telnet.enabled=false
 # shell.telnet.port=5000
-# shell.ssh.authTimeout=3000
-# shell.ssh.idleTimeout=30000
+# shell.ssh.auth-timeout=3000
+# shell.ssh.idle-timeout=30000
 ```
 
 
@@ -1111,7 +1111,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 ```
 
 
-## Events JPA Database
+## Events Jpa Database
 
 ```properties
 # cas.events.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1211,7 +1211,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.couchbase.timeout=10
 ```
 
-## JPA Service Registry Pooling
+## Jpa Service Registry Pooling
 
 ```properties
 # cas.serviceRegistry.jpa.pool.suspension=false
@@ -1221,7 +1221,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
-## JPA Service Registry
+## Jpa Service Registry
 
 ```properties
 # cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1255,7 +1255,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.pt.numberOfUses=1
 ```
 
-## JPA Ticket Registry Pooling
+## Jpa Ticket Registry Pooling
 
 ```properties
 # cas.ticket.registry.jpa.pool.suspension=false
@@ -1265,7 +1265,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.jpa.pool.maxWait=2000
 ```
 
-## JPA Ticket Registry
+## Jpa Ticket Registry
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
