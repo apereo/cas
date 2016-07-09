@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 
@@ -11,7 +10,6 @@ import org.springframework.webflow.engine.Flow;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("pac4jWebflowConfigurer")
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String CLIENT_ACTION = "clientAction";

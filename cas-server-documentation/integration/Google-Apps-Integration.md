@@ -36,18 +36,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 The `public.key` and `private.p8` go into classpath. The `x509.pem` file should be 
 uploaded into Google Apps under Security/SSO.
 
-## Configure CAS
-Adjust the following settings in your `application.properties`:
-
-```properties
-##
-# Google Apps public/private key
-#
-# cas.saml.googleapps.publickey.file=file:/etc/cas/public.key
-# cas.saml.googleapps.privatekey.file=file:/etc/cas/private.p8
-# cas.saml.googleapps.key.alg=RSA
-# cas.saml.response.skewAllowance=0
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Also, ensure that Google Apps is registered in your Service Registry, 
 by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
@@ -58,6 +47,7 @@ can be specified in the CAS service registry via [username attribute providers](
 for the registered Google Apps service.
 
 ## Configure Google
+
 You'll need to provide Google with the URL for your SAML-based SSO service, as well as the URL your users will 
 be redirected to when they log out of a hosted Google application.
 Use the following URLs when you are configuring for Google Apps:
@@ -67,5 +57,6 @@ Use the following URLs when you are configuring for Google Apps:
 * Change password URL: `https://mgmt.password.edu/`
 
 ## Test
+
 Attempt to access a Google-hosted application, such as Google Calendar 
 with the url: `http://calendar.google.com/a/YourGoogleDomain`

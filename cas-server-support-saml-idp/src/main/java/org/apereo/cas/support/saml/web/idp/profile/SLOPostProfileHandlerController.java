@@ -1,14 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,12 +24,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("sloPostProfileHandlerController")
 public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerController {
-
-    @Value("${cas.samlidp.logout.request.force.signed:true}")
-    private boolean forceSignedLogoutRequests = true;
-
-    @Value("${cas.samlidp.logout.slo.callbacks.disabled:false}")
-    private boolean singleLogoutCallbacksDisabled;
 
     /**
      * Instantiates a new Slo post profile handler controller.
@@ -62,13 +55,13 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     protected void handleSloPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        if (this.singleLogoutCallbacksDisabled) {
+        if (isSingleLogoutCallbacksDisabled()) {
             logger.info("Processing SAML IdP SLO requests is disabled");
             return;
         }
 
         final LogoutRequest logoutRequest = decodeRequest(request, decoder, LogoutRequest.class);
-        if (this.forceSignedLogoutRequests && !logoutRequest.isSigned()) {
+        if (isForceSignedLogoutRequests() && !logoutRequest.isSigned()) {
             throw new SAMLException("Logout request is not signed but should be.");
         } else if (logoutRequest.isSigned()) {
             final MetadataResolver resolver = SamlIdPUtils.getMetadataResolverForAllSamlServices(this.servicesManager,
@@ -77,7 +70,6 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             this.samlObjectSigner.verifySamlProfileRequestIfNeeded(logoutRequest, resolver);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);
-        response.sendRedirect(this.casServerPrefix.concat("/logout"));
+        response.sendRedirect(getLogoutUrl());
     }
-
 }

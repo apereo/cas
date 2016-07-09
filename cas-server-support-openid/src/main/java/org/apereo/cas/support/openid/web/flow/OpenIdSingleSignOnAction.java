@@ -13,8 +13,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -26,8 +24,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RefreshScope
-@Component("openIdSingleSignOnAction")
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     

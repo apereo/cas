@@ -1,21 +1,17 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.FormData;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.FormData;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,44 +20,23 @@ import java.util.List;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component("registeredServiceFactory")
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
-    @Autowired(required = false)
-    private ApplicationContext applicationContext;
 
-    
-    @Autowired(required = false)
-    @Qualifier("accessStrategyMapper")
-    private AccessStrategyMapper accessStrategyMapper;
+    private AccessStrategyMapper accessStrategyMapper = new DefaultAccessStrategyMapper();
 
-    
-    @Autowired(required = false)
-    @Qualifier("attributeReleasePolicyMapper")
-    private AttributeReleasePolicyMapper attributeReleasePolicyMapper;
+    private AttributeReleasePolicyMapper attributeReleasePolicyMapper =
+            new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+                                                    new DefaultPrincipalAttributesRepositoryMapper());
 
-    
-    @Autowired(required = false)
-    @Qualifier("proxyPolicyMapper")
-    private ProxyPolicyMapper proxyPolicyMapper;
+    private ProxyPolicyMapper proxyPolicyMapper = new DefaultProxyPolicyMapper();
 
-    
-    @Autowired(required = false)
-    @Qualifier("registeredServiceMapper")
-    private RegisteredServiceMapper registeredServiceMapper;
+    private RegisteredServiceMapper registeredServiceMapper = new DefaultRegisteredServiceMapper();
 
-    
-    @Autowired(required = false)
-    @Qualifier("usernameAttributeProviderMapper")
-    private UsernameAttributeProviderMapper usernameAttributeProviderMapper;
+    private UsernameAttributeProviderMapper usernameAttributeProviderMapper = 
+            new DefaultUsernameAttributeProviderMapper();
 
-    
-    @Autowired
-    private List<? extends FormDataPopulator> formDataPopulators;
+    private List<? extends FormDataPopulator> formDataPopulators = new ArrayList<>();
 
-    public void setApplicationContext(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     public void setAccessStrategyMapper(final AccessStrategyMapper accessStrategyMapper) {
         this.accessStrategyMapper = accessStrategyMapper;
@@ -93,54 +68,6 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
      */
     @PostConstruct
     public void initializeDefaults() {
-        // use default mappers from spring context
-        if (this.applicationContext != null) {
-            if (this.accessStrategyMapper == null) {
-                this.accessStrategyMapper = this.applicationContext.getBean(
-                        DefaultAccessStrategyMapper.BEAN_NAME,
-                        AccessStrategyMapper.class);
-            }
-            if (this.attributeReleasePolicyMapper == null) {
-                this.attributeReleasePolicyMapper = this.applicationContext.getBean(
-                        DefaultAttributeReleasePolicyMapper.BEAN_NAME,
-                        AttributeReleasePolicyMapper.class);
-            }
-            if (this.proxyPolicyMapper == null) {
-                this.proxyPolicyMapper = this.applicationContext.getBean(
-                        DefaultProxyPolicyMapper.BEAN_NAME,
-                        ProxyPolicyMapper.class);
-            }
-            if (this.registeredServiceMapper == null) {
-                this.registeredServiceMapper = this.applicationContext.getBean(
-                        DefaultRegisteredServiceMapper.BEAN_NAME,
-                        RegisteredServiceMapper.class);
-            }
-            if (this.usernameAttributeProviderMapper == null) {
-                this.usernameAttributeProviderMapper = this.applicationContext.getBean(
-                        DefaultUsernameAttributeProviderMapper.BEAN_NAME,
-                        UsernameAttributeProviderMapper.class);
-            }
-        }
-
-        // initialize default mappers if any are still missing
-        if (this.accessStrategyMapper == null) {
-            this.accessStrategyMapper = new DefaultAccessStrategyMapper();
-        }
-        if (this.attributeReleasePolicyMapper == null) {
-            final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper();
-            policyMapper.setApplicationContext(this.applicationContext);
-            policyMapper.initializeDefaults();
-            this.attributeReleasePolicyMapper = policyMapper;
-        }
-        if (this.proxyPolicyMapper == null) {
-            this.proxyPolicyMapper = new DefaultProxyPolicyMapper();
-        }
-        if (this.registeredServiceMapper == null) {
-            this.registeredServiceMapper = new DefaultRegisteredServiceMapper();
-        }
-        if (this.usernameAttributeProviderMapper == null) {
-            this.usernameAttributeProviderMapper = new DefaultUsernameAttributeProviderMapper();
-        }
     }
 
     @Override

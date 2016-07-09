@@ -4,10 +4,6 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -25,8 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("ticketGrantingTicketCheckAction")
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
     /**
@@ -44,21 +38,17 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      **/
     public static final String VALID = "valid";
 
-    /**
-     * The Central authentication service.
-     */
-    
     private CentralAuthenticationService centralAuthenticationService;
 
+    public TicketGrantingTicketCheckAction() {
+    }
 
     /**
      * Creates a new instance with the given ticket registry.
      *
      * @param centralAuthenticationService the central authentication service
      */
-    @Autowired
-    public TicketGrantingTicketCheckAction(@Qualifier("centralAuthenticationService")
-                                               final CentralAuthenticationService centralAuthenticationService) {
+    public TicketGrantingTicketCheckAction(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -86,6 +76,6 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
         } catch (final AbstractTicketException e) {
             logger.trace("Could not retrieve ticket id {} from registry.", e);
         }
-        return new Event(this,  eventId);
+        return new Event(this, eventId);
     }
 }

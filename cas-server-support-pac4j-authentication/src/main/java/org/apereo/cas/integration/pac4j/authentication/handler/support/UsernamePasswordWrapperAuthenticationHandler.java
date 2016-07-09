@@ -47,7 +47,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
      * Default constructor.
      */
     public UsernamePasswordWrapperAuthenticationHandler() {
-        setTypedIdUsed(false);
+       
     }
 
     @Override

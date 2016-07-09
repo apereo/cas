@@ -2,17 +2,16 @@ package org.apereo.cas.support.rest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,38 +29,57 @@ import java.util.Map;
 /**
  * {@link RestController} implementation of a REST API
  * that allows for registration of CAS services.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @RestController("registeredServiceResourceRestController")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RegisteredServiceResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceResource.class);
 
-    @Autowired
-    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Value("${cas.rest.services.attributename:}")
     private String attributeName;
-
-    @Value("${cas.rest.services.attributevalue:}")
     private String attributeValue;
+
+    public ServicesManager getServicesManager() {
+        return servicesManager;
+    }
+
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    public void setAttributeName(final String attributeName) {
+        this.attributeName = attributeName;
+    }
+
+    public String getAttributeValue() {
+        return attributeValue;
+    }
+
+    public void setAttributeValue(final String attributeValue) {
+        this.attributeValue = attributeValue;
+    }
 
     /**
      * Create new service.
      *
-     * @param tgtId ticket granting ticket id URI path param
+     * @param tgtId             ticket granting ticket id URI path param
      * @param serviceDataHolder the service to register and save in rest form
      * @return {@link ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/v1/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType
             .APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder,
-                                                      @PathVariable("tgtId") final String tgtId) {
+                                                @PathVariable("tgtId") final String tgtId) {
         try {
 
             if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
@@ -69,7 +87,7 @@ public class RegisteredServiceResource {
             }
 
             final TicketGrantingTicket ticket =
-                this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
+                    this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
             if (ticket == null || ticket.isExpired()) {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
@@ -97,15 +115,6 @@ public class RegisteredServiceResource {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-
-    public void setAttributeName(final String attributeName) {
-        this.attributeName = attributeName;
-    }
-
-    public void setAttributeValue(final String attributeValue) {
-        this.attributeValue = attributeValue;
     }
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
@@ -164,4 +173,9 @@ public class RegisteredServiceResource {
         }
 
     }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
 }

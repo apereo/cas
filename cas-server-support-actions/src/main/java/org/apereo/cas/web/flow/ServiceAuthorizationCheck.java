@@ -7,10 +7,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -22,22 +18,20 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Dmitriy Kopylenko
  * @since 3.5.1
  **/
-@RefreshScope
-@Component("serviceAuthorizationCheck")
 public class ServiceAuthorizationCheck extends AbstractAction {
 
-    
     private ServicesManager servicesManager;
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /*public ServiceAuthorizationCheck() {
+    }*/
 
     /**
      * Initialize the component with an instance of the services manager.
      * @param servicesManager the service registry instance.
      */
-    @Autowired
-    public ServiceAuthorizationCheck(@Qualifier("servicesManager")
-                                         final ServicesManager servicesManager) {
+    public ServiceAuthorizationCheck(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 

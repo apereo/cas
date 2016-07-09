@@ -1,25 +1,22 @@
 package org.apereo.cas.services.web.view;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.view.AbstractView;
 
-import javax.annotation.Resource;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,22 +43,23 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected boolean successResponse;
 
-    /** The attribute encoder instance. */
-    
-    @Resource(name="casAttributeEncoder")
+    /**
+     * The attribute encoder instance.
+     */
     protected CasAttributeEncoder casAttributeEncoder;
 
-    /** The Services manager. */
-    
-    @Resource(name="servicesManager")
+    /**
+     * The Services manager.
+     */
     protected ServicesManager servicesManager;
 
-    /** Logger instance. **/
+    /**
+     * Logger instance.
+     **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    
     private String authenticationContextAttribute;
-
+    
     /**
      * Gets the assertion from the model.
      *
@@ -101,6 +99,7 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getProxyGrantingTicketId(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
     }
+
     /**
      * Gets the PGT-IOU from the model.
      *
@@ -110,7 +109,6 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getProxyGrantingTicketIou(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
     }
-
 
 
     /**
@@ -148,7 +146,7 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Gets an authentication attribute from the primary authentication object.
      *
-     * @param model the model
+     * @param model         the model
      * @param attributeName the attribute name
      * @return the authentication attribute
      */
@@ -156,6 +154,7 @@ public abstract class AbstractCasView extends AbstractView {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
         return (String) authn.getAttributes().get(attributeName);
     }
+
     /**
      * Gets the principal from the model.
      *
@@ -171,6 +170,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Gets principal attributes.
      * Single-valued attributes are converted to a collection
      * so the review can easily loop through all.
+     *
      * @param model the model
      * @return the attributes
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
@@ -184,6 +184,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Gets authentication attributes.
      * Single-valued attributes are converted to a collection
      * so the review can easily loop through all.
+     *
      * @param model the model
      * @return the attributes
      * @see #convertAttributeValuesToMultiValuedObjects(java.util.Map)
@@ -197,6 +198,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Is remember me authentication?
      * looks at the authentication object to find {@link RememberMeCredential#AUTHENTICATION_ATTRIBUTE_REMEMBER_ME}
      * and expects the assertion to also note a new login session.
+     *
      * @param model the model
      * @return true if remember-me, false if otherwise.
      */
@@ -215,7 +217,8 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(
             final Map<String, Object> model) {
-        if (model.containsKey(this.authenticationContextAttribute)) {
+        if (StringUtils.isNotBlank(authenticationContextAttribute)
+                && model.containsKey(this.authenticationContextAttribute)) {
             final Optional<MultifactorAuthenticationProvider> result =
                     (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
             return result;
@@ -303,8 +306,8 @@ public abstract class AbstractCasView extends AbstractView {
      * attribute.
      *
      * @param attributes the attributes
-     * @param model the model
-     * @param service the service
+     * @param model      the model
+     * @param service    the service
      */
     protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
                                                                          final Map<String, Object> model,
@@ -326,8 +329,8 @@ public abstract class AbstractCasView extends AbstractView {
      * attribute.
      *
      * @param attributes the attributes
-     * @param model the model
-     * @param service the service
+     * @param model      the model
+     * @param service    the service
      */
     protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
                                                                           final Map<String, Object> model,
@@ -344,10 +347,10 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * Decide attribute release based on service attribute policy.
      *
-     * @param attributes the attributes
-     * @param attributeValue the attribute value
-     * @param attributeName the attribute name
-     * @param service the service
+     * @param attributes               the attributes
+     * @param attributeValue           the attribute value
+     * @param attributeName            the attribute name
+     * @param service                  the service
      * @param doesAttributePolicyAllow does attribute policy allow release of this attribute?
      */
     protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes,
@@ -376,39 +379,28 @@ public abstract class AbstractCasView extends AbstractView {
      * Put into model.
      *
      * @param model the model
-     * @param key the key
+     * @param key   the key
      * @param value the value
      */
-    protected void putIntoModel(final Map<String, Object> model, final String key, final Object value){
+    protected void putIntoModel(final Map<String, Object> model, final String key, final Object value) {
         model.put(key, value);
     }
 
     /**
      * Put all into model.
      *
-     * @param model the model
+     * @param model  the model
      * @param values the values
      */
-    protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values){
+    protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values) {
         model.putAll(values);
     }
-
-    /**
-     * Sets services manager.
-     *
-     * @param servicesManager the services manager
-     * @since 4.1
-     */
+    
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
-    /**
-     * Sets cas attribute encoder.
-     *
-     * @param casAttributeEncoder the cas attribute encoder
-     * @since 4.1
-     */
+
     public void setCasAttributeEncoder(final CasAttributeEncoder casAttributeEncoder) {
         this.casAttributeEncoder = casAttributeEncoder;
     }
@@ -420,14 +412,16 @@ public abstract class AbstractCasView extends AbstractView {
     public ServicesManager getServicesManager() {
         return this.servicesManager;
     }
-
-    /**
-     * Sets whether this view functions as a success response.
-     *
-     * @param successResponse the success response
-     * @since 4.1.0
-     */
+    
     public void setSuccessResponse(final boolean successResponse) {
         this.successResponse = successResponse;
+    }
+
+    public String getAuthenticationContextAttribute() {
+        return authenticationContextAttribute;
+    }
+
+    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
     }
 }

@@ -15,12 +15,34 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
 
     private static final long serialVersionUID = 2995938566845586064L;
 
+    /**
+     * The enum Types.
+     */
+    public enum Types {
+        /** Default type. */
+        DEFAULT,
+        /** Time based access. */
+        TIME,
+        /** Grouper-based access. */
+        GROUPER,
+        /** Remote endpoint access. */
+        REMOTE
+    }
+    
     private String startingTime;
     private String endingTime;
     private boolean casEnabled;
     private boolean ssoEnabled;
     private boolean requireAll;
+    private String unauthzUrl;
+    private Types type;
+    private String groupField;
+    private String codes;
+    private String url;
+    
     private Map<String, Set<String>> requiredAttr = new HashMap<>();
+    private Map<String, Set<String>> rejectedAttr = new HashMap<>();
+    private boolean caseSensitive;
 
     public boolean isCasEnabled() {
         return this.casEnabled;
@@ -54,6 +76,14 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
         this.requiredAttr = requiredAttr;
     }
 
+    public void setRejectedAttr(final Map<String, Set<String>> rejectedAttr) {
+        this.rejectedAttr = requiredAttr;
+    }
+
+    public Map<String, Set<String>> getRejectedAttr() {
+        return rejectedAttr;
+    }
+
     public String getStartingTime() {
         return this.startingTime;
     }
@@ -68,5 +98,53 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
 
     public void setEndingTime(final String endingTime) {
         this.endingTime = endingTime;
+    }
+
+    public String getUnauthzUrl() {
+        return unauthzUrl;
+    }
+
+    public void setUnauthzUrl(final String unauthzUrl) {
+        this.unauthzUrl = unauthzUrl;
+    }
+
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    public void setCaseSensitive(final boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    public Types getType() {
+        return type;
+    }
+
+    public void setType(final Types type) {
+        this.type = type;
+    }
+
+    public String getGroupField() {
+        return groupField;
+    }
+
+    public void setGroupField(final String groupField) {
+        this.groupField = groupField;
+    }
+
+    public String getCodes() {
+        return codes;
+    }
+
+    public void setCodes(final String codes) {
+        this.codes = codes;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
     }
 }

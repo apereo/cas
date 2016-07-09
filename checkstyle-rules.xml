@@ -34,7 +34,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="ClassFanOutComplexity">
-            <property name="max" value="50"/>
+            <property name="max" value="120"/>
             <property name="severity" value="error"/>
         </module>
         <module name="CommentsIndentation">
@@ -94,6 +94,9 @@
         <module name="PackageName">
             <property name="severity" value="error"/>
         </module>
+        <module name="UnnecessaryParentheses">
+            <property name="severity" value="error"/>
+        </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
             <property name="ignoreOverridden" value="true" />
@@ -102,6 +105,10 @@
             <property name="severity" value="error"/>
             <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
         </module>
+        <module name="SingleSpaceSeparator">
+            <property name="validateComments" value="true"/>
+            <property name="severity" value="error"/>
+        </module>
         <module name="AbbreviationAsWordInName"/>
         <module name="TypeName">
             <property name="severity" value="error"/>
@@ -109,9 +116,17 @@
         <module name="AvoidStarImport">
             <property name="severity" value="error"/>
             <property name="excludes"
-                      value="java.io,java.net,java.lang.Math,org.junit.Assert,org.mockito.Mockito,
-                      org.mockito.Matchers,org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
+                      value="java.io,
+                      java.net,
+                      java.lang.Math,
+                      org.junit.Assert,
+                      org.mockito.Mockito,
+                      org.mockito.Matchers,
+                      org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
                       org.springframework.test.web.servlet.result.MockMvcResultMatchers,
+                      org.springframework.test.web.client.ExpectedCount,
+                      org.springframework.test.web.client.match.MockRestRequestMatchers,
+                      org.springframework.test.web.client.response.MockRestResponseCreators,
                       java.nio.file.StandardWatchEventKinds"/>
             <property name="allowStaticMemberImports" value="false"/>
         </module>
@@ -153,7 +168,7 @@
             <property name="tokens" value="METHOD_DEF"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="140"/>
+            <property name="max" value="160"/>
             <property name="tabWidth" value="4"/>
             <property name="severity" value="error"/>
         </module>
@@ -484,6 +499,14 @@
         <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
         <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
     </module>
+
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="Arrays\.asList\(.+"/>
+        <property name="message" value="Use Lists.newArrayList() instead."/>
+    </module>
+    
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
         <property name="severity" value="error"/>

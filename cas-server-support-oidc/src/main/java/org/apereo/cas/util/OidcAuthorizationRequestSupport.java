@@ -16,9 +16,6 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -31,17 +28,12 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("oidcAuthorizationRequestSupport")
 public class OidcAuthorizationRequestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizationRequestSupport.class);
     
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    
     private TicketRegistrySupport ticketRegistrySupport;
 
 
@@ -223,5 +215,13 @@ public class OidcAuthorizationRequestSupport {
             casClient.setRenew(false);
             casClient.setGateway(true);
         }
+    }
+
+    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+    }
+
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 }

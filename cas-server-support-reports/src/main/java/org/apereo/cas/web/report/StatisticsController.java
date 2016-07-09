@@ -1,19 +1,17 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.Ticket;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.common.base.Predicates;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,24 +39,19 @@ public class StatisticsController implements ServletContextAware {
 
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
 
-    private  static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
+    private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    @Value("${host.name:cas01.example.org}")
-    private String casTicketSuffix;
-
     @Autowired
+    private CasConfigurationProperties casProperties;
+    
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("metrics")
+    
     private MetricRegistry metricsRegistry;
-
-    @Autowired
-    @Qualifier("healthCheckMetrics")
+    
     private HealthCheckRegistry healthCheckRegistry;
 
     /**
@@ -157,7 +150,7 @@ public class StatisticsController implements ServletContextAware {
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
+        modelAndView.addObject("casTicketSuffix", casProperties.getHost().getName());
         modelAndView.getModel().putAll(getAvailability(httpServletRequest, httpServletResponse));
         modelAndView.addObject("startTime", this.upTimeStartDate.toLocalDateTime());
                 
@@ -167,17 +160,31 @@ public class StatisticsController implements ServletContextAware {
 
     /**
      * Convert to megabytes from bytes.
+     *
      * @param bytes the total number of bytes
      * @return value converted to MB
      */
     private static double convertToMegaBytes(final double bytes) {
         return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
     }
+
     
     @Override
     public void setServletContext(final ServletContext servletContext) {
         servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, this.metricsRegistry);
         servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, Boolean.TRUE);
         servletContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, this.healthCheckRegistry);
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setMetricsRegistry(final MetricRegistry metricsRegistry) {
+        this.metricsRegistry = metricsRegistry;
+    }
+
+    public void setHealthCheckRegistry(final HealthCheckRegistry healthCheckRegistry) {
+        this.healthCheckRegistry = healthCheckRegistry;
     }
 }

@@ -1,28 +1,22 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
+import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.apereo.cas.authentication.Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.security.auth.login.FailedLoginException;
 
 /**
  * Authentication Handler that accepts X509 Certificates, determines their
@@ -40,64 +34,55 @@ import javax.security.auth.login.FailedLoginException;
  * @author Jan Van der Velpen
  * @since 3.0.4
  */
-@RefreshScope
-@Component("x509CredentialsAuthenticationHandler")
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    /** Default setting to limit the number of intermediate certificates. */
-    private static final int DEFAULT_MAXPATHLENGTH = 1;
-
-    /** Default setting whether to allow unspecified number of intermediate certificates. */
-    private static final boolean DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED = false;
-
-    /** Default setting to check keyUsage extension. */
-    private static final boolean DEFAULT_CHECK_KEYUSAGE = false;
-
     /**
-     * Default setting to force require "KeyUsage" extension.
+     * OID for KeyUsage X.509v3 extension field.
      */
-    private static final boolean DEFAULT_REQUIRE_KEYUSAGE = false;
-
-    /** Default subject pattern match. */
-    private static final Pattern DEFAULT_SUBJECT_DN_PATTERN = Pattern.compile(".*");
-
-    /** OID for KeyUsage X.509v3 extension field. */
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
-    /** Instance of Logging. */
+    /**
+     * Instance of Logging.
+     */
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The compiled pattern supplied by the deployer. */
-    
+    /**
+     * The compiled pattern supplied by the deployer.
+     */
     private Pattern regExTrustedIssuerDnPattern;
 
     /**
      * Deployer supplied setting for maximum pathLength in a SUPPLIED
      * certificate.
      */
-    private int maxPathLength = DEFAULT_MAXPATHLENGTH;
+    private int maxPathLength;
 
     /**
      * Deployer supplied setting to allow unlimited pathLength in a SUPPLIED
      * certificate.
      */
-    private boolean maxPathLengthAllowUnspecified = DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED;
+    private boolean maxPathLengthAllowUnspecified;
 
-    /** Deployer supplied setting to check the KeyUsage extension. */
-    private boolean checkKeyUsage = DEFAULT_CHECK_KEYUSAGE;
+    /**
+     * Deployer supplied setting to check the KeyUsage extension.
+     */
+    private boolean checkKeyUsage;
 
     /**
      * Deployer supplied setting to force require the correct KeyUsage
      * extension.
      */
-    private boolean requireKeyUsage = DEFAULT_REQUIRE_KEYUSAGE;
+    private boolean requireKeyUsage;
 
-    /** The compiled pattern for trusted DN's supplied by the deployer. */
-    
-    private Pattern regExSubjectDnPattern = DEFAULT_SUBJECT_DN_PATTERN;
+    /**
+     * The compiled pattern for trusted DN's supplied by the deployer.
+     */
+    private Pattern regExSubjectDnPattern;
 
-    /** Certificate revocation checker component. */
-    
+    /**
+     * Certificate revocation checker component.
+     */
+
     private RevocationChecker revocationChecker = new NoOpRevocationChecker();
 
 
@@ -105,7 +90,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     public boolean supports(final Credential credential) {
         return credential != null
                 && X509CertificateCredential.class.isAssignableFrom(credential
-                        .getClass());
+                .getClass());
     }
 
     /**
@@ -159,51 +144,46 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         throw new FailedLoginException();
     }
 
-    @Autowired
-    public void setTrustedIssuerDnPattern(@Value("${cas.x509.authn.trusted.issuer.dnpattern:}") final String trustedIssuerDnPattern) {
+    public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {
         this.regExTrustedIssuerDnPattern = Pattern.compile(trustedIssuerDnPattern);
     }
 
     /**
      * @param maxPathLength The maxPathLength to set.
      */
-    @Autowired
-    public void setMaxPathLength(@Value("${cas.x509.authn.max.path.length:" + DEFAULT_MAXPATHLENGTH + '}')
-                                 final int maxPathLength) {
+    public void setMaxPathLength(
+            final int maxPathLength) {
         this.maxPathLength = maxPathLength;
     }
 
     /**
      * @param allowed Allow CA certs to have unlimited intermediate certs (default=false).
      */
-    @Autowired
-    public void setMaxPathLengthAllowUnspecified(@Value("${cas.x509.authn.max.path.length.unspecified:"
-                                                    + DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED + '}')
-                                                 final boolean allowed) {
+
+    public void setMaxPathLengthAllowUnspecified(
+            final boolean allowed) {
         this.maxPathLengthAllowUnspecified = allowed;
     }
 
     /**
      * @param checkKeyUsage The checkKeyUsage to set.
      */
-    @Autowired
-    public void setCheckKeyUsage(@Value("${cas.x509.authn.check.key.usage:" + DEFAULT_CHECK_KEYUSAGE + '}')
-                                 final boolean checkKeyUsage) {
+    public void setCheckKeyUsage(
+            final boolean checkKeyUsage) {
         this.checkKeyUsage = checkKeyUsage;
     }
 
     /**
      * @param requireKeyUsage The requireKeyUsage to set.
      */
-    @Autowired
-    public void setRequireKeyUsage(@Value("${cas.x509.authn.require.key.usage:" + DEFAULT_REQUIRE_KEYUSAGE + '}')
-                                   final boolean requireKeyUsage) {
+    public void setRequireKeyUsage(
+            final boolean requireKeyUsage) {
         this.requireKeyUsage = requireKeyUsage;
     }
 
-    @Autowired
-    public void setSubjectDnPattern(@Value("${cas.x509.authn.subject.dnpattern:.*}")
-                                    final String subjectDnPattern) {
+
+    public void setSubjectDnPattern(
+            final String subjectDnPattern) {
         this.regExSubjectDnPattern = Pattern.compile(subjectDnPattern);
     }
 
@@ -215,9 +195,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      *
      * @param checker Revocation checker component.
      */
-    @Autowired(required=false)
-    public void setRevocationChecker(@Qualifier("x509RevocationChecker")
-                                         final RevocationChecker checker) {
+    public void setRevocationChecker(final RevocationChecker checker) {
         this.revocationChecker = checker;
     }
 
@@ -257,7 +235,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * KeyUsage ::= BIT STRING { digitalSignature (0), nonRepudiation (1),
      * keyEncipherment (2), dataEncipherment (3), keyAgreement (4),
      * keyCertSign (5), cRLSign (6), encipherOnly (7), decipherOnly (8) }
-     *          
+     *
      * @param certificate the certificate
      * @return true, if  valid key usage
      */
@@ -275,7 +253,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             valid = keyUsage[0];
         } else {
             logger.debug(
-               "KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
+                    "KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
             valid = true;
         }
         return valid;
@@ -284,7 +262,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     /**
      * Checks if critical extension oids contain the extension oid.
      *
-     * @param certificate the certificate
+     * @param certificate  the certificate
      * @param extensionOid the extension oid
      * @return true, if  critical
      */
@@ -322,14 +300,18 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * Does principal name match pattern?
      *
      * @param principal the principal
-     * @param pattern the pattern
+     * @param pattern   the pattern
      * @return true, if successful
      */
     private boolean doesNameMatchPattern(final Principal principal,
-            final Pattern pattern) {
-        final String name = principal.getName();
-        final boolean result = pattern.matcher(name).matches();
-        logger.debug(String.format("%s matches %s == %s", pattern.pattern(), name, result));
-        return result;
+                                         final Pattern pattern) {
+
+        if (pattern != null) {
+            final String name = principal.getName();
+            final boolean result = pattern.matcher(name).matches();
+            logger.debug(String.format("%s matches %s == %s", pattern.pattern(), name, result));
+            return result;
+        }
+        return true;
     }
 }

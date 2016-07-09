@@ -1,7 +1,8 @@
 package org.apereo.cas.util;
 
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * This is {@link DigestUtils}
@@ -12,9 +13,6 @@ import java.security.NoSuchAlgorithmException;
  * @since 5.0.0
  */
 public final class DigestUtils {
-    private static String SHA512 = "SHA512";
-    private static String SHA = "SHA";
-
     private DigestUtils() {
     }
 
@@ -24,7 +22,7 @@ public final class DigestUtils {
      * @return sha-512 hash
      */
     public static String sha512(final String data) {
-        return digest(SHA512, data.getBytes());
+        return digest(MessageDigestAlgorithms.SHA_512, data.getBytes());
     }
 
     /**
@@ -33,7 +31,7 @@ public final class DigestUtils {
      * @return sha hash
      */
     public static String sha(final String data) {
-        return digest(SHA, data);
+        return digest(MessageDigestAlgorithms.SHA_1, data);
     }
 
     /**
@@ -42,7 +40,7 @@ public final class DigestUtils {
      * @return sha hash
      */
     public static byte[] sha(final byte[] data) {
-        return rawDigest(SHA, data);
+        return rawDigest(MessageDigestAlgorithms.SHA_1, data);
     }
 
     /**
@@ -74,8 +72,7 @@ public final class DigestUtils {
     public static byte[] rawDigest(final String alg, final byte[] data) {
         try {
             return MessageDigest.getInstance(alg).digest(data);
-        } catch (final NoSuchAlgorithmException cause) {
-            //TODO Throw exception inheriting from RootCasException?
+        } catch (final Exception cause) {
             throw new SecurityException(cause);
         }
     }

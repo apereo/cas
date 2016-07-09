@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
@@ -29,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -128,7 +128,7 @@ public final class SamlIdPUtils {
                 final CriteriaSet criteriaSet = new CriteriaSet();
                 criteriaSet.add(new EntityIdCriterion(issuer));
                 criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-                criteriaSet.add(new BindingCriterion(Arrays.asList(SAMLConstants.SAML2_POST_BINDING_URI)));
+                criteriaSet.add(new BindingCriterion(Lists.newArrayList(SAMLConstants.SAML2_POST_BINDING_URI)));
                 
                 final Iterable<EntityDescriptor> it = samlResolver.resolve(criteriaSet);
                 it.forEach(entityDescriptor -> {

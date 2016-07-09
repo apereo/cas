@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
@@ -30,7 +31,7 @@ public class WebUtilTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");
 
-        final Service service = WebUtils.getService(Arrays.asList(argumentExtractors), request);
+        final Service service = WebUtils.getService(Lists.newArrayList(argumentExtractors), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());

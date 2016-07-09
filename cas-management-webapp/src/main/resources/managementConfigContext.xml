@@ -7,16 +7,5 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
-       
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.StubPersonAttributeDao" 
-          p:backingMap-ref="backingMap"/>
-
-    <util:map id="backingMap">
-        <entry key="uid" value="uid"/>
-        <entry key="eduPersonAffiliation" value="eduPersonAffiliation"/>
-        <entry key="groupMembership" value="groupMembership"/>
-    </util:map>
-
-    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao"/>
-    
+   
 </beans>

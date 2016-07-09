@@ -15,20 +15,10 @@ import java.util.Properties;
  */
 public class CasBanner implements Banner {
 
-    private static final String[] BANNER = {
-            "                       ______ ___    _____",
-            "                      / ____//   |  / ___/",
-            "                     / /    / /| |  \\__ \\ ",
-            "                    / /___ / ___ | ___/ / ",
-            "                    \\____//_/  |_|/____/  "};
 
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
-        out.println();
-        for (final String line : BANNER) {
-            out.println(line);
-        }
-        out.println(collectEnvironmentInfo());
+        AsciiArtUtils.printAsciiArt(out, "(CAS)", collectEnvironmentInfo());
     }
 
     /**
@@ -41,7 +31,6 @@ public class CasBanner implements Banner {
     private static String collectEnvironmentInfo() {
         final Properties properties = System.getProperties();
         try (final Formatter formatter = new Formatter()) {
-            formatter.format("\n******************** Welcome to CAS *******************\n");
             formatter.format("CAS Version: %s\n", CasVersion.getVersion());
             formatter.format("Build Date/Time: %s\n", CasVersion.getDateTime());
             formatter.format("Java Home: %s\n", properties.get("java.home"));
@@ -50,7 +39,6 @@ public class CasBanner implements Banner {
             formatter.format("OS Architecture: %s\n", properties.get("os.arch"));
             formatter.format("OS Name: %s\n", properties.get("os.name"));
             formatter.format("OS Version: %s\n", properties.get("os.version"));
-            formatter.format("*******************************************************\n");
             return formatter.toString();
         }
     }

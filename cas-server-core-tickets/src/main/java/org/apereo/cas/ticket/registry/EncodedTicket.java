@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -40,7 +41,7 @@ public class EncodedTicket implements Ticket {
             this.id = encodedTicketId;
             this.encodedTicket = encodedTicket.read();
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

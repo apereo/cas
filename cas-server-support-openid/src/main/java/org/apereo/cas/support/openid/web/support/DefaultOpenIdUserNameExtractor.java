@@ -1,9 +1,6 @@
 package org.apereo.cas.support.openid.web.support;
 
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 /**
  * Extracts a local Id from an openid.identity. The default provider can extract
  * the following uris: http://openid.myprovider.com/scottb provides a local id
@@ -12,8 +9,6 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RefreshScope
-@Component("defaultOpenIdUserNameExtractor")
 public class DefaultOpenIdUserNameExtractor implements OpenIdUserNameExtractor {
 
     @Override

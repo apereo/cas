@@ -4,9 +4,13 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -22,6 +26,8 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@SpringApplicationConfiguration(classes = {CasSupportActionsConfiguration.class,
+        CasCoreWebflowConfiguration.class, CasCookieConfiguration.class})
 public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private GenerateServiceTicketAction action;

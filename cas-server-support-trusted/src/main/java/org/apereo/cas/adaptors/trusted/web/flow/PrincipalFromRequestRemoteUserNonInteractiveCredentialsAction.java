@@ -6,8 +6,6 @@ import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,8 +21,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("principalFromRemoteUserAction")
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
 

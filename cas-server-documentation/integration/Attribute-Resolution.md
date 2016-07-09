@@ -4,18 +4,27 @@ title: CAS - Attribute Resolution
 ---
 
 # Attribute Resolution
-Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory). 
-The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. 
-This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
 
-<div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, attributes are cached to the length of the SSO session. 
-This means that while the underlying component provided by Person Directory may have a different caching model, attributes by default and from 
-a CAS perspective will not be refreshed and retrieved again on subsequent requests as long as the SSO session exists.</p></div>
+Attribute resolution strategies are controlled by 
+the [Person Directory project](https://github.com/Jasig/person-directory). 
+The Person Directory dependency is automatically bundled with the CAS server. Therefor, 
+declaring an additional dependency will not be required. 
+This Person Directory project supports both LDAP and JDBC attribute resolution, 
+caching, attribute aggregation from multiple attribute sources, etc.
+
+<div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, 
+attributes are cached to the length of the SSO session. 
+This means that while the underlying component provided by Person Directory may have 
+a different caching model, attributes by default and from 
+a CAS perspective will not be refreshed and retrieved again on subsequent requests 
+as long as the SSO session exists.</p></div>
 
 
 ## Components
-A Person Directory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched 
-for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 
+A Person Directory `IPersonAttributeDao` attribute source is defined and configured to 
+describe the global set of attributes to be fetched 
+for each authenticated principal. That global set of attributes is then filtered by the 
+service manager according to service-specific attribute release rules. 
 
 ### Person Directory
 
@@ -46,7 +55,7 @@ The CAS project provides the following additional implementations:
 
 | Component         					| Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `ShibbolethPersonAttributeDao` | *EXPERIMENTAL* Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes
+| `ShibbolethPersonAttributeDao` | Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes
 
 ### Sample Usage
 
@@ -149,7 +158,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
+You may also need to declare the following Maven repository in your 
+CAS Overlay to be able to resolve dependencies:
 
 ```xml
 <repositories>
@@ -162,7 +172,8 @@ You may also need to declare the following Maven repository in your CAS Overlay 
 </repositories>
 ```
 
-The module provides a `shibbolethPersonAttributeDao` that uses the property `shibboleth.attributeResolver.resources`
+The module provides a `shibbolethPersonAttributeDao` that uses
+the property `shibboleth.attributeResolver.resources`
 for configuration.
 
 - Alias bean:
@@ -171,7 +182,8 @@ for configuration.
 <alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
 ```
 
-- Modify either `application.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
+- Modify either `application.properties` or the runtime environment 
+to add `shibboleth.attributeResolver.resources`. This is a
 comma seperated list of resources to use for the configuration:
 
 ```shell

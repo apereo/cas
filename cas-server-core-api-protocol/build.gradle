@@ -1,3 +1,6 @@
 
-description = 'Apereo CAS Core Protocol APIs'
+description = "Apereo CAS Core Protocol APIs"
 
+dependencies {
+    compile libraries.spring
+}

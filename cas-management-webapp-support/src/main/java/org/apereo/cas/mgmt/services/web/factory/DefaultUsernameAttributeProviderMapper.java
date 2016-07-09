@@ -10,8 +10,6 @@ import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceUsernameAttributeProviderEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 
@@ -21,14 +19,7 @@ import java.nio.charset.Charset;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component(DefaultUsernameAttributeProviderMapper.BEAN_NAME)
 public class DefaultUsernameAttributeProviderMapper implements UsernameAttributeProviderMapper {
-    /**
-     * Name of this bean within the Spring context.
-     */
-    public static final String BEAN_NAME = "defaultUsernameAttributeProviderMapper";
-
     @Override
     public void mapUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider provider,
                                              final ServiceData bean) {

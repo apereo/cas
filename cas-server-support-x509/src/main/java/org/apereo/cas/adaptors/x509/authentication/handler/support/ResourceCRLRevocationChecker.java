@@ -1,20 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.security.auth.x500.X500Principal;
-import javax.validation.constraints.Min;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -36,25 +30,14 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  *
  */
-@RefreshScope
-@Component("resourceCrlRevocationChecker")
-public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  {
-
-    /** Default refresh interval is 1 hour. */
-    public static final int DEFAULT_REFRESH_INTERVAL = 3600;
-
+public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
+    
     /** Executor responsible for refreshing CRL data. */
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /** CRL refresh interval in seconds. */
-    private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    /** Handles fetching CRL data. */
-    @Autowired(required = false)
-    @Qualifier("x509CrlFetcher")
+    private int refreshInterval = 3600;
+    
     private CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
@@ -65,7 +48,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
     private Set<Resource> resources;
 
     /** Used for serialization and auto wiring. */
-    private ResourceCRLRevocationChecker() {}
+    public ResourceCRLRevocationChecker() {}
 
     /**
      * Creates a new instance using the specified resource for CRL data.
@@ -104,20 +87,13 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
      *
      * @param seconds Refresh interval in seconds; MUST be positive integer.
      */
-    @Autowired
-    public void setRefreshInterval(@Min(1) @Value("${cas.x509.authn.crl.refresh.interval:" + DEFAULT_REFRESH_INTERVAL + '}')
-                                   final int seconds) {
+    public void setRefreshInterval(final int seconds) {
         this.refreshInterval = seconds;
     }
 
 
-    private void initializeResourcesFromContext() {
-        try {
-            this.resources = this.applicationContext.getBean("x509CrlResources", Set.class);
-            logger.debug("Located {} CRL resources from configuration", this.resources.size());
-        } catch (final Exception e) {
-            logger.debug("[x509CrlResources] is not defined in the application context");
-        }
+    public void setResources(final Set<Resource> resources) {
+        this.resources = resources;
     }
 
     /**
@@ -125,10 +101,9 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
      */
     @PostConstruct
     @Override
-    public void init()  {
+    public void init() {
         super.init();
-
-        initializeResourcesFromContext();
+        
         if (!validateConfiguration()) {
             return;
         }
@@ -138,7 +113,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
             final Set<X509CRL> results = this.fetcher.fetch(getResources());
             ResourceCRLRevocationChecker.this.addCrls(results);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
 
         // Set up the scheduler to fetch periodically to implement refresh
@@ -156,8 +131,15 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
                 }
             }
         };
-        this.scheduler.scheduleAtFixedRate(
-                scheduledFetcher, this.refreshInterval, this.refreshInterval, TimeUnit.SECONDS);
+        try {
+            this.scheduler.scheduleAtFixedRate(
+                    scheduledFetcher,
+                    this.refreshInterval,
+                    this.refreshInterval,
+                    TimeUnit.SECONDS);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
 
     }
 
@@ -227,16 +209,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
         this.scheduler.shutdown();
     }
 
-    @Autowired(required=false)
-    @Override
-    public void setUnavailableCRLPolicy(@Qualifier("x509ResourceUnavailableRevocationPolicy") final RevocationPolicy policy) {
-        super.setUnavailableCRLPolicy(policy);
+    public void setFetcher(final CRLFetcher fetcher) {
+        this.fetcher = fetcher;
     }
-
-    @Autowired(required=false)
-    @Override
-    public void setExpiredCRLPolicy(@Qualifier("x509ResourceExpiredRevocationPolicy") final RevocationPolicy policy) {
-        super.setExpiredCRLPolicy(policy);
-    }
-
 }

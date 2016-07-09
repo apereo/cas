@@ -9,8 +9,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@RefreshScope
-@Component("oAuthValidator")
 public class OAuthValidator {
 
     /** The logger. */

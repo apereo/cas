@@ -3,7 +3,6 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -12,8 +11,6 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -103,14 +100,9 @@ public class SingleSignOnSessionsReportController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
      * Instantiates a new Single sign on sessions report resource.
@@ -234,7 +226,7 @@ public class SingleSignOnSessionsReportController {
      */
     @RequestMapping(value = "/destroySsoSession", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
+    public Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -257,7 +249,7 @@ public class SingleSignOnSessionsReportController {
      */
     @RequestMapping(value = "/destroySsoSessions", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
+    public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();
 
@@ -292,5 +284,13 @@ public class SingleSignOnSessionsReportController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }

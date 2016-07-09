@@ -43,55 +43,55 @@ def projectMavenDeployer = {
         }
 
         scm {
-            url 'scm:git@github.com:apereo/cas.git'
-            connection 'scm:git@github.com:apereo/cas.git'
-            developerConnection 'scm:git@github.com:apereo/cas.git'
+            url "scm:git@github.com:apereo/cas.git"
+            connection "scm:git@github.com:apereo/cas.git"
+            developerConnection "scm:git@github.com:apereo/cas.git"
         }
 
         licenses {
             license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
+                name "The Apache Software License, Version 2.0"
+                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution "repo"
             }
         }
 
         developers {
             developer {
-                id 'leleuj'
-                name 'Jérôme Leleu'
+                id "leleuj"
+                name "Jérôme Leleu"
             }
             developer {
-                id 'apetro'
-                name 'Andrew Petro'
+                id "apetro"
+                name "Andrew Petro"
             }
             developer {
-                id 'wgthom'
-                name 'William G. Thompson'
+                id "wgthom"
+                name "William G. Thompson"
             }
             developer {
-                id 'serac'
-                name 'Marvin S. Addison'
+                id "serac"
+                name "Marvin S. Addison"
             }
             developer {
-                id 'battags'
-                name 'Scott Battaglia'
+                id "battags"
+                name "Scott Battaglia"
             }
             developer {
-                id 'mmoayyed'
-                name 'Misagh Moayyed'
+                id "mmoayyed"
+                name "Misagh Moayyed"
             }
             developer {
-                id 'robertoschwald'
-                name 'Robert Oschwald'
+                id "robertoschwald"
+                name "Robert Oschwald"
             }
             developer {
-                id 'frett'
-                name 'Daniel Frett'
+                id "frett"
+                name "Daniel Frett"
             }
             developer {
-                id 'dima767'
-                name 'Dmitriy Kopylenko'
+                id "dima767"
+                name "Dmitriy Kopylenko"
             }
         }
 
@@ -213,8 +213,8 @@ def projectMavenDeployer = {
                 releases {
                     enabled true
                 }
-           }
-           repository {
+            }
+            repository {
                 id "uniconiam"
                 url "https://dl.bintray.com/uniconiam/maven"
                 releases {
@@ -234,6 +234,7 @@ buildscript {
         jcenter()
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "http://repo.spring.io/plugins-release" }
     }
 
     dependencies {
@@ -241,6 +242,7 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:0.27.0"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
+        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
     }
 }
 
@@ -251,7 +253,8 @@ allprojects {
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
     apply plugin: "nebula.lint"
-    gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
+
+    gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
 
     signing {
         required = isArtifactSigningRequired
@@ -265,22 +268,26 @@ subprojects {
     task allDepInsight(type: DependencyInsightReportTask) << {}
     task allDeps(type: DependencyReportTask) {}
 
-    apply plugin: 'java'
-    apply plugin: 'checkstyle'
-    apply plugin: 'findbugs'
-    apply plugin: 'aspectj'
-    apply plugin: 'project-report'
-    
+    apply plugin: "java"
+    apply plugin: "checkstyle"
+    apply plugin: "findbugs"
+    apply plugin: "aspectj"
+    apply plugin: "project-report"
+    apply plugin: "propdeps"
+    apply plugin: "propdeps-maven"
+    apply plugin: "propdeps-idea"
+    apply plugin: "propdeps-eclipse"
+
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries;
 
     /*
-    Don't publish test dependencies into the final POM.
+        Do NOT publish test dependencies into the final POM.
     */
     conf2ScopeMappings.mappings.remove(configurations.findByName("testCompile"))
     conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntime"))
-    
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -293,25 +300,24 @@ subprojects {
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
         maven { url "http://repo.spring.io/milestone" }
-        maven { url "https://dl.bintray.com/uniconiam/maven"}
+        maven { url "https://dl.bintray.com/uniconiam/maven" }
     }
 
     test {
         enabled = !Boolean.getBoolean("skipTests")
         maxParallelForks = 1
         useJUnit()
-        scanForTestClasses false
+        scanForTestClasses = false
 
-        ignoreFailures Boolean.getBoolean("ignoreTestFailures")
-        include '**/*Tests.*'
-        exclude '**/*Abstract*.*'
+        ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
+        include "**/*Tests.*"
+        exclude "**/*Abstract*.*"
         classpath = it.classpath + files("${projectDir}/src/main/resources") +
                 files("${projectDir}/src/test/resources")
         testLogging {
             events "failed", "standardError"
             exceptionFormat "full"
         }
-
     }
 
     configurations {
@@ -336,7 +342,7 @@ subprojects {
         archives resourcesJar
         archives testJar
     }
-    
+
 
     sourceSets {
         test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
@@ -344,7 +350,7 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-    
+
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
@@ -354,16 +360,15 @@ subprojects {
     tasks.jar.onlyIf {
         project.buildDate != null || !project.buildJarFile.exists()
     }
-    
+
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                       "Implementation-Vendor": project.group,
-                       "Created-By": project.group,
-                       "Implementation-Version": project.version)
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Version": project.version)
         }
     }
-
 
     checkstyle {
         configFile new File(rootDir, "checkstyle-rules.xml")
@@ -385,7 +390,7 @@ subprojects {
         includePlugins = false
         includeSubProjects = true
     }
-    
+
     findbugs {
         toolVersion = "${findbugsVersion}"
         sourceSets = [sourceSets.main]
@@ -414,9 +419,12 @@ subprojects {
         compile libraries.commons
         compile libraries.jodatime
         compile libraries.inspektr
-                
+
         compileOnly libraries.javax
-        
+
+        if (Boolean.getBoolean("genConfigMetadata")) {
+            optional libraries.springbootconfigmetadata
+        }
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektraspects
             aspectpath libraries.inspektraspects
@@ -438,24 +446,29 @@ subprojects {
             mavenDeployer projectMavenDeployer
         }
     }
+
+    if (Boolean.getBoolean("genConfigMetadata")) {
+        compileJava.dependsOn(processResources)
+    }
 }
 
-task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+task wrapper(type: Wrapper, description: "Gradle wrapper") {
     gradleVersion = project.gradleVersion
 }
 
 task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory") {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
-    destinationDir = new File(buildDir, 'javadoc')
+    destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
 
-task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc,
+        description: "Aggregate all Javadocs into a single directory") {
+    classifier = "javadoc"
+    from javadoc
 }
 
-task rootSourcesJar(type: Jar) {
+task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
     baseName = "${project.archivesBaseName}"
     from rootProject.file("src")
 }
