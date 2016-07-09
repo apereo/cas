@@ -103,6 +103,7 @@ dependencies {
     }
     runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
     runtime group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
+    runtime project(':cas-server-support-oauth')
 }
 
 configurations {
