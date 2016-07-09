@@ -1,0 +1,29 @@
+{
+  "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
+  "serviceId" : "http://accounts.wavity.(com|net)/auth/oauth2.0/callbackAuthorize",
+  "name" : "wavity oauth webapp",
+  "id" : 101,
+  "description" : "Oauth server for wavity app",
+  "clientId" : "5758e742-fb20-4e93-9ac7-e0979f4a409d",
+  "clientSecret" : "50e3c558-ab8f-436a-a23b-44550998ee44",
+  "bypassApprovalPrompt": false,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "usernameAttributeProvider" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : false,
+    "authorizedToReleaseProxyGrantingTicket" : false
+  },
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true
+  }
+}
