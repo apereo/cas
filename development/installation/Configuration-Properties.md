@@ -3,7 +3,7 @@ layout: default
 title: CAS Properties
 ---
 
-## CAS PropertiesJ
+## CAS Properties
 
 Various properties can be specified in CAS [either inside configuration files or as command 
 line switches](Configuration-Management.md). This section provides a list common CAS properties and 
