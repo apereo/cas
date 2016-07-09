@@ -3,7 +3,7 @@ layout: default
 title: CAS Properties
 ---
 
-## CAS Properties
+## CAS PropertiesJ
 
 Various properties can be specified in CAS [either inside configuration files or as command 
 line switches](Configuration-Management.md). This section provides a list common CAS properties and 
@@ -56,7 +56,7 @@ server.tomcat.uriEncoding=UTF-8
 server.useForwardHeaders=true
 ```
 
-### CAS Server Embedded Tomcat HTTP
+### Embedded Tomcat HTTP
 
 Enable HTTP connections for the embedded Tomcat container.
 
@@ -66,7 +66,7 @@ Enable HTTP connections for the embedded Tomcat container.
 # cas.server.http.enabled=true
 ```
 
-### CAS Server Embedded Tomcat AJP
+### Embedded Tomcat AJP
 
 Enable the AJP connector for the embedded Tomcat container.
 
@@ -1111,7 +1111,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 ```
 
 
-## Events Jpa Database
+## Events JPA Database
 
 ```properties
 # cas.events.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1211,7 +1211,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.couchbase.timeout=10
 ```
 
-## Jpa Service Registry Pooling
+## JPA Service Registry Pooling
 
 ```properties
 # cas.serviceRegistry.jpa.pool.suspension=false
@@ -1221,7 +1221,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
-## Jpa Service Registry
+## JPA Service Registry
 
 ```properties
 # cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1255,7 +1255,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.pt.numberOfUses=1
 ```
 
-## Jpa Ticket Registry Pooling
+## JPA Ticket Registry Pooling
 
 ```properties
 # cas.ticket.registry.jpa.pool.suspension=false
@@ -1265,7 +1265,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.jpa.pool.maxWait=2000
 ```
 
-## Jpa Ticket Registry
+## JPA Ticket Registry
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
