@@ -108,8 +108,8 @@
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
 
 * [Developer](#developer)
-    *   [Javadocs](/$version/javadocs/index.html)
-    *   [Issue Tracker](https://github.com/Jasig/cas/issues)
+    *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
+    *   [Issue Tracker](https://github.com/apereo/cas/issues)
     *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Policy](/cas/developer/Release-Policy.html)
