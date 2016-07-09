@@ -395,7 +395,7 @@ ext.libraries = [
                 }
         ],
         javax                : [
-                "javax.servlet:javax.servlet-api:$javaxSevletVersion",
+                "javax.servlet:javax.servlet-api:$javaxServletVersion",
         ],
         javaximpl            : [
                 "javax.servlet:jstl:$javaxJstlVersion",
