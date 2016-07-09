@@ -33,7 +33,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Configuration
 
-### Register Providersw
+### Register Providers
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. 
 If you want to delegate the CAS authentication to Twitter for example, you have to add an 
@@ -49,7 +49,7 @@ an OAuth client at the OAuth provider. After the declaration, a key and a secret
 to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values for the *key* and *secret* properties).
 
 For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server 
-which is using OAuth wrapping (for example: *http://mycasserver2/oauth2.0*).
+which is using OAuth wrapping (i.e: `http://mycasserver2/oauth2.0`).
 
 ### User Interface
 
@@ -63,9 +63,7 @@ and the url for the redirection to the identity provider in the `pac4jUrls` obje
 
 After a successful delegated authentication, a user is created inside the CAS server with a specific identifier: 
 this one can be created only from the technical identifier received from the external identity provider (like `1234`) 
-or as a "typed identifier" (like FacebookProfile#1234), which is the default.
-
-This can be defined in the `application.properties` file.
+or as a "typed identifier" (like FacebookProfile#1234), which is the default. This can be defined in the `application.properties` file.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
@@ -88,8 +86,9 @@ In the CAS server, after this kind of delegated authentication, users have speci
 
 The `Authentication` object has:
 
-* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
-* The attribute *`clientName`* set to the type of the provider used during authentication process.
+* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` 
+set to `org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`
+* The attribute `clientName` set to the type of the provider used during authentication process.
 
 The `Principal` object of the `Authentication` object has:
 
@@ -147,4 +146,4 @@ final FacebookProfile rebuiltProfileOnCasClientSide =
     (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
 ```
 
-and then use it in your application.
+...and then use it in your application.
