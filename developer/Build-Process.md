@@ -21,7 +21,7 @@ cd cas-server
 ./gradlew build --parallel -x test -x javadoc -DskipCheckstyle=true -DskipAspectJ=true -DskipFindbugs=true
 ```
 
-The following commandline flags are supported by the build:
+The following commandline boolean flags are supported by the build:
 
 | Flag                              | Description
 |-----------------------------------+----------------------------------------------------+
@@ -29,6 +29,8 @@ The following commandline flags are supported by the build:
 | `skipAspectJ`                     | Skip decorating source files with AspectJ.
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
+| `genConfigMetadata`               | Generate CAS configuration metadata for `@ConfigurationProperties` classes.
+
 
 Note that you can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test/javadoc`)
 
