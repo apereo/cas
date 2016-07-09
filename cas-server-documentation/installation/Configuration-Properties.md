@@ -17,7 +17,9 @@ into your CAS configuration; rather pick only the properties that you need.</p><
 in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property`
 and `CAS_SOME_PROPERTY` are all valid names.
 
-The following list of properties are controlled by and provided to CAS.
+The following list of properties are controlled by and provided to CAS. Each block, for most use cases, corresponds
+to a specific CAS module that is expected to be included in the final CAS distribution prepared during the build
+and deployment process. 
 
 ### Embedded Tomcat
 
@@ -87,7 +89,6 @@ Identify the CAS server. `name` and `prefix` are always required settings.
 # cas.server.name=https://cas.example.org:8443
 # cas.server.prefix=https://cas.example.org:8443/cas
 ```
-
 
 ### Cloud Config AMQP Bus
 
