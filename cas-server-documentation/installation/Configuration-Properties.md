@@ -126,7 +126,7 @@ endpoint of CAS which provide administrative functionality and oversight into th
 # cas.securityContext.adminpages.ip=.+
 # endpoints.enabled=true
 # endpoints.sensitive=true
-# management.context-path=/status
+# management.contextPath=/status
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
 
@@ -143,8 +143,8 @@ Control the web application session behavior.
 
 ```properties
 server.session.timeout=300
-server.session.cookie.http-only=true
-server.session.tracking-modes=COOKIE
+server.session.cookie.httpOnly=true
+server.session.trackingModes=COOKIE
 ```
 
 ### Thymeleaf View
@@ -160,14 +160,14 @@ Control the location and other settings of the CAS logging configuration.
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
-server.context-parameters.isLog4jAutoInitializationDisabled=true
+server.contextParameters.isLog4jAutoInitializationDisabled=true
 ```
 
 ### AspectJ Configuration
 
 ```properties
 # spring.aop.auto=true
-# spring.aop.proxy-target-class=true
+# spring.aop.proxyTargetClass=true
 ```
 
 ### Authentication Attributes
@@ -194,16 +194,16 @@ CAS attempts to vend and validate tickets.
 ### CAS Groovy Shell Console
 
 ```properties
-# shell.command-refresh-interval=15
-# shell.command-path-patterns=classpath*:/commands/**
+# shell.commandRefreshInterval=15
+# shell.commandPathPatterns=classpath*:/commands/**
 # shell.auth.simple.user.name=
 # shell.auth.simple.user.password=
 # shell.ssh.enabled=true
 # shell.ssh.port=2000
 # shell.telnet.enabled=false
 # shell.telnet.port=5000
-# shell.ssh.auth-timeout=3000
-# shell.ssh.idle-timeout=30000
+# shell.ssh.authTimeout=3000
+# shell.ssh.idleTimeout=30000
 ```
 
 
