@@ -18,18 +18,9 @@ Support is enabled by adding the following module into the Maven overlay:
 </dependency>
 ```
 
-In `application.properties`:
+Path to the service definitions directory is controlled via the `application.properties` file.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-#CAS components mappings
-serviceRegistryDao=yamlServiceRegistryDao
-```
-
-Path to the service definitions directory is controlled via:
-
-```properties
-service.registry.config.location=classpath:services
-```
 
 A sample YAML file follows:
 

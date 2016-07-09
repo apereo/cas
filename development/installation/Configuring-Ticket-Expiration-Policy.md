@@ -19,78 +19,44 @@ having to re-authenticate. An attempt to grant a ST with an expired TGT would re
 to obtain a new (valid) TGT.
 
 #### Default
+
 This is default option, which provides a hard-time out as well as a sliding window.
 
-In `application.properties`:
 
-```properties
-#CAS components mappings
-grantingTicketExpirationPolicy=ticketGrantingTicketExpirationPolicy
-```
-
-Settings are controlled via:
-
-```properties
-# tgt.maxTimeToLiveInSeconds=28800
-# tgt.timeToKillInSeconds=7200
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 #### Timeout
+
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout. 
 For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise 
 it would be marked as expired.
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-grantingTicketExpirationPolicy=timeoutExpirationPolicy
-```
-
 Settings are controlled via:
 
-```properties
-# tgt.timeout.maxTimeToLiveInSeconds=28800
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 #### Hard Timeout
+
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span 
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired 
 and the user will be forced to re-authenticate.
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-grantingTicketExpirationPolicy=hardTimeoutExpirationPolicy
-```
 
 Settings are controlled via:
 
-```properties
-# tgt.timeout.hard.maxTimeToLiveInSeconds=28000
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 #### Throttled
+
 The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at 
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client 
 attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
-In `application.properties`:
 
-```properties
-#CAS components mappings
-grantingTicketExpirationPolicy=throttledUseAndTimeoutExpirationPolicy
-```
-
-Settings are controlled via:
-
-```properties
-# tgt.throttled.maxTimeToLiveInSeconds=28800
-# tgt.throttled.timeInBetweenUsesInSeconds=5
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 #### Never
+
 The never expires policy allows tickets to exist indefinitely.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Use of this policy has significant consequences to overall 
@@ -99,31 +65,20 @@ server resource usage for the ticket registries backed by filesystem storage. Si
 for those registries with this policy in effect, use of this policy with those ticket registry implementations 
 is strongly discouraged.</p></div>
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-grantingTicketExpirationPolicy=neverExpiresExpirationPolicy
-```
-
 ### Service Ticket Policies
 
 #### Default
-This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum 
-period of inactivity elapses. This is default and only option.
 
-```properties
-# st.timeToKillInSeconds=10
-# st.numberOfUses=1
-```
+This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum 
+period of inactivity elapses. This is the default and only option.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Proxy Ticket Policies
 
 #### Default
+
 This is the default policy applied to proxy tickets where a ticket is expired after a fixed number of uses or after a maximum 
 period of inactivity elapses. This is default and only option.
 
-```properties
-# pt.timeToKillInSeconds=10
-# pt.numberOfUses=1
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

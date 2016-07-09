@@ -4,11 +4,13 @@ title: CAS - JWT Authentication
 ---
 
 # JWT Authentication
+
 [JSON Web Tokens](http://jwt.io/) are an open, industry standard RFC 7519 method for representing claims securely between two parties.
 CAS provides support for token-based authentication on top of JWT, where an authentication request can be granted an SSO session based
 on a form of credentials that are JWTs. 
 
 ## Overview
+
 CAS expects a `token` parameter to be passed along to the `/login` endpoint. The parameter value must be a 
 JWT. Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j/pac4j):
 
@@ -33,6 +35,7 @@ Once the token is generated, you may pass it to the `/login` endpoint of CAS as 
 ```
 
 ## Configuration
+
 JWT authentication support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -43,16 +46,8 @@ JWT authentication support is enabled by including the following dependency in t
 </dependency>
 ```
 
-Then, configure the JWT handler in your overlay configuration:
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-primaryAuthenticationHandler=tokenAuthenticationHandler
-```
-
-Configure the appropriate service in your service registry to hold the secret:
+Configure the appropriate service in your service registry to hold the secrets:
 
 ```json
 {

@@ -52,13 +52,7 @@ OpenID Connect clients can be registered with CAS as such:
 
 ## Settings
 
-The following settings are available:
-
-```properties
-# cas.oidc.issuer=${server.prefix}/oidc
-# cas.oidc.jwks=file:/etc/cas/keystore.jwks
-# cas.oidc.skew=5
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Keystores
 

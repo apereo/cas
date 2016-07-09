@@ -24,36 +24,7 @@ to appropriate decrypt and encrypt the cookie value and will prevent successful 
 
 ## Configuration
 
-The generation of the ticket-granting cookie is controlled via:
-
-```properties
-# The encryption secret key. By default, must be a octet string of size 256.
-tgc.encryption.key=
-
-# The signing secret key. By default, must be a octet string of size 512.
-tgc.signing.key=
-
-# Decides whether SSO cookie should be created only under secure connections.
-# tgc.secure=true
-
-# The expiration value of the SSO cookie
-# tgc.maxAge=-1
-
-# The name of the SSO cookie
-# tgc.name=TGC
-
-# The path to which the SSO cookie will be scoped
-# tgc.path=/cas
-
-# The domain of the SSO cookie
-# tgc.domain=
-
-# Decides whether SSO Warning cookie should be created only under secure connections.
-# warn.cookie.secure=true
-
-# The expiration value of the SSO Warning cookie
-# warn.cookie.maxAge=-1
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 The cookie has the following properties:
 
@@ -76,14 +47,9 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 
 ### Disable Encryption
 
-If you wish to turn off cookie encryption, adjust your configuration to be the following:
+If you wish to turn off cookie encryption, see the relevant list of CAS properties
+and [review this guide](Configuration-Properties.html).
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-cookieCipherExecutor=noOpCipherExecutor
-```
 
 ## Cookie Generation for Renewed Authentications
 
@@ -101,29 +67,12 @@ to an SSO-participating application. This might better match user expectations.
 
 The controlling of this behavior is done via the `application.properties` file:
 
-```properties
-##
-# Single Sign-On Session
-#
-# Indicates whether an SSO session should be created for renewed authentication requests.
-# create.sso.renewed.authn=true
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 # SSO Warning Session Cookie
+
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page. The cookie is used later to warn and prompt
 the user before a service ticket is generated and access to the service application is granted.
 The cookie is controlled via:
 
-```properties
-# Decides whether SSO Warning cookie should be created only under secure connections.
-# warn.cookie.secure=true
-
-# The expiration value of the SSO Warning cookie
-# warn.cookie.maxAge=-1
-
-# The name of the SSO Warning cookie
-# warn.cookie.name=CASPRIVACY
-
-# The path to which the SSO Warning cookie will be scoped
-# warn.cookie.path=/cas
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

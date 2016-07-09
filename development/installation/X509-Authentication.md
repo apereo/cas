@@ -28,81 +28,15 @@ X.509 support is enabled by including the following dependency in the WAR overla
 CAS provides an X.509 authentication handler, a handful of X.509-specific principal resolvers, some certificate
 revocation machinery, and some Webflow actions to provide for non-interactive authentication.
 
-### Authentication
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
 by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-primaryAuthenticationHandler=x509CredentialsAuthenticationHandler
-```
-
-The following settings are applicable:
-
-```properties
-# cas.x509.authn.crl.checkAll=false
-# cas.x509.authn.crl.throw.failure=true
-# cas.x509.authn.crl.refresh.interval=
-# cas.x509.authn.revocation.policy.threshold=
-# cas.x509.authn.trusted.issuer.dnpattern=
-# cas.x509.authn.max.path.length=
-# cas.x509.authn.max.path.length.unspecified=
-# cas.x509.authn.check.key.usage=
-# cas.x509.authn.require.key.usage=
-# cas.x509.authn.subject.dnpattern=
-# cas.x509.authn.principal.descriptor=
-# cas.x509.authn.principal.serial.no.prefix=
-# cas.x509.authn.principal.value.delim=
-```
-
-## Principal Resolution
-
-### Subject
-Creates a principal ID from a format string composed of components from the subject distinguished name.
-The following configuration snippet produces principals of the form `cn@example.com`. For example, given a
-certificate with the subject `DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto` it would produce the ID
-`jacky@vt.edu`.
-
-```xml
-<alias name="x509SubjectPrincipalResolver" alias="primaryPrincipalResolver" />
-```
-
-### Subject DN
-Creates a principal ID from the certificate subject distinguished name.
-
-```xml
-<alias name="x509SubjectDNPrincipalResolver" alias="primaryPrincipalResolver" />
-```
-
-### Serial Number
-Creates a principal ID from the certificate serial number.
-
-```xml
-<alias name="x509SerialNumberPrincipalResolver" alias="primaryPrincipalResolver" />
-```
-
-### Serial Number & DN
-Creates a principal ID by concatenating the certificate serial number, a delimiter, and the issuer DN.
-The serial number may be prefixed with an optional string.
-
-```xml
-<alias name="x509SerialNumberAndIssuerDNPrincipalResolver" alias="primaryPrincipalResolver" />
-```
-
-### Subject Alternative Name
-Adds support the embedding of a `UserPrincipalName` object as a `SubjectAlternateName` extension within an X509 certificate,
-allowing properly-empowered certificates to be used for network logon (via SmartCards, or alternately by 'soft certs' in certain environments).
-This resolver extracts the Subject Alternative Name UPN extension from the provided certificate if available as a resolved principal id.
-
-```xml
-<alias name="x509SubjectAlternativeNameUPNPrincipalResolver" alias="primaryPrincipalResolver" />
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Certificate Revocation Checking
+
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
 configurability in the revocation machinery built into the JSSE.
 
@@ -163,7 +97,8 @@ Fetches a CRL resource from a preconfigured attribute, in the event that the CRL
 ```
 
 ### Pooling LDAP Attribute
-Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance. This component is able to use connection pooling.
+Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance. 
+This component is able to use connection pooling.
 
 ```xml
 <alias name="poolingLdaptiveResourceCRLFetcher" alias="x509CrlFetcher" />
@@ -173,6 +108,7 @@ Fetches a CRL resource from a preconfigured attribute, in the event that the CRL
 ```
 
 ## Web Server Configuration
+
 X.509 configuration requires substantial configuration outside the CAS Web application. The configuration of Web
 server SSL components varies dramatically with software and is outside the scope of this document. We offer some
 general advice for SSL configuration:
