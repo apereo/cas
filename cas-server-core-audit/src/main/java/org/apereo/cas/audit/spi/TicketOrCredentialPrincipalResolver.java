@@ -15,8 +15,6 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,8 +32,8 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
     private CentralAuthenticationService centralAuthenticationService;
-
-    private PrincipalIdProvider principalIdProvider = new DefaultPrincipalIdProvider();
+    
+    private PrincipalIdProvider principalIdProvider = authentication -> authentication.getPrincipal().getId();
 
     /**
      * Instantiates a new Ticket or credential principal resolver.
@@ -52,8 +50,6 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
      *
      * @return principal id provider
      */
-    @Autowired(required = false)
-    @Qualifier("principalIdProvider")
     public PrincipalIdProvider getPrincipalIdProvider() {
         return principalIdProvider;
     }
@@ -138,13 +134,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
         return WebUtils.getAuthenticatedUsername();
     }
 
-    /**
-     * Default implementation that simply returns principal#id.
-     */
-    static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
-        @Override
-        public String getPrincipalIdFrom(final Authentication authentication) {
-            return authentication.getPrincipal().getId();
-        }
+    public void setPrincipalIdProvider(final PrincipalIdProvider principalIdProvider) {
+        this.principalIdProvider = principalIdProvider;
     }
 }

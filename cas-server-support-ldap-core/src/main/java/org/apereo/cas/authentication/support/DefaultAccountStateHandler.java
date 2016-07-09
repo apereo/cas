@@ -1,13 +1,15 @@
 package org.apereo.cas.authentication.support;
 
+import com.google.common.base.Throwables;
+import org.apache.shiro.util.ClassUtils;
 import org.apereo.cas.DefaultMessageDescriptor;
+import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.InvalidLoginLocationException;
 import org.apereo.cas.authentication.InvalidLoginTimeException;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.InvalidLoginLocationException;
-
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -16,8 +18,7 @@ import org.ldaptive.auth.ext.PasswordExpirationAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -27,6 +28,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,14 +40,18 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("accountStateHandler")
 public class DefaultAccountStateHandler implements AccountStateHandler {
-    /** Map of account state error to CAS authentication exception. */
+    /**
+     * Map of account state error to CAS authentication exception.
+     */
     protected Map<AccountState.Error, LoginException> errorMap;
 
-    /** Logger instance. */
+    /**
+     * Logger instance.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
+
+    private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>();
 
     /**
      * Instantiates a new account state handler, that populates
@@ -69,9 +75,16 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         this.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new AccountPasswordMustChangeException());
     }
 
+
     @Override
-    public List<MessageDescriptor> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
+    public List<MessageDescriptor> handle(final AuthenticationResponse response,
+                                          final LdapPasswordPolicyConfiguration configuration)
             throws LoginException {
+
+        if (!this.attributesToErrorMap.isEmpty() && response.getResult()) {
+            logger.debug("Handling policy based on pre-defined attributes");
+            handlePolicyAttributes(response);
+        }
 
         final AccountState state = response.getAccountState();
         if (state == null) {
@@ -90,11 +103,10 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      * <p>
      * Override this method to provide custom error handling.
      *
-     * @param error Account state error.
-     * @param response Ldaptive authentication response.
+     * @param error         Account state error.
+     * @param response      Ldaptive authentication response.
      * @param configuration Password policy configuration.
-     * @param messages Container for messages produced by account state error handling.
-     *
+     * @param messages      Container for messages produced by account state error handling.
      * @throws LoginException On errors that should be communicated as login exceptions.
      */
     protected void handleError(
@@ -118,16 +130,17 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      * <p>
      * Override this method to provide custom warning message handling.
      *
-     * @param warning the account state warning messages.
-     * @param response Ldaptive authentication response.
+     * @param warning       the account state warning messages.
+     * @param response      Ldaptive authentication response.
      * @param configuration Password policy configuration.
-     * @param messages Container for messages produced by account state warning handling.
+     * @param messages      Container for messages produced by account state warning handling.
      */
     protected void handleWarning(
             final AccountState.Warning warning,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
             final List<MessageDescriptor> messages) {
+
 
         logger.debug("Handling warning {}", warning);
         if (warning == null) {
@@ -156,4 +169,30 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
 
         }
     }
+
+    public void setAttributesToErrorMap(final Map<String, Class<LoginException>> attributesToErrorMap) {
+        this.attributesToErrorMap = attributesToErrorMap;
+    }
+
+    /**
+     * Maps boolean attribute values to their corresponding exception.
+     * This handles ad-hoc password policies.
+     *
+     * @param response the authentication response.
+     */
+    protected void handlePolicyAttributes(final AuthenticationResponse response) {
+        final Collection<LdapAttribute> attrs = response.getLdapEntry().getAttributes();
+        for (final LdapAttribute attr : attrs) {
+            if (this.attributesToErrorMap.containsKey(attr.getName())
+                    && Boolean.parseBoolean(attr.getStringValue())) {
+                final Class<LoginException> clazz = this.attributesToErrorMap.get(attr.getName());
+                final LoginException ex = (LoginException) ClassUtils.newInstance(clazz);
+                if (ex != null) {
+                    throw Throwables.propagate(ex);
+                }
+            }
+        }
+
+    }
 }
+

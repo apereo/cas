@@ -7,10 +7,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.annotation.Nullable;
+import org.thymeleaf.util.StringUtils;
 
 /**
  * Generates a persistent id as username for anonymous service access.
@@ -27,10 +24,8 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider implements Regi
     private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousRegisteredServiceUsernameAttributeProvider.class);
 
     /** Encoder to generate PseudoIds. */
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("persistentIdGenerator")
-    private PersistentIdGenerator persistentIdGenerator;
+    private PersistentIdGenerator persistentIdGenerator = 
+            new ShibbolethCompatiblePersistentIdGenerator(StringUtils.randomAlphanumeric(16));
 
     /** Init provider. */
     public AnonymousRegisteredServiceUsernameAttributeProvider() {}

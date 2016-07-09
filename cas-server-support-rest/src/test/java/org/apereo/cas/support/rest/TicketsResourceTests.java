@@ -5,6 +5,9 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -56,16 +59,21 @@ public class TicketsResourceTests {
         final AuthenticationManager mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
 
+        this.ticketsResourceUnderTest.setAuthenticationSystemSupport(
+                new DefaultAuthenticationSystemSupport(
+                        new DefaultAuthenticationTransactionManager(mgmr),
+                        new DefaultPrincipalElectionStrategy()));
         this.ticketsResourceUnderTest.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(mgmr);
         this.ticketsResourceUnderTest.setWebApplicationServiceFactory(new WebApplicationServiceFactory());
+        this.ticketsResourceUnderTest.setCentralAuthenticationService(this.casMock);
 
         when(this.ticketSupport.getAuthenticationFrom(anyString())).thenReturn(TestUtils.getAuthentication());
         this.ticketsResourceUnderTest.setTicketRegistrySupport(ticketSupport);
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
-                .contextPath("/cas")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                        .contextPath("/cas")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .build();
     }
 

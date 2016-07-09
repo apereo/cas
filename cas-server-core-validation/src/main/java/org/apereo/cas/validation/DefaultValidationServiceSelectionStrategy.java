@@ -1,7 +1,6 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link DefaultValidationServiceSelectionStrategy} which returns back to the caller
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("defaultValidationServiceSelectionStrategy")
 public class DefaultValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
     
     @Override

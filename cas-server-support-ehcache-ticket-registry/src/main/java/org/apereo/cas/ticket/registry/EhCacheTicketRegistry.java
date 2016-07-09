@@ -4,13 +4,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -27,12 +23,8 @@ import java.util.stream.Collectors;
  * @author Andrew Tillinghast
  * @since 3.5
  */
-@RefreshScope
-@Component("ehcacheTicketRegistry")
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
-
-    @Autowired
-    @Qualifier("ehcacheTicketsCache")
+    
     private Cache ehcacheTicketsCache;
 
     private boolean supportRegistryState = true;
@@ -207,4 +199,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
                 .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
+    
+    
 }

@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
+import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
@@ -8,6 +10,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -16,17 +19,16 @@ import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,12 +39,14 @@ import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapServiceRegistryDao} class.
+ *
  * @author Misagh Moayyed
  * @author Marvin S. Addison
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/ldap-context.xml", "/ldap-regservice-test.xml"})
+@SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/ldap-regservice-test.xml"},
+        classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
@@ -184,7 +188,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     private static RegisteredService getRegexRegisteredService() {
-        final AbstractRegisteredService rs  = new RegexRegisteredService();
+        final AbstractRegisteredService rs = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
@@ -195,7 +199,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
-        rs.setRequiredHandlers(new HashSet<>(Arrays.asList("handler1", "handler2")));
+        rs.setRequiredHandlers(new HashSet<>(Lists.newArrayList("handler1", "handler2")));
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();

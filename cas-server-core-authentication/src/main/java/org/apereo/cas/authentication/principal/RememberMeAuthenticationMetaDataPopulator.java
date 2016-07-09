@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Determines if the credential provided are for Remember Me Services and then sets the appropriate
@@ -16,8 +14,6 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@RefreshScope
-@Component("rememberMeAuthenticationMetaDataPopulator")
 public class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeAuthenticationMetaDataPopulator.class);

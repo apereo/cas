@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
@@ -26,10 +25,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.action.AbstractAction;
@@ -56,8 +51,6 @@ import java.util.Set;
  * @since 3.5.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@RefreshScope
-@Component("clientAction")
 public class ClientAction extends AbstractAction {
     /**
      * All the urls and names of the pac4j clients.
@@ -69,30 +62,13 @@ public class ClientAction extends AbstractAction {
      */
     private static final Set<ClientType> SUPPORTED_PROTOCOLS = ImmutableSet.of(ClientType.CAS_PROTOCOL, ClientType.OAUTH_PROTOCOL,
             ClientType.OPENID_PROTOCOL, ClientType.SAML_PROTOCOL, ClientType.OPENID_CONNECT_PROTOCOL);
-
-    /**
-     * The logger.
-     */
+    
     private transient Logger logger = LoggerFactory.getLogger(ClientAction.class);
-
-    /**
-     * The clients used for authentication.
-     */
     
-    @Autowired
-    @Qualifier("builtClients")
     private Clients clients;
-
     
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
-    /**
-     * The service for CAS authentication.
-     */
+    private AuthenticationSystemSupport authenticationSystemSupport;
     
-    @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
     static {
@@ -253,6 +229,10 @@ public class ClientAction extends AbstractAction {
 
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return this.authenticationSystemSupport;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     /**

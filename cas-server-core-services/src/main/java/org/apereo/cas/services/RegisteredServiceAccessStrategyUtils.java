@@ -102,8 +102,9 @@ public final class RegisteredServiceAccessStrategyUtils {
     public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
                                                                 final RegisteredService registeredService,
                                                                  final TicketGrantingTicket ticketGrantingTicket)
-            throws UnauthorizedServiceException,  PrincipalException  {
-        ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(), registeredService, ticketGrantingTicket.getAuthentication());
+            throws UnauthorizedServiceException, PrincipalException {
+        ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(), 
+                registeredService, ticketGrantingTicket.getAuthentication());
     }
 
     /**
@@ -118,7 +119,7 @@ public final class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
                                                                 final TicketGrantingTicket ticketGrantingTicket)
-            throws UnauthorizedServiceException,  PrincipalException  {
+            throws UnauthorizedServiceException, PrincipalException {
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Authentication authentication = authentications.get(authentications.size() - 1);
         ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
@@ -137,7 +138,7 @@ public final class RegisteredServiceAccessStrategyUtils {
     public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
                                                                 final AuthenticationResult context,
                                                                 final RegisteredService registeredService)
-                                                    throws UnauthorizedServiceException,  PrincipalException  {
+                                                    throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(), registeredService, context.getAuthentication());
     }
 

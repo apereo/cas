@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class AcceptUsersAuthenticationHandlerTests  {
+public class AcceptUsersAuthenticationHandlerTests {
 
     private Map<String, String> users;
 
@@ -32,7 +33,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
         this.users.put("brian", "t�st");
 
         this.authenticationHandler = new AcceptUsersAuthenticationHandler();
-
+        this.authenticationHandler.setPrincipalFactory(new DefaultPrincipalFactory());
         this.authenticationHandler.setUsers(this.users);
     }
 

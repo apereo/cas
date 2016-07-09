@@ -26,8 +26,6 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +42,6 @@ import java.util.Map;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-@RefreshScope
-@Component("saml10ObjectBuilder")
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";

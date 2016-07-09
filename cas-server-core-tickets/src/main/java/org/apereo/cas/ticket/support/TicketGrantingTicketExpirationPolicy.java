@@ -4,9 +4,6 @@ import org.apereo.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -22,8 +19,6 @@ import java.util.concurrent.TimeUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
-@RefreshScope
-@Component("ticketGrantingTicketExpirationPolicy")
 public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -36,14 +31,12 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
     /** Maximum time this ticket is valid.  */
-    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
     private long maxTimeToLiveInMilliSeconds;
 
     /** Time to kill in milliseconds. */
-    @Value("#{${tgt.timeToKillInSeconds:7200}*1000}")
     private long timeToKillInMilliSeconds;
 
-    private TicketGrantingTicketExpirationPolicy() {}
+    public TicketGrantingTicketExpirationPolicy() {}
 
     /**
      * Instantiates a new Ticket granting ticket expiration policy.

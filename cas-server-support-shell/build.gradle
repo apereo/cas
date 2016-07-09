@@ -1,4 +1,4 @@
-description = 'Apereo CAS Remote Shell Support'
+description = "Apereo CAS Remote Shell Support"
 
 dependencies {
     compile libraries.springbootremoteshell

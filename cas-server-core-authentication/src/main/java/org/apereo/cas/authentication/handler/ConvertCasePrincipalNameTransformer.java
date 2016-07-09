@@ -1,11 +1,5 @@
 package org.apereo.cas.authentication.handler;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
 
 
@@ -17,8 +11,6 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RefreshScope
-@Component("convertCasePrincipalNameTransformer")
 public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
     private boolean toUpperCase;
 
@@ -34,9 +26,7 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
      *
      * @param delegate the delegate
      */
-    @Autowired(required = false)
-    public ConvertCasePrincipalNameTransformer(@Qualifier("delegateTransformer")
-                                                   final PrincipalNameTransformer delegate) {
+    public ConvertCasePrincipalNameTransformer(final PrincipalNameTransformer delegate) {
         this.delegateTransformer = delegate;
     }
 
@@ -56,9 +46,7 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
         return this.toUpperCase ? result.toUpperCase(): result.toLowerCase();
     }
 
-    @Autowired
-    public void setToUpperCase(@Value("${cas.principal.transform.upperCase:false}") final boolean toUpperCase) {
+    public void setToUpperCase(final boolean toUpperCase) {
         this.toUpperCase = toUpperCase;
     }
-
 }

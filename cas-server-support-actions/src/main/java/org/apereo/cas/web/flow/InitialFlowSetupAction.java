@@ -11,17 +11,11 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -37,8 +31,6 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RefreshScope
-@Component("initialFlowSetupAction")
 public class InitialFlowSetupAction extends AbstractAction {
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -54,17 +46,17 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     /** Extractors for finding the service. */
     private List<ArgumentExtractor> argumentExtractors;
-
-    @Value("${events.track.geolocation:false}")
+    
     private boolean trackGeoLocation;
 
-    @Value("${cas.google.analytics.id:}")
     private String googleAnalyticsTrackingId;
 
 
     /** If no authentication request from a service is present, halt and warn the user. */
     private boolean enableFlowOnAbsentServiceRequest = true;
 
+    private boolean staticAuthentication;
+    
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -94,6 +86,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
+        WebUtils.putStaticAuthenticationIntoFlowScope(context, this.staticAuthentication);
         
         final Service service = WebUtils.getService(this.argumentExtractors, context);
 
@@ -125,21 +118,18 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putService(context, service);
         return result("success");
     }
-
-    @Autowired
+    
     public void setTicketGrantingTicketCookieGenerator(
-            @Qualifier("ticketGrantingTicketCookieGenerator")
             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
-    @Autowired
-    public void setWarnCookieGenerator(@Qualifier("warnCookieGenerator")
-                                       final CookieRetrievingCookieGenerator warnCookieGenerator) {
+
+    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    @Resource(name="argumentExtractors")
+    
     public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
@@ -151,8 +141,7 @@ public class InitialFlowSetupAction extends AbstractAction {
      * Since 4.1
      * @param servicesManager the services manager
      */
-    @Autowired
-    public void setServicesManager(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
@@ -162,9 +151,23 @@ public class InitialFlowSetupAction extends AbstractAction {
      *
      * @param enableFlowOnAbsentServiceRequest the enable flow on absent service request
      */
-    @Autowired
-    public void setEnableFlowOnAbsentServiceRequest(@Value("${create.sso.missing.service:true}")
-                                                    final boolean enableFlowOnAbsentServiceRequest) {
+    public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
         this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
+    }
+
+    public void setTrackGeoLocation(final boolean trackGeoLocation) {
+        this.trackGeoLocation = trackGeoLocation;
+    }
+
+    public void setGoogleAnalyticsTrackingId(final String googleAnalyticsTrackingId) {
+        this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
+    }
+
+    public boolean isStaticAuthentication() {
+        return staticAuthentication;
+    }
+
+    public void setStaticAuthentication(final boolean staticAuthentication) {
+        this.staticAuthentication = staticAuthentication;
     }
 }

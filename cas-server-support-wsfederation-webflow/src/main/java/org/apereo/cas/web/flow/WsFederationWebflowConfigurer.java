@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.springframework.binding.expression.Expression;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -17,12 +16,13 @@ import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("wsFederationWebflowConfigurer")
 public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String WS_FEDERATION_ACTION = "wsFederationAction";
     private static final String WS_FEDERATION_REDIRECT = "wsFederationRedirect";
 
+    private boolean autoRedirect = true;
+    
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
@@ -41,11 +41,19 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         final TransitionableState initLoginState = flow.getTransitionableState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         for (final Transition transition : initLoginState.getTransitionSet()) {
             if (transition.getId().equals(CasWebflowConstants.TRANSITION_ID_GENERATED)) {
-                final TargetStateResolver targetStateResolver = (TargetStateResolver) fromStringTo(TargetStateResolver.class)
+                final TargetStateResolver targetStateResolver = (TargetStateResolver) convertClassToTargetType(TargetStateResolver.class)
                         .execute(WS_FEDERATION_REDIRECT);
                 transition.setTargetStateResolver(targetStateResolver);
                 break;
             }
         }
+    }
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
     }
 }

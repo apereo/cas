@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.util.DateTimeUtils;
@@ -32,9 +33,6 @@ import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -52,12 +50,8 @@ import java.util.List;
  * @author John Gasper
  * @since 4.2.0
  */
-@RefreshScope
-@Component("wsFederationHelper")
 public class WsFederationHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationHelper.class);
-
-    @Autowired
     
     private OpenSamlConfigBean configBean;
 
@@ -210,7 +204,11 @@ public class WsFederationHelper {
 
             return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
+    }
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
     }
 }

@@ -1,10 +1,5 @@
 package org.apereo.cas.support.spnego.web.flow.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import java.util.regex.Pattern;
 
 /**
@@ -16,16 +11,16 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("hostnameSpnegoClientAction")
+
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
 
-    private  Pattern hostNamePatternString;
+    private Pattern hostNamePatternString;
 
     /**
      * Instantiates a new Host name spnego known client systems filter action.
      */
-    public HostNameSpnegoKnownClientSystemsFilterAction() {}
+    public HostNameSpnegoKnownClientSystemsFilterAction() {
+    }
 
     /**
      * Instantiates a new hostname spnego known client systems filter action.
@@ -33,10 +28,8 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
      * @param hostNamePatternString the host name pattern string.
      *                              The pattern to match the retrieved hostname against.
      */
-    @Autowired
     public HostNameSpnegoKnownClientSystemsFilterAction(
-                                                        @Value("${cas.spnego.hostname.pattern:something.+}")
-                                                        final String hostNamePatternString) {
+            final String hostNamePatternString) {
         super();
         this.hostNamePatternString = Pattern.compile(hostNamePatternString);
     }
@@ -53,7 +46,7 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
     @Override
     protected boolean shouldDoSpnego(final String remoteIp) {
         final boolean ipCheck = ipPatternCanBeChecked(remoteIp);
-        if(ipCheck && !ipPatternMatches(remoteIp)) {
+        if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
         final String hostName = getRemoteHostName(remoteIp);

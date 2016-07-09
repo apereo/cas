@@ -23,7 +23,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
 
     private static final long serialVersionUID = -3546719400741715137L;
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalAttributeRegisteredServiceUsernameProvider.class);
     
     
     private String usernameAttribute;
@@ -54,20 +54,20 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         final Map<String, Object> originalPrincipalAttributes = principal.getAttributes();
         final Map<String, Object> attributes = getPrincipalAttributes(principal, service);
 
-        logger.debug("Principal attributes available for selection of username attribute [{}] are [{}].",
+        LOGGER.debug("Principal attributes available for selection of username attribute [{}] are [{}].",
                 this.usernameAttribute, attributes);
 
         if (attributes.containsKey(this.usernameAttribute)) {
             principalId = attributes.get(this.usernameAttribute).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
-            logger.warn("The selected username attribute [{}] was retrieved as a direct "
+            LOGGER.warn("The selected username attribute [{}] was retrieved as a direct "
                        + "principal attributes and not through the attribute release policy for service [{}]. "
                        + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
                        + "is explicitly authorized for release via the service attribute release policy.", 
                     this.usernameAttribute, service, this.usernameAttribute);
             principalId = originalPrincipalAttributes.get(this.usernameAttribute).toString();
         } else {
-            logger.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
+            LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                     + "provide the user attribute the service expects. "
                     + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
                     + "is allowed to be released by the service attribute release policy.",
@@ -77,7 +77,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                     principalId);
         }
 
-        logger.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].",
+        LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].",
                 service.getId(), principalId, principal.getId());
         return principalId;
     }
@@ -128,17 +128,17 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     protected Map<String, Object> getPrincipalAttributes(final Principal p, final Service service) {
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
         if (context != null) {
-            logger.debug("Located application context to locate the service registry entry");
-            final ReloadableServicesManager servicesManager = context.getBean(ReloadableServicesManager.class);
+            LOGGER.debug("Located application context to locate the service registry entry");
+            final ServicesManager servicesManager = context.getBean(ServicesManager.class);
             if (servicesManager != null) {
                 final RegisteredService registeredService = servicesManager.findServiceBy(service);
 
                 if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                    logger.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
+                    LOGGER.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
                             registeredService, p.getId());
 
                     if (registeredService.getAttributeReleasePolicy() == null) {
-                        logger.debug("No attribute release policy is defined for {}. Returning default principal attributes",
+                        LOGGER.debug("No attribute release policy is defined for {}. Returning default principal attributes",
                                 service.getId());
                         return p.getAttributes();
                     }
@@ -146,10 +146,10 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
                 }
             }
 
-            logger.debug("Could not locate service {} in the registry.", service.getId());
+            LOGGER.debug("Could not locate service {} in the registry.", service.getId());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        logger.warn("No application context could be detected. Returning default principal attributes");
+        LOGGER.warn("No application context could be detected. Returning default principal attributes");
         return p.getAttributes();
     }
 }

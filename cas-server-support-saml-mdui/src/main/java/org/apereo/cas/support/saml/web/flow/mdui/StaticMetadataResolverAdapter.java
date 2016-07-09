@@ -1,23 +1,10 @@
 package org.apereo.cas.support.saml.web.flow.mdui;
 
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
-import org.quartz.Job;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * A {@link StaticMetadataResolverAdapter} that loads metadata from static xml files
@@ -26,19 +13,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapter implements Job {
-    private static final int DEFAULT_METADATA_REFRESH_INTERNAL_MINS = 300;
-
-    /**
-      * Refresh metadata every {@link #DEFAULT_METADATA_REFRESH_INTERNAL_MINS}
-      * minutes by default.
-      **/
-    private int refreshIntervalInMinutes = DEFAULT_METADATA_REFRESH_INTERNAL_MINS;
-
-    @Autowired
-    @Qualifier("scheduler")
-    private Scheduler scheduler;
-
+public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
     /**
      * New ctor - required for serialization and job scheduling.
      */
@@ -55,35 +30,10 @@ public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapt
         super(metadataResources);
     }
 
-    public void setRefreshIntervalInMinutes(final int refreshIntervalInMinutes) {
-        this.refreshIntervalInMinutes = refreshIntervalInMinutes;
-    }
-
-    /**
-     * Refresh metadata. Schedules the job to retrieve metadata.
-     */
-    @PostConstruct
-    public void refreshMetadata() {
-        final Thread thread = new Thread(this::buildMetadataResolverAggregate);
-        thread.start();
-
-        final JobDetail job = JobBuilder.newJob(this.getClass())
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString())).build();
-        final Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshIntervalInMinutes)
-                        .repeatForever()).build();
-
-        try {
-            this.scheduler.scheduleJob(job, trigger);
-        } catch (final SchedulerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    @Scheduled(initialDelayString="${cas.saml.mdui.startDelay:30000}",
+               fixedDelayString = "${cas.saml.mdui.repeatInterval:900000}")
     @Override
-    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        buildMetadataResolverAggregate();
+    public void buildMetadataResolverAggregate() {
+        super.buildMetadataResolverAggregate();
     }
 }

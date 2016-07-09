@@ -22,11 +22,8 @@ following dependencies in the WAR overlay:
 
 ## Configuration
 
-```properties
-# cas.mfa.yubikey.client.id=
-# cas.mfa.yubikey.secret.key=
-# cas.mfa.yubikey.rank = 0
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 By default, all YubiKey accounts for users are allowed to authenticate. If you wish to plug in a custom registry implementation that would determine 
 which users are allowed to use their YubiKey accounts for authentication, you may plug in a custom implementation of the `YubiKeyAccountRegistry`

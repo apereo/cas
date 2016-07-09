@@ -30,4 +30,8 @@ public interface CasWebflowEventResolver {
      * @return the event
      */
     Event resolveSingle(RequestContext context);
+
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

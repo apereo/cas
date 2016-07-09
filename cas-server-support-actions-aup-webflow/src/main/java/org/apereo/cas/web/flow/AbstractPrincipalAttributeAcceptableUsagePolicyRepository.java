@@ -7,9 +7,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
@@ -29,11 +26,8 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
      * Single-valued attribute in LDAP that describes whether the policy
      * has been accepted. Its value must match either TRUE/FALSE.
      */
-    @Value("${cas.aup.attribute:acceptedUsagePolicy}")
     protected String aupAttributeName;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Override
@@ -52,6 +46,14 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
 
         logger.warn("Usage policy has not been accepted by {}", principal.getId());
         return false;
+    }
+
+    public void setAupAttributeName(final String aupAttributeName) {
+        this.aupAttributeName = aupAttributeName;
+    }
+
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
     /**

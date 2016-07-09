@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +14,17 @@ import java.util.List;
  *
  * @author Scott Battaglia
  * @since 3.1.2
- *
  */
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    /** Logger instance. */
+    /**
+     * Logger instance.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The factory responsible for creating service objects based on the arguments extracted. */
-    @Resource(name="serviceFactoryList")
+    /**
+     * The factory responsible for creating service objects based on the arguments extracted.
+     */
     protected List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList;
 
     /**

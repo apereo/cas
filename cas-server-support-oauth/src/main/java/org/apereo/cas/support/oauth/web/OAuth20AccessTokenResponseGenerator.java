@@ -13,10 +13,8 @@ import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,8 +25,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("oauthAccessTokenResponseGenerator")
 public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     

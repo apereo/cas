@@ -1,8 +1,7 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,16 +12,14 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-@RefreshScope
-@Component("inMemoryIpAddressUsernameThrottle")
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
-          extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
-
+        extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
+    
     @Override
-    protected String constructKey(final HttpServletRequest request) {
+    public String constructKey(final HttpServletRequest request) {
         final String username = request.getParameter(getUsernameParameter());
 
-        if (username == null) {
+        if (StringUtils.isBlank(username)) {
             return request.getRemoteAddr();
         }
 
@@ -31,7 +28,7 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
 
     @Override
-    protected String getName() {
+    public String getName() {
         return "inMemoryIpAddressUsernameThrottle";
     }
 }

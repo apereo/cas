@@ -1,6 +1,6 @@
 
-description = 'Apereo CAS Core Ticket APIs'
+description = "Apereo CAS Core Ticket APIs"
 dependencies {
-    compile project(':cas-server-core-api-authentication')
+    compile project(":cas-server-core-api-authentication")
 }
 

@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.TokenConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractTokenWrapperAuthenticationHandler;
 import org.apereo.cas.services.RegisteredService;
@@ -12,10 +11,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -25,8 +20,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("tokenAuthenticationHandler")
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
     @Override
     protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
@@ -55,16 +48,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                     service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
         return null;
     }
-
-    @Autowired(required=false)
-    @Override
-    public void setPrincipalNameTransformer(@Qualifier("tokenPrincipalNameTransformer")
-                                            final PrincipalNameTransformer principalNameTransformer) {
-        if (principalNameTransformer != null) {
-            super.setPrincipalNameTransformer(principalNameTransformer);
-        }
-    }
-
+    
     /**
      * Gets registered service jwt encryption secret.
      *

@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
 
+import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -27,8 +29,9 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/couchbase-svcregistry-test-context.xml")
-@IfProfileValue(name="couchbaseEnabled", value="true")
+@SpringApplicationConfiguration(
+        classes = {RefreshAutoConfiguration.class, CouchbaseServiceRegistryConfiguration.class})
+@IfProfileValue(name = "couchbaseEnabled", value = "true")
 public class CouchbaseServiceRegistryDaoTests {
 
     private static final int LOAD_SIZE = 1;
@@ -42,7 +45,6 @@ public class CouchbaseServiceRegistryDaoTests {
         final List<RegisteredService> services = this.serviceRegistryDao.load();
         for (final RegisteredService service : services) {
             this.serviceRegistryDao.delete(service);
-
         }
     }
 

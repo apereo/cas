@@ -3,10 +3,8 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +23,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("resourceCrlFetcher")
 public class ResourceCRLFetcher implements CRLFetcher {
     /**
      * Logger instance.

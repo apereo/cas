@@ -13,10 +13,6 @@ import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -31,18 +27,12 @@ import org.springframework.stereotype.Component;
 
  * @since 3.0.0
  */
-
-@RefreshScope
-@Component("proxyAuthenticationHandler")
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /** Log instance. */
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Instance of Apache Commons HttpClient. */
-    
-    @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     @Override

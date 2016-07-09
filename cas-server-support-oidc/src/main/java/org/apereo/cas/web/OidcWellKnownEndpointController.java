@@ -2,11 +2,14 @@ package org.apereo.cas.web;
 
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.config.OidcServerDiscoveryProperties;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.config.OidcServerDiscoverySettings;
+import org.apereo.cas.configuration.model.core.ServerProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * This is {@link OidcWellKnownEndpointController}.
@@ -17,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("wellknownController")
 public class OidcWellKnownEndpointController {
 
-    @Value("${server.prefix}")
-    private String serverPrefix;
+    @Resource
+    private OidcProperties properties;
 
-    @Value("${cas.oidc.issuer:http://localhost:8080/cas/oidc}")
-    private String issuer;
+    @Resource
+    private ServerProperties serverProperties;
 
     /**
      * Gets well known discovery configuration.
@@ -29,10 +32,10 @@ public class OidcWellKnownEndpointController {
      * @return the well known discovery configuration
      */
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", method = RequestMethod.GET)
-    public OidcServerDiscoveryProperties getWellKnownDiscoveryConfiguration() {
+    public OidcServerDiscoverySettings getWellKnownDiscoveryConfiguration() {
 
-        final OidcServerDiscoveryProperties discoveryProperties =
-                new OidcServerDiscoveryProperties(this.serverPrefix, this.issuer);
+        final OidcServerDiscoverySettings discoveryProperties =
+                new OidcServerDiscoverySettings(this.serverProperties.getPrefix(), properties.getIssuer());
 
         discoveryProperties.setSupportedClaims(
                 ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
@@ -56,7 +59,7 @@ public class OidcWellKnownEndpointController {
      * @return the well known discovery configuration
      */
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", method = RequestMethod.GET)
-    public OidcServerDiscoveryProperties getWellKnownOpenIdDiscoveryConfiguration() {
+    public OidcServerDiscoverySettings getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();
     }
 }

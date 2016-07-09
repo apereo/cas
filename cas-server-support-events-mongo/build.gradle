@@ -1,8 +1,8 @@
 
-description = 'Apereo CAS Events Consumer MongoDb'
+description = "Apereo CAS Events Consumer MongoDb"
 dependencies {
-    compile project(':cas-server-core-events')
-    compile project(':cas-server-core-util')
+    compile project(":cas-server-core-events")
+    compile project(":cas-server-core-util")
     compile libraries.mongo
     compile libraries.spring
     runtime libraries.hibernate

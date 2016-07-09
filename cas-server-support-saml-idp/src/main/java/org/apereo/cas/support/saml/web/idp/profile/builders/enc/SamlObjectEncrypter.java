@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -28,15 +29,10 @@ import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -47,54 +43,32 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("samlObjectEncrypter")
 public class SamlObjectEncrypter {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * The encryption cert file.
-     */
-    @Value("${cas.samlidp.metadata.location:}/idp-encryption.crt")
-    protected File encryptionCertFile;
-
-    /**
-     * The encryption key file.
-     */
-    @Value("${cas.samlidp.metadata.location:}/idp-encryption.key")
-    protected File encryptionKeyFile;
-
+        
     /**
      * The Override data encryption algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideDataEncryptionAlgorithms")
     protected List overrideDataEncryptionAlgorithms;
 
     /**
      * The Override key encryption algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideKeyEncryptionAlgorithms")
     protected List overrideKeyEncryptionAlgorithms;
 
     /**
      * The Override black listed encryption signing algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideBlackListedEncryptionAlgorithms")
     protected List overrideBlackListedEncryptionAlgorithms;
 
     /**
      * The Override white listed encryption signing algorithms.
      */
-    @Autowired(required = false)
-    @Qualifier("overrideWhiteListedEncryptionAlgorithms")
     protected List overrideWhiteListedAlgorithms;
 
-    @Value("${cas.samlidp.key.private.alg:RSA}")
-    private String privateKeyAlgName;
-
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
@@ -252,8 +226,10 @@ public class SamlObjectEncrypter {
      * @return the encryption certificate
      */
     protected X509Certificate getEncryptionCertificate() {
-        logger.debug("Locating encryption certificate file from [{}]", this.encryptionCertFile);
-        return SamlUtils.readCertificate(new FileSystemResource(this.encryptionCertFile));
+        logger.debug("Locating encryption certificate file from [{}]", 
+                casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile());
+        return SamlUtils.readCertificate(new FileSystemResource(
+                casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionCertFile()));
     }
 
     /**
@@ -264,10 +240,26 @@ public class SamlObjectEncrypter {
      */
     protected PrivateKey getEncryptionPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(this.encryptionKeyFile));
-        privateKeyFactoryBean.setAlgorithm(this.privateKeyAlgName);
+        privateKeyFactoryBean.setLocation(new FileSystemResource(casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionKeyFile()));
+        privateKeyFactoryBean.setAlgorithm(casProperties.getAuthn().getSamlIdp().getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating encryption key file from [{}]", this.encryptionKeyFile);
+        logger.debug("Locating encryption key file from [{}]", casProperties.getAuthn().getSamlIdp().getMetadata().getEncryptionKeyFile());
         return privateKeyFactoryBean.getObject();
+    }
+
+    public void setOverrideDataEncryptionAlgorithms(final List overrideDataEncryptionAlgorithms) {
+        this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
+    }
+
+    public void setOverrideKeyEncryptionAlgorithms(final List overrideKeyEncryptionAlgorithms) {
+        this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
+    }
+
+    public void setOverrideBlackListedEncryptionAlgorithms(final List overrideBlackListedEncryptionAlgorithms) {
+        this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
+    }
+
+    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
+        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
     }
 }

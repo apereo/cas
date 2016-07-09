@@ -1,20 +1,18 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import net.shibboleth.idp.installer.metadata.MetadataGenerator;
 import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,8 +22,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("shibbolethIdpMetadataAndCertificatesGenerationService")
 public class ShibbolethIdpMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,17 +32,13 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
 
     private File encryptionCertFile;
     private File encryptionCertKeyFile;
-
-    @Value("${cas.samlidp.metadata.location:}")
+    
     private File metadataLocation;
-
-    @Value("${cas.samlidp.entityid:}")
+    
     private String entityId;
-
-    @Value("${cas.samlidp.hostname:}")
+    
     private String hostName;
-
-    @Value("${cas.samlidp.scope:}")
+    
     private String scope;
 
     /**
@@ -124,7 +116,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
             return this.metadataFile;
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -138,7 +130,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setHostName(this.hostName);
         generator.setCertificateFile(this.encryptionCertFile);
         generator.setPrivateKeyFile(this.encryptionCertKeyFile);
-        generator.setURISubjectAltNames(Arrays.asList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Lists.newArrayList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 
@@ -152,7 +144,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setHostName(this.hostName);
         generator.setCertificateFile(this.signingCertFile);
         generator.setPrivateKeyFile(this.signingKeyFile);
-        generator.setURISubjectAltNames(Arrays.asList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Lists.newArrayList(this.hostName.concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 
@@ -190,5 +182,21 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setSAML2LogoutCommented(false);
 
         generator.generate();
+    }
+
+    public void setMetadataLocation(final File metadataLocation) {
+        this.metadataLocation = metadataLocation;
+    }
+
+    public void setEntityId(final String entityId) {
+        this.entityId = entityId;
+    }
+
+    public void setHostName(final String hostName) {
+        this.hostName = hostName;
+    }
+
+    public void setScope(final String scope) {
+        this.scope = scope;
     }
 }

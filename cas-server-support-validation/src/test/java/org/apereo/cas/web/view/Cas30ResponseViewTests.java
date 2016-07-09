@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
@@ -9,6 +10,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.util.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -37,12 +40,32 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @DirtiesContext
+@TestPropertySource(properties = "cas.clearpass.cacheCredential=true")
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-        
+
+    @Autowired
+    @Qualifier("cas3ServiceJsonView")
+    private View cas3ServiceJsonView;
+
+    @Autowired
+    @Qualifier("cas3SuccessView")
+    private View cas3SuccessView;
+
+    @Autowired
+    @Qualifier("cas3ServiceFailureView")
+    private View cas3ServiceFailureView;
+
+    @Before
+    public void setup() {
+        this.serviceValidateController.setFailureView(cas3ServiceFailureView);
+        this.serviceValidateController.setSuccessView(cas3SuccessView);
+        this.serviceValidateController.setJsonView(cas3ServiceJsonView);
+    }
+    
     private Map<?, ?> renderView() throws Exception{
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
@@ -121,7 +144,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             final byte[] cipherData = cipher.doFinal(cred64);
             return new String(cipherData);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

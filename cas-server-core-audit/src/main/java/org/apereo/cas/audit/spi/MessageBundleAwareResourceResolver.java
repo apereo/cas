@@ -1,13 +1,11 @@
 package org.apereo.cas.audit.spi;
 
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.lang.JoinPoint;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
+import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,14 +18,11 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("messageBundleAwareResourceResolver")
 public class MessageBundleAwareResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Autowired
     private ApplicationContext context;
-
-
+    
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception e) {
         final String[] resolved = super.resolveFrom(joinPoint, e);

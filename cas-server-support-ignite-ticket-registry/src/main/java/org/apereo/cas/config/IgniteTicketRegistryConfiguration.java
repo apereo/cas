@@ -7,12 +7,19 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import java.util.ArrayList;
@@ -25,70 +32,63 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("igniteConfiguration")
+@Configuration("igniteTicketRegistryConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class IgniteTicketRegistryConfiguration {
-    
-    /**
-     * The Ignite addresses.
-     */
-    @Value("${ignite.adresses:localhost:47500}")
-    private String igniteAddresses;
-    
-    /**
-     * The cache name.
-     */
-    @Value("${ignite.ticketsCache.name:TicketsCache}")
-    private String cacheName;
 
-    /**
-     * The cache mode.
-     */
-    @Value("${ignite.ticketsCache.cacheMode:REPLICATED}")
-    private CacheMode cacheMode;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
-    /**
-     * The atomicity mode.
-     */
-    @Value("${ignite.ticketsCache.atomicityMode:TRANSACTIONAL}}")
-    private CacheAtomicityMode atomicityMode;
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
+    private CipherExecutor cipherExecutor;
 
-    /**
-     * The write synchronization mode.
-     */
-    @Value("${ignite.ticketsCache.writeSynchronizationMode:FULL_SYNC}")
-    private CacheWriteSynchronizationMode writeSynchronizationMode;
-    
-    @Value("${ignite.ticketsCache.timeout:" + Integer.MAX_VALUE + '}')
-    private long timeout;
-    
     /**
      * Ignite configuration ignite configuration.
      *
      * @return the ignite configuration
      */
     @RefreshScope
-    @Bean(name = "igniteConfiguration")
+    @Bean
     public IgniteConfiguration igniteConfiguration() {
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
-        finder.setAddresses(StringUtils.commaDelimitedListToSet(this.igniteAddresses));
+        finder.setAddresses(StringUtils.commaDelimitedListToSet(casProperties.getTicket().getRegistry().getIgnite().getIgniteAddresses()));
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
 
         final List<CacheConfiguration> configurations = new ArrayList<>();
 
         final CacheConfiguration ticketsCache = new CacheConfiguration();
-        ticketsCache.setName(this.cacheName);
-        ticketsCache.setCacheMode(this.cacheMode);
-        ticketsCache.setAtomicityMode(this.atomicityMode);
-        ticketsCache.setWriteSynchronizationMode(this.writeSynchronizationMode);
-        ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, this.timeout)));
+        ticketsCache.setName(
+                casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
+        ticketsCache.setCacheMode(
+                CacheMode.valueOf(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheMode()));
+        ticketsCache.setAtomicityMode(
+                CacheAtomicityMode.valueOf(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getAtomicityMode()));
+        ticketsCache.setWriteSynchronizationMode(
+                CacheWriteSynchronizationMode.valueOf(
+                        casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getWriteSynchronizationMode()));
+        ticketsCache.setExpiryPolicyFactory(
+                CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS,
+                        casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())));
 
         configurations.add(ticketsCache);
 
         config.setCacheConfiguration(configurations.toArray(new CacheConfiguration[]{}));
-        
+
         return config;
+    }
+
+    
+    @Bean(name = {"igniteTicketRegistry", "ticketRegistry"})
+    @RefreshScope
+    public TicketRegistry igniteTicketRegistry() {
+        final IgniteTicketRegistry r = new IgniteTicketRegistry();
+        r.setIgniteConfiguration(igniteConfiguration());
+        r.setCipherExecutor(cipherExecutor);
+        return r;
     }
 }

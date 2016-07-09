@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -17,8 +18,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -50,7 +49,7 @@ public class InitialFlowSetupActionTests {
         final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new DefaultArgumentExtractor(
                 new WebApplicationServiceFactory()
         )};
-        this.action.setArgumentExtractors(Arrays.asList(argExtractors));
+        this.action.setArgumentExtractors(Lists.newArrayList(argExtractors));
 
         this.servicesManager = mock(ServicesManager.class);
         when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(

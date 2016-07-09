@@ -1,16 +1,12 @@
 package org.apereo.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,32 +18,22 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("defaultCookieValueManager")
 public class DefaultCasCookieValueManager implements CookieValueManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
-    /** The cipher exec that is responsible for encryption and signing of the cookie. */
-    private CipherExecutor<String, String> cipherExecutor;
-
     /**
-     * Instantiates a new Cas cookie value manager.
-     * Set the default cipher to do absolutely  nothing.
+     * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    public DefaultCasCookieValueManager() {
-        this(new NoOpCipherExecutor());
-    }
-
+    private CipherExecutor<String, String> cipherExecutor = new NoOpCipherExecutor();
+    
     /**
      * Instantiates a new Cas cookie value manager.
      *
      * @param cipherExecutor the cipher executor
      */
-    @Autowired
-    public DefaultCasCookieValueManager(@Qualifier("cookieCipherExecutor")
-                                        final CipherExecutor<String, String> cipherExecutor) {
+    public DefaultCasCookieValueManager(final CipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
                 this.cipherExecutor.getClass());

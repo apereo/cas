@@ -6,8 +6,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,8 +17,6 @@ import java.util.Iterator;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("firstMultifactorAuthenticationProviderSelector")
 public class FirstMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 

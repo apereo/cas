@@ -1,5 +1,6 @@
-description = 'Apereo CAS Web Application Mongo Session Management'
+description = "Apereo CAS Web Application Mongo Session Management"
 dependencies {
+    compile project(":cas-server-core-configuration")
     compile libraries.spring
     compile libraries.springcloud
     compile libraries.springsession

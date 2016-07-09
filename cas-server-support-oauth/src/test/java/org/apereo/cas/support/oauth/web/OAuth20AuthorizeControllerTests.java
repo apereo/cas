@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
@@ -9,7 +10,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.util.CommonHelper;
@@ -17,14 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,10 +33,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/oauth-context.xml")
-@DirtiesContext
-public class OAuth20AuthorizeControllerTests {
+public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     private static final String ID = "id";
     private static final String FIRST_NAME_ATTRIBUTE = "firstName";
@@ -494,12 +487,12 @@ public class OAuth20AuthorizeControllerTests {
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setAttributeReleasePolicy(
-                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[] {FIRST_NAME_ATTRIBUTE})));
+                new ReturnAllowedAttributeReleasePolicy(Lists.newArrayList(new String[]{FIRST_NAME_ATTRIBUTE})));
         return registeredServiceImpl;
     }
 
     private void clearAllServices() {
-        final Collection<RegisteredService> col  = oAuth20AuthorizeController.getServicesManager().getAllServices();
+        final Collection<RegisteredService> col = oAuth20AuthorizeController.getServicesManager().getAllServices();
 
         for (final RegisteredService r : col) {
             oAuth20AuthorizeController.getServicesManager().delete(r.getId());

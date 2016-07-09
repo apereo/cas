@@ -5,6 +5,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -19,7 +20,6 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,14 +40,13 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     /**
      * The code factory instance.
      */
-    @Autowired
-    @Qualifier("defaultOAuthCodeFactory")
     protected OAuthCodeFactory oAuthCodeFactory;
-
-    @Autowired
-    @Qualifier("consentApprovalViewResolver")
+    
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     /**
      * Handle request internal model and view.
      *
@@ -145,7 +144,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                 .append('&')
                 .append(OAuthConstants.EXPIRES)
                 .append('=')
-                .append(this.timeout);
+                .append(casProperties.getTicket().getTgt().getTimeToKillInSeconds());
 
         if (StringUtils.isNotBlank(state)) {
             stringBuilder.append('&')
@@ -255,5 +254,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      */
     public void setoAuthCodeFactory(final OAuthCodeFactory oAuthCodeFactory) {
         this.oAuthCodeFactory = oAuthCodeFactory;
+    }
+
+    public void setConsentApprovalViewResolver(final ConsentApprovalViewResolver consentApprovalViewResolver) {
+        this.consentApprovalViewResolver = consentApprovalViewResolver;
     }
 }

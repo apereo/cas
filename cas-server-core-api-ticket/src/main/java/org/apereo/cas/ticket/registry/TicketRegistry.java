@@ -8,15 +8,11 @@ import org.apereo.cas.ticket.Ticket;
  * Interface for a registry that stores tickets. The underlying registry can be
  * backed by anything from a normal HashMap to JGroups for having distributed
  * registries. It is up to specific implementations to determine their clean up
- * strategy. Strategies can include a manual clean up by a Registry Cleaner or a
+ * strategy. Strategies can include a manual clean up by a registry cleaner or a
  * more sophisticated strategy such as LRU.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
  */
 public interface TicketRegistry {
 
@@ -70,5 +66,21 @@ public interface TicketRegistry {
      * @param ticket the ticket
      */
     void updateTicket(Ticket ticket);
+
+    /**
+     * Computes the number of SSO sessions stored in the ticket registry.
+     *
+     * @return Number of ticket-granting tickets in the registry at time of invocation
+     *         or {@link Integer#MIN_VALUE} if unknown.
+     */
+    long sessionCount();
+    
+    /**
+     * Computes the number of service tickets stored in the ticket registry.
+     *
+     * @return Number of service tickets in the registry at time of invocation
+     *         or {@link Integer#MIN_VALUE} if unknown.
+     */
+    long serviceTicketCount();
 
 }

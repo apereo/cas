@@ -1,7 +1,11 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.services.CouchbaseServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistryDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,31 +18,11 @@ import org.springframework.util.StringUtils;
  * @since 5.0.0
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseServiceRegistryConfiguration {
 
-    /**
-     * The Node set.
-     */
-    @Value("${svcreg.couchbase.nodes:localhost:8091}")
-    private String nodeSet;
-
-    /**
-     * The Timeout.
-     */
-    @Value("${svcreg.couchbase.timeout:10}")
-    private int timeout;
-
-    /**
-     * The Password.
-     */
-    @Value("${svcreg.couchbase.password:}")
-    private String password;
-
-    /**
-     * The Bucket.
-     */
-    @Value("${svcreg.couchbase.bucket:default}")
-    private String bucket;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     /**
      * Service registry couchbase client factory couchbase client factory.
@@ -46,13 +30,23 @@ public class CouchbaseServiceRegistryConfiguration {
      * @return the couchbase client factory
      */
     @RefreshScope
-    @Bean(name = "serviceRegistryCouchbaseClientFactory")
+    @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
+
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(this.nodeSet));
-        factory.setTimeout(this.timeout);
-        factory.setBucketName(this.bucket);
-        factory.setPassword(this.password);
+        factory.setNodes(StringUtils.commaDelimitedListToSet(
+                casProperties.getServiceRegistry().getCouchbase().getNodeSet()));
+        factory.setTimeout(casProperties.getServiceRegistry().getCouchbase().getTimeout());
+        factory.setBucketName(casProperties.getServiceRegistry().getCouchbase().getBucket());
+        factory.setPassword(casProperties.getServiceRegistry().getCouchbase().getPassword());
         return factory;
+    }
+
+    @Bean(name = {"couchbaseServiceRegistryDao", "serviceRegistryDao"})
+    @RefreshScope
+    public ServiceRegistryDao couchbaseServiceRegistryDao() {
+        final CouchbaseServiceRegistryDao c = new CouchbaseServiceRegistryDao();
+        c.setCouchbaseClientFactory(serviceRegistryCouchbaseClientFactory());
+        return c;
     }
 }

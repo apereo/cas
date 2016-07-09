@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -10,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +37,11 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     @Before
     public void setUp() {
         attributes = new HashMap<>();
-        attributes.put("a1", new ArrayList(Arrays.asList(new Object[]{"v1", "v2", "v3"})));
-        attributes.put("mail", new ArrayList(Arrays.asList(new Object[]{"final@example.com"})));
-        attributes.put("a6", new ArrayList(Arrays.asList(new Object[]{"v16", "v26", "v63"})));
-        attributes.put("a2", new ArrayList(Arrays.asList(new Object[]{"v4"})));
-        attributes.put("username", new ArrayList(Arrays.asList(new Object[]{"uid"})));
+        attributes.put("a1", new ArrayList(Lists.newArrayList(new Object[]{"v1", "v2", "v3"})));
+        attributes.put("mail", new ArrayList(Lists.newArrayList(new Object[]{"final@example.com"})));
+        attributes.put("a6", new ArrayList(Lists.newArrayList(new Object[]{"v16", "v26", "v63"})));
+        attributes.put("a2", new ArrayList(Lists.newArrayList(new Object[]{"v4"})));
+        attributes.put("username", new ArrayList(Lists.newArrayList(new Object[]{"uid"})));
 
         this.dao = mock(IPersonAttributeDao.class);
         final IPersonAttributes person = mock(IPersonAttributes.class);
@@ -51,7 +51,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
         this.principal = this.principalFactory.createPrincipal("uid",
                 Collections.<String, Object>singletonMap("mail",
-                        new ArrayList(Arrays.asList(new Object[]{"final@school.com"}))));
+                        new ArrayList(Lists.newArrayList(new Object[]{"final@school.com"}))));
     }
 
     protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
