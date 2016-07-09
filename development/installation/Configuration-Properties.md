@@ -3,7 +3,7 @@ layout: default
 title: CAS Properties
 ---
 
-## CAS Properties
+## CAS PropertiesJ
 
 Various properties can be specified in CAS [either inside configuration files or as command 
 line switches](Configuration-Management.md). This section provides a list common CAS properties and 
@@ -24,39 +24,39 @@ The following list of properties are controlled by and provided to CAS.
 The following properties are related to the embedded Tomcat container that ships with CAS. 
 
 ```properties
-server.context-path=/cas
+server.contextPath=/cas
 server.port=8443
-server.ssl.key-store=file:/etc/cas/thekeystore
-server.ssl.key-store-password=changeit
-server.ssl.key-password=changeit
+server.ssl.keyStore=file:/etc/cas/thekeystore
+server.ssl.keyStorePassword=changeit
+server.ssl.keyPassword=changeit
 # server.ssl.ciphers=
-# server.ssl.client-auth=
+# server.ssl.clientAuth=
 # server.ssl.enabled=
-# server.ssl.key-alias=
-# server.ssl.key-store-provider=
-# server.ssl.key-store-type=
+# server.ssl.keyAlias=
+# server.ssl.keyStoreProvider=
+# server.ssl.keyStoreType=
 # server.ssl.protocol=
-# server.ssl.trust-store=
-# server.ssl.trust-store-password=
-# server.ssl.trust-store-provider=
-# server.ssl.trust-store-type=
+# server.ssl.trustStore=
+# server.ssl.trustStorePassword=
+# server.ssl.trustStoreProvider=
+# server.ssl.trustStoreType=
 
 server.tomcat.basedir=build/tomcat
 server.tomcat.accesslog.enabled=true
 server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
 server.tomcat.accesslog.suffix=.log
-server.tomcat.max-http-header-size=20971520
-server.tomcat.max-threads=5
-server.tomcat.port-header=X-Forwarded-Port
-server.tomcat.protocol-header=X-Forwarded-Proto
-server.tomcat.protocol-header-https-value=https
-server.tomcat.remote-ip-header=X-FORWARDED-FOR
-server.tomcat.uri-encoding=UTF-8
+server.tomcat.maxHttpHeaderSize=20971520
+server.tomcat.maxThreads=5
+server.tomcat.portHeader=X-Forwarded-Port
+server.tomcat.protocolHeader=X-Forwarded-Proto
+server.tomcat.protocolHeaderHttpsValue=https
+server.tomcat.remoteIpHeader=X-FORWARDED-FOR
+server.tomcat.uriEncoding=UTF-8
 
-server.use-forward-headers=true
+server.useForwardHeaders=true
 ```
 
-### CAS Server Embedded Tomcat HTTP
+### Embedded Tomcat HTTP
 
 Enable HTTP connections for the embedded Tomcat container.
 
@@ -66,7 +66,7 @@ Enable HTTP connections for the embedded Tomcat container.
 # cas.server.http.enabled=true
 ```
 
-### CAS Server Embedded Tomcat AJP
+### Embedded Tomcat AJP
 
 Enable the AJP connector for the embedded Tomcat container.
 
@@ -1111,7 +1111,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 ```
 
 
-## Events Jpa Database
+## Events JPA Database
 
 ```properties
 # cas.events.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1211,7 +1211,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.couchbase.timeout=10
 ```
 
-## Jpa Service Registry Pooling
+## JPA Service Registry Pooling
 
 ```properties
 # cas.serviceRegistry.jpa.pool.suspension=false
@@ -1221,7 +1221,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
-## Jpa Service Registry
+## JPA Service Registry
 
 ```properties
 # cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1255,7 +1255,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.pt.numberOfUses=1
 ```
 
-## Jpa Ticket Registry Pooling
+## JPA Ticket Registry Pooling
 
 ```properties
 # cas.ticket.registry.jpa.pool.suspension=false
@@ -1265,7 +1265,7 @@ server, simply increment the index and specify the settings for the latter LDAP.
 # cas.ticket.registry.jpa.pool.maxWait=2000
 ```
 
-## Jpa Ticket Registry
+## JPA Ticket Registry
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
