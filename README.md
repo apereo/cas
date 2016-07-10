@@ -1,6 +1,6 @@
 ![][casimg]
 # Central Authentication Service (CAS)
-[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
+[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas&root=/cas/login)][caswebheroku]
 [![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-services/login)][casmgheroku] [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
@@ -69,5 +69,5 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 [caswebheroku]: http://jasigcas.heroku.com/cas
 [casmgheroku]: http://jasigcasmgmt.heroku.com/cas-services
 [cassupport]: http://apereo.github.io/cas/Support.html
-[casgitter]: https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
