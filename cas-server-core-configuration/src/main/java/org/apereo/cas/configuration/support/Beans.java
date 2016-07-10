@@ -21,7 +21,6 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.HashMap;

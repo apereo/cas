@@ -9,8 +9,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
-public class MongoAuthenticationProperties  {
+public class MongoAuthenticationProperties {
 
     private String collectionName = "users";
     private String mongoHostUri = "mongodb://uri";
