@@ -135,6 +135,7 @@ https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<
 ```
 
 ### Displaying SAML MDUI
+
 The CAS server is able to recognize the `entityId` parameter and display SAML MDUI on the login page,
 that is provided by the metadata associated with the relying party. This means that CAS will also need to know
 about metadata sources that the identity provider uses.
@@ -151,7 +152,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-Then, adjust `cas-servlet.xml` with the following:
+Then, adjust `deployerConfigContext.xml` with the following:
 
 ```xml
 <bean id="samlMetadataUIParserAction"
@@ -184,6 +185,7 @@ In this case, metadata sources are statically provided via classpath, file or ur
 ```
 
 #### Dynamic
+
 In this case, metadata sources are provided via the
 [Metadata Query Protocol](https://spaces.internet2.edu/display/InCFederation/Metadata+Query+Protocol), which
 is a REST-like API for requesting and receiving arbitrary metadata. CAS will contact
@@ -259,6 +261,7 @@ You will need to modify your metadata retrieval process, whether static or dynam
 to adjust for the appropriate metadata filter if need be.
 
 ### Display MDUI
+
 Modify the `login-webflow.xml` to execute the `SamlMetadataUIParserAction` action
 when the login form is rendered:
 
