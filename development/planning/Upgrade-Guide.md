@@ -63,8 +63,9 @@ the upgrade is, you want to make sure it is well tested in your environment befo
 the software dependencies and platform requirements of the new upgrade (i.e. Java, Maven, etc)
 and make sure you have everything installed and configured correctly before you attempt. 
 
-## Clean Maven Overlay
-We recommend that you first start out with a separate clean [CAS Maven overlay](../installation/Maven-Overlay-Installation.html) targeted
+## Sanitize Configuration
+
+We recommend that you first start out with a separate clean [CAS overlay](../installation/Maven-Overlay-Installation.html) targeted
 at the version to which you want to upgrade. This has the advantage of guaranteeing that your new CAS deployment 
 will be functional without any local changes. Build and deploy the clean CAS overlay once to make sure
 your build/deployment process is functional.
