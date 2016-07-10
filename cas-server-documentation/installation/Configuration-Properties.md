@@ -6,7 +6,7 @@ title: CAS Properties
 # CAS Properties
 
 Various properties can be specified in CAS [either inside configuration files or as command 
-line switches](Configuration-Management.md). This section provides a list common CAS properties and 
+line switches](Configuration-Management.html). This section provides a list common CAS properties and 
 references to the underlying modules that consume them.
 
 <div class="alert alert-info"><strong>Be Selective</strong><p>
