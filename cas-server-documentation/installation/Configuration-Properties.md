@@ -1436,7 +1436,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
 
-## TGT Expiration Policy
+## TGT Expiration Policy -> Default
 
 Provides a hard-time out as well as a sliding window.
 
@@ -1516,26 +1516,22 @@ spring.http.encoding.force=true
 # cas.webflow.alg=AES
 ```
 
-## Webflow -> Session Management
+## Spring Webflow
 
-Control how Spring Webflow's conversational session state should be managed by CAS. 
-
-
-```properties
-# cas.webflow.session.lockTimeout=30
-# cas.webflow.session.compress=false
-# cas.webflow.session.maxConversations=5
-# cas.webflow.session.storage=true
-# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
-```
-
-## Webflow Global
+Control how Spring Webflow's conversational session state should be managed by CAS,
+and all other webflow related settings.
 
 ```properties
 # cas.webflow.autoconfigure=true
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+
+# cas.webflow.session.lockTimeout=30
+# cas.webflow.session.compress=false
+# cas.webflow.session.maxConversations=5
+# cas.webflow.session.storage=true
+# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
 ```
 
 ## Principal Resolution Global
@@ -1579,5 +1575,4 @@ Control how Spring Webflow's conversational session state should be managed by C
 # cas.googleApps.publicKeyLocation=file:/etc/cas/public.key
 # cas.googleApps.keyAlgorithm=RSA
 # cas.googleApps.privateKeyLocation=file:/etc/cas/private.key
-
 ```
