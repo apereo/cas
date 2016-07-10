@@ -5,10 +5,10 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
@@ -28,7 +28,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * PasswordEncoder to be used by subclasses to encode passwords for
      * comparing against a resource.
      */
-    private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
+    private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
     
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 

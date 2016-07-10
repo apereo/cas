@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link MongoAuthenticationProperties}.
  *
@@ -7,13 +10,24 @@ package org.apereo.cas.configuration.model.support.mongo;
  * @since 5.0.0
  */
 
-public class MongoAuthenticationProperties {
+public class MongoAuthenticationProperties  {
 
     private String collectionName = "users";
     private String mongoHostUri = "mongodb://uri";
     private String attributes;
     private String usernameAttribute = "username";
     private String passwordAttribute = "password";
+
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String getCollectionName() {
         return collectionName;

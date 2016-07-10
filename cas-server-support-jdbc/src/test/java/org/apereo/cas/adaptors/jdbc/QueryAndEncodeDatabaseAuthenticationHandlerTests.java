@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.Entity;
@@ -146,8 +146,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setPasswordFieldName("password");
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
-            public String encode(final String password) {
-                return password.concat("1");
+            public String encode(final CharSequence password) {
+                return password.toString().concat("1");
             }
 
             @Override

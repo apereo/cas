@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -35,7 +36,10 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throws GeneralSecurityException, PreventedException {
 
         try {
-            final ResponseEntity<SimplePrincipal> authenticationResponse = api.authenticate(c);
+            final UsernamePasswordCredential creds = new UsernamePasswordCredential(c.getUsername(),
+                    this.getPasswordEncoder().encode(c.getPassword()));
+            
+            final ResponseEntity<SimplePrincipal> authenticationResponse = api.authenticate(creds);
             if (authenticationResponse.getStatusCode().value() == HttpStatus.OK.value()) {
                 final SimplePrincipal principalFromRest = authenticationResponse.getBody();
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
