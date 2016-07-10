@@ -293,11 +293,369 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
-## Authentication Password Encoding
+## Radius Authentication
 
 ```properties
-# cas.authn.passwordEncoder.characterEncoding=
-# cas.authn.passwordEncoder.encodingAlgorithm=
+# cas.authn.radius.server.nasPortId=-1
+# cas.authn.radius.server.nasRealPort=-1
+# cas.authn.radius.server.protocol=EAP_MSCHAPv2
+# cas.authn.radius.server.retries=3
+# cas.authn.radius.server.nasPortType=-1
+# cas.authn.radius.server.nasPort=-1
+# cas.authn.radius.server.nasIpAddress=
+# cas.authn.radius.server.nasIpv6Address=
+# cas.authn.radius.server.nasIdentifier=-1
+
+# cas.authn.radius.client.authenticationPort=1812
+# cas.authn.radius.client.sharedSecret=N0Sh@ar3d$ecReT
+# cas.authn.radius.client.socketTimeout=0
+# cas.authn.radius.client.inetAddress=localhost
+# cas.authn.radius.client.accountingPort=1813
+
+# cas.authn.radius.failoverOnException=false
+# cas.authn.radius.failoverOnAuthenticationFailure=false
+
+# cas.authn.radius.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.radius.passwordEncoder.characterEncoding=
+# cas.authn.radius.passwordEncoder.encodingAlgorithm=
+# cas.authn.radius.passwordEncoder.secret=
+# cas.authn.radius.passwordEncoder.strength=16
+```
+
+## File Authentication
+
+```properties
+# cas.authn.file.separator=::
+# cas.authn.file.filename=
+
+# cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.file.passwordEncoder.characterEncoding=
+# cas.authn.file.passwordEncoder.encodingAlgorithm=
+# cas.authn.file.passwordEncoder.secret=
+# cas.authn.file.passwordEncoder.strength=16
+```
+
+## Reject Users Authentication
+
+```properties
+# cas.authn.reject.users=user1,user2
+
+# cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.reject.passwordEncoder.characterEncoding=
+# cas.authn.reject.passwordEncoder.encodingAlgorithm=
+# cas.authn.reject.passwordEncoder.secret=
+# cas.authn.reject.passwordEncoder.strength=16
+```
+
+## Database Authentication -> Query
+
+Authenticates a user by comparing the (hashed) user password against the password on record determined by a configurable database query.
+
+```properties
+# cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.query[0].isolateInternalQueries=false
+# cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.query[0].failFast=true
+# cas.authn.jdbc.query[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.query[0].leakThreshold=10
+# cas.authn.jdbc.query[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.query[0].batchSize=1
+# cas.authn.jdbc.query[0].user=sa
+# cas.authn.jdbc.query[0].ddlAuto=create-drop
+# cas.authn.jdbc.query[0].maxAgeDays=180
+# cas.authn.jdbc.query[0].password=
+# cas.authn.jdbc.query[0].autocommit=false
+# cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.query[0].idleTimeout=5000
+# cas.authn.jdbc.query[0].sql=
+
+# cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
+# cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=
+# cas.authn.jdbc.query[0].passwordEncoder.secret=
+# cas.authn.jdbc.query[0].passwordEncoder.strength=16
+```
+
+## Database Authentication -> Search
+
+Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
+
+```properties
+# cas.authn.jdbc.search[0].fieldUser=
+# cas.authn.jdbc.search[0].tableUsers=
+# cas.authn.jdbc.search[0].fieldPassword=
+# cas.authn.jdbc.search[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.search[0].isolateInternalQueries=false
+# cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.search[0].failFast=true
+# cas.authn.jdbc.search[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.search[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.search[0].leakThreshold=10
+# cas.authn.jdbc.search[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.search[0].batchSize=1
+# cas.authn.jdbc.search[0].user=sa
+# cas.authn.jdbc.search[0].ddlAuto=create-drop
+# cas.authn.jdbc.search[0].maxAgeDays=180
+# cas.authn.jdbc.search[0].password=
+# cas.authn.jdbc.search[0].autocommit=false
+# cas.authn.jdbc.search[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.search[0].idleTimeout=5000
+
+# cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
+# cas.authn.jdbc.search[0].passwordEncoder.encodingAlgorithm=
+# cas.authn.jdbc.search[0].passwordEncoder.secret=
+# cas.authn.jdbc.search[0].passwordEncoder.strength=16
+```
+
+## Database Authentication -> Bind
+
+Authenticates a user by attempting to create a database connection using the username and (hashed) password.
+
+```properties
+# cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.bind[0].isolateInternalQueries=false
+# cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.bind[0].failFast=true
+# cas.authn.jdbc.bind[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.bind[0].leakThreshold=10
+# cas.authn.jdbc.bind[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.bind[0].batchSize=1
+# cas.authn.jdbc.bind[0].user=sa
+# cas.authn.jdbc.bind[0].ddlAuto=create-drop
+# cas.authn.jdbc.bind[0].maxAgeDays=180
+# cas.authn.jdbc.bind[0].password=
+# cas.authn.jdbc.bind[0].autocommit=false
+# cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.bind[0].idleTimeout=5000
+
+# cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
+# cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
+# cas.authn.jdbc.bind[0].passwordEncoder.secret=
+# cas.authn.jdbc.bind[0].passwordEncoder.strength=16
+```
+
+## Database Authentication -> Encode
+
+A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded 
+password using the public salt value. Assumes everything is inside the same database table. Supports settings for 
+number of iterations as well as private salt.
+
+This password encoding method, combines the private Salt and the public salt which it prepends to the password before hashing. 
+If multiple iterations are used, the bytecode Hash of the first iteration is rehashed without the salt values. The final hash 
+is converted to Hex before comparing it to the database value.
+
+```properties
+# cas.authn.jdbc.encode[0].numberOfIterations=0
+# cas.authn.jdbc.encode[0].numberOfIterationsFieldName=numIterations
+# cas.authn.jdbc.encode[0].saltFieldName=salt
+# cas.authn.jdbc.encode[0].staticSalt=
+# cas.authn.jdbc.encode[0].sql=
+# cas.authn.jdbc.encode[0].algorithmName=
+# cas.authn.jdbc.encode[0].passwordFieldName=password
+# cas.authn.jdbc.encode[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.jdbc.encode[0].isolateInternalQueries=false
+# cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.jdbc.encode[0].failFast=true
+# cas.authn.jdbc.encode[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.jdbc.encode[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.jdbc.encode[0].leakThreshold=10
+# cas.authn.jdbc.encode[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.jdbc.encode[0].batchSize=1
+# cas.authn.jdbc.encode[0].user=sa
+# cas.authn.jdbc.encode[0].ddlAuto=create-drop
+# cas.authn.jdbc.encode[0].maxAgeDays=180
+# cas.authn.jdbc.encode[0].password=
+# cas.authn.jdbc.encode[0].autocommit=false
+# cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.jdbc.encode[0].idleTimeout=5000
+
+# cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
+# cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
+# cas.authn.jdbc.encode[0].passwordEncoder.secret=
+# cas.authn.jdbc.encode[0].passwordEncoder.strength=16
+```
+
+## MongoDb Authentication
+
+```properties
+# cas.authn.mongo.mongoHostUri=mongodb://uri
+# cas.authn.mongo.usernameAttribute=username
+# cas.authn.mongo.attributes=
+# cas.authn.mongo.passwordAttribute=password
+# cas.authn.mongo.collectionName=users
+```
+
+## Ldap Authentication
+
+CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP. 
+There are numerous directory architectures and we provide configuration for four common cases.
+
+- Active Directory - Users authenticate with sAMAccountName.
+- Authenticated Search - Manager bind/search followed by user simple bind.
+- Anonymous Search - Anonymous search followed by user simple bind.
+- Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
+no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
+1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
+2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
+
+Note that CAS will automatically create the appropriate components internally
+based on the settings specified below. If you wish to authenticate against more than one LDAP
+server, simply increment the index and specify the settings for the next LDAP server. 
+
+```properties
+# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.ldap[0].useSsl=true
+# cas.authn.ldap[0].useStartTls=false
+# cas.authn.ldap[0].connectTimeout=5000
+# cas.authn.ldap[0].baseDn=dc=example,dc=org
+# cas.authn.ldap[0].userFilter=cn={user}
+# cas.authn.ldap[0].subtreeSearch=true
+# cas.authn.ldap[0].usePasswordPolicy=true
+# cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.ldap[0].bindCredential=Password
+
+# cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
+# cas.authn.ldap[0].principalAttributeId=uid
+# cas.authn.ldap[0].principalAttributeList=sn,cn,givenName
+# cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
+# cas.authn.ldap[0].additionalAttributes=
+# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
+
+# cas.authn.ldap[0].trustCertificates=
+# cas.authn.ldap[0].keystore=
+# cas.authn.ldap[0].keystorePassword=
+# cas.authn.ldap[0].keystoreType=JKS|JCEKS|PKCS12
+
+# cas.authn.ldap[0].minPoolSize=3
+# cas.authn.ldap[0].maxPoolSize=10
+# cas.authn.ldap[0].validateOnCheckout=true
+# cas.authn.ldap[0].validatePeriodically=true
+# cas.authn.ldap[0].validatePeriod=600
+
+# cas.authn.ldap[0].failFast=true
+# cas.authn.ldap[0].idleTime=500
+# cas.authn.ldap[0].prunePeriod=600
+# cas.authn.ldap[0].blockWaitTime=5000
+
+# cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.ldap[0].allowMultipleDns=false
+
+# cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.ldap[0].passwordEncoder.characterEncoding=
+# cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
+# cas.authn.ldap[0].passwordEncoder.secret=
+# cas.authn.ldap[0].passwordEncoder.strength=16
+```
+
+## REST Authentication
+
+```properties
+# cas.authn.rest.uri=https://...
+
+# cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.rest.passwordEncoder.characterEncoding=
+# cas.authn.rest.passwordEncoder.encodingAlgorithm=
+# cas.authn.rest.passwordEncoder.secret=
+# cas.authn.rest.passwordEncoder.strength=16
+```
+
+## Google Apps Authentication
+
+```properties
+# cas.googleApps.publicKeyLocation=file:/etc/cas/public.key
+# cas.googleApps.keyAlgorithm=RSA
+# cas.googleApps.privateKeyLocation=file:/etc/cas/private.key
+```
+
+## OpenID Authentication
+
+Allow CAS to become am OpenID authentication provider.
+
+```properties
+# cas.authn.openid.enforceRpId=false
+# cas.authn.openid.principal.principalAttribute=
+# cas.authn.openid.principal.returnNull=false
+```
+
+## SPNEGO Authentication
+
+```properties
+# cas.authn.spnego.kerberosConf=
+# cas.authn.spnego.mixedModeAuthentication=false
+# cas.authn.spnego.cachePolicy=600
+# cas.authn.spnego.timeout=300000
+# cas.authn.spnego.jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
+# cas.authn.spnego.jcifsNetbiosWins=
+# cas.authn.spnego.loginConf=
+# cas.authn.spnego.ntlmAllowed=true
+# cas.authn.spnego.hostNamePatternString=.+
+# cas.authn.spnego.jcifsUsername=
+# cas.authn.spnego.useSubjectCredsOnly=false
+# cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
+# cas.authn.spnego.jcifsDomainController=
+# cas.authn.spnego.dnsTimeout=2000
+# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
+# cas.authn.spnego.kerberosKdc=172.10.1.10
+# cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
+# cas.authn.spnego.jcifsDomain=
+# cas.authn.spnego.ipsToCheckPattern=127.+
+# cas.authn.spnego.kerberosDebug=
+# cas.authn.spnego.send401OnAuthenticationFailure=true
+# cas.authn.spnego.kerberosRealm=EXAMPLE.COM
+# cas.authn.spnego.ntlm=false
+# cas.authn.spnego.principalWithDomainName=false
+# cas.authn.spnego.jcifsServicePassword=
+# cas.authn.spnego.jcifsPassword=
+# cas.authn.spnego.spnegoAttributeName=distinguishedName
+
+# cas.authn.spnego.principal.principalAttribute=
+# cas.authn.spnego.principal.returnNull=false
+```
+
+## JAAS Authentication
+
+```properties
+# cas.authn.jaas.realm=CAS
+# cas.authn.jaas.kerberosKdcSystemProperty=
+# cas.authn.jaas.kerberosRealmSystemProperty=
+
+# cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jaas.passwordEncoder.characterEncoding=
+# cas.authn.jaas.passwordEncoder.encodingAlgorithm=
+# cas.authn.jaas.passwordEncoder.secret=
+# cas.authn.jaas.passwordEncoder.strength=16
+```
+
+## Stormpath Authentication
+
+```properties
+# cas.authn.stormpath.apiKey=
+# cas.authn.stormpath.secretkey=
+# cas.authn.stormpath.applicationId=
+```
+
+## Remote Address Authentication
+
+```properties
+# cas.authn.remoteAddress.ipAddressRange=
+```
+
+
+## Accept Users Authentication
+
+```properties
+# cas.authn.accept.users=
+
+# cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.accept.passwordEncoder.characterEncoding=
+# cas.authn.accept.passwordEncoder.encodingAlgorithm=
+# cas.authn.accept.passwordEncoder.secret=
+# cas.authn.accept.passwordEncoder.strength=16
 ```
 
 ## X509 Authentication
@@ -329,6 +687,12 @@ connections and queries.
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
 # cas.authn.shiro.config.location=classpath:shiro.ini
+
+# cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.shiro.passwordEncoder.characterEncoding=
+# cas.authn.shiro.passwordEncoder.encodingAlgorithm=
+# cas.authn.shiro.passwordEncoder.secret=
+# cas.authn.shiro.passwordEncoder.strength=16
 ```
 
 ## NTLM Authentication
@@ -362,6 +726,7 @@ connections and queries.
 # cas.authn.wsfed.principal.principalAttribute=
 # cas.authn.wsfed.principal.returnNull=false
 ```
+
 
 ## Multifactor Authentication
 
@@ -435,11 +800,17 @@ and link them to custom messages defined in message bundles.
 # cas.authn.exceptions.exceptions=value1,value2,...
 ```
 
-## Accept Users Authentication
+
+## Saml Core
 
 ```properties
-# cas.authn.accept.users=
+# cas.samlCore.ticketidSaml2=false
+# cas.samlCore.skewAllowance=0
+# cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
+# cas.samlCore.issuer=localhost
+# cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
 ```
+
 
 ## Saml IdP
 
@@ -496,72 +867,6 @@ an ad-hoc policy.
 # cas.authn.passwordPolicy.policyAttributes.mustUpdatePassword=org.apereo.cas.authentication.AccountPasswordMustChangeException
 ```
 
-## OpenID Authentication
-
-Allow CAS to become am OpenID authentication provider.
-
-```properties
-# cas.authn.openid.enforceRpId=false
-# cas.authn.openid.principal.principalAttribute=
-# cas.authn.openid.principal.returnNull=false
-```
-
-## SPNEGO Authentication
-
-```properties
-# cas.authn.spnego.kerberosConf=
-# cas.authn.spnego.mixedModeAuthentication=false
-# cas.authn.spnego.cachePolicy=600
-# cas.authn.spnego.timeout=300000
-# cas.authn.spnego.jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.authn.spnego.jcifsNetbiosWins=
-# cas.authn.spnego.loginConf=
-# cas.authn.spnego.ntlmAllowed=true
-# cas.authn.spnego.hostNamePatternString=.+
-# cas.authn.spnego.jcifsUsername=
-# cas.authn.spnego.useSubjectCredsOnly=false
-# cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
-# cas.authn.spnego.jcifsDomainController=
-# cas.authn.spnego.dnsTimeout=2000
-# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
-# cas.authn.spnego.kerberosKdc=172.10.1.10
-# cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
-# cas.authn.spnego.jcifsDomain=
-# cas.authn.spnego.ipsToCheckPattern=127.+
-# cas.authn.spnego.kerberosDebug=
-# cas.authn.spnego.send401OnAuthenticationFailure=true
-# cas.authn.spnego.kerberosRealm=EXAMPLE.COM
-# cas.authn.spnego.ntlm=false
-# cas.authn.spnego.principalWithDomainName=false
-# cas.authn.spnego.jcifsServicePassword=
-# cas.authn.spnego.jcifsPassword=
-# cas.authn.spnego.spnegoAttributeName=distinguishedName
-
-# cas.authn.spnego.principal.principalAttribute=
-# cas.authn.spnego.principal.returnNull=false
-```
-
-## JAAS Authentication
-
-```properties
-# cas.authn.jaas.realm=CAS
-# cas.authn.jaas.kerberosKdcSystemProperty=
-# cas.authn.jaas.kerberosRealmSystemProperty=
-```
-
-## Stormpath Authentication
-
-```properties
-# cas.authn.stormpath.apiKey=
-# cas.authn.stormpath.secretkey=
-# cas.authn.stormpath.applicationId=
-```
-
-## Remote Address Authentication
-
-```properties
-# cas.authn.remoteAddress.ipAddressRange=
-```
 
 ## Pac4j
 
@@ -630,29 +935,6 @@ Delegate authentication to an external SAML2 IdP.
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
 
-## Radius Authentication
-
-```properties
-# cas.authn.radius.server.nasPortId=-1
-# cas.authn.radius.server.nasRealPort=-1
-# cas.authn.radius.server.protocol=EAP_MSCHAPv2
-# cas.authn.radius.server.retries=3
-# cas.authn.radius.server.nasPortType=-1
-# cas.authn.radius.server.nasPort=-1
-# cas.authn.radius.server.nasIpAddress=
-# cas.authn.radius.server.nasIpv6Address=
-# cas.authn.radius.server.nasIdentifier=-1
-
-# cas.authn.radius.client.authenticationPort=1812
-# cas.authn.radius.client.sharedSecret=N0Sh@ar3d$ecReT
-# cas.authn.radius.client.socketTimeout=0
-# cas.authn.radius.client.inetAddress=localhost
-# cas.authn.radius.client.accountingPort=1813
-
-# cas.authn.radius.failoverOnException=false
-# cas.authn.radius.failoverOnAuthenticationFailure=false
-```
-
 ## OAuth2
 
 Allows CAS to act as an OAuth2 provider. Here you can control how
@@ -668,137 +950,6 @@ long various tokens issued by CAS should last, etc.
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 ```
 
-## File Authentication
-
-```properties
-# cas.authn.file.separator=::
-# cas.authn.file.filename=
-```
-
-## Reject Users Authentication
-
-```properties
-# cas.authn.reject.users=user1,user2
-```
-
-## Database Authentication -> Query
-
-Authenticates a user by comparing the (hashed) user password against the password on record determined by a configurable database query.
-
-```properties
-# cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.query[0].isolateInternalQueries=false
-# cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.query[0].failFast=true
-# cas.authn.jdbc.query[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.query[0].leakThreshold=10
-# cas.authn.jdbc.query[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.query[0].batchSize=1
-# cas.authn.jdbc.query[0].user=sa
-# cas.authn.jdbc.query[0].ddlAuto=create-drop
-# cas.authn.jdbc.query[0].maxAgeDays=180
-# cas.authn.jdbc.query[0].password=
-# cas.authn.jdbc.query[0].autocommit=false
-# cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.query[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].sql=
-```
-
-## Database Authentication -> Search
-
-Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
-
-```properties
-# cas.authn.jdbc.search[0].fieldUser=
-# cas.authn.jdbc.search[0].tableUsers=
-# cas.authn.jdbc.search[0].fieldPassword=
-# cas.authn.jdbc.search[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.search[0].isolateInternalQueries=false
-# cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.search[0].failFast=true
-# cas.authn.jdbc.search[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.search[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.search[0].leakThreshold=10
-# cas.authn.jdbc.search[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.search[0].batchSize=1
-# cas.authn.jdbc.search[0].user=sa
-# cas.authn.jdbc.search[0].ddlAuto=create-drop
-# cas.authn.jdbc.search[0].maxAgeDays=180
-# cas.authn.jdbc.search[0].password=
-# cas.authn.jdbc.search[0].autocommit=false
-# cas.authn.jdbc.search[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.search[0].idleTimeout=5000
-```
-
-## Database Authentication -> Bind
-
-Authenticates a user by attempting to create a database connection using the username and (hashed) password.
-
-```properties
-# cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.bind[0].isolateInternalQueries=false
-# cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.bind[0].failFast=true
-# cas.authn.jdbc.bind[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.bind[0].leakThreshold=10
-# cas.authn.jdbc.bind[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.bind[0].batchSize=1
-# cas.authn.jdbc.bind[0].user=sa
-# cas.authn.jdbc.bind[0].ddlAuto=create-drop
-# cas.authn.jdbc.bind[0].maxAgeDays=180
-# cas.authn.jdbc.bind[0].password=
-# cas.authn.jdbc.bind[0].autocommit=false
-# cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.bind[0].idleTimeout=5000
-```
-
-## Database Authentication -> Encode
-
-A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded 
-password using the public salt value. Assumes everything is inside the same database table. Supports settings for 
-number of iterations as well as private salt.
-
-This password encoding method, combines the private Salt and the public salt which it prepends to the password before hashing. 
-If multiple iterations are used, the bytecode Hash of the first iteration is rehashed without the salt values. The final hash 
-is converted to Hex before comparing it to the database value.
-
-```properties
-# cas.authn.jdbc.encode[0].numberOfIterations=0
-# cas.authn.jdbc.encode[0].numberOfIterationsFieldName=numIterations
-# cas.authn.jdbc.encode[0].saltFieldName=salt
-# cas.authn.jdbc.encode[0].staticSalt=
-# cas.authn.jdbc.encode[0].sql=
-# cas.authn.jdbc.encode[0].algorithmName=
-# cas.authn.jdbc.encode[0].passwordFieldName=password
-# cas.authn.jdbc.encode[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.jdbc.encode[0].isolateInternalQueries=false
-# cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.encode[0].failFast=true
-# cas.authn.jdbc.encode[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.encode[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.encode[0].leakThreshold=10
-# cas.authn.jdbc.encode[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.encode[0].batchSize=1
-# cas.authn.jdbc.encode[0].user=sa
-# cas.authn.jdbc.encode[0].ddlAuto=create-drop
-# cas.authn.jdbc.encode[0].maxAgeDays=180
-# cas.authn.jdbc.encode[0].password=
-# cas.authn.jdbc.encode[0].autocommit=false
-# cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.encode[0].idleTimeout=5000
-```
-
-## MongoDb Authentication
-
-```properties
-# cas.authn.mongo.mongoHostUri=mongodb://uri
-# cas.authn.mongo.usernameAttribute=username
-# cas.authn.mongo.attributes=
-# cas.authn.mongo.passwordAttribute=password
-# cas.authn.mongo.collectionName=users
-```
 
 ## Authentication Throttling
 
@@ -874,61 +1025,6 @@ same IP address.
 # cas.tgc.cipherEnabled=true
 ```
 
-## Ldap Authentication
-
-CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP. 
-There are numerous directory architectures and we provide configuration for four common cases.
-
-- Active Directory - Users authenticate with sAMAccountName.
-- Authenticated Search - Manager bind/search followed by user simple bind.
-- Anonymous Search - Anonymous search followed by user simple bind.
-- Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
-1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
-2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
-
-Note that CAS will automatically create the appropriate components internally
-based on the settings specified below. If you wish to authenticate against more than one LDAP
-server, simply increment the index and specify the settings for the next LDAP server. 
-
-```properties
-# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
-# cas.authn.ldap[0].useSsl=true
-# cas.authn.ldap[0].useStartTls=false
-# cas.authn.ldap[0].connectTimeout=5000
-# cas.authn.ldap[0].baseDn=dc=example,dc=org
-# cas.authn.ldap[0].userFilter=cn={user}
-# cas.authn.ldap[0].subtreeSearch=true
-# cas.authn.ldap[0].usePasswordPolicy=true
-# cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
-# cas.authn.ldap[0].bindCredential=Password
-
-# cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
-# cas.authn.ldap[0].principalAttributeId=uid
-# cas.authn.ldap[0].principalAttributeList=sn,cn,givenName
-# cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
-# cas.authn.ldap[0].additionalAttributes=
-# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
-
-# cas.authn.ldap[0].trustCertificates=
-# cas.authn.ldap[0].keystore=
-# cas.authn.ldap[0].keystorePassword=
-# cas.authn.ldap[0].keystoreType=JKS|JCEKS|PKCS12
-
-# cas.authn.ldap[0].minPoolSize=3
-# cas.authn.ldap[0].maxPoolSize=10
-# cas.authn.ldap[0].validateOnCheckout=true
-# cas.authn.ldap[0].validatePeriodically=true
-# cas.authn.ldap[0].validatePeriod=600
-
-# cas.authn.ldap[0].failFast=true
-# cas.authn.ldap[0].idleTime=500
-# cas.authn.ldap[0].prunePeriod=600
-# cas.authn.ldap[0].blockWaitTime=5000
-
-# cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
-# cas.authn.ldap[0].allowMultipleDns=false
-```
 
 ## Logout
 
@@ -1488,16 +1584,6 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
 
-## Saml Response
-
-```properties
-# cas.samlCore.ticketidSaml2=false
-# cas.samlCore.skewAllowance=0
-# cas.samlCore.attributeNamespace=http://www.ja-sig.org/products/cas/
-# cas.samlCore.issuer=localhost
-# cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
-```
-
 ## Maxmind GeoTracking
 
 Used to geo-profile authentication events and such.
@@ -1576,11 +1662,6 @@ and all other webflow related settings.
 # cas.webflow.alg=AES
 ```
 
-## REST Authentication
-
-```properties
-# cas.authn.rest.uri=https://...
-```
 
 ## REST API
 
@@ -1602,12 +1683,4 @@ and all other webflow related settings.
 ```properties
 # cas.metrics.loggerName=perfStatsLogger
 # cas.metrics.refreshInterval=30
-```
-
-## Google Apps Authentication
-
-```properties
-# cas.googleApps.publicKeyLocation=file:/etc/cas/public.key
-# cas.googleApps.keyAlgorithm=RSA
-# cas.googleApps.privateKeyLocation=file:/etc/cas/private.key
 ```
