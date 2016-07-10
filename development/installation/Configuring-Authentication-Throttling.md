@@ -36,7 +36,7 @@ a particular username from the same IP address.
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
-[inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
+[inspektr library](https://github.com/apereo/inspektr) used for CAS auditing be configured with
 `JdbcAuditTrailManager`, which writes audit data to a database.
 
 Enable the following module in your configuration overlay:

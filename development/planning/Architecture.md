@@ -31,8 +31,8 @@ have been developed.
 Platforms:
 
 * Apache httpd Server ([mod_auth_cas module](https://github.com/Jasig/mod_auth_cas))
-* Java ([Java CAS Client](https://github.com/Jasig/java-cas-client))
-* .NET ([.NET CAS Client](https://github.com/Jasig/dotnet-cas-client))
+* Java ([Java CAS Client](https://github.com/apereo/java-cas-client))
+* .NET ([.NET CAS Client](https://github.com/apereo/dotnet-cas-client))
 * PHP ([phpCAS](https://github.com/Jasig/phpCAS))
 * Perl (PerlCAS)
 * Python (pycas)
@@ -48,7 +48,7 @@ Applications:
 * uPortal
 
 When the term "CAS client" appears in this manual without further qualification, it refers to the integration
-components such as the Jasig Java CAS Client rather than to the application relying upon (a client of) the CAS server.
+components such as the Java CAS Client rather than to the application relying upon (a client of) the CAS server.
 
 
 ## Protocols
