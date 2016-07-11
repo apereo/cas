@@ -22,11 +22,6 @@ public class DefaultDigestHashedCredentialRetriever implements DigestHashedCrede
         throw new AccountNotFoundException("Could not locate user account for " + uid);
     }
 
-    @Override
-    public boolean isCredentialEncoded() {
-        return false;
-    }
-
     public Table<String, String, String> getStore() {
         return store;
     }

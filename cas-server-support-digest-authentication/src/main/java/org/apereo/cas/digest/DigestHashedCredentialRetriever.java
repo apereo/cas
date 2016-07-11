@@ -19,11 +19,4 @@ public interface DigestHashedCredentialRetriever {
      * @throws AccountNotFoundException if the account is not found
      */
     String findCredential(final String uid, final String realm) throws AccountNotFoundException;
-
-    /**
-     * Decides whether the retrieved credentials are encoded already.
-     *
-     * @return true/false
-     */
-    boolean isCredentialEncoded();
 }

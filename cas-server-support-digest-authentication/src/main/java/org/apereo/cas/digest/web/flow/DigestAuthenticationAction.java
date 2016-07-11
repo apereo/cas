@@ -1,9 +1,9 @@
 package org.apereo.cas.digest.web.flow;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.digest.util.DigestAuthenticationUtils;
+import org.apereo.cas.digest.DigestCredential;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
+import org.apereo.cas.digest.util.DigestAuthenticationUtils;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.HttpConstants;
@@ -66,8 +66,8 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             }
 
             LOGGER.debug("Received digest authentication request from credentials {} ", credentials);
-            final String serverResponse = credentials.calculateServerDigest(this.credentialRetriever.isCredentialEncoded(),
-                    this.credentialRetriever.findCredential(credentials.getUsername(), credentials.getRealm()));
+            final String serverResponse = credentials.calculateServerDigest(true,
+                    this.credentialRetriever.findCredential(credentials.getUsername(), this.realm));
 
             final String clientResponse = credentials.getToken();
             if (!serverResponse.equals(clientResponse)) {
@@ -75,7 +75,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
                 return null;
             }
 
-            return new UsernamePasswordCredential(credentials.getUsername(), credentials.getToken());
+            return new DigestCredential(credentials.getUsername(), this.realm, credentials.getToken());
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

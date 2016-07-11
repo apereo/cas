@@ -31,6 +31,7 @@
     *   [Rest](/$version/installation/Rest-Authentication.html)
     *   [Stormpath](/$version/installation/Stormpath-Authentication.html)
     *   [Basic](/$version/installation/Basic-Authentication.html)
+    *   [Digest](/$version/installation/Digest-Authentication.html)
     *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
     *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
     *   [Pac4j](/$version/installation/Pac4j-Authentication.html)
