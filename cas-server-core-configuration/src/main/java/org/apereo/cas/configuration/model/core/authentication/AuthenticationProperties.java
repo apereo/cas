@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
@@ -42,17 +43,20 @@ public class AuthenticationProperties {
     private Map<String, String> attributes = new HashMap();
 
     @NestedConfigurationProperty
+    private DigestProperties digest = new DigestProperties();
+
+    @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
-    
+
     @NestedConfigurationProperty
     private ThrottleProperties throttle = new ThrottleProperties();
-    
+
     @NestedConfigurationProperty
     private SamlIdPProperties samlIdp = new SamlIdPProperties();
-    
+
     @NestedConfigurationProperty
     private AuthenticationExceptionsProperties exceptions =
             new AuthenticationExceptionsProperties();
@@ -84,7 +88,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private JaasAuthenticationProperties jaas = new JaasAuthenticationProperties();
 
@@ -93,7 +97,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private MultifactorAuthenticationProperties mfa = new MultifactorAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
 
@@ -126,7 +130,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private X509Properties x509 = new X509Properties();
-    
+
     public AuthenticationExceptionsProperties getExceptions() {
         return exceptions;
     }
@@ -357,5 +361,13 @@ public class AuthenticationProperties {
 
     public void setRest(final RestAuthenticationProperties rest) {
         this.rest = rest;
+    }
+
+    public DigestProperties getDigest() {
+        return digest;
+    }
+
+    public void setDigest(final DigestProperties digest) {
+        this.digest = digest;
     }
 }
