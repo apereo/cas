@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 
 /**
@@ -38,16 +40,30 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     @Override
     protected HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
+        
         final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
-        if (userPass.getUsername() == null) {
+        
+        if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
         
         final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
-        if (transformedUsername == null) {
+        if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
+
+        if (StringUtils.isBlank(userPass.getPassword())) {
+            throw new FailedLoginException("Password is null.");
+        }
+        
+        final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
+        if (StringUtils.isBlank(transformedPsw)) {
+            throw new AccountNotFoundException("Encoded password is null.");
+        }
+        
         userPass.setUsername(transformedUsername);
+        userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
+        
         return authenticateUsernamePasswordInternal(userPass);
     }
 
@@ -64,20 +80,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      */
     protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException;
-
-    /**
-     * Method to return the PasswordEncoder to be used to encode passwords.
-     *
-     * @return the PasswordEncoder associated with this class.
-     */
-    protected PasswordEncoder getPasswordEncoder() {
-        return this.passwordEncoder;
-    }
-
-    protected PrincipalNameTransformer getPrincipalNameTransformer() {
-        return this.principalNameTransformer;
-    }
-    
+        
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
     }
