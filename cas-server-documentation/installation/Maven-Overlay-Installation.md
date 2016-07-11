@@ -191,7 +191,7 @@ Not everyone likes inheriting from the BOM.
 You may have your own corporate standard parent that you need to use, 
 or you may just prefer to explicitly declare all your Maven configuration.
 
-If you don’t want to use the spring-boot-starter-parent, you can still 
+If you don’t want to use the `cas-server-support-bom`, you can still 
 keep the benefit of the dependency management (but not the plugin management) 
 by using a `scope=import` dependency:
 
