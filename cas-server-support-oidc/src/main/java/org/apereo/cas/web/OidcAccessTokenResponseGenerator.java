@@ -61,10 +61,10 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
 
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
-        final UserProfile profile = manager.get(true);
+        final Optional<UserProfile> profile = manager.get(true);
         
         final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout, 
-                oidcRegisteredService, profile, context);
+                oidcRegisteredService, profile.get(), context);
         final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet(oidcRegisteredService);
         final String idToken = signIdTokenClaim(oidcRegisteredService, jwks, claims);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);

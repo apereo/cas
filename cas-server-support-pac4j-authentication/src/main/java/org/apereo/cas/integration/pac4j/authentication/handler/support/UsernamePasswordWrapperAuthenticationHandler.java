@@ -7,9 +7,9 @@ import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.pac4j.http.credentials.UsernamePasswordCredentials;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -66,7 +66,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     }
 
     @Override
-    protected Authenticator getAuthenticator(final Credential credential) {
+    protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         return this.authenticator;
     }
 

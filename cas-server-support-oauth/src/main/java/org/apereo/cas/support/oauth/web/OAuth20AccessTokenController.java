@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -28,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * This controller returns an access token according to the given
@@ -44,7 +44,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     private RefreshTokenFactory refreshTokenFactory;
 
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
@@ -78,8 +78,8 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
 
         if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE) || isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
-            final UserProfile profile = manager.get(true);
-            final String clientId = profile.getId();
+            final Optional<UserProfile> profile = manager.get(true);
+            final String clientId = profile.get().getId();
             registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             // we generate a refresh token if requested by the service but not from a refresh token
@@ -106,15 +106,18 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
             generateRefreshToken = registeredService != null && registeredService.isGenerateRefreshToken();
 
-            // resource owner password grant type
-            final OAuthUserProfile profile = (OAuthUserProfile) manager.get(true);
-            service = createService(registeredService);
-            authentication = createAuthentication(profile, registeredService, context);
-
             try {
+                // resource owner password grant type
+                final Optional<OAuthUserProfile> profile = manager.get(true);
+                if (!profile.isPresent()) {
+                    throw new UnauthorizedServiceException("Oauth user profile cannot be determined");
+                }
+                service = createService(registeredService);
+                authentication = createAuthentication(profile.get(), registeredService, context);
+
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                         registeredService, authentication);
-            } catch (final UnauthorizedServiceException | PrincipalException e) {
+            } catch (final Exception e) {
                 logger.error(e.getMessage(), e);
                 return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT);
             }
@@ -131,7 +134,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
                 casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
 
         this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
-                accessToken, refreshToken, 
+                accessToken, refreshToken,
                 casProperties.getTicket().getTgt().getTimeToKillInSeconds());
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -181,26 +184,27 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
         // must be authenticated (client or user)
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
-        final UserProfile profile = manager.get(true);
-        if (profile == null) {
+        final Optional<UserProfile> profile = manager.get(true);
+        if (profile == null || !profile.isPresent()) {
             return false;
         }
 
+        final UserProfile uProfile = profile.get();
+
         // authorization code grant type
         if (isGrantType(grantType, OAuthGrantType.AUTHORIZATION_CODE)) {
-
-            final String clientId = profile.getId();
+            final String clientId = uProfile.getId();
             final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
             final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
 
-            return profile instanceof OAuthClientProfile
+            return uProfile instanceof OAuthClientProfile
                     && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
                     && this.validator.checkParameterExist(request, OAuthConstants.CODE)
                     && this.validator.checkCallbackValid(registeredService, redirectUri);
 
         } else if (isGrantType(grantType, OAuthGrantType.REFRESH_TOKEN)) {
             // refresh token grant type
-            return profile instanceof OAuthClientProfile
+            return uProfile instanceof OAuthClientProfile
                     && this.validator.checkParameterExist(request, OAuthConstants.REFRESH_TOKEN);
 
         } else {
@@ -209,7 +213,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
 
             // resource owner password grant type
-            return profile instanceof OAuthUserProfile
+            return uProfile instanceof OAuthUserProfile
                     && this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
                     && this.validator.checkServiceValid(registeredService);
         }
@@ -256,6 +260,6 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     public void setRefreshTokenFactory(final RefreshTokenFactory refreshTokenFactory) {
         this.refreshTokenFactory = refreshTokenFactory;
     }
-    
-    
+
+
 }

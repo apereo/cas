@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.digest;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -22,8 +22,15 @@ import org.apache.http.util.EntityUtils;
  * @since 5.0.0
  */
 public class ClientPreemptiveDigestAuthentication {
+    protected ClientPreemptiveDigestAuthentication() {}
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * Main.
+     *
+     * @param args the args
+     * @throws Exception the exception
+     */
+    public static void main(final String[] args) throws Exception {
         final HttpHost target = new HttpHost("mmoayyed.unicon.net", 8443, "https");
         final CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
@@ -33,7 +40,6 @@ public class ClientPreemptiveDigestAuthentication {
                 .setDefaultCredentialsProvider(credsProvider)
                 .build();
         try {
-
             // Create AuthCache instance
             final AuthCache authCache = new BasicAuthCache();
             // Generate DIGEST scheme object, initialize it and add it to the local
@@ -46,7 +52,7 @@ public class ClientPreemptiveDigestAuthentication {
             authCache.put(target, digestAuth);
 
             // Add AuthCache to the execution context
-            HttpClientContext localContext = HttpClientContext.create();
+            final HttpClientContext localContext = HttpClientContext.create();
             localContext.setAuthCache(authCache);
 
             final HttpGet httpget = new HttpGet("https://mmoayyed.unicon.net:8443/cas/login");

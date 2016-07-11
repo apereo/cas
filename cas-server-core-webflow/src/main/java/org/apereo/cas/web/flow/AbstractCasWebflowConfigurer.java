@@ -107,8 +107,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     @Override
     public Flow getLoginFlow() {
-        final Flow flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
-        return flow;
+        return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
     }
 
     /**

@@ -9,7 +9,8 @@ import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractT
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.pac4j.http.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.TokenCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 
 /**
@@ -29,7 +30,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     }
 
     @Override
-    protected Authenticator getAuthenticator(final Credential credential) {
+    protected Authenticator<TokenCredentials> getAuthenticator(final Credential credential) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
         logger.debug("Locating token secret for service [{}]", tokenCredential.getService());
 

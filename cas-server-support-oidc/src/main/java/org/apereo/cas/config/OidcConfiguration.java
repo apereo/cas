@@ -28,7 +28,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -174,9 +174,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
+    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
-        return new RequiresAuthenticationInterceptor(oauthSecConfig, name) {
+        return new SecurityInterceptor(oauthSecConfig, name) {
 
             @Override
             public boolean preHandle(final HttpServletRequest request,

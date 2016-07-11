@@ -1,6 +1,7 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.digest.web.flow;
 
-import org.springframework.stereotype.Component;
+import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 /**
@@ -9,7 +10,6 @@ import org.springframework.webflow.engine.Flow;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("digestAuthenticationWebflowConfigurer")
 public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override

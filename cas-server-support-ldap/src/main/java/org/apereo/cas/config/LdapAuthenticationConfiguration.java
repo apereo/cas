@@ -34,7 +34,7 @@ import org.ldaptive.provider.Provider;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.pac4j.core.authorization.AuthorizationGenerator;
+import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

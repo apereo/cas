@@ -5,9 +5,9 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.exception.CredentialsException;
-import org.pac4j.http.credentials.UsernamePasswordCredentials;
-import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 
 /**
  * Authenticator for client credentials authentication.
