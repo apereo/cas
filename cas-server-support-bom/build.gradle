@@ -1,0 +1,36 @@
+description = "Apereo CAS ‌‌Bill of Material"
+
+configurations.archives.artifacts.clear()
+artifacts {
+    archives(file("cas-bom.md"))
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.whenConfigured {
+            packaging = "pom"
+            withXml {
+                asNode().children().last() + {
+                    delegate.dependencyManagement {
+                        println "here3"
+                        delegate.dependencies {
+                            parent.subprojects.sort { "$it.name" }.each { p ->
+                                println "now at $p.name via $parent.name"
+                                println delegate.toString()
+                                if (p.hasProperty("merge") && p.merge.into == null && p != project) {
+                                    println "************"
+                                    delegate.dependency {
+                                        delegate.groupId(p.group)
+                                        delegate.artifactId(p.name)
+                                        delegate.version(p.version)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
